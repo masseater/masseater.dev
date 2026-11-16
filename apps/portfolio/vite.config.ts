@@ -6,7 +6,6 @@ import { portfolioPlugins } from "./src/app/vite/plugins.ts";
 export default defineConfig({
   msch: {
     lint: {
-      ignorePatterns: ["src/entities/song/catalog/*/program/*.js"],
       overrides: [
         { files: ["src/**/*.{ts,tsx}"], use: ["decision"] },
         {

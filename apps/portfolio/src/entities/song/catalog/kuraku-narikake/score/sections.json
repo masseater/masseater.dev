@@ -1,0 +1,23 @@
+{
+  "museum": { "from": { "bar": 87, "step": 0 }, "to": { "bar": 144, "step": 0 } },
+  "hallRise": { "from": { "bar": 87, "step": 0 }, "to": { "bar": 88, "step": 8 } },
+  "museumOpen": [
+    { "from": { "bar": 87, "step": 0 }, "to": { "bar": 112, "step": 0 } },
+    { "from": { "bar": 128, "step": 0 }, "to": { "bar": 143, "step": 14 } }
+  ],
+  "museumShown": [
+    { "from": { "bar": 87, "step": 8 }, "to": { "bar": 112, "step": 0 } },
+    { "from": { "bar": 128, "step": 0 }, "to": { "bar": 143, "step": 14 } }
+  ],
+  "masterOpen": { "from": { "bar": 89, "step": 0 }, "to": { "bar": 112, "step": 0 } },
+  "drumLowPass": [
+    { "from": { "bar": 47, "step": 12 }, "to": { "bar": 56, "step": 0 } },
+    { "from": { "bar": 67, "step": 14 }, "to": { "bar": 72, "step": 0 } },
+    { "from": { "bar": 196, "step": 0 }, "to": { "bar": 212, "step": 0 }, "after": 3 }
+  ],
+  "drumHighPass": [{ "from": { "bar": 140, "step": 0 }, "to": { "bar": 144, "step": 0 } }],
+  "museumLowPass": [
+    { "from": { "bar": 87, "step": 0 }, "to": { "bar": 88, "step": 8 } },
+    { "from": { "bar": 196, "step": 0 } }
+  ]
+}
