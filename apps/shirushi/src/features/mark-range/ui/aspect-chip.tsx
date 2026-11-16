@@ -4,8 +4,8 @@ import { Array as Arr, pipe } from "effect";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import { aspectsAtom } from "#/features/mark-range/model/draft";
-import { ASPECTS, ASPECT_LABELS } from "#/shared/config";
+import { aspectsAtom } from "#/features/mark-range/model/draft.ts";
+import { ASPECTS, ASPECT_LABELS } from "#/shared/config/index.ts";
 
 import { TOGGLE } from "./toggle.ts";
 
