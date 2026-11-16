@@ -30,7 +30,7 @@ const NONE = 0;
 export const velocityOf: From<Attributes, number> = (attributes) =>
   Option.match(Arr.findFirst(attributes, isVelocity), {
     onNone: () => FULL,
-    onSome: (velocity) => velocity.value,
+    onSome: (velocity) => velocity.value ?? FULL,
   });
 
 export const nudgeOf: From<Attributes, number> = (attributes) =>
