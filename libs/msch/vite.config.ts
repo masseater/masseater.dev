@@ -54,6 +54,7 @@ export default defineConfig({
       verify: { command: [], dependsOn: ["build"] },
       build: {
         command: "vp pack",
+        dependsOn: [{ task: "build", from: "dependencies" }],
         cache: {
           input: [{ auto: true }, ...(await ignoredDirectories(`${import.meta.dirname}/../..`))],
         },

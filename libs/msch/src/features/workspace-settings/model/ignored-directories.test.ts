@@ -15,15 +15,19 @@ const excludesIgnoredDirectories = Effect.gen(function* excludesIgnoredDirectori
   const ignored = yield* Effect.promise(() => ignoredDirectories(root));
   expect(ignored).toStrictEqual([
     { pattern: "!target", base: "workspace" },
+    { pattern: "!target/**", base: "workspace" },
     { pattern: "!**/.cache", base: "workspace" },
+    { pattern: "!**/.cache/**", base: "workspace" },
     { pattern: "!apps/game/**/.godot", base: "workspace" },
+    { pattern: "!apps/game/**/.godot/**", base: "workspace" },
     { pattern: "!apps/game/out", base: "workspace" },
+    { pattern: "!apps/game/out/**", base: "workspace" },
   ]);
 });
 
 layer(fixtureLayer)("ignored directories", (it) => {
   it.effect(
-    "turns the directories each .gitignore names into exclusions and keeps any that hold listed files",
+    "turns the directories each .gitignore names into exclusions of the directory and its contents and keeps any that hold listed files",
     () => excludesIgnoredDirectories,
   );
 });
