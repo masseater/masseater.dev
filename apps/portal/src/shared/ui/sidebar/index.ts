@@ -1,8 +1,8 @@
-export { MobileSidebar } from "./mobile-sidebar";
-export { Sidebar } from "./sidebar";
-export { SidebarBrand } from "./sidebar-brand";
-export { SidebarGroup } from "./sidebar-group";
-export { SidebarInset } from "./sidebar-inset";
-export { SidebarLink } from "./sidebar-link";
-export { SidebarProvider } from "./sidebar-provider";
-export { SidebarTrigger } from "./sidebar-trigger";
+export { MobileSidebar } from "./mobile-sidebar.tsx";
+export { Sidebar } from "./sidebar.tsx";
+export { SidebarBrand } from "./sidebar-brand.tsx";
+export { SidebarGroup } from "./sidebar-group.tsx";
+export { SidebarInset } from "./sidebar-inset.tsx";
+export { SidebarLink } from "./sidebar-link.tsx";
+export { SidebarProvider } from "./sidebar-provider.tsx";
+export { SidebarTrigger } from "./sidebar-trigger.tsx";

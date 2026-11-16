@@ -2,9 +2,9 @@ import { and, desc, eq, isNull } from "drizzle-orm";
 import { Array as Arr, Effect } from "effect";
 import type { Option } from "effect";
 
-import { apiToken } from "#/shared/db";
-import type { ApiToken, StorageFailed } from "#/shared/db";
-import { db, query } from "#/shared/db/index.server";
+import { db, query } from "#/shared/db/index.server.ts";
+import { apiToken } from "#/shared/db/index.ts";
+import type { ApiToken, StorageFailed } from "#/shared/db/index.ts";
 
 export type TokenSummary = Omit<ApiToken, "tokenHash">;
 

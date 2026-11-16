@@ -2,13 +2,13 @@ import { Link } from "@tanstack/react-router";
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { hasMovement } from "#/entities/money";
-import { useOverview } from "#/pages/home/api/home-query";
-import { RECENT_MONTHS } from "#/pages/home/model/recent-months";
-import { Card, CardHeader, ChartLegend } from "#/shared/ui";
-import type { LegendItem } from "#/shared/ui";
+import { hasMovement } from "#/entities/money/index.ts";
+import { useOverview } from "#/pages/home/api/home-query.ts";
+import { RECENT_MONTHS } from "#/pages/home/model/recent-months.ts";
+import { Card, CardHeader, ChartLegend } from "#/shared/ui/index.ts";
+import type { LegendItem } from "#/shared/ui/index.ts";
 
-import { MoneyMiniChart } from "./money-mini-chart";
+import { MoneyMiniChart } from "./money-mini-chart.tsx";
 
 const TEXT = {
   title: "お金",

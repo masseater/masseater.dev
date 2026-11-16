@@ -4,8 +4,8 @@ import { runWorkersAi } from "@r_masseater/workers-tracing/workers-ai";
 import { env } from "cloudflare:workers";
 import { Array as Arr, Effect, pipe } from "effect";
 
-import { meanOf, piecesOf } from "./trait-vector";
-import type { Vector } from "./trait-vector";
+import { meanOf, piecesOf } from "./trait-vector.ts";
+import type { Vector } from "./trait-vector.ts";
 
 const EMBEDDING_MODEL = "@cf/pfnet/plamo-embedding-1b";
 

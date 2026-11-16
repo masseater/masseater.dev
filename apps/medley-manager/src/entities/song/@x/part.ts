@@ -1,1 +1,1 @@
-export { SongLink } from "#/entities/song";
+export { SongLink } from "#/entities/song/index.ts";

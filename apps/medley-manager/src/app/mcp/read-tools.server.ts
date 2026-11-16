@@ -1,11 +1,11 @@
 import type { McpServer } from "@modelcontextprotocol/server";
 import { Schema } from "effect";
 
-import { IdInput, KeywordInput, VideoSearchInput } from "#/entities/catalog";
-import { getSong, listSongs } from "#/entities/song/index.server";
-import { getVideo, listVideos } from "#/entities/video/index.server";
-import { orMissing, runTool } from "#/shared/api/index.server";
-import { keywordOf } from "#/shared/db/index.server";
+import { IdInput, KeywordInput, VideoSearchInput } from "#/entities/catalog/index.ts";
+import { getSong, listSongs } from "#/entities/song/index.server.ts";
+import { getVideo, listVideos } from "#/entities/video/index.server.ts";
+import { orMissing, runTool } from "#/shared/api/index.server.ts";
+import { keywordOf } from "#/shared/db/index.server.ts";
 
 const READ_ONLY = { readOnlyHint: true, openWorldHint: false };
 const KEYWORD_SCHEMA = KeywordInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);

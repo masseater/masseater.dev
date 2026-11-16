@@ -20,8 +20,8 @@ import {
 import { Command, Flag } from "effect/cli";
 import { FetchHttpClient, HttpClient } from "effect/http";
 
-import { markedAt, missingOf, render, spanOf, traceOf } from "#/trace-tree.ts";
-import type { ReceivedSpan } from "#/trace-tree.ts";
+import { markedAt, missingOf, render, spanOf, traceOf } from "#/entities/span/index.ts";
+import type { ReceivedSpan } from "#/entities/span/index.ts";
 
 const DEFAULT_SINK = "workers-tracing-sink";
 const DEFAULT_MINUTES = 15;

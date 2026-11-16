@@ -1,2 +1,2 @@
-export { loadSlidesPage } from "./api/slides-query";
-export { SlidesPage } from "./ui/slides-page";
+export { loadSlidesPage } from "./api/slides-query.ts";
+export { SlidesPage } from "./ui/slides-page.tsx";

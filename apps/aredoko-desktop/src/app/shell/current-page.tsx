@@ -1,7 +1,7 @@
 import type { ComponentType, ReactNode } from "react";
 
-import { HomePage } from "#/pages/home";
-import { SettingsPage } from "#/pages/settings";
+import { HomePage } from "#/pages/home/index.ts";
+import { SettingsPage } from "#/pages/settings/index.ts";
 
 import { usePage } from "./navigation.ts";
 import type { Page } from "./navigation.ts";

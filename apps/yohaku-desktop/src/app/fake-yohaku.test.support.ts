@@ -9,7 +9,7 @@ import type {
 } from "@masseater.dev/yohaku-protocol";
 import { Array, Effect, Option, Record, Stream, String, pipe } from "effect";
 
-import type { ClaudeStatus, OnboardingStep, Release, Yohaku } from "#/shared/api";
+import type { ClaudeStatus, OnboardingStep, Release, Yohaku } from "#/shared/api/index.ts";
 
 import { DRAFT, EMOTION, INGESTED, REWRITE } from "./fake-data.test.support.ts";
 import { revisionCalls } from "./fake-revisions.test.support.ts";

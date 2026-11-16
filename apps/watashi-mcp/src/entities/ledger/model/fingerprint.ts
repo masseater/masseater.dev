@@ -1,7 +1,7 @@
 import { Array as Arr, Effect, HashMap, Option, pipe } from "effect";
 import { Digest } from "effect/crypto";
 
-import { normalized } from "./categories";
+import { normalized } from "./categories.ts";
 
 export type Entry = Readonly<{ date: string; amount: number; description: string }>;
 

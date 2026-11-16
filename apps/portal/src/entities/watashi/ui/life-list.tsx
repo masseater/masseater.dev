@@ -1,10 +1,10 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import type { LifeItemValue } from "#/entities/watashi/model/life-item";
-import { RowList } from "#/shared/ui";
+import type { LifeItemValue } from "#/entities/watashi/model/life-item.ts";
+import { RowList } from "#/shared/ui/index.ts";
 
-import { LifeRow } from "./life-row";
+import { LifeRow } from "./life-row.tsx";
 
 export const LifeList = ({
   items,

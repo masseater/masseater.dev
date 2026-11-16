@@ -2,8 +2,6 @@ import { OVERWRITE, READ_ONLY, one } from "@masseater.dev/mcp-tool-call";
 import type { Effect } from "effect";
 import { Match, Option } from "effect";
 
-import { MoneyReadInput, MoneyWriteInput } from "#/entities/ledger";
-import type { MoneyRead, MoneyWrite } from "#/entities/ledger";
 import {
   deleteRule,
   recordBalance,
@@ -12,20 +10,22 @@ import {
   setRule,
   tool,
   upsertAccount,
-} from "#/entities/ledger/index.server";
-import type { Failure, Services } from "#/entities/ledger/index.server";
-import { settings } from "#/features/categorize/index.server";
+} from "#/entities/ledger/index.server.ts";
+import type { Failure, Services } from "#/entities/ledger/index.server.ts";
+import { MoneyReadInput, MoneyWriteInput } from "#/entities/ledger/index.ts";
+import type { MoneyRead, MoneyWrite } from "#/entities/ledger/index.ts";
+import { settings } from "#/features/categorize/index.server.ts";
 import {
   addTransactions,
   deleteImport,
   importCsv,
-} from "#/features/import-statements/index.server";
+} from "#/features/import-statements/index.server.ts";
 import {
   balanceSheetReport,
   flowReport,
   listTransactions,
   monthlyReport,
-} from "#/features/report/index.server";
+} from "#/features/report/index.server.ts";
 
 type Run<Input> = (input: Input) => Effect.Effect<unknown, Failure, Services>;
 

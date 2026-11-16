@@ -1,1 +1,1 @@
-export { PageShell } from "./ui/page-shell";
+export { PageShell } from "./ui/page-shell.tsx";

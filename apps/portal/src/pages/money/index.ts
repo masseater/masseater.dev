@@ -1,2 +1,2 @@
-export { loadMoneyPage } from "./api/money-query";
-export { MoneyPage } from "./ui/money-page";
+export { loadMoneyPage } from "./api/money-query.ts";
+export { MoneyPage } from "./ui/money-page.tsx";

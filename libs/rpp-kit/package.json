@@ -3,9 +3,12 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "imports": {
+    "#/*": "./src/*"
+  },
   "exports": {
-    ".": "./src/index.ts",
-    "./vite": "./src/vite.ts"
+    ".": "./src/app/index.ts",
+    "./vite": "./src/app/vite.ts"
   },
   "dependencies": {
     "@effect/platform-node": "catalog:",
@@ -23,7 +26,7 @@
       "dynamicConfig": false,
       "exec": [
         "node",
-        "src/mapper.ts"
+        "src/app/mapper.ts"
       ]
     }
   }

@@ -1,9 +1,14 @@
 import type { ReactNode } from "react";
 
-import { MobileSidebar, Sidebar, SidebarInset, SidebarProvider } from "#/shared/ui/sidebar";
+import {
+  MobileSidebar,
+  Sidebar,
+  SidebarInset,
+  SidebarProvider,
+} from "#/shared/ui/sidebar/index.ts";
 
-import { PortalHeader } from "./portal-header";
-import { PortalNav } from "./portal-nav";
+import { PortalHeader } from "./portal-header.tsx";
+import { PortalNav } from "./portal-nav.tsx";
 
 export const PortalShell = ({
   children,

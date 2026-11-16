@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
-import { Card } from "./card";
-import { CardHeader } from "./card-header";
+import { CardHeader } from "./card-header.tsx";
+import { Card } from "./card.tsx";
 
 export const Section = ({
   children,

@@ -2,8 +2,7 @@ import { NodeRuntime } from "@effect/platform-node";
 import { provideAtEntry } from "@ocr-decide/tooling";
 import { Effect, Array as Arr, pipe } from "effect";
 
-import { outcomeOf } from "#/details.ts";
-import { Results, resultsLayer } from "#/report.ts";
+import { outcomeOf, Results, resultsLayer } from "#/features/measure-documents/index.ts";
 
 const rescore = Effect.gen(function* rescore() {
   const results = yield* Results;

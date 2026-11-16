@@ -1,6 +1,6 @@
 import { Array as Arr, Effect, Number, Option, Order, pipe, Record, String as Str } from "effect";
 
-import { catalogDb } from "#/shared/db/index.server";
+import { catalogDb } from "#/shared/db/index.server.ts";
 
 import { quoteReach, sourcesByVideo, videoSummaries } from "./quote-reach.server.ts";
 import type { QuotePair, VideoSummary } from "./quote-reach.server.ts";

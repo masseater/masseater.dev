@@ -1,6 +1,6 @@
 import { Array as Arr, pipe } from "effect";
 
-import { summary } from "./summary";
+import { summary } from "./summary.ts";
 
 const PALETTE = [
   "var(--color-series-1)",

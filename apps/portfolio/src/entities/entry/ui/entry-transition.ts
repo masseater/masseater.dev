@@ -1,6 +1,6 @@
 import { String as Str } from "effect";
 
-import type { Entry } from "#/entities/entry/model/entry";
+import type { Entry } from "#/entities/entry/model/entry.ts";
 
 const transitionName = (
   part: "title" | "meta",

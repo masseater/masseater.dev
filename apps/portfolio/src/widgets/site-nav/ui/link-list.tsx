@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import type { Direction } from "#/widgets/site-nav/model/direction";
+import type { Direction } from "#/widgets/site-nav/model/direction.ts";
 
 const LIST_CLASS = {
   row: "flex flex-wrap justify-center gap-x-4",

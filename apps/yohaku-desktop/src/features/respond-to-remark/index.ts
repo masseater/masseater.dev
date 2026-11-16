@@ -1,1 +1,1 @@
-export { RemarkNote } from "./ui/remark-note";
+export { RemarkNote } from "./ui/remark-note.tsx";

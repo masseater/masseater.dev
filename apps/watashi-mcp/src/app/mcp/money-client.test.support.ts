@@ -11,7 +11,7 @@ import {
   pipe,
 } from "effect";
 
-import { registerMoneyTools } from "./money-tools.server";
+import { registerMoneyTools } from "./money-tools.server.ts";
 
 export type Args = Readonly<Record<string, unknown>>;
 

@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import type { StarView } from "#/features/star/model/star-state";
+import type { StarView } from "#/features/star/model/star-state.ts";
 
 const STAR_LABEL = "スター";
 

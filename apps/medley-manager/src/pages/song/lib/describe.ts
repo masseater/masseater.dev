@@ -1,6 +1,6 @@
 import { Array, Option, pipe } from "effect";
 
-import { formatTime } from "#/entities/video";
+import { formatTime } from "#/entities/video/index.ts";
 
 type UsedAt = Readonly<{ position: number; startSec: number | null }>;
 

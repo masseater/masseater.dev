@@ -2,11 +2,11 @@ import type { QueryClient } from "@tanstack/react-query";
 import { createRootRouteWithContext } from "@tanstack/react-router";
 import { Option, pipe } from "effect";
 
-import { RootDocument } from "#/app/shell/root-document";
-import { RouteError } from "#/app/shell/route-error";
-import { readSidebarLayout } from "#/shared/api";
-import { SITE_NAME } from "#/shared/config";
-import { DEFAULT_SIDEBAR_WIDTH, sidebarWidthRule } from "#/shared/model";
+import { RootDocument } from "#/app/shell/root-document.tsx";
+import { RouteError } from "#/app/shell/route-error.tsx";
+import { readSidebarLayout } from "#/shared/api/index.ts";
+import { SITE_NAME } from "#/shared/config/index.ts";
+import { DEFAULT_SIDEBAR_WIDTH, sidebarWidthRule } from "#/shared/model/index.ts";
 
 import appCss from "#/app/styles.css?url";
 

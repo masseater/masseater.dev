@@ -1,7 +1,7 @@
 import { Array, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { useManuscripts } from "#/entities/manuscript";
+import { useManuscripts } from "#/entities/manuscript/index.ts";
 
 import { ManuscriptEntry } from "./manuscript-entry.tsx";
 

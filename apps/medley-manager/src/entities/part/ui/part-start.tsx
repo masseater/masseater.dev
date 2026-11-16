@@ -1,7 +1,7 @@
 import { Option } from "effect";
 import type { ReactNode } from "react";
 
-import type { PartStartLink } from "#/entities/video/@x/part";
+import type { PartStartLink } from "#/entities/video/@x/part.ts";
 
 const CHIP = "rounded-full bg-screen px-2 py-0.5 text-xs font-bold text-comment-cyan tabular-nums";
 

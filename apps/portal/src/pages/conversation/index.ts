@@ -1,2 +1,2 @@
-export { loadConversationPage } from "./api/conversation-query";
-export { ConversationPage } from "./ui/conversation-page";
+export { loadConversationPage } from "./api/conversation-query.ts";
+export { ConversationPage } from "./ui/conversation-page.tsx";

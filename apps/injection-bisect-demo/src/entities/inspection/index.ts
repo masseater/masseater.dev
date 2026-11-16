@@ -17,19 +17,19 @@ export {
   useSetRun,
   useSetModel,
   useFocus,
-} from "./model/draft";
-export type { Run, Opening, Focus } from "./model/draft";
-export { traceOf } from "./model/trace";
-export type { Trace, Phase, Answer, Row } from "./model/trace";
-export { inspectEvents } from "./api/inspect-events";
-export type { InspectEvent } from "./api/inspect-events";
-export { MAX_CHARS, MODELS } from "./model/models";
-export { COUNT, DOLLARS, PERCENT } from "./model/format";
-export { logOf } from "./model/log";
-export type { LogLine } from "./model/log";
-export { EXAMPLES } from "./model/examples";
-export type { Example } from "./model/examples";
-export { gradeOf } from "./model/answer";
-export type { Grade } from "./model/answer";
-export { piecesOf, toneOf } from "./model/overlay";
-export type { Tone, Piece } from "./model/overlay";
+} from "./model/draft.ts";
+export type { Run, Opening, Focus } from "./model/draft.ts";
+export { traceOf } from "./model/trace.ts";
+export type { Trace, Phase, Answer, Row } from "./model/trace.ts";
+export { inspectEvents } from "./api/inspect-events.ts";
+export type { InspectEvent } from "./api/inspect-events.ts";
+export { MAX_CHARS, MODELS } from "./model/models.ts";
+export { COUNT, DOLLARS, PERCENT } from "./model/format.ts";
+export { logOf } from "./model/log.ts";
+export type { LogLine } from "./model/log.ts";
+export { EXAMPLES } from "./model/examples.ts";
+export type { Example } from "./model/examples.ts";
+export { gradeOf } from "./model/answer.ts";
+export type { Grade } from "./model/answer.ts";
+export { piecesOf, toneOf } from "./model/overlay.ts";
+export type { Tone, Piece } from "./model/overlay.ts";

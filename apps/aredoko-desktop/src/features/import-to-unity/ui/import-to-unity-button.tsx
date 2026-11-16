@@ -4,7 +4,7 @@ import { Check, Import } from "lucide-react";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import { importToUnity } from "#/features/import-to-unity/api/import-to-unity";
+import { importToUnity } from "#/features/import-to-unity/api/import-to-unity.ts";
 
 const LABEL = "Unity に読み込む";
 const SENT = "ファイルを Unity に渡しました";

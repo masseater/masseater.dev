@@ -1,7 +1,7 @@
 import { Array as Arr, HashSet, Number as Num, Option, Order, Record as Rec, pipe } from "effect";
 
-import { isActive, keyText } from "./trait-state";
-import type { Candidates, TraitState } from "./trait-state";
+import { isActive, keyText } from "./trait-state.ts";
+import type { Candidates, TraitState } from "./trait-state.ts";
 
 export type Vector = readonly number[];
 

@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
-import type { TimelineEntry } from "#/entities/watashi";
-import { Row, TagList } from "#/shared/ui";
+import type { TimelineEntry } from "#/entities/watashi/index.ts";
+import { Row, TagList } from "#/shared/ui/index.ts";
 
 export const TimelineRow = ({ entry }: Readonly<{ entry: TimelineEntry }>): ReactNode => (
   <Row lead={entry.when}>

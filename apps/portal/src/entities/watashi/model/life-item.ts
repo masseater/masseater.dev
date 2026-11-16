@@ -1,6 +1,6 @@
 import { Array as Arr, Option, Schema, String as Str, pipe } from "effect";
 
-import { TimeOut } from "#/shared/model";
+import { TimeOut } from "#/shared/model/index.ts";
 
 const Names = Schema.Array(Schema.String);
 

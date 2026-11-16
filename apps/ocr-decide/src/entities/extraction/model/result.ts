@@ -2,7 +2,7 @@ import { INVOICE_FIELDS } from "@r_masseater/ocr-decide";
 import type { FieldValue } from "@r_masseater/ocr-decide";
 import { Option, Array as Arr, pipe } from "effect";
 
-import { COPY } from "#/shared/config";
+import { COPY } from "#/shared/config/index.ts";
 
 const COST_DIGITS = 5;
 

@@ -1,8 +1,8 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { articleTitles, blogPath } from "#/entities/technique";
-import type { Origin } from "#/entities/technique";
+import { articleTitles, blogPath } from "#/entities/technique/index.ts";
+import type { Origin } from "#/entities/technique/index.ts";
 
 export const OriginView = ({ origin }: Readonly<{ origin: Origin }>): ReactNode => (
   <section className="flex flex-col gap-3">

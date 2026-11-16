@@ -24,7 +24,7 @@ layer(Layer.empty)("ページを離れるときのスパンの送信", (it) => {
   it.effect("ページを離れるときのスパンは keepalive を付けて送り、ページが閉じても送り切る", () =>
     Effect.gen(function* sendsWithKeepalive() {
       const keepalives = recordKeepalives();
-      const { flushTraces, runtime } = yield* Effect.promise(() => import("./telemetry"));
+      const { flushTraces, runtime } = yield* Effect.promise(() => import("./telemetry.ts"));
       yield* Effect.promise(() =>
         runtime.runPromise(
           Effect.void.pipe(Effect.withSpan("mosaic.page.hide"), Effect.andThen(flushTraces)),

@@ -3,8 +3,8 @@ import { Array as Arr, pipe } from "effect";
 import { useMemo } from "react";
 import type { ReactNode } from "react";
 
-import type { MoneySearchValue, PeriodValue, SettingsValue } from "#/entities/money";
-import { SelectField } from "#/shared/ui";
+import type { MoneySearchValue, PeriodValue, SettingsValue } from "#/entities/money/index.ts";
+import { SelectField } from "#/shared/ui/index.ts";
 
 const TEXT = {
   category: "カテゴリー",

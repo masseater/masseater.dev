@@ -3,7 +3,7 @@
 import { HoverCard } from "radix-ui";
 import type { ReactNode } from "react";
 
-import { HoverCardContent } from "#/shared/ui";
+import { HoverCardContent } from "#/shared/ui/index.ts";
 
 export type FootnoteProps = Readonly<{
   href: string;

@@ -1,4 +1,4 @@
-import type { Panel } from "#/entities/interview";
+import type { Panel } from "#/entities/interview/index.ts";
 
 export type PanelLabel = Readonly<{ id: Panel; label: string }>;
 

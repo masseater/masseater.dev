@@ -1,7 +1,7 @@
 import { Array, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import type { Page } from "#/shared/model";
+import type { Page } from "#/shared/model/index.ts";
 
 import { NavButton } from "./nav-button.tsx";
 

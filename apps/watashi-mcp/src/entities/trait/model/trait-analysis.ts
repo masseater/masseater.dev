@@ -1,6 +1,6 @@
 import { Schema } from "effect";
 
-import { STANCES, TRAIT_KINDS, TRAIT_ORIGINS } from "#/shared/db";
+import { STANCES, TRAIT_KINDS, TRAIT_ORIGINS } from "#/shared/db/index.ts";
 
 const TraitKind = Schema.Literals(TRAIT_KINDS).annotate({
   description:

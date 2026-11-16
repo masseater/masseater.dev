@@ -2,8 +2,8 @@ import { useAtomSet, useAtomValue } from "@effect/atom-react";
 import { Option } from "effect";
 import { Atom } from "effect/reactivity";
 
-import type { LanguageCode } from "#/entities/language/@x/translation";
-import type { Form } from "#/shared/api";
+import type { LanguageCode } from "#/entities/language/@x/translation.ts";
+import type { Form } from "#/shared/api/index.ts";
 
 export type FormChoice = "auto" | Form;
 

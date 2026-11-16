@@ -2,8 +2,8 @@ import type { Video } from "@masseater.dev/nimado";
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { views } from "#/entities/ranking";
-import { ExternalLink } from "#/shared/ui/external-link";
+import { views } from "#/entities/ranking/index.ts";
+import { ExternalLink } from "#/shared/ui/external-link.tsx";
 
 export const VideoLinks = ({
   label,

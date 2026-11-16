@@ -12,9 +12,9 @@ import {
   YAxis,
 } from "recharts";
 
-import { monthLabel, SIGNED_YEN, YEN } from "#/entities/money";
-import type { MonthTotalValue } from "#/entities/money";
-import { monthlyRows } from "#/pages/money/model/monthly-rows";
+import { monthLabel, SIGNED_YEN, YEN } from "#/entities/money/index.ts";
+import type { MonthTotalValue } from "#/entities/money/index.ts";
+import { monthlyRows } from "#/pages/money/model/monthly-rows.ts";
 
 const TEXT = { income: "収入", expense: "支出", balance: "収支" } as const;
 

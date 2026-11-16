@@ -1,8 +1,8 @@
 import { Array, Match, Option, Record } from "effect";
 
-import type { Camera, Point } from "./camera";
-import type { Scene, Step } from "./scene";
-import { NO_GESTURE, STILL, tileAt, zoomAt } from "./scene";
+import type { Camera, Point } from "./camera.ts";
+import type { Scene, Step } from "./scene.ts";
+import { NO_GESTURE, STILL, tileAt, zoomAt } from "./scene.ts";
 
 const DRAG_THRESHOLD = 5;
 const TAP_MS = 500;

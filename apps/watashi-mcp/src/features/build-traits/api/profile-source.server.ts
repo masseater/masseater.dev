@@ -1,15 +1,15 @@
 import { desc, eq } from "drizzle-orm";
 import { Array as Arr, Effect, Option, Order, String as Str, pipe } from "effect";
 
-import { SELF, factStateOf, itemOf, todayJst } from "#/entities/life-record";
-import type { Body, Entry } from "#/entities/life-record";
-import { scanAll } from "#/entities/life-record/index.server";
-import { GLOBAL, idOf, isActive, supportsOf } from "#/entities/trait";
-import type { TraitState } from "#/entities/trait";
-import { loadTraits } from "#/entities/trait/index.server";
-import { memory, NOT_RETRACTED } from "#/shared/db";
-import type { StorageFailed } from "#/shared/db";
-import { db, query } from "#/shared/db/index.server";
+import { scanAll } from "#/entities/life-record/index.server.ts";
+import { SELF, factStateOf, itemOf, todayJst } from "#/entities/life-record/index.ts";
+import type { Body, Entry } from "#/entities/life-record/index.ts";
+import { loadTraits } from "#/entities/trait/index.server.ts";
+import { GLOBAL, idOf, isActive, supportsOf } from "#/entities/trait/index.ts";
+import type { TraitState } from "#/entities/trait/index.ts";
+import { db, query } from "#/shared/db/index.server.ts";
+import { memory, NOT_RETRACTED } from "#/shared/db/index.ts";
+import type { StorageFailed } from "#/shared/db/index.ts";
 
 const RECENT_MEMOS = 40;
 

@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import type { Side } from "#/entities/language";
+import type { Side } from "#/entities/language/index.ts";
 
 import { PickerChoices } from "./picker-choices.tsx";
 import { PickerSearch } from "./picker-search.tsx";

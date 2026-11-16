@@ -1,8 +1,8 @@
 import { Clock, Effect, Option } from "effect";
 import { SecureRandom } from "effect/crypto";
 
-import { listen } from "#/shared/lib/recognition";
-import { write } from "#/shared/lib/registry";
+import { listen } from "#/shared/lib/recognition.ts";
+import { write } from "#/shared/lib/registry.ts";
 
 import {
   answerDraftAtom,

@@ -2,7 +2,7 @@ import { getRouteApi } from "@tanstack/react-router";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import type { RankingSearch } from "#/entities/ranking";
+import type { RankingSearch } from "#/entities/ranking/index.ts";
 
 const route = getRouteApi("/");
 

@@ -1,6 +1,6 @@
 import { Effect } from "effect";
 
-import type { Revision, Yohaku } from "#/shared/api";
+import type { Revision, Yohaku } from "#/shared/api/index.ts";
 
 const SAVED_AT = 1_794_472_200_000;
 

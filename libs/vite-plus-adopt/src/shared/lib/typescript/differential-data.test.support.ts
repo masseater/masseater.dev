@@ -1,0 +1,96 @@
+import { Array as Arr, Option, Schema } from "effect";
+
+import { parseJson, toJson } from "#/shared/lib/json.ts";
+import { Package } from "#attw-upstream/index.js";
+
+import expectedJson from "./differential.expected.json" with { type: "json" };
+import fixturesJson from "./differential.fixtures.json" with { type: "json" };
+
+const Fixture = Schema.Struct({
+  name: Schema.String,
+  packageName: Schema.String,
+  packageVersion: Schema.String,
+  resolvedUrl: Schema.String,
+  typesPackage: Schema.optional(
+    Schema.Struct({ packageName: Schema.String, packageVersion: Schema.String }),
+  ),
+  files: Schema.Record(Schema.String, Schema.String),
+});
+
+const HostLookup = Schema.Struct({
+  fixture: Schema.String,
+  moduleResolution: Schema.Finite,
+  moduleName: Schema.String,
+  containingFile: Schema.String,
+  mode: Schema.Finite,
+  noDtsResolution: Schema.Boolean,
+});
+
+const Fixtures = Schema.Struct({
+  fixtures: Schema.Array(Fixture),
+  paths: Schema.Array(Schema.String),
+  hostLookups: Schema.Array(HostLookup),
+  packageNames: Schema.Array(Schema.String),
+});
+
+const ExpectedPath = Schema.Struct({
+  path: Schema.String,
+  rootLength: Schema.Finite,
+  normalized: Schema.String,
+  absolute: Schema.String,
+  directory: Schema.String,
+  combined: Schema.String,
+  components: Schema.Array(Schema.String),
+});
+
+const ExpectedLookup = Schema.Struct({
+  ...HostLookup.fields,
+  resolution: Schema.Unknown,
+  trace: Schema.Array(Schema.String),
+});
+
+const ExpectedPackageName = Schema.Struct({
+  name: Schema.String,
+  mangled: Schema.String,
+  unmangled: Schema.String,
+  typesPackage: Schema.String,
+});
+
+const Expected = Schema.Struct({
+  packages: Schema.Record(Schema.String, Schema.Unknown),
+  paths: Schema.Array(ExpectedPath),
+  hostLookups: Schema.Array(ExpectedLookup),
+  packageNames: Schema.Array(ExpectedPackageName),
+});
+
+export type FixtureData = typeof Fixture.Type;
+export type ExpectedLookupData = typeof ExpectedLookup.Type;
+export type ExpectedPathData = typeof ExpectedPath.Type;
+export type ExpectedPackageNameData = typeof ExpectedPackageName.Type;
+
+const undecodable = (): TypeError => new TypeError("The differential test data does not decode");
+
+export const inputs = Schema.decodeOption(Fixtures)(fixturesJson).pipe(
+  Option.getOrThrowWith(undecodable),
+);
+
+export const expected = Schema.decodeOption(Expected)(expectedJson).pipe(
+  Option.getOrThrowWith(undecodable),
+);
+
+export const asJson = (value: object): unknown =>
+  Option.getOrThrowWith(parseJson(toJson(value)), undecodable);
+
+export const packageOf = (fixture: FixtureData): Package =>
+  new Package(
+    { ...fixture.files },
+    fixture.packageName,
+    fixture.packageVersion,
+    fixture.resolvedUrl,
+    fixture.typesPackage,
+  );
+
+export const fixtureNamed = (name: string): FixtureData =>
+  Arr.findFirst(inputs.fixtures, (fixture) => fixture.name === name).pipe(
+    Option.getOrThrowWith(() => new TypeError(`No fixture named ${name}`)),
+  );

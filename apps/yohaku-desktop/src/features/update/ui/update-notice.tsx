@@ -2,7 +2,7 @@ import { Option, pipe } from "effect";
 import type { ReactNode } from "react";
 
 import { useRelease } from "#/features/update/api/update.ts";
-import type { Release } from "#/shared/api";
+import type { Release } from "#/shared/api/index.ts";
 
 import { UpdateCard } from "./update-card.tsx";
 

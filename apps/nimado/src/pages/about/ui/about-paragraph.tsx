@@ -1,8 +1,8 @@
 import { Array as Arr, Option, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import type { Segment } from "#/pages/about/model/content";
-import { ExternalLink } from "#/shared/ui/external-link";
+import type { Segment } from "#/pages/about/model/content.ts";
+import { ExternalLink } from "#/shared/ui/external-link.tsx";
 
 const segmentNode = ({ text, href }: Segment): ReactNode =>
   Option.match(Option.fromNullishOr(href), {

@@ -1,8 +1,8 @@
 import { Array as Arr, Effect, Match } from "effect";
 
-import { InvalidRecord } from "#/shared/api";
-import type { StoreFailure } from "#/shared/api";
-import { StorageFailed } from "#/shared/db";
+import { InvalidRecord } from "#/shared/api/index.ts";
+import type { StoreFailure } from "#/shared/api/index.ts";
+import { StorageFailed } from "#/shared/db/index.ts";
 
 export type Place = Readonly<{ index: number; written: readonly string[] }>;
 

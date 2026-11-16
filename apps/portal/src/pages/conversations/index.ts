@@ -1,2 +1,2 @@
-export { loadConversationsPage } from "./api/sessions-query";
-export { ConversationsPage } from "./ui/conversations-page";
+export { loadConversationsPage } from "./api/sessions-query.ts";
+export { ConversationsPage } from "./ui/conversations-page.tsx";

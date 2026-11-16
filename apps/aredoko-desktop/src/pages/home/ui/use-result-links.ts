@@ -1,7 +1,7 @@
 import type { SearchResult } from "@masseater.dev/aredoko-protocol";
 import { Option, pipe } from "effect";
 
-import { usePackage } from "#/entities/asset";
+import { usePackage } from "#/entities/asset/index.ts";
 
 interface ResultLinks {
   readonly file: Option.Option<string>;

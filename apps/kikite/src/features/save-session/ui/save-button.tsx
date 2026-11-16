@@ -2,7 +2,7 @@ import { Button } from "@masseater.dev/ui/button";
 import { Download } from "lucide-react";
 import type { ReactNode } from "react";
 
-import { useSave } from "#/features/save-session/model/save";
+import { useSave } from "#/features/save-session/model/save.ts";
 
 const LABEL = "JSON を書き出す";
 

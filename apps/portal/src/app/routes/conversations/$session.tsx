@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Schema } from "effect";
 
-import { ConversationSearch } from "#/entities/watashi";
-import { ConversationPage, loadConversationPage } from "#/pages/conversation";
+import { ConversationSearch } from "#/entities/watashi/index.ts";
+import { ConversationPage, loadConversationPage } from "#/pages/conversation/index.ts";
 
 export const Route = createFileRoute("/conversations/$session")({
   validateSearch: Schema.toStandardSchemaV1(ConversationSearch),

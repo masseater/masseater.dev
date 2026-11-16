@@ -2,8 +2,8 @@ import type { Summary } from "@masseater.dev/aredoko-protocol";
 import { Array, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { KIND_LABELS } from "#/entities/asset/config/asset-kinds";
-import { Badge } from "#/shared/ui/badge";
+import { KIND_LABELS } from "#/entities/asset/config/asset-kinds.ts";
+import { Badge } from "#/shared/ui/badge.tsx";
 
 export const KindCounts = ({
   counts,

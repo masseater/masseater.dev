@@ -1,9 +1,9 @@
 import type { Detection, Region } from "@r_masseater/injection-bisect";
 import { Array as Arr, Option, String as Str, pipe } from "effect";
 
-import { EXAMPLES } from "./examples";
-import type { Example } from "./examples";
-import type { Phase } from "./trace";
+import { EXAMPLES } from "./examples.ts";
+import type { Example } from "./examples.ts";
+import type { Phase } from "./trace.ts";
 
 export interface Span {
   readonly start: number;

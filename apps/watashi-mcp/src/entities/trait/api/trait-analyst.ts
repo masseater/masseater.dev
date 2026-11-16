@@ -1,11 +1,11 @@
 import { Context } from "effect";
 import type { Effect } from "effect";
 
-import type { AnalystFailed } from "#/entities/trait/model/analyst-failed";
+import type { AnalystFailed } from "#/entities/trait/model/analyst-failed.ts";
 import type {
   AnalysisRequestValue,
   AnalysisResultValue,
-} from "#/entities/trait/model/trait-analysis";
+} from "#/entities/trait/model/trait-analysis.ts";
 
 export class TraitAnalyst extends Context.Service<
   TraitAnalyst,

@@ -3,13 +3,13 @@ import { getRouteApi } from "@tanstack/react-router";
 import { Option } from "effect";
 import type { ReactNode } from "react";
 
-import { mosaicQuery } from "#/entities/mosaic";
+import { mosaicQuery } from "#/entities/mosaic/index.ts";
 
-import { MosaicCredit } from "./mosaic-credit";
-import { MosaicLoading } from "./mosaic-loading";
-import { MosaicStatus } from "./mosaic-status";
-import { MosaicView } from "./mosaic-view";
-import { SeedUrl } from "./seed-url";
+import { MosaicCredit } from "./mosaic-credit.tsx";
+import { MosaicLoading } from "./mosaic-loading.tsx";
+import { MosaicStatus } from "./mosaic-status.tsx";
+import { MosaicView } from "./mosaic-view.tsx";
+import { SeedUrl } from "./seed-url.tsx";
 
 const FAILED = "モザイクを読み込めませんでした";
 

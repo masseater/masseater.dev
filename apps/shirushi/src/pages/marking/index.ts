@@ -1,1 +1,1 @@
-export { MarkingPage } from "./ui/marking-page";
+export { MarkingPage } from "./ui/marking-page.tsx";

@@ -7,13 +7,13 @@ import {
   release,
   reset,
   startListening,
-} from "#/entities/interview";
-import type { Phase } from "#/entities/interview";
-import { due } from "#/features/ask-question";
-import type { Due } from "#/features/ask-question";
-import { read, write } from "#/shared/lib/registry";
-import { runtime } from "#/shared/lib/runtime";
-import { holdScreen } from "#/shared/lib/screen-hold";
+} from "#/entities/interview/index.ts";
+import type { Phase } from "#/entities/interview/index.ts";
+import { due } from "#/features/ask-question/index.ts";
+import type { Due } from "#/features/ask-question/index.ts";
+import { read, write } from "#/shared/lib/registry.ts";
+import { runtime } from "#/shared/lib/runtime.ts";
+import { holdScreen } from "#/shared/lib/screen-hold.ts";
 
 import { actionsFor } from "./actions.ts";
 import type { Actions } from "./actions.ts";

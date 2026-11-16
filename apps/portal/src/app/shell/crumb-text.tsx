@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Option } from "effect";
 import type { ReactNode } from "react";
 
-import type { Crumb } from "./crumbs";
+import type { Crumb } from "./crumbs.ts";
 
 export const CrumbText = ({ crumb, last }: Readonly<{ crumb: Crumb; last: boolean }>): ReactNode =>
   Option.match(crumb.to, {

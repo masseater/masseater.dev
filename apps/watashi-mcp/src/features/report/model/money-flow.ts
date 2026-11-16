@@ -1,7 +1,7 @@
 import { Array as Arr, Match, Number as Num, Option, Order, Record as Rec, pipe } from "effect";
 
-import { CATEGORY_LABELS, isOn, valueOn } from "#/entities/ledger";
-import type { Category, Side } from "#/entities/ledger";
+import { CATEGORY_LABELS, isOn, valueOn } from "#/entities/ledger/index.ts";
+import type { Category, Side } from "#/entities/ledger/index.ts";
 
 export type CategoryTotal = Readonly<{
   category: Category;

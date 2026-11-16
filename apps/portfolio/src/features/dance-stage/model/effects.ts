@@ -1,6 +1,6 @@
 import { Effect, Option, Record as Rec, String as Str, pipe } from "effect";
 
-import type { GpuEffect } from "./effect";
+import type { GpuEffect } from "#/entities/dance-effect/index.ts";
 
 const SHADER_DIR = "../shaders/";
 const EXTENSION = ".frag";

@@ -3,8 +3,11 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "imports": {
+    "#/*": "./src/*"
+  },
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/app/index.ts"
   },
   "dependencies": {
     "@masseater.dev/local-server": "workspace:*",

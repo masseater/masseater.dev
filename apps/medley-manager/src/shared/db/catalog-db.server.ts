@@ -2,7 +2,7 @@ import { env } from "cloudflare:workers";
 import { drizzle } from "drizzle-orm/d1";
 import { Option, String as Str } from "effect";
 
-import { catalogRelations } from "./relations";
+import { catalogRelations } from "./relations.ts";
 
 export const catalogDb = drizzle(env.DB, { relations: catalogRelations });
 

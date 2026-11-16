@@ -1,10 +1,10 @@
 import type { ReactNode } from "react";
 
-import type { ProfileSectionValue } from "#/entities/watashi";
-import { jstMinute } from "#/shared/model";
+import type { ProfileSectionValue } from "#/entities/watashi/index.ts";
+import { jstMinute } from "#/shared/model/index.ts";
 
-import { ScopeNav } from "./scope-nav";
-import { SectionToc } from "./section-toc";
+import { ScopeNav } from "./scope-nav.tsx";
+import { SectionToc } from "./section-toc.tsx";
 
 const TEXT = { built: "最終ビルド" } as const;
 

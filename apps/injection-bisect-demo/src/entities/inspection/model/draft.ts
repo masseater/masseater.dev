@@ -4,7 +4,7 @@ import type { Unreadable } from "@r_masseater/injection-bisect";
 import { Array as Arr } from "effect";
 import { Atom } from "effect/reactivity";
 
-import { EXAMPLES } from "./examples";
+import { EXAMPLES } from "./examples.ts";
 
 export type Run =
   | { readonly status: "idle" }

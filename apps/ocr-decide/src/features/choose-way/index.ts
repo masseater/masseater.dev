@@ -1,1 +1,1 @@
-export { WayField } from "./ui/way-field";
+export { WayField } from "./ui/way-field.tsx";

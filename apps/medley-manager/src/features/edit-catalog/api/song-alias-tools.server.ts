@@ -1,8 +1,8 @@
 import type { McpServer } from "@modelcontextprotocol/server";
 import { Schema } from "effect";
 
-import { SongAliasInput } from "#/entities/catalog";
-import { runTool } from "#/shared/api/index.server";
+import { SongAliasInput } from "#/entities/catalog/index.ts";
+import { runTool } from "#/shared/api/index.server.ts";
 
 import { addSongAlias, removeSongAlias } from "./song-write.server.ts";
 

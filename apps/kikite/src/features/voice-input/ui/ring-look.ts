@@ -1,7 +1,7 @@
 import { Mic, MicOff } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
-import type { Asking, Listening } from "#/entities/interview";
+import type { Asking, Listening } from "#/entities/interview/index.ts";
 
 export type RingState = "listening" | "hearing" | "thinking" | "typing" | "paused" | "deaf";
 

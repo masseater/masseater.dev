@@ -3,16 +3,19 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "imports": {
+    "#/*": "./src/*"
+  },
   "exports": {
-    "./account": "./account.ts",
-    "./ai-gateway": "./ai-gateway.ts",
-    "./auth-site": "./auth-site.ts",
-    "./edge-guard": "./edge-guard.ts",
-    "./trace-destination": "./trace-destination.ts",
-    "./traced-providers": "./traced-providers.ts",
-    "./owner-access": "./owner-access.ts",
-    "./owner-site-run": "./owner-site-run.ts",
-    "./run-tasks": "./run-tasks.ts"
+    "./account": "./src/features/provision-account/index.ts",
+    "./ai-gateway": "./src/features/provision-ai-gateway/index.ts",
+    "./auth-site": "./src/features/provision-auth-site/index.ts",
+    "./edge-guard": "./src/features/guard-edge/index.ts",
+    "./trace-destination": "./src/features/trace-stacks/index.ts",
+    "./traced-providers": "./src/features/trace-stacks/index.ts",
+    "./owner-access": "./src/features/grant-owner-access/index.ts",
+    "./owner-site-run": "./src/features/run-owner-site/index.ts",
+    "./run-tasks": "./src/features/run-owner-site/index.ts"
   },
   "dependencies": {
     "@alchemy.run/cloudflare": "catalog:stack",

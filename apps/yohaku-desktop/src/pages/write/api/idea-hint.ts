@@ -1,6 +1,6 @@
 import { Option } from "effect";
 
-import { useHint } from "#/entities/onboarding";
+import { useHint } from "#/entities/onboarding/index.ts";
 
 const findIdea = (): Option.Option<Element> =>
   Option.fromNullishOr(document.querySelector('.yohaku-kinds [data-kind="idea"]'));

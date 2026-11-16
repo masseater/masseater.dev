@@ -24,8 +24,11 @@
     "LICENSE"
   ],
   "type": "module",
+  "imports": {
+    "#/*": "./src/*"
+  },
   "exports": {
-    ".": "./src/index.ts",
+    ".": "./src/app/index.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {

@@ -9,13 +9,13 @@ import {
   useOverview,
   useRecords,
   useSessions,
-} from "#/pages/home/api/home-query";
-import { activitiesOf, byDay, foldConversations } from "#/pages/home/model/activity";
-import type { Activity, ActivityKind } from "#/pages/home/model/activity";
-import { Section } from "#/shared/ui";
+} from "#/pages/home/api/home-query.ts";
+import { activitiesOf, byDay, foldConversations } from "#/pages/home/model/activity.ts";
+import type { Activity, ActivityKind } from "#/pages/home/model/activity.ts";
+import { Section } from "#/shared/ui/index.ts";
 
-import { ActivityDayList } from "./activity-day-list";
-import { KindFilter } from "./kind-filter";
+import { ActivityDayList } from "./activity-day-list.tsx";
+import { KindFilter } from "./kind-filter.tsx";
 
 const TITLE = "最近の動き";
 

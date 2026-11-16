@@ -1,6 +1,6 @@
 import { Array as Arr, Option, pipe } from "effect";
 
-import type { SettingsValue } from "#/entities/money";
+import type { SettingsValue } from "#/entities/money/index.ts";
 
 type Labeled = Readonly<{ id: string; label: string }>;
 

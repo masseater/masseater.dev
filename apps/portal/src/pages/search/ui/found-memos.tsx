@@ -1,10 +1,10 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { useFoundMemos } from "#/pages/search/api/search-query";
-import { RowList, Section } from "#/shared/ui";
+import { useFoundMemos } from "#/pages/search/api/search-query.ts";
+import { RowList, Section } from "#/shared/ui/index.ts";
 
-import { FoundMemoRow } from "./found-memo-row";
+import { FoundMemoRow } from "./found-memo-row.tsx";
 
 const TITLE = "作業メモ";
 

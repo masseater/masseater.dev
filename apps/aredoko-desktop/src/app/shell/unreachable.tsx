@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { RevealLogButton } from "#/features/reveal-server-log";
+import { RevealLogButton } from "#/features/reveal-server-log/index.ts";
 
 const UNREACHABLE = "接続できません";
 

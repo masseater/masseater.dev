@@ -1,7 +1,7 @@
 import { cn } from "@masseater.dev/ui/cn";
 import type { ReactNode } from "react";
 
-import { phrased } from "#/shared/lib/phrases";
+import { phrased } from "#/shared/lib/phrases.ts";
 
 import { AskFailed } from "./ask-failed.tsx";
 import { useShownQuestion } from "./shown-question.ts";

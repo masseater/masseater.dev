@@ -3,9 +3,9 @@ import { Array as Arr, pipe } from "effect";
 import { useCallback } from "react";
 import type { ChangeEvent, ReactNode } from "react";
 
-import { useFormat, useSetFormat } from "#/entities/inspection";
-import { COPY } from "#/shared/config";
-import { SELECT_CLASS } from "#/shared/ui/select-class";
+import { useFormat, useSetFormat } from "#/entities/inspection/index.ts";
+import { COPY } from "#/shared/config/index.ts";
+import { SELECT_CLASS } from "#/shared/ui/select-class.ts";
 
 const TEXT_FORMATS = formatsOf({ readers: [] });
 

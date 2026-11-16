@@ -1,11 +1,11 @@
 import type { ReactNode } from "react";
 
-import type { MonthTotalValue } from "#/entities/money";
-import { ChartLegend } from "#/shared/ui";
-import type { LegendItem } from "#/shared/ui";
+import type { MonthTotalValue } from "#/entities/money/index.ts";
+import { ChartLegend } from "#/shared/ui/index.ts";
+import type { LegendItem } from "#/shared/ui/index.ts";
 
-import { MonthlyChart } from "./monthly-chart";
-import { MonthlyTable } from "./monthly-table";
+import { MonthlyChart } from "./monthly-chart.tsx";
+import { MonthlyTable } from "./monthly-table.tsx";
 
 const LEGEND: readonly LegendItem[] = [
   { label: "収入", swatch: "bg-income size-3 rounded-xs" },

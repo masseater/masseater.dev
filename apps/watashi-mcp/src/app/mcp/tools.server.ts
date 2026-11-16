@@ -2,13 +2,13 @@ import type { Caller } from "@masseater.dev/mcp-tool-call";
 import { McpServer } from "@modelcontextprotocol/server";
 import { pipe } from "effect";
 
-import { registerConversationTools } from "#/features/conversation-tools/index.server";
-import { registerLifeTools } from "#/features/life-tools/index.server";
-import { registerWatashiTools } from "#/features/memory-tools/index.server";
-import { registerTokenTools } from "#/features/token-tools/index.server";
-import { SITE_NAME, SITE_ORIGIN } from "#/shared/config";
+import { registerConversationTools } from "#/features/conversation-tools/index.server.ts";
+import { registerLifeTools } from "#/features/life-tools/index.server.ts";
+import { registerWatashiTools } from "#/features/memory-tools/index.server.ts";
+import { registerTokenTools } from "#/features/token-tools/index.server.ts";
+import { SITE_NAME, SITE_ORIGIN } from "#/shared/config/index.ts";
 
-import { registerMoneyTools } from "./money-tools.server";
+import { registerMoneyTools } from "./money-tools.server.ts";
 
 const SERVER_INFO = { name: SITE_NAME, version: "0.0.0", websiteUrl: SITE_ORIGIN };
 

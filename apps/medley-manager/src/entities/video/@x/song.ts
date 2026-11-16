@@ -1,1 +1,1 @@
-export type { VideoKind } from "#/entities/video";
+export type { VideoKind } from "#/entities/video/index.ts";

@@ -3,7 +3,7 @@ import { queryOptions, useMutation, useQuery, useQueryClient } from "@tanstack/r
 import { Effect, Option, pipe } from "effect";
 import { useCallback } from "react";
 
-import { useYohaku } from "#/shared/api";
+import { useYohaku } from "#/shared/api/index.ts";
 
 export type Sources = readonly (typeof Source.Type)[];
 

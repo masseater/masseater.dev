@@ -1,8 +1,8 @@
 import { requireMcpAuth } from "@better-auth/mcp";
 import { createMcpHandler } from "@modelcontextprotocol/server";
 
-import { createAuth } from "#/shared/auth/index.server";
-import { MCP_URL } from "#/shared/config";
+import { createAuth } from "#/shared/auth/index.server.ts";
+import { MCP_URL } from "#/shared/config/index.ts";
 
 import { buildServer } from "./build-server.server.ts";
 

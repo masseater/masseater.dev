@@ -3,9 +3,9 @@ import { runner } from "@r_masseater/workers-tracing/effect";
 import { WorkerEntrypoint } from "cloudflare:workers";
 import { Effect, Layer, Logger, Match } from "effect";
 
-import { MONEY_READ } from "#/app/mcp/money-tools.server";
-import { services } from "#/entities/ledger/index.server";
-import type { Failure, Services } from "#/entities/ledger/index.server";
+import { MONEY_READ } from "#/app/mcp/money-tools.server.ts";
+import { services } from "#/entities/ledger/index.server.ts";
+import type { Failure, Services } from "#/entities/ledger/index.server.ts";
 
 type Described = Readonly<{ errorTag: string; text: string }>;
 

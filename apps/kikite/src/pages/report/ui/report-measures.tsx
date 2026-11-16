@@ -1,7 +1,7 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { useReport } from "#/pages/report/model/review-hooks";
+import { useReport } from "#/pages/report/model/review-hooks.ts";
 
 import { FactLine } from "./fact-line.tsx";
 import { factsOf } from "./facts.ts";

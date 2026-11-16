@@ -2,9 +2,9 @@ import { useMemo } from "react";
 import type { ReactNode } from "react";
 import { Bar, LabelList } from "recharts";
 
-import type { SheetSeries } from "#/pages/money/model/sheet-chart";
+import type { SheetSeries } from "#/pages/money/model/sheet-chart.ts";
 
-import { SheetLabel } from "./sheet-label";
+import { SheetLabel } from "./sheet-label.tsx";
 
 const STACK = "sheet";
 

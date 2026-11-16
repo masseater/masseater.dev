@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
-import { usePlayback, usePlaybackControls } from "#/features/playback/model/playback";
-import { transport } from "#/shared/config";
+import { usePlayback, usePlaybackControls } from "#/features/playback/model/playback.ts";
+import { transport } from "#/shared/config/index.ts";
 
 const labelOf = (playing: boolean): string => {
   if (playing) {

@@ -6,7 +6,7 @@ import type { TranslatorRpc } from "@masseater.dev/plamo-translate-protocol";
 import { RemovalPolicy, Stack } from "alchemy";
 import { Effect, Option } from "effect";
 
-import { APP_NAME, PREFIX, requireAppPrefix } from "./app-name.ts";
+import { APP_NAME, PREFIX, requireAppPrefix } from "./src/shared/config/app-name.ts";
 import {
   CONVERSATION_UPLOAD_DATASET,
   MCP_URL,

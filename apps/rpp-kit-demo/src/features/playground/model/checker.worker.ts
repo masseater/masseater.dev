@@ -10,14 +10,17 @@ import {
 } from "effect";
 import { FetchHttpClient, HttpClient, HttpClientResponse } from "effect/http";
 
-import { createChecker } from "./checker";
-import type { At, Checker, Completion, Hover, Lint, Source } from "./checker";
+import { createChecker } from "./checker.ts";
+import type { At, Checker, Completion, Hover, Lint, Source } from "./checker.ts";
 
-const SONG_TYPES = import.meta.glob<string>("/node_modules/rpp-kit/src/types.ts", {
-  query: "?raw",
-  import: "default",
-  eager: true,
-});
+const SONG_TYPES = import.meta.glob<string>(
+  "/node_modules/rpp-kit/src/entities/song/model/types.ts",
+  {
+    query: "?raw",
+    import: "default",
+    eager: true,
+  },
+);
 
 const runtime = ManagedRuntime.make(FetchHttpClient.layer);
 

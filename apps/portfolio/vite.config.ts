@@ -1,7 +1,7 @@
 import { alchemyTasks, d1Tasks } from "@masseater.dev/cloudflare-account/run-tasks";
 import { defineConfig } from "vite-plus";
 
-import { portfolioPlugins } from "./vite-plugins/plugins.ts";
+import { portfolioPlugins } from "./src/app/vite/plugins.ts";
 
 export default defineConfig({
   msch: {
@@ -23,7 +23,7 @@ export default defineConfig({
           },
         },
         {
-          files: ["worker/**/*.ts", "src/**/*.server.ts"],
+          files: ["src/app/worker/**/*.ts", "src/**/*.server.ts"],
           excludeFiles: ["**/*.test.ts"],
           use: ["traced"],
         },
@@ -56,7 +56,6 @@ export default defineConfig({
       "technique-examples": { command: "vpx bin/technique-examples.ts", cache: false },
     },
   },
-  resolve: { tsconfigPaths: true },
-  test: { include: ["src/**/*.test.{ts,tsx}", "vite-plugins/**/*.test.ts", "worker/**/*.test.ts"] },
+  test: { include: ["src/**/*.test.{ts,tsx}"] },
   plugins: portfolioPlugins(),
 });

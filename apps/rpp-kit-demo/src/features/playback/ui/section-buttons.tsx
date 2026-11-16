@@ -1,9 +1,9 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { song } from "#/entities/song";
+import { song } from "#/entities/song/index.ts";
 
-import { SectionButton } from "./section-button";
+import { SectionButton } from "./section-button.tsx";
 
 export const SectionButtons = (): ReactNode => (
   <div className="flex flex-wrap gap-1">

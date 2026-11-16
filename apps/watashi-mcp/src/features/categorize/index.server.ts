@@ -1,1 +1,1 @@
-export { settings } from "./api/category-settings.server";
+export { settings } from "./api/category-settings.server.ts";

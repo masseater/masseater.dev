@@ -1,17 +1,17 @@
 import { Effect, Option, Record } from "effect";
 
-import type { ViewerStore } from "#/entities/mosaic/model/viewer";
-import { runtime } from "#/shared/lib/telemetry";
+import type { ViewerStore } from "#/entities/mosaic/model/viewer.ts";
+import { runtime } from "#/shared/lib/telemetry.ts";
 
-import type { Point, Size } from "./camera";
-import type { Visit } from "./files";
-import { leave, pointerDown, pointerMove, pointerUp } from "./gesture";
-import { createInvalidation, startLoop } from "./loop";
-import { createRenderer } from "./renderer";
-import type { Scene } from "./scene";
-import { createScene, flyHome, resize, select, settle, zoomAt, zoomInAt } from "./scene";
-import type { Sprites } from "./sprites";
-import { createSprites } from "./sprites";
+import type { Point, Size } from "./camera.ts";
+import type { Visit } from "./files.ts";
+import { leave, pointerDown, pointerMove, pointerUp } from "./gesture.ts";
+import { createInvalidation, startLoop } from "./loop.ts";
+import { createRenderer } from "./renderer.ts";
+import type { Scene } from "./scene.ts";
+import { createScene, flyHome, resize, select, settle, zoomAt, zoomInAt } from "./scene.ts";
+import type { Sprites } from "./sprites.ts";
+import { createSprites } from "./sprites.ts";
 
 const HIGH_DENSITY = "(min-resolution: 2dppx)";
 const HIGH_RATIO = 2;

@@ -1,1 +1,1 @@
-export { registerTranslateTools } from "./api/translate-tools";
+export { registerTranslateTools } from "./api/translate-tools.ts";

@@ -6,5 +6,5 @@ export {
   pageTitle,
   seo,
   wikiPageTitle,
-} from "./seo";
-export type { Head, JsonLd } from "./seo";
+} from "./seo.ts";
+export type { Head, JsonLd } from "./seo.ts";

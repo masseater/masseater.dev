@@ -1,6 +1,6 @@
-import type { Activity, ActivityKind } from "./activity";
-import { countSince } from "./activity";
-import { previousWeekStart, weekStart } from "./week";
+import type { Activity, ActivityKind } from "./activity.ts";
+import { countSince } from "./activity.ts";
+import { previousWeekStart, weekStart } from "./week.ts";
 
 export type WeekCount = Readonly<{ now: number; before: number }>;
 

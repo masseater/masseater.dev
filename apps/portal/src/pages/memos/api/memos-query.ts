@@ -2,9 +2,9 @@ import type { QueryClient } from "@tanstack/react-query";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 
-import { watashiQueries } from "#/entities/watashi";
-import type { MemoValue, MemosSearchValue } from "#/entities/watashi";
-import { loadProjects } from "#/features/filter-memos";
+import { watashiQueries } from "#/entities/watashi/index.ts";
+import type { MemoValue, MemosSearchValue } from "#/entities/watashi/index.ts";
+import { loadProjects } from "#/features/filter-memos/index.ts";
 
 type MemosLoad = Readonly<{ queryClient: QueryClient; search: MemosSearchValue }>;
 

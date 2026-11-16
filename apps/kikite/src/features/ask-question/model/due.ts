@@ -8,9 +8,9 @@ import {
   hearingAtom,
   interimAtom,
   listeningAtom,
-} from "#/entities/interview";
-import type { Asking, Entry, Heard, Listening } from "#/entities/interview";
-import { read } from "#/shared/lib/registry";
+} from "#/entities/interview/index.ts";
+import type { Asking, Entry, Heard, Listening } from "#/entities/interview/index.ts";
+import { read } from "#/shared/lib/registry.ts";
 
 export type Snapshot = Readonly<{
   now: number;

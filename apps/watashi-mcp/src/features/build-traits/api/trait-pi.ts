@@ -2,8 +2,8 @@ import { createRegistry, defineExtension, defineTool, section } from "@earendil-
 import type { Extension, Registry } from "@earendil-works/pi-durable";
 import { Array as Arr, Number as Num, Option, Schema, pipe } from "effect";
 
-import { AnalysisResult } from "#/entities/trait";
-import type { AnalysisResultValue } from "#/entities/trait";
+import { AnalysisResult } from "#/entities/trait/index.ts";
+import type { AnalysisResultValue } from "#/entities/trait/index.ts";
 
 export const TRAIT_MODEL = "@cf/zai-org/glm-5.3-flash";
 

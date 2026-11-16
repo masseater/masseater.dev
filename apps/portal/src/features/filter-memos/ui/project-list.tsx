@@ -2,10 +2,10 @@ import { getRouteApi } from "@tanstack/react-router";
 import { Array as Arr, Predicate, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { useProjects } from "#/features/filter-memos/api/projects-query";
+import { useProjects } from "#/features/filter-memos/api/projects-query.ts";
 
-import { AllProjectsItem } from "./all-projects-item";
-import { ProjectItem } from "./project-item";
+import { AllProjectsItem } from "./all-projects-item.tsx";
+import { ProjectItem } from "./project-item.tsx";
 
 const route = getRouteApi("/memos/");
 

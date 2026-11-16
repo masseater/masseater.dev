@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { phrased } from "#/shared/lib/phrases";
+import { phrased } from "#/shared/lib/phrases.ts";
 
 export const InterimItem = ({ text }: Readonly<{ text: string }>): ReactNode =>
   text !== "" && (

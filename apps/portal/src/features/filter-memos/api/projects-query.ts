@@ -1,8 +1,8 @@
 import type { QueryClient } from "@tanstack/react-query";
 import { useSuspenseQuery } from "@tanstack/react-query";
 
-import { watashiQueries } from "#/entities/watashi";
-import type { ProjectValue } from "#/entities/watashi";
+import { watashiQueries } from "#/entities/watashi/index.ts";
+import type { ProjectValue } from "#/entities/watashi/index.ts";
 
 const projects = watashiQueries["memo-projects"].get;
 

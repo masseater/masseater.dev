@@ -3,11 +3,11 @@ import { FileUp } from "lucide-react";
 import { useCallback } from "react";
 import type { ChangeEvent, ReactNode } from "react";
 
-import { usePicture, useSetChoice, SAMPLES } from "#/entities/extraction";
-import type { Picture } from "#/entities/extraction";
-import { COPY } from "#/shared/config";
+import { usePicture, useSetChoice, SAMPLES } from "#/entities/extraction/index.ts";
+import type { Picture } from "#/entities/extraction/index.ts";
+import { COPY } from "#/shared/config/index.ts";
 
-import { SampleButton } from "./sample-button";
+import { SampleButton } from "./sample-button.tsx";
 
 const FIRST = 0;
 

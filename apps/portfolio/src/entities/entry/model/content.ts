@@ -1,6 +1,6 @@
 import { String as Str, pipe } from "effect";
 
-import type { Entry } from "./entry";
+import type { Entry } from "./entry.ts";
 
 const CONTENT_ROOT = "/content/";
 const EXTENSION = ".md";

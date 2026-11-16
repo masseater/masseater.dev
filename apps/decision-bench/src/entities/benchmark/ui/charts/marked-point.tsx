@@ -1,7 +1,7 @@
 import { Schema } from "effect";
 import type { ReactElement } from "react";
 
-import { ORIGIN, REFERENCE_COLOR } from "./chart-style";
+import { ORIGIN, REFERENCE_COLOR } from "./chart-style.ts";
 
 const RADIUS = 5;
 const FONT_SIZE = 11;

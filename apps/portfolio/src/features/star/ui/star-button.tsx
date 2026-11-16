@@ -1,10 +1,10 @@
 import type { ReactNode } from "react";
 
-import type { Entry } from "#/entities/entry";
-import { useStar } from "#/features/star/api/use-star";
-import { starView } from "#/features/star/model/star-state";
+import type { Entry } from "#/entities/entry/index.ts";
+import { useStar } from "#/features/star/api/use-star.ts";
+import { starView } from "#/features/star/model/star-state.ts";
 
-import { StarToggle } from "./star-toggle";
+import { StarToggle } from "./star-toggle.tsx";
 
 export const StarButton = ({ entry }: Readonly<{ entry: Entry }>): ReactNode => {
   const { stars, addStar, removeStar } = useStar(entry);

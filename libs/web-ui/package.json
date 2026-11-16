@@ -7,9 +7,9 @@
     "#/*": "./src/*"
   },
   "exports": {
-    ".": "./src/index.ts",
-    "./styles.css": "./src/styles.css",
-    "./web-analytics": "./src/web-analytics.ts"
+    ".": "./src/app/index.ts",
+    "./styles.css": "./src/app/styles.css",
+    "./web-analytics": "./src/shared/lib/web-analytics.ts"
   },
   "dependencies": {
     "@effect/atom-react": "catalog:stack",

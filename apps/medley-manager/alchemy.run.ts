@@ -5,7 +5,7 @@ import { tracedStackProps } from "@masseater.dev/cloudflare-account/traced-provi
 import { RemovalPolicy, Stack } from "alchemy";
 import { Effect, Option } from "effect";
 
-import { APP_NAME, requireAppPrefix } from "./app-name.ts";
+import { APP_NAME, requireAppPrefix } from "./src/shared/config/app-name.ts";
 import { MCP_URL, SITE_HOST } from "./src/shared/config/index.ts";
 
 const CF_BEACON_TOKEN = "ad561fe157a84abb89c547d547524e9f";

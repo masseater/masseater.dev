@@ -11,11 +11,11 @@ import {
   paragraphsAtom,
   pausedAtom,
   titleAtom,
-} from "#/entities/manuscript";
-import type { Texts } from "#/entities/manuscript";
-import { useYohaku } from "#/shared/api";
-import type { Failure, Yohaku } from "#/shared/api";
-import { beforeClosing, screenAtom } from "#/shared/model";
+} from "#/entities/manuscript/index.ts";
+import type { Texts } from "#/entities/manuscript/index.ts";
+import { useYohaku } from "#/shared/api/index.ts";
+import type { Failure, Yohaku } from "#/shared/api/index.ts";
+import { beforeClosing, screenAtom } from "#/shared/model/index.ts";
 
 type Paragraphs = readonly (typeof Paragraph.Type)[];
 

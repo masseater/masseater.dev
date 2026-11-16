@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
-import { useAutostart, useSetAutostart } from "#/pages/settings/api/autostart";
-import { Switch } from "#/shared/ui/switch";
+import { useAutostart, useSetAutostart } from "#/pages/settings/api/autostart.ts";
+import { Switch } from "#/shared/ui/switch.tsx";
 
 const ID = "autostart";
 const LABEL = "Windows へのサインイン時に起動する";
