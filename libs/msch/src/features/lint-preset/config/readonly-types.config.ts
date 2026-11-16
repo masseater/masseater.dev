@@ -64,6 +64,11 @@ export const readonlyParameterAllow = [
   { from: "package" as const, package: "elysia", name: "ElysiaConfig" },
   { from: "package" as const, package: "@types/node", name: ["Request", "Response"] },
   { from: "package" as const, package: "@better-auth/drizzle-adapter", name: "DB" },
+  {
+    from: "package" as const,
+    package: "drizzle-orm",
+    name: ["DrizzleSqliteDODatabase", "SQL"],
+  },
   { from: "package" as const, package: "@tanstack/query-core", name: "QueryClient" },
   {
     from: "package" as const,
@@ -247,6 +252,7 @@ export const readonlyParameterAllow = [
       "Atom",
       "Cause",
       "Context",
+      "DateTime",
       "Deferred",
       "Duration",
       "Effect",
