@@ -206,7 +206,7 @@ const wireTransport = (shell: Shell): void => {
   parts.deck.wave.addEventListener("click", onWave(shell));
   parts.tracks.lanes.addEventListener("click", onLanes(shell));
   parts.roll.canvas.addEventListener("click", onRoll(shell));
-  document.addEventListener("keydown", onKey(shell));
+  document.addEventListener("keydown", onKey(shell), { signal: shell.signal });
 };
 
 const wireZoom = (shell: Shell): void => {
@@ -240,12 +240,27 @@ const wireView = (shell: Shell): void => {
   parts.roll.canvas.addEventListener("pointerleave", () => {
     hover(shell, Option.none());
   });
-  matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
-    retheme(shell);
-  });
+  shell.signal.addEventListener(
+    "abort",
+    () => {
+      observer.disconnect();
+    },
+    { once: true },
+  );
+};
+
+const wireTheme = (shell: Shell): void => {
+  matchMedia("(prefers-color-scheme: dark)").addEventListener(
+    "change",
+    () => {
+      retheme(shell);
+    },
+    { signal: shell.signal },
+  );
 };
 
 export const wire = (shell: Shell): void => {
+  wireTheme(shell);
   wireTransport(shell);
   wireZoom(shell);
   wireView(shell);
