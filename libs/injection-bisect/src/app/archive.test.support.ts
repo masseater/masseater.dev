@@ -3,7 +3,7 @@ import { Tar } from "effect/encoding";
 import { strToU8, zip } from "fflate";
 import type { AsyncZippable } from "fflate";
 
-type Files = Readonly<Record<string, string | Uint8Array>>;
+export type Files = Readonly<Record<string, string | Uint8Array>>;
 
 const STORED = 0;
 
