@@ -1,7 +1,7 @@
 import { defineConfig } from "oxlint";
 
 export default defineConfig({
-  jsPlugins: ["../../dist/ai-slop.mjs"],
+  jsPlugins: ["../../dist/presets/ai-slop.mjs"],
   ignorePatterns: ["oxlint.config.ts"],
   rules: {
     "decision-ai-slop/redundant-guard": "error",
