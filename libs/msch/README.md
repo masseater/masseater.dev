@@ -32,6 +32,7 @@ export default defineConfig({ lint });
 `fsdRules` には、masseater のリポジトリが `fsd.configs.recommended` の後に足す Steiger のルールが入っている。
 decision ルールは呼ぶたびに費用がかかるので、プリセットは有効にしない。
 `decisionRules` を掛けたいファイルの overrides に渡す。
+`tracedRules` は、@r_masseater/workers-tracing でスパンを取る Worker のコードの overrides に渡す。
 
 Vite+ はワークスペースの `vite.config.ts` の `lint` を使わない。
 1 つのワークスペースだけに効く設定は、そのワークスペースの `vite.config.ts` の `msch` にリテラルで書く。
