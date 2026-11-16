@@ -2,14 +2,16 @@ import { Array as Arr, Option, Record as Rec, String as Str, pipe } from "effect
 
 import type { Mixer } from "#/entities/song/index.ts";
 import { decibelsOf, shareOf } from "#/shared/lib/units.ts";
-import { isAutomation } from "#generated/langium/ast.ts";
+import { isAutomation, isPluginEffect } from "#generated/langium/ast.ts";
 import type {
   Automation,
   Bus,
   Bar as BarNode,
+  Effect,
   Track as TrackNode,
 } from "#generated/langium/ast.ts";
 
+import { parameterOf } from "./automation.ts";
 import { problemAt } from "./problem.ts";
 import type { From, Problem } from "./problem.ts";
 
@@ -32,6 +34,23 @@ export const mixerOf: From<Mixable, Mixer> = (node) => ({
   muted: node.muted,
 });
 
+const effectParametersOf: From<Effect, readonly string[]> = (effect) => {
+  if (!isPluginEffect(effect)) {
+    return [Str.toLowerCase(effect.$type)];
+  }
+  return pipe(
+    Option.fromNullishOr(effect.use.plugin.ref),
+    Option.match({
+      onNone: () => [],
+      onSome: (plugin) =>
+        pipe(
+          plugin.params,
+          Arr.map((param) => `${plugin.name}.${param.name}`),
+        ),
+    }),
+  );
+};
+
 const parametersOf: From<Mixable, readonly string[]> = (node) => [
   ...Rec.keys(UNIT_OF),
   ...pipe(
@@ -41,7 +60,7 @@ const parametersOf: From<Mixable, readonly string[]> = (node) => [
       onSome: (chain) =>
         pipe(
           chain.effects,
-          Arr.map((effect) => Str.toLowerCase(effect.$type)),
+          Arr.flatMap((effect) => effectParametersOf(effect)),
           Arr.dedupe,
         ),
     }),
@@ -74,12 +93,13 @@ const automationProblemsOf: From<Automation, readonly Problem[]> = (automation) 
       onNone: () => [],
       onSome: (target) => {
         const parameters = parametersOf(target);
-        if (Arr.contains(parameters, automation.parameter)) {
+        const parameter = parameterOf(automation);
+        if (Arr.contains(parameters, parameter)) {
           return unitProblemsOf(automation);
         }
         return [
           problemAt(automation)("parameter")(
-            `${target.name} の ${automation.parameter} は自動化できません。できるのは ${Arr.join(parameters, ", ")} です`,
+            `${target.name} の ${parameter} は自動化できません。できるのは ${Arr.join(parameters, ", ")} です`,
           ),
         ];
       },

@@ -12,10 +12,22 @@ Import:
 ImportedSymbol:
     target=[Exportable:Name];
 
-type Exportable = Sample | Kit | Instrument | Bus | Track | Fn | Let;
+type Exportable = Sample | Kit | Instrument | Bus | Track | Plugin | Fn | Let;
 
 Declaration:
-    Groove | Sample | Kit | Instrument | Bus | Track | Duck | Master;
+    Groove | Sample | Kit | Instrument | Bus | Track | Duck | Master | Plugin;
+
+Plugin:
+    'plugin' name=ID 'from' module=STRING '{' params+=PluginParam* '}';
+
+PluginParam:
+    name=Name ':' type=ScalarType ('=' default=Literal)?;
+
+PluginUse:
+    plugin=[Plugin:ID] arguments+=PluginArgument*;
+
+PluginArgument:
+    name=Name value=Literal;
 
 Groove:
     'groove' 'swing' grid=FRACTION amount=PERCENT;
@@ -33,7 +45,10 @@ Instrument:
     'instrument' name=Name source=InstrumentSource;
 
 InstrumentSource:
-    MultiSample | SingleSample;
+    MultiSample | SingleSample | PluginInstrument;
+
+PluginInstrument:
+    'plugin' use=PluginUse;
 
 MultiSample:
     'multisample' '{' zones+=Zone* '}';
@@ -98,7 +113,10 @@ FxChain:
     '[' effects+=Effect (',' effects+=Effect)* ']';
 
 Effect:
-    Highpass | Lowpass | Reverb | Delay | Comp | Chorus | Width | Limit | Phaser | Tremolo | Drive | Gain;
+    Highpass | Lowpass | Reverb | Delay | Comp | Chorus | Width | Limit | Phaser | Tremolo | Drive | Gain | PluginEffect;
+
+PluginEffect:
+    use=PluginUse;
 
 Reverb: 'reverb' 'ir' left=STRING right=STRING? ('predelay' predelay=MILLISECONDS)? ('mix' mix=PERCENT)?;
 Delay: 'delay' (beats=FRACTION | time=MILLISECONDS) 'feedback' feedback=PERCENT ('lowpass' lowpass=HERTZ)? ('highpass' highpass=HERTZ)? ('pingpong' pingpong=PERCENT)?;
@@ -222,7 +240,7 @@ VoiceLine:
     (master?='master' | track=[Track:Name]) ':' events+=Event (',' events+=Event)*;
 
 Automation:
-    'automate' target=[Mixable:Name] '.' parameter=Name from=Amount '->' to=Amount 'over' span=BARS ('curve' curve=('linear' | 'exp'))?;
+    'automate' target=[Mixable:Name] '.' parameter=Name ('.' field=Name)? from=Amount '->' to=Amount 'over' span=BARS ('curve' curve=('linear' | 'exp'))?;
 
 Amount:
     value=(HERTZ | DECIBELS | PERCENT | MILLISECONDS | SEMITONES | NUMBER);
@@ -268,7 +286,7 @@ Fade: 'fade' time=MILLISECONDS;
 Every: 'every' slice=FRACTION count=COUNT?;
 
 Name returns string:
-    ID | 'melody' | 'countermelody' | 'bass' | 'harmony' | 'drums' | 'texture' | 'delay' | 'reverb' | 'chorus' | 'comp' | 'limit' | 'width' | 'phaser' | 'tremolo' | 'drive' | 'gain' | 'pan' | 'sample' | 'release' | 'attack' | 'decay' | 'offset' | 'length' | 'mix' | 'base' | 'from' | 'to' | 'q' | 'ir' | 'predelay' | 'feedback' | 'pingpong' | 'lookahead' | 'makeup' | 'semi' | 'highpass' | 'lowpass' | 'slice' | 'slices' | 'onsets' | 'root' | 'hold' | 'depth' | 'by' | 'over' | 'curve' | 'linear' | 'exp' | 'every' | 'fade' | 'nudge' | 'bend' | 'lyric' | 'gate' | 'vel' | 'tie' | 'staccato' | 'legato' | 'accent' | 'reverse' | 'audio' | 'kit' | 'instrument' | 'track' | 'bus' | 'duck' | 'groove' | 'swing' | 'multisample' | 'song' | 'bar' | 'meter' | 'tempo' | 'section' | 'mark' | 'automate' | 'fx' | 'send' | 'role' | 'mono-below' | 'volume';
+    ID | 'melody' | 'countermelody' | 'bass' | 'harmony' | 'drums' | 'texture' | 'delay' | 'reverb' | 'chorus' | 'comp' | 'limit' | 'width' | 'phaser' | 'tremolo' | 'drive' | 'gain' | 'pan' | 'sample' | 'release' | 'attack' | 'decay' | 'offset' | 'length' | 'mix' | 'base' | 'from' | 'to' | 'q' | 'ir' | 'predelay' | 'feedback' | 'pingpong' | 'lookahead' | 'makeup' | 'semi' | 'highpass' | 'lowpass' | 'slice' | 'slices' | 'onsets' | 'root' | 'hold' | 'depth' | 'by' | 'over' | 'curve' | 'linear' | 'exp' | 'every' | 'fade' | 'nudge' | 'bend' | 'lyric' | 'gate' | 'vel' | 'tie' | 'staccato' | 'legato' | 'accent' | 'reverse' | 'audio' | 'kit' | 'instrument' | 'track' | 'bus' | 'duck' | 'groove' | 'swing' | 'multisample' | 'song' | 'bar' | 'meter' | 'tempo' | 'section' | 'mark' | 'automate' | 'fx' | 'send' | 'role' | 'mono-below' | 'volume' | 'plugin' | 'number' | 'pitch' | 'duration' | 'decibels' | 'percent' | 'hertz' | 'time' | 'semitones' | 'string' | 'bool';
 
 hidden terminal WS: /\s+/;
 hidden terminal ML_COMMENT: /\/\*[\s\S]*?\*\//;
