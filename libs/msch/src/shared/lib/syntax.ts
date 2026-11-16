@@ -24,7 +24,7 @@ import type {
 } from "./compiler.ts";
 import { NODE_MODULES } from "./repository-files.ts";
 
-export const NODE_MODULES_SEGMENT = `/${NODE_MODULES}/`;
+const NODE_MODULES_SEGMENT = `/${NODE_MODULES}/`;
 
 export const POSITION_BASE = 1;
 
