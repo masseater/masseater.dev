@@ -71,5 +71,8 @@
       "path": "dist/*.mjs",
       "limit": "27356 B"
     }
-  ]
+  ],
+  "engines": {
+    "node": ">=26"
+  }
 }
