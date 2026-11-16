@@ -3,10 +3,13 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "imports": {
+    "#/*": "./src/*"
+  },
   "exports": {
-    ".": "./src/index.ts",
-    "./response": "./src/response.ts",
-    "./static": "./src/static.ts"
+    ".": "./src/entities/policy/index.ts",
+    "./response": "./src/features/secure-response/index.ts",
+    "./static": "./src/features/write-static-headers/index.ts"
   },
   "dependencies": {
     "effect": "catalog:stack"

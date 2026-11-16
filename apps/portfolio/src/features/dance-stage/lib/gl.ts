@@ -4,7 +4,7 @@ import HEADER from "#/features/dance-stage/shaders/prelude-webgl.glsl?raw";
 import PRELUDE from "#/features/dance-stage/shaders/prelude.glsl?raw";
 import VERTEX from "#/features/dance-stage/shaders/vertex.glsl?raw";
 
-import type { Fn } from "./fn";
+import type { Fn } from "./fn.ts";
 
 const LOW = -1;
 const HIGH = 1;

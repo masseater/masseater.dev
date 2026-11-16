@@ -1,7 +1,7 @@
 import { Array as Arr, pipe } from "effect";
 
-import { colorOf, indexDetail } from "#/entities/benchmark";
-import type { ModelResult, ChartRow } from "#/entities/benchmark";
+import { colorOf, indexDetail } from "#/entities/benchmark/index.ts";
+import type { ModelResult, ChartRow } from "#/entities/benchmark/index.ts";
 
 export const rowsOf = (models: readonly ModelResult[]): readonly ChartRow[] =>
   pipe(

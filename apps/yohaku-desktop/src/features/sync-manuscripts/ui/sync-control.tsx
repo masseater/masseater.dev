@@ -2,7 +2,7 @@ import type { SyncStatus } from "@masseater.dev/yohaku-protocol";
 import { Option, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { useSyncStatus } from "#/features/sync-manuscripts/api/sync";
+import { useSyncStatus } from "#/features/sync-manuscripts/api/sync.ts";
 
 import { ConnectSyncButton } from "./connect-sync-button.tsx";
 import { SyncState } from "./sync-state.tsx";

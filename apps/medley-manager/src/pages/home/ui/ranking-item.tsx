@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { RankMark } from "./rank-mark";
+import { RankMark } from "./rank-mark.tsx";
 
 export const RankingItem = ({
   rank,

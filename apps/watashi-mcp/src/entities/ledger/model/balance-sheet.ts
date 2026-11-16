@@ -1,7 +1,7 @@
 import { Array as Arr, Number as Num, Option, pipe } from "effect";
 
-import { directionOf } from "./accounts";
-import type { AccountClass } from "./accounts";
+import { directionOf } from "./accounts.ts";
+import type { AccountClass } from "./accounts.ts";
 
 export type Snapshot = Readonly<{ date: string; balance: number }>;
 

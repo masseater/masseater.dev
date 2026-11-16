@@ -2,10 +2,10 @@ import { Link } from "@tanstack/react-router";
 import { useMemo } from "react";
 import type { ReactNode } from "react";
 
-import { VIDEO_KIND_LABEL } from "#/entities/video";
-import type { VideoKind } from "#/entities/video";
-import { variantOf } from "#/pages/videos/lib/variant";
-import { Button } from "#/shared/ui/button";
+import { VIDEO_KIND_LABEL } from "#/entities/video/index.ts";
+import type { VideoKind } from "#/entities/video/index.ts";
+import { variantOf } from "#/pages/videos/lib/variant.ts";
+import { Button } from "#/shared/ui/button.tsx";
 
 export const KindFilterLink = ({
   kind,

@@ -1,8 +1,8 @@
 import { countDistinct } from "drizzle-orm";
 import { Array, Effect, Option, Order, pipe } from "effect";
 
-import { partStaff } from "#/shared/db";
-import { NO_ROWS, catalogDb, containing } from "#/shared/db/index.server";
+import { NO_ROWS, catalogDb, containing } from "#/shared/db/index.server.ts";
+import { partStaff } from "#/shared/db/index.ts";
 
 const byCreditsDescending = Order.flip(
   Order.mapInput(Order.Number, ({ creditCount }: Readonly<{ creditCount: number }>) => creditCount),

@@ -3,7 +3,7 @@ import { Option } from "effect";
 import { Atom } from "effect/reactivity";
 import { use, useMemo } from "react";
 
-import type { Scene, Step } from "#/entities/mosaic/lib/scene";
+import type { Scene, Step } from "#/entities/mosaic/lib/scene.ts";
 
 export type Viewer =
   | Readonly<{ status: "empty" }>

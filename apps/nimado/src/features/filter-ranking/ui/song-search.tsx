@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import type { ChangeEventHandler, ReactNode } from "react";
 
-import { TEXT } from "#/entities/ranking";
+import { TEXT } from "#/entities/ranking/index.ts";
 
 export const SongSearch = ({
   query,

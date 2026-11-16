@@ -2,8 +2,8 @@ import { Effect } from "effect";
 import { HttpClientRequest } from "effect/http";
 import type { HttpClient } from "effect/http";
 
-import { SESSIONS_PATH, SessionRecord } from "#protocol";
-import type { RecordedSession } from "#protocol";
+import { SESSIONS_PATH, SessionRecord } from "#/shared/api/protocol.ts";
+import type { RecordedSession } from "#/shared/api/protocol.ts";
 
 import { InterviewerFailed, send } from "./interviewer.ts";
 

@@ -2,7 +2,7 @@ import { Button } from "@masseater.dev/web-ui";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import { useSetChoice } from "#/entities/extraction";
+import { useSetChoice } from "#/entities/extraction/index.ts";
 
 export const SampleButton = ({
   name,

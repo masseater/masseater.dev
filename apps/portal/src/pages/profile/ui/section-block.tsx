@@ -1,10 +1,10 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { sectionId } from "#/entities/watashi";
-import type { ProfileSectionValue } from "#/entities/watashi";
+import { sectionId } from "#/entities/watashi/index.ts";
+import type { ProfileSectionValue } from "#/entities/watashi/index.ts";
 
-import { LineItem } from "./line-item";
+import { LineItem } from "./line-item.tsx";
 
 export const SectionBlock = ({
   section,

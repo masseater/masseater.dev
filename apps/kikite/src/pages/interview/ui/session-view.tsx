@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
-import { useTypeAnywhere } from "#/features/answer-question";
-import { useRunSession } from "#/pages/interview/model/session-hooks";
+import { useTypeAnywhere } from "#/features/answer-question/index.ts";
+import { useRunSession } from "#/pages/interview/model/session-hooks.ts";
 
 import { ConversationColumn } from "./conversation-column.tsx";
 import { NotesColumn } from "./notes-column.tsx";

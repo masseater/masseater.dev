@@ -1,1 +1,1 @@
-export type { ObservationValue } from "./model/trait-analysis";
+export type { ObservationValue } from "./model/trait-analysis.ts";

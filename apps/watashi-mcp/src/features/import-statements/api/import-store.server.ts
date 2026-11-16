@@ -2,14 +2,14 @@ import { count, eq } from "drizzle-orm";
 import { Array as Arr, Clock, Effect, Option, pipe } from "effect";
 import { SecureRandom } from "effect/crypto";
 
-import { fingerprints, imports, transactions } from "#/entities/ledger";
-import { accountNamed, userRules, runAll } from "#/entities/ledger/index.server";
-import type { Failure } from "#/entities/ledger/index.server";
-import { InvalidRecord } from "#/shared/api";
-import { db, query } from "#/shared/db/index.server";
+import { accountNamed, userRules, runAll } from "#/entities/ledger/index.server.ts";
+import type { Failure } from "#/entities/ledger/index.server.ts";
+import { fingerprints, imports, transactions } from "#/entities/ledger/index.ts";
+import { InvalidRecord } from "#/shared/api/index.ts";
+import { db, query } from "#/shared/db/index.server.ts";
 
-import { ROWS_PER_INSERT, insertsOf, rowOf } from "./import-rows.server";
-import type { ImportRequest, NewRow, Prepared } from "./import-rows.server";
+import { ROWS_PER_INSERT, insertsOf, rowOf } from "./import-rows.server.ts";
+import type { ImportRequest, NewRow, Prepared } from "./import-rows.server.ts";
 
 const NOTHING = 0;
 

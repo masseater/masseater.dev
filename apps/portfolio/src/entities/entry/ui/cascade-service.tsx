@@ -5,11 +5,11 @@ import type { NodeProps } from "@xyflow/react";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import { clicked } from "#/entities/entry/model/cascade";
-import { useUpdateCascade } from "#/entities/entry/model/cascade-state";
+import { useUpdateCascade } from "#/entities/entry/model/cascade-state.ts";
+import { clicked } from "#/entities/entry/model/cascade.ts";
 
-import { CascadeLabel } from "./cascade-label";
-import type { ServiceNode, Status } from "./cascade-layout";
+import { CascadeLabel } from "./cascade-label.tsx";
+import type { ServiceNode, Status } from "./cascade-layout.ts";
 
 const serviceClass = {
   running: "cascade-service",

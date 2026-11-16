@@ -2,10 +2,10 @@ import { failedAt } from "@masseater.dev/mcp-tool-call";
 import type { UpstreamFailed } from "@masseater.dev/mcp-tool-call";
 import { Array as Arr, Effect, Schema } from "effect";
 
-import { ProfileAuthor } from "#/entities/owner-profile";
+import { ProfileAuthor } from "#/entities/owner-profile/index.ts";
 
-import { PROFILE_INSTRUCTIONS } from "./profile-prompt";
-import { TRAIT_MODEL } from "./trait-pi";
+import { PROFILE_INSTRUCTIONS } from "./profile-prompt.ts";
+import { TRAIT_MODEL } from "./trait-pi.ts";
 
 const MAX_TOKENS = 8000;
 

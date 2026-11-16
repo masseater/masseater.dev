@@ -2,8 +2,8 @@ import { Effect } from "effect";
 import { renderToStaticMarkup } from "react-dom/server";
 import { expect, test } from "vite-plus/test";
 
-import { Figure } from "./figure";
-import { importFigures } from "./figure-chunks";
+import { importFigures } from "./figure-chunks.ts";
+import { Figure } from "./figure.tsx";
 
 const FRAME = "--cascade-aspect:452 / 840";
 

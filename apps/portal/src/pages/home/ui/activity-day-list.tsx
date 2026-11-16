@@ -1,9 +1,9 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import type { ActivityDay } from "#/pages/home/model/activity";
+import type { ActivityDay } from "#/pages/home/model/activity.ts";
 
-import { ActivityDayGroup } from "./activity-day-group";
+import { ActivityDayGroup } from "./activity-day-group.tsx";
 
 export const ActivityDayList = ({
   days,

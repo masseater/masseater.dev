@@ -1,7 +1,7 @@
 import { Option } from "effect";
 import { expect, test, vi } from "vite-plus/test";
 
-import { onCached, onRestored, releaseOnUnmount, whileMounted } from "./gpu-lifetime";
+import { onCached, onRestored, releaseOnUnmount, whileMounted } from "./gpu-lifetime.ts";
 
 const pageTransition = (type: string, persisted: boolean): Event =>
   Object.defineProperty(new Event(type), "persisted", { value: persisted });

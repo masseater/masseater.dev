@@ -1,7 +1,7 @@
 import { Array, Option, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import type { PartRow } from "#/entities/part/lib/part";
+import type { PartRow } from "#/entities/part/lib/part.ts";
 
 const FACTS = [
   { key: "bpm", label: "BPM" },

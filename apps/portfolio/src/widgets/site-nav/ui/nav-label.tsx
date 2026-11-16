@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
-import { sectionMeta } from "#/shared/config";
-import type { Section } from "#/shared/config";
+import { sectionMeta } from "#/shared/config/index.ts";
+import type { Section } from "#/shared/config/index.ts";
 
 export const NavLabel = ({
   active,

@@ -1,9 +1,16 @@
 import { Array as Arr, Effect, Option, Record as Rec, pipe } from "effect";
 
-import { peopleFilter, goalPeriods, itemOf, SELF, refOf, textAt } from "#/entities/life-record";
-import type { Entry, Body } from "#/entities/life-record";
-import { loadStatsData, scanAll, readVocabulary } from "#/entities/life-record/index.server";
-import type { LifeRecordName, StorageFailed } from "#/shared/db";
+import { loadStatsData, scanAll, readVocabulary } from "#/entities/life-record/index.server.ts";
+import {
+  peopleFilter,
+  goalPeriods,
+  itemOf,
+  SELF,
+  refOf,
+  textAt,
+} from "#/entities/life-record/index.ts";
+import type { Entry, Body } from "#/entities/life-record/index.ts";
+import type { LifeRecordName, StorageFailed } from "#/shared/db/index.ts";
 
 export type ExtrasInput = Readonly<{
   record: Option.Option<LifeRecordName>;

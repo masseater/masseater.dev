@@ -1,7 +1,7 @@
 import { accessMcpEndpoint } from "@masseater.dev/mcp-tool-call";
 import { env } from "cloudflare:workers";
 
-import { registerTools } from "./tools";
+import { registerTools } from "./tools.ts";
 
 export const serveMcp = accessMcpEndpoint({
   teamDomain: env.ACCESS_TEAM_DOMAIN,

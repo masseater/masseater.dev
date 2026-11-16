@@ -1,6 +1,6 @@
 import { Option, Stream, String, pipe } from "effect";
 
-import type { Engine, Progress } from "#/shared/api";
+import type { Engine, Progress } from "#/shared/api/index.ts";
 
 export type TranslateRequest = Engine["translate"] extends (request: infer Request) => unknown
   ? Request

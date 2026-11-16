@@ -3,8 +3,7 @@ import { provideAtEntry, tracingLayer } from "@ocr-decide/tooling";
 import { PRODUCT_NAME, openRouter } from "@r_masseater/ocr-decide";
 import { Effect, Layer } from "effect";
 
-import { measureDocument } from "#/outcome.ts";
-import { Results, resultsLayer } from "#/report.ts";
+import { measureDocument, Results, resultsLayer } from "#/features/measure-documents/index.ts";
 
 const ONE_AT_A_TIME = { concurrency: 1 } as const;
 

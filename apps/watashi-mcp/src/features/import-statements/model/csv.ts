@@ -1,10 +1,10 @@
 import { Array as Arr, Effect, Match, Option, Result, Stream, String as Str, pipe } from "effect";
 import { Csv } from "effect/encoding";
 
-import { indexesOf } from "#/entities/ledger";
-import type { AmountIndexes, Columns, Indexes, Lookup } from "#/entities/ledger";
+import { indexesOf } from "#/entities/ledger/index.ts";
+import type { AmountIndexes, Columns, Indexes, Lookup } from "#/entities/ledger/index.ts";
 
-import { amountOf, clean, dateOf, optionalAmountOf } from "./csv-cells";
+import { amountOf, clean, dateOf, optionalAmountOf } from "./csv-cells.ts";
 
 export type CsvLayout = Readonly<{ csv: string; headerRow: number; columns: Columns }>;
 

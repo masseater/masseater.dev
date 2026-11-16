@@ -14,10 +14,10 @@ import {
   TODO_STATUSES,
   Time,
   TodoBody,
-} from "#/entities/life-record/model/life-body";
-import { LIFE_RECORDS } from "#/shared/db";
+} from "#/entities/life-record/model/life-body.ts";
+import { LIFE_RECORDS } from "#/shared/db/index.ts";
 
-import { BUCKETS } from "./life-groups";
+import { BUCKETS } from "./life-groups.ts";
 
 const MIN_ONE = 1;
 

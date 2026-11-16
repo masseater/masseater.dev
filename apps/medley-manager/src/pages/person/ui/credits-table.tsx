@@ -1,12 +1,12 @@
 import { Array, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { usePerson } from "#/pages/person/api/use-person";
-import { Table } from "#/shared/ui/table";
-import { TableBody } from "#/shared/ui/table-body";
-import { TableHeadings } from "#/shared/ui/table-headings";
+import { usePerson } from "#/pages/person/api/use-person.ts";
+import { TableBody } from "#/shared/ui/table-body.tsx";
+import { TableHeadings } from "#/shared/ui/table-headings.tsx";
+import { Table } from "#/shared/ui/table.tsx";
 
-import { CreditRow } from "./credit-row";
+import { CreditRow } from "./credit-row.tsx";
 
 const HEADINGS = ["動画", "No.", "曲", "担当"];
 

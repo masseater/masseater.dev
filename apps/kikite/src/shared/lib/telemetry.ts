@@ -2,7 +2,7 @@ import { Duration, Layer } from "effect";
 import { FetchHttpClient } from "effect/http";
 import { OtlpSerialization, OtlpTracer } from "effect/observability";
 
-import { TELEMETRY_SERVICE, TRACES_PATH } from "#config";
+import { TELEMETRY_SERVICE, TRACES_PATH } from "#/shared/config/index.ts";
 
 const EXPORT_INTERVAL = Duration.fromInputUnsafe("2 seconds");
 const MAX_BATCH = 64;

@@ -15,8 +15,8 @@ import {
   keptAtom,
   manuscriptIdAtom,
   stalledAtom,
-} from "#/entities/manuscript";
-import { useYohaku } from "#/shared/api";
+} from "#/entities/manuscript/index.ts";
+import { useYohaku } from "#/shared/api/index.ts";
 
 const appendChunk = (draft: string, chunk: string): string => `${draft}${chunk}`;
 const FIRST_ATTEMPT = 0;

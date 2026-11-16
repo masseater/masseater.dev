@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Schema } from "effect";
 
-import { MemosSearch } from "#/entities/watashi";
-import { MemosPage, loadMemosPage } from "#/pages/memos";
+import { MemosSearch } from "#/entities/watashi/index.ts";
+import { MemosPage, loadMemosPage } from "#/pages/memos/index.ts";
 
 export const Route = createFileRoute("/memos/")({
   validateSearch: Schema.toStandardSchemaV1(MemosSearch),

@@ -1,6 +1,6 @@
 import { env } from "cloudflare:workers";
 
-import { PERSONAL_ORIGIN } from "#/shared/config";
+import { PERSONAL_ORIGIN } from "#/shared/config/index.ts";
 
 export const personal = (path: string): Promise<Response> =>
   env.PERSONAL.fetch(`${PERSONAL_ORIGIN}${path}`);

@@ -1,0 +1,25 @@
+import { Array as Arr, String as Str, pipe } from "effect";
+import type { ReactNode } from "react";
+
+import { nameTransition } from "#/shared/lib/name-transition.ts";
+import { portfolio } from "#/shared/lib/portfolio.ts";
+
+export const PortfolioSocialLinks = (): ReactNode => (
+  <ul className="flex justify-end sm:gap-x-4">
+    {pipe(
+      portfolio.links,
+      Arr.map(({ label, href }) => (
+        <li key={href}>
+          <a
+            className="stage-link px-2 py-3"
+            data-vt={`social-${Str.toLowerCase(label)}`}
+            ref={nameTransition}
+            href={href}
+          >
+            {label}
+          </a>
+        </li>
+      )),
+    )}
+  </ul>
+);

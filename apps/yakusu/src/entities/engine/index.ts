@@ -1,2 +1,2 @@
-export { usePreparation } from "./api/preparation";
-export { amountOf } from "./model/preparation";
+export { usePreparation } from "./api/preparation.ts";
+export { amountOf } from "./model/preparation.ts";

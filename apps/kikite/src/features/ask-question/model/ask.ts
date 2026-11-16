@@ -12,11 +12,11 @@ import {
   summaryOf,
   askedOf,
   recentOf,
-} from "#/entities/interview";
-import type { ParsedDraft, Entry } from "#/entities/interview";
-import { questionText } from "#/shared/api";
-import { modify, read, write } from "#/shared/lib/registry";
-import type { QuestionBody } from "#protocol";
+} from "#/entities/interview/index.ts";
+import type { ParsedDraft, Entry } from "#/entities/interview/index.ts";
+import { questionText } from "#/shared/api/index.ts";
+import type { QuestionBody } from "#/shared/api/index.ts";
+import { modify, read, write } from "#/shared/lib/registry.ts";
 
 type Registered = Effect.Effect<void, never, AtomRegistry.AtomRegistry>;
 

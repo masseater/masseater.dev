@@ -8,7 +8,7 @@ import {
   pipe,
 } from "effect";
 
-import type { Aggregate } from "#/entities/life-record/model/life-body";
+import type { Aggregate } from "#/entities/life-record/model/life-body.ts";
 
 export type StatEvent = Readonly<{
   kind: string;

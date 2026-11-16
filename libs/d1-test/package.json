@@ -3,8 +3,11 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "imports": {
+    "#/*": "./src/*"
+  },
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/features/fake-d1/index.ts"
   },
   "dependencies": {
     "@effect/platform-node": "catalog:",

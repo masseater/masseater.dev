@@ -2,8 +2,8 @@ import type { SearchResult } from "@masseater.dev/aredoko-protocol";
 import { Option } from "effect";
 import type { ReactNode } from "react";
 
-import { ImportToUnityButton } from "#/features/import-to-unity";
-import { OpenerButton } from "#/shared/ui/opener-button";
+import { ImportToUnityButton } from "#/features/import-to-unity/index.ts";
+import { OpenerButton } from "#/shared/ui/opener-button.tsx";
 
 import { ShowPackageButton } from "./show-package-button.tsx";
 import { useResultLinks } from "./use-result-links.ts";

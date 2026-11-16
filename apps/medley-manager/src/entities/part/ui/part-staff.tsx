@@ -1,9 +1,9 @@
 import { Array, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { STAFF_ROLE_LABEL } from "#/entities/part/lib/part";
-import type { PartRow, StaffRole } from "#/entities/part/lib/part";
-import { PersonLink } from "#/entities/person/@x/part";
+import { STAFF_ROLE_LABEL } from "#/entities/part/lib/part.ts";
+import type { PartRow, StaffRole } from "#/entities/part/lib/part.ts";
+import { PersonLink } from "#/entities/person/@x/part.ts";
 
 export const PartStaff = ({
   part,

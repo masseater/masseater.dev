@@ -1,7 +1,7 @@
 import { Number as Num } from "effect";
 
-import type { Gpu } from "./gpu-device";
-import { SHADER } from "./gpu-shader";
+import type { Gpu } from "./gpu-device.ts";
+import { SHADER } from "./gpu-shader.ts";
 
 export const SLOT_BYTES = 256;
 export const MAX_DRAWS = 1024;

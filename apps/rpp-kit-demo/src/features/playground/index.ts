@@ -1,1 +1,1 @@
-export { Playground } from "./ui/playground";
+export { Playground } from "./ui/playground.tsx";

@@ -44,7 +44,6 @@ export default defineConfig(({ mode }) => ({
         "auth generate --config auth.config.ts --output node_modules/.cache/auth.table.ts --yes && diff -u src/shared/auth/generated/auth.table.ts node_modules/.cache/auth.table.ts",
     },
   },
-  resolve: { tsconfigPaths: true },
   test: { include: ["src/**/*.test.{ts,tsx}"] },
   plugins: appPlugins(mode),
 }));

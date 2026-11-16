@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
 
-import { TechniqueExamples } from "#/entities/technique";
-import type { Example } from "#/entities/technique";
-import { EXAMPLES_HEADING } from "#/pages/seikin-technique/model/copy";
+import { TechniqueExamples } from "#/entities/technique/index.ts";
+import type { Example } from "#/entities/technique/index.ts";
+import { EXAMPLES_HEADING } from "#/pages/seikin-technique/model/copy.ts";
 
 export const ExamplesSection = ({
   examples,

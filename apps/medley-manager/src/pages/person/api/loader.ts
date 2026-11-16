@@ -1,6 +1,6 @@
 import type { QueryClient } from "@tanstack/react-query";
 
-import { catalogQueries } from "#/entities/catalog";
+import { catalogQueries } from "#/entities/catalog/index.ts";
 
 export const loadPersonPage = ({
   queryClient,

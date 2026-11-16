@@ -1,6 +1,6 @@
 import { DateTime, Option, Order, String as Str, pipe } from "effect";
 
-import type { PeriodInputValue, PeriodValue } from "./money";
+import type { PeriodInputValue, PeriodValue } from "./money.ts";
 
 const MONTHS_BEFORE = 11;
 

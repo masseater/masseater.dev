@@ -1,7 +1,7 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { SAMPLE } from "#/pages/why/model/copy";
+import { SAMPLE } from "#/pages/why/model/copy.ts";
 
 const LOOK = {
   kept: "",

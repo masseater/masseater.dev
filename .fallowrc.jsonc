@@ -5,13 +5,12 @@
   "dynamicallyLoaded": [
     "**/*.d.rpp.ts",
     "apps/aredoko-server/src/app/rpc/embedder-worker.test.support.ts",
-    "libs/workers-tracing/src/fixture/*.worker.ts",
-    "libs/oxlint-typed-rules/src/ts-api-utils.ts",
-    "libs/oxlint-typed-rules/src/ts-compat.ts",
-    "libs/oxlint-typed-rules/src/typescript-eslint-utils.ts",
-    "libs/vite-plus-adopt/src/attw/compiler-hosts.ts",
-    "libs/vite-plus-adopt/src/attw/typescript.ts",
-    "libs/vite-plus-adopt/src/fsd-typescript.ts",
+    "libs/oxlint-typed-rules/src/shared/lib/ts-api-utils.ts",
+    "libs/oxlint-typed-rules/src/shared/lib/ts-compat.ts",
+    "libs/oxlint-typed-rules/src/shared/lib/typescript-eslint-utils.ts",
+    "libs/vite-plus-adopt/src/shared/lib/typescript/compiler-hosts.ts",
+    "libs/vite-plus-adopt/src/shared/lib/typescript/index.ts",
+    "libs/vite-plus-adopt/src/app/fsd-typescript.ts",
   ],
   "usedClassMembers": [
     { "implements": "LegacySymbol", "members": ["getName", "getDeclarations"] },
@@ -30,7 +29,10 @@
   ],
   "ignoreExports": [
     { "file": "**/generated/**", "exports": ["*"] },
-    { "file": "libs/workers-tracing/src/tanstack-start.plain.ts", "exports": ["traceServerFn"] },
+    {
+      "file": "libs/workers-tracing/src/app/tanstack-start.plain.ts",
+      "exports": ["traceServerFn"],
+    },
   ],
   "overrides": [{ "files": ["**/generated/**"], "rules": { "unused-enum-members": "off" } }],
   "ignoreDependencies": ["@effect/language-service"],
@@ -94,6 +96,7 @@
     ],
   },
   "typeAware": { "enabled": true, "require": "complete" },
+  "ignoreExportsUsedInFile": true,
   "failOnParseError": true,
   "ignorePatterns": [
     ".claude/**",
@@ -193,7 +196,7 @@
     {
       "name": "alchemy",
       "enablers": ["alchemy"],
-      "entryPoints": ["alchemy.*.ts", "*.worker.ts"],
+      "entryPoints": ["alchemy.*.ts", "src/**/*.worker.ts"],
     },
     {
       "name": "vite-plus",

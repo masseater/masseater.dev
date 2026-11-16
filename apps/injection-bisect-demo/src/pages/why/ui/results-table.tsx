@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
-import { ResultsBody } from "./results-body";
-import { ResultsHead } from "./results-head";
+import { ResultsBody } from "./results-body.tsx";
+import { ResultsHead } from "./results-head.tsx";
 
 export const ResultsTable = (): ReactNode => (
   <div className="overflow-x-auto rounded-lg border">

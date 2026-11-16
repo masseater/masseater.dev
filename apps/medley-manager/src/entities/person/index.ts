@@ -1,1 +1,1 @@
-export { PersonLink } from "./ui/person-link";
+export { PersonLink } from "./ui/person-link.tsx";

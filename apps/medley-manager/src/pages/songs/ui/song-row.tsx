@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
 
-import { SongLink } from "#/entities/song";
-import { TableCell } from "#/shared/ui/table-cell";
-import { TableRow } from "#/shared/ui/table-row";
+import { SongLink } from "#/entities/song/index.ts";
+import { TableCell } from "#/shared/ui/table-cell.tsx";
+import { TableRow } from "#/shared/ui/table-row.tsx";
 
 type SongSummary = Readonly<{ id: number; title: string; artist: string | null; useCount: number }>;
 

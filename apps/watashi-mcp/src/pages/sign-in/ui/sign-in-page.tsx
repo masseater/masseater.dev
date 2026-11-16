@@ -3,7 +3,7 @@ import { ActionPanel } from "@masseater.dev/owner-auth/ui";
 import { Button } from "@masseater.dev/ui/button";
 import type { ReactNode } from "react";
 
-import { SITE_NAME } from "#/shared/config";
+import { SITE_NAME } from "#/shared/config/index.ts";
 
 export const SignInPage = (): ReactNode => (
   <ActionPanel

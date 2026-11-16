@@ -5,9 +5,8 @@
   "type": "module",
   "imports": {
     "#/*": "./src/*",
-    "#app-name": "./app-name.ts",
-    "#vite-plugins/*": "./vite-plugins/*",
-    "#worker/*": "./worker/*"
+    "#vite-plugins/*": "./src/app/vite/*",
+    "#worker/*": "./src/app/worker/*"
   },
   "dependencies": {
     "@alchemy.run/cloudflare": "catalog:stack",

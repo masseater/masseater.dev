@@ -1,10 +1,10 @@
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import { useSource } from "#/entities/language";
-import type { Side } from "#/entities/language";
-import { useChooseSource } from "#/features/pick-language/model/choose";
-import { useIsSearching, useSetQueryText } from "#/features/pick-language/model/search";
+import { useSource } from "#/entities/language/index.ts";
+import type { Side } from "#/entities/language/index.ts";
+import { useChooseSource } from "#/features/pick-language/model/choose.ts";
+import { useIsSearching, useSetQueryText } from "#/features/pick-language/model/search.ts";
 
 import { Choice } from "./choice.tsx";
 

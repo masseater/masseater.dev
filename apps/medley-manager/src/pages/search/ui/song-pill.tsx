@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
-import { SongLink } from "#/entities/song";
-import { PillItem } from "#/shared/ui/pill-item";
+import { SongLink } from "#/entities/song/index.ts";
+import { PillItem } from "#/shared/ui/pill-item.tsx";
 
 export const SongPill = ({
   song,

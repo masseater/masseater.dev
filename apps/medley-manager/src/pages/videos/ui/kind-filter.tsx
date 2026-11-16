@@ -2,10 +2,10 @@ import { getRouteApi } from "@tanstack/react-router";
 import { Array, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { VIDEO_KINDS } from "#/entities/video";
+import { VIDEO_KINDS } from "#/entities/video/index.ts";
 
-import { AllKindsLink } from "./all-kinds-link";
-import { KindFilterLink } from "./kind-filter-link";
+import { AllKindsLink } from "./all-kinds-link.tsx";
+import { KindFilterLink } from "./kind-filter-link.tsx";
 
 const route = getRouteApi("/videos/");
 

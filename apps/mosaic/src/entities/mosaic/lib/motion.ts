@@ -1,8 +1,8 @@
 import { Match } from "effect";
 
-import type { Camera } from "./camera";
-import type { Scene, Step } from "./scene";
-import { settle } from "./scene";
+import type { Camera } from "./camera.ts";
+import type { Scene, Step } from "./scene.ts";
+import { settle } from "./scene.ts";
 
 const FLIGHT_MS = 900;
 const DONE = 1;

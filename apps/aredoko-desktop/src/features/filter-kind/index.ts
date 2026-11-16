@@ -1,1 +1,1 @@
-export { KindChips } from "./ui/kind-chips";
+export { KindChips } from "./ui/kind-chips.tsx";

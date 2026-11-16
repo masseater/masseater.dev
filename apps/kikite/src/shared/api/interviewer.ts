@@ -1,8 +1,14 @@
 import { Effect, Schema, Stream } from "effect";
 import { HttpClient, HttpClientRequest, HttpClientResponse } from "effect/http";
 
-import { QUESTION_PATH, QuestionRequest, SUMMARY_PATH, Summary, SummaryRequest } from "#protocol";
-import type { InterviewSummary, QuestionBody, SummaryBody } from "#protocol";
+import {
+  QUESTION_PATH,
+  QuestionRequest,
+  SUMMARY_PATH,
+  Summary,
+  SummaryRequest,
+} from "#/shared/api/protocol.ts";
+import type { InterviewSummary, QuestionBody, SummaryBody } from "#/shared/api/protocol.ts";
 
 const taggedError = Schema.TaggedError;
 

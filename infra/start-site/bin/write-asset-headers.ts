@@ -5,8 +5,7 @@ import { Command, Flag } from "effect/cli";
 import { pageSlug, pageHashes } from "security-headers/static";
 import type { PageHeaders } from "security-headers/static";
 
-import { assetHeaders } from "#/asset-headers.ts";
-import { contentSecurityPolicy } from "#/content-security-policy.ts";
+import { assetHeaders, contentSecurityPolicy } from "#/features/write-asset-headers/index.ts";
 import pkg from "#package.json" with { type: "json" };
 
 const OUTDIR = "dist/client";

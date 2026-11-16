@@ -1,7 +1,7 @@
 import { Effect } from "effect";
 import { describe, expect, test } from "vite-plus/test";
 
-import { allEntries } from "./entries";
+import { allEntries } from "./entries.ts";
 
 describe("allEntries", () => {
   test("content の frontmatter がすべてスキーマを満たす", () =>

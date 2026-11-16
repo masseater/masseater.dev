@@ -2,10 +2,10 @@ import { Link } from "@tanstack/react-router";
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { useCredentials } from "#/pages/home/api/home-query";
-import { Card, CardHeader } from "#/shared/ui";
+import { useCredentials } from "#/pages/home/api/home-query.ts";
+import { Card, CardHeader } from "#/shared/ui/index.ts";
 
-import { AttentionList } from "./attention-list";
+import { AttentionList } from "./attention-list.tsx";
 
 const TEXT = {
   title: "要対応",

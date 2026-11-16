@@ -2,9 +2,9 @@ import { and, countDistinct, eq, like, or } from "drizzle-orm";
 import type { SQL } from "drizzle-orm";
 import { Array, Effect, Option, pipe } from "effect";
 
-import type { VideoFilter } from "#/entities/video/model/video-search";
-import { part, video } from "#/shared/db";
-import { NO_ROWS, catalogDb, containing, keywordOf } from "#/shared/db/index.server";
+import type { VideoFilter } from "#/entities/video/model/video-search.ts";
+import { NO_ROWS, catalogDb, containing, keywordOf } from "#/shared/db/index.server.ts";
+import { part, video } from "#/shared/db/index.ts";
 
 const keywordCondition = (filter: VideoFilter): SQL | undefined =>
   keywordOf(filter.keyword).pipe(

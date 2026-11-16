@@ -1,7 +1,7 @@
 import { Tooltip } from "radix-ui";
 import type { ReactNode } from "react";
 
-import { SidebarTip } from "./sidebar-tip";
+import { SidebarTip } from "./sidebar-tip.tsx";
 
 export const SidebarTooltip = ({
   children,

@@ -2,8 +2,8 @@ import { useAtomSet, useAtomValue } from "@effect/atom-react";
 import { Array, String, pipe } from "effect";
 import { Atom } from "effect/reactivity";
 
-import type { Language } from "#/entities/language";
-import { useSetPicker } from "#/entities/language";
+import type { Language } from "#/entities/language/index.ts";
+import { useSetPicker } from "#/entities/language/index.ts";
 
 const queryAtom = Atom.make("");
 

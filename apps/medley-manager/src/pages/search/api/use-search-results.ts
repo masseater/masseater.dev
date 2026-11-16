@@ -1,8 +1,8 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 
-import { catalogQueries } from "#/entities/catalog";
-import type { SearchResults } from "#/entities/catalog";
+import { catalogQueries } from "#/entities/catalog/index.ts";
+import type { SearchResults } from "#/entities/catalog/index.ts";
 
 const route = getRouteApi("/search");
 

@@ -16,7 +16,7 @@ export default defineConfig({
     sourcemap: true,
   },
   test: {
-    include: ["src/**/*.test.ts"],
+    include: ["src/**/*.test.ts", "bin/**/*.test.ts"],
     testTimeout: 120_000,
   },
 });

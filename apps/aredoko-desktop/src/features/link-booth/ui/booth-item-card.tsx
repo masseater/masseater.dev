@@ -1,7 +1,7 @@
 import type { BoothItem } from "@masseater.dev/aredoko-protocol";
 import type { ReactNode } from "react";
 
-import { OpenerButton } from "#/shared/ui/opener-button";
+import { OpenerButton } from "#/shared/ui/opener-button.tsx";
 
 export const BoothItemCard = ({ item }: Readonly<{ item: typeof BoothItem.Type }>): ReactNode => (
   <div className="flex flex-col gap-2 rounded-lg border p-4">

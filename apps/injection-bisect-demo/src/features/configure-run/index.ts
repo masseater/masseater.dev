@@ -1,2 +1,2 @@
-export { RunSettings } from "./ui/run-settings";
-export { FormatField } from "./ui/format-field";
+export { RunSettings } from "./ui/run-settings.tsx";
+export { FormatField } from "./ui/format-field.tsx";

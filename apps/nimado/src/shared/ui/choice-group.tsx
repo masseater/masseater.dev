@@ -1,7 +1,7 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { ChoiceButton } from "./choice-button";
+import { ChoiceButton } from "./choice-button.tsx";
 
 export type Choices<Value extends string> = readonly (readonly [Value, string])[];
 

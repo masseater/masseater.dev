@@ -2,12 +2,12 @@ import type { Option } from "effect";
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { withTag } from "#/entities/slide";
-import { TagFilter } from "#/features/filter-decks";
-import { useDecks } from "#/pages/slides/api/slides-query";
-import { RowList } from "#/shared/ui";
+import { withTag } from "#/entities/slide/index.ts";
+import { TagFilter } from "#/features/filter-decks/index.ts";
+import { useDecks } from "#/pages/slides/api/slides-query.ts";
+import { RowList } from "#/shared/ui/index.ts";
 
-import { DeckRow } from "./deck-row";
+import { DeckRow } from "./deck-row.tsx";
 
 const LABEL = "デッキ";
 

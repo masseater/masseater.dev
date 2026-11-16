@@ -6,10 +6,10 @@ import {
 import { Effect, Option } from "effect";
 import { useCallback } from "react";
 
-import type { Preparation } from "#/entities/engine/model/preparation";
-import { preparationOf } from "#/entities/engine/model/preparation";
-import { useEngine } from "#/shared/api";
-import type { Progress } from "#/shared/api";
+import type { Preparation } from "#/entities/engine/model/preparation.ts";
+import { preparationOf } from "#/entities/engine/model/preparation.ts";
+import { useEngine } from "#/shared/api/index.ts";
+import type { Progress } from "#/shared/api/index.ts";
 
 const NOTHING = Option.none<Progress>();
 

@@ -1,5 +1,6 @@
 import { Array as Arr, Effect, Option, Record as Rec, pipe } from "effect";
 
+import { loadStatsData, scanAll } from "#/entities/life-record/index.server.ts";
 import {
   previousPeriod,
   shiftDays,
@@ -9,10 +10,9 @@ import {
   dayBound,
   jstDayOf,
   todayJst,
-} from "#/entities/life-record";
-import type { Period, Body, Entry, MetricStats, StatsData } from "#/entities/life-record";
-import { loadStatsData, scanAll } from "#/entities/life-record/index.server";
-import type { StoreFailure } from "#/shared/api";
+} from "#/entities/life-record/index.ts";
+import type { Period, Body, Entry, MetricStats, StatsData } from "#/entities/life-record/index.ts";
+import type { StoreFailure } from "#/shared/api/index.ts";
 
 export type DigestInput = Readonly<{ from?: string; to?: string }>;
 

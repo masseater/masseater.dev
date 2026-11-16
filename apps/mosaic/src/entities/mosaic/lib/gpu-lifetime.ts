@@ -1,6 +1,6 @@
 import { Option, Predicate } from "effect";
 
-import { destroyDevice } from "./gpu-telemetry";
+import { destroyDevice } from "./gpu-telemetry.ts";
 
 export interface Held {
   readonly device: Pick<GPUDevice, "destroy">;

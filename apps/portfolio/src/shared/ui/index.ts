@@ -1,5 +1,5 @@
-export { Arrow } from "./arrow";
-export { HoverCardContent } from "./hover-card";
-export { SloppediaLink } from "./sloppedia-link";
-export { YouTubeLink } from "./youtube-link";
-export { TagList } from "./tag-list";
+export { Arrow } from "./arrow.tsx";
+export { HoverCardContent } from "./hover-card.tsx";
+export { SloppediaLink } from "./sloppedia-link.tsx";
+export { YouTubeLink } from "./youtube-link.tsx";
+export { TagList } from "./tag-list.tsx";

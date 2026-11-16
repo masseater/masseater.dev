@@ -1,8 +1,8 @@
 import { Array as Arr, Option, String as Str, pipe } from "effect";
 
-import { ERROR_LABEL, QUESTION_LABEL, REASON_LABEL, STRATEGY_LABEL } from "#protocol";
-import { strategyOf } from "#strategies";
-import type { StrategyId } from "#strategies";
+import { ERROR_LABEL, QUESTION_LABEL, REASON_LABEL, STRATEGY_LABEL } from "#/shared/api/index.ts";
+import { strategyOf } from "#/shared/config/index.ts";
+import type { StrategyId } from "#/shared/config/index.ts";
 
 export type ParsedDraft = Readonly<{
   strategy: Option.Option<StrategyId>;

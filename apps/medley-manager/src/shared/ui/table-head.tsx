@@ -1,6 +1,6 @@
 import type { ComponentProps, ReactNode } from "react";
 
-import { cn } from "#/shared/lib/utils";
+import { cn } from "#/shared/lib/utils.ts";
 
 export const TableHead = ({ className, ...props }: ComponentProps<"th">): ReactNode => (
   <th

@@ -3,10 +3,10 @@ import type { QueryClient } from "@tanstack/react-query";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Effect } from "effect";
 
-import { slidesQueries } from "#/entities/slide";
-import type { HitValue } from "#/entities/slide";
-import { watashiQueries } from "#/entities/watashi";
-import type { LifeItemValue, MemoValue } from "#/entities/watashi";
+import { slidesQueries } from "#/entities/slide/index.ts";
+import type { HitValue } from "#/entities/slide/index.ts";
+import { watashiQueries } from "#/entities/watashi/index.ts";
+import type { LifeItemValue, MemoValue } from "#/entities/watashi/index.ts";
 
 type SearchLoad = Readonly<{ queryClient: QueryClient; keyword: string }>;
 

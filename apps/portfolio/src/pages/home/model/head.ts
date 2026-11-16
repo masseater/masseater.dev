@@ -1,8 +1,8 @@
 import { Array as Arr, pipe } from "effect";
 
-import { site } from "#/shared/config";
-import { author, defaultImage, seo } from "#/shared/lib";
-import type { Head } from "#/shared/lib";
+import { site } from "#/shared/config/index.ts";
+import { author, defaultImage, seo } from "#/shared/lib/index.ts";
+import type { Head } from "#/shared/lib/index.ts";
 
 export const homeHead: Head = seo({
   title: site.name,

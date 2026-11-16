@@ -3,7 +3,7 @@ import type { SloppediaGitHub } from "@masseater.dev/repositories/credential-bro
 import { env } from "cloudflare:workers";
 import { Effect } from "effect";
 
-import { brokerFailed, brokerResponse } from "#/shared/api";
+import { brokerFailed, brokerResponse } from "#/shared/api/index.ts";
 
 const broker = (): Service<SloppediaGitHub> => env.SLOPPEDIA_GITHUB;
 

@@ -1,2 +1,2 @@
-export { loadVideoPage } from "./api/loader";
-export { VideoPage } from "./ui/video-page";
+export { loadVideoPage } from "./api/loader.ts";
+export { VideoPage } from "./ui/video-page.tsx";

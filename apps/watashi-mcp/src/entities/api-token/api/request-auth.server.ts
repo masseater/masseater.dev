@@ -2,13 +2,13 @@ import { requireMcpAuth } from "@better-auth/mcp";
 import { runner } from "@r_masseater/workers-tracing/effect";
 import { Effect, Equal, Layer, Option, String as Str, pipe } from "effect";
 
-import { FORBIDDEN, UNAUTHORIZED, storageFailed, withStatus } from "#/shared/api";
-import { createAuth } from "#/shared/auth/index.server";
-import { MCP_URL } from "#/shared/config";
-import type { ApiToken, TokenScope } from "#/shared/db";
+import { FORBIDDEN, UNAUTHORIZED, storageFailed, withStatus } from "#/shared/api/index.ts";
+import { createAuth } from "#/shared/auth/index.server.ts";
+import { MCP_URL } from "#/shared/config/index.ts";
+import type { ApiToken, TokenScope } from "#/shared/db/index.ts";
 
-import { hashApiToken, isApiToken } from "./api-token";
 import { activeTokenByHash } from "./api-token-store.server.ts";
+import { hashApiToken, isApiToken } from "./api-token.ts";
 
 export type Principal = Readonly<{ via: "oauth" | "token" }>;
 

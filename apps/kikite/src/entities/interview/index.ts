@@ -16,7 +16,7 @@ export {
   staleAtom,
   leadsAtom,
   researchingAtom,
-} from "./model/atoms";
+} from "./model/atoms.ts";
 export type {
   Entry,
   Asking,
@@ -26,11 +26,11 @@ export type {
   Rating,
   Progress,
   Phase,
-} from "./model/atoms";
-export { heardFailure, heardInterim, heardSound, heardSpeech, touch } from "./model/heard";
-export { parseDraft } from "./lib/draft";
-export type { ParsedDraft } from "./lib/draft";
-export { askedOf, recentOf, linesOf, speechAfter } from "./model/transcript";
+} from "./model/atoms.ts";
+export { heardFailure, heardInterim, heardSound, heardSpeech, touch } from "./model/heard.ts";
+export { parseDraft } from "./lib/draft.ts";
+export type { ParsedDraft } from "./lib/draft.ts";
+export { askedOf, recentOf, linesOf, speechAfter } from "./model/transcript.ts";
 export {
   useSummary,
   useAnswerDraft,
@@ -51,11 +51,11 @@ export {
   useEntries,
   useLeads,
   useResearching,
-} from "./model/hooks";
-export type { Lead, Panel, Saving } from "./model/hooks";
-export { rated } from "./model/rate";
-export { saveAtom } from "./model/record";
+} from "./model/hooks.ts";
+export type { Lead, Panel, Saving } from "./model/hooks.ts";
+export { rated } from "./model/rate.ts";
+export { saveAtom } from "./model/record.ts";
 /** @internal */
-export { autosaving, upload, uploadAtom } from "./api/upload";
-export { release, reset, startListening } from "./model/lifecycle";
-export { rememberTheme } from "./model/memory";
+export { autosaving, upload, uploadAtom } from "./api/upload.ts";
+export { release, reset, startListening } from "./model/lifecycle.ts";
+export { rememberTheme } from "./model/memory.ts";

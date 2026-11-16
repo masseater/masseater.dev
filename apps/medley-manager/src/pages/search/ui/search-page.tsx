@@ -1,9 +1,9 @@
 import type { ReactNode } from "react";
 
-import { FoundPeople } from "./found-people";
-import { FoundSongs } from "./found-songs";
-import { FoundVideos } from "./found-videos";
-import { SearchHeader } from "./search-header";
+import { FoundPeople } from "./found-people.tsx";
+import { FoundSongs } from "./found-songs.tsx";
+import { FoundVideos } from "./found-videos.tsx";
+import { SearchHeader } from "./search-header.tsx";
 
 export const SearchPage = (): ReactNode => (
   <div className="flex flex-col gap-10">

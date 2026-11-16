@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
-import { percentOf } from "#/entities/song";
-import { usePlayback } from "#/features/playback/model/playback";
+import { percentOf } from "#/entities/song/index.ts";
+import { usePlayback } from "#/features/playback/model/playback.ts";
 
 export const Playhead = (): ReactNode => {
   const { position } = usePlayback();

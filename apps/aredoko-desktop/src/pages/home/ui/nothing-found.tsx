@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
-import { IndexingProgress } from "#/features/indexing";
-import { Notice } from "#/shared/ui/notice";
+import { IndexingProgress } from "#/features/indexing/index.ts";
+import { Notice } from "#/shared/ui/notice.tsx";
 
 export const NothingFound = ({ text }: Readonly<{ text: string }>): ReactNode => (
   <div className="flex flex-col gap-2">

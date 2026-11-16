@@ -6,7 +6,7 @@ import type { Root } from "react-dom/client";
 
 import { Screens } from "#/app/screens.tsx";
 import { Providers } from "#/app/state.tsx";
-import type { Yohaku } from "#/shared/api";
+import type { Yohaku } from "#/shared/api/index.ts";
 
 import styles from "#/app/styles.css?inline";
 import fixedFonts from "./fixed-fonts.test.support.css?inline";

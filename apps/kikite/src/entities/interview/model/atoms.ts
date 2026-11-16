@@ -1,8 +1,13 @@
 import { Option } from "effect";
 import { Atom } from "effect/reactivity";
 
-import type { Recognition } from "#/shared/lib/recognition";
-import type { InterviewLead, InterviewSummary, RecordedEntry, RecordedProgress } from "#protocol";
+import type {
+  InterviewLead,
+  InterviewSummary,
+  RecordedEntry,
+  RecordedProgress,
+} from "#/shared/api/index.ts";
+import type { Recognition } from "#/shared/lib/recognition.ts";
 
 import { storedPrevious } from "./memory.ts";
 

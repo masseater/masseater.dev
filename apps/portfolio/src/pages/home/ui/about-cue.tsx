@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { ABOUT_ID, ABOUT_TITLE } from "#/pages/home/model/about";
+import { ABOUT_ID, ABOUT_TITLE } from "#/pages/home/model/about.ts";
 
 const DOWN = "↓";
 

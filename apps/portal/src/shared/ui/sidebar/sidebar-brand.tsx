@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
-import { SidebarMark } from "./sidebar-mark";
+import { SidebarMark } from "./sidebar-mark.tsx";
 
 export const SidebarBrand = (): ReactNode => (
   <div className="flex flex-col gap-2 p-2" data-slot="sidebar-header">

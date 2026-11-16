@@ -1,8 +1,8 @@
 import type { Heading } from "@masseater.dev/sloppedia";
 import { Effect } from "effect";
 
-import { entryOf, foundOrNotFound, loadedHeadings, preloadBody } from "#/entities/entry";
-import type { Entry } from "#/entities/entry";
+import { entryOf, foundOrNotFound, loadedHeadings, preloadBody } from "#/entities/entry/index.ts";
+import type { Entry } from "#/entities/entry/index.ts";
 
 export type FoundArticle = Readonly<{ entry: Entry; headings: readonly Heading[] }>;
 

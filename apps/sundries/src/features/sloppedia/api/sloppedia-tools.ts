@@ -12,11 +12,11 @@ import type { McpServer } from "@modelcontextprotocol/server";
 import { Array as Arr, Effect, Layer, Option, Redacted, Schema, pipe } from "effect";
 import { FetchHttpClient, HttpClient, HttpClientRequest, HttpClientResponse } from "effect/http";
 
-import { meteredInput, runToolIn } from "#/shared/api";
+import { meteredInput, runToolIn } from "#/shared/api/index.ts";
 
-import { ArticleInput } from "./sloppedia-input";
-import { articleContent } from "./sloppedia-markdown";
-import { sloppediaToken } from "./sloppedia-token";
+import { ArticleInput } from "./sloppedia-input.ts";
+import { articleContent } from "./sloppedia-markdown.ts";
+import { sloppediaToken } from "./sloppedia-token.ts";
 
 type Article = typeof ArticleInput.Type;
 

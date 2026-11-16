@@ -1,10 +1,10 @@
 import { Array as Arr, Option, pipe } from "effect";
 
-import { techniqueOf, techniquePath } from "#/entities/technique";
-import type { Technique } from "#/entities/technique";
-import type { FoundTechnique } from "#/pages/seikin-technique/api/load-technique";
-import { defaultImage, notFoundHead, pageTitle, seo } from "#/shared/lib";
-import type { Head } from "#/shared/lib";
+import { techniqueOf, techniquePath } from "#/entities/technique/index.ts";
+import type { Technique } from "#/entities/technique/index.ts";
+import type { FoundTechnique } from "#/pages/seikin-technique/api/load-technique.ts";
+import { defaultImage, notFoundHead, pageTitle, seo } from "#/shared/lib/index.ts";
+import type { Head } from "#/shared/lib/index.ts";
 
 const descriptionOf = (technique: Technique): string =>
   pipe(

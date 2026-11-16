@@ -1,8 +1,8 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { AllScopesItem } from "./all-scopes-item";
-import { ScopeItem } from "./scope-item";
+import { AllScopesItem } from "./all-scopes-item.tsx";
+import { ScopeItem } from "./scope-item.tsx";
 
 const LABEL = "範囲";
 

@@ -6,7 +6,7 @@ export default defineConfig({
     lint: {
       overrides: [
         {
-          files: ["src/code.ts"],
+          files: ["src/entities/document/model/code.ts"],
           rules: { "import/no-namespace": ["error", { ignore: ["linguist-languages"] }] },
         },
       ],
@@ -19,7 +19,7 @@ export default defineConfig({
     },
   },
   pack: {
-    entry: ["src/index.ts"],
+    entry: ["src/app/index.ts"],
     platform: "neutral",
     sourcemap: true,
     dts: {

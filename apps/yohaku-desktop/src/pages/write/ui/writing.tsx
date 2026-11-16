@@ -1,10 +1,10 @@
 import type { ReactNode } from "react";
 
-import { useDrafts } from "#/features/edit-draft";
-import { TitleField } from "#/features/rename-manuscript";
+import { useDrafts } from "#/features/edit-draft/index.ts";
+import { TitleField } from "#/features/rename-manuscript/index.ts";
 import { useAutosave } from "#/pages/write/api/autosave.ts";
 import { useIdeaHint } from "#/pages/write/api/idea-hint.ts";
-import { AppHeader } from "#/shared/ui";
+import { AppHeader } from "#/shared/ui/index.ts";
 
 import { WritingColumns } from "./writing-columns.tsx";
 

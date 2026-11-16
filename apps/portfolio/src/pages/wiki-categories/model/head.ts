@@ -1,7 +1,7 @@
-import { sectionPath } from "#/shared/config";
-import { defaultImage, seo, wikiPageTitle } from "#/shared/lib";
-import type { Head } from "#/shared/lib";
-import { wiki } from "#/shared/wiki";
+import { sectionPath } from "#/shared/config/index.ts";
+import { defaultImage, seo, wikiPageTitle } from "#/shared/lib/index.ts";
+import type { Head } from "#/shared/lib/index.ts";
+import { wiki } from "#/shared/wiki/index.ts";
 
 export const categoriesHead: Head = seo({
   title: wikiPageTitle(wiki.labels.categories),

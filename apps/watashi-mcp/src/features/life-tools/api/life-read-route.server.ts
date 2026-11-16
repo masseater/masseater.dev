@@ -1,8 +1,8 @@
 import type { Effect } from "effect";
 import { Option, pipe } from "effect";
 
-import type { LifeReadValue, Body } from "#/entities/life-record";
-import type { StoreFailure } from "#/shared/api";
+import type { LifeReadValue, Body } from "#/entities/life-record/index.ts";
+import type { StoreFailure } from "#/shared/api/index.ts";
 
 import { lifeDigest } from "./life-digest.server.ts";
 import { lifeRead } from "./life-read.server.ts";

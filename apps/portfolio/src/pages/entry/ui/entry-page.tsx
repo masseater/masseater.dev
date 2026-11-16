@@ -1,10 +1,10 @@
 import { getRouteApi } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
-import { EntryColumn } from "./entry-column";
-import { EntryOutline } from "./entry-outline";
-import { EntrySide } from "./entry-side";
-import { EntryTitleBar } from "./entry-title-bar";
+import { EntryColumn } from "./entry-column.tsx";
+import { EntryOutline } from "./entry-outline.tsx";
+import { EntrySide } from "./entry-side.tsx";
+import { EntryTitleBar } from "./entry-title-bar.tsx";
 
 const route = getRouteApi("/_stage/_site/$category/$slug");
 

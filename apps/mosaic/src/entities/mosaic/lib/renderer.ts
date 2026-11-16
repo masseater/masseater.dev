@@ -1,8 +1,8 @@
 import { Effect, Option } from "effect";
 
-import { createGpuRenderer } from "./gpu-renderer";
-import { drawScene, isFading } from "./render";
-import type { Renderer, Target } from "./renderer-contract";
+import { createGpuRenderer } from "./gpu-renderer.ts";
+import { drawScene, isFading } from "./render.ts";
+import type { Renderer, Target } from "./renderer-contract.ts";
 
 const ACCENT_PROPERTY = "--primary";
 

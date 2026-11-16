@@ -6,8 +6,8 @@ import {
   creditedTiles,
   creditsHead,
   creditsSearch,
-} from "#/pages/credits";
-import { bundledPreview } from "#/pages/mosaic";
+} from "#/pages/credits/index.ts";
+import { bundledPreview } from "#/pages/mosaic/index.ts";
 
 export const Route = createFileRoute("/$slug_/credits")({
   validateSearch: creditsSearch,

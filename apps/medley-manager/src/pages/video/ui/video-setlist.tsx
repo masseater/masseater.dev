@@ -1,8 +1,8 @@
 import { Array as Arr } from "effect";
 import type { ReactNode } from "react";
 
-import { Setlist } from "#/entities/part";
-import { useVideo } from "#/pages/video/api/use-video";
+import { Setlist } from "#/entities/part/index.ts";
+import { useVideo } from "#/pages/video/api/use-video.ts";
 
 const EMPTY = "この動画のセトリはまだ登録されていません。";
 

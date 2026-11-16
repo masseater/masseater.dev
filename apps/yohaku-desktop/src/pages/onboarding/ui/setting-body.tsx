@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { IngestForm } from "#/entities/source";
+import { IngestForm } from "#/entities/source/index.ts";
 
 import { IngestedList } from "./ingested-list.tsx";
 import { SettingRoutes } from "./setting-routes.tsx";

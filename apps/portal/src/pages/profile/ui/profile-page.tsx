@@ -2,11 +2,11 @@ import { getRouteApi } from "@tanstack/react-router";
 import { useMemo } from "react";
 import type { ReactNode } from "react";
 
-import { scopesOf, sectionsOf } from "#/entities/watashi";
-import { useProfile } from "#/pages/profile/api/profile-query";
+import { scopesOf, sectionsOf } from "#/entities/watashi/index.ts";
+import { useProfile } from "#/pages/profile/api/profile-query.ts";
 
-import { ProfileAside } from "./profile-aside";
-import { ProfileDocument } from "./profile-document";
+import { ProfileAside } from "./profile-aside.tsx";
+import { ProfileDocument } from "./profile-document.tsx";
 
 const route = getRouteApi("/profile");
 

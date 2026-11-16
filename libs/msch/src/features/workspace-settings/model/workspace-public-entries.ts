@@ -1,18 +1,19 @@
 import { Array as Arr, Effect, Option, Schema, pipe } from "effect";
 
-import { MANIFEST_FILE, publicEntriesOf, PackEntry, entriesOf } from "#/entities/package/index.ts";
+import {
+  MANIFEST_FILE,
+  EntryManifestJson,
+  entriesOf,
+  PackEntry,
+  publicEntriesOf,
+} from "#/entities/package/index.ts";
 import type { EntryManifest, PackEntrySource } from "#/entities/package/index.ts";
 import { literalOf, nestedValues } from "#/entities/workspace/index.ts";
 import { RepositoryFiles } from "#/shared/lib/repository-files.ts";
 
 const PACK_ENTRY = ["pack", "entry"] as const;
 
-const Manifest = Schema.Struct({
-  name: Schema.optional(Schema.String),
-  exports: Schema.optional(Schema.Unknown),
-  bin: Schema.optional(Schema.Unknown),
-});
-const decodeManifest = Schema.decodeUnknownOption(Schema.fromJsonString(Manifest));
+const decodeEntryManifest = Schema.decodeUnknownOption(EntryManifestJson);
 const decodePackEntry = Schema.decodeUnknownOption(PackEntry);
 
 const packEntriesIn = (program: unknown): readonly PackEntrySource[] =>
@@ -62,7 +63,7 @@ export const publicEntryFiles = Effect.fn("publicEntryFiles")(function* publicEn
   const join = (target: string): string => files.join(directory, target);
   return pipe(
     text,
-    Option.flatMap(decodeManifest),
+    Option.flatMap(decodeEntryManifest),
     Option.map(entryFilesOf({ join, packEntries })),
     Option.getOrElse((): readonly string[] => []),
   );

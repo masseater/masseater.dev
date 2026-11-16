@@ -1,0 +1,17 @@
+import type { ReactNode } from "react";
+
+import type { SloppediaConfig, Target } from "#/shared/config/index.ts";
+
+import { WikiLink } from "./wiki-link.tsx";
+
+export const WikiNavItem = ({
+  config,
+  target,
+  label,
+}: Readonly<{ config: SloppediaConfig; target: Target; label: string }>): ReactNode => (
+  <li>
+    <WikiLink config={config} target={target}>
+      {label}
+    </WikiLink>
+  </li>
+);

@@ -6,7 +6,7 @@ import { useCallback } from "react";
 import type { ReactNode } from "react";
 
 import { ActionButton } from "./action-button.tsx";
-import { Notice } from "./notice";
+import { Notice } from "./notice.tsx";
 
 interface Opener {
   readonly open: (target: string) => Promise<void>;

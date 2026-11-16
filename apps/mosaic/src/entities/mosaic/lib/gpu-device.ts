@@ -1,7 +1,7 @@
 import { Effect, Option, Schema, flow } from "effect";
 
-import { releaseOnUnmount, whileMounted } from "./gpu-lifetime";
-import { destroyDevice, trackDevice } from "./gpu-telemetry";
+import { releaseOnUnmount, whileMounted } from "./gpu-lifetime.ts";
+import { destroyDevice, trackDevice } from "./gpu-telemetry.ts";
 
 export interface Gpu {
   readonly device: GPUDevice;

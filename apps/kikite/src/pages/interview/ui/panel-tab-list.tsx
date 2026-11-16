@@ -1,7 +1,7 @@
 import { Array as Arr, Option, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { useSummary } from "#/entities/interview";
+import { useSummary } from "#/entities/interview/index.ts";
 
 import { PanelTab } from "./panel-tab.tsx";
 import { PANELS } from "./panels.ts";
