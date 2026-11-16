@@ -1,11 +1,13 @@
 import type { Comment } from "@masseater.dev/akapen-protocol";
 import type { Media } from "@masseater.dev/media-notes-protocol";
 import { MediaStage } from "@masseater.dev/media-notes-ui";
-import type { Span } from "@masseater.dev/media-notes-ui";
+import type { Hint, Span } from "@masseater.dev/media-notes-ui";
 import { Array as Arr, Option, pipe } from "effect";
 import type { ReactNode } from "react";
 
 import { useComments } from "#/entities/comment/index.ts";
+
+const NO_HINTS: readonly Hint[] = [];
 
 const spanOf = (comment: Comment): Span => ({
   key: comment.id,
@@ -19,5 +21,5 @@ const spanOf = (comment: Comment): Span => ({
 
 export const Stage = ({ media }: Readonly<{ media: Media }>): ReactNode => {
   const spans = pipe(useComments(Option.some(media)), Arr.map(spanOf));
-  return <MediaStage media={media} spans={spans} />;
+  return <MediaStage media={media} spans={spans} hints={NO_HINTS} />;
 };

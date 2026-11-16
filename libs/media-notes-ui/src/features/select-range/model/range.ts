@@ -5,11 +5,12 @@ import { openedAtom } from "#/entities/media/index.ts";
 
 export type Range = Readonly<{ from: number; to: number }>;
 
-export type Tone = "plain" | "warn" | "faint";
+export type Tone = "plain" | "warn" | "faint" | "guess" | "guess-warn";
 
 export type Span = Readonly<{ key: string; from: number; to: number; tone: Tone }>;
 
-const perMedia = <Value>(initial: Value): Atom.Writable<Value> =>
+/** @internal */
+export const perMedia = <Value>(initial: Value): Atom.Writable<Value> =>
   Atom.writable(
     (get) => {
       get(openedAtom);
