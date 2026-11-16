@@ -6,7 +6,7 @@
 
 組み込みにないエフェクトや音源はプラグインとして足す。`plugin 名前 from "モジュール" { パラメータ: 型 = 既定値 }` でパラメータの型と既定値を宣言する。`fx [名前 パラメータ 値]` や `instrument 名前 plugin 名前 …` で使う。DSP はモジュール側の TypeScript が持ち、`.fumx` を読むときにはモジュールを実行しない。読み込みでは、渡したパラメータの名前と型を宣言と照らし合わせる。
 
-TypeScript では `.fumx` ファイルをインポートできる。`import { song } from "./song.fumx"` を実行すると、コンパイル済みの楽曲が値として渡される。`tsc --runExternalCode` で content mapper を有効にすると、タイトルやトラック、バス、インストゥルメント、キット、サンプル、プラグインの名前がリテラル型となり、`.fumx` ファイルおよびインポート先のファイル内のエラーがファイル上の適切な位置に報告される。`.fumx` ファイルをインポートするワークスペースは、`@masseater.dev/song-format/vite` からプラグインを追加し、tsconfig.json の `contentMappers` にこのパッケージを記載する。
+TypeScript では `.fumx` ファイルをインポートできる。`import { song } from "./song.fumx"` を実行すると、コンパイル済みの楽曲が値として渡される。`tsc --runExternalCode` で content mapper を有効にすると、タイトルやトラック、バス、インストゥルメント、キット、サンプル、プラグインの名前がリテラル型になる。`.fumx` ファイルとインポート先のファイルのエラーは、`.fumx` ファイル上のその行に報告される。`.fumx` ファイルをインポートするワークスペースは、`@masseater.dev/song-format/vite` からプラグインを追加し、tsconfig.json の `contentMappers` にこのパッケージを記載する。
 
 文法は `src/features/read-song/model/fumx.langium` にある。変更したら `vp run grammar` を実行して `generated/langium` のパーサーを生成し直す。生成されたパーサーが古いままだと verify が失敗する。
 
