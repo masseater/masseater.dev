@@ -4,20 +4,10 @@ import { assertFalse, assertTrue } from "@effect/vitest/utils";
 import { Effect, String as Str } from "effect";
 
 import type { TextlintPreset } from "#/shared/config/index.test.support.ts";
-import { directoryWith, lines } from "#/shared/lib/fixture.test.support.ts";
+import { NO_FOO_RULE, directoryWith, lines } from "#/shared/lib/fixture.test.support.ts";
 import { toJson } from "#/shared/lib/json.ts";
 
 import { lintTexts } from "./textlint.ts";
-
-const NO_FOO_RULE = lines(
-  "module.exports = (context) => ({",
-  "  [context.Syntax.Str](node) {",
-  '    if (context.getSource(node).includes("foo")) {',
-  '      context.report(node, new context.RuleError("foo is not allowed"));',
-  "    }",
-  "  },",
-  "});",
-);
 
 const NO_BAR_RULE = lines(
   'import type { TextlintRuleModule } from "@textlint/types";',
