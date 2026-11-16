@@ -2,14 +2,16 @@ import type { UserConfig } from "vite-plus";
 
 type Tasks = NonNullable<NonNullable<UserConfig["run"]>["tasks"]>;
 
+const PODMAN = "DOCKER_BIN=podman";
+
 export const alchemyTasks = {
-  dev: { command: "alchemy dev", cache: false },
-  deploy: { command: "alchemy deploy", cache: false },
-  destroy: { command: "alchemy destroy", cache: false },
+  dev: { command: `${PODMAN} alchemy dev`, cache: false },
+  deploy: { command: `${PODMAN} alchemy deploy`, cache: false },
+  destroy: { command: `${PODMAN} alchemy destroy`, cache: false },
 } satisfies Tasks;
 
 export const deployTo = (stage: "prod" | "production"): { command: string; cache: false } => ({
-  command: `alchemy deploy --stage ${stage} --yes`,
+  command: `${PODMAN} alchemy deploy --stage ${stage} --yes`,
   cache: false,
 });
 

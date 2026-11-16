@@ -4678,9 +4678,6 @@ importers:
       '@masseater.dev/nimado':
         specifier: workspace:*
         version: link:../../libs/nimado
-      '@masseater.dev/node-main':
-        specifier: workspace:*
-        version: link:../../libs/node-main
       effect:
         specifier: catalog:stack
         version: 4.1.4
