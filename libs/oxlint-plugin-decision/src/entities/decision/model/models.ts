@@ -1,10 +1,11 @@
 import { Schema } from "effect";
 
-type ClefModel = "clef" | "clef-flash" | "clef-omni";
-
-type JevModel = "jev-latest" | `jev-${number}.${number}`;
-
-export type DecisionModel = `typesafe/${JevModel}` | `cloudflare/@cf/cloudflare/${ClefModel}`;
+export type DecisionModel =
+  | "typesafe/jev-latest"
+  | `typesafe/jev-${number}.${number}`
+  | "cloudflare/@cf/cloudflare/clef"
+  | "cloudflare/@cf/cloudflare/clef-flash"
+  | "cloudflare/@cf/cloudflare/clef-omni";
 
 export const JEV_MODEL = /^jev-(?:latest|\d+\.\d+)$/u;
 
