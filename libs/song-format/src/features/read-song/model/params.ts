@@ -25,6 +25,7 @@ import type {
   Width,
 } from "#generated/langium/ast.ts";
 
+import { pluginUseOf } from "./plugins.ts";
 import type { From } from "./problem.ts";
 
 const UNITY = 1;
@@ -186,5 +187,6 @@ export const effectOf: From<EffectNode, Effect> = (node) =>
         rateHertz: hertzOf(tremolo.rate),
         depth: shareOf(tremolo.depth),
       }),
+      PluginEffect: (effect): Effect => pluginUseOf(effect.use).value,
     }),
   );

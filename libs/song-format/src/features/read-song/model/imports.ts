@@ -1,5 +1,5 @@
 import { Array as Arr, Option, Record as Rec, pipe } from "effect";
-import { AstUtils, UriUtils, isReference } from "langium";
+import { AstUtils, isReference } from "langium";
 import type { AstNode, URI } from "langium";
 
 import type { Effect } from "#/entities/song/index.ts";
@@ -8,11 +8,15 @@ import type { Declaration, Song as SongNode } from "#generated/langium/ast.ts";
 
 import { declarationsOf, isNamed, namespaceOf } from "./declarations.ts";
 import type { Declarations } from "./declarations.ts";
+import { pathFrom } from "./plugins.ts";
 import { problemAt } from "./problem.ts";
 import type { From, Problem } from "./problem.ts";
 import { importedUriOf } from "./scope.ts";
 
-export type Shared = Pick<Declarations, "samples" | "kits" | "instruments" | "buses" | "tracks">;
+export type Shared = Pick<
+  Declarations,
+  "samples" | "kits" | "instruments" | "buses" | "tracks" | "plugins"
+>;
 
 const uriOf: From<AstNode, URI> = (node) => AstUtils.getDocument(node).uri;
 
@@ -63,6 +67,9 @@ const importedDeclarationsOf: From<SongNode, readonly Declaration[]> = (song) =>
   );
 
 const effectWith: From<From<string, string>, From<Effect, Effect>> = (fix) => (effect) => {
+  if (effect.kind === "plugin") {
+    return { ...effect, module: fix(effect.module) };
+  }
   if (effect.kind === "reverb") {
     return {
       ...effect,
@@ -83,6 +90,21 @@ const effectsWith: From<From<string, string>, From<readonly Effect[], readonly E
       Arr.map((effect) => effectWith(fix)(effect)),
     );
 
+type Source = Shared["instruments"][number]["source"];
+
+const sourceWith: From<From<string, string>, From<Source, Source>> = (fix) => (source) => {
+  if (source.kind === "plugin") {
+    return { ...source, module: fix(source.module) };
+  }
+  return {
+    ...source,
+    zones: pipe(
+      source.zones,
+      Arr.map((zone) => ({ ...zone, path: fix(zone.path) })),
+    ),
+  };
+};
+
 const rebased: From<From<string, string>, From<Shared, Shared>> = (fix) => (shared) => {
   const effects = effectsWith(fix);
   return {
@@ -102,13 +124,7 @@ const rebased: From<From<string, string>, From<Shared, Shared>> = (fix) => (shar
     ),
     instruments: pipe(
       shared.instruments,
-      Arr.map((instrument) => ({
-        ...instrument,
-        zones: pipe(
-          instrument.zones,
-          Arr.map((zone) => ({ ...zone, path: fix(zone.path) })),
-        ),
-      })),
+      Arr.map((instrument) => ({ ...instrument, source: sourceWith(fix)(instrument.source) })),
     ),
     buses: pipe(
       shared.buses,
@@ -118,11 +134,12 @@ const rebased: From<From<string, string>, From<Shared, Shared>> = (fix) => (shar
       shared.tracks,
       Arr.map((track) => ({ ...track, fx: effects(track.fx) })),
     ),
+    plugins: pipe(
+      shared.plugins,
+      Arr.map((plugin) => ({ ...plugin, module: fix(plugin.module) })),
+    ),
   };
 };
-
-const pathFrom: From<URI, From<URI, From<string, string>>> = (home) => (module) => (path) =>
-  UriUtils.relative(UriUtils.dirname(home), UriUtils.resolvePath(UriUtils.dirname(module), path));
 
 const joined: From<readonly Shared[], Shared> = (parts) => ({
   samples: pipe(
@@ -144,6 +161,10 @@ const joined: From<readonly Shared[], Shared> = (parts) => ({
   tracks: pipe(
     parts,
     Arr.flatMap((part) => part.tracks),
+  ),
+  plugins: pipe(
+    parts,
+    Arr.flatMap((part) => part.plugins),
   ),
 });
 
