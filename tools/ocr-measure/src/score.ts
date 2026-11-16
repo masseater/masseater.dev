@@ -1,4 +1,4 @@
-import type { FieldValue, INVOICE_FIELDS } from "@r_masseater/ocr-decide";
+import type { FieldValue, INVOICE_FIELDS } from "@masseater.dev/ocr-decide";
 import { Array as Arr, Equivalence, Option, String as Str, pipe } from "effect";
 
 export type FieldId = (typeof INVOICE_FIELDS)[number]["id"];

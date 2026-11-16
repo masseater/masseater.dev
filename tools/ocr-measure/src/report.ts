@@ -1,11 +1,11 @@
 import { NodeServices } from "@effect/platform-node";
-import { SummarySchema } from "@ocr-decide/measurements/schema";
 import {
   CUTOFF,
   DEFAULT_GENERATOR_MODEL,
   INVOICE_FIELDS,
   REREAD_BELOW,
-} from "@r_masseater/ocr-decide";
+} from "@masseater.dev/ocr-decide";
+import { SummarySchema } from "@ocr-decide/measurements/schema";
 import { Context, DateTime, Effect, FileSystem, Layer, Schema, Array as Arr, pipe } from "effect";
 
 import { DetailsSchema, detailOf } from "./details.ts";

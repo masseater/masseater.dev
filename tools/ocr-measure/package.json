@@ -8,9 +8,9 @@
   },
   "dependencies": {
     "@effect/platform-node": "catalog:",
+    "@masseater.dev/ocr-decide": "workspace:*",
     "@ocr-decide/measurements": "workspace:*",
     "@ocr-decide/tooling": "workspace:*",
-    "@r_masseater/ocr-decide": "workspace:*",
     "effect": "catalog:stack",
     "entities": "catalog:"
   },

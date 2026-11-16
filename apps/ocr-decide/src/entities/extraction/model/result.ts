@@ -1,5 +1,5 @@
-import { INVOICE_FIELDS } from "@r_masseater/ocr-decide";
-import type { FieldValue } from "@r_masseater/ocr-decide";
+import { INVOICE_FIELDS } from "@masseater.dev/ocr-decide";
+import type { FieldValue } from "@masseater.dev/ocr-decide";
 import { Option, Array as Arr, pipe } from "effect";
 
 import { COPY } from "#/shared/config";

@@ -1,6 +1,6 @@
 import { NodeRuntime } from "@effect/platform-node";
+import { PRODUCT_NAME, openRouter } from "@masseater.dev/ocr-decide";
 import { provideAtEntry, tracingLayer } from "@ocr-decide/tooling";
-import { PRODUCT_NAME, openRouter } from "@r_masseater/ocr-decide";
 import { Effect, Layer, Ref, Array as Arr, pipe } from "effect";
 
 import { ENGINES } from "#/engines.ts";

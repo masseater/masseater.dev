@@ -1,5 +1,5 @@
-import { METHODS } from "@r_masseater/ocr-decide";
-import type { FieldValue } from "@r_masseater/ocr-decide";
+import { METHODS } from "@masseater.dev/ocr-decide";
+import type { FieldValue } from "@masseater.dev/ocr-decide";
 import { Schema } from "effect";
 
 import { labelOf } from "./outcome.ts";

@@ -1,5 +1,5 @@
 import { NodeServices } from "@effect/platform-node";
-import { ModelApi, readFragments } from "@r_masseater/ocr-decide";
+import { ModelApi, readFragments } from "@masseater.dev/ocr-decide";
 import {
   Context,
   Duration,

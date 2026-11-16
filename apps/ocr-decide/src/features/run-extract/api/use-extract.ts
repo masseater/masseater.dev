@@ -1,5 +1,5 @@
-import { INVOICE_FIELDS, extract, openRouterWithKey } from "@r_masseater/ocr-decide";
-import type { FieldValue } from "@r_masseater/ocr-decide";
+import { INVOICE_FIELDS, extract, openRouterWithKey } from "@masseater.dev/ocr-decide";
+import type { FieldValue } from "@masseater.dev/ocr-decide";
 import { useMutation } from "@tanstack/react-query";
 import { Duration, Effect, Layer } from "effect";
 

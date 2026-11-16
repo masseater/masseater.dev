@@ -1888,15 +1888,15 @@ importers:
       '@effect/atom-react':
         specifier: catalog:stack
         version: 4.1.4(effect@4.1.4)(react@19.3.1)(scheduler@0.28.0)
+      '@masseater.dev/ocr-decide':
+        specifier: workspace:*
+        version: link:../../libs/ocr-decide
       '@masseater.dev/web-ui':
         specifier: workspace:*
         version: link:../../libs/web-ui
       '@ocr-decide/measurements':
         specifier: workspace:*
         version: link:../../libs/ocr-measurements
-      '@r_masseater/ocr-decide':
-        specifier: workspace:*
-        version: link:../../libs/ocr-decide
       '@tanstack/react-query':
         specifier: catalog:stack
         version: 5.107.1(@types/react@19.3.0)(react@19.3.1)
@@ -2164,6 +2164,9 @@ importers:
       '@masseater.dev/repositories':
         specifier: workspace:*
         version: link:../../infra/repositories
+      '@masseater.dev/sloppedia':
+        specifier: workspace:*
+        version: link:../../libs/sloppedia
       '@masseater.dev/ui':
         specifier: workspace:*
         version: link:../../libs/ui
@@ -2230,9 +2233,6 @@ importers:
       security-headers:
         specifier: workspace:*
         version: link:../../libs/security-headers
-      sloppedia:
-        specifier: workspace:*
-        version: link:../../libs/sloppedia
       tailwindcss:
         specifier: catalog:stack
         version: 4.3.5
@@ -3729,7 +3729,7 @@ importers:
 
   libs/ocr-measurements:
     dependencies:
-      '@r_masseater/ocr-decide':
+      '@masseater.dev/ocr-decide':
         specifier: workspace:*
         version: link:../ocr-decide
       effect:
@@ -3981,12 +3981,6 @@ importers:
 
   libs/sloppedia:
     devDependencies:
-      '@r_masseater/vite-plus-adopt':
-        specifier: 'catalog:'
-        version: 0.6.0(@voidzero-dev/vite-plus-core@1.6.0(patch_hash=b28fd962a73ec6c9915197197f7e549598912400c8517eb2d0d12dc86c2ec9f0)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(effect@4.1.4)(supports-color@10.2.2)(typescript@7.1.0-beta)(vite-plus@1.6.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))
-      '@size-limit/file':
-        specifier: 'catalog:'
-        version: 14.3.0(size-limit@14.3.0)
       '@types/react':
         specifier: 'catalog:'
         version: 19.3.0
@@ -3999,18 +3993,12 @@ importers:
       happy-dom:
         specifier: 'catalog:'
         version: 21.0.4
-      publint:
-        specifier: 'catalog:'
-        version: 0.3.25
       react:
         specifier: 'catalog:'
         version: 19.3.1
       react-dom:
         specifier: 'catalog:'
         version: 19.3.1(react@19.3.1)
-      size-limit:
-        specifier: 'catalog:'
-        version: 14.3.0
       tailwindcss:
         specifier: catalog:stack
         version: 4.3.5
@@ -4683,15 +4671,15 @@ importers:
       '@effect/platform-node':
         specifier: 'catalog:'
         version: 4.1.4(effect@4.1.4)(redis@6.2.1(@opentelemetry/api@1.10.0))
+      '@masseater.dev/ocr-decide':
+        specifier: workspace:*
+        version: link:../../libs/ocr-decide
       '@ocr-decide/measurements':
         specifier: workspace:*
         version: link:../../libs/ocr-measurements
       '@ocr-decide/tooling':
         specifier: workspace:*
         version: link:../../libs/ocr-tooling
-      '@r_masseater/ocr-decide':
-        specifier: workspace:*
-        version: link:../../libs/ocr-decide
       effect:
         specifier: catalog:stack
         version: 4.1.4
@@ -4732,15 +4720,15 @@ importers:
       '@effect/platform-node':
         specifier: 'catalog:'
         version: 4.1.4(effect@4.1.4)(redis@6.2.1(@opentelemetry/api@1.10.0))
+      '@masseater.dev/ocr-decide':
+        specifier: workspace:*
+        version: link:../../libs/ocr-decide
       '@ocr-decide/measurements':
         specifier: workspace:*
         version: link:../../libs/ocr-measurements
       '@ocr-decide/tooling':
         specifier: workspace:*
         version: link:../../libs/ocr-tooling
-      '@r_masseater/ocr-decide':
-        specifier: workspace:*
-        version: link:../../libs/ocr-decide
       effect:
         specifier: catalog:stack
         version: 4.1.4

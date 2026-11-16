@@ -1,47 +1,16 @@
 {
-  "name": "@r_masseater/ocr-decide",
-  "version": "0.1.0",
+  "name": "@masseater.dev/ocr-decide",
+  "version": "0.0.0",
+  "private": true,
   "description": "Read invoices and receipts with plain OCR and let fast, cheap decision models pick which line holds each field.",
-  "keywords": [
-    "decision-model",
-    "effect",
-    "invoice",
-    "ocr",
-    "openrouter",
-    "receipt"
-  ],
-  "homepage": "https://github.com/masseater/masseater.dev/tree/main/libs/ocr-decide#readme",
-  "bugs": {
-    "url": "https://github.com/masseater/masseater.dev/issues"
-  },
-  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/masseater/masseater.dev.git",
     "directory": "libs/ocr-decide"
   },
-  "files": [
-    "dist",
-    "LICENSE"
-  ],
   "type": "module",
   "exports": {
-    ".": "./src/index.ts",
-    "./package.json": "./package.json"
-  },
-  "publishConfig": {
-    "exports": {
-      ".": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
-      },
-      "./package.json": "./package.json"
-    },
-    "access": "public",
-    "provenance": true
-  },
-  "scripts": {
-    "prepublishOnly": "vp run build"
+    ".": "./src/index.ts"
   },
   "dependencies": {
     "@effect/ai-openrouter": "catalog:",
@@ -55,8 +24,5 @@
   },
   "peerDependencies": {
     "effect": "^4.1.2"
-  },
-  "engines": {
-    "node": ">=26"
   }
 }
