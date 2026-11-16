@@ -1,5 +1,7 @@
 import { Array as Arr, Effect, Option, Schema, pipe } from "effect";
 
+import type { TrackBlock } from "#/entities/live/index.ts";
+
 export const BLOCK_FRAMES = 32_768;
 const LOW_MEMORY = 4;
 const PHONE = /iPhone|iPad|iPod|Android/u;
@@ -136,12 +138,6 @@ onmessage = ({ data }) => {
   queue = queue.then(() => handle(data)).catch((error) => postMessage({ failed: String(error) }));
 };
 `;
-
-export interface TrackBlock {
-  readonly channels: number;
-  readonly scale: number;
-  readonly data: Int16Array;
-}
 
 export interface TapeShape {
   readonly tracks: number;

@@ -21,4 +21,4 @@ Sloppedia の記事は百科事典のようなスタイルで記述すること�
 
 曲は `src/entities/song/catalog/<slug>/` に 1 曲ずつ置く。一覧とページは、そこにある `work.ts`、`recording.ts`、`thumb.webp` から作る。
 
-`program/*.js` は AI が書いた曲のプログラムで、作品の原本として書き換えない。lint の対象から外し、型は隣の `.d.ts` で与える。音を直すときは曲を作り直す。`recording.ts` などのつなぎのコードは TypeScript で書き、lint を通す。
+曲の音を作るコードも TypeScript で書き、lint を通す。譜面の値は `score/` のデータに置き、音の処理は `engine/` に置く。書き出す音が変わる変更は曲の作り直しとして扱う。それ以外の変更では、書き出した音がビット単位で変わらないことを確かめる。

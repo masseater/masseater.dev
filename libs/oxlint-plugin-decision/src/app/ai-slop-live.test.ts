@@ -58,7 +58,7 @@ const byPosition = (lines: readonly string[]): readonly string[] => Arr.sort(lin
 const aiSlopLive = Effect.scoped(
   Effect.gen(function* test() {
     const fs = yield* FileSystem.FileSystem;
-    const key = yield* Config.Redacted("OPENROUTER_API_KEY");
+    const key = yield* Config.Redacted("TYPESAFE_API_KEY");
     const example = yield* fromRoot("example-presets", "ai-slop");
     const cwd = yield* tempProject({
       "fail.ts": yield* fs.readFileString(`${example}/fail.ts`),
@@ -74,7 +74,7 @@ const aiSlopLive = Effect.scoped(
     const run = yield* oxlint(
       cwd,
       ["--format", "unix", "-c", "oxlint.config.ts", "fail.ts", "pass.ts"],
-      { ...(yield* forwardedEnv), OPENROUTER_API_KEY: Redacted.value(key) },
+      { ...(yield* forwardedEnv), TYPESAFE_API_KEY: Redacted.value(key) },
     );
     yield* Effect.log(outputOf(run));
     deepStrictEqual(

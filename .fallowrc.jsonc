@@ -164,15 +164,11 @@
     },
   },
   "health": {
-    "ignore": ["**/generated/**", "apps/portfolio/src/entities/song/catalog/*/program/*.js"],
+    "ignore": ["**/generated/**"],
   },
   "duplicates": {
     "threshold": 1,
-    "ignore": [
-      "**/generated/**",
-      "**/routeTree.gen.ts",
-      "apps/portfolio/src/entities/song/catalog/*/program/*.js",
-    ],
+    "ignore": ["**/generated/**", "**/routeTree.gen.ts"],
   },
   "flags": {
     "sdkPatterns": [

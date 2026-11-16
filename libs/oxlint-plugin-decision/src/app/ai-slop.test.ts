@@ -14,6 +14,7 @@ import {
 import type { PlatformError } from "effect/PlatformError";
 
 import aiSlopPlugin, { aiSlopRules } from "./ai-slop.ts";
+import { FAKE_SETTINGS, alwaysYes, fakeTypesafeEnv } from "./fake-typesafe.test.support.ts";
 import {
   FAILED,
   TIMEOUT,
@@ -31,24 +32,13 @@ const AI_SLOP = aiSlopPlugin.meta.name;
 
 const EXAMPLES = ["fail.ts", "pass.ts"] as const;
 
-const alwaysYes = (core: string, entry: string): string => `
-import { createDecisionPlugin, defineProvider } from ${toJson(core)};
+const pluginSource = (core: string, entry: string): string => `
+import { createDecisionPlugin } from ${toJson(core)};
 import { aiSlopRules } from ${toJson(entry)};
-
-const decide = ({ request }) => ({
-  ok: true,
-  response: {
-    model: "fake-1",
-    answers: Object.fromEntries(
-      Object.keys(request.questions).map((ref) => [ref, { type: "noul", noul: 0.99 }]),
-    ),
-  },
-});
 
 export default createDecisionPlugin({
   name: ${toJson(AI_SLOP)},
   rules: aiSlopRules,
-  providers: [defineProvider({ name: "fake", requiredEnv: [], decide })],
 });
 `;
 
@@ -146,16 +136,21 @@ const askedWhere = Effect.scoped(
     const core = yield* fromRoot("dist", "index.mjs");
     const entry = yield* fromRoot("dist", "presets", "ai-slop.mjs");
     const cwd = yield* tempProject({
-      "plugin.mjs": alwaysYes(core, entry),
+      "plugin.mjs": pluginSource(core, entry),
       "fail.ts": yield* exampleFile("fail.ts"),
       "pass.ts": yield* exampleFile("pass.ts"),
       "oxlint.config.ts": configSource({
         jsPlugins: ["./plugin.mjs"],
         rules: enabled(AI_SLOP, aiSlopRules),
-        settings: { [AI_SLOP]: { model: "fake/any" } },
+        settings: { [AI_SLOP]: FAKE_SETTINGS },
       }),
     });
-    const run = yield* oxlint(cwd, ["--format", "unix", "-c", "oxlint.config.ts", ...EXAMPLES], {});
+    const env = yield* fakeTypesafeEnv(alwaysYes);
+    const run = yield* oxlint(
+      cwd,
+      ["--format", "unix", "-c", "oxlint.config.ts", ...EXAMPLES],
+      env,
+    );
     strictEqual(run.status, FAILED, outputOf(run));
     deepStrictEqual(sorted(byRule(run.stdout)), EXPECTED);
   }),

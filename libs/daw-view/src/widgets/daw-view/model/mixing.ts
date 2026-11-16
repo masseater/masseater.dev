@@ -1,5 +1,6 @@
 import { Array as Arr, Option, pipe } from "effect";
 
+import type { Mixer } from "#/entities/live/index.ts";
 import type { Session, Track } from "#/entities/song/index.ts";
 
 const NONE = 0;
@@ -9,12 +10,6 @@ export type Switch = "mute" | "solo";
 export interface Change {
   readonly name: string;
   readonly flip: Switch;
-}
-
-export interface Mixer {
-  readonly volumeDecibels: number;
-  readonly pan: number;
-  readonly muted: boolean;
 }
 
 export interface Channel {

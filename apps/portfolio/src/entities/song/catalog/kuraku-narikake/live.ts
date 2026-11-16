@@ -1,38 +1,44 @@
 import type { LiveMix, Rendered, Take, Tape } from "@masseater.dev/daw-view";
-import { Array as Arr, Option, Record as Rec, pipe } from "effect";
+import { Option, pipe } from "effect";
 
+import { workletIn } from "#/entities/song/model/daw.ts";
 import { withLive } from "#/entities/song/model/mixdown.ts";
-import { FIELD } from "#/entities/song/model/program.ts";
 
-import type { Master, Session, Slot } from "./program/song.js";
-import { engine, player } from "./session.ts";
+import type { Mastered } from "./engine/master.ts";
+import type { LiveInit } from "./engine/player.ts";
+import { MIX } from "./engine/score.ts";
 
-export interface Mastering {
-  readonly session: Session;
-  readonly out: Master;
-  readonly stems: readonly Slot[];
-}
+const worklet = workletIn(
+  import.meta.glob<string>("./worklet.ts", {
+    query: "?worker&url",
+    import: "default",
+    eager: true,
+  }),
+);
 
-export const liveOf =
-  ({ session, out, stems }: Mastering) =>
-  (tape: Tape): LiveMix => ({
-    tracks: session.tracks,
-    player,
-    init: { [FIELD.frames]: session.N, SR: engine.SR, stems, par: out.par, auto: out.auto },
-    transfer: pipe(
-      Rec.values(out.auto),
-      Arr.map((curve) => curve.buffer),
-    ),
-    tape,
-  });
-
-export interface Finished extends Mastering {
+export interface Finish {
+  readonly out: Mastered;
+  readonly drums: readonly boolean[];
   readonly take: Take;
 }
 
-export const masteredWith =
-  ({ take, ...mastering }: Finished) =>
+const liveOf =
+  ({ out, drums }: Finish) =>
+  (tape: Tape): LiveMix => {
+    const init: LiveInit = { frames: out.left.length, drums, curves: out.curves };
+    const { drum, low, mid, high, limit } = out.curves;
+    return {
+      tracks: MIX.order,
+      worklet,
+      init,
+      transfer: [drum.buffer, low.buffer, mid.buffer, high.buffer, limit.buffer],
+      tape,
+    };
+  };
+
+export const finished =
+  (finish: Finish) =>
   (tape: Option.Option<Tape>): Rendered => {
-    const live = pipe(tape, Option.map(liveOf(mastering)));
-    return withLive({ left: mastering.out.L, right: mastering.out.R, take })(live);
+    const live = pipe(tape, Option.map(liveOf(finish)));
+    return withLive({ left: finish.out.left, right: finish.out.right, take: finish.take })(live);
   };

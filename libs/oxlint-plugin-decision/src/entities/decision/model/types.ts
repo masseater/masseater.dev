@@ -1,12 +1,6 @@
-import type {
-  Answer as WireAnswerSchema,
-  ChoiceQuestion as ChoiceQuestionSchema,
-  DecisionsRequest as DecisionsRequestSchema,
-  DecisionsResponse as DecisionsResponseSchema,
-  NoulQuestion as NoulQuestionSchema,
-} from "@effect/ai-openrouter/OpenRouterSchema";
 import type { Context, ESTree, Location, Range } from "@oxlint/plugins";
 
+import type { DecisionModel } from "./models.ts";
 import type {
   CiBehaviorSchema,
   EnclosingKindSchema,
@@ -34,7 +28,7 @@ export type Target = typeof TargetSchema.Type;
 
 export type CiBehavior = typeof CiBehaviorSchema.Type;
 
-export type ModelSpec = string | readonly string[];
+export type ModelSpec = DecisionModel | readonly DecisionModel[];
 
 export type ExplainSetting = typeof ExplainSettingSchema.Type;
 
@@ -73,24 +67,21 @@ export interface DecisionOptions {
   readonly explain?: ExplainSetting;
 }
 
-export interface NoulQuestion extends Readonly<
-  Pick<typeof NoulQuestionSchema.Encoded, "type" | "instructions">
-> {
+export interface NoulQuestion {
+  readonly type: "noul";
   readonly instructions: string;
 }
 
-export interface ChoiceQuestion extends Readonly<
-  Pick<typeof ChoiceQuestionSchema.Encoded, "type" | "instructions" | "criteria">
-> {
+export interface ChoiceQuestion {
+  readonly type: "choice";
   readonly instructions: string;
   readonly criteria: Readonly<Record<string, string | null>>;
 }
 
 export type Question = NoulQuestion | ChoiceQuestion;
 
-export interface DecisionRequest extends Readonly<
-  Pick<typeof DecisionsRequestSchema.Encoded, "model" | "state" | "questions">
-> {
+export interface DecisionRequest {
+  readonly model: string;
   readonly state: {
     readonly snippets: Readonly<Record<string, string>>;
     readonly contexts?: Readonly<Record<string, string>>;
@@ -98,17 +89,25 @@ export interface DecisionRequest extends Readonly<
   readonly questions: Readonly<Record<string, Question>>;
 }
 
-export type DecisionResponse = Pick<typeof DecisionsResponseSchema.Type, "model" | "answers">;
+export interface NoulAnswer {
+  readonly type: "noul";
+  readonly noul: number;
+}
 
-export type Answers = DecisionResponse["answers"];
+export interface ChoiceAnswer {
+  readonly type: "choice";
+  readonly choice: string;
+  readonly probabilities?: Readonly<Record<string, number>> | undefined;
+}
 
-export type Answer = Answers[string];
+export type Answer = NoulAnswer | ChoiceAnswer;
 
-export type NoulAnswer = Frozen<Extract<typeof WireAnswerSchema.Type, { readonly type: "noul" }>>;
+export type Answers = Readonly<Record<string, Answer>>;
 
-export type ChoiceAnswer = Frozen<
-  Extract<typeof WireAnswerSchema.Type, { readonly type: "choice" }>
->;
+export interface DecisionResponse {
+  readonly model: string;
+  readonly answers: Answers;
+}
 
 export type DecideResult =
   | { readonly ok: true; readonly response: DecisionResponse; readonly cached?: boolean }
@@ -123,16 +122,14 @@ export interface DecideInput {
 export interface DecisionProvider {
   readonly name: string;
   readonly requiredEnv: readonly string[];
-  readonly models?: RegExp;
-  readonly yesNo?: boolean;
+  readonly models: RegExp;
   readonly decide: (input: DecideInput) => DecideResult;
-  readonly decideAll?: (inputs: readonly DecideInput[]) => readonly DecideResult[];
+  readonly decideAll: (inputs: readonly DecideInput[]) => readonly DecideResult[];
 }
 
 export interface DecisionPluginSetup extends DecisionOptions {
   readonly name?: string;
   readonly rules: readonly DecisionRule[];
-  readonly providers?: readonly DecisionProvider[];
 }
 
 export interface DecisionPlugin {
