@@ -72,6 +72,7 @@ export const GITHUB_APP_PERMISSIONS = {
   environments: "write",
   contents: "write",
   pull_requests: "write",
+  workflows: "write",
   metadata: "read",
 } as const satisfies Readonly<Record<string, PermissionLevel>>;
 
@@ -124,10 +125,15 @@ const BOT_PERMISSIONS = {
   metadata: "read",
 } as const satisfies Readonly<Record<string, PermissionLevel>>;
 
+const MERGE_QUEUE_PERMISSIONS = {
+  ...BOT_PERMISSIONS,
+  workflows: "write",
+} as const satisfies Readonly<Record<string, PermissionLevel>>;
+
 export const WORKFLOW_GITHUB_GRANTS: Readonly<Record<string, Readonly<Record<string, string>>>> = {
   "autofix.yml": BOT_PERMISSIONS,
   "skills-lock.yml": BOT_PERMISSIONS,
-  "update-branches.yml": BOT_PERMISSIONS,
+  "update-branches.yml": MERGE_QUEUE_PERMISSIONS,
 };
 
 const NPM_GRANTS: readonly string[] = ["masseater.dev/npm"];
