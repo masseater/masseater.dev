@@ -2,7 +2,7 @@ import { describe, expect, it } from "@effect/vitest";
 import { Effect } from "effect";
 import { page } from "vite-plus/test/browser";
 
-import { fixtureOf } from "./fixture.test.support.ts";
+import { fixtureOf, mixedFixtureOf } from "./fixture.test.support.ts";
 import { mount } from "./mount.test.support.ts";
 
 const CLICK = new URL("click.wav", import.meta.url).href;
@@ -101,6 +101,39 @@ describe("the tracks of a mounted song", () => {
         Math.round(timeline.getBoundingClientRect().left),
       );
       yield* Effect.promise(() => page.viewport(WIDE.width, WIDE.height));
+    }),
+  );
+});
+
+const solo = page.getByRole("button", { name: "BASS をソロ" });
+const mute = page.getByRole("button", { name: "DRUMS をミュート" });
+
+const mixed = Effect.gen(function* mixed() {
+  yield* mount(mixedFixtureOf({}).song);
+  yield* ready;
+  yield* Effect.promise(() => solo.click());
+  yield* Effect.promise(() => mute.click());
+});
+
+describe("the mixer of a mounted song", () => {
+  it.live("mutes and solos the tracks its mixer carries", () =>
+    Effect.gen(function* test() {
+      yield* mixed;
+      yield* Effect.promise(() => expect.element(solo).toHaveAttribute("aria-pressed", "true"));
+      yield* Effect.promise(() => expect.element(mute).toHaveAttribute("aria-pressed", "true"));
+      const unmixed = page.getByRole("button", { name: "VOICE SEND をソロ" });
+      yield* Effect.promise(() => expect.element(unmixed).not.toBeInTheDocument());
+      yield* Effect.promise(() => expect(main).toMatchScreenshot("mixed"));
+    }),
+  );
+
+  it.live("plays and pauses through the song's own mixer", () =>
+    Effect.gen(function* test() {
+      yield* mixed;
+      yield* Effect.promise(() => play.click());
+      yield* Effect.promise(() => expect.element(page.getByText("0:01")).toBeVisible());
+      yield* Effect.promise(() => pause.click());
+      yield* Effect.promise(() => expect.element(play).toBeVisible());
     }),
   );
 });

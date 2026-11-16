@@ -35,5 +35,5 @@ export {
   pitchClass,
   pitchName,
 } from "./model/text.ts";
-export { RULER_HEIGHT, eventsBetween, firstFrom, sessionOf } from "./model/tracks.ts";
+export { RULER_HEIGHT, eventsBetween, firstFrom, levelOf, sessionOf } from "./model/tracks.ts";
 export type { Lane, Session, Track } from "./model/tracks.ts";
