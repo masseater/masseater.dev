@@ -158,7 +158,7 @@ export const lint = {
   overrides,
   settings: {
     [decisionPluginName]: {
-      model: "cloudflare/@cf/qwen/qwen3.8-27b",
+      model: "cloudflare/@cf/cloudflare/clef-flash",
       timeoutMs: DECISION_TIMEOUT_MS,
       ci: "skip",
     },

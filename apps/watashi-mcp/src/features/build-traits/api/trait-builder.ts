@@ -28,7 +28,10 @@ const logger = Logger.layer([Logger.withLeveledConsole(Logger.formatStructured)]
 const runLogged = runner(logger);
 
 export class TraitBuilder extends DurableObject {
-  private readonly ai = createAI({ binding: env.AI });
+  private readonly ai = createAI({
+    binding: env.AI,
+    metadata: { caller: "watashi-mcp.trait-builder" },
+  });
 
   private readonly registry = traitRegistry();
 

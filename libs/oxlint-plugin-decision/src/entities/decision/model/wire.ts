@@ -9,7 +9,6 @@ import type {
   Question,
 } from "./types.ts";
 import {
-  collapseChoices,
   isRespan,
   withChoices,
   isSeverityScale,
@@ -18,6 +17,8 @@ import {
 } from "./wire-choice.ts";
 
 const DATA_FIRST_ARITY = 2;
+
+const MAX_QUESTIONS = 64;
 
 type State = DecisionRequest["state"];
 
@@ -110,46 +111,51 @@ const asYesNo = ([id, question]: readonly [string, Question]): readonly (readonl
   return [[id, question]];
 };
 
+type SnippetQuestions = Arr.NonEmptyReadonlyArray<readonly [string, Question]>;
+
+const perSnippet =
+  (wiresOf: (ref: string, questions: SnippetQuestions) => readonly WireRequest[]) =>
+  (request: DecisionRequest): Arr.NonEmptyReadonlyArray<WireRequest> => {
+    const bySnippet = Arr.groupBy(Rec.toEntries(request.questions), ([id]) => snippetRefOf(id));
+    const wires = pipe(
+      Rec.toEntries(bySnippet),
+      Arr.flatMap(([ref, questions]) => wiresOf(ref, questions)),
+    );
+    if (Arr.isReadonlyArrayNonEmpty(wires)) {
+      return wires;
+    }
+    return [request];
+  };
+
 export const yesNoRequestsFor = (
   request: DecisionRequest,
-): Arr.NonEmptyReadonlyArray<WireRequest> => {
-  const bySnippet = Arr.groupBy(Rec.toEntries(request.questions), ([id]) => snippetRefOf(id));
-  const wires = pipe(
-    Rec.values(bySnippet),
-    Arr.map((questions): WireRequest => {
-      const [[id]] = questions;
-      return {
-        model: request.model,
-        state: stateAsText(stateOf(request.state, snippetRefOf(id))),
-        questions: Rec.fromEntries(
-          pipe(
-            questions,
-            Arr.flatMap((entry) => asYesNo(entry)),
-          ),
+): Arr.NonEmptyReadonlyArray<WireRequest> =>
+  perSnippet((ref, questions) => [
+    {
+      model: request.model,
+      state: stateAsText(stateOf(request.state, ref)),
+      questions: Rec.fromEntries(
+        pipe(
+          questions,
+          Arr.flatMap((entry) => asYesNo(entry)),
         ),
-      };
-    }),
-  );
-  if (Arr.isReadonlyArrayNonEmpty(wires)) {
-    return wires;
-  }
-  return [request];
-};
-
-export const yesNoRequestFor = (
-  request: DecisionRequest,
-): Arr.NonEmptyReadonlyArray<WireRequest> => [
-  {
-    model: request.model,
-    state: stateAsText(request.state),
-    questions: Rec.fromEntries(
-      pipe(
-        Rec.toEntries(request.questions),
-        Arr.flatMap((entry) => asYesNo(entry)),
       ),
+    },
+  ])(request);
+
+export const snippetRequestsFor = (
+  request: DecisionRequest,
+): Arr.NonEmptyReadonlyArray<WireRequest> =>
+  perSnippet((ref, questions) =>
+    pipe(
+      Arr.chunksOf(questions, MAX_QUESTIONS),
+      Arr.map((chunk): WireRequest => ({
+        model: request.model,
+        state: stateOf(request.state, ref),
+        questions: Rec.fromEntries(chunk),
+      })),
     ),
-  },
-];
+  )(request);
 
 export const wireRequestsFor = (
   request: DecisionRequest,
@@ -193,5 +199,3 @@ export interface Merge {
 }
 
 export const mergeResponses: Merge = Fn.dual(DATA_FIRST_ARITY, merging(withChoices));
-
-export const mergeYesNo: Merge = Fn.dual(DATA_FIRST_ARITY, merging(collapseChoices));

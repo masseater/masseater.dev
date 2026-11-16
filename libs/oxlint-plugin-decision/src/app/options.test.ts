@@ -38,7 +38,9 @@ const resolvesDefaults = Effect.sync(() => {
     ),
     [
       {
-        models: [{ id: "cloudflare/@cf/qwen/qwen3.8-27b", model: "@cf/qwen/qwen3.8-27b" }],
+        models: [
+          { id: "cloudflare/@cf/cloudflare/clef-flash", model: "@cf/cloudflare/clef-flash" },
+        ],
         answer: { kind: "boolean" },
       },
     ],
@@ -74,6 +76,12 @@ const settingsOverrideCode = Effect.sync(() => {
 const refusesEmpty = Effect.sync(() => {
   throws(() => {
     resolveOptions(noSettings, [], providers);
+  });
+});
+
+const refusesChatModels = Effect.sync(() => {
+  throws(() => {
+    resolveOptions({ options: { model: "cloudflare/@cf/qwen/qwen3.8-27b" } }, [rule], providers);
   });
 });
 
@@ -153,6 +161,7 @@ layer(Layer.empty)("resolving options", (it) => {
   it.effect("lets oxlint settings override the plugin's own options", () => settingsOverrideCode);
   it.effect("refuses a plugin with no rules", () => refusesEmpty);
   it.effect("asks each listed model once", () => dedupesModels);
+  it.effect("refuses a Workers AI model that is not a decision model", () => refusesChatModels);
   it.effect(
     "sends the binding for an anonymous function stored under a name",
     () => namesAnonymousFunctions,
