@@ -8,6 +8,21 @@ import { checkRepository } from "./check.ts";
 
 const stringifyUnknown = Schema.encodeEffect(Schema.fromJsonString(Schema.Unknown));
 
+export const jsonOf = (value: unknown): Effect.Effect<string, Schema.SchemaError> =>
+  stringifyUnknown(value);
+
+export const dependingOn = (
+  ...names: readonly string[]
+): Effect.Effect<string, Schema.SchemaError> =>
+  stringifyUnknown({
+    name: "fixture",
+    dependencies: pipe(
+      names,
+      Arr.map((name) => [name, "1.0.0"] as const),
+      Rec.fromEntries,
+    ),
+  });
+
 const defaultFiles = Effect.gen(function* defaultFiles() {
   const packageJson = yield* stringifyUnknown({ name: "fixture" });
   const tsconfig = yield* stringifyUnknown({

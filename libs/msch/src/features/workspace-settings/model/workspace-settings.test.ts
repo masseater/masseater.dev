@@ -6,7 +6,7 @@ import { gitRepositoryWith, fixtureLayer } from "#/shared/lib/repository.test.su
 
 import { workspaceSettings } from "./workspace-settings.ts";
 
-const RULE_SETS = { traced: { "eslint/no-restricted-properties": ["error", { object: "db" }] } };
+const RULE_SETS = { traced: { "eslint/no-console": ["error", { allow: ["warn"] }] } };
 const DEPENDENCY_SETS = { telemetry: ["@opentelemetry/sdk-trace-base"] };
 
 const WORKSPACE = "packages:\n  - apps/*\n  - libs/*\n";
@@ -55,7 +55,7 @@ const readsLiteralSettings = Effect.gen(function* readsLiteralSettings() {
         {
           files: ["apps/web/worker/**/*.ts"],
           excludeFiles: ["apps/web/**/*.test.ts"],
-          rules: { "eslint/no-restricted-properties": ["error", { object: "db" }] },
+          rules: { "eslint/no-console": ["error", { allow: ["warn"] }] },
         },
         {
           files: ["apps/web/src/serve.ts"],

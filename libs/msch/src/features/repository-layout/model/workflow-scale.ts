@@ -1,7 +1,7 @@
 import { Array as Arr, Effect, Option, String as Str, pipe } from "effect";
 import { isMap, isPair, parseDocument } from "yaml";
 
-import { namedWorkspaces } from "#/entities/workspace/index.ts";
+import { namedWorkspaces, patternOf } from "#/entities/workspace/index.ts";
 import type { NamedWorkspace } from "#/entities/workspace/index.ts";
 import type { Problem, RuleName } from "#/shared/lib/problem.ts";
 import { RepositoryFiles } from "#/shared/lib/repository-files.ts";
@@ -71,7 +71,10 @@ const pathFiltersIn = (file: string, source: string): readonly Problem[] => {
 const matching = (workspaces: readonly NamedWorkspace[], text: string): Option.Option<string> =>
   pipe(
     workspaces,
-    Arr.findFirst(({ pattern }) => Option.isSome(Str.match(pattern)(text))),
+    Arr.findFirst(
+      ({ names }) =>
+        Arr.isReadonlyArrayNonEmpty(names) && Option.isSome(Str.match(patternOf(names))(text)),
+    ),
     Option.map(({ directory }) => directory),
   );
 

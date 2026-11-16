@@ -82,7 +82,32 @@ const passesTheCheckPolicy = Effect.gen(function* passesTheCheckPolicy() {
   expect(findings).toStrictEqual([]);
 });
 
+const namesMarketplacePluginsButNotTheirPaths = Effect.gen(
+  function* namesMarketplacePluginsButNotTheirPaths() {
+    const findings = yield* findingsFor({
+      "package.json": '{ "name": "repo" }',
+      "plugins/teacher/package.json": '{ "name": "teacher" }',
+      "apps/harbor/package.json": '{ "name": "@repo/harbor" }',
+      "plugins/harbor/package.json": '{ "name": "plugin-harbor" }',
+      ".claude-plugin/marketplace.json":
+        '{ "plugins": [{ "name": "teacher", "source": "./plugins/teacher" }, { "name": "harbor", "source": "./plugins/harbor" }] }',
+      "README.md": Arr.join("\n")([
+        "# repo",
+        "",
+        "Install teacher or harbor with claude plugin install teacher@repo.",
+        "Its license is in plugins/teacher/LICENSE.",
+        "The dashboard is @repo/harbor.",
+      ]),
+    });
+    expect(findings).toStrictEqual(["README.md:4:19 root-readme", "README.md:5:18 root-readme"]);
+  },
+);
+
 layer(fixtureLayer)("root readme", (it) => {
+  it.effect(
+    "lets the root README name a marketplace plugin, even one sharing an app's name, but not a path inside it",
+    () => namesMarketplacePluginsButNotTheirPaths,
+  );
   it.effect(
     "flags a workspace's directory, basename or package name in the root README",
     () => flagsWorkspaceNames,
