@@ -17,7 +17,7 @@ export default Stack.make("site", Workers.Worker("site", { main: "./src/app/site
 const NESTED = `import { Workers } from "@alchemy.run/cloudflare";
 
 export const guard = Workers.Worker("guard", {
-  main: decodeURIComponent(new URL("honeypot.ts", import.meta.url).pathname),
+  main: decodeURIComponent(new URL("./honeypot.ts", import.meta.url).pathname),
 });
 `;
 

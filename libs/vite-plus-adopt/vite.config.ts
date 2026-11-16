@@ -94,7 +94,7 @@ interface BuiltAttw {
 }
 
 const loadBuiltAttw = (): Promise<BuiltAttw> =>
-  import(new URL("dist/attw.mjs", import.meta.url).href);
+  import(new URL("./dist/attw.mjs", import.meta.url).href);
 
 const checkWith =
   (tarball: Uint8Array, options: CheckPackageOptions) =>

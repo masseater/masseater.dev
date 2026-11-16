@@ -88,6 +88,7 @@ const rules = {
   "import/no-nodejs-modules": "off",
   "eslint/new-cap": ["error", { capIsNew: false }],
   "eslint/one-var": ["error", "never"],
+  "unicorn/relative-url-style": ["error", "always"],
   "eslint/id-length": ["error", { exceptions: ["x", "y"] }],
   "jsdoc/check-tag-names": ["error", { definedTags: ["msch"] }],
   "jsdoc/require-param": ["error", { exemptedBy: ["inheritdoc", "internal", "msch"] }],

@@ -4,7 +4,6 @@
   "entry": ["*/*/bin/*.ts"],
   "dynamicallyLoaded": [
     "**/*.d.rpp.ts",
-    "apps/aredoko-server/src/app/rpc/embedder-worker.test.support.ts",
     "libs/oxlint-typed-rules/src/shared/lib/ts-api-utils.ts",
     "libs/oxlint-typed-rules/src/shared/lib/ts-compat.ts",
     "libs/oxlint-typed-rules/src/shared/lib/typescript-eslint-utils.ts",

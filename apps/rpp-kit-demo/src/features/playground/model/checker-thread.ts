@@ -8,7 +8,9 @@ import type { CheckerWorker } from "./checker-runner.ts";
 import { GENERATED_PATH } from "./editors.ts";
 
 const spawn = Effect.acquireRelease(
-  Effect.sync(() => new Worker(new URL("checker-runner.ts", import.meta.url), { type: "module" })),
+  Effect.sync(
+    () => new Worker(new URL("./checker-runner.ts", import.meta.url), { type: "module" }),
+  ),
   (thread) =>
     Effect.sync(() => {
       thread.terminate();

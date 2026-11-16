@@ -17,7 +17,7 @@ import { Settings } from "#/shared/settings/index.ts";
 import { VERSION } from "./handlers.ts";
 import { serverLayer } from "./server-layer.ts";
 
-const EMBEDDER_WORKER = new URL("embedder-worker.test.support.ts", import.meta.url);
+const EMBEDDER_WORKER = new URL("./embedder-worker.test.support.ts", import.meta.url);
 const WRONG_TOKEN = "wrong";
 const FILLER = "0";
 const TOKEN_LENGTH = 64;
