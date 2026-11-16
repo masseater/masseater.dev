@@ -1,7 +1,6 @@
-import { Array, Effect, FileSystem, Option, pipe } from "effect";
+import { Array, Effect, FileSystem, Option, Stream, pipe } from "effect";
 import { Decompress, decompress } from "fzstd";
 
-import { collectBytes } from "#/shared/bytes/index.ts";
 import { PreviewFailed, pixelsPreview } from "#/shared/preview/index.ts";
 
 import { blendThumbnail } from "./blend-thumbnail.ts";
@@ -49,7 +48,7 @@ const gunzipFile = Effect.fn("gunzipFile")(function* gunzipFile(path: string) {
 
 const plainPrefix = Effect.fn("plainPrefix")(function* plainPrefix(path: string) {
   const fileSystem = yield* FileSystem.FileSystem;
-  const prefix = yield* collectBytes(fileSystem.stream(path, { bytesToRead: PREFIX_BYTES }));
+  const prefix = yield* Stream.mkUint8Array(fileSystem.stream(path, { bytesToRead: PREFIX_BYTES }));
   if (isZstd(prefix)) {
     return yield* unzstdPrefix(path, prefix);
   }

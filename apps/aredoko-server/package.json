@@ -20,7 +20,6 @@
     "@zip.js/zip.js": "catalog:",
     "effect": "catalog:stack",
     "fzstd": "catalog:",
-    "modern-tar": "catalog:",
     "sharp": "catalog:",
     "sqlite-vec": "catalog:",
     "three": "catalog:"
