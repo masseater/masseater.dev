@@ -4,7 +4,7 @@ import { EditSchema, HitSchema, NoteSchema, SliceSchema } from "./events.ts";
 import { Name, Share, Ticks, kind } from "./fields.ts";
 import { EffectSchema, PlayParamSchema, SendSchema } from "./sound.ts";
 
-export const RoleSchema = Schema.Literals([
+const RoleSchema = Schema.Literals([
   "melody",
   "countermelody",
   "bass",
@@ -17,7 +17,7 @@ export type Role = typeof RoleSchema.Type;
 
 const SlicingSchema = Schema.Union([kind("onsets")({}), kind("count")({ count: Schema.Int })]);
 
-export const SampleSchema = Schema.Struct({
+const SampleSchema = Schema.Struct({
   name: Name,
   path: Schema.String,
   slices: Schema.OptionFromNullOr(SlicingSchema),
@@ -29,11 +29,11 @@ const KitVoiceSchema = Schema.Struct({
   params: Schema.Array(PlayParamSchema),
 });
 
-export const KitSchema = Schema.Struct({ name: Name, voices: Schema.Array(KitVoiceSchema) });
+const KitSchema = Schema.Struct({ name: Name, voices: Schema.Array(KitVoiceSchema) });
 
 const ZoneSchema = Schema.Struct({ path: Schema.String, root: Schema.Int });
 
-export const InstrumentSchema = Schema.Struct({ name: Name, zones: Schema.Array(ZoneSchema) });
+const InstrumentSchema = Schema.Struct({ name: Name, zones: Schema.Array(ZoneSchema) });
 
 const TrackSourceSchema = Schema.Union([
   kind("kit")({ kit: Name }),
@@ -41,7 +41,7 @@ const TrackSourceSchema = Schema.Union([
   kind("audio")({}),
 ]);
 
-export const TrackSchema = Schema.Struct({
+const TrackSchema = Schema.Struct({
   name: Name,
   source: TrackSourceSchema,
   role: Schema.OptionFromNullOr(RoleSchema),
@@ -51,7 +51,7 @@ export const TrackSchema = Schema.Struct({
 
 export type Track = typeof TrackSchema.Type;
 
-export const BusSchema = Schema.Struct({
+const BusSchema = Schema.Struct({
   name: Name,
   fx: Schema.Array(EffectSchema),
   sends: Schema.Array(SendSchema),
@@ -59,7 +59,7 @@ export const BusSchema = Schema.Struct({
 
 const DuckDepthSchema = Schema.Struct({ target: Name, amount: Share });
 
-export const DuckSchema = Schema.Struct({
+const DuckSchema = Schema.Struct({
   targets: Schema.Array(Name),
   source: Name,
   holdMilliseconds: Schema.Finite,
@@ -67,7 +67,7 @@ export const DuckSchema = Schema.Struct({
   depths: Schema.Array(DuckDepthSchema),
 });
 
-export const MeterSchema = Schema.Struct({
+const MeterSchema = Schema.Struct({
   numerator: Schema.Int,
   denominator: Schema.Int,
   groups: Schema.Array(Schema.Int),
@@ -77,14 +77,14 @@ export type Meter = typeof MeterSchema.Type;
 
 const RampSchema = Schema.Struct({ bpm: Schema.Finite, bars: Schema.Int });
 
-export const TempoSchema = Schema.Struct({
+const TempoSchema = Schema.Struct({
   bpm: Schema.Finite,
   ramp: Schema.OptionFromNullOr(RampSchema),
 });
 
 export type Tempo = typeof TempoSchema.Type;
 
-export const BarSchema = Schema.Struct({
+const BarSchema = Schema.Struct({
   index: Schema.Int,
   start: Ticks,
   length: Ticks,
@@ -96,14 +96,14 @@ export const BarSchema = Schema.Struct({
 
 export type Bar = typeof BarSchema.Type;
 
-export const AmountSchema = Schema.Struct({
+const AmountSchema = Schema.Struct({
   unit: Schema.Literals(["hertz", "decibels", "share", "milliseconds", "semitones", "number"]),
   value: Schema.Finite,
 });
 
 export type Amount = typeof AmountSchema.Type;
 
-export const AutomationSchema = Schema.Struct({
+const AutomationSchema = Schema.Struct({
   target: Name,
   parameter: Name,
   from: AmountSchema,
