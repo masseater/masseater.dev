@@ -3,7 +3,7 @@ import { Select } from "radix-ui";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import { useSelectPackage, useSelectedPackage } from "#/entities/asset";
+import { useSelectPackage, useSelectedPackage } from "#/entities/asset/index.ts";
 
 import { ALL_PACKAGES } from "./all-packages.ts";
 import { ScopeMenu } from "./scope-menu.tsx";

@@ -2,7 +2,7 @@ import { Button } from "@masseater.dev/ui/button";
 import { X } from "lucide-react";
 import type { ReactNode } from "react";
 
-import { useClearSearch, useDraft, useQueryText } from "#/entities/asset";
+import { useClearSearch, useDraft, useQueryText } from "#/entities/asset/index.ts";
 
 const LABEL = "検索をやめる";
 

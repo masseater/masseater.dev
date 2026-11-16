@@ -1,8 +1,8 @@
 import { CircleAlert, CircleCheck } from "lucide-react";
 import type { ReactNode } from "react";
 
-import { useLastImport } from "#/features/library/api/queries";
-import { Notice } from "#/shared/ui/notice";
+import { useLastImport } from "#/features/library/api/queries.ts";
+import { Notice } from "#/shared/ui/notice.tsx";
 
 const NOTHING = "取り込めるアセットがありませんでした";
 const NONE_PLACED = 0;

@@ -1,2 +1,2 @@
-export { loadPersonPage } from "./api/loader";
-export { PersonPage } from "./ui/person-page";
+export { loadPersonPage } from "./api/loader.ts";
+export { PersonPage } from "./ui/person-page.tsx";

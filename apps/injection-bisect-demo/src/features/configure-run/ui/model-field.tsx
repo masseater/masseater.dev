@@ -3,9 +3,9 @@ import { Array as Arr, pipe } from "effect";
 import { useCallback } from "react";
 import type { ChangeEvent, ReactNode } from "react";
 
-import { useModel, useSetModel, MODELS } from "#/entities/inspection";
-import { COPY } from "#/shared/config";
-import { SELECT_CLASS } from "#/shared/ui/select-class";
+import { useModel, useSetModel, MODELS } from "#/entities/inspection/index.ts";
+import { COPY } from "#/shared/config/index.ts";
+import { SELECT_CLASS } from "#/shared/ui/select-class.ts";
 
 export const ModelField = (): ReactNode => {
   const model = useModel();

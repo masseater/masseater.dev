@@ -2,7 +2,7 @@ import { Function, Option, pipe } from "effect";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import type { TileCrop as Crop } from "#/entities/mosaic";
+import type { TileCrop as Crop } from "#/entities/mosaic/index.ts";
 
 const ORIGIN = 0;
 

@@ -1,15 +1,15 @@
 import { Array, Effect, Option, pipe } from "effect";
 
-import { acquireGpu } from "./gpu-device";
-import type { Gpu } from "./gpu-device";
-import { drawGpuFrame, isIntro } from "./gpu-frame";
-import type { Bound, Color } from "./gpu-frame";
-import { cellsBuffer, createPipelines, drawGroup, frameGroup } from "./gpu-pipelines";
-import type { Pipelines } from "./gpu-pipelines";
-import { createTextures } from "./gpu-textures";
-import type { Textures } from "./gpu-textures";
-import type { Renderer, Target } from "./renderer-contract";
-import type { Sprites } from "./sprites";
+import { acquireGpu } from "./gpu-device.ts";
+import type { Gpu } from "./gpu-device.ts";
+import { drawGpuFrame, isIntro } from "./gpu-frame.ts";
+import type { Bound, Color } from "./gpu-frame.ts";
+import { cellsBuffer, createPipelines, drawGroup, frameGroup } from "./gpu-pipelines.ts";
+import type { Pipelines } from "./gpu-pipelines.ts";
+import { createTextures } from "./gpu-textures.ts";
+import type { Textures } from "./gpu-textures.ts";
+import type { Renderer, Target } from "./renderer-contract.ts";
+import type { Sprites } from "./sprites.ts";
 
 const CHANNEL = 255;
 const ONE_PIXEL = 1;

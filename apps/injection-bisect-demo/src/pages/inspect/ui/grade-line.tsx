@@ -2,11 +2,11 @@ import { Match } from "effect";
 import { Target } from "lucide-react";
 import type { ReactNode } from "react";
 
-import { gradeOf } from "#/entities/inspection";
-import type { Grade, Phase } from "#/entities/inspection";
-import { COPY } from "#/shared/config";
+import { gradeOf } from "#/entities/inspection/index.ts";
+import type { Grade, Phase } from "#/entities/inspection/index.ts";
+import { COPY } from "#/shared/config/index.ts";
 
-import { Note } from "./note";
+import { Note } from "./note.tsx";
 
 const textOf = (grade: Grade): string =>
   Match.value(grade).pipe(

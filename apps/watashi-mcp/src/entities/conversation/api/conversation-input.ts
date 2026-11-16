@@ -1,7 +1,7 @@
 import { CONVERSATION_KINDS } from "@masseater.dev/watashi-protocol";
 import { Schema } from "effect";
 
-import type { ConversationKind } from "#/shared/db";
+import type { ConversationKind } from "#/shared/db/index.ts";
 
 const DEFAULT_SESSION_LIMIT = 20;
 const MAX_SESSION_LIMIT = 100;

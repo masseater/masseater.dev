@@ -3,9 +3,12 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "imports": {
+    "#/*": "./src/*"
+  },
   "exports": {
-    ".": "./src/index.ts",
-    "./claude-requests": "./src/claude-requests.ts"
+    ".": "./src/entities/exposure-ledger/index.ts",
+    "./claude-requests": "./src/features/request-claude/index.ts"
   },
   "dependencies": {
     "effect": "catalog:stack"

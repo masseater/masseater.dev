@@ -1,10 +1,15 @@
 import { Effect, Option } from "effect";
 import type { AtomRegistry } from "effect/reactivity";
 
-import { answerDraftAtom, listeningAtom, recognitionAtom, touch } from "#/entities/interview";
-import type { Listening } from "#/entities/interview";
-import type { Recognition } from "#/shared/lib/recognition";
-import { read, write } from "#/shared/lib/registry";
+import {
+  answerDraftAtom,
+  listeningAtom,
+  recognitionAtom,
+  touch,
+} from "#/entities/interview/index.ts";
+import type { Listening } from "#/entities/interview/index.ts";
+import type { Recognition } from "#/shared/lib/recognition.ts";
+import { read, write } from "#/shared/lib/registry.ts";
 
 type Registered<Value> = Effect.Effect<Value, never, AtomRegistry.AtomRegistry>;
 

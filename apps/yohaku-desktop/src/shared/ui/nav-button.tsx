@@ -2,8 +2,8 @@ import { cn } from "@masseater.dev/ui/cn";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import { useScreen } from "#/shared/model";
-import type { Page } from "#/shared/model";
+import { useScreen } from "#/shared/model/index.ts";
+import type { Page } from "#/shared/model/index.ts";
 
 export const NavButton = ({ label, page }: Readonly<{ label: string; page: Page }>): ReactNode => {
   const [screen, setScreen] = useScreen();

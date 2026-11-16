@@ -1,7 +1,7 @@
 import { env } from "cloudflare:workers";
 import { Array as Arr, Option, Record as Rec, String as Str, pipe } from "effect";
 
-import { webAnalyticsBeacon } from "#/shared/config";
+import { webAnalyticsBeacon } from "#/shared/config/index.ts";
 
 const escapeAttribute = (value: string): string =>
   pipe(value, Str.replaceAll("&", "&amp;"), Str.replaceAll('"', "&quot;"));

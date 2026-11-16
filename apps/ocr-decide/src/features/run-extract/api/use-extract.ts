@@ -3,7 +3,7 @@ import type { FieldValue } from "@r_masseater/ocr-decide";
 import { useMutation } from "@tanstack/react-query";
 import { Duration, Effect, Layer } from "effect";
 
-import type { Way } from "#/entities/extraction";
+import type { Way } from "#/entities/extraction/index.ts";
 
 export type Outcome =
   | { readonly status: "failed"; readonly reason: string }

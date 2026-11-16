@@ -1,7 +1,7 @@
 import type { Effect } from "effect";
 
-import type { Scene } from "./scene";
-import type { Sprites } from "./sprites";
+import type { Scene } from "./scene.ts";
+import type { Sprites } from "./sprites.ts";
 
 export interface RenderFrame {
   readonly scene: Scene;

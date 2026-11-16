@@ -5,8 +5,8 @@ import { Command } from "effect/cli";
 import { FetchHttpClient } from "effect/http";
 import { OtlpSerialization, OtlpTracer } from "effect/observability";
 
-import { dailyCommand, saveCommand } from "#/daily-command.ts";
-import { pruneCommand } from "#/prune.ts";
+import { dailyCommand, saveCommand } from "#/app/daily-command.ts";
+import { pruneCommand } from "#/features/prune-versions/index.ts";
 import pkg from "#package.json" with { type: "json" };
 
 const tracing = OtlpTracer.layerFromConfig({

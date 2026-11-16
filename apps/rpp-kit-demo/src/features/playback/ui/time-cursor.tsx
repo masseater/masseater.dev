@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { usePlayback } from "#/features/playback/model/playback";
+import { usePlayback } from "#/features/playback/model/playback.ts";
 
 export const TimeCursor = (): ReactNode => {
   const { position } = usePlayback();

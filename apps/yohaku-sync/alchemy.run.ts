@@ -6,7 +6,7 @@ import { SYNC_HOST } from "@masseater.dev/yohaku-protocol/sync";
 import { RemovalPolicy, Stack } from "alchemy";
 import { Effect } from "effect";
 
-import { APP_NAME, PREFIX, requireAppPrefix } from "./app-name.ts";
+import { APP_NAME, PREFIX, requireAppPrefix } from "./src/shared/config/index.ts";
 
 const worker = Effect.gen(function* worker() {
   const DB = yield* D1.Database("Documents", { migrations: "./migrations" }).pipe(
@@ -14,7 +14,7 @@ const worker = Effect.gen(function* worker() {
   );
   return yield* Workers.Worker("Sync", {
     name: `${PREFIX}worker`,
-    main: "./sync.worker.ts",
+    main: "./src/app/sync.worker.ts",
     logpush: true,
     domain: SYNC_HOST,
     workersDev: false,

@@ -1,8 +1,8 @@
 import { Array as Arr, Option, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { useSummary } from "#/entities/interview";
-import { SECTIONS } from "#/pages/report/model/handoff";
+import { useSummary } from "#/entities/interview/index.ts";
+import { SECTIONS } from "#/pages/report/model/handoff.ts";
 
 import { ReportSection } from "./report-section.tsx";
 

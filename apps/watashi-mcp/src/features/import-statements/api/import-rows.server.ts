@@ -1,9 +1,9 @@
 import type { BatchItem } from "drizzle-orm/batch";
 import { Array as Arr, Option, pipe } from "effect";
 
-import { decide, transactions } from "#/entities/ledger";
-import type { Rule, Entry, Fingerprint } from "#/entities/ledger";
-import { db } from "#/shared/db/index.server";
+import { decide, transactions } from "#/entities/ledger/index.ts";
+import type { Rule, Entry, Fingerprint } from "#/entities/ledger/index.ts";
+import { db } from "#/shared/db/index.server.ts";
 
 export type LedgerEntry = Entry & Readonly<{ memo: Option.Option<string> }>;
 

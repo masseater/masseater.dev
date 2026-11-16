@@ -1,9 +1,9 @@
 import { Array as Arr, Option, Order, Predicate, Record as Rec, String as Str, pipe } from "effect";
 
-import type { LifeRow } from "#/shared/db";
+import type { LifeRow } from "#/shared/db/index.ts";
 
-import { NONE, lower, stringAt, textAt } from "./life-record";
-import type { Body } from "./life-record";
+import { NONE, lower, stringAt, textAt } from "./life-record.ts";
+import type { Body } from "./life-record.ts";
 
 export type Entry = Readonly<{ row: LifeRow; body: Body }>;
 
@@ -228,4 +228,4 @@ export const projected =
     return Arr.reduce(picked, base, mergeInto);
   };
 
-export type { Body } from "./life-record";
+export type { Body } from "./life-record.ts";

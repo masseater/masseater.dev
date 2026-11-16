@@ -1,9 +1,9 @@
 import { inArray } from "drizzle-orm";
 import { Array as Arr, Effect, pipe } from "effect";
 
-import type { VideoKind } from "#/entities/video/@x/song";
-import { part } from "#/shared/db";
-import { catalogDb } from "#/shared/db/index.server";
+import type { VideoKind } from "#/entities/video/@x/song.ts";
+import { catalogDb } from "#/shared/db/index.server.ts";
+import { part } from "#/shared/db/index.ts";
 
 export type QuotePair = readonly [videoId: number, source: number];
 

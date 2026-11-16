@@ -3,8 +3,8 @@ import { Effect } from "effect";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
-import { useYohaku } from "#/shared/api";
-import type { Release } from "#/shared/api";
+import { useYohaku } from "#/shared/api/index.ts";
+import type { Release } from "#/shared/api/index.ts";
 
 const RELEASES = "https://github.com/masseater/masseater.dev/releases/tag/yohaku-v";
 

@@ -1,1 +1,1 @@
-export { TagFilter } from "./ui/tag-filter";
+export { TagFilter } from "./ui/tag-filter.tsx";

@@ -2,7 +2,7 @@ import { Effect, Option, Record as Rec } from "effect";
 import { createElement } from "react";
 import type { ReactElement } from "react";
 
-import type { FigureName } from "#/entities/entry/model/figure";
+import type { FigureName } from "#/entities/entry/model/figure.ts";
 
 type FigureChunk =
   | { readonly status: "idle" }
@@ -10,7 +10,7 @@ type FigureChunk =
   | { readonly status: "imported"; readonly body: ReactElement };
 
 const chunks = {
-  "cascade-failure": Effect.promise(() => import("./cascade-failure")).pipe(
+  "cascade-failure": Effect.promise(() => import("./cascade-failure.tsx")).pipe(
     Effect.map(({ CascadeFailure }) => createElement(CascadeFailure)),
   ),
 } as const satisfies Record<FigureName, Effect.Effect<ReactElement>>;

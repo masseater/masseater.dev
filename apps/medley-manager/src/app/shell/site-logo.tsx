@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { SITE_NAME } from "#/shared/config";
+import { SITE_NAME } from "#/shared/config/index.ts";
 
 const PLAY_MARK = "▶";
 

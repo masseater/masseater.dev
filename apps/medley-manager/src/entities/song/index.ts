@@ -1,1 +1,1 @@
-export { SongLink } from "./ui/song-link";
+export { SongLink } from "./ui/song-link.tsx";

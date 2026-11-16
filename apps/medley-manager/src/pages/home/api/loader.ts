@@ -1,8 +1,8 @@
 import type { QueryClient } from "@tanstack/react-query";
 
-import { catalogQueries } from "#/entities/catalog";
-import { DANMAKU_SONGS } from "#/pages/home/lib/danmaku";
-import { RANKING_LIMIT } from "#/pages/home/lib/rank";
+import { catalogQueries } from "#/entities/catalog/index.ts";
+import { DANMAKU_SONGS } from "#/pages/home/lib/danmaku.ts";
+import { RANKING_LIMIT } from "#/pages/home/lib/rank.ts";
 
 const FEATURED_LIMIT = 8;
 

@@ -1,7 +1,7 @@
 import { Array as Arr, String as Str, pipe } from "effect";
 
-import type { Category } from "#/entities/ledger";
-import { totalOn } from "#/entities/ledger";
+import type { Category } from "#/entities/ledger/index.ts";
+import { totalOn } from "#/entities/ledger/index.ts";
 
 export type DayTotal = Readonly<{ date: string; category: Category; amount: number }>;
 

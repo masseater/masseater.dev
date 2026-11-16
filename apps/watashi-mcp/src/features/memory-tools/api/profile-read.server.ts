@@ -1,9 +1,9 @@
 import { Array as Arr, Effect, Option } from "effect";
 
-import type { Body } from "#/entities/life-record";
-import type { WatashiProfileValue } from "#/entities/memory";
-import { embedTexts, profileTraits, traitDetail } from "#/entities/trait/index.server";
-import type { ToolFailure } from "#/shared/api";
+import type { Body } from "#/entities/life-record/index.ts";
+import type { WatashiProfileValue } from "#/entities/memory/index.ts";
+import { embedTexts, profileTraits, traitDetail } from "#/entities/trait/index.server.ts";
+import type { ToolFailure } from "#/shared/api/index.ts";
 
 import { userMd } from "./profile-document.server.ts";
 

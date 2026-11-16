@@ -1,8 +1,8 @@
 import { Option } from "effect";
 import type { ReactNode } from "react";
 
-import { usePackage, useSelectedPackage, PackageSummary } from "#/entities/asset";
-import { BoothSection } from "#/features/link-booth";
+import { usePackage, useSelectedPackage, PackageSummary } from "#/entities/asset/index.ts";
+import { BoothSection } from "#/features/link-booth/index.ts";
 
 import { PackageHeader } from "./package-header.tsx";
 

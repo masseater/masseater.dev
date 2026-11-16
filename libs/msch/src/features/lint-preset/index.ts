@@ -11,3 +11,4 @@ export { INSTRUMENTATION, requiredStack } from "./config/required-stack.config.t
 export { tracedRules } from "./config/traced-rules.config.ts";
 export { steigerRules } from "./config/fsd-rules.ts";
 export { readonlyParameterAllow } from "./config/readonly-types.config.ts";
+export { default as decisionPlugin } from "./config/decision-rules.ts";

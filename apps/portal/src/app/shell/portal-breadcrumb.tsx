@@ -2,8 +2,8 @@ import { useRouterState } from "@tanstack/react-router";
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { CrumbItem } from "./crumb-item";
-import { crumbsOf } from "./crumbs";
+import { CrumbItem } from "./crumb-item.tsx";
+import { crumbsOf } from "./crumbs.ts";
 
 const LABEL = "現在地";
 

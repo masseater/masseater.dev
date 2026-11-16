@@ -1,8 +1,8 @@
 import { Effect } from "effect";
 
-import { ownerTraitJa } from "#/shared/db";
-import type { OwnerTraitJa, StorageFailed } from "#/shared/db";
-import { db, query } from "#/shared/db/index.server";
+import { db, query } from "#/shared/db/index.server.ts";
+import { ownerTraitJa } from "#/shared/db/index.ts";
+import type { OwnerTraitJa, StorageFailed } from "#/shared/db/index.ts";
 
 export const saveTraitJa = (row: OwnerTraitJa): Effect.Effect<void, StorageFailed> =>
   query(() =>

@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
-import { TEXT } from "#/pages/about/model/content";
-import { BASE_PATH } from "#/shared/config";
+import { TEXT } from "#/pages/about/model/content.ts";
+import { BASE_PATH } from "#/shared/config/index.ts";
 
 export const AboutHeader = (): ReactNode => (
   <header className="flex items-baseline justify-between gap-4">

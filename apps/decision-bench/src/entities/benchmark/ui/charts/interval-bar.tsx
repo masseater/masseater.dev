@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { ErrorBar } from "recharts";
 
-import { ERROR_WIDTH, REFERENCE_COLOR } from "./chart-style";
+import { ERROR_WIDTH, REFERENCE_COLOR } from "./chart-style.ts";
 
 export const intervalBar = (direction: "x" | "y"): ReactNode => (
   <ErrorBar

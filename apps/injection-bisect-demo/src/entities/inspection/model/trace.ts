@@ -1,7 +1,7 @@
 import type { Detection, Probe } from "@r_masseater/injection-bisect";
 import { Array as Arr, pipe } from "effect";
 
-import type { InspectEvent } from "#/entities/inspection/api/inspect-events";
+import type { InspectEvent } from "#/entities/inspection/api/inspect-events.ts";
 
 export type Answer =
   | { readonly status: "pending" }

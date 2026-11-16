@@ -9,7 +9,7 @@ inputs:
 plugins:
   - remote: buf.build/bufbuild/es:v2.17.0
     include_imports: true
-    out: src/generated
+    out: src/shared/api/generated
     opt:
       - target=ts
       - import_extension=ts

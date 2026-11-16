@@ -1,8 +1,8 @@
 import { Option } from "effect";
 import { describe, expect, it } from "vite-plus/test";
 
-import { computeStats } from "./life-stats";
-import type { MetricStats, StatsData, StatsRequest } from "./life-stats";
+import { computeStats } from "./life-stats.ts";
+import type { MetricStats, StatsData, StatsRequest } from "./life-stats.ts";
 
 const NO_SLEEP = 0;
 

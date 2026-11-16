@@ -1,9 +1,13 @@
 import type { Manuscript } from "@masseater.dev/yohaku-protocol";
 import type { ReactNode } from "react";
 
-import { ManuscriptRow } from "#/entities/manuscript";
-import { ExportButton } from "#/features/export-manuscript";
-import { HistoryButton, RevisionList, useHistoryShown } from "#/features/manuscript-history";
+import { ManuscriptRow } from "#/entities/manuscript/index.ts";
+import { ExportButton } from "#/features/export-manuscript/index.ts";
+import {
+  HistoryButton,
+  RevisionList,
+  useHistoryShown,
+} from "#/features/manuscript-history/index.ts";
 
 export const ManuscriptEntry = ({
   manuscript,

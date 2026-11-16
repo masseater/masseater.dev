@@ -5,10 +5,15 @@ import { Array as Arr, pipe } from "effect";
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 import type { ReactNode } from "react";
 
-import { directionOf, LABEL_ID, useSort, useSortClick } from "#/features/sort-table/model/sorting";
-import type { TableColumn } from "#/features/sort-table/model/sorting";
-import { TableHead } from "#/shared/ui/table-head";
-import { TableRow } from "#/shared/ui/table-row";
+import {
+  directionOf,
+  LABEL_ID,
+  useSort,
+  useSortClick,
+} from "#/features/sort-table/model/sorting.ts";
+import type { TableColumn } from "#/features/sort-table/model/sorting.ts";
+import { TableHead } from "#/shared/ui/table-head.tsx";
+import { TableRow } from "#/shared/ui/table-row.tsx";
 
 const ARIA_SORT = { asc: "ascending", desc: "descending", none: "none" } as const;
 

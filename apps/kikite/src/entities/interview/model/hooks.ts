@@ -1,7 +1,7 @@
 import { useAtomSet, useAtomValue } from "@effect/atom-react";
 import { Array as Arr, Option, pipe } from "effect";
 
-import type { InterviewSummary } from "#protocol";
+import type { InterviewSummary } from "#/shared/api/index.ts";
 
 import {
   answerDraftAtom,

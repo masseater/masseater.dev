@@ -1,1 +1,1 @@
-export { MosaicSwitcher } from "./ui/mosaic-switcher";
+export { MosaicSwitcher } from "./ui/mosaic-switcher.tsx";

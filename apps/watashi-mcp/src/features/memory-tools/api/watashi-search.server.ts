@@ -1,13 +1,13 @@
 import { Array as Arr, Effect, Option, Order, pipe } from "effect";
 
-import { contains, itemOf, todayJst } from "#/entities/life-record";
-import type { Body, Entry } from "#/entities/life-record";
-import { SCAN_LIMIT, scanCapped } from "#/entities/life-record/index.server";
-import { DEFAULT_MEMORY_LIMIT } from "#/entities/memory";
-import type { WatashiSearchValue } from "#/entities/memory";
-import { memoryItem, searchMemories } from "#/entities/memory/index.server";
-import type { Memory, StorageFailed } from "#/shared/db";
-import { termsOf } from "#/shared/db/index.server";
+import { SCAN_LIMIT, scanCapped } from "#/entities/life-record/index.server.ts";
+import { contains, itemOf, todayJst } from "#/entities/life-record/index.ts";
+import type { Body, Entry } from "#/entities/life-record/index.ts";
+import { memoryItem, searchMemories } from "#/entities/memory/index.server.ts";
+import { DEFAULT_MEMORY_LIMIT } from "#/entities/memory/index.ts";
+import type { WatashiSearchValue } from "#/entities/memory/index.ts";
+import { termsOf } from "#/shared/db/index.server.ts";
+import type { Memory, StorageFailed } from "#/shared/db/index.ts";
 
 type Scored = Readonly<{ score: number; item: Body }>;
 

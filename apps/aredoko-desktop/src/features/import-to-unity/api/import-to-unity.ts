@@ -1,7 +1,7 @@
 import { openPath } from "@tauri-apps/plugin-opener";
 import { Effect } from "effect";
 
-import { extract } from "#/shared/api";
+import { extract } from "#/shared/api/index.ts";
 
 import { OpenFailed } from "./open-failed.ts";
 

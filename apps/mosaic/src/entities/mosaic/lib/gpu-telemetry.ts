@@ -1,6 +1,6 @@
 import { Effect, Predicate } from "effect";
 
-import { flushTraces, runtime } from "#/shared/lib/telemetry";
+import { flushTraces, runtime } from "#/shared/lib/telemetry.ts";
 
 export type Releasable = Pick<GPUDevice, "destroy">;
 

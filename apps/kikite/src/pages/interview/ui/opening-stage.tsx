@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { MicButton } from "#/features/voice-input";
+import { MicButton } from "#/features/voice-input/index.ts";
 
 import { CurrentAnswer } from "./current-answer.tsx";
 import { NudgeLine } from "./nudge-line.tsx";

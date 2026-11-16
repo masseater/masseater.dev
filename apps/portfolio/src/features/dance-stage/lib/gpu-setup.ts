@@ -1,11 +1,11 @@
 import { Array as Arr, Effect, Number as Num, Option, Schema, pipe } from "effect";
 
-import type { GpuEffect, GpuPass, Pass } from "#/features/dance-stage/model/effect";
+import type { GpuEffect, GpuPass, Pass } from "#/entities/dance-effect/index.ts";
 
-import type { Fn } from "./fn";
-import type { Size } from "./gl";
-import { computeLayoutOf, computePipelinesOf } from "./gpu-compute";
-import type { ComputeStage } from "./gpu-compute";
+import type { Fn } from "./fn.ts";
+import type { Size } from "./gl.ts";
+import { computeLayoutOf, computePipelinesOf } from "./gpu-compute.ts";
+import type { ComputeStage } from "./gpu-compute.ts";
 
 const VERTEX = `
 struct Corner {

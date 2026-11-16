@@ -1,9 +1,9 @@
 import { Effect } from "effect";
 
-import { conversationChunk, conversationSession } from "#/shared/db";
-import type { ConversationChunk, ConversationSession } from "#/shared/db";
-import { db, attempt } from "#/shared/db/index.server";
-import type { WriteFailure } from "#/shared/db/index.server";
+import { db, attempt } from "#/shared/db/index.server.ts";
+import type { WriteFailure } from "#/shared/db/index.server.ts";
+import { conversationChunk, conversationSession } from "#/shared/db/index.ts";
+import type { ConversationChunk, ConversationSession } from "#/shared/db/index.ts";
 
 export type ChunkRecord = ConversationChunk &
   Pick<ConversationSession, "cwd" | "source" | "remoteSession">;

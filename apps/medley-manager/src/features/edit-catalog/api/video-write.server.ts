@@ -1,12 +1,12 @@
 import { and, eq, isNull } from "drizzle-orm";
 import { Array as Arr, Effect, Option, Struct } from "effect";
 
-import type { VideoDetail, CreateVideoInput, UpdateVideoInput } from "#/entities/catalog";
-import { getVideo } from "#/entities/video/index.server";
-import type { ToolError } from "#/shared/api";
-import { orMissing, query } from "#/shared/api/index.server";
-import { part, video } from "#/shared/db";
-import { catalogDb } from "#/shared/db/index.server";
+import type { VideoDetail, CreateVideoInput, UpdateVideoInput } from "#/entities/catalog/index.ts";
+import { getVideo } from "#/entities/video/index.server.ts";
+import { orMissing, query } from "#/shared/api/index.server.ts";
+import type { ToolError } from "#/shared/api/index.ts";
+import { catalogDb } from "#/shared/db/index.server.ts";
+import { part, video } from "#/shared/db/index.ts";
 
 const VIDEO_MISSING = "video not found";
 const WATCH_URL =

@@ -6,7 +6,7 @@ import type { AccessOAuth } from "@masseater.dev/repositories/credential-broker.
 import { Stack } from "alchemy";
 import { Effect } from "effect";
 
-import { APP_NAME, PREFIX, requireAppPrefix } from "./app-name.ts";
+import { APP_NAME, PREFIX, requireAppPrefix } from "./src/shared/config/app-name.ts";
 import { MCP_URL, SERVER_NAME, SITE_HOST, TOOL_CALL_DATASET } from "./src/shared/config/index.ts";
 
 const worker = Effect.gen(function* worker() {

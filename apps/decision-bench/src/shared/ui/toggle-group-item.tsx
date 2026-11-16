@@ -4,7 +4,7 @@ import { cn } from "@masseater.dev/web-ui";
 import { ToggleGroup as ToggleGroupPrimitive } from "radix-ui";
 import type { ReactNode } from "react";
 
-import { toggleVariants } from "./toggle-variants";
+import { toggleVariants } from "./toggle-variants.ts";
 
 export const ToggleGroupItem = ({
   value,

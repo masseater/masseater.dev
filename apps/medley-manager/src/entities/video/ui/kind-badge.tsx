@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
 
-import { VIDEO_KIND_LABEL } from "#/entities/video/lib/video-kind";
-import type { VideoKind } from "#/entities/video/lib/video-kind";
-import { Badge } from "#/shared/ui/badge";
+import { VIDEO_KIND_LABEL } from "#/entities/video/lib/video-kind.ts";
+import type { VideoKind } from "#/entities/video/lib/video-kind.ts";
+import { Badge } from "#/shared/ui/badge.tsx";
 
 const KIND_VARIANT = {
   medley: "pink",

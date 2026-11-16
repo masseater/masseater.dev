@@ -1,1 +1,1 @@
-export { credentialsQueries } from "./api/queries";
+export { credentialsQueries } from "./api/queries.ts";

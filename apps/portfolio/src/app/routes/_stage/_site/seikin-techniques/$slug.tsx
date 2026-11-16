@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { loadTechnique, techniqueHead, TechniquePage } from "#/pages/seikin-technique";
+import { loadTechnique, techniqueHead, TechniquePage } from "#/pages/seikin-technique/index.ts";
 
 export const Route = createFileRoute("/_stage/_site/seikin-techniques/$slug")({
   loader: ({ params }) => loadTechnique(params),

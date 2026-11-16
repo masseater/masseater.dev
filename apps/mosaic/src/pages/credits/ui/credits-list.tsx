@@ -3,7 +3,7 @@ import { Array, Order, pipe } from "effect";
 import type { ReactNode } from "react";
 import { useMemo } from "react";
 
-import { CreditItem } from "./credit-item";
+import { CreditItem } from "./credit-item.tsx";
 
 type Entry = typeof Tile.Type;
 

@@ -1,1 +1,1 @@
-export { ExampleList } from "./ui/example-list";
+export { ExampleList } from "./ui/example-list.tsx";

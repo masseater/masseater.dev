@@ -1,7 +1,7 @@
 import { expect, it } from "@effect/vitest";
 import { Array as Arr, Option, String as Str, pipe } from "effect";
 
-import { inScope, isUserMd, parseUserMd, renderUserMd } from "./user-md";
+import { inScope, isUserMd, parseUserMd, renderUserMd } from "./user-md.ts";
 
 const REFS = "57 86, 9";
 

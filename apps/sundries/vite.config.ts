@@ -5,7 +5,6 @@ export default defineConfig(
   mergeConfig(
     {
       run: ownerSiteRun,
-      resolve: { tsconfigPaths: true },
       test: { include: ["src/**/*.test.ts"] },
     },
     {

@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
 
-import { usePhase } from "#/entities/interview";
-import { InterviewPage } from "#/pages/interview";
-import { ReportView } from "#/pages/report";
+import { usePhase } from "#/entities/interview/index.ts";
+import { InterviewPage } from "#/pages/interview/index.ts";
+import { ReportView } from "#/pages/report/index.ts";
 
 export const Screen = (): ReactNode => {
   const { status } = usePhase();

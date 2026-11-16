@@ -3,14 +3,14 @@
 import type { ReactNode } from "react";
 import { CartesianGrid, Scatter, ScatterChart, Tooltip, XAxis, YAxis } from "recharts";
 
-import { ChartContainer } from "#/shared/ui/chart";
+import { ChartContainer } from "#/shared/ui/chart.tsx";
 
-import { AXIS_TICK, PERCENT_SCALE, SERIES_COLOR } from "./chart-style";
-import { DetailTooltip } from "./detail-tooltip";
-import { intervalBar } from "./interval-bar";
-import { MarkedPoint } from "./marked-point";
-import { describe } from "./score-scatter-model";
-import type { Axis, ScatterPoint } from "./score-scatter-model";
+import { AXIS_TICK, PERCENT_SCALE, SERIES_COLOR } from "./chart-style.ts";
+import { DetailTooltip } from "./detail-tooltip.tsx";
+import { intervalBar } from "./interval-bar.tsx";
+import { MarkedPoint } from "./marked-point.tsx";
+import { describe } from "./score-scatter-model.ts";
+import type { Axis, ScatterPoint } from "./score-scatter-model.ts";
 
 const Y_LABEL = { value: "skill", angle: -90, position: "insideLeft", fontSize: 12 } as const;
 const MARGIN = { top: 16, right: 24, bottom: 16, left: 0 } as const;

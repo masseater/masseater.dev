@@ -1,7 +1,7 @@
 import { Button } from "@masseater.dev/ui/button";
 import type { ReactNode } from "react";
 
-import { ServiceIcon } from "#/shared/ui/service-icon";
+import { ServiceIcon } from "#/shared/ui/service-icon.tsx";
 
 export const ServiceLink = ({
   url,

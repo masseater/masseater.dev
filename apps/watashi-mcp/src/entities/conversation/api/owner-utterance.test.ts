@@ -1,7 +1,7 @@
 import { Array as Arr } from "effect";
 import { describe, expect, it } from "vite-plus/test";
 
-import { ownerUtterances } from "./owner-utterance";
+import { ownerUtterances } from "./owner-utterance.ts";
 
 const AT = "2026-11-09T15:19:34.000Z";
 

@@ -3,7 +3,7 @@
 import type { ReactNode } from "react";
 import { CartesianGrid, ReferenceLine, Tooltip, XAxis, YAxis } from "recharts";
 
-import { pointsOf } from "#/entities/benchmark/lib/format";
+import { pointsOf } from "#/entities/benchmark/lib/format.ts";
 
 import {
   AXIS_TICK,
@@ -12,7 +12,7 @@ import {
   PERCENT_SCALE,
   REFERENCE_COLOR,
   TOOLTIP_STYLE,
-} from "./chart-style";
+} from "./chart-style.ts";
 
 const X_LABEL = { value: "確信度", position: "insideBottom", offset: -4, fontSize: 12 } as const;
 const Y_LABEL = {

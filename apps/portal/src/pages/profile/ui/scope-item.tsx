@@ -2,7 +2,7 @@ import { getRouteApi, Link } from "@tanstack/react-router";
 import { useMemo } from "react";
 import type { ReactNode } from "react";
 
-import { SCOPE_PILL } from "./scope-pill";
+import { SCOPE_PILL } from "./scope-pill.ts";
 
 const route = getRouteApi("/profile");
 

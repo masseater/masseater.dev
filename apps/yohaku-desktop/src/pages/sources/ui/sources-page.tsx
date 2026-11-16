@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
 import { useSourceHint } from "#/pages/sources/api/source-hint.ts";
-import { ScreenFrame } from "#/shared/ui";
+import { ScreenFrame } from "#/shared/ui/index.ts";
 
 import { SourceListPane } from "./source-list-pane.tsx";
 import { SourceSidebar } from "./source-sidebar.tsx";

@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
 
-import { MosaicSwitcher } from "#/features/switch-mosaic";
+import { MosaicSwitcher } from "#/features/switch-mosaic/index.ts";
 
-import { MosaicToolbar } from "./mosaic-toolbar";
+import { MosaicToolbar } from "./mosaic-toolbar.tsx";
 
 export const MosaicChrome = ({
   slug,

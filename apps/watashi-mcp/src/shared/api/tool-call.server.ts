@@ -2,7 +2,7 @@ import { toolCalls } from "@masseater.dev/mcp-tool-call";
 import { env } from "cloudflare:workers";
 import { Match } from "effect";
 
-import type { ToolFailure } from "./tool-failure";
+import type { ToolFailure } from "./tool-failure.ts";
 
 export const describeFailure = Match.type<ToolFailure>().pipe(
   Match.tagsExhaustive({

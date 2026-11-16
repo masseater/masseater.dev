@@ -1,9 +1,9 @@
 import { Effect } from "effect";
 
-import { heardFailure, heardInterim, heardSound, heardSpeech } from "#/entities/interview";
-import { ask, nudge, summarize, wrapUp, wrapUpIfAsked } from "#/features/ask-question";
-import { typing } from "#/features/voice-input";
-import { runners } from "#/shared/lib/runners";
+import { heardFailure, heardInterim, heardSound, heardSpeech } from "#/entities/interview/index.ts";
+import { ask, nudge, summarize, wrapUp, wrapUpIfAsked } from "#/features/ask-question/index.ts";
+import { typing } from "#/features/voice-input/index.ts";
+import { runners } from "#/shared/lib/runners.ts";
 
 import { assistWith } from "./assist.ts";
 

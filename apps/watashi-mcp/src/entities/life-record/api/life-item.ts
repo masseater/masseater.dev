@@ -1,11 +1,11 @@
 import { Option, pipe } from "effect";
 
-import { NOT_RETRACTED } from "#/shared/db";
+import { NOT_RETRACTED } from "#/shared/db/index.ts";
 
-import { factStateOf } from "./life-filter";
-import type { Entry } from "./life-filter";
-import { refOf, timesOut } from "./life-record";
-import type { Body } from "./life-record";
+import { factStateOf } from "./life-filter.ts";
+import type { Entry } from "./life-filter.ts";
+import { refOf, timesOut } from "./life-record.ts";
+import type { Body } from "./life-record.ts";
 
 const retractedOf = ({ row }: Entry): Body =>
   pipe(

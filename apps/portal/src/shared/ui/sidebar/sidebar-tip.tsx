@@ -1,7 +1,7 @@
 import { Tooltip } from "radix-ui";
 import type { ReactNode } from "react";
 
-import { useSidebarOpen } from "./sidebar-state";
+import { useSidebarOpen } from "./sidebar-state.ts";
 
 const GAP = 4;
 

@@ -2,10 +2,10 @@ import { cutoffFor } from "@r_masseater/injection-bisect";
 import type { Region } from "@r_masseater/injection-bisect";
 import { Array as Arr, Option, Order, String as Str, pipe } from "effect";
 
-import { answerOf } from "./answer";
-import type { Focus } from "./draft";
-import { traceOf } from "./trace";
-import type { Answer, Phase, Row, Trace } from "./trace";
+import { answerOf } from "./answer.ts";
+import type { Focus } from "./draft.ts";
+import { traceOf } from "./trace.ts";
+import type { Answer, Phase, Row, Trace } from "./trace.ts";
 
 export type Tone = "none" | "pending" | "miss" | "hit" | "injection";
 

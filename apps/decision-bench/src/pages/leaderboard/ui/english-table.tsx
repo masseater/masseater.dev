@@ -1,10 +1,10 @@
 import { percent } from "bench-summary/format";
 import type { ReactNode } from "react";
 
-import type { EnglishRow } from "#/entities/benchmark";
-import { colorOf, gap } from "#/entities/benchmark";
-import type { TableColumn } from "#/features/sort-table";
-import { SortableTable } from "#/features/sort-table";
+import type { EnglishRow } from "#/entities/benchmark/index.ts";
+import { colorOf, gap } from "#/entities/benchmark/index.ts";
+import type { TableColumn } from "#/features/sort-table/index.ts";
+import { SortableTable } from "#/features/sort-table/index.ts";
 
 const CAPTION = "英語（DecideBench）と日本語（業務ルール判定）の正解率";
 const LABEL = "モデル";

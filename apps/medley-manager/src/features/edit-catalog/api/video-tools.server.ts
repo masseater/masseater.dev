@@ -1,8 +1,8 @@
 import type { McpServer } from "@modelcontextprotocol/server";
 import { Schema } from "effect";
 
-import { CreateVideoInput, IdInput, UpdateVideoInput } from "#/entities/catalog";
-import { runTool } from "#/shared/api/index.server";
+import { CreateVideoInput, IdInput, UpdateVideoInput } from "#/entities/catalog/index.ts";
+import { runTool } from "#/shared/api/index.server.ts";
 
 import { createVideo, deleteVideo, updateVideo } from "./video-write.server.ts";
 

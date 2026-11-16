@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
-import { usePicker } from "#/entities/language";
-import { LanguagePicker } from "#/features/pick-language";
+import { usePicker } from "#/entities/language/index.ts";
+import { LanguagePicker } from "#/features/pick-language/index.ts";
 
 import { Panes } from "./panes.tsx";
 

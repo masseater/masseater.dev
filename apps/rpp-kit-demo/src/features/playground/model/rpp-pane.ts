@@ -7,7 +7,7 @@ import { Effect, Match, Ref, Schema } from "effect";
 import { mapRpp, readSong } from "rpp-kit";
 
 import type { CheckerWorker } from "./checker.worker.ts";
-import { GENERATED_PATH, notifySongChanged, replaceDocument } from "./editors";
+import { GENERATED_PATH, notifySongChanged, replaceDocument } from "./editors.ts";
 
 export type Views = Readonly<{
   worker: Remote<CheckerWorker>;

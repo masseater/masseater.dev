@@ -1,8 +1,8 @@
 import { RegistryProvider } from "@effect/atom-react";
 import type { ReactNode } from "react";
 
-import { SiteFooter } from "./site-footer";
-import { SiteHeader } from "./site-header";
+import { SiteFooter } from "./site-footer.tsx";
+import { SiteHeader } from "./site-header.tsx";
 
 export const AppShell = ({ children }: Readonly<{ children: ReactNode }>): ReactNode => (
   <RegistryProvider>

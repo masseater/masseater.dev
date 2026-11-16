@@ -2,11 +2,11 @@ import { getRouteApi } from "@tanstack/react-router";
 import { String as Str } from "effect";
 import type { ReactNode } from "react";
 
-import { SearchField } from "#/shared/ui";
+import { SearchField } from "#/shared/ui/index.ts";
 
-import { FoundMemos } from "./found-memos";
-import { FoundRecords } from "./found-records";
-import { FoundSlides } from "./found-slides";
+import { FoundMemos } from "./found-memos.tsx";
+import { FoundRecords } from "./found-records.tsx";
+import { FoundSlides } from "./found-slides.tsx";
 
 const route = getRouteApi("/search");
 

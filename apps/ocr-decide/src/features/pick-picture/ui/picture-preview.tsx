@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { usePicture } from "#/entities/extraction";
+import { usePicture } from "#/entities/extraction/index.ts";
 
 export const PicturePreview = (): ReactNode => {
   const picture = usePicture();

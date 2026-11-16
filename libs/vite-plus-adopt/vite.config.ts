@@ -6,9 +6,9 @@ import type {
   CheckResult,
   checkPackage,
   createPackageFromTarballData,
-} from "#src/attw.ts";
+} from "#/app/attw.ts";
 
-import { toJson } from "./src/json.ts";
+import { toJson } from "./src/shared/lib/json.ts";
 
 const BANNERS: Readonly<Record<string, string>> = { cli: "#!/usr/bin/env node" };
 
@@ -34,7 +34,7 @@ const isAttwUpstream = (importer: string | undefined): boolean =>
 
 const ATTW_REDIRECTS: readonly (readonly [(id: string) => boolean, string])[] = [
   [(id) => Str.endsWith("/multiCompilerHost.js")(id), VIRTUAL_HOSTS],
-  [(id) => id === "typescript", local("src/attw/typescript.ts")],
+  [(id) => id === "typescript", local("src/shared/lib/typescript/index.ts")],
 ];
 
 const attwRedirect = (id: string, importer: string | undefined): Option.Option<string> =>
@@ -52,7 +52,7 @@ const VIRTUAL_MODULES: Readonly<Record<string, string>> = {
   [VIRTUAL_HOSTS]: pipe(
     [
       `import minimalLibDts from ${toJson(`${ATTW_LIB}internal/minimalLibDts.js`)};`,
-      `import { createCompilerHostWrapperWith, createCompilerHostsWith } from ${toJson(local("src/attw/compiler-hosts.ts"))};`,
+      `import { createCompilerHostWrapperWith, createCompilerHostsWith } from ${toJson(local("src/shared/lib/typescript/compiler-hosts.ts"))};`,
       "export const createCompilerHosts = (fs) => createCompilerHostsWith(fs, minimalLibDts);",
       "export function CompilerHostWrapper(fs, moduleResolution) {",
       "  return createCompilerHostWrapperWith(fs, moduleResolution, minimalLibDts);",
@@ -82,7 +82,7 @@ const typescriptShim = {
     order: "pre",
     handler: (id: string): string | undefined =>
       Option.liftPredicate(id, (candidate) => candidate === "typescript").pipe(
-        Option.map(() => local("src/fsd-typescript.ts")),
+        Option.map(() => local("src/app/fsd-typescript.ts")),
         Option.getOrUndefined,
       ),
   },
@@ -117,7 +117,7 @@ export default defineConfig({
       ignorePatterns: ["upstream/**"],
       overrides: [
         {
-          files: ["src/{attw/typescript,fsd-typescript}.ts"],
+          files: ["src/{shared/lib/typescript/index,app/fsd-typescript}.ts"],
           rules: { "import/no-default-export": "off" },
         },
       ],
@@ -126,7 +126,13 @@ export default defineConfig({
   tsconfig: "tsconfig.json",
   plugins: [attwUpstream, typescriptShim],
   pack: {
-    entry: ["src/index.ts", "src/cli.ts", "src/postinstall.ts", "src/fsd.ts", "src/attw.ts"],
+    entry: [
+      "src/app/index.ts",
+      "src/app/cli.ts",
+      "src/app/postinstall.ts",
+      "src/app/fsd.ts",
+      "src/app/attw.ts",
+    ],
     platform: "node",
     plugins: [attwUpstream, typescriptShim],
     deps: {
@@ -150,7 +156,7 @@ export default defineConfig({
     dedupe: ["vitest"],
     alias: [
       { find: /^\.\.\/index\.js$/u, replacement: "@feature-sliced/filesystem" },
-      { find: /^@arethetypeswrong\/core$/u, replacement: local("src/attw.ts") },
+      { find: /^@arethetypeswrong\/core$/u, replacement: local("src/app/attw.ts") },
       { find: /^@arethetypeswrong\/core\/utils$/u, replacement: `${ATTW_LIB}utils.js` },
       { find: /^#internal\/(?<path>.*)$/u, replacement: `${ATTW_LIB}internal/$<path>` },
       { find: /^node:test$/u, replacement: NODE_TEST_SHIM },

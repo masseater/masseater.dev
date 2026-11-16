@@ -3,12 +3,10 @@ import { provideAtEntry, tracingLayer } from "@ocr-decide/tooling";
 import { PRODUCT_NAME, openRouter } from "@r_masseater/ocr-decide";
 import { Effect, Layer, Ref, Array as Arr, pipe } from "effect";
 
-import { ENGINES } from "#/engines.ts";
-import type { Engine } from "#/engines.ts";
-import type { Page } from "#/page.ts";
-import { Reader, readerLayer } from "#/read.ts";
-import { writeReport } from "#/report.ts";
-import { Results, resultsLayer } from "#/results.ts";
+import { ENGINES, Results, resultsLayer } from "#/entities/bench/index.ts";
+import type { Engine, Page } from "#/entities/bench/index.ts";
+import { Reader, readerLayer } from "#/features/read-pages/index.ts";
+import { writeReport } from "#/features/report-bench/index.ts";
 
 const ONE_AT_A_TIME = { concurrency: 1 } as const;
 

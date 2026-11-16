@@ -1,1 +1,1 @@
-export { TileSearch } from "./ui/tile-search";
+export { TileSearch } from "./ui/tile-search.tsx";

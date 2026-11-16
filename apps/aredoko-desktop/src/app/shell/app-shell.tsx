@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { useModelRendering } from "#/features/render-models";
+import { useModelRendering } from "#/features/render-models/index.ts";
 
 import { CurrentPage } from "./current-page.tsx";
 import { Header } from "./header.tsx";

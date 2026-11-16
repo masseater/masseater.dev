@@ -3,12 +3,12 @@ import { getRouteApi } from "@tanstack/react-router";
 import { Array, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { catalogQueries } from "#/entities/catalog";
-import { Table } from "#/shared/ui/table";
-import { TableBody } from "#/shared/ui/table-body";
-import { TableHeadings } from "#/shared/ui/table-headings";
+import { catalogQueries } from "#/entities/catalog/index.ts";
+import { TableBody } from "#/shared/ui/table-body.tsx";
+import { TableHeadings } from "#/shared/ui/table-headings.tsx";
+import { Table } from "#/shared/ui/table.tsx";
 
-import { SongRow } from "./song-row";
+import { SongRow } from "./song-row.tsx";
 
 const route = getRouteApi("/songs/");
 

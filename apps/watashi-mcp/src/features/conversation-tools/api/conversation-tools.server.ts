@@ -3,10 +3,10 @@ import { NO_PROJECT, one, READ_ONLY } from "@masseater.dev/mcp-tool-call";
 import type { CallToolResult, McpServer } from "@modelcontextprotocol/server";
 import { Effect, Option, Schema } from "effect";
 
-import { ReadInput, listRequestOf, readRequestOf } from "#/entities/conversation";
-import type { Input } from "#/entities/conversation";
-import { listSessions, readConversation } from "#/entities/conversation/index.server";
-import { meteredInput, runTool } from "#/shared/api/index.server";
+import { listSessions, readConversation } from "#/entities/conversation/index.server.ts";
+import { ReadInput, listRequestOf, readRequestOf } from "#/entities/conversation/index.ts";
+import type { Input } from "#/entities/conversation/index.ts";
+import { meteredInput, runTool } from "#/shared/api/index.server.ts";
 
 const READ_SCHEMA = ReadInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
 

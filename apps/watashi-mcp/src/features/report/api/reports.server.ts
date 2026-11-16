@@ -1,16 +1,16 @@
 import { Effect, pipe } from "effect";
 
-import { balanceSheet } from "#/entities/ledger";
-import type { BalanceSheet } from "#/entities/ledger";
-import { positions } from "#/entities/ledger/index.server";
-import { moneyFlow } from "#/features/report/model/money-flow";
-import type { MoneyFlow } from "#/features/report/model/money-flow";
-import { monthlyTotals } from "#/features/report/model/monthly";
-import type { Month } from "#/features/report/model/monthly";
-import type { StorageFailed } from "#/shared/db";
+import { positions } from "#/entities/ledger/index.server.ts";
+import { balanceSheet } from "#/entities/ledger/index.ts";
+import type { BalanceSheet } from "#/entities/ledger/index.ts";
+import { moneyFlow } from "#/features/report/model/money-flow.ts";
+import type { MoneyFlow } from "#/features/report/model/money-flow.ts";
+import { monthlyTotals } from "#/features/report/model/monthly.ts";
+import type { Month } from "#/features/report/model/monthly.ts";
+import type { StorageFailed } from "#/shared/db/index.ts";
 
-import { categoryTotals, dayTotals } from "./report-store.server";
-import type { Period } from "./report-store.server";
+import { categoryTotals, dayTotals } from "./report-store.server.ts";
+import type { Period } from "./report-store.server.ts";
 
 export const flowReport = (period: Period): Effect.Effect<MoneyFlow, StorageFailed> =>
   pipe(categoryTotals(period), Effect.map(moneyFlow));

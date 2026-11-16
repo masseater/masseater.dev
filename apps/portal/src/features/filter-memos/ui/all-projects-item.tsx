@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
-import { PILL } from "./pill";
+import { PILL } from "./pill.ts";
 
 const ALL = "すべて";
 

@@ -1,7 +1,7 @@
 import { Record } from "effect";
 import { describe, expect, test } from "vite-plus/test";
 
-import { works } from "./works";
+import { works } from "./works.ts";
 
 const labs = "../../../../../labs";
 

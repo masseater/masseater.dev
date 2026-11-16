@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { SITE_DESCRIPTION, SITE_NAME } from "#/shared/config";
+import { SITE_DESCRIPTION, SITE_NAME } from "#/shared/config/index.ts";
 
 export const SiteFooter = (): ReactNode => (
   <footer className="mt-16 border-t">

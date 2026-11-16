@@ -1,10 +1,10 @@
 import { percent } from "bench-summary/format";
 
-import { decimal, usd, withInterval } from "#/entities/benchmark/lib/format";
-import { displayLabel } from "#/entities/benchmark/model/display-label";
-import { METRIC_NAMES } from "#/entities/benchmark/model/metric-names";
-import type { TaskEntry } from "#/entities/benchmark/model/ranking";
-import type { ModelResult } from "#/entities/benchmark/model/summary";
+import { decimal, usd, withInterval } from "#/entities/benchmark/lib/format.ts";
+import { displayLabel } from "#/entities/benchmark/model/display-label.ts";
+import { METRIC_NAMES } from "#/entities/benchmark/model/metric-names.ts";
+import type { TaskEntry } from "#/entities/benchmark/model/ranking.ts";
+import type { ModelResult } from "#/entities/benchmark/model/summary.ts";
 
 export type DetailRow = Readonly<{ name: string; value: string }>;
 

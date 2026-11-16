@@ -3,14 +3,14 @@ import { runner } from "@r_masseater/workers-tracing/effect";
 import { WorkerEntrypoint } from "cloudflare:workers";
 import { Effect, Logger } from "effect";
 
-import type { ToolFailure } from "#/shared/api";
+import type { ToolFailure } from "#/shared/api/index.ts";
 
-import { memoryProjects } from "./memory-projects.server";
-import { conversationRead } from "./portal-conversation.server";
-import { lifeRead, memoryRead, memoryWrite, profile } from "./portal-operations.server";
-import { settled } from "./portal-settled.server";
+import { memoryProjects } from "./memory-projects.server.ts";
+import { conversationRead } from "./portal-conversation.server.ts";
+import { lifeRead, memoryRead, memoryWrite, profile } from "./portal-operations.server.ts";
+import { settled } from "./portal-settled.server.ts";
 
-export { MoneyPortal } from "./money-portal.server";
+export { MoneyPortal } from "./money-portal.server.ts";
 
 const NOT_FOUND = 404;
 

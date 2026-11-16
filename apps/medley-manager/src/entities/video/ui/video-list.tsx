@@ -1,8 +1,8 @@
 import { Array, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { VideoListItem } from "./video-list-item";
-import type { VideoSummary } from "./video-list-item";
+import { VideoListItem } from "./video-list-item.tsx";
+import type { VideoSummary } from "./video-list-item.tsx";
 
 export const VideoList = <Item extends VideoSummary>({
   videos,

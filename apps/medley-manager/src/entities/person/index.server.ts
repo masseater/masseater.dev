@@ -1,3 +1,3 @@
-export { listPeople } from "./api/people.server";
-export { personRoutes } from "./api/person-routes.server";
-export { getPerson } from "./api/person.server";
+export { listPeople } from "./api/people.server.ts";
+export { personRoutes } from "./api/person-routes.server.ts";
+export { getPerson } from "./api/person.server.ts";

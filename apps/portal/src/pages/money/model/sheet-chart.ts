@@ -1,6 +1,6 @@
 import { Array as Arr, Record as Rec, pipe } from "effect";
 
-import type { BlockTone, SheetBlock } from "./sheet";
+import type { BlockTone, SheetBlock } from "./sheet.ts";
 
 export type SheetRow = Readonly<{ side: string } & Partial<Record<BlockTone, number>>>;
 

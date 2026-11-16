@@ -3,7 +3,7 @@ import { queryOptions, useMutation, useQuery, useQueryClient } from "@tanstack/r
 import { Effect, Option } from "effect";
 import { useCallback } from "react";
 
-import { useYohaku } from "#/shared/api";
+import { useYohaku } from "#/shared/api/index.ts";
 
 const SYNC_KEY = ["sync"] as const;
 const POLL_INTERVAL = 5000;

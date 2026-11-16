@@ -1,6 +1,6 @@
 import { Option } from "effect";
 
-import { seedOf } from "#/shared/lib/seed";
+import { seedOf } from "#/shared/lib/seed.ts";
 
 interface MosaicSearch {
   readonly seed?: number;

@@ -2,9 +2,9 @@
 import { Console, Effect, FileSystem, Schema } from "effect";
 import { Argument, Command } from "effect/cli";
 
-import { AnalysisSchema, analyze } from "#/analysis.ts";
-import { runWithNode } from "#/node-services.ts";
-import { SongSchema } from "#/song.ts";
+import { SongSchema } from "#/entities/song/index.ts";
+import { AnalysisSchema, analyze } from "#/features/analyze-song/index.ts";
+import { runWithNode } from "#/shared/lib/node-services.ts";
 
 const INDENT = 2;
 

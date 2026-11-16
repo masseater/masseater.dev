@@ -44,6 +44,8 @@ const RuleNameSchema = Schema.Literals([
   "workflow-path-filter",
   "workflow-package",
   "colocated-test",
+  "layered-source",
+  "public-entry",
   "comment",
   "applied-package",
   "package-script",

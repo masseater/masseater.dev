@@ -3,7 +3,7 @@ import { QueryClient } from "@tanstack/react-query";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
-import { tauriYohaku } from "#/shared/api";
+import { tauriYohaku } from "#/shared/api/index.ts";
 
 import { Screens } from "./screens.tsx";
 import { Providers } from "./state.tsx";

@@ -2,9 +2,9 @@ import { queryOptions, useMutation, useQuery } from "@tanstack/react-query";
 import { Effect, Option, pipe } from "effect";
 import { useCallback } from "react";
 
-import { useYohaku } from "#/shared/api";
-import type { Revision } from "#/shared/api";
-import { opened, useScreen } from "#/shared/model";
+import { useYohaku } from "#/shared/api/index.ts";
+import type { Revision } from "#/shared/api/index.ts";
+import { opened, useScreen } from "#/shared/model/index.ts";
 
 const NONE_YET: readonly Revision[] = [];
 

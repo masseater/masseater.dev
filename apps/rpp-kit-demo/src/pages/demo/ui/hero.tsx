@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { hero } from "#/shared/config";
+import { hero } from "#/shared/config/index.ts";
 
 export const Hero = (): ReactNode => (
   <section className="flex flex-wrap items-end justify-between gap-4">

@@ -2,7 +2,7 @@ import { Option } from "effect";
 import { Terminal } from "lucide-react";
 import type { ReactNode } from "react";
 
-import { CopyCommandButton, useMcp } from "#/entities/mcp";
+import { CopyCommandButton, useMcp } from "#/entities/mcp/index.ts";
 
 const LABEL = "Claude Code に原作を読ませる";
 

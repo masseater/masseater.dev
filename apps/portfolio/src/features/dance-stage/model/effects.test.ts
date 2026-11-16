@@ -1,9 +1,9 @@
 import { Array as Arr, Option, pipe } from "effect";
 import { expect, test } from "vite-plus/test";
 
-import { techniqueList } from "#/entities/technique";
+import { techniqueList } from "#/entities/technique/index.ts";
 
-import { effectLoader } from "./effects";
+import { effectLoader } from "./effects.ts";
 
 test("すべての手法にセイキンダンス版の効果がある", () => {
   expect(

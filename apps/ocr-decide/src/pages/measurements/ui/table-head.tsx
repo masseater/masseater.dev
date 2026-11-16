@@ -1,7 +1,7 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { COPY } from "#/pages/measurements/model/copy";
+import { COPY } from "#/pages/measurements/model/copy.ts";
 
 const CELL = "px-3 py-2 text-left font-medium whitespace-nowrap";
 

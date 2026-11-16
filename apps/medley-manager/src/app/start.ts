@@ -4,8 +4,8 @@ import { createMiddleware, createStart } from "@tanstack/react-start";
 import { Effect, Option } from "effect";
 import { securedResult } from "security-headers/response";
 
-import { withWebAnalytics } from "#/app/server/web-analytics.server";
-import { SEARCH_INDEX_ORIGIN } from "#/shared/config";
+import { withWebAnalytics } from "#/app/server/web-analytics.server.ts";
+import { SEARCH_INDEX_ORIGIN } from "#/shared/config/index.ts";
 
 const noindex = createMiddleware().server(({ next }) =>
   run(

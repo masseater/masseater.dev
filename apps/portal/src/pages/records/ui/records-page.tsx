@@ -1,9 +1,9 @@
 import { getRouteApi } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
-import { LifeList } from "#/entities/watashi";
-import { useRecords } from "#/pages/records/api/records-query";
-import { Card, CardHeader, SearchField } from "#/shared/ui";
+import { LifeList } from "#/entities/watashi/index.ts";
+import { useRecords } from "#/pages/records/api/records-query.ts";
+import { Card, CardHeader, SearchField } from "#/shared/ui/index.ts";
 
 const route = getRouteApi("/records");
 

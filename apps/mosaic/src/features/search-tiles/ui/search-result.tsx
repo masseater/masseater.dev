@@ -1,8 +1,8 @@
 import type { MouseEventHandler, ReactNode } from "react";
 import { useCallback } from "react";
 
-import { focus, useSetSearch, useViewerStore } from "#/entities/mosaic";
-import type { Hit } from "#/features/search-tiles/lib/search";
+import { focus, useSetSearch, useViewerStore } from "#/entities/mosaic/index.ts";
+import type { Hit } from "#/features/search-tiles/lib/search.ts";
 
 export const SearchResult = ({ hit }: Readonly<{ hit: Hit }>): ReactNode => {
   const store = useViewerStore();

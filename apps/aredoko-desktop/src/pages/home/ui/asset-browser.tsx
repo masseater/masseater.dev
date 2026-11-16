@@ -1,9 +1,9 @@
 import { Array, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { useAssets, useLoadNext, useKinds, useSelectedPackage } from "#/entities/asset";
-import { Loading } from "#/shared/ui/loading";
-import { Notice } from "#/shared/ui/notice";
+import { useAssets, useLoadNext, useKinds, useSelectedPackage } from "#/entities/asset/index.ts";
+import { Loading } from "#/shared/ui/loading.tsx";
+import { Notice } from "#/shared/ui/notice.tsx";
 
 import { NextPageTrigger } from "./next-page-trigger.tsx";
 import { NothingFound } from "./nothing-found.tsx";

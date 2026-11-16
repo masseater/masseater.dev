@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import type { ReactNode } from "react";
 import type { Section } from "rpp-kit";
 
-import { usePlaybackControls } from "#/features/playback/model/playback";
+import { usePlaybackControls } from "#/features/playback/model/playback.ts";
 
 export const SectionButton = ({ section }: Readonly<{ section: Section }>): ReactNode => {
   const { seek } = usePlaybackControls();

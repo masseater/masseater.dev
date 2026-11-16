@@ -5,7 +5,7 @@ import { Effect } from "effect";
 import type { Scope } from "effect";
 
 import type { CheckerWorker } from "./checker.worker.ts";
-import { GENERATED_PATH } from "./editors";
+import { GENERATED_PATH } from "./editors.ts";
 
 const spawn = Effect.acquireRelease(
   Effect.sync(() => new Worker(new URL("checker.worker.ts", import.meta.url), { type: "module" })),

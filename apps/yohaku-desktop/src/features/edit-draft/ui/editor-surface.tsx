@@ -13,10 +13,10 @@ import {
   openedParagraphsAtom,
   paragraphsAtom,
   placedAtom,
-} from "#/entities/manuscript";
-import { useStableDraftActions } from "#/features/edit-draft/api/draft-actions";
-import { extensionsFor } from "#/features/edit-draft/model/editor";
-import type { Wiring } from "#/features/edit-draft/model/editor";
+} from "#/entities/manuscript/index.ts";
+import { useStableDraftActions } from "#/features/edit-draft/api/draft-actions.ts";
+import { extensionsFor } from "#/features/edit-draft/model/editor.ts";
+import type { Wiring } from "#/features/edit-draft/model/editor.ts";
 
 type Paragraphs = readonly (typeof Paragraph.Type)[];
 

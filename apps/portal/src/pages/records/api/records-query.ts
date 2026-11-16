@@ -2,8 +2,8 @@ import type { QueryClient } from "@tanstack/react-query";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 
-import { watashiQueries } from "#/entities/watashi";
-import type { LifeItemValue, RecordsSearchValue } from "#/entities/watashi";
+import { watashiQueries } from "#/entities/watashi/index.ts";
+import type { LifeItemValue, RecordsSearchValue } from "#/entities/watashi/index.ts";
 
 type RecordsLoad = Readonly<{ queryClient: QueryClient; search: RecordsSearchValue }>;
 

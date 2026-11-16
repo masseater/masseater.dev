@@ -2,10 +2,10 @@ import { Button } from "@masseater.dev/ui/button";
 import { useMemo } from "react";
 import type { ReactNode } from "react";
 
-import type { PeriodValue } from "#/entities/money";
-import { recentMonths } from "#/features/choose-period/model/months";
+import type { PeriodValue } from "#/entities/money/index.ts";
+import { recentMonths } from "#/features/choose-period/model/months.ts";
 
-import { MonthSelect } from "./month-select";
+import { MonthSelect } from "./month-select.tsx";
 
 const TEXT = {
   from: "最初の月",

@@ -1,10 +1,10 @@
 import { Array, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { useTiles } from "#/entities/mosaic";
-import { searchTiles } from "#/features/search-tiles/lib/search";
+import { useTiles } from "#/entities/mosaic/index.ts";
+import { searchTiles } from "#/features/search-tiles/lib/search.ts";
 
-import { SearchResult } from "./search-result";
+import { SearchResult } from "./search-result.tsx";
 
 const NOTHING = "見つかりませんでした";
 

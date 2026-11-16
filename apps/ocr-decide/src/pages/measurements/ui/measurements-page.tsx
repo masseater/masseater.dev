@@ -2,11 +2,11 @@ import { Link } from "@tanstack/react-router";
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { useSummary } from "#/pages/measurements/api/summary-query";
-import { COPY } from "#/pages/measurements/model/copy";
-import { tablesOf } from "#/pages/measurements/model/tables";
+import { useSummary } from "#/pages/measurements/api/summary-query.ts";
+import { COPY } from "#/pages/measurements/model/copy.ts";
+import { tablesOf } from "#/pages/measurements/model/tables.ts";
 
-import { RunsSection } from "./runs-section";
+import { RunsSection } from "./runs-section.tsx";
 
 export const MeasurementsPage = (): ReactNode => {
   const summary = useSummary();

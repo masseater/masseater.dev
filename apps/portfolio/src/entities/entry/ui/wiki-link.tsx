@@ -1,8 +1,8 @@
 import { Option, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import { findEntry } from "#/entities/entry/api/entries";
-import { entryPath } from "#/entities/entry/model/entry";
+import { findEntry } from "#/entities/entry/api/entries.ts";
+import { entryPath } from "#/entities/entry/model/entry.ts";
 
 export const WikiLink = ({
   slug,

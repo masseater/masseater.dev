@@ -1,9 +1,9 @@
 import { and, eq, isNull } from "drizzle-orm";
 import { Effect } from "effect";
 
-import { apiToken } from "#/shared/db";
-import type { ApiToken, StorageFailed } from "#/shared/db";
-import { db, query } from "#/shared/db/index.server";
+import { db, query } from "#/shared/db/index.server.ts";
+import { apiToken } from "#/shared/db/index.ts";
+import type { ApiToken, StorageFailed } from "#/shared/db/index.ts";
 
 export type NewApiToken = Omit<ApiToken, "revokedAt">;
 

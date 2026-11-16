@@ -1,17 +1,6 @@
 import { Array as Arr, Effect, Option, Predicate, Record as Rec, pipe } from "effect";
 
 import {
-  assumedNotices,
-  normalize,
-  validateBody,
-  columnsOf,
-  lower,
-  refOf,
-  textAt,
-  withDefaults,
-} from "#/entities/life-record";
-import type { ItemResult, ChangeValue, WriteItemValue, Body } from "#/entities/life-record";
-import {
   findByLabel,
   scanAll,
   scanLabel,
@@ -20,16 +9,32 @@ import {
   insertRecord,
   replaceRecord,
   snapshotOf,
-} from "#/entities/life-record/index.server";
+} from "#/entities/life-record/index.server.ts";
 import type {
   LifeEntry,
   Notice,
   ValuesCheck,
   NewRecord,
   Writer,
-} from "#/entities/life-record/index.server";
-import type { InvalidRecord } from "#/shared/api";
-import type { LifeRecordName, Source, StorageFailed } from "#/shared/db";
+} from "#/entities/life-record/index.server.ts";
+import {
+  assumedNotices,
+  normalize,
+  validateBody,
+  columnsOf,
+  lower,
+  refOf,
+  textAt,
+  withDefaults,
+} from "#/entities/life-record/index.ts";
+import type {
+  ItemResult,
+  ChangeValue,
+  WriteItemValue,
+  Body,
+} from "#/entities/life-record/index.ts";
+import type { InvalidRecord } from "#/shared/api/index.ts";
+import type { LifeRecordName, Source, StorageFailed } from "#/shared/db/index.ts";
 
 export type CreateItem = Exclude<WriteItemValue, ChangeValue>;
 

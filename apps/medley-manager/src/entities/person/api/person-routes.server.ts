@@ -1,9 +1,9 @@
 import { Schema } from "effect";
 
-import { createRouter, IdParams, respondFound } from "#/shared/api/index.server";
-import { keywordOf } from "#/shared/db/index.server";
-import { TextSearch } from "#/shared/lib/text-search";
-import { runRequest } from "#/shared/observability/index.server";
+import { createRouter, IdParams, respondFound } from "#/shared/api/index.server.ts";
+import { keywordOf } from "#/shared/db/index.server.ts";
+import { TextSearch } from "#/shared/lib/text-search.ts";
+import { runRequest } from "#/shared/observability/index.server.ts";
 
 import { listPeople } from "./people.server.ts";
 import { getPerson } from "./person.server.ts";

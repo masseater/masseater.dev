@@ -1,0 +1,44 @@
+import type { ReactNode } from "react";
+
+import type { ConsentView } from "#/features/answer-consent/model/consent.ts";
+import type { ButtonComponent } from "#/shared/ui/button-component.ts";
+
+const ALLOW = "許可する";
+const DENY = "拒否する";
+const FAILED = "許可できませんでした";
+
+export const ConsentActions = ({
+  button: Button,
+  scope,
+  allow,
+  status,
+  onAllow,
+  onDeny,
+}: Readonly<{
+  button: ButtonComponent;
+  scope: string;
+  allow: ConsentView["allow"];
+  status: "idle" | "pending" | "success" | "error";
+  onAllow: () => void;
+  onDeny: () => void;
+}>): ReactNode => {
+  const locked = status === "pending" || status === "success";
+  return (
+    <>
+      <p>{scope}</p>
+      <div className="flex gap-3">
+        <Button disabled={locked || allow === "disabled"} onClick={onAllow}>
+          {ALLOW}
+        </Button>
+        <Button variant="outline" disabled={locked} onClick={onDeny}>
+          {DENY}
+        </Button>
+      </div>
+      {status === "error" && (
+        <p role="alert" className="text-destructive text-sm">
+          {FAILED}
+        </p>
+      )}
+    </>
+  );
+};
