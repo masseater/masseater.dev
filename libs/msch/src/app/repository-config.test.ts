@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vite-plus/test";
 
-import type { WorkspaceSettings } from "#/features/workspace-settings/index.ts";
+import type { WorkspaceSettings } from "#/features/build-workspace-settings/index.ts";
 
 import { repositoryConfig } from "./repository-config.ts";
 

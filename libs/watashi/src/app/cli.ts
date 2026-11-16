@@ -5,7 +5,7 @@ import { ChildProcessSpawner } from "effect/process";
 import { conversationCommand, maskCommand } from "#/app/commands/conversation-commands.ts";
 import { hookCommand } from "#/app/commands/hook-command.ts";
 import { tokenCommand } from "#/app/commands/token-commands.ts";
-import { forgetCredentials, login } from "#/features/authenticate/index.ts";
+import { forgetCredentials, login } from "#/features/authenticate-user/index.ts";
 import { settings } from "#/shared/config/index.ts";
 import { openBrowser } from "#/shared/lib/browser.ts";
 

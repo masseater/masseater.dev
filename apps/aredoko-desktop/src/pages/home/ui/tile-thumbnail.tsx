@@ -3,7 +3,7 @@ import { cn } from "@masseater.dev/ui/cn";
 import type { ReactNode } from "react";
 
 import { ResultPreview } from "#/entities/asset/index.ts";
-import { useAnalysis } from "#/features/indexing/index.ts";
+import { useAnalysis } from "#/features/follow-indexing/index.ts";
 
 export const TileThumbnail = ({
   result,

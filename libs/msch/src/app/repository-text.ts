@@ -1,7 +1,7 @@
 import type { ToolSections } from "@r_masseater/vite-plus-adopt";
 import { Array as Arr, pipe } from "effect";
 
-import { textlintPresets } from "#/features/lint-preset/index.ts";
+import { textlintPresets } from "#/features/define-lint-preset/index.ts";
 
 export interface TextOptions {
   readonly ignores?: readonly string[];

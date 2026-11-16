@@ -12,7 +12,7 @@
     "#generated/*": "./generated/*"
   },
   "exports": {
-    "./analysis": "./src/features/analyze/index.ts",
+    "./analysis": "./src/features/analyze-song/index.ts",
     "./read-song": "./src/features/read-song/index.ts",
     "./song": "./src/entities/song/index.ts",
     "./vite": "./src/app/vite.ts"

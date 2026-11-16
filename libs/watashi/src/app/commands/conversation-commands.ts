@@ -3,7 +3,7 @@ import { Console, Effect, Option, Path, Stdio, Stream } from "effect";
 import type { PlatformError } from "effect";
 import { Argument, Command, Flag } from "effect/cli";
 
-import { authorized } from "#/features/authenticate/index.ts";
+import { authorized } from "#/features/authenticate-user/index.ts";
 import { maskWith, detectorOf, pushSession, summaryOf } from "#/features/push-session/index.ts";
 import { asWatashi } from "#/shared/api/index.ts";
 import { settings } from "#/shared/config/index.ts";

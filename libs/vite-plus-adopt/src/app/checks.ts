@@ -1,7 +1,7 @@
 import type { NamedCheck } from "#/entities/check/index.ts";
 import { dependenciesCheck, steigerCheck } from "#/features/check-repository/index.ts";
+import { commitlintCheck, markdownlintCheck, textlintCheck } from "#/features/check-text/index.ts";
 import { actionlintCheck, zizmorCheck } from "#/features/check-workflows/index.ts";
-import { commitlintCheck, markdownlintCheck, textlintCheck } from "#/features/lint-text/index.ts";
 import { fallowCheck } from "#/features/run-fallow/index.ts";
 import { betterleaksCheck } from "#/features/scan-secrets/index.ts";
 

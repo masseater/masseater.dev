@@ -6,7 +6,7 @@ export default defineConfig({
     lint: {
       overrides: [
         {
-          files: ["src/features/authenticate/api/callback-server.ts"],
+          files: ["src/features/authenticate-user/api/callback-server.ts"],
           rules: { "effecttsgo/node-builtin-import": "off" },
         },
       ],

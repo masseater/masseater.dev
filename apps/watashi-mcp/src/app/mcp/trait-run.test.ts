@@ -10,7 +10,7 @@ import {
   buildTraits,
 } from "#/features/build-traits/index.test.support.ts";
 import type { Conversation } from "#/features/build-traits/index.test.support.ts";
-import { watashiProfile, writeMemory } from "#/features/memory-tools/index.test.support.ts";
+import { watashiProfile, writeMemory } from "#/features/manage-memory/index.test.support.ts";
 import { encodeJson } from "#/shared/db/index.server.ts";
 
 import { pastBudget, settle } from "./trait-build.test.support.ts";
