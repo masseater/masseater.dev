@@ -19,10 +19,14 @@ const readout = ({ parts, structure, model }: Shell, time: number): void => {
 
 export const painterOf = (shell: Shell): (() => boolean) => {
   const canvases = canvasPainter(shell);
+  let followed = Option.none<number>();
   return () => {
     const time = shell.transport.position();
     paintHeader(shell)(time);
-    follow(shell)(time);
+    if (shell.transport.playing() || !Option.contains(followed, time)) {
+      follow(shell)(time);
+    }
+    followed = Option.some(time);
     paintHeads(shell)(time);
     if (Option.isSome(shell.surfaces)) {
       canvases(shell.surfaces.value, time);
