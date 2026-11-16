@@ -8,44 +8,20 @@ import { fixtureLayer, gitRepositoryWith } from "#/shared/lib/repository.test.su
 
 import { checkSkillEntry } from "./skill-entry.ts";
 
-const LOCK = "skills-lock.json";
-const ENTRY = ".agents/skills/masseater-ecosystem/SKILL.md";
-const OURS = "masseater/skills";
+const CONFIG = "vite.config.ts";
+const RENOVATE = "renovate.json";
+const COMMIT = "0123456789abcdef0123456789abcdef01234567";
+const EXTENDS =
+  '{ "extends": ["github>masseater/masseater.dev//libs/vite-plus-adopt/renovate"] }\n';
 
-const lockWith = (skills: readonly (readonly [name: string, source: string])[]): string =>
-  pipe(
-    [
-      "{",
-      '  "version": 2,',
-      '  "skills": {',
-      pipe(
-        skills,
-        Arr.map(([name, source]) => `    "${name}": { "source": "${source}" }`),
-        Arr.join(",\n"),
-      ),
-      "  }",
-      "}",
-      "",
-    ],
-    Arr.join("\n"),
-  );
+const configWith = (sources: readonly string[]): string =>
+  pipe(["export default {", "  skills: {", ...sources, "  },", "};", ""], Arr.join("\n"));
 
-const entryNaming = (lines: readonly string[]): string =>
-  pipe(
-    [
-      "---",
-      "name: masseater-ecosystem",
-      "description: Use first.",
-      "---",
-      "",
-      "# masseater-ecosystem",
-      "",
-      "- See [`tech-stack`](references/tech-stack.md).",
-      ...lines,
-      "",
-    ],
-    Arr.join("\n"),
-  );
+const ALL = `    "masseater/skills": { commit: "${COMMIT}", skills: "all" },`;
+const NAMED = `    "masseater/skills": { commit: "${COMMIT}", skills: ["vite-plus"] },`;
+const OTHER = `    "example/skills": { commit: "${COMMIT}", skills: ["effect-ts"] },`;
+const LOCAL = `    "./docs/skills": { skills: "all" },`;
+const HIDDEN = `    "example/skills": { skills: ["effect-ts"], commit: "${COMMIT}" },`;
 
 const findingsFor = Effect.fn("findingsFor")(function* findingsFor(
   files: Readonly<Record<string, string>>,
@@ -62,69 +38,57 @@ const findingsFor = Effect.fn("findingsFor")(function* findingsFor(
   );
 });
 
-const flagsSkillsTheEntryNamesButTheLockLacks = Effect.gen(
-  function* flagsSkillsTheEntryNamesButTheLockLacks() {
-    const findings = yield* findingsFor({
-      [LOCK]: lockWith([
-        ["effect-ts", "example/skills"],
-        ["masseater-ecosystem", OURS],
-        ["repo-conventions", OURS],
-        ["writing", "example/skills"],
-      ]),
-      [ENTRY]: entryNaming([
-        "- Always: `repo-conventions` and `vite-plus`",
-        "- Prose: `writing`. `writing` builds on `repo-conventions`.",
-      ]),
-    });
-    expect(findings).toStrictEqual([
-      expect.stringMatching(/^skills-lock\.json:5 unlocked-skill .* read vite-plus, /u),
-      expect.stringMatching(/^skills-lock\.json:5 unlocked-skill .* read writing, /u),
+const flagsNamedOrMissingEcosystemSkills = Effect.gen(
+  function* flagsNamedOrMissingEcosystemSkills() {
+    const named = yield* findingsFor({ [CONFIG]: configWith([NAMED]), [RENOVATE]: EXTENDS });
+    const missing = yield* findingsFor({ [CONFIG]: configWith([OTHER]), [RENOVATE]: EXTENDS });
+    expect([named, missing]).toStrictEqual([
+      [
+        expect.stringMatching(
+          /^vite\.config\.ts:3 unlocked-skill picks skills from masseater\/skills by name/u,
+        ),
+      ],
+      [
+        expect.stringMatching(
+          /^vite\.config\.ts:2 unlocked-skill does not install masseater\/skills/u,
+        ),
+      ],
     ]);
   },
 );
 
-const flagsOurSkillsWithoutTheEntry = Effect.gen(function* flagsOurSkillsWithoutTheEntry() {
-  const findings = yield* findingsFor({
-    [LOCK]: lockWith([
-      ["effect-ts", "example/skills"],
-      ["vite-plus", OURS],
-    ]),
-  });
-  expect(findings).toStrictEqual([
-    expect.stringMatching(/^skills-lock\.json:5 unlocked-skill .* without masseater-ecosystem, /u),
+const flagsSourcesRenovateCannotRead = Effect.gen(function* flagsSourcesRenovateCannotRead() {
+  const hidden = yield* findingsFor({ [CONFIG]: configWith([ALL, HIDDEN]), [RENOVATE]: EXTENDS });
+  const noPreset = yield* findingsFor({ [CONFIG]: configWith([ALL]), [RENOVATE]: "{}\n" });
+  expect([hidden, noPreset]).toStrictEqual([
+    [expect.stringMatching(/^vite\.config\.ts:4 skill-source-visible declares example\/skills/u)],
+    [expect.stringMatching(/^renovate\.json:1 skill-source-visible does not extend/u)],
   ]);
 });
 
-const passesCompleteAndUnrelatedLocks = Effect.gen(function* passesCompleteAndUnrelatedLocks() {
-  const complete = yield* findingsFor({
-    [LOCK]: lockWith([
-      ["masseater-ecosystem", OURS],
-      ["vite-plus", OURS],
-    ]),
-    [ENTRY]: entryNaming(["- Always: `vite-plus`"]),
-  });
-  const notInstalled = yield* findingsFor({
-    [LOCK]: lockWith([["masseater-ecosystem", OURS]]),
-  });
-  const unrelated = yield* findingsFor({
-    [LOCK]: lockWith([["effect-ts", "example/skills"]]),
-    [ENTRY]: entryNaming(["- Always: `vite-plus`"]),
-  });
-  const noLock = yield* findingsFor({ [ENTRY]: entryNaming(["- Always: `vite-plus`"]) });
-  expect([complete, notInstalled, unrelated, noLock]).toStrictEqual([[], [], [], []]);
-});
+const passesACompleteSectionAndNoSection = Effect.gen(
+  function* passesACompleteSectionAndNoSection() {
+    const complete = yield* findingsFor({
+      [CONFIG]: configWith([ALL, OTHER, LOCAL]),
+      [RENOVATE]: EXTENDS,
+    });
+    const noSection = yield* findingsFor({ [CONFIG]: "export default {};\n" });
+    const noConfig = yield* findingsFor({ "README.md": "# x\n" });
+    expect([complete, noSection, noConfig]).toStrictEqual([[], [], []]);
+  },
+);
 
-layer(fixtureLayer)("skills-lock.json installs what masseater-ecosystem names", (it) => {
+layer(fixtureLayer)("the skills section in vite.config.ts", (it) => {
   it.effect(
-    "flags a skill the entry names that the lock does not install",
-    () => flagsSkillsTheEntryNamesButTheLockLacks,
+    "flags masseater/skills picked by name or not installed",
+    () => flagsNamedOrMissingEcosystemSkills,
   );
   it.effect(
-    "flags skills from masseater/skills installed without the entry",
-    () => flagsOurSkillsWithoutTheEntry,
+    "flags sources the Renovate preset cannot read and a missing preset",
+    () => flagsSourcesRenovateCannotRead,
   );
   it.effect(
-    "passes a complete lock, an uninstalled entry and a lock without our skills",
-    () => passesCompleteAndUnrelatedLocks,
+    "passes a complete section and a repository without one",
+    () => passesACompleteSectionAndNoSection,
   );
 });

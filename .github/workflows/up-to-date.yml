@@ -17,26 +17,16 @@ jobs:
       contents: read
       pull-requests: read
     steps:
-      - id: skills-lock
-        if: github.event_name == 'pull_request'
-        uses: masseater/typescript-template/.github/actions/pr-changed@d79be66b83e21575c7f40a75453fea5a51aaff8c
-        with:
-          file: skills-lock.json
-          github-token: ${{ github.token }}
       - id: lockfile
         if: github.event_name == 'pull_request'
         uses: masseater/typescript-template/.github/actions/pr-changed@d79be66b83e21575c7f40a75453fea5a51aaff8c
         with:
           file: pnpm-lock.yaml
           github-token: ${{ github.token }}
-      - if: steps.skills-lock.outputs.changed == 'true' || steps.lockfile.outputs.changed == 'true'
+      - if: steps.lockfile.outputs.changed == 'true'
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - if: steps.skills-lock.outputs.changed == 'true'
-        uses: masseater/typescript-template/.github/actions/skills-lock@d79be66b83e21575c7f40a75453fea5a51aaff8c
-        with:
-          branch: ${{ github.head_ref }}
       - if: steps.lockfile.outputs.changed == 'true'
         uses: $/.github/actions/setup
         with:
