@@ -62,12 +62,15 @@ const flagsDockerCommands = Effect.gen(function* flagsDockerCommands() {
     "vite.config.ts": `export const task = "${COMPOSE} up --detach";\n`,
     "src/build.ts": `ChildProcess.make(\n  "${CLI}",\n  ["build", "."],\n);\n`,
     "src/main.rs": `let mut command = Command::new("${CLI}");\n`,
+    "src/run.ts": `execSync("${CLI} run --rm app");\nawait $\`${CLI} build .\`;\n`,
   });
   expect(findings).toStrictEqual([
     ".github/workflows/deploy.yml:4 docker-command",
     ".github/workflows/deploy.yml:5 docker-command",
     "src/build.ts:1 docker-command",
     "src/main.rs:1 docker-command",
+    "src/run.ts:1 docker-command",
+    "src/run.ts:2 docker-command",
     "vite.config.ts:1 docker-command",
   ]);
 });
@@ -81,6 +84,9 @@ const passesPodmanAndNames = Effect.gen(function* passesPodmanAndNames() {
     "src/probes.ts": `export const PATHS = ["${COMPOSE}.yml", "/${CLI}file"];\n`,
     "docs/containers.md": `${CLI} build は使わない。\n`,
     "pnpm-lock.yaml": `packages:\n  is-${CLI}: {}\n`,
+    "src/hints.rs": `const HINT: &str = "use \`${CLI} run\` in a script step";\n`,
+    "src/cases.ts": `export const CASES = ["${CLI} run --rm app", "uses: ${CLI}://alpine"];\n`,
+    "src/spawn.ts": `execSync("${CLI}.io/probe");\n`,
   });
   expect(findings).toStrictEqual([]);
 });
@@ -91,5 +97,8 @@ layer(fixtureLayer)("Docker is not used", (it) => {
     "flags Docker commands and actions in workflows, tasks and spawned processes",
     () => flagsDockerCommands,
   );
-  it.effect("passes podman and code that only names Docker", () => passesPodmanAndNames);
+  it.effect(
+    "passes podman and source code that only names or quotes Docker",
+    () => passesPodmanAndNames,
+  );
 });

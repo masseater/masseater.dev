@@ -74,6 +74,11 @@ fn diagnostic(finding: &Finding<'_>) -> (String, Diagnostic) {
     )
 }
 
+#[must_use]
+pub fn is_workflow(path: &str) -> bool {
+    InputKind::from_path(Utf8Path::new(path)) == Some(InputKind::Workflow)
+}
+
 fn group_of(root: &Utf8Path, options: &AuditOptions) -> Result<InputGroup, String> {
     let config = match &options.rules {
         Some(rules) => config::Config::load(&serde_json::json!({ "rules": rules }).to_string())
