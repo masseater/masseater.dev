@@ -17,7 +17,7 @@ export interface SecretOptions {
   readonly paths?: readonly string[];
 }
 
-const TEXT_IGNORES = ["AGENTS.md", ".agents/skills/**", "CHANGELOG.md"];
+const TEXT_IGNORES = ["AGENTS.md", "CLAUDE.md", ".agents/skills/**", "CHANGELOG.md"];
 const SENTENCE_LENGTH = 120;
 const KANJI_RUN = 6;
 const PUBLIC_LINES = [String.raw`\bCF_BEACON_TOKEN = "[0-9a-f]{32}"`];
