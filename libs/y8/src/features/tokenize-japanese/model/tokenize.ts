@@ -1,4 +1,4 @@
-import { Effect } from "effect";
+import { Array as Arr, Effect, Option, Schema, pipe } from "effect";
 
 import { native } from "#/shared/native/index.ts";
 import type { Morpheme } from "#/shared/native/index.ts";
@@ -9,34 +9,40 @@ export interface Tokenizer {
 }
 
 const CACHE_SIZE = 10_000;
+const NO_MORPHEMES: readonly Morpheme[] = [];
 
 const addon = Effect.cached(native).pipe(Effect.flatten, Effect.runSync);
 
 const cache = new Map<string, readonly Morpheme[]>();
 
-const isMorphemes = (value: unknown): value is readonly Morpheme[] => Array.isArray(value);
+const decodeJson = Schema.decodeUnknownOption(Schema.fromJsonString(Schema.Unknown));
 
-const parsed = (json: string): readonly Morpheme[] => {
-  const value: unknown = JSON.parse(json);
-  if (isMorphemes(value)) {
-    return value;
-  }
-  return [];
-};
+const isMorphemes = (value: unknown): value is readonly Morpheme[] => Arr.isArray(value);
 
-const remember = (text: string, tokens: readonly Morpheme[]): readonly Morpheme[] => {
+const parsed = (json: string): readonly Morpheme[] =>
+  pipe(
+    decodeJson(json),
+    Option.filter(isMorphemes),
+    Option.getOrElse(() => NO_MORPHEMES),
+  );
+
+const remember = (text: string, morphemes: readonly Morpheme[]): readonly Morpheme[] => {
   if (cache.size >= CACHE_SIZE) {
-    cache.delete(cache.keys().next().value ?? "");
+    cache.clear();
   }
-  cache.set(text, tokens);
-  return tokens;
+  cache.set(text, morphemes);
+  return morphemes;
 };
 
-export const tokenizeSync = (text: string): readonly Morpheme[] =>
-  cache.get(text) ?? remember(text, parsed(addon.tokenize(text)));
+export const morphemesOf = (text: string): readonly Morpheme[] =>
+  pipe(
+    Option.fromUndefinedOr(cache.get(text)),
+    Option.getOrElse(() => remember(text, parsed(addon.tokenize(text)))),
+  );
 
-const tokenizer: Tokenizer = { tokenize: tokenizeSync, tokenizeForSentence: tokenizeSync };
+const tokenizer: Tokenizer = { tokenize: morphemesOf, tokenizeForSentence: morphemesOf };
 
-export const getTokenizer = async (): Promise<Tokenizer> => tokenizer;
+export const getTokenizer = (): Promise<Tokenizer> => Promise.resolve(tokenizer);
 
-export const tokenize = async (text: string): Promise<readonly Morpheme[]> => tokenizeSync(text);
+export const tokenize = (text: string): Promise<readonly Morpheme[]> =>
+  Promise.resolve(morphemesOf(text));

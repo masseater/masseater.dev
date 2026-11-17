@@ -1,7 +1,7 @@
 export { definePlugin, defineRule } from "#/entities/rule/index.ts";
 export { diagnosticDetail, format } from "./format.ts";
 export { lint } from "./lint.ts";
-export { tokenize, tokenizeSync } from "#/features/tokenize-japanese/index.ts";
+export { tokenize, morphemesOf } from "#/features/tokenize-japanese/index.ts";
 export { markdownPathspecs, y8Section } from "./section.ts";
 export type { PathspecInput } from "./section.ts";
 export type { LintInput } from "./lint.ts";

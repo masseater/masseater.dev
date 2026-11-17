@@ -1,4 +1,4 @@
-import { tokenizeSync } from "@r_masseater/y8";
+import { morphemesOf } from "@r_masseater/y8";
 import type { Morpheme } from "@r_masseater/y8";
 import type { TxtNode } from "@textlint/ast-node-types";
 import type { TextlintRuleModule } from "@textlint/types";
@@ -31,7 +31,7 @@ type Check = Readonly<{ message: string; test: (sentence: string) => Effect.Effe
 
 const contentTokens = (text: string): Effect.Effect<readonly Token[]> =>
   pipe(
-    Effect.sync(() => tokenizeSync(text)),
+    Effect.sync(() => morphemesOf(text)),
     Effect.map(Arr.filter((token) => token.pos !== "記号")),
   );
 
