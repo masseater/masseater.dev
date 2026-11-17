@@ -1,3 +1,4 @@
+import { LOCKED } from "@r_masseater/msch/locked-inputs";
 import { checkPackage, createPackageFromTarballData } from "@r_masseater/vite-plus-adopt/attw";
 import { otlp } from "@r_masseater/vitest-otlp";
 import { defineConfig } from "vite-plus";
@@ -13,8 +14,8 @@ export default defineConfig({
   },
   run: {
     tasks: {
-      test: "vp test run",
-      build: "vp pack",
+      test: { command: "vp test run", cache: LOCKED },
+      build: { command: "vp pack", cache: LOCKED },
     },
   },
   plugins: [otlp()],

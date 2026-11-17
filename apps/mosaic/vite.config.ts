@@ -1,4 +1,5 @@
 import { alchemyTasks } from "@masseater.dev/cloudflare-account/run-tasks";
+import { LOCKED } from "@r_masseater/msch/locked-inputs";
 import { defineConfig } from "vite-plus";
 
 import { mosaicPlugins } from "./src/app/vite/vite-plugins.ts";
@@ -28,7 +29,10 @@ export default defineConfig({
   run: {
     tasks: {
       ...alchemyTasks,
-      build: "vp build && node bin/write-asset-headers.ts",
+      build: {
+        command: "vp build && node bin/write-asset-headers.ts",
+        cache: LOCKED,
+      },
       "deploy:production": {
         command: ["node bin/live.ts", "alchemy deploy --stage production --yes"],
         cache: false,

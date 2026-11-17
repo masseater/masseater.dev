@@ -19,7 +19,9 @@ type ResolvedSections = Readonly<
   Partial<Pick<ProjectSnapshot, "dependencies" | "devDependencies" | "optionalDependencies">>
 >;
 
-type ResolvedDependencies = Readonly<NonNullable<ResolvedSections["dependencies"]>>;
+export type ResolvedDependencies = Readonly<
+  NonNullable<WantedLockfile["importers"][keyof WantedLockfile["importers"]]["dependencies"]>
+>;
 
 interface LockedSnapshots<Importer extends string, Package extends string> {
   readonly importers: Readonly<Record<Importer, ResolvedSections>>;
@@ -35,7 +37,7 @@ const importerManifest = (id: string): string =>
     },
   );
 
-const depPathsOf = (resolved: ResolvedDependencies | undefined): readonly string[] =>
+export const depPathsOf = (resolved: ResolvedDependencies | undefined): readonly string[] =>
   pipe(
     Rec.toEntries(resolved ?? {}),
     Arr.flatMap(([name, reference]) =>

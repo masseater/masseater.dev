@@ -10,6 +10,7 @@ import {
   settingsInvalid,
   usedFrom,
   workspaceDirectories,
+  writeLockedClosures,
   prefixed,
   NO_TASKS,
   TEST_TASK,
@@ -228,6 +229,7 @@ const mergedTasks = (found: readonly { readonly tasks: WorkspaceTasks }[]): Work
 const collectWorkspaceSettings = Effect.fn("collectWorkspaceSettings")(
   function* collectWorkspaceSettings(options: SettingsOptions) {
     const files = yield* RepositoryFiles;
+    yield* Effect.ignore(writeLockedClosures(options.root));
     const directories = yield* workspaceDirectories(options.root);
     const found: readonly Workspace[] = yield* Effect.forEach(
       directories,
