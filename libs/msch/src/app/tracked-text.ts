@@ -4,7 +4,6 @@ import { checkComments } from "#/features/ban-comments/index.ts";
 import { checkDocker, checkPython } from "#/features/ban-tools/index.ts";
 import { checkCatalogEntries } from "#/features/check-catalog-entries/index.ts";
 import { checkGitSubpath, checkPackageRegistry } from "#/features/check-overrides/index.ts";
-import { checkNodeVersion } from "#/features/check-runtime-version/index.ts";
 import {
   checkPublishedSkills,
   checkSkillEntry,
@@ -22,6 +21,8 @@ import {
   checkUnneededFiles,
 } from "#/features/find-unneeded-files/index.ts";
 
+import { checkManifests } from "./manifest-checks.ts";
+
 /** @internal */
 export const checkTrackedText = Effect.fn("checkTrackedText")(function* checkTrackedText(
   root: string,
@@ -34,7 +35,7 @@ export const checkTrackedText = Effect.fn("checkTrackedText")(function* checkTra
       checkUnneededFiles(root),
       checkReplacedTools(root),
       checkAlchemyPatch(root),
-      checkNodeVersion(root),
+      checkManifests(root),
       checkSkillFiles(root),
       checkSkillEntry(root),
       checkPublishedSkills(root),
