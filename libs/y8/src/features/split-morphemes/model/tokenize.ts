@@ -11,7 +11,7 @@ export interface Tokenizer {
 const CACHE_SIZE = 10_000;
 const NO_MORPHEMES: readonly Morpheme[] = [];
 
-const addon = Effect.cached(native).pipe(Effect.flatten, Effect.runSync);
+const addon = Effect.cached(native).pipe(Effect.runSync);
 
 const cache = new Map<string, readonly Morpheme[]>();
 
@@ -37,7 +37,7 @@ const remember = (text: string, morphemes: readonly Morpheme[]): readonly Morphe
 export const morphemesOf = (text: string): readonly Morpheme[] =>
   pipe(
     Option.fromUndefinedOr(cache.get(text)),
-    Option.getOrElse(() => remember(text, parsed(addon.tokenize(text)))),
+    Option.getOrElse(() => remember(text, parsed(pipe(addon, Effect.runSync).tokenize(text)))),
   );
 
 const tokenizer: Tokenizer = { tokenize: morphemesOf, tokenizeForSentence: morphemesOf };
