@@ -1,6 +1,6 @@
 {
   "name": "@r_masseater/textlint-rule-preset-ja",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "textlint preset of masseater's Japanese writing rules: yomiyasu, which flags hard-to-read Japanese written by AI, and no-taigendome, which bans sentences that end in a noun after a comma.",
   "keywords": [
     "japanese",
@@ -52,11 +52,11 @@
     "prepublishOnly": "vp run build"
   },
   "dependencies": {
-    "kuromojin": "3.0.1",
     "sentence-splitter": "5.0.3"
   },
   "devDependencies": {
     "@r_masseater/vite-plus-adopt": "catalog:",
+    "@r_masseater/y8": "workspace:*",
     "@size-limit/file": "catalog:",
     "@textlint/ast-node-types": "catalog:",
     "@textlint/types": "catalog:",
@@ -67,12 +67,13 @@
     "vite-plus": "catalog:stack"
   },
   "peerDependencies": {
+    "@r_masseater/y8": "workspace:^",
     "effect": "^4.0.0"
   },
   "size-limit": [
     {
       "path": "dist/*.mjs",
-      "limit": "27480 B"
+      "limit": "27505 B"
     }
   ],
   "engines": {
