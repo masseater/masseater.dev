@@ -129,6 +129,9 @@ const listsSourcesAndIgnoredDirectories = Effect.gen(function* listsSourcesAndIg
     "apps/web/package.json": `{ "name": "web" }`,
     "apps/web/src/app/main.ts": "export const main = 1;\n",
     "libs/flat/package.json": `{ "name": "flat" }`,
+    "libs/crate/package.json": `{ "name": "crate" }`,
+    "libs/crate/Cargo.toml": '[package]\nname = "crate"\n',
+    "libs/crate/src/lib.rs": "mod shared;\n",
   });
   expect(settings.sourceDirectories).toStrictEqual(["apps/web/src"]);
   expect(settings.ignoredDirectories).toStrictEqual([

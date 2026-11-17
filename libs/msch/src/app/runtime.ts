@@ -5,8 +5,7 @@ import { FetchHttpClient } from "effect/http";
 import { Otlp, OtlpSerialization } from "effect/observability";
 import type { ChildProcessSpawner } from "effect/process";
 
-import { nodeServicesLayer } from "#/shared/lib/node-services.ts";
-import { nodeRepositoryFiles } from "#/shared/lib/repository-files.ts";
+import { nodeRepositoryFiles, nodeServicesLayer } from "#/shared/lib/repository-files.ts";
 import type { RepositoryFiles } from "#/shared/lib/repository-files.ts";
 
 import { ProblemsFound } from "./output.ts";
