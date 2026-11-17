@@ -1,15 +1,16 @@
 import { Option, Predicate } from "effect";
 
 import { SVF, svf } from "#/entities/song/lib/dsp/filter.ts";
+import type { Cutoff } from "#/entities/song/lib/dsp/filter.ts";
 import { SAMPLE_RATE, isGiven, orDefault } from "#/entities/song/lib/dsp/number.ts";
 import { drive } from "#/entities/song/lib/dsp/shape.ts";
 import constants from "#/entities/song/lib/dsp/tuning.json";
 
 import type { Bus } from "./bus.ts";
 import { fieldOf } from "./field.ts";
-import { needsScratch, planOf, played, writerOf } from "./paste.ts";
+import { isLowPassed, needsScratch, planOf, played, writerOf } from "./paste.ts";
 import type { Desk, Paste, Plan } from "./paste.ts";
-import type { Logged } from "./placement.ts";
+import type { Logged, Sweep } from "./placement.ts";
 
 const ONE = 1;
 const SILENT = 0;
@@ -52,28 +53,30 @@ const entryOf =
       pan: plan.pan,
       offset: orDefault(SILENT)(placement.offset),
       ...fieldOf("glide")(placement.pitch),
-      reversed: placement.reverse === true,
+      reversed: Predicate.isNotUndefined(placement.reverse),
     };
   };
 
+const lowCutoffOf = (lowPass: number | Sweep, frames: number): Cutoff => {
+  if (Predicate.isNumber(lowPass)) {
+    return lowPass;
+  }
+  const ratio = lowPass.to / lowPass.from;
+  return (index) => lowPass.from * ratio ** (index / frames);
+};
+
 const lowPassed = (scratch: Float32Array, plan: Plan, frames: number): void => {
-  const { lowPass, lowPassEnd } = plan.placement;
-  const resonance = fieldOf("resonance")(plan.placement.resonance);
-  if (!isGiven(lowPass)) {
+  const { lowPass } = plan.placement;
+  if (!isLowPassed(lowPass)) {
     return;
   }
-  if (isGiven(lowPassEnd)) {
-    const ratio = lowPassEnd / lowPass;
-    svf({
-      kind: SVF.low,
-      cutoff: (index) => lowPass * ratio ** (index / frames),
-      ...resonance,
-      from: FIRST,
-      to: frames,
-    })(scratch);
-    return;
-  }
-  svf({ kind: SVF.low, cutoff: lowPass, ...resonance, from: FIRST, to: frames })(scratch);
+  svf({
+    kind: SVF.low,
+    cutoff: lowCutoffOf(lowPass, frames),
+    ...fieldOf("resonance")(plan.placement.resonance),
+    from: FIRST,
+    to: frames,
+  })(scratch);
 };
 
 const finished = (scratch: Float32Array, plan: Plan, frames: number): void => {
