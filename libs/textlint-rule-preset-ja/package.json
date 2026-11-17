@@ -52,11 +52,11 @@
     "prepublishOnly": "vp run build"
   },
   "dependencies": {
-    "@r_masseater/y8": "workspace:*",
     "sentence-splitter": "5.0.3"
   },
   "devDependencies": {
     "@r_masseater/vite-plus-adopt": "catalog:",
+    "@r_masseater/y8": "workspace:*",
     "@size-limit/file": "catalog:",
     "@textlint/ast-node-types": "catalog:",
     "@textlint/types": "catalog:",
@@ -67,6 +67,7 @@
     "vite-plus": "catalog:stack"
   },
   "peerDependencies": {
+    "@r_masseater/y8": "workspace:^",
     "effect": "^4.0.0"
   },
   "size-limit": [

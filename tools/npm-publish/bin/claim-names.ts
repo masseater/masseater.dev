@@ -17,7 +17,7 @@ import {
 } from "effect";
 import { ChildProcess, ChildProcessSpawner } from "effect/process";
 
-const LIBS = "libs";
+const LIBS = "../../libs";
 const REGISTRY = "https://registry.npmjs.org/";
 const WORKFLOW = "publish.yml";
 const ENVIRONMENT = "npm";
