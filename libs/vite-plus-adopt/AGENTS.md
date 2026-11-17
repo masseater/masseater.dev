@@ -1,5 +1,5 @@
 # @r_masseater/vite-plus-adopt
 
-このワークスペースは `vpa` である。Betterleaks や zizmor といった外部チェックを Vite+ に取り込み、すべてのチェックを単一のコマンドで実行する。
+This workspace is `vpa`. It brings outside checks such as Betterleaks and zizmor into Vite+ and runs every check with one command.
 
-サブコマンドを追加しないこと。引数なしで1回実行すると、設定済みのチェックがすべて行われる。betterleaks と zizmor は postinstall でインストールし、実行時にダウンロードしないこと。
+Do not add subcommands. One run with no arguments does every configured check. Install betterleaks and zizmor in postinstall; do not download them at run time.

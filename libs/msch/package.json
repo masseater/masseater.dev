@@ -108,6 +108,7 @@
     "@r_masseater/vite-plus-adopt": "catalog:",
     "@r_masseater/wism": "workspace:*",
     "@r_masseater/y8": "workspace:*",
+    "@r_masseater/y8-docs": "workspace:*",
     "@shadcn/lint": "catalog:",
     "@tanstack/intent": "catalog:",
     "@textlint-ja/textlint-rule-preset-ai-writing": "catalog:",

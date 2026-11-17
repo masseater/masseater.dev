@@ -1,8 +1,8 @@
 # @r_masseater/injection-bisect
 
-このワークスペースは `injection-bisect` である。安価な decision モデルに小さな部分について問いかけることで、プロンプトインジェクションがドキュメントのどこに潜んでいるか、また潜んでいるかどうかを判定する。
+This workspace is `injection-bisect`. It finds whether and where a prompt injection hides in a document by asking a cheap decision model about small parts.
 
-新しい入力フォーマットを `Parser` として追加する。独自のリーダーを記述するのではなく、既存のライブラリでフォーマットを読み込む。
-`respan/` 配下のモデルでは、1つのリクエストに各スパンの質問を並べず、選択式の質問も使用しない。
-デフォルトモデル `respan/span-01-lite` を変更する前に、計測し直し、ユーザーに確認する。
-無害な入力およびインジェクションを含む入力の両方について、直接判定するフロンティアモデルと精度、コスト、時間を比較する。計測前後で OpenRouter キーの残高を確認する。
+Add a new input format as a `Parser`. Read the format with an existing library instead of writing your own reader.
+For models under `respan/`, do not put several spans' questions in one request, and do not use multiple-choice questions.
+Before changing the default model `respan/span-01-lite`, measure again and ask the user.
+Compare accuracy, cost and time against frontier models that judge directly, on both harmless inputs and inputs with injections. Check the OpenRouter key balance before and after measuring.
