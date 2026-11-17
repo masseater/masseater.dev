@@ -2,7 +2,7 @@ import { Array as Arr, Effect, Option, pipe } from "effect";
 
 import { publishedProjects } from "#/entities/workspace/index.ts";
 import type { WorkspaceProject } from "#/entities/workspace/index.ts";
-import { JAPANESE } from "#/shared/config/japanese.ts";
+import { JAPANESE } from "#/shared/config/index.ts";
 import type { Problem, RuleName } from "#/shared/lib/problem.ts";
 import { RepositoryFiles } from "#/shared/lib/repository-files.ts";
 import { positionOf } from "#/shared/lib/text-position.ts";

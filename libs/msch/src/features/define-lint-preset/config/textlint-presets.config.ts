@@ -4,7 +4,7 @@ import presetJa from "@r_masseater/textlint-rule-preset-ja";
 import type { ToolSections } from "@r_masseater/vite-plus-adopt";
 import { Option, Predicate, Record as Rec, pipe } from "effect";
 
-import { JAPANESE } from "#/shared/config/japanese.ts";
+import { JAPANESE } from "#/shared/config/index.ts";
 
 type Preset = NonNullable<NonNullable<ToolSections["textlint"]>["presets"]>[string];
 type Rule = Preset["rules"][string];
