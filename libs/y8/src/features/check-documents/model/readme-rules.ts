@@ -20,7 +20,7 @@ import {
 } from "#/features/check-documents/lib/markdown.ts";
 import type { Section } from "#/features/check-documents/lib/markdown.ts";
 import { numberOption } from "#/features/check-documents/lib/options.ts";
-import { bannedHeading, maxLines } from "#/features/check-documents/lib/shapes.ts";
+import { bannedHeading, maxLines, titleRule } from "#/features/check-documents/lib/shapes.ts";
 import type { MarkdownNode, PackageManifest, Rule, RuleContext } from "#/shared/config/index.ts";
 
 const SUMMARY_SENTENCES = 2;
@@ -50,25 +50,9 @@ const publishedManifest = (context: RuleContext): Option.Option<PackageManifest>
 const nameOf = (manifest: PackageManifest): Option.Option<string> =>
   pipe(Option.fromNullishOr(manifest.data["name"]), Option.filter(Predicate.isString));
 
-export const readmeTitle: Rule = defineRule({
-  meta: { description: "A README opens with one title, which is the package name when published" },
-  create: (context) => ({
-    document: (): void => {
-      const title = titleOf(context);
-      if (Option.isNone(title)) {
-        context.report({ line: ONE, message: "Start the README with a level 1 title" });
-        return;
-      }
-      for (const name of Option.toArray(Option.flatMap(publishedManifest(context), nameOf))) {
-        if (title.value.text !== name) {
-          context.report({
-            node: title.value.node,
-            message: `The title ${title.value.text} is not the package name ${name}`,
-          });
-        }
-      }
-    },
-  }),
+export const readmeTitle: Rule = titleRule({
+  description: "A README opens with one title, which is the package name when published",
+  expected: (context) => Option.flatMap(publishedManifest(context), nameOf),
 });
 
 export const readmeSummary: Rule = defineRule({

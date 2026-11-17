@@ -19,7 +19,7 @@ import {
   stringOption,
   stringsOption,
 } from "#/features/check-documents/lib/options.ts";
-import { bannedHeading } from "#/features/check-documents/lib/shapes.ts";
+import { bannedHeading, titleRule } from "#/features/check-documents/lib/shapes.ts";
 import type { Rule, RuleContext } from "#/shared/config/index.ts";
 
 const ONE = 1;
@@ -45,25 +45,9 @@ const expectedTitle = (context: RuleContext): Option.Option<string> =>
     ),
   );
 
-export const agentsTitle: Rule = defineRule({
-  meta: { description: "AGENTS.md opens with the package or repository name as its title" },
-  create: (context) => ({
-    document: (): void => {
-      const title = titleOf(context);
-      if (Option.isNone(title)) {
-        context.report({ line: ONE, message: "Start with a level 1 title" });
-        return;
-      }
-      for (const name of Option.toArray(expectedTitle(context))) {
-        if (title.value.text !== name) {
-          context.report({
-            node: title.value.node,
-            message: `The title ${title.value.text} is not ${name}`,
-          });
-        }
-      }
-    },
-  }),
+export const agentsTitle: Rule = titleRule({
+  description: "AGENTS.md opens with the package or repository name as its title",
+  expected: expectedTitle,
 });
 
 export const agentsOpening: Rule = defineRule({

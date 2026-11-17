@@ -1,9 +1,9 @@
-import { Array as Arr, String as Str, pipe } from "effect";
+import { Array as Arr, Option, String as Str, pipe } from "effect";
 
 import { defineRule } from "#/entities/rule/index.ts";
-import type { Rule } from "#/shared/config/index.ts";
+import type { Rule, RuleContext } from "#/shared/config/index.ts";
 
-import { proseNodes, subHeadingsOf } from "./markdown.ts";
+import { proseNodes, subHeadingsOf, titleOf } from "./markdown.ts";
 import { numberOption } from "./options.ts";
 
 const NEXT_LINE = 1;
@@ -70,3 +70,30 @@ export const noShouting: Rule = defineRule({
     },
   }),
 });
+
+export interface TitleRule {
+  readonly description: string;
+  readonly expected: (context: RuleContext) => Option.Option<string>;
+}
+
+export const titleRule = ({ description, expected }: TitleRule): Rule =>
+  defineRule({
+    meta: { description },
+    create: (context) => ({
+      document: (): void => {
+        const title = titleOf(context);
+        if (Option.isNone(title)) {
+          context.report({ line: NEXT_LINE, message: "Start with a level 1 title" });
+          return;
+        }
+        for (const name of Option.toArray(expected(context))) {
+          if (title.value.text !== name) {
+            context.report({
+              node: title.value.node,
+              message: `The title ${title.value.text} is not ${name}`,
+            });
+          }
+        }
+      },
+    }),
+  });
