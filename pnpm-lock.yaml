@@ -4416,8 +4416,8 @@ importers:
   libs/textlint-rule-preset-ja:
     dependencies:
       sentence-splitter:
-        specifier: 5.0.3
-        version: 5.0.3
+        specifier: 5.1.0
+        version: 5.1.0
     devDependencies:
       '@r_masseater/vite-plus-adopt':
         specifier: 'catalog:'
@@ -16132,8 +16132,8 @@ packages:
     resolution: {integrity: sha512-1gnZf7DFcoIcajTjTwjwuDjzuz4PPcY2StKPlsGAQ1+YH20IRVrBaXSWmdjowTJ6u8Rc01PoYOGHXfP1mYcZNQ==}
     engines: {node: '>= 18'}
 
-  sentence-splitter@5.0.3:
-    resolution: {integrity: sha512-L+vTqoKX0fFj+OPDyq15z/aVHqEnvwa4lH0j0VYQw9asAqdmenyPq9cF1L6/8PkYcyYDvPoiZwepX8ABTLcRGQ==}
+  sentence-splitter@5.1.0:
+    resolution: {integrity: sha512-Zt4F1K7KF3QQQOVgdJ0Of6WYGI9t3aSiGRI6/DpXj1FXvL5wiOobhRbYceDZnNmnuYWfwd4l+wfyLB+nUax5ow==}
 
   sentry@0.45.0:
     resolution: {integrity: sha512-kgmEbLlC22lL7uneeUm9Sjz65rp5cvwYOMTxXbZCmBum4sbVre/lLT3zTV3kwXHJ9/BM8ZS0/GhZe9Cl1t6WyA==}
@@ -23174,7 +23174,7 @@ snapshots:
 
   '@textlint-rule/textlint-rule-no-unmatched-pair@2.0.4':
     dependencies:
-      sentence-splitter: 5.0.3
+      sentence-splitter: 5.1.0
       textlint-rule-helper: 2.5.0
 
   '@textlint/ast-node-types@13.4.1': {}
@@ -29068,10 +29068,9 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  sentence-splitter@5.0.3:
+  sentence-splitter@5.1.0:
     dependencies:
       '@textlint/ast-node-types': 15.8.0
-      structured-source: 4.0.0
 
   sentry@0.45.0: {}
 
@@ -29613,7 +29612,7 @@ snapshots:
 
   textlint-rule-max-comma@4.0.0:
     dependencies:
-      sentence-splitter: 5.0.3
+      sentence-splitter: 5.1.0
       textlint-util-to-string: 3.3.4
 
   textlint-rule-max-kanji-continuous-len@1.1.1:
@@ -29624,7 +29623,7 @@ snapshots:
   textlint-rule-max-ten@5.0.0:
     dependencies:
       kuromojin: 3.0.1
-      sentence-splitter: 5.0.3
+      sentence-splitter: 5.1.0
       textlint-rule-helper: 2.5.0
       textlint-util-to-string: 3.3.4
 
@@ -29635,20 +29634,20 @@ snapshots:
   textlint-rule-no-doubled-conjunction@3.0.1:
     dependencies:
       kuromojin: 3.0.1
-      sentence-splitter: 5.0.3
+      sentence-splitter: 5.1.0
       textlint-rule-helper: 2.5.0
 
   textlint-rule-no-doubled-conjunctive-particle-ga@3.0.0:
     dependencies:
       kuromojin: 3.0.1
-      sentence-splitter: 5.0.3
+      sentence-splitter: 5.1.0
       textlint-rule-helper: 2.5.0
       textlint-util-to-string: 3.3.4
 
   textlint-rule-no-doubled-joshi@5.1.1:
     dependencies:
       kuromojin: 3.0.1
-      sentence-splitter: 5.0.3
+      sentence-splitter: 5.1.0
       textlint-rule-helper: 2.5.0
       textlint-util-to-string: 3.3.4
 
@@ -29738,7 +29737,7 @@ snapshots:
   textlint-rule-sentence-length@5.2.1:
     dependencies:
       '@textlint/regexp-string-matcher': 2.0.2
-      sentence-splitter: 5.0.3
+      sentence-splitter: 5.1.0
       textlint-rule-helper: 2.5.0
       textlint-util-to-string: 3.3.4
 
