@@ -1,0 +1,1 @@
+echo Constant in quoted expression

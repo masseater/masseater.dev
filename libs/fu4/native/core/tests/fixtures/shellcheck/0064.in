@@ -1,0 +1,1 @@
+echo "::debug::Set the Octocat variable"

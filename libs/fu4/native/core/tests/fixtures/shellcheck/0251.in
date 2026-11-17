@@ -1,0 +1,1 @@
+echo 'must contain only alnum or _ or -'

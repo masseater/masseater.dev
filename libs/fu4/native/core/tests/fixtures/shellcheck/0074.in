@@ -1,0 +1,1 @@
+echo "ISSUE: $ISSUE, COMMITS: $COMMIT, REF: $REF"

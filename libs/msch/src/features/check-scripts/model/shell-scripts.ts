@@ -76,7 +76,7 @@ export const checkShellScripts = Effect.fn("checkShellScripts")(function* checkS
   root: string,
 ) {
   const files = yield* RepositoryFiles;
-  const names = yield* files.listedFiles(root);
+  const names = yield* files.ownedFiles(root);
   const settings = yield* files.readFile(files.join(root, SETTINGS_FILE));
   const commands = pipe(
     settings,

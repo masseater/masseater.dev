@@ -1,0 +1,1 @@
+echo image must not be empty string

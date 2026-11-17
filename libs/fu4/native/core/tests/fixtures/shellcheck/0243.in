@@ -1,0 +1,1 @@
+echo 'invalid type 2'

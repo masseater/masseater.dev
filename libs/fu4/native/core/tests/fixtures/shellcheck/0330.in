@@ -1,0 +1,2 @@
+x=`date`
+echo `whoami`

@@ -1,0 +1,1 @@
+echo credentials and image must not be empty
