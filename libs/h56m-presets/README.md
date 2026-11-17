@@ -21,3 +21,7 @@ Each export is the absolute path of a TOML file in the Betterleaks format. The f
 so this package has no per-OS builds.
 
 The Betterleaks rules are under the MIT license. `THIRD-PARTY-NOTICES.txt` holds the notice.
+
+## Agent skills
+
+The package ships TanStack Intent skills for coding agents. Load one with `vp exec intent load @r_masseater/h56m-presets#<skill>`.

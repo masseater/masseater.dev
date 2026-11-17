@@ -67,6 +67,14 @@
     "vite": "*",
     "vite-plus": ">=1.5.0"
   },
+  "peerDependenciesMeta": {
+    "vite": {
+      "optional": true
+    },
+    "vite-plus": {
+      "optional": true
+    }
+  },
   "engines": {
     "node": ">=26"
   }

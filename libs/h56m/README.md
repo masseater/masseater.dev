@@ -26,3 +26,7 @@ Run `h56m` to scan the commits since the default branch, or `h56m --staged`
 to scan the index. Call `makeDetector` to scan text from code.
 
 Kingfisher is under MIT and Apache-2.0, and its word list is under CC-BY-SA-4.0. `THIRD-PARTY-NOTICES.txt` holds their notices.
+
+## Agent skills
+
+The package ships TanStack Intent skills for coding agents. Load one with `vp exec intent load @r_masseater/h56m#<skill>`.

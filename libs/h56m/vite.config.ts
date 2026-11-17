@@ -5,12 +5,6 @@ import { defineConfig } from "vite-plus";
 
 const CARGO_INPUTS = await cargoInputs({ directory: import.meta.dirname });
 
-const addon = addonTasks({
-  command: "node bin/build-native.ts",
-  inputs: CARGO_INPUTS,
-  buildAfter: ["notices"],
-});
-
 export default defineConfig({
   run: {
     tasks: {
@@ -27,7 +21,11 @@ export default defineConfig({
           output: ["THIRD-PARTY-NOTICES.txt"],
         },
       },
-      ...addon,
+      ...addonTasks({
+        command: "node bin/build-native.ts",
+        inputs: CARGO_INPUTS,
+        buildAfter: ["notices"],
+      }),
     },
   },
   pack: {
