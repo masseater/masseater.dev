@@ -375,9 +375,7 @@ impl Config {
 
         let secrets_outside_env_config =
             raw.rule_config::<SecretsOutsideEnvConfig>(SecretsOutsideEnvironment::ident())?;
-        let secrets_outside_env_policy = secrets_outside_env_config
-            .map(Into::into)
-            .unwrap_or_default();
+        let secrets_outside_env_policy = secrets_outside_env_config.map_or_default(Into::into);
 
         let unpinned_uses_policies = {
             if let Some(unpinned_uses_config) =
