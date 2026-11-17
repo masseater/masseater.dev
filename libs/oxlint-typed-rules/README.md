@@ -37,6 +37,12 @@ warm はページキャッシュの載った状態での 5 回の中央値で、
 メモリは子プロセスの tsgo と tsgolint を含めた RSS の合計の最大値である。
 
 [masseater-dev]: https://github.com/masseater/masseater.dev
+[tanstack]: https://www.npmjs.com/package/@tanstack/eslint-plugin-start
+[tanstack-query]: https://www.npmjs.com/package/@tanstack/eslint-plugin-query
+[tanstack-router]: https://www.npmjs.com/package/@tanstack/eslint-plugin-router
+[drizzle]: https://www.npmjs.com/package/eslint-plugin-drizzle
+[remotion]: https://www.npmjs.com/package/@remotion/eslint-plugin
+[eslint-react]: https://www.npmjs.com/package/@eslint-react/eslint-plugin
 
 masseater.dev の `apps/portfolio/src` の結果は次のとおりである。
 

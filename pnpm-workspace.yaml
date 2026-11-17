@@ -8,6 +8,7 @@ packages:
 catalogMode: prefer
 
 catalog:
+  "@napi-rs/cli": 3.10.12
   "@pnpm/lockfile.fs": 1100.2.18
   "@pnpm/logger": 1100.0.0
   "@pnpm/workspace.projects-reader": 1101.1.7

@@ -58,6 +58,7 @@ export default defineConfig({
       },
       rules: { "@r_masseater/preset-ja": { "no-taigendome": false } },
     },
+    markdown: { ignores: ["apps/zenn-articles/**"] },
     run: { tasks: { "db-check-all": "vp run -r db:check" } },
   }),
   skills: {

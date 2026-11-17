@@ -1,5 +1,6 @@
 import { Array as Arr, Effect } from "effect";
 
+import { checkMarkdown } from "#/features/check-markdown/index.ts";
 import { checkOverrides } from "#/features/check-overrides/index.ts";
 import { checkPlacement } from "#/features/check-placement/index.ts";
 import { checkWorkspaces } from "#/features/check-repository-layout/index.ts";
@@ -37,6 +38,7 @@ export const checkAll: (
       checkPublishedPackages(root),
       checkWorkspaces(root),
       checkToolUse(root),
+      checkMarkdown(root),
     ],
     { concurrency: "unbounded" },
   );

@@ -1,0 +1,98 @@
+{
+  "name": "@r_masseater/y8",
+  "version": "0.1.0",
+  "description": "A Markdown linter written in Rust that matches markdownlint's built-in rules, configured from vite.config.ts, with TypeScript rules and markdownlint custom-rule support.",
+  "keywords": [
+    "lint",
+    "markdown",
+    "markdownlint",
+    "napi",
+    "tanstack-intent",
+    "vite-plus"
+  ],
+  "homepage": "https://github.com/masseater/masseater.dev/tree/main/libs/y8#readme",
+  "bugs": {
+    "url": "https://github.com/masseater/masseater.dev/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/masseater/masseater.dev.git",
+    "directory": "libs/y8"
+  },
+  "bin": {
+    "y8": "./bin/y8.ts"
+  },
+  "files": [
+    "LICENSE",
+    "dist",
+    "skills/lint-markdown"
+  ],
+  "type": "module",
+  "imports": {
+    "#/*": "./src/*"
+  },
+  "exports": {
+    ".": "./src/app/index.ts",
+    "./vite": {
+      "types": "./src/app/vite.ts"
+    },
+    "./native/*": "./native/*",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "bin": {
+      "y8": "./dist/cli.mjs"
+    },
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "./vite": {
+        "types": "./dist/vite.d.mts",
+        "default": "./dist/vite.mjs"
+      },
+      "./package.json": "./package.json"
+    },
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "prepublishOnly": "vp run build"
+  },
+  "dependencies": {
+    "@effect/platform-node": "catalog:"
+  },
+  "devDependencies": {
+    "@napi-rs/cli": "catalog:",
+    "@r_masseater/vitest-otlp": "workspace:*",
+    "@types/node": "catalog:",
+    "effect": "catalog:stack",
+    "markdownlint": "catalog:",
+    "vite": "catalog:",
+    "vite-plus": "catalog:stack"
+  },
+  "peerDependencies": {
+    "effect": "^4.1.2",
+    "markdownlint": ">=0.42.0",
+    "vite": "*",
+    "vite-plus": ">=1.5.0"
+  },
+  "peerDependenciesMeta": {
+    "markdownlint": {
+      "optional": true
+    }
+  },
+  "napi": {
+    "binaryName": "y8",
+    "packageName": "@r_masseater/y8",
+    "targets": [
+      "x86_64-unknown-linux-gnu",
+      "x86_64-pc-windows-msvc"
+    ]
+  },
+  "engines": {
+    "node": ">=26"
+  }
+}
