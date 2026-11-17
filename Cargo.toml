@@ -15,6 +15,9 @@ members = [
   "libs/media-notes",
   "libs/y8/native/core",
   "libs/y8/native/node",
+  "libs/h56m/native/core",
+  "libs/h56m/native/node",
+  "libs/napi-telemetry",
   "libs/fu4/native/core",
   "libs/fu4/native/node",
   "libs/wism/native/core",
@@ -28,7 +31,7 @@ version = "0.0.0"
 edition = "2024"
 license = "AGPL-3.0-or-later"
 repository = "https://github.com/masseater/masseater.dev"
-rust-version = "1.97"
+rust-version = "1.100"
 
 [workspace.lints.rust]
 unsafe_code = "forbid"

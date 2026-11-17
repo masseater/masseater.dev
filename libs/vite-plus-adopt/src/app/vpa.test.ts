@@ -10,12 +10,14 @@ import { toJson } from "#/shared/lib/json.ts";
 
 import { failedChecksOf, manifest, repositoryWith, run, statusLines } from "./vpa.test.support.ts";
 
+const LEAK = Arr.join(["AKIA", "Z7XQ2JN4VBD3KPLM"], "");
+
 const passesEveryConfiguredCheck = Effect.gen(function* passesEveryConfiguredCheck() {
   const root = yield* repositoryWith({ commits: ["feat: second"] });
   const { exit, output } = yield* run(root, []);
   assertTrue(Exit.isSuccess(exit));
   deepStrictEqual(statusLines(output), [
-    "✓ betterleaks",
+    "✓ h56m",
     "✓ commitlint",
     "✓ dependencies",
     "✓ steiger",
@@ -98,7 +100,7 @@ const lintsAGivenMessage = Effect.gen(function* lintsAGivenMessage() {
 
 const scansTheStagedChanges = Effect.gen(function* scansTheStagedChanges() {
   const root = yield* repositoryWith({
-    files: { "clean.txt": "hello\n", "leak.txt": "AKIAEXAMPLE\n" },
+    files: { "clean.txt": "hello\n", "leak.txt": `${LEAK}\n` },
   });
   yield* runGit(root, ["add", "clean.txt"]);
   const clean = yield* run(root, ["--staged"]);
@@ -123,11 +125,11 @@ const shallowCloneOf = (
 
 const scansTheTreeOfAShallowClone = Effect.gen(function* scansTheTreeOfAShallowClone() {
   const clean = yield* shallowCloneOf({ "clean.txt": "hello\n" });
-  const leaked = yield* shallowCloneOf({ "leak.txt": "AKIAEXAMPLE\n" });
+  const leaked = yield* shallowCloneOf({ "leak.txt": `${LEAK}\n` });
   const cleanRun = yield* run(clean, []);
   const leakedRun = yield* run(leaked, []);
   deepStrictEqual(failedChecksOf(cleanRun.output), []);
-  deepStrictEqual(failedChecksOf(leakedRun.output), ["✗ betterleaks"]);
+  deepStrictEqual(failedChecksOf(leakedRun.output), ["✗ h56m"]);
 });
 
 const ROOT_REPORTING_CONFIG = lines(

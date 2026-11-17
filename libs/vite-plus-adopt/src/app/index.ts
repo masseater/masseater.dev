@@ -2,8 +2,6 @@
 export { loadViteConfig } from "#/entities/vite-config/index.ts";
 /** @internal */
 export type {
-  BetterleaksConfig,
-  BetterleaksRule,
   CommitlintConfig,
   DependencyRules,
   FallowConfig,
