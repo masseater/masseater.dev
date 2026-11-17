@@ -15,19 +15,19 @@ export interface Joinable {
   readonly releaseVelocity: Option.Option<number>;
 }
 
-interface Tieable {
+export interface Tieable {
   readonly track: string;
   readonly start: number;
   readonly item: { readonly length: number; readonly tie: Option.Option<AstNode> };
 }
 
-interface Chaining<Placed extends Tieable, Value> {
+export interface Chaining<Placed extends Tieable, Value> {
   readonly identity: From<Placed, string>;
   readonly valueOf: From<Placed, Value>;
   readonly join: From<readonly [Value, Value], Value>;
 }
 
-interface Tied<Value> {
+export interface Tied<Value> {
   readonly values: readonly Value[];
   readonly problems: readonly Problem[];
 }

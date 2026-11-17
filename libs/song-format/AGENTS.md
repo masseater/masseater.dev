@@ -6,4 +6,4 @@
 
 `song-report <file>` は、楽曲ファイルから導いたキー、コード、繰り返しの小節を JSON 形式で出力する。楽曲を聴けない AI は、この出力を読んで自分が書いたものを確かめる。
 
-`midi-to-fumx <file>` は、Standard MIDI File を `.fumx` に変換する。書いた `.fumx` を読み直して元の MIDI のイベントと突き合わせ、一つでも合わなければ失敗する。
+`midi-to-fumx <file>` は、Standard MIDI File を `.fumx` に変換する。書いた `.fumx` を読み直して元の MIDI のイベントと突き合わせ、1つでも合わなければ失敗する。
