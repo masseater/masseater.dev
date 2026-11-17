@@ -9,6 +9,7 @@ use std::path::PathBuf;
 use std::sync::Arc;
 
 use crate::entities::action::LocalActions;
+use crate::entities::reusable_workflow::LocalWorkflows;
 use crate::entities::workflow::{Workflow, parse};
 use crate::shared::diagnostic::Diagnostic;
 
@@ -19,6 +20,7 @@ pub struct Project {
     pub root: PathBuf,
     pub config: Compiled,
     pub actions: LocalActions,
+    pub workflows: LocalWorkflows,
 }
 
 impl Project {
@@ -28,6 +30,7 @@ impl Project {
             root,
             config: config.compile()?,
             actions: LocalActions::default(),
+            workflows: LocalWorkflows::default(),
         }))
     }
 }

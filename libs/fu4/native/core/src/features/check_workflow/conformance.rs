@@ -21,6 +21,7 @@ const PORTED: &[&str] = &[
     "deprecated-commands",
     "if-cond",
     "action",
+    "workflow-call",
 ];
 const SKIPPED: &[&str] = &["shellcheck", "pyflakes"];
 
@@ -37,6 +38,13 @@ fn kind_of(line: &str) -> Option<&str> {
         .or_else(|| line.strip_suffix(']'))?;
     let open = body.rfind('[')?;
     Some(body[open + 1..].trim_end_matches('\\')).filter(|kind| !kind.is_empty())
+}
+
+fn is_ported(kind: &str) -> bool {
+    kind.trim_start_matches('(')
+        .trim_end_matches(')')
+        .split('|')
+        .any(|k| PORTED.contains(&k))
 }
 
 fn matches(want: &str, have: &str) -> bool {
@@ -131,7 +139,7 @@ fn matches_actionlint_on_its_error_fixtures() {
             let expected: Vec<String> = std::fs::read_to_string(file.with_extension("out"))
                 .expect("out file")
                 .lines()
-                .filter(|line| kind_of(line).is_some_and(|kind| PORTED.contains(&kind)))
+                .filter(|line| kind_of(line).is_some_and(is_ported))
                 .map(str::to_owned)
                 .collect();
             let actual = lint(&dir, &file);
@@ -184,7 +192,7 @@ fn expected_lines(out: &Path) -> Vec<String> {
     std::fs::read_to_string(out)
         .expect("out file")
         .lines()
-        .filter(|line| kind_of(line).is_some_and(|kind| PORTED.contains(&kind)))
+        .filter(|line| kind_of(line).is_some_and(is_ported))
         .map(str::to_owned)
         .collect()
 }

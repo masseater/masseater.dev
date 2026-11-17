@@ -1,8 +1,10 @@
+mod decode;
 mod load;
 mod resolve;
 
 use std::rc::Rc;
 
+pub use decode::Decoder;
 pub use load::{LoadError, Loaded, load};
 pub use resolve::parse_go_float;
 
