@@ -12,6 +12,7 @@
   "devDependencies": {
     "@effect/platform-node": "catalog:",
     "@effect/tsgo": "catalog:stack",
+    "@r_masseater/msch": "workspace:*",
     "@types/node": "catalog:",
     "effect": "catalog:stack",
     "vite-plus": "catalog:stack"

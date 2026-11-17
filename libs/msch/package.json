@@ -34,6 +34,7 @@
   },
   "exports": {
     "./cli": "./bin/msch.ts",
+    "./cargo-inputs": "./src/features/derive-cargo-inputs/index.ts",
     "./config": "./src/app/repository-config.ts",
     "./decision-rules": "./src/app/decision-rules.ts",
     "./lint-rules": "./src/features/define-lint-rules/index.ts",
@@ -51,6 +52,10 @@
     },
     "exports": {
       "./cli": "./dist/cli.mjs",
+      "./cargo-inputs": {
+        "types": "./dist/cargo-inputs.d.mts",
+        "default": "./dist/cargo-inputs.mjs"
+      },
       "./config": {
         "types": "./dist/config.d.mts",
         "default": "./dist/config.mjs"
@@ -96,6 +101,7 @@
     "@pnpm/workspace.projects-reader": "catalog:",
     "@pnpm/workspace.workspace-manifest-reader": "catalog:",
     "@pnpm/workspace.workspace-manifest-writer": "catalog:",
+    "@r_masseater/fu4": "workspace:*",
     "@r_masseater/oxlint-plugin-decision": "workspace:*",
     "@r_masseater/oxlint-typed-rules": "catalog:",
     "@r_masseater/textlint-rule-preset-ja": "workspace:*",

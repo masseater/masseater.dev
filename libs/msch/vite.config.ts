@@ -29,6 +29,7 @@ export default defineConfig({
   pack: {
     entry: {
       cli: "bin/msch.ts",
+      "cargo-inputs": "src/features/derive-cargo-inputs/index.ts",
       config: "src/app/repository-config.ts",
       oxlint: "src/app/oxlint.ts",
       lint: "src/features/define-lint-preset/index.ts",

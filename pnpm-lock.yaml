@@ -1174,6 +1174,9 @@ importers:
       '@masseater.dev/tauri-app':
         specifier: workspace:*
         version: link:../../infra/tauri-app
+      '@r_masseater/msch':
+        specifier: workspace:*
+        version: link:../../libs/msch
       '@tauri-apps/cli':
         specifier: 'catalog:'
         version: 2.12.4
@@ -2051,6 +2054,9 @@ importers:
       '@masseater.dev/node-main':
         specifier: workspace:*
         version: link:../../libs/node-main
+      '@r_masseater/msch':
+        specifier: workspace:*
+        version: link:../../libs/msch
       '@types/node':
         specifier: 'catalog:'
         version: 26.6.6
@@ -2550,6 +2556,9 @@ importers:
       '@masseater.dev/tauri-app':
         specifier: workspace:*
         version: link:../../infra/tauri-app
+      '@r_masseater/msch':
+        specifier: workspace:*
+        version: link:../../libs/msch
       '@tauri-apps/cli':
         specifier: 'catalog:'
         version: 2.12.4
@@ -2934,6 +2943,9 @@ importers:
       '@masseater.dev/tauri-app':
         specifier: workspace:*
         version: link:../../infra/tauri-app
+      '@r_masseater/msch':
+        specifier: workspace:*
+        version: link:../../libs/msch
       '@tauri-apps/cli':
         specifier: 'catalog:'
         version: 2.12.4
@@ -3022,6 +3034,9 @@ importers:
       '@masseater.dev/tauri-app':
         specifier: workspace:*
         version: link:../../infra/tauri-app
+      '@r_masseater/msch':
+        specifier: workspace:*
+        version: link:../../libs/msch
       '@tauri-apps/cli':
         specifier: 'catalog:'
         version: 2.12.4
@@ -3276,6 +3291,9 @@ importers:
       '@masseater.dev/browser-test':
         specifier: workspace:*
         version: link:../../libs/browser-test
+      '@r_masseater/msch':
+        specifier: workspace:*
+        version: link:../../libs/msch
       '@tailwindcss/vite':
         specifier: 'catalog:'
         version: 4.3.5(@voidzero-dev/vite-plus-core@1.6.0(patch_hash=b28fd962a73ec6c9915197197f7e549598912400c8517eb2d0d12dc86c2ec9f0)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))
@@ -3388,6 +3406,9 @@ importers:
 
   libs/desktop-shell:
     devDependencies:
+      '@r_masseater/msch':
+        specifier: workspace:*
+        version: link:../msch
       vite-plus:
         specifier: catalog:stack
         version: 1.6.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
@@ -3404,6 +3425,9 @@ importers:
       '@effect/vitest':
         specifier: 'catalog:'
         version: 4.1.4(effect@4.1.4)(vitest@5.1.0)
+      '@r_masseater/msch':
+        specifier: workspace:*
+        version: link:../msch
       vite-plus:
         specifier: catalog:stack
         version: 1.6.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
@@ -3682,6 +3706,9 @@ importers:
 
   libs/media-notes:
     devDependencies:
+      '@r_masseater/msch':
+        specifier: workspace:*
+        version: link:../msch
       vite-plus:
         specifier: catalog:stack
         version: 1.6.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
@@ -3771,6 +3798,9 @@ importers:
       '@pnpm/workspace.workspace-manifest-writer':
         specifier: 'catalog:'
         version: 1100.2.11
+      '@r_masseater/fu4':
+        specifier: workspace:*
+        version: link:../fu4
       '@r_masseater/oxlint-plugin-decision':
         specifier: workspace:*
         version: link:../oxlint-plugin-decision
@@ -4111,6 +4141,9 @@ importers:
       '@effect/tsgo':
         specifier: catalog:stack
         version: 0.69.0
+      '@r_masseater/msch':
+        specifier: workspace:*
+        version: link:../msch
       '@types/node':
         specifier: 'catalog:'
         version: 26.6.6
@@ -4933,6 +4966,9 @@ importers:
         specifier: catalog:stack
         version: 4.1.4
     devDependencies:
+      '@r_masseater/msch':
+        specifier: workspace:*
+        version: link:../../libs/msch
       vite-plus:
         specifier: catalog:stack
         version: 1.6.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
@@ -5029,6 +5065,9 @@ importers:
 
   tools/pod-rattle-host:
     devDependencies:
+      '@r_masseater/msch':
+        specifier: workspace:*
+        version: link:../../libs/msch
       vite-plus:
         specifier: catalog:stack
         version: 1.6.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
@@ -5091,6 +5130,9 @@ importers:
       '@mediapipe/tasks-vision':
         specifier: 1.2.3
         version: 1.2.3
+      '@r_masseater/msch':
+        specifier: workspace:*
+        version: link:../../libs/msch
       vite-plus:
         specifier: catalog:stack
         version: 1.6.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
@@ -5141,6 +5183,9 @@ importers:
 
   tools/xtask:
     devDependencies:
+      '@r_masseater/msch':
+        specifier: workspace:*
+        version: link:../../libs/msch
       vite-plus:
         specifier: catalog:stack
         version: 1.6.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
