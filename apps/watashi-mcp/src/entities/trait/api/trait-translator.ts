@@ -1,8 +1,8 @@
 import type { UpstreamFailed } from "@masseater.dev/mcp-tool-call";
-import { failedAt } from "@masseater.dev/mcp-tool-call";
-import { runWorkersAi } from "@r_masseater/workers-tracing/workers-ai";
-import type { GatewayOptions } from "@r_masseater/workers-tracing/workers-ai";
-import { Array as Arr, Context, Effect, Schema, String as Str } from "effect";
+import { Array as Arr, Context, Effect, String as Str } from "effect";
+
+import { chatAnswer } from "#/shared/api/index.server.ts";
+import type { ChatModel } from "#/shared/api/index.server.ts";
 
 export const TRANSLATE_MODEL = "@cf/google/gemma-4-26b-a4b-it";
 
@@ -20,22 +20,10 @@ const INSTRUCTIONS = Arr.join(
   " ",
 );
 
-export type TranslatorModel = Readonly<{
-  run: (model: string, inputs: object, options: GatewayOptions) => Promise<unknown>;
-}>;
-
-const Message = Schema.Struct({ content: Schema.String });
-
-const Choice = Schema.Struct({ message: Message });
-
-const Completion = Schema.Struct({ choices: Schema.NonEmptyArray(Choice) });
-
 export class TraitTranslator extends Context.Service<
   TraitTranslator,
   { readonly toJapanese: (english: string) => Effect.Effect<string, UpstreamFailed> }
 >()("watashi-mcp/entities/trait/api/trait-translator/TraitTranslator") {}
-
-const fail = failedAt("workers-ai");
 
 const inputsOf = (english: string): object => ({
   messages: [
@@ -46,20 +34,14 @@ const inputsOf = (english: string): object => ({
   chat_template_kwargs: { enable_thinking: false },
 });
 
-export const translatorOf = (ai: TranslatorModel): TraitTranslator["Service"] =>
+export const translatorOf = (ai: ChatModel): TraitTranslator["Service"] =>
   TraitTranslator.of({
     toJapanese: (english) =>
-      runWorkersAi({
-        operation: "chat",
+      chatAnswer({
+        ai,
         model: TRANSLATE_MODEL,
-        caller: `watashi-mcp.${AGENT}`,
+        agent: AGENT,
         prompt: AGENT,
-        call: (options) => ai.run(TRANSLATE_MODEL, inputsOf(english), options),
-      }).pipe(
-        Effect.mapError(({ cause }) => fail(cause)),
-        Effect.flatMap((raw) =>
-          Schema.decodeUnknownEffect(Completion)(raw).pipe(Effect.mapError(fail)),
-        ),
-        Effect.map((completion) => Str.trim(Arr.headNonEmpty(completion.choices).message.content)),
-      ),
+        inputs: inputsOf(english),
+      }).pipe(Effect.map(Str.trim)),
   });
