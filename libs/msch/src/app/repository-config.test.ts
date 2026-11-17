@@ -1,3 +1,5 @@
+import type { Rule } from "@r_masseater/wism";
+import { Option, Record as Rec, pipe } from "effect";
 import { describe, expect, it } from "vite-plus/test";
 
 import type { WorkspaceSettings } from "#/features/build-workspace-settings/index.ts";
@@ -29,6 +31,36 @@ const config = repositoryConfig({
   run: { tasks: { "db-check-all": "vp run -r db:check" } },
 });
 
+const placementRule = (): Option.Option<Rule> =>
+  pipe(
+    Option.fromNullishOr(config.wism),
+    Option.flatMap(({ plugins }) => Option.fromNullishOr(plugins)),
+    Option.flatMap(Rec.get("fsd")),
+    Option.flatMap(({ rules }) => Option.fromNullishOr(rules)),
+    Option.flatMap(Rec.get("placement")),
+  );
+
+const reportedByPlacement = (files: readonly string[]): readonly string[] => {
+  const reportedBy = ({ check }: Rule): readonly string[] => {
+    const found: string[] = [];
+    check({
+      root: "/repo",
+      files,
+      edges: [],
+      options: {},
+      report: ({ path }) => {
+        found.push(path);
+      },
+    });
+    return found;
+  };
+  return pipe(
+    placementRule(),
+    Option.map(reportedBy),
+    Option.getOrElse((): readonly string[] => []),
+  );
+};
+
 describe("repositoryConfig", () => {
   it("makes verify depend on workspace verifies and every root task", () => {
     expect(config).toMatchObject({
@@ -44,7 +76,14 @@ describe("repositoryConfig", () => {
   });
 
   it("lays out every member workspace with wism", () => {
-    expect(config).toHaveProperty(["wism", "kinds", "0", "paths"], ["apps/web", "libs/kit"]);
+    const reported = reportedByPlacement([
+      "apps/web/package.json",
+      "apps/web/stray.ts",
+      "tools/x/package.json",
+      "tools/x/stray.ts",
+    ]);
+    expect(config).toHaveProperty(["wism", "rules", "fsd/placement"], "error");
+    expect(reported).toStrictEqual(["apps/web/stray.ts"]);
   });
 
   it("adds repository words to the shared text rules", () => {
