@@ -39,12 +39,6 @@ export default defineConfig({
         command: "node bin/launch-installed.ts macos-arm64 release-assets",
         cache: false,
       },
-      "release:tag": { command: "component-tag yakusu", cache: false },
-      "release:publish": {
-        command: "component-release yakusu yakusu release-assets",
-        cache: false,
-      },
-      "release:token": { command: "release-please-token yakusu", cache: false },
     },
   },
 });

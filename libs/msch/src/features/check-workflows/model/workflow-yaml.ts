@@ -68,3 +68,24 @@ export const workflowCheck = ({
       }),
     );
   });
+
+export interface ScalarKey {
+  readonly name: string;
+  readonly matches: (value: string) => boolean;
+}
+
+export const scalarKeyOffsets =
+  ({ name, matches }: ScalarKey) =>
+  (source: string): readonly number[] =>
+    pipe(
+      pairsNamed(name)(source),
+      Arr.filter(({ value }) => isScalar(value) && matches(String(value.value))),
+      Arr.flatMap(({ key }) =>
+        pipe(
+          Option.liftPredicate(key, isScalar),
+          Option.flatMap((scalar) => Option.fromNullishOr(scalar.range)),
+          Option.map(([start]) => start),
+          Option.toArray,
+        ),
+      ),
+    );
