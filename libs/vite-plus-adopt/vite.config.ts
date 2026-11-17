@@ -145,12 +145,12 @@ export default defineConfig({
       },
     ],
     sourcemap: true,
-    dts: { generator: "tsgo" },
+    dts: { generator: "tsgo", resolve: [/^steiger$/u] },
     publint: { strict: true },
     attw: { module: builtAttw, profile: "esm-only", level: "error" },
     outputOptions: {
       codeSplitting: {
-        groups: [{ name: "steiger", test: /node_modules[\\/](?:steiger|zod)[\\/]/u }],
+        groups: [{ name: "steiger", test: /node_modules[\\/](?:steiger|zod)[\\/].*\.[cm]?js$/u }],
       },
       banner: (chunk) => Option.getOrElse(Rec.get(BANNERS, chunk.name), () => ""),
     },
