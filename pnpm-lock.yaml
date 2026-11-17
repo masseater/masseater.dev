@@ -4867,7 +4867,7 @@ importers:
         version: 4.1.4
       vite-plus:
         specifier: catalog:stack
-        version: 1.6.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
+        version: 1.7.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(oxlint-tsgolint@7.0.2007)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
 
   libs/yohaku-protocol:
     dependencies:
@@ -5515,10 +5515,6 @@ packages:
     resolution: {integrity: sha512-IDl/lrPb90aH+pZFHGNDmgH9nAUQj5PlZH1sJ3w7RikctyjHSnY3oNjZhrLoaBoQn/rNK0zsP6OHEqEhj2tdLA==}
     engines: {node: '>=20.0.0'}
 
-  '@aws-sdk/core@3.978.1':
-    resolution: {integrity: sha512-LbY9aGsEiznDWmUc30Nwv3aIX/+dbwTx8KfS0yOC3NPYMO+O91e6jkT1azf34FwjOndq8/Q+RcVVZz5xnerwdg==}
-    engines: {node: '>=20.0.0'}
-
   '@aws-sdk/core@3.981.0':
     resolution: {integrity: sha512-Mnu7gaDrC5UCdyH8uLxLfB2eWbjE/HbjKX1U1J2VQxG3TTATUDObW2wU3I8iH3e9YH5NN2CY6w1mlAIe2XJ3jg==}
     engines: {node: '>=20.0.0'}
@@ -5583,16 +5579,8 @@ packages:
     resolution: {integrity: sha512-GpyAr0DD63YOEmYFM6Df+gJuIgC92MMTiBK4FTKfxii5MJ9ge20epR7LyroulscYlG89J+ZB2ivFDPjvfQhzdw==}
     engines: {node: '>=20.0.0'}
 
-  '@aws-sdk/types@3.974.6':
-    resolution: {integrity: sha512-v/clNZzZnDxGyvpHMOGpJKVXFAExJzUNAAjaWGdcx8QAcXLGwTaOkw33p5SHAi0YAioK32xB3hWwOekRVfmfKg==}
-    engines: {node: '>=20.0.0'}
-
   '@aws-sdk/types@3.975.1':
     resolution: {integrity: sha512-7rGxUkCB2QPoQOeJmonmAICTN2zrH+fpmi1p4Iwu72lnxNaMhOgqcbpyddifnM1DBb19TWQ1u6z/XjkaFNEDWw==}
-    engines: {node: '>=20.0.0'}
-
-  '@aws-sdk/xml-builder@3.972.41':
-    resolution: {integrity: sha512-ctjVSyCMegrWfXlx6VqzSBFI6UqmQ5ZlnfMhdLIiWmhoH8UAQxSCP5N3OpG7X3k4LnS7ou74C4mt20+bfTW2aQ==}
     engines: {node: '>=20.0.0'}
 
   '@aws-sdk/xml-builder@3.972.43':
@@ -10117,21 +10105,12 @@ packages:
     peerDependencies:
       size-limit: 14.3.0
 
-  '@smithy/core@3.35.0':
-    resolution: {integrity: sha512-zRMhfkByhT2snNdr1si24vJitU6Cr9ix2MikUfWmkAgp4jrNP0GcKSP5YvwQ+TlI8AZXER5QOGJn3JsVtSD9/A==}
-    engines: {node: '>=18.0.0'}
-    deprecated: Deprecated due to a bug in custom logger data redaction. See https://github.com/aws/aws-sdk-js-v3/issues/8393.
-
   '@smithy/core@3.40.0':
     resolution: {integrity: sha512-DssGno52pzZ5m6RlDtyKuBIpZNPg9pqgs0CnNDKz9IatxCsmvNmJNn5Zn6rf77MthZo9wf89OvZFhTY/RwxhxQ==}
     engines: {node: '>=18.0.0'}
 
   '@smithy/credential-provider-imds@4.5.2':
     resolution: {integrity: sha512-A9uSdn72ozbRUSit0eib0TW7nXuNPlaeM0zcGkJ+nE6tFcSDbnmtwoxbTCFBukVQcszDAyvsd7+rTduPTXpygg==}
-    engines: {node: '>=18.0.0'}
-
-  '@smithy/fetch-http-handler@5.8.0':
-    resolution: {integrity: sha512-ycSJu3tFAQ4v04CBB0agqFMVsSQ1iG3yw+SpgxRqKfaURpQD4CZ8Wn0zPMmSnOuTpTh65Vz+EA0rMrw089wvkA==}
     engines: {node: '>=18.0.0'}
 
   '@smithy/fetch-http-handler@5.8.1':
@@ -10142,16 +10121,8 @@ packages:
     resolution: {integrity: sha512-ThMkboGeONWXAelq9FvGsuJC4rOi+qyC4/zhUF58xYpxUg5sQKx2VXZYJmtNjr4dSuBJ1HeJXETQILCz3wOHvw==}
     engines: {node: '>=18.0.0'}
 
-  '@smithy/signature-v4@5.7.4':
-    resolution: {integrity: sha512-tHy0K0VtqNd5Y7Y41h0a0Lhh0L1GzC08dTWg0F7vRJWFtTENg7IZikf3wQkanYIRdb7ngoIPMTmqgUi401fEeQ==}
-    engines: {node: '>=18.0.0'}
-
   '@smithy/signature-v4@5.7.5':
     resolution: {integrity: sha512-WPjdr5oWOk1LArpI4pavu+fSo+/evi0Re1olxGvqwuZopd4gYR1UGCi+Soyn/IjmafqbWs+ZC+3AKxJS3ZpwUg==}
-    engines: {node: '>=18.0.0'}
-
-  '@smithy/types@4.19.0':
-    resolution: {integrity: sha512-r7jh49VJxGerfAcTQA6gXcKc+98zOp/tqRwzYjgOE+iSQsP6cEU1hq2QzbuipmP68QtYdY9wKEhiCQZIzHgZ4Q==}
     engines: {node: '>=18.0.0'}
 
   '@smithy/types@4.20.0':
@@ -16174,12 +16145,6 @@ packages:
     peerDependencies:
       seroval: ^1.0
 
-  seroval-plugins@1.6.7:
-    resolution: {integrity: sha512-4Nk35ttD3DTDJW4hgw5StsVAPeU6qnDFnULAouw6tQ7oLTV/ICXrWpsXo2EE52eSP2joUMazbVf52mFEcADqRw==}
-    engines: {node: '>=10'}
-    peerDependencies:
-      seroval: ^1.0
-
   seroval@1.6.12:
     resolution: {integrity: sha512-CqbIVfk/7GL3ITwZI55lcPbpQbjHZ2DD5cUj4iH7E9YsCfHNJV1mx7yNp86Z84w5IpmkZZS/2s5vPOWmVWSdQg==}
     engines: {node: '>=10'}
@@ -17787,28 +17752,17 @@ snapshots:
 
   '@aws-sdk/client-bedrock-runtime@3.1127.0':
     dependencies:
-      '@aws-sdk/core': 3.978.1
+      '@aws-sdk/core': 3.981.0
       '@aws-sdk/credential-provider-node': 3.972.84
       '@aws-sdk/eventstream-handler-node': 3.972.42
       '@aws-sdk/middleware-eventstream': 3.972.38
       '@aws-sdk/middleware-websocket': 3.972.66
       '@aws-sdk/token-providers': 3.1127.0
-      '@aws-sdk/types': 3.974.6
-      '@smithy/core': 3.35.0
-      '@smithy/fetch-http-handler': 5.8.0
+      '@aws-sdk/types': 3.975.1
+      '@smithy/core': 3.40.0
+      '@smithy/fetch-http-handler': 5.8.1
       '@smithy/node-http-handler': 4.12.1
-      '@smithy/types': 4.19.0
-      tslib: 2.8.1
-
-  '@aws-sdk/core@3.978.1':
-    dependencies:
-      '@aws-sdk/types': 3.974.6
-      '@aws-sdk/xml-builder': 3.972.41
-      '@aws/lambda-invoke-store': 0.3.0
-      '@smithy/core': 3.35.0
-      '@smithy/signature-v4': 5.7.4
-      '@smithy/types': 4.19.0
-      bowser: 2.14.1
+      '@smithy/types': 4.20.0
       tslib: 2.8.1
 
   '@aws-sdk/core@3.981.0':
@@ -17950,11 +17904,11 @@ snapshots:
 
   '@aws-sdk/token-providers@3.1127.0':
     dependencies:
-      '@aws-sdk/core': 3.978.1
+      '@aws-sdk/core': 3.981.0
       '@aws-sdk/nested-clients': 3.997.46
-      '@aws-sdk/types': 3.974.6
-      '@smithy/core': 3.35.0
-      '@smithy/types': 4.19.0
+      '@aws-sdk/types': 3.975.1
+      '@smithy/core': 3.40.0
+      '@smithy/types': 4.20.0
       tslib: 2.8.1
 
   '@aws-sdk/token-providers@3.1138.0':
@@ -17966,19 +17920,9 @@ snapshots:
       '@smithy/types': 4.20.0
       tslib: 2.8.1
 
-  '@aws-sdk/types@3.974.6':
-    dependencies:
-      '@smithy/types': 4.19.0
-      tslib: 2.8.1
-
   '@aws-sdk/types@3.975.1':
     dependencies:
       '@smithy/types': 4.20.0
-      tslib: 2.8.1
-
-  '@aws-sdk/xml-builder@3.972.41':
-    dependencies:
-      '@smithy/types': 4.19.0
       tslib: 2.8.1
 
   '@aws-sdk/xml-builder@3.972.43':
@@ -22338,11 +22282,6 @@ snapshots:
     dependencies:
       size-limit: 14.3.0
 
-  '@smithy/core@3.35.0':
-    dependencies:
-      '@smithy/types': 4.19.0
-      tslib: 2.8.1
-
   '@smithy/core@3.40.0':
     dependencies:
       '@smithy/types': 4.20.0
@@ -22354,12 +22293,6 @@ snapshots:
       '@smithy/types': 4.20.0
       tslib: 2.8.1
 
-  '@smithy/fetch-http-handler@5.8.0':
-    dependencies:
-      '@smithy/core': 3.35.0
-      '@smithy/types': 4.19.0
-      tslib: 2.8.1
-
   '@smithy/fetch-http-handler@5.8.1':
     dependencies:
       '@smithy/core': 3.40.0
@@ -22368,24 +22301,14 @@ snapshots:
 
   '@smithy/node-http-handler@4.12.1':
     dependencies:
-      '@smithy/core': 3.35.0
-      '@smithy/types': 4.19.0
-      tslib: 2.8.1
-
-  '@smithy/signature-v4@5.7.4':
-    dependencies:
-      '@smithy/core': 3.35.0
-      '@smithy/types': 4.19.0
+      '@smithy/core': 3.40.0
+      '@smithy/types': 4.20.0
       tslib: 2.8.1
 
   '@smithy/signature-v4@5.7.5':
     dependencies:
       '@smithy/core': 3.40.0
       '@smithy/types': 4.20.0
-      tslib: 2.8.1
-
-  '@smithy/types@4.19.0':
-    dependencies:
       tslib: 2.8.1
 
   '@smithy/types@4.20.0':
@@ -22960,7 +22883,7 @@ snapshots:
       '@tanstack/history': 1.162.5
       cookie-es: 3.1.1
       seroval: 1.7.2
-      seroval-plugins: 1.6.7(seroval@1.7.2)
+      seroval-plugins: 1.6.12(seroval@1.7.2)
 
   '@tanstack/router-devtools-core@1.168.3(@tanstack/router-core@1.171.39)(csstype@3.2.3)':
     dependencies:
@@ -25260,7 +25183,7 @@ snapshots:
   dockerfile-ast@0.7.1:
     dependencies:
       vscode-languageserver-textdocument: 1.0.15
-      vscode-languageserver-types: 3.17.5
+      vscode-languageserver-types: 3.18.5
 
   dom-accessibility-api@0.5.16: {}
 
@@ -29120,7 +29043,7 @@ snapshots:
     dependencies:
       seroval: 1.6.12
 
-  seroval-plugins@1.6.7(seroval@1.7.2):
+  seroval-plugins@1.6.12(seroval@1.7.2):
     dependencies:
       seroval: 1.7.2
 
