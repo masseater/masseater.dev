@@ -24,5 +24,4 @@ export type { Collected, ChunkPositionValue, RowPositionValue } from "./api/trai
 export { AnalysisResult } from "./model/trait-analysis.ts";
 export type { AnalysisRequestValue, AnalysisResultValue } from "./model/trait-analysis.ts";
 export { TraitTranslator, translatorOf } from "./api/trait-translator.ts";
-export type { TranslatorBinding } from "./api/trait-translator.ts";
 export { planTraits } from "./api/trait-plan.ts";
