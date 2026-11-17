@@ -136,7 +136,7 @@ export default defineConfig({
     platform: "node",
     plugins: [attwUpstream, typescriptShim],
     deps: {
-      alwaysBundle: [/^@feature-sliced\//u],
+      alwaysBundle: [/^@feature-sliced\//u, /^steiger$/u, /^zod$/u],
     },
     copy: [
       {
@@ -149,6 +149,9 @@ export default defineConfig({
     publint: { strict: true },
     attw: { module: builtAttw, profile: "esm-only", level: "error" },
     outputOptions: {
+      codeSplitting: {
+        groups: [{ name: "steiger", test: /node_modules[\\/](?:steiger|zod)[\\/]/u }],
+      },
       banner: (chunk) => Option.getOrElse(Rec.get(BANNERS, chunk.name), () => ""),
     },
   },
