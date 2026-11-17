@@ -156,7 +156,7 @@ test("formats a diagnostic like actionlint", () => {
   ).toBe(`${WORKFLOW}:1:2: bad [events]`);
 });
 
-test("reads the fu4 section and excludes ignored workflows", () => {
+test("reads the fu4 section and excludes ignored, vendored and generated workflows", () => {
   const config = fu4Section({ fu4: { ignores: [".github/workflows/vendor-*.yml"] } });
   expect(workflowPathspecs({ config })).toStrictEqual([
     ".github/workflows/*.yml",
@@ -167,6 +167,8 @@ test("reads the fu4 section and excludes ignored workflows", () => {
     ".github/dependabot.yaml",
     ".pre-commit-config.yaml",
     ".pre-commit-hooks.yaml",
+    ":(exclude,attr:linguist-vendored)",
+    ":(exclude,attr:linguist-generated)",
     ":(glob,exclude).github/workflows/vendor-*.yml",
   ]);
   expect(fu4Section({})).toStrictEqual({});

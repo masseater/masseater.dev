@@ -10,7 +10,7 @@ export type Persona = "regular" | "pedantic" | "auditor";
 
 export type Severity = "informational" | "low" | "medium" | "high";
 
-export type Confidence = "low" | "medium" | "high";
+export type Confidence = Exclude<Severity, "informational">;
 
 export interface AuditConfig {
   readonly rules?: Readonly<Record<string, unknown>>;

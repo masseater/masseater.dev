@@ -13,6 +13,8 @@ const WORKFLOWS = [
   ".pre-commit-hooks.yaml",
 ];
 
+const NOT_OWNED = [":(exclude,attr:linguist-vendored)", ":(exclude,attr:linguist-generated)"];
+
 const hasSection = (value: unknown): value is { readonly fu4: Fu4Config } =>
   Predicate.hasProperty(value, "fu4") && Predicate.isObject(value.fu4);
 
@@ -33,6 +35,7 @@ export const workflowPathspecs = ({
   patterns = WORKFLOWS,
 }: PathspecInput): readonly string[] => [
   ...patterns,
+  ...NOT_OWNED,
   ...pipe(
     config.ignores ?? [],
     Arr.map((glob) => `:(glob,exclude)${glob}`),
