@@ -15,8 +15,9 @@ import type { Report } from "#/shared/lib/report.ts";
 
 import { CHECKS } from "./checks.ts";
 
-const DEFAULT_BASE = "origin/main";
+const DEFAULT_BRANCHES = ["origin/HEAD", "origin/main", "origin/master"];
 const RESOLVED = 0;
+const WHOLE_HISTORY = "HEAD";
 
 const isCommit = (
   root: string,
@@ -32,15 +33,17 @@ const isCommit = (
     return exitCode === RESOLVED;
   }).pipe(Effect.orElseSucceed(() => false));
 
-const resolveBase = (
+const resolveRange = (
   root: string,
 ): Effect.Effect<string, never, ChildProcessSpawner.ChildProcessSpawner> =>
-  Effect.gen(function* base() {
+  Effect.gen(function* range() {
     const configured = yield* Config.option(Config.String("VPA_BASE")).pipe(Effect.orDie);
-    if (Option.isSome(configured) && (yield* isCommit(root, configured.value))) {
-      return configured.value;
-    }
-    return DEFAULT_BASE;
+    const candidates = [...Option.toArray(configured), ...DEFAULT_BRANCHES];
+    const base = yield* Effect.findFirst(candidates, (revision) => isCommit(root, revision));
+    return Option.match(base, {
+      onNone: () => WHOLE_HISTORY,
+      onSome: (revision) => `${revision}..HEAD`,
+    });
   });
 
 interface Outcome {
@@ -66,10 +69,10 @@ export const runAllChecks = (
 ): Effect.Effect<void, CheckError, CheckServices | Stdio.Stdio> =>
   Effect.gen(function* all() {
     const config = yield* loadViteConfig(root);
-    const base = yield* resolveBase(root);
+    const range = yield* resolveRange(root);
     const outcomes = yield* pipe(
       CHECKS,
-      Effect.forEach(runCheck({ root, config, base }), { concurrency: "unbounded" }),
+      Effect.forEach(runCheck({ root, config, range }), { concurrency: "unbounded" }),
       Effect.map(Arr.getSomes),
     );
     yield* writeTo("stdout", `${pipe(outcomes, Arr.map(describe), Arr.join("\n"))}\n`);

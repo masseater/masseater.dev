@@ -63,8 +63,8 @@ export const textlintCheck = withSection("textlint", (config, { root }) => {
 });
 
 /** @internal */
-export const commitlintCheck = withSection("commitlint", (config, { root, base }) =>
-  listCommitMessages(root, `${base}..HEAD`).pipe(
+export const commitlintCheck = withSection("commitlint", (config, { root, range }) =>
+  listCommitMessages(root, range).pipe(
     Effect.flatMap((messages) => lintCommitMessages(config, root, messages)),
   ),
 );
