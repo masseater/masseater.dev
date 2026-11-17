@@ -37,7 +37,11 @@ export default defineConfig({
     ],
     secrets: {
       lines: [String.raw`\bOWNER_DISCORD_ID = "[0-9]{17,20}"`],
-      paths: [String.raw`(^|/)fixtures/[^/]+\.tgz!`, String.raw`/fixtures/actionlint/`],
+      paths: [
+        String.raw`(^|/)fixtures/[^/]+\.tgz!`,
+        String.raw`/fixtures/actionlint/`,
+        String.raw`/fixtures/zizmor/`,
+      ],
     },
     textlint: {
       ignores: ["apps/zenn-articles/**", "**/.cache/**", "**/fixtures/**"],
@@ -99,7 +103,7 @@ export default defineConfig({
       skills: ["modern-web-guidance"],
     },
     "masseater/skills": {
-      commit: "b323dbad64cdb7140b75686cb129a36b670a621a",
+      commit: "41bcbab7980ada35ade27a8e140d4f67722eaf24",
       root: "plugins/masseater-skills/skills",
       skills: "all",
     },

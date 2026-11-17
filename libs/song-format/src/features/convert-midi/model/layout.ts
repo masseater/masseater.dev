@@ -1,7 +1,7 @@
+import { TICKS_PER_WHOLE, fractionOf } from "@r_masseater/fumx-parser";
 import { Array as Arr, Option, pipe } from "effect";
 
 import type { From } from "#/shared/lib/from.ts";
-import { TICKS_PER_WHOLE, fractionOf } from "#/shared/lib/ticks.ts";
 
 import type { Meter, TempoChange, Text, Timeline } from "./events.ts";
 

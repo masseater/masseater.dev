@@ -3,6 +3,7 @@ import { Effect, FileSystem, Option, Path, Schema, String as Str, pipe } from "e
 const MANIFEST_FILE = "package.json";
 const SCOPE = /^@[^/]+\//u;
 const UNVERSIONED = "0.0.0";
+const ROOT = ".";
 
 const Native = Schema.Struct({ binary: Schema.String, targets: Schema.Array(Schema.String) });
 
@@ -10,6 +11,7 @@ const ManifestSchema = Schema.Struct({
   name: Schema.String,
   version: Schema.String,
   private: Schema.optionalKey(Schema.Boolean),
+  dependencies: Schema.optionalKey(Schema.Record(Schema.String, Schema.String)),
   native: Schema.optionalKey(Native),
   "size-limit": Schema.optionalKey(Schema.Unknown),
 });
@@ -30,8 +32,20 @@ export const releaseName = ({ name }: Pick<Manifest, "name">): string =>
   Str.replace(SCOPE, "")(name);
 
 /** @internal */
-export const tagOf = (manifest: Pick<Manifest, "name" | "version">): string =>
-  `${releaseName(manifest)}-v${manifest.version}`;
+export const isRoot = (directory: string): boolean => directory === ROOT;
+
+/** @internal */
+export interface Tagged extends Pick<Manifest, "name" | "version"> {
+  readonly directory: string;
+}
+
+/** @internal */
+export const tagOf = ({ directory, name, version }: Tagged): string => {
+  if (isRoot(directory)) {
+    return `v${version}`;
+  }
+  return `${releaseName({ name })}-v${version}`;
+};
 
 /** @internal */
 export const environmentOf = (manifest: Pick<Manifest, "name">): string =>

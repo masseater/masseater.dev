@@ -1,66 +1,57 @@
 #!/usr/bin/env node
-import { mustSucceed, outputOf, succeeds } from "@masseater.dev/github-workflow";
+import { getJson, outputOf, patch, post, postJson } from "@masseater.dev/github-workflow";
 import { runMain } from "@masseater.dev/node-main";
-import { Config, Effect, Option, Redacted } from "effect";
-import { Base64 } from "effect/encoding";
+import { Array as Arr, Config, Effect, Option, Schema } from "effect";
 
 const ARTICLES = "apps/zenn-articles";
 const BRANCH = "zenn";
-const BOT = "github-actions[bot]";
-const BOT_EMAIL = "41898282+github-actions[bot]@users.noreply.github.com";
-const IDENTITY = {
-  GIT_AUTHOR_NAME: BOT,
-  GIT_AUTHOR_EMAIL: BOT_EMAIL,
-  GIT_COMMITTER_NAME: BOT,
-  GIT_COMMITTER_EMAIL: BOT_EMAIL,
+const REF = `refs/heads/${BRANCH}`;
+const BOT = {
+  name: "github-actions[bot]",
+  email: "41898282+github-actions[bot]@users.noreply.github.com",
 };
 
-const authenticated = Effect.gen(function* authenticated() {
-  const token = yield* Config.Redacted("GITHUB_TOKEN");
-  const credentials = Base64.encode(`x-access-token:${Redacted.value(token)}`);
-  return {
-    GIT_CONFIG_COUNT: "1",
-    GIT_CONFIG_KEY_0: "http.https://github.com/.extraheader",
-    GIT_CONFIG_VALUE_0: `AUTHORIZATION: basic ${credentials}`,
-  };
-});
+const Pointer = Schema.Struct({ sha: Schema.String });
+const Refs = Schema.Array(Schema.Struct({ ref: Schema.String, object: Pointer }));
+const Commit = Schema.Struct({ tree: Pointer });
 
-const git = (...args: readonly string[]): { command: string; args: readonly string[] } => ({
-  command: "git",
-  args,
-});
+const publishedHead = getJson(Refs)(`git/matching-refs/heads/${BRANCH}`).pipe(
+  Effect.map(Arr.findFirst((found) => found.ref === REF)),
+  Effect.map(Option.map((found) => found.object.sha)),
+);
 
 const publishedTree = Effect.fn("publishedTree")(function* publishedTree(
-  env: Readonly<Record<string, string>>,
+  head: Option.Option<string>,
 ) {
-  const fetched = yield* succeeds({
-    ...git("fetch", "--no-tags", "--depth=1", "origin", BRANCH),
-    env,
-  });
-  if (!fetched) {
+  if (Option.isNone(head)) {
     return Option.none<string>();
   }
-  const tree = yield* outputOf(git("rev-parse", "FETCH_HEAD^{tree}"));
-  return Option.some(tree);
+  const commit = yield* getJson(Commit)(`git/commits/${head.value}`);
+  return Option.some(commit.tree.sha);
 });
 
 const zennPublish = Effect.gen(function* zennPublish() {
   const sha = yield* Config.String("GITHUB_SHA");
-  const env = yield* authenticated;
-  const tree = yield* outputOf(git("rev-parse", `HEAD:${ARTICLES}`));
-  const published = yield* publishedTree(env);
+  const tree = yield* outputOf({ command: "git", args: ["rev-parse", `HEAD:${ARTICLES}`] });
+  const head = yield* publishedHead;
+  const published = yield* publishedTree(head);
   if (Option.exists(published, (current) => current === tree)) {
     return;
   }
-  const parent = Option.match(published, {
-    onNone: (): readonly string[] => [],
-    onSome: () => ["-p", "FETCH_HEAD"],
+  const commit = yield* postJson(Pointer)({
+    path: "git/commits",
+    body: {
+      message: `deploy: ${sha}`,
+      tree,
+      parents: Arr.fromOption(head),
+      author: BOT,
+      committer: BOT,
+    },
   });
-  const commit = yield* outputOf({
-    ...git("commit-tree", tree, ...parent, "-m", `deploy: ${sha}`),
-    env: IDENTITY,
+  yield* Option.match(head, {
+    onNone: () => post({ path: "git/refs", body: { ref: REF, sha: commit.sha } }),
+    onSome: () => patch({ path: `git/${REF}`, body: { sha: commit.sha, force: false } }),
   });
-  yield* mustSucceed({ ...git("push", "origin", `${commit}:refs/heads/${BRANCH}`), env });
 });
 
 runMain("zenn-publish")(zennPublish);
