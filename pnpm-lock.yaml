@@ -576,8 +576,8 @@ catalogs:
       specifier: ^1.2.2
       version: 1.2.2
     chokidar:
-      specifier: 4.0.3
-      version: 4.0.3
+      specifier: 6.0.0
+      version: 6.0.0
     chrome-launcher:
       specifier: 1.2.3
       version: 1.2.3
@@ -4427,7 +4427,7 @@ importers:
         version: 15.8.0
       chokidar:
         specifier: 'catalog:'
-        version: 4.0.3
+        version: 6.0.0
       cjs-module-lexer:
         specifier: 'catalog:'
         version: 2.3.0
@@ -12458,6 +12458,10 @@ packages:
   chokidar@5.0.0:
     resolution: {integrity: sha512-TQMmc3w+5AxjpL8iIiwebF73dRDF4fBIieAqGn9RGCWaEVwQ6Fb2cGe31Yns0RRIzii5goJ1Y7xbMwo1TxMplw==}
     engines: {node: '>= 20.19.0'}
+
+  chokidar@6.0.0:
+    resolution: {integrity: sha512-Ec2Z7wpcKBiMpR7DxteoqS/sq5G5d2A4fpxzPv6+fD7xNNdrTghn7L11YwV5EN1B3i72Erc3XVT5FkWIDx90+A==}
+    engines: {node: '>= 22.22'}
 
   chrome-launcher@1.2.3:
     resolution: {integrity: sha512-IpQuNUYnpXXq3VBRJInM7zTZDiAp/cu+zy0X74NjyQtFcZIQBbI64i0PYQO25wNwgmgw2cPBYitVmFz53N11Rg==}
@@ -24644,6 +24648,10 @@ snapshots:
       readdirp: 4.1.2
 
   chokidar@5.0.0:
+    dependencies:
+      readdirp: 5.1.1
+
+  chokidar@6.0.0:
     dependencies:
       readdirp: 5.1.1
 
