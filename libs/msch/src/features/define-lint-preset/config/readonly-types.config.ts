@@ -253,6 +253,7 @@ export const readonlyParameterAllow = [
       "Cause",
       "Context",
       "DateTime",
+      "Decoder",
       "Deferred",
       "Duration",
       "Effect",
