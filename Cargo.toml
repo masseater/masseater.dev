@@ -10,7 +10,7 @@ members = [
   "tools/seikin-dance",
   "tools/pod-rattle-host",
   "tools/xtask",
-  "libs/effect2rs",
+  "libs/effect2rs/conformance",
   "libs/local-mcp",
   "libs/desktop-shell",
   "libs/media-notes",
