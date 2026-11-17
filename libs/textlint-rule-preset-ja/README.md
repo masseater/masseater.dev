@@ -18,3 +18,7 @@ npm install --save-dev textlint @r_masseater/textlint-rule-preset-ja @r_masseate
   }
 }
 ```
+
+## Agent skills
+
+The package ships TanStack Intent skills for coding agents. Load one with `vp exec intent load @r_masseater/textlint-rule-preset-ja#<skill>`.
