@@ -6539,7 +6539,7 @@ dependencies = [
 
 [[package]]
 name = "pod_rattle"
-version = "0.0.9"
+version = "0.0.10"
 dependencies = [
  "egui",
  "nice-plug",
