@@ -16,7 +16,6 @@
     "@alchemy.run/cloudflare": "catalog:stack",
     "@cloudflare/workers-types": "catalog:",
     "@effect/vitest": "catalog:",
-    "@masseater.dev/alchemy-app-name": "workspace:*",
     "@masseater.dev/cloudflare-account": "workspace:*",
     "@masseater.dev/d1-test": "workspace:*",
     "@types/node": "catalog:",

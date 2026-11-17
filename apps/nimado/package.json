@@ -8,7 +8,6 @@
   },
   "dependencies": {
     "@effect/atom-react": "catalog:stack",
-    "@masseater.dev/alchemy-app-name": "workspace:*",
     "@masseater.dev/cloudflare-account": "workspace:*",
     "@masseater.dev/nimado": "workspace:*",
     "@masseater.dev/start-shell": "workspace:*",
