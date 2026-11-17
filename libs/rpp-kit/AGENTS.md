@@ -1,3 +1,3 @@
 # rpp-kit
 
-このワークスペースは `rpp-kit` である。REAPER のプロジェクトファイル (`.rpp`) を読み込み、サイトのコンテンツに変換する。
+This workspace is `rpp-kit`. It reads REAPER project files (`.rpp`) and turns them into site content.

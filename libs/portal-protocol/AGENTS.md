@@ -1,3 +1,3 @@
 # @masseater.dev/portal-protocol
 
-このワークスペースには、`portal` がデータを持つ Worker を呼ぶときの RPC の型が格納されている。
+This workspace holds the RPC types `portal` uses to call the Workers that hold data.

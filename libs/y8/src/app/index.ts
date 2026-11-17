@@ -1,12 +1,6 @@
 export { agnix, definePlugin, defineRule } from "#/entities/rule/index.ts";
 export { diagnosticDetail, format } from "./format.ts";
 export { lint } from "./lint.ts";
-export {
-  docsPlugin,
-  docsPreset,
-  recommendedMarkdownRules,
-} from "#/features/check-documents/index.ts";
-export type { DocsPresetOptions, SkillNameOptions } from "#/features/check-documents/index.ts";
 export { tokenize, morphemesOf } from "#/features/split-morphemes/index.ts";
 export { markdownPathspecs, y8Section } from "./section.ts";
 export type { PathspecInput } from "./section.ts";

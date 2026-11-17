@@ -755,6 +755,9 @@ catalogs:
     micromatch:
       specifier: 4.0.8
       version: 4.0.8
+    midi-file:
+      specifier: 1.2.4
+      version: 1.2.4
     miniflare:
       specifier: 4.20260730.0
       version: 4.20260730.0
@@ -3776,6 +3779,9 @@ importers:
       '@r_masseater/y8':
         specifier: workspace:*
         version: link:../y8
+      '@r_masseater/y8-docs':
+        specifier: workspace:*
+        version: link:../y8-docs
       '@shadcn/lint':
         specifier: 'catalog:'
         version: 0.2.5(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))
@@ -4190,6 +4196,9 @@ importers:
       '@effect/platform-node-shared':
         specifier: 'catalog:'
         version: 4.1.4(effect@4.1.4)
+      '@masseater.dev/node-main':
+        specifier: workspace:*
+        version: link:../node-main
       effect:
         specifier: catalog:stack
         version: 4.1.4
@@ -4199,6 +4208,9 @@ importers:
       mapped-import:
         specifier: workspace:*
         version: link:../mapped-import
+      midi-file:
+        specifier: 'catalog:'
+        version: 1.2.4
       tonal:
         specifier: 'catalog:'
         version: 6.5.1
@@ -4769,6 +4781,28 @@ importers:
       vite:
         specifier: 'catalog:'
         version: '@voidzero-dev/vite-plus-core@1.6.0(patch_hash=b28fd962a73ec6c9915197197f7e549598912400c8517eb2d0d12dc86c2ec9f0)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)'
+      vite-plus:
+        specifier: catalog:stack
+        version: 1.6.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
+
+  libs/y8-docs:
+    dependencies:
+      minimatch:
+        specifier: 'catalog:'
+        version: 11.0.8
+    devDependencies:
+      '@effect/platform-node':
+        specifier: 'catalog:'
+        version: 4.1.4(effect@4.1.4)(redis@6.2.1(@opentelemetry/api@1.10.0))
+      '@r_masseater/y8':
+        specifier: workspace:*
+        version: link:../y8
+      '@types/node':
+        specifier: 'catalog:'
+        version: 26.6.6
+      effect:
+        specifier: catalog:stack
+        version: 4.1.4
       vite-plus:
         specifier: catalog:stack
         version: 1.6.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
@@ -14945,6 +14979,9 @@ packages:
   micromatch@4.0.8:
     resolution: {integrity: sha512-PXwfBhYu0hBCPw8Dn0E+WDYb7af3dSLVWKi3HGv84IdF4TyFoC0ysxFd0Goxw7nSv4T/PzEJQxsYsEiFCKo2BA==}
     engines: {node: '>=8.6'}
+
+  midi-file@1.2.4:
+    resolution: {integrity: sha512-B5SnBC6i2bwJIXTY9MElIydJwAmnKx+r5eJ1jknTLetzLflEl0GWveuBB6ACrQpecSRkOB6fhTx1PwXk2BVxnA==}
 
   mime-db@1.52.0:
     resolution: {integrity: sha512-sPU4uV7dYlvtWJxwwxHD0PuihVNiE7TyAbQ5SWxDCB9mUYvOgroQOwYQQOKPJ8CIbE+1ETVlOoK1UC2nU3gYvg==}
@@ -27649,6 +27686,8 @@ snapshots:
     dependencies:
       braces: 3.0.3
       picomatch: 2.3.2
+
+  midi-file@1.2.4: {}
 
   mime-db@1.52.0: {}
 

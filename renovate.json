@@ -11,17 +11,6 @@
   "configMigration": true,
   "ignoreTests": true,
   "minimumReleaseAge": "3 days",
-  "ignorePaths": [
-    "**/node_modules/**",
-    "**/bower_components/**",
-    "**/vendor/**",
-    "**/examples/**",
-    "**/__tests__/**",
-    "**/test/**",
-    "**/tests/**",
-    "**/__fixtures__/**",
-    "patches/**"
-  ],
   "packageRules": [
     {
       "matchPackageNames": [
@@ -39,6 +28,11 @@
       "matchPackageNames": ["oxlint", "@oxlint/plugins", "@effect/tsgo"],
       "groupName": "oxlint and effect-tsgo",
       "ignoreTests": false
+    },
+    {
+      "description": "patches/ の crate はルートの Cargo.lock で解決される。Renovate は写しの Cargo.toml と写し自身の Cargo.lock だけを上げ、ルートの Cargo.lock と食い違って cargo の --locked が落ちる (#1283, #1284, #1289)。更新しない。",
+      "matchFileNames": ["patches/**"],
+      "enabled": false
     },
     {
       "matchDepTypes": ["pnpm-workspace.overrides"],
