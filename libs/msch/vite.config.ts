@@ -29,6 +29,7 @@ export default defineConfig({
   pack: {
     entry: {
       cli: "bin/msch.ts",
+      changed: "bin/msch-changed.ts",
       publish: "bin/msch-publish.ts",
       "cargo-inputs": "src/features/derive-cargo-inputs/index.ts",
       config: "src/app/repository-config.ts",

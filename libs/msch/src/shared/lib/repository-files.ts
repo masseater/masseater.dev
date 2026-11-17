@@ -48,6 +48,7 @@ export class RepositoryFiles extends Context.Service<
     readonly writeFile: (file: string, text: string) => Effect.Effect<void>;
     readonly removeFile: (file: string) => Effect.Effect<void>;
     readonly hash: (text: string) => Effect.Effect<string>;
+    readonly hashFile: (file: string) => Effect.Effect<Option.Option<string>>;
     readonly generatedFiles: (root: string) => Effect.Effect<readonly string[]>;
     readonly listedFiles: (root: string) => Effect.Effect<readonly string[]>;
     readonly ownedFiles: (root: string) => Effect.Effect<readonly string[]>;
@@ -130,7 +131,7 @@ const linkName = (entry: string): readonly string[] =>
 
 type CacheOperations = Pick<
   typeof RepositoryFiles.Service,
-  "walkDirectory" | "writeFile" | "removeFile" | "hash"
+  "walkDirectory" | "writeFile" | "removeFile" | "hash" | "hashFile"
 >;
 
 const encoder = new TextEncoder();
@@ -150,6 +151,11 @@ const cacheOperations = (
       .pipe(Effect.andThen(fs.writeFileString(file, text)), Effect.ignore),
   removeFile: (file) => fs.remove(file, { force: true }).pipe(Effect.ignore),
   hash: (text) => digest.digestHex(Digest.sha256, encoder.encode(text)),
+  hashFile: (file) =>
+    fs.readFile(file).pipe(
+      Effect.flatMap((bytes) => digest.digestHex(Digest.sha256, bytes)),
+      Effect.option,
+    ),
 });
 
 export const nodeRepositoryFiles = Layer.effect(
