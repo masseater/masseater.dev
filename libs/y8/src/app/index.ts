@@ -7,10 +7,12 @@ export {
   recommendedMarkdownRules,
 } from "#/features/check-documents/index.ts";
 export type { DocsPresetOptions, SkillNameOptions } from "#/features/check-documents/index.ts";
+export { tokenize, morphemesOf } from "#/features/split-morphemes/index.ts";
 export { markdownPathspecs, y8Section } from "./section.ts";
 export type { PathspecInput } from "./section.ts";
 export type { LintInput } from "./lint.ts";
 export { Y8Error } from "#/shared/lib/errors.ts";
+export type { Morpheme } from "#/shared/native/index.ts";
 export type {
   Diagnostic,
   Frontmatter,

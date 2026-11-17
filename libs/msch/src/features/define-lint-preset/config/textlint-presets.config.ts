@@ -1,10 +1,10 @@
-import { createRequire } from "node:module";
-
 import presetJa from "@r_masseater/textlint-rule-preset-ja";
 import type { ToolSections } from "@r_masseater/vite-plus-adopt";
 import { Option, Predicate, Record as Rec, pipe } from "effect";
 
 import { JAPANESE } from "#/shared/config/index.ts";
+
+import { requireWithY8Kuromojin } from "./kuromojin.config.ts";
 
 type Preset = NonNullable<NonNullable<ToolSections["textlint"]>["presets"]>[string];
 type Rule = Preset["rules"][string];
@@ -29,7 +29,7 @@ const presetIn = (value: unknown): Option.Option<Preset> => {
   return Option.none();
 };
 
-const required = createRequire(import.meta.url);
+const required = requireWithY8Kuromojin(import.meta.url);
 
 const presetOf = (specifier: string, loaded: unknown): Preset =>
   Option.getOrThrowWith(

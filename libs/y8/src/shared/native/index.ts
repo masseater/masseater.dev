@@ -102,6 +102,22 @@ export interface SourceFile {
   readonly text: string;
 }
 
+export interface Morpheme {
+  readonly word_id: number;
+  readonly word_type: "KNOWN" | "UNKNOWN";
+  readonly surface_form: string;
+  readonly pos: string;
+  readonly pos_detail_1: string;
+  readonly pos_detail_2: string;
+  readonly pos_detail_3: string;
+  readonly conjugated_type: string;
+  readonly conjugated_form: string;
+  readonly basic_form: string;
+  readonly reading?: string;
+  readonly pronunciation?: string;
+  readonly word_position: number;
+}
+
 export interface Native {
   readonly lint: (files: readonly SourceFile[], options: NativeOptions) => readonly NativeResult[];
   readonly lintPaths: (
@@ -111,6 +127,7 @@ export interface Native {
   ) => readonly NativeResult[];
   readonly flushTelemetry: () => Promise<void>;
   readonly readTexts: (root: string, paths: readonly string[]) => readonly (string | null)[];
+  readonly tokenize: (text: string) => string;
 }
 
 const isNative = (value: unknown): value is Native =>
@@ -121,7 +138,9 @@ const isNative = (value: unknown): value is Native =>
   Predicate.hasProperty(value, "flushTelemetry") &&
   Predicate.isFunction(value.flushTelemetry) &&
   Predicate.hasProperty(value, "readTexts") &&
-  Predicate.isFunction(value.readTexts);
+  Predicate.isFunction(value.readTexts) &&
+  Predicate.hasProperty(value, "tokenize") &&
+  Predicate.isFunction(value.tokenize);
 
 export const native: Effect.Effect<Native, Y8Error> = loadAddon({
   packageName: "@r_masseater/y8",
