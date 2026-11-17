@@ -1,5 +1,7 @@
 # @r_masseater/fu4
 
+![fu4 logo](logo.svg)
+
 A GitHub Actions workflow linter written in Rust and configured from `vite.config.ts`.
 
 It reports what [actionlint](https://github.com/rhysd/actionlint) reports, with the same

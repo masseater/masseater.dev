@@ -25,6 +25,7 @@
   "files": [
     "LICENSE",
     "dist",
+    "logo.svg",
     "skills/lint-workflows"
   ],
   "type": "module",
