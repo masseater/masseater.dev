@@ -37,7 +37,10 @@ export default defineConfig({
     ],
     secrets: {
       lines: [String.raw`\bOWNER_DISCORD_ID = "[0-9]{17,20}"`],
-      paths: [String.raw`(^|/)fixtures/[^/]+\.tgz!`],
+      paths: [
+        String.raw`(^|/)fixtures/[^/]+\.tgz!`,
+        String.raw`^libs/fu4/native/core/tests/fixtures/actionlint/`,
+      ],
     },
     textlint: {
       ignores: ["apps/zenn-articles/**", "**/.cache/**", "**/fixtures/**"],

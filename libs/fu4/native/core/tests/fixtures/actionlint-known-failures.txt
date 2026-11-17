@@ -1,0 +1,3 @@
+err/invalid_permissions # permission scopes come from the current SchemaStore workflow schema, which lists scopes added after actionlint v1.7.12
+examples/permissions # same as err/invalid_permissions
+examples/webhook_checks # activity types come from the current GitHub docs, which list types added after actionlint v1.7.12

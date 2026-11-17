@@ -1,0 +1,94 @@
+{
+  "name": "@r_masseater/fu4",
+  "version": "0.1.0",
+  "description": "A GitHub Actions workflow linter written in Rust that matches actionlint's checks, configured from vite.config.ts.",
+  "keywords": [
+    "actionlint",
+    "github-actions",
+    "lint",
+    "tanstack-intent",
+    "vite-plus"
+  ],
+  "homepage": "https://github.com/masseater/masseater.dev/tree/main/libs/fu4#readme",
+  "bugs": {
+    "url": "https://github.com/masseater/masseater.dev/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/masseater/masseater.dev.git",
+    "directory": "libs/fu4"
+  },
+  "bin": {
+    "fu4": "./bin/fu4.ts"
+  },
+  "files": [
+    "LICENSE",
+    "dist",
+    "skills/lint-workflows"
+  ],
+  "type": "module",
+  "imports": {
+    "#/*": "./src/*"
+  },
+  "exports": {
+    ".": "./src/app/index.ts",
+    "./vite": {
+      "types": "./src/app/vite.ts"
+    },
+    "./native/*": "./native/*",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "bin": {
+      "fu4": "./dist/cli.mjs"
+    },
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "./vite": {
+        "types": "./dist/vite.d.mts",
+        "default": "./dist/vite.mjs"
+      },
+      "./package.json": "./package.json"
+    },
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "prepublishOnly": "vp run build"
+  },
+  "dependencies": {
+    "@effect/platform-node": "catalog:"
+  },
+  "devDependencies": {
+    "@r_masseater/vitest-otlp": "workspace:*",
+    "@types/mdast": "catalog:",
+    "@types/node": "catalog:",
+    "effect": "catalog:stack",
+    "mdast-util-to-string": "catalog:",
+    "remark-gfm": "catalog:",
+    "remark-parse": "catalog:",
+    "unified": "catalog:",
+    "vite": "catalog:",
+    "vite-plus": "catalog:stack",
+    "yaml": "catalog:"
+  },
+  "peerDependencies": {
+    "effect": "^4.1.2",
+    "vite": "*",
+    "vite-plus": ">=1.5.0"
+  },
+  "engines": {
+    "node": ">=26"
+  },
+  "native": {
+    "binary": "fu4",
+    "targets": [
+      "linux-x64-gnu",
+      "win32-x64-msvc"
+    ]
+  }
+}
