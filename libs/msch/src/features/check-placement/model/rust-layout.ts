@@ -20,20 +20,10 @@ const MODULE_INDEX = "mod";
 const CRATE_ROOTS: readonly string[] = ["src/lib.rs", "src/main.rs"];
 const OUTSIDE_ALLOWED = /^(?:build\.rs|benches\/.+)$/u;
 const SEPARATE_TEST = /^tests\/.+$/u;
-const SHARED_SLICES: readonly string[] = ["app", "shared"];
 const SLICED_LAYERS: readonly string[] = ["pages", "widgets", "features", "entities", "shared"];
 const LAYER_DEPTH = 1;
 const SOURCE_PREFIX = `${SOURCE_DIRECTORY}${SEPARATOR}`;
 const ROOT_CRATE = "";
-const NO_RANK = -1;
-const LAYER_INDEX = 0;
-const SLICE_INDEX = 1;
-
-const upwardMessage = (target: string, source: string): string =>
-  `uses the ${target} layer from the ${source} layer. A layer may only use the layers below it (${Arr.join(LAYERS, ", ")}).`;
-
-const crossMessage = (layer: string, target: string, source: string): string =>
-  `uses the ${layer} slice ${target} from the slice ${source}. Slices of one layer must not use each other; move what they share down a layer.`;
 
 export interface RustSource {
   readonly crate: string;
@@ -108,66 +98,6 @@ export const kindOf = (inner: string): Kind => {
     return "misplaced";
   }
   return sourceKindOf(inner);
-};
-
-export const isInsideSource = (inner: string): boolean => Str.startsWith(SOURCE_PREFIX)(inner);
-
-export interface PathFrom {
-  readonly segments: readonly string[];
-  readonly current: readonly string[];
-}
-
-export const resolvedFrom = ({ segments, current }: PathFrom): Option.Option<readonly string[]> => {
-  const first = Arr.head(segments);
-  const rest = Arr.drop(segments, NEXT);
-  if (Option.contains(first, "crate")) {
-    return Option.some(rest);
-  }
-  if (Option.contains(first, "self")) {
-    return resolvedFrom({ segments: rest, current });
-  }
-  if (Option.contains(first, "super")) {
-    return pipe(
-      Option.liftPredicate(current, Arr.isReadonlyArrayNonEmpty),
-      Option.flatMap((parent) =>
-        resolvedFrom({ segments: rest, current: Arr.dropRight(parent, NEXT) }),
-      ),
-    );
-  }
-  return Option.some([...current, ...segments]);
-};
-
-const rankOf = (layer: string): number =>
-  pipe(
-    Arr.findFirstIndex(LAYERS, (name) => name === layer),
-    Option.getOrElse(() => NO_RANK),
-  );
-
-const partOf = (path: readonly string[], index: number): string =>
-  Option.getOrElse(Arr.get(path, index), () => "");
-
-export interface Import {
-  readonly source: readonly string[];
-  readonly target: readonly string[];
-}
-
-export const importMessage = ({ source, target }: Import): Option.Option<string> => {
-  const [sourceLayer, sourceSlice] = [partOf(source, LAYER_INDEX), partOf(source, SLICE_INDEX)];
-  const [targetLayer, targetSlice] = [partOf(target, LAYER_INDEX), partOf(target, SLICE_INDEX)];
-  if (!Arr.contains(LAYERS, targetLayer) || target.length < SLICE_DEPTH) {
-    return Option.none();
-  }
-  if (rankOf(targetLayer) < rankOf(sourceLayer)) {
-    return Option.some(upwardMessage(targetLayer, sourceLayer));
-  }
-  if (
-    targetLayer === sourceLayer &&
-    targetSlice !== sourceSlice &&
-    !Arr.contains(SHARED_SLICES, targetLayer)
-  ) {
-    return Option.some(crossMessage(targetLayer, targetSlice, sourceSlice));
-  }
-  return Option.none();
 };
 
 export const isSliceIndex = (modulePath: readonly string[]): boolean =>

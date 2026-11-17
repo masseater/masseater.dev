@@ -49,7 +49,7 @@ const readsLiteralSettings = Effect.gen(function* readsLiteralSettings() {
     "libs/fixture/nested/vite.config.ts": `export default { msch: { lint: { ignorePatterns: ["x"] } } };\n`,
   });
   expect(settings).toStrictEqual({
-    sourceDirectories: [],
+    members: ["apps/web", "libs/own"],
     ignoredDirectories: [],
     lint: {
       ignorePatterns: ["apps/web/upstream/**", "!apps/web/upstream/keep.ts"],
@@ -123,7 +123,7 @@ const listsPublicEntries = Effect.gen(function* listsPublicEntries() {
   ]);
 });
 
-const listsSourcesAndIgnoredDirectories = Effect.gen(function* listsSourcesAndIgnoredDirectories() {
+const listsMembersAndIgnoredDirectories = Effect.gen(function* listsMembersAndIgnoredDirectories() {
   const settings = yield* settingsOf({
     ".gitignore": "dist/\n",
     "apps/web/package.json": `{ "name": "web" }`,
@@ -133,7 +133,7 @@ const listsSourcesAndIgnoredDirectories = Effect.gen(function* listsSourcesAndIg
     "libs/crate/Cargo.toml": '[package]\nname = "crate"\n',
     "libs/crate/src/lib.rs": "mod shared;\n",
   });
-  expect(settings.sourceDirectories).toStrictEqual(["apps/web/src"]);
+  expect(settings.members).toStrictEqual(["apps/web", "libs/crate", "libs/flat"]);
   expect(settings.ignoredDirectories).toStrictEqual([
     { pattern: "!**/dist", base: "workspace" },
     { pattern: "!**/dist/**", base: "workspace" },
@@ -142,8 +142,8 @@ const listsSourcesAndIgnoredDirectories = Effect.gen(function* listsSourcesAndIg
 
 layer(fixtureLayer)("workspace settings", (it) => {
   it.effect(
-    "lists the src directory of each workspace and the directories .gitignore hides",
-    () => listsSourcesAndIgnoredDirectories,
+    "lists the member workspaces and the directories .gitignore hides",
+    () => listsMembersAndIgnoredDirectories,
   );
   it.effect(
     "reads msch settings and tasks of each workspace without running it, roots its patterns and leaves out workspaces that test themselves",

@@ -1,10 +1,10 @@
+import { present } from "@r_masseater/lint-host";
 import { Array as Arr, Effect, Option, Predicate, Record as Rec, pipe } from "effect";
 
 import { reportedSeverity } from "#/entities/rule/index.ts";
 import type { CompatRule } from "#/entities/rule/index.ts";
 import type { Diagnostic } from "#/shared/config/index.ts";
 import { Y8Error, failedWith } from "#/shared/lib/errors.ts";
-import { present } from "#/shared/lib/present.ts";
 import type { SourceFile } from "#/shared/native/index.ts";
 
 interface MarkdownlintError {
