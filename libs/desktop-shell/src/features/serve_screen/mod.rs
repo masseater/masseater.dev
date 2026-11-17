@@ -1,11 +1,12 @@
 use tauri::{App, Builder, Url, WebviewUrl, WebviewWindowBuilder, Wry};
 
+use crate::shared::lib::HOST;
 use crate::shared::ui::paint_like_the_page;
 
 pub type Setup = Result<(), Box<dyn std::error::Error>>;
 
 fn bound_port(port: u16) -> std::io::Result<u16> {
-    Ok(std::net::TcpListener::bind((local_mcp::HOST, port))?
+    Ok(std::net::TcpListener::bind((HOST, port))?
         .local_addr()?
         .port())
 }
@@ -19,8 +20,7 @@ fn served_at(port: u16) -> Result<WebviewUrl, url::ParseError> {
         return Ok(WebviewUrl::default());
     }
     Ok(WebviewUrl::External(Url::parse(&format!(
-        "http://{}:{port}",
-        local_mcp::HOST
+        "http://{HOST}:{port}"
     ))?))
 }
 
@@ -31,7 +31,7 @@ pub fn served(app: Builder<Wry>, port: u16) -> Builder<Wry> {
     }
     app.plugin(
         tauri_plugin_localhost::Builder::new(port)
-            .host(local_mcp::HOST)
+            .host(HOST)
             .build(),
     )
 }
@@ -54,11 +54,11 @@ pub fn open_window(app: &App, port: u16) -> Setup {
 mod tests {
     use std::net::TcpListener;
 
-    use super::screen_port;
+    use super::{HOST, screen_port};
 
     #[test]
     fn keeps_the_preferred_port_when_it_is_free() {
-        let free = TcpListener::bind((local_mcp::HOST, 0))
+        let free = TcpListener::bind((HOST, 0))
             .unwrap()
             .local_addr()
             .unwrap()
@@ -68,7 +68,7 @@ mod tests {
 
     #[test]
     fn moves_to_another_port_when_the_preferred_one_is_taken() {
-        let taken = TcpListener::bind((local_mcp::HOST, 0)).unwrap();
+        let taken = TcpListener::bind((HOST, 0)).unwrap();
         let port = taken.local_addr().unwrap().port();
         let chosen = screen_port(port).unwrap();
         assert_ne!(chosen, port);

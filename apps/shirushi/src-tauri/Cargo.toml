@@ -18,7 +18,6 @@ tokio = { version = "1", features = ["macros", "net", "rt-multi-thread"] }
 [dependencies]
 axum = "0.8"
 desktop-shell = { path = "../../../libs/desktop-shell" }
-local-mcp = { path = "../../../libs/local-mcp" }
 media-notes = { path = "../../../libs/media-notes" }
 reqwest = { version = "0.13", default-features = false, features = ["rustls"] }
 rmcp = { version = "3.10", features = ["macros", "server", "transport-streamable-http-server"] }

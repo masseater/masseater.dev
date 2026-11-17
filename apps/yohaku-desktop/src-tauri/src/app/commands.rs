@@ -285,7 +285,7 @@ pub async fn revert_source(yohaku: State<'_, Yohaku>, id: String) -> Answer<()> 
 #[specta::specta]
 pub async fn get_mcp(yohaku: State<'_, Yohaku>) -> Answer<Mcp> {
     Ok(Mcp {
-        url: local_mcp::url(mcp::PORT),
+        url: desktop_shell::mcp_url(mcp::PORT),
         token: yohaku.mcp_token.clone(),
     })
 }
