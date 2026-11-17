@@ -36,3 +36,5 @@ export { namedWorkspaces, patternOf } from "./model/workspace-names.ts";
 export type { NamedWorkspace } from "./model/workspace-names.ts";
 export { deployEntries } from "./model/deploy-entries.ts";
 export { lockedPackages } from "./model/locked-packages.ts";
+export { lockedGraph } from "./model/locked-graph.ts";
+export type { LockedNode } from "./model/locked-graph.ts";

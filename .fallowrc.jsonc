@@ -38,7 +38,7 @@
     },
   ],
   "overrides": [{ "files": ["**/generated/**"], "rules": { "unused-enum-members": "off" } }],
-  "ignoreDependencies": ["@effect/language-service", "@typescript/typescript6"],
+  "ignoreDependencies": ["@effect/language-service"],
   "workspaces": {
     "settings": {
       "libs/msch": {
@@ -58,8 +58,15 @@
           "@andrewbranch/untar.js",
           "@feature-sliced/filesystem",
           "@loaderkit/resolve",
+          "chokidar",
           "cjs-module-lexer",
+          "effector",
+          "empathic",
           "fastest-levenshtein",
+          "globby",
+          "immer",
+          "micromatch",
+          "patronum",
           "pluralize",
           "tsconfck",
           "validate-npm-package-name",
