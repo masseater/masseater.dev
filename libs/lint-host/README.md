@@ -20,3 +20,7 @@ const addon = loadAddon({
 
 `buildAddon` builds the addon from `bin/build-native.ts`, and `addonTasks` from
 `@r_masseater/lint-host/vite` declares the `native`, `build` and `test` tasks around it.
+
+## Agent skills
+
+The package ships TanStack Intent skills for coding agents. Load one with `vp exec intent load @r_masseater/lint-host#<skill>`.

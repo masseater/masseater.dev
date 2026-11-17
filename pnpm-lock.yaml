@@ -4803,6 +4803,12 @@ importers:
       '@r_masseater/lint-host':
         specifier: workspace:*
         version: link:../lint-host
+      minimatch:
+        specifier: 'catalog:'
+        version: 11.0.8
+      yaml:
+        specifier: 'catalog:'
+        version: 2.9.1
     devDependencies:
       '@r_masseater/vitest-otlp':
         specifier: workspace:*

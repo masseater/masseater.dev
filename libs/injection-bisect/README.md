@@ -1,4 +1,4 @@
-# injection-bisect
+# @r_masseater/injection-bisect
 
 injection-bisect uses a decision model on OpenRouter to check whether a document handed to an AI contains a prompt injection, and removes the injected part if it does.
 
@@ -49,3 +49,7 @@ node check.mjs
 ```
 
 When it finds an injection, it prints `injected` and the sentences it judged to be injected. Otherwise it prints only `clean`. The default model is the free `respan/span-01-lite`. Choose another decision model with `detect(text, { model: "typesafe/jev-1.13" })`.
+
+## Agent skills
+
+The package ships TanStack Intent skills for coding agents. Load one with `vp exec intent load @r_masseater/injection-bisect#<skill>`.

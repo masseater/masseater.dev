@@ -8,6 +8,7 @@ rust-version.workspace = true
 publish = false
 
 [dependencies]
+agnix-core = "=0.61.0"
 pulldown-cmark = { version = "0.13.6", default-features = false }
 rayon = "1"
 regex = "1"
