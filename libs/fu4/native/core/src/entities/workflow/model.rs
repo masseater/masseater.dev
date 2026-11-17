@@ -144,7 +144,7 @@ pub struct CallEventOutput {
 #[derive(Debug, Clone, Default)]
 pub struct WorkflowCallEvent {
     pub inputs: Vec<CallEventInput>,
-    pub secrets: BTreeMap<String, CallEventSecret>,
+    pub secrets: Option<BTreeMap<String, CallEventSecret>>,
     pub outputs: BTreeMap<String, CallEventOutput>,
     pub pos: Pos,
 }

@@ -657,11 +657,12 @@ impl Parser {
                     }
                 }
                 "secrets" => {
-                    call.secrets = BTreeMap::new();
+                    let mut secrets = BTreeMap::new();
                     for secret in self.parse_section("secrets", &entry.val, true, false) {
                         let parsed = self.parse_call_secret(secret.key, &secret.val);
-                        call.secrets.insert(secret.id, parsed);
+                        secrets.insert(secret.id, parsed);
                     }
+                    call.secrets = Some(secrets);
                 }
                 "outputs" => {
                     call.outputs = BTreeMap::new();

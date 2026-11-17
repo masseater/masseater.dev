@@ -3,6 +3,7 @@ mod credentials;
 mod deprecated_commands;
 mod env_var;
 mod events;
+mod expression;
 mod glob;
 mod id;
 mod if_cond;
@@ -37,6 +38,7 @@ pub fn all(context: &Context) -> Vec<Box<dyn Rule>> {
             context.path.clone(),
             context.project.clone(),
         )),
+        Box::new(expression::Expression::new(context.project.clone())),
         Box::new(deprecated_commands::DeprecatedCommands::default()),
         Box::new(if_cond::IfCond::default()),
     ]

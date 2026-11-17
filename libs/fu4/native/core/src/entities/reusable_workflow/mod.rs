@@ -63,6 +63,7 @@ impl ReusableMetadata {
         let secrets = event
             .secrets
             .iter()
+            .flatten()
             .map(|(id, secret)| {
                 (
                     id.clone(),

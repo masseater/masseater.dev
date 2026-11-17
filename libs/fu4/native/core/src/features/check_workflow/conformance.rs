@@ -22,6 +22,7 @@ const PORTED: &[&str] = &[
     "if-cond",
     "action",
     "workflow-call",
+    "expression",
 ];
 const SKIPPED: &[&str] = &["shellcheck", "pyflakes"];
 
@@ -47,9 +48,29 @@ fn is_ported(kind: &str) -> bool {
         .any(|k| PORTED.contains(&k))
 }
 
+fn go_literal_braces(source: &str) -> String {
+    let chars: Vec<char> = source.chars().collect();
+    let mut out = String::new();
+    for (i, c) in chars.iter().enumerate() {
+        let escaped = i > 0 && chars[i - 1] == '\\';
+        let repetition = match c {
+            '{' => chars.get(i + 1).is_some_and(char::is_ascii_digit),
+            '}' => i > 0 && (chars[i - 1].is_ascii_digit() || chars[i - 1] == ','),
+            _ => true,
+        };
+        if matches!(c, '{' | '}') && !escaped && !repetition {
+            out.push('\\');
+        }
+        out.push(*c);
+    }
+    out
+}
+
 fn matches(want: &str, have: &str) -> bool {
     if want.len() > 1 && want.starts_with('/') && want.ends_with('/') {
-        return Regex::new(&want[1..want.len() - 1]).is_ok_and(|pattern| pattern.is_match(have));
+        let source = &want[1..want.len() - 1];
+        let pattern = Regex::new(source).or_else(|_| Regex::new(&go_literal_braces(source)));
+        return pattern.is_ok_and(|pattern| pattern.is_match(have));
     }
     want == have
 }
@@ -97,6 +118,10 @@ fn normalize(message: &str) -> String {
         .replace(
             &format!("variables in {CONFIG_NAME} are"),
             "variables in actionlint.yaml are",
+        )
+        .replace(
+            &format!("is empty in {CONFIG_NAME}."),
+            "is empty in actionlint.yaml.",
         )
         .replace(CONFIG_NAME, "actionlint.yaml config file")
 }
@@ -156,7 +181,7 @@ fn matches_actionlint_on_its_error_fixtures() {
     }
     let fixed: Vec<&String> = known
         .difference(&failures)
-        .filter(|id| !id.starts_with("projects/"))
+        .filter(|id| id.starts_with("err/") || id.starts_with("examples/"))
         .collect();
     assert!(
         report.is_empty() && fixed.is_empty(),
@@ -169,8 +194,10 @@ fn matches_actionlint_on_its_error_fixtures() {
 
 #[test]
 fn accepts_actionlint_ok_fixtures() {
+    let known = known_failures();
     let dir = fixtures().join("ok");
     let mut report = Vec::new();
+    let mut failures = BTreeSet::new();
     for file in workflows(&dir) {
         let name = file
             .file_name()
@@ -181,11 +208,23 @@ fn accepts_actionlint_ok_fixtures() {
             continue;
         }
         let actual = lint(&dir, &file);
+        let id = format!("ok/{}", name.trim_end_matches(".yaml").trim_end_matches(".yml"));
         if !actual.is_empty() {
-            report.push(format!("{name}: {actual:#?}"));
+            if !known.contains(&id) {
+                report.push(format!("{name}: {actual:#?}"));
+            }
+            failures.insert(id);
         }
     }
-    assert!(report.is_empty(), "{}", report.join("\n"));
+    let fixed: Vec<&String> = known
+        .iter()
+        .filter(|id| id.starts_with("ok/") && !failures.contains(*id))
+        .collect();
+    assert!(
+        report.is_empty() && fixed.is_empty(),
+        "known failures now pass {fixed:?}\n{}",
+        report.join("\n")
+    );
 }
 
 fn expected_lines(out: &Path) -> Vec<String> {

@@ -6,6 +6,7 @@ use super::availability::table;
 use super::json;
 use super::types::{ArrayType, ExprType, ObjectType};
 use super::untrusted::Untrusted;
+use crate::shared::product::CONFIG_NAME;
 use crate::shared::text::{ordinal, quote, quotes, sorted_quotes};
 
 pub struct Signature {
@@ -371,9 +372,7 @@ impl Checker {
     }
 
     fn check_context(&mut self, expr: &Expr, name: &str) {
-        let Some(contexts) = &self.contexts else {
-            return;
-        };
+        let contexts = self.contexts.as_deref().unwrap_or_default();
         let lower = name.to_lowercase();
         if contexts.iter().any(|c| *c == lower) {
             return;
@@ -439,7 +438,7 @@ impl Checker {
             self.error(
                 expr,
                 format!(
-                    "no configuration variable is allowed since the variables list is empty in actionlint.yaml. you may forget adding the variable {} to the list",
+                    "no configuration variable is allowed since the variables list is empty in {CONFIG_NAME}. you may forget adding the variable {} to the list",
                     quote(property)
                 ),
             );
@@ -451,7 +450,7 @@ impl Checker {
         self.error(
             expr,
             format!(
-                "undefined configuration variable {}. defined configuration variables in actionlint.yaml are {}",
+                "undefined configuration variable {}. defined configuration variables in {CONFIG_NAME} are {}",
                 quote(property),
                 sorted_quotes(&defined)
             ),

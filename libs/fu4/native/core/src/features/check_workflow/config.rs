@@ -6,7 +6,7 @@ use serde::Deserialize;
 
 use crate::shared::text::quote;
 
-pub const CONFIG_NAME: &str = "the fu4 section of vite.config.ts";
+pub use crate::shared::product::CONFIG_NAME;
 
 #[derive(Debug, Clone, Default, Deserialize)]
 #[serde(rename_all = "camelCase", default)]
