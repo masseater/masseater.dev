@@ -28,7 +28,7 @@ const LINUX: Release = {
 const WINDOWS: Release = {
   asset: "pluginval_Windows.zip",
   sha256: "c08e61ce3b96db41636f8ec7e76f4c7e2c13ebdac7fa1b5a1f52b4f32ec715ab",
-  extract: ["tar", "-xf", ARCHIVE],
+  extract: [String.raw`C:\Windows\System32\tar.exe`, "-xf", ARCHIVE],
   command: ["./pluginval.exe"],
 };
 
