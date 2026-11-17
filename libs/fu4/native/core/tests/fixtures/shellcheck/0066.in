@@ -1,0 +1,1 @@
+echo "::error file=app.js,line=1,col=5,endColumn=7::Missing semicolon"

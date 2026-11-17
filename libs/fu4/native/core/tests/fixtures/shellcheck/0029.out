@@ -1,0 +1,3 @@
+SC2086:info:1:15: Double quote to prevent globbing and word splitting
+SC2086:info:1:39: Double quote to prevent globbing and word splitting
+SC2068:error:1:47: Double quote array expansions to avoid re-splitting elements

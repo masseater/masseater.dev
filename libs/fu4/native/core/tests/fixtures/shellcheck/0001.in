@@ -1,0 +1,1 @@
+$Env:FOO = "FOO"
