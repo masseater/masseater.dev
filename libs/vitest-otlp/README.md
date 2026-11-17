@@ -1,7 +1,9 @@
 # @r_masseater/vitest-otlp
 
 A Vitest plugin that receives OTLP during tests. A test can then assert the
-spans, metrics and logs that the code under test really exported. It shows that
+spans, metrics and logs that the code under test really exported.
+
+It shows that
 auto-instrumentation and `OTEL_*` settings work. It also shows that telemetry
 actually leaves the process.
 
@@ -70,6 +72,10 @@ test("caching writes to KV", () =>
     yield* Effect.promise(() => miniflare.dispose());
   }).pipe(Effect.runPromise));
 ```
+
+## Agent skills
+
+The package ships TanStack Intent skills for coding agents. Load one with `vp exec intent load @r_masseater/vitest-otlp#<skill>`.
 
 ## License
 
