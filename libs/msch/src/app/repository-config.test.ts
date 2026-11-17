@@ -15,7 +15,7 @@ const WORKSPACE: WorkspaceSettings = {
   sourceDirectories: ["apps/web/src", "libs/kit/src"],
   ignoredDirectories: [{ pattern: "!**/dist", base: "workspace" }],
   testProjects: ["apps/web"],
-  tasks: { verify: ["web#verify"] },
+  tasks: { verify: ["web#verify"], native: [] },
   devDependencies: {},
 };
 

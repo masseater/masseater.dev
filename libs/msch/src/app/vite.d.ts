@@ -1,3 +1,4 @@
+import type { Y8Config } from "@r_masseater/y8";
 import type { OxlintOverride } from "vite-plus/lint";
 
 export type { ToolSections } from "@r_masseater/vite-plus-adopt";
@@ -40,5 +41,6 @@ export interface MschConfig {
 declare module "vite" {
   interface UserConfig {
     readonly msch?: MschConfig;
+    readonly y8?: Y8Config;
   }
 }

@@ -1,6 +1,6 @@
 # vite-plus-adopt
 
-`vpa` is a CLI that brings Betterleaks, actionlint, zizmor, commitlint, textlint, markdownlint, Steiger, fallow and agent skill installation into Vite+. Write their settings and your dependency rules in `vite.config.ts`, and `vpa` reads them from there.
+`vpa` is a CLI that brings Betterleaks, actionlint, zizmor, commitlint, textlint, Steiger, fallow and agent skill installation into Vite+. Write their settings and your dependency rules in `vite.config.ts`, and `vpa` reads them from there.
 Running `vpa` once with no arguments runs every configured check in parallel and prints the results together.
 It also bundles a Feature-Sliced Design plugin for Steiger and @arethetypeswrong/core, both running on TypeScript 7 alone.
 
@@ -42,7 +42,6 @@ export default defineConfig({
     ignores: ["CHANGELOG.md"],
     rules: { "preset-ja-technical-writing": true },
   },
-  markdownlint: { ignores: ["CHANGELOG.md"] },
   fallow: { production: true, rules: { "unused-files": "error" } },
   run: { tasks: { vpa: { command: "vpa", cache: false } } },
 });
