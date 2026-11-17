@@ -6,18 +6,27 @@ import type { Problem, RuleName } from "#/shared/lib/problem.ts";
 import { RepositoryFiles } from "#/shared/lib/repository-files.ts";
 
 const RULE: RuleName = "unverified-crate";
+const VERSION_RULE: RuleName = "release-version";
+const MANIFEST_FILE = "package.json";
+const APP_DIRECTORIES: readonly string[] = ["", "src-tauri"];
 const CARGO_FILE = "Cargo.toml";
 const CONFIG_FILE = "vite.config.ts";
 const SEPARATOR = "/";
 const FIRST = 1;
 const READ_CONCURRENCY = 8;
 
-const CrateEntry = Schema.Struct({ name: Schema.String, manifest_path: Schema.String });
+const CrateEntry = Schema.Struct({
+  name: Schema.String,
+  version: Schema.String,
+  manifest_path: Schema.String,
+});
+const PackageVersion = Schema.fromJsonString(Schema.Struct({ version: Schema.String }));
 const CrateList = Schema.fromJsonString(Schema.Struct({ packages: Schema.Array(CrateEntry) }));
 const decodeCrateList = Schema.decodeUnknownEffect(CrateList);
 
 interface Crate {
   readonly name: string;
+  readonly version: string;
   readonly manifest: string;
 }
 
@@ -31,7 +40,11 @@ const cratesIn = Effect.fn("cratesIn")(function* cratesIn(root: string) {
   const list = yield* decodeCrateList(output);
   return pipe(
     list.packages,
-    Arr.map((crate): Crate => ({ name: crate.name, manifest: crate.manifest_path })),
+    Arr.map((crate): Crate => ({
+      name: crate.name,
+      version: crate.version,
+      manifest: crate.manifest_path,
+    })),
   );
 }, Effect.scoped);
 
@@ -77,6 +90,46 @@ const problemIn = Effect.fn("problemIn")(function* problemIn(
   );
 });
 
+const versionProblemIn = Effect.fn("versionProblemIn")(function* versionProblemIn(
+  root: string,
+  directories: readonly string[],
+  crate: Crate,
+) {
+  const files = yield* RepositoryFiles;
+  const directory = files.relative(root, files.dirname(crate.manifest));
+  const workspace = pipe(
+    directories,
+    Arr.findFirst((candidate) =>
+      pipe(
+        APP_DIRECTORIES,
+        Arr.map((inner) =>
+          pipe([candidate, inner], Arr.filter(Str.isNonEmpty), Arr.join(SEPARATOR)),
+        ),
+        Arr.contains(directory),
+      ),
+    ),
+  );
+  if (Option.isNone(workspace)) {
+    return Option.none<Problem>();
+  }
+  const text = yield* files.readFile(files.join(root, workspace.value, MANIFEST_FILE));
+  const version = pipe(
+    text,
+    Option.flatMap(Schema.decodeOption(PackageVersion)),
+    Option.map((manifest) => manifest.version),
+  );
+  if (Option.isNone(version) || version.value === crate.version) {
+    return Option.none<Problem>();
+  }
+  return Option.some<Problem>({
+    file: crate.manifest,
+    line: FIRST,
+    column: FIRST,
+    rule: VERSION_RULE,
+    message: `crate ${crate.name} is version ${crate.version} but ${workspace.value}/${MANIFEST_FILE} is ${version.value}. msch-publish releases the version in package.json, so bump both in the same PR.`,
+  });
+});
+
 /** @internal */
 export const checkCrates = Effect.fn("checkCrates")(function* checkCrates(root: string) {
   const files = yield* RepositoryFiles;
@@ -86,8 +139,16 @@ export const checkCrates = Effect.fn("checkCrates")(function* checkCrates(root: 
   }
   const directories = yield* workspaceDirectories(root);
   const crates = yield* cratesIn(root);
-  const found = yield* Effect.forEach(crates, (crate) => problemIn(root, directories, crate), {
-    concurrency: READ_CONCURRENCY,
-  });
-  return Arr.getSomes(found);
+  const found = yield* Effect.forEach(
+    crates,
+    (crate) =>
+      Effect.all(
+        [problemIn(root, directories, crate), versionProblemIn(root, directories, crate)],
+        {
+          concurrency: "unbounded",
+        },
+      ),
+    { concurrency: READ_CONCURRENCY },
+  );
+  return Arr.getSomes(Arr.flatten(found));
 });
