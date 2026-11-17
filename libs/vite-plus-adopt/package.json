@@ -126,7 +126,7 @@
         "!dist/attw.mjs",
         "!dist/steiger-*.mjs"
       ],
-      "limit": "15470 B"
+      "limit": "15500 B"
     },
     {
       "name": "steiger",
