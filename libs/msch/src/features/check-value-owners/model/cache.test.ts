@@ -1,11 +1,12 @@
 import { layer } from "@effect/vitest";
-import { Effect, Array as Arr, pipe } from "effect";
+import { Effect, Array as Arr, String as Str, pipe } from "effect";
 import { expect } from "vite-plus/test";
 
 import { RepositoryFiles } from "#/shared/lib/repository-files.ts";
-import { FixtureFiles, fixtureLayer } from "#/shared/lib/repository.test.support.ts";
+import { FixtureFiles, directoryWith, fixtureLayer } from "#/shared/lib/repository.test.support.ts";
 
-import { cacheEntriesAfter, findingsAfterEdit } from "./findings.test.support.ts";
+import { implementationOf } from "./cache.ts";
+import { cacheContentsOf, cacheEntriesAfter, findingsAfterEdit } from "./findings.test.support.ts";
 
 const lines = (source: readonly string[]): string => pipe(source, Arr.join("\n"));
 
@@ -88,7 +89,71 @@ const replacesTheEntryWhenTheInstalledDependenciesChange = Effect.gen(
   },
 );
 
+const writesTheSameEntriesWhereverTheRepositoryIs = Effect.gen(
+  function* writesTheSameEntriesWhereverTheRepositoryIs() {
+    const first = yield* cacheContentsOf(sources);
+    const second = yield* cacheContentsOf(sources);
+    expect(first).not.toStrictEqual([]);
+    expect(second).toStrictEqual(first);
+  },
+);
+
+const PACKAGE = {
+  "package.json": '{"name":"checker"}',
+  "src/app/cli.ts": "",
+  "src/features/owners/model/cache.ts": "",
+  "src/features/owners/index.ts": "",
+  "src/features/other/index.ts": "",
+  "src/entities/project/index.ts": "",
+  "src/shared/lib/files.ts": "",
+  "dist/cli.mjs": "",
+};
+
+const fingerprintedFrom = Effect.fn("fingerprintedFrom")(function* fingerprintedFrom(
+  ...moduleDirectory: readonly string[]
+) {
+  const files = yield* RepositoryFiles;
+  const root = yield* directoryWith(PACKAGE);
+  const implementation = yield* implementationOf(files.join(root, ...moduleDirectory));
+  return pipe(
+    implementation.files,
+    Arr.map(([name]) => name),
+    Arr.filter(Str.includes(".")),
+  );
+});
+
+const fingerprintsOnlyItsSliceAndLowerLayersFromSource = Effect.gen(
+  function* fingerprintsOnlyItsSliceAndLowerLayersFromSource() {
+    const names = yield* fingerprintedFrom("src", "features", "owners", "model");
+    expect(names).toStrictEqual([
+      "src/entities/project/index.ts",
+      "src/features/owners/index.ts",
+      "src/features/owners/model/cache.ts",
+      "src/shared/lib/files.ts",
+    ]);
+  },
+);
+
+const fingerprintsTheBundleWhenPublished = Effect.gen(
+  function* fingerprintsTheBundleWhenPublished() {
+    const names = yield* fingerprintedFrom("dist");
+    expect(names).toStrictEqual(["dist/cli.mjs", "package.json"]);
+  },
+);
+
 layer(fixtureLayer)("value-owners cache", (it) => {
+  it.effect(
+    "writes the same entries wherever the repository is",
+    () => writesTheSameEntriesWhereverTheRepositoryIs,
+  );
+  it.effect(
+    "fingerprints only its slice and the lower layers when it runs from source",
+    () => fingerprintsOnlyItsSliceAndLowerLayersFromSource,
+  );
+  it.effect(
+    "fingerprints the bundle when it runs from a published package",
+    () => fingerprintsTheBundleWhenPublished,
+  );
   it.effect("reports a problem added after a clean run", () => reportsAProblemAddedAfterACleanRun);
   it.effect("drops a problem fixed after the first run", () => dropsAProblemFixedAfterTheFirstRun);
   it.effect(

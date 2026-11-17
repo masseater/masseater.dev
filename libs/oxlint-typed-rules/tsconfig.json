@@ -6,6 +6,8 @@
     "upstream/tanstack-query/src/__tests__",
     "upstream/tanstack-router/src/__tests__",
     "upstream/drizzle/tests",
-    "upstream/remotion/src/tests"
+    "upstream/remotion/src/tests",
+    "upstream/react/**/*.spec.ts",
+    "upstream/react/testing"
   ]
 }
