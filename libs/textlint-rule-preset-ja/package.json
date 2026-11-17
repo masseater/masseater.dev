@@ -59,10 +59,12 @@
     "@r_masseater/y8": "workspace:*",
     "@size-limit/file": "catalog:",
     "@textlint/ast-node-types": "catalog:",
+    "@textlint/kernel": "catalog:",
     "@textlint/types": "catalog:",
     "effect": "catalog:stack",
     "publint": "catalog:",
     "size-limit": "catalog:",
+    "textlint": "catalog:",
     "typescript": "catalog:stack",
     "vite-plus": "catalog:stack"
   },

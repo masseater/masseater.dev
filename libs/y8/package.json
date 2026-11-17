@@ -67,7 +67,9 @@
   },
   "dependencies": {
     "@effect/platform-node": "catalog:",
-    "@r_masseater/lint-host": "workspace:*"
+    "@r_masseater/lint-host": "workspace:*",
+    "minimatch": "catalog:",
+    "yaml": "catalog:"
   },
   "devDependencies": {
     "@r_masseater/vitest-otlp": "workspace:*",

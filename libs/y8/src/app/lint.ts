@@ -1,11 +1,13 @@
 import { callAddon, present, sortByPosition, traceparent } from "@r_masseater/lint-host";
 import { Array as Arr, Effect, Match, Option, pipe } from "effect";
 
-import { BUILTIN, resolve, unknownPlugins } from "#/entities/rule/index.ts";
-import type { Resolved } from "#/entities/rule/index.ts";
+import { BUILTIN, groupByOverrides, resolve, unknownPlugins } from "#/entities/rule/index.ts";
+import type { FileGroup, Resolved } from "#/entities/rule/index.ts";
+import { agentDiagnosticsOf } from "#/features/map-agent-diagnostics/index.ts";
+import { readProject } from "#/features/read-project/index.ts";
 import { runCompatRules } from "#/features/run-compat-rules/index.ts";
 import { runScriptRules } from "#/features/run-rules/index.ts";
-import type { Diagnostic, Y8Config } from "#/shared/config/index.ts";
+import type { Diagnostic, Project, Y8Config } from "#/shared/config/index.ts";
 import { Y8Error, failedWith } from "#/shared/lib/errors.ts";
 import { native } from "#/shared/native/index.ts";
 import type {
@@ -18,6 +20,7 @@ import type {
 export interface LintInput {
   readonly root: string;
   readonly files: readonly string[];
+  readonly projectFiles?: readonly string[];
   readonly config?: Y8Config;
 }
 
@@ -48,7 +51,11 @@ const fromNative =
 const needsText = (resolved: Resolved): boolean =>
   Arr.isReadonlyArrayNonEmpty(resolved.scripts) || Arr.isReadonlyArrayNonEmpty(resolved.compat);
 
-const nativeOptions = (resolved: Resolved, config: Y8Config): Effect.Effect<NativeOptions> =>
+const nativeOptions = (
+  root: string,
+  resolved: Resolved,
+  config: Y8Config,
+): Effect.Effect<NativeOptions> =>
   traceparent.pipe(
     Effect.map((parent): NativeOptions => ({
       config: resolved.core,
@@ -56,6 +63,7 @@ const nativeOptions = (resolved: Resolved, config: Y8Config): Effect.Effect<Nati
       keepTree: Arr.isReadonlyArrayNonEmpty(resolved.scripts),
       keepText: needsText(resolved),
       ...present(parent, (value) => ({ traceparent: value })),
+      ...present(resolved.agent, ({ disabled }) => ({ agnix: { root, disabled } })),
     })),
   );
 
@@ -66,12 +74,18 @@ const sourceOf = (result: NativeResult): Option.Option<SourceFile> =>
   );
 
 const scriptedOne =
-  (resolved: Resolved) =>
+  (resolved: Resolved, project: Project) =>
   (result: NativeResult): readonly Diagnostic[] =>
     pipe(
       Option.all({ tree: Option.fromNullishOr(result.tree), source: sourceOf(result) }),
       Option.map(({ tree, source }) =>
-        runScriptRules({ path: source.path, text: source.text, tree, rules: resolved.scripts }),
+        runScriptRules({
+          path: source.path,
+          text: source.text,
+          tree,
+          rules: resolved.scripts,
+          project,
+        }),
       ),
       Option.getOrElse((): readonly Diagnostic[] => []),
     );
@@ -90,26 +104,48 @@ const checkPlugins = (config: Y8Config): Effect.Effect<void, Y8Error> =>
       ),
   });
 
+const lintGroup = (
+  root: string,
+  project: Project,
+): ((group: FileGroup) => Effect.Effect<readonly Diagnostic[], Y8Error>) =>
+  Effect.fn("y8.lint.group")(function* group(input: FileGroup) {
+    const resolved = resolve(input.config);
+    const options = yield* nativeOptions(root, resolved, input.config);
+    const results = yield* callAddon({
+      addon: native,
+      name: "y8",
+      files: input.files.length,
+      call: (addon) => addon.lintPaths(root, input.files, options),
+      failWith: failedWith,
+    });
+    const compat = yield* runCompatRules({
+      files: pipe(
+        results,
+        Arr.flatMap((result) => Option.toArray(sourceOf(result))),
+      ),
+      rules: resolved.compat,
+    });
+    const builtin = pipe(results, Arr.flatMap(builtinOf));
+    const scripted = pipe(results, Arr.flatMap(scriptedOne(resolved, project)));
+    const agent = Option.match(resolved.agent, {
+      onNone: (): readonly Diagnostic[] => [],
+      onSome: (rules) => pipe(results, Arr.flatMap(agentDiagnosticsOf(rules))),
+    });
+    return [...builtin, ...scripted, ...compat, ...agent];
+  });
+
 export const lint = Effect.fn("y8.lint")(function* lint(input: LintInput) {
   const config = input.config ?? {};
   yield* checkPlugins(config);
-  const resolved = resolve(config);
-  const options = yield* nativeOptions(resolved, config);
-  const results = yield* callAddon({
-    addon: native,
-    name: "y8",
-    files: input.files.length,
-    call: (addon) => addon.lintPaths(input.root, input.files, options),
-    failWith: failedWith,
+  const project = yield* readProject({
+    root: input.root,
+    files: input.files,
+    projectFiles: input.projectFiles ?? [],
   });
-  const compat = yield* runCompatRules({
-    files: pipe(
-      results,
-      Arr.flatMap((result) => Option.toArray(sourceOf(result))),
-    ),
-    rules: resolved.compat,
-  });
-  const builtin = pipe(results, Arr.flatMap(builtinOf));
-  const scripted = pipe(results, Arr.flatMap(scriptedOne(resolved)));
-  return sortByPosition<Diagnostic>([...builtin, ...scripted, ...compat]);
+  const found = yield* Effect.forEach(
+    groupByOverrides(config, input.files),
+    lintGroup(input.root, project),
+    { concurrency: 1 },
+  );
+  return sortByPosition<Diagnostic>(Arr.flatten(found));
 });

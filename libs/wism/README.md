@@ -35,3 +35,7 @@ export default defineConfig({
 ```
 
 Run `wism` to check the files git tracks, or call `lint` from code.
+
+## Agent skills
+
+The package ships TanStack Intent skills for coding agents. Load one with `vp exec intent load @r_masseater/wism#<skill>`.

@@ -47,6 +47,17 @@ const flagsPublishedRootPackage = Effect.gen(function* flagsPublishedRootPackage
   expect(findings).toStrictEqual(["README.md:3:1"]);
 });
 
+const flagsMissingReadme = Effect.gen(function* flagsMissingReadme() {
+  const findings = yield* findingsFor({
+    "pnpm-workspace.yaml": "packages:\n  - libs/*\n",
+    "package.json": '{ "name": "repo", "private": true }',
+    "README.md": "# repo\n",
+    "libs/bare/package.json": '{ "name": "bare" }',
+    "libs/internal/package.json": '{ "name": "internal", "private": true }',
+  });
+  expect(findings).toStrictEqual(["libs/bare/README.md:1:1"]);
+});
+
 layer(Layer.mergeAll(nodeServicesLayer, fixtureLayer))("checkPublishedReadme", (it) => {
   it.effect(
     "flags Japanese in the README of a published workspace",
@@ -56,4 +67,5 @@ layer(Layer.mergeAll(nodeServicesLayer, fixtureLayer))("checkPublishedReadme", (
     "flags Japanese in the README of a published root package",
     () => flagsPublishedRootPackage,
   );
+  it.effect("flags a published workspace without a README", () => flagsMissingReadme);
 });
