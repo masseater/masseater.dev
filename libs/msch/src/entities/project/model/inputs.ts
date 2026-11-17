@@ -51,7 +51,9 @@ const dependenciesOf = Effect.fn("dependenciesOf")(function* dependenciesOf(dire
   );
 });
 
-const workspaceClosure = Effect.fn("workspaceClosure")(function* workspaceClosure(start: string) {
+export const workspaceClosure = Effect.fn("workspaceClosure")(function* workspaceClosure(
+  start: string,
+) {
   const seen = new Set([start]);
   const queue = [start];
   for (const directory of queue) {
