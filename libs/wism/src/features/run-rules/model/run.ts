@@ -1,13 +1,13 @@
 import { Array as Arr, Match, Option, pipe } from "effect";
 
 import type { ScriptRule } from "#/entities/rule/index.ts";
-import type { Diagnostic, GraphEdge, GraphNode, Report } from "#/shared/config/index.ts";
+import type { Diagnostic, GraphEdge, Report } from "#/shared/config/index.ts";
 
 const FIRST = 1;
 
 export interface Graph {
   readonly files: readonly string[];
-  readonly nodes: readonly GraphNode[];
+  readonly root: string;
   readonly edges: readonly GraphEdge[];
 }
 
