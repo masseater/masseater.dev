@@ -11,6 +11,7 @@ const ManifestSchema = Schema.Struct({
   name: Schema.String,
   version: Schema.String,
   private: Schema.optionalKey(Schema.Boolean),
+  dependencies: Schema.optionalKey(Schema.Record(Schema.String, Schema.String)),
   native: Schema.optionalKey(Native),
   "size-limit": Schema.optionalKey(Schema.Unknown),
 });

@@ -15,9 +15,9 @@ import {
 } from "effect";
 import { HttpClient, HttpClientRequest, HttpClientResponse } from "effect/http";
 
+import { onNpm } from "./dependencies.ts";
 import { manifestIn } from "./manifest.ts";
 import type { Manifest } from "./manifest.ts";
-import { onNpm } from "./plan.ts";
 import { nativeFields, nativeFileOf, nativeReadme } from "./platforms.ts";
 import type { NativePackage } from "./platforms.ts";
 

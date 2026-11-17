@@ -23,7 +23,7 @@ Every release is manual. Nothing publishes on a push to main, and msch reports r
 2. Merge the PR.
 3. Dispatch the `publish` workflow on main with the workspace directory, such as `libs/y8` or `apps/yakusu`.
 
-A version that is already on npm or already has a GitHub Release with assets is skipped, so dispatching twice is safe.
+A version that is already on npm or already has a GitHub Release with assets is skipped, so dispatching twice is safe. A package whose `workspace:` dependencies are not on npm at their current versions is refused; publish those first.
 
 ## What the workspace declares
 
@@ -41,4 +41,4 @@ The tag is the package name without its scope, then `-v` and the version. The re
 
 ## The workflow
 
-The `publish` workflow runs `msch-publish plan`, the builds and checks the plan lists, `msch-publish npm` in the `npm` environment, and `msch-publish release`, which tags the commit and uploads `release-assets/`. Runs are serialized and never cancelled.
+The `publish` workflow runs `msch-publish plan`, the builds and checks the plan lists, `msch-publish npm` in the `npm` environment, and `msch-publish release`, which tags the commit and uploads `release-assets/`. Runs for the same workspace are serialized and never cancelled; different workspaces publish independently.

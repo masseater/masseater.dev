@@ -11,6 +11,7 @@ import {
   pipe,
 } from "effect";
 
+import { onNpm, requirePublishedDependencies } from "./dependencies.ts";
 import {
   environmentOf,
   goesToNpm,
@@ -56,26 +57,24 @@ export type Plan = typeof PlanSchema.Type;
 
 const AssetCount = Schema.fromJsonString(Schema.Finite);
 
-/** @internal */
-export interface Published {
-  readonly directory: string;
-  readonly name: string;
-  readonly version: string;
-}
+const graphTasks = outputOf({ command: "vp", args: ["run", "--json"] }).pipe(
+  Effect.flatMap(Schema.decodeEffect(TaskGraph)),
+  Effect.map(({ tasks }) => Rec.values(tasks)),
+);
 
-const tasksOf = Effect.fn("publish.tasks")(function* tasksOf(directory: string) {
-  const text = yield* outputOf({ command: "vp", args: ["run", "--json"] });
-  const graph = yield* Schema.decodeEffect(TaskGraph)(text);
-  return pipe(
-    Rec.values(graph.tasks),
+const tasksIn = (tasks: readonly (typeof Task.Type)[], directory: string): readonly string[] =>
+  pipe(
+    tasks,
     Arr.filter((task) => task.package === directory),
     Arr.map(({ name }) => name),
   );
-});
 
-/** @internal */
-export const onNpm = ({ directory, name, version }: Published): ReturnType<typeof succeeds> =>
-  succeeds({ command: "npm", args: ["view", `${name}@${version}`, "version"], cwd: directory });
+const workspacesOf = (tasks: readonly (typeof Task.Type)[]): readonly string[] =>
+  pipe(
+    tasks,
+    Arr.map((task) => task.package),
+    Arr.dedupe,
+  );
 
 /** @internal */
 export const released = Effect.fn("publish.released")(function* released(tag: string) {
@@ -111,12 +110,17 @@ const keepWhen =
 const needsNpm = Effect.fn("publish.needsNpm")(function* needsNpm(
   directory: string,
   manifest: Manifest,
+  workspaces: readonly string[],
 ) {
   if (!goesToNpm(manifest)) {
     return false;
   }
   const published = yield* onNpm({ directory, ...manifest });
-  return !published;
+  if (published) {
+    return false;
+  }
+  yield* requirePublishedDependencies({ manifest, workspaces });
+  return true;
 });
 
 const needsRelease = Effect.fn("publish.needsRelease")(function* needsRelease(
@@ -149,8 +153,9 @@ export const planOf = Effect.fn("publish.plan")(function* planOf(directory: stri
   const path = yield* Path.Path;
   const workspace = Str.replace(TRAILING_SLASH, "")(path.normalize(directory));
   const manifest = yield* manifestIn(workspace);
-  const tasks = yield* tasksOf(workspace);
-  const npm = yield* needsNpm(workspace, manifest);
+  const graph = yield* graphTasks;
+  const tasks = tasksIn(graph, workspace);
+  const npm = yield* needsNpm(workspace, manifest, workspacesOf(graph));
   const release = yield* needsRelease(workspace, manifest, buildsOf(tasks));
   const built = keepWhen(release || !isVersioned(manifest));
   return {
