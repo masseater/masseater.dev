@@ -8,7 +8,8 @@ import { checkStructure } from "#/features/check-structure/index.ts";
 import { checkVitePlus } from "#/features/check-vite-plus/index.ts";
 import {
   checkFullHistoryCheckout,
-  checkReleasePrAutoMerge,
+  checkPublishTrigger,
+  checkReleasePlease,
   checkWorkflowCommits,
   checkWorkflowLint,
   checkWorkflowQueues,
@@ -24,7 +25,8 @@ export const checkToolUse = Effect.fn("checkToolUse")(function* checkToolUse(roo
       checkWorkflowQueues(root),
       checkWorkflowCommits(root),
       checkFullHistoryCheckout(root),
-      checkReleasePrAutoMerge(root),
+      checkReleasePlease(root),
+      checkPublishTrigger(root),
       checkRestrictedRules(root),
       checkMarkdown(root),
       checkStructure(root),

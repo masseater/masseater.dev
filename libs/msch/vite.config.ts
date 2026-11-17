@@ -29,6 +29,7 @@ export default defineConfig({
   pack: {
     entry: {
       cli: "bin/msch.ts",
+      publish: "bin/msch-publish.ts",
       "cargo-inputs": "src/features/derive-cargo-inputs/index.ts",
       config: "src/app/repository-config.ts",
       oxlint: "src/app/oxlint.ts",
@@ -38,6 +39,7 @@ export default defineConfig({
       "workspace-settings": "src/features/build-workspace-settings/index.ts",
     },
     platform: "node",
+    deps: { alwaysBundle: [/^@masseater\.dev\//u] },
     sourcemap: true,
     dts: { generator: "tsgo" },
     publint: { strict: true },
