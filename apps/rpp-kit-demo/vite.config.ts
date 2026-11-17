@@ -12,7 +12,10 @@ export default defineConfig({
   run: {
     tasks: {
       ...alchemyTasks,
-      "deploy:production": deployTo("production"),
+      "deploy:production": {
+        command: [deployTo("production").command, "web-vitals-flow https://masseater.dev/rpp-kit/"],
+        cache: false,
+      },
       verify: { command: [], dependsOn: ["typecheck"] },
       typecheck: "tsc --runExternalCode",
     },

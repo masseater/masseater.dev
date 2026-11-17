@@ -432,11 +432,11 @@ impl ServerHandler for Tools {
 
 fn router(serving: Serving) -> Router {
     let token = serving.token.clone();
-    local_mcp::router(token, move || Tools::new(serving.clone()))
+    desktop_shell::mcp_router(token, move || Tools::new(serving.clone()))
 }
 
 pub async fn serve(serving: Serving) -> std::io::Result<()> {
-    local_mcp::serve(PORT, router(serving)).await
+    desktop_shell::serve_mcp(PORT, router(serving)).await
 }
 
 #[cfg(test)]
@@ -486,7 +486,7 @@ mod tests {
             token: "secret".to_owned(),
             changed: Arc::new(|| {}),
         };
-        tokio::spawn(local_mcp::serve_on(listener, router(serving)));
+        tokio::spawn(desktop_shell::serve_mcp_on(listener, router(serving)));
         let client = reqwest::Client::new();
         let url = format!("http://{address}/mcp");
         let ask = |bearer: &str| {

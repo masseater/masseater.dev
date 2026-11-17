@@ -18,14 +18,21 @@ export default defineConfig({
       build: "vp pack",
     },
   },
-  pack: {
-    entry: ["src/app/index.ts"],
-    platform: "neutral",
-    sourcemap: true,
-    dts: {
-      generator: "tsgo",
+  pack: [
+    {
+      entry: ["src/app/index.ts"],
+      platform: "neutral",
+      sourcemap: true,
+      dts: {
+        generator: "tsgo",
+      },
     },
-  },
+    {
+      entry: { main: "bin/injection-bisect.ts" },
+      platform: "node",
+      sourcemap: true,
+    },
+  ],
   test: {
     include: ["src/**/*.test.ts"],
   },
