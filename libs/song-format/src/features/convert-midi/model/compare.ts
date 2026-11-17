@@ -1,6 +1,6 @@
+import type { Song } from "@r_masseater/fumx-parser";
 import { Array as Arr, Option, Record as Rec, pipe } from "effect";
 
-import type { Song } from "#/entities/song/index.ts";
 import type { From } from "#/shared/lib/from.ts";
 
 import type { LaidBar } from "./layout.ts";

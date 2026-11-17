@@ -1,8 +1,8 @@
 import { expect, it } from "@effect/vitest";
+import { readSong } from "@r_masseater/fumx-parser";
 import { Effect, String as Str } from "effect";
 
 import { compareWithMidi, midiToFumx } from "#/features/convert-midi/index.ts";
-import { readSong } from "#/features/read-song/index.ts";
 
 import { everyElement } from "./midi-to-fumx.test.support.ts";
 import { convertMidiFile } from "./midi-to-fumx.ts";
