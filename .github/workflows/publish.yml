@@ -200,13 +200,15 @@ jobs:
   release:
     needs: [plan, build, check, npm]
     if: >-
-      !cancelled() && (fromJSON(needs.plan.outputs.plan).npm || fromJSON(needs.plan.outputs.plan).release)
+      !cancelled() && (fromJSON(needs.plan.outputs.plan).npm || fromJSON(needs.plan.outputs.plan).release
+        || !fromJSON(needs.plan.outputs.plan).tagged)
       && contains(fromJSON('["success", "skipped"]'), needs.build.result)
       && contains(fromJSON('["success", "skipped"]'), needs.check.result)
       && contains(fromJSON('["success", "skipped"]'), needs.npm.result)
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      id-token: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:

@@ -86,8 +86,6 @@ export type GitHubGrant = Readonly<{
 
 const RELEASE_REPOSITORIES: readonly string[] = ["lint-kit", "typescript-template"];
 
-const RELEASE_COMPONENTS: readonly string[] = ["pod-rattle", "yakusu", "yohaku"];
-
 const releaseGrant = (repository: string): readonly [string, GitHubGrant] => [
   repository,
   {
@@ -113,12 +111,6 @@ const GITHUB_GRANTS: Readonly<Record<string, GitHubGrant>> = {
     },
   },
   "masseater.dev/private-names": { permissions: { metadata: "read" } },
-  ...Rec.fromEntries(
-    pipe(
-      RELEASE_COMPONENTS,
-      Arr.map((component) => [`masseater.dev/${component}-release`, MASSEATER_DEV_GITHUB_GRANT]),
-    ),
-  ),
   ...Rec.fromEntries(pipe(RELEASE_REPOSITORIES, Arr.map(releaseGrant))),
 };
 
@@ -133,8 +125,15 @@ const MERGE_QUEUE_PERMISSIONS = {
   workflows: "write",
 } as const satisfies Readonly<Record<string, PermissionLevel>>;
 
+const RELEASE_TAG_PERMISSIONS = {
+  contents: "write",
+  workflows: "write",
+  metadata: "read",
+} as const satisfies Readonly<Record<string, PermissionLevel>>;
+
 export const WORKFLOW_GITHUB_GRANTS: Readonly<Record<string, Readonly<Record<string, string>>>> = {
   "autofix.yml": BOT_PERMISSIONS,
+  "publish.yml": RELEASE_TAG_PERMISSIONS,
   "update-branches.yml": MERGE_QUEUE_PERMISSIONS,
 };
 
