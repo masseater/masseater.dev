@@ -13,6 +13,11 @@
   "minimumReleaseAge": "3 days",
   "packageRules": [
     {
+      "description": "patches/crates は上流の crate を Cargo の [patch] で差し替えるコピーである。renovate はこの中の Cargo.toml と Cargo.lock だけを上げ、ルートの Cargo.lock を直さないので、patch が使われなくなって cargo が解決できなくなる（#1283）。上げるときはルートの Cargo.lock と src を合わせて手で直す。",
+      "matchFileNames": ["patches/crates/**"],
+      "enabled": false
+    },
+    {
       "matchPackageNames": [
         "effect",
         "@effect/**",
