@@ -1,4 +1,4 @@
-# @r_masseater/lint-host
+# @masseater.dev/lint-host
 
 このワークスペースは、Rust で書いたリンター（y8 と wism）を Node.js から動かす部品をまとめている。napi アドオンのビルドと読み込み、vite.config.ts の設定と git の追跡ファイルを読む CLI、ルールの設定の解釈、トレースの受け渡しを持つ。
 

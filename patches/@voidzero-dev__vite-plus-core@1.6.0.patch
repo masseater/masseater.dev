@@ -1,5 +1,5 @@
 diff --git a/dist/tsdown/dist-BImdOfKl.js b/dist/tsdown/dist-BImdOfKl.js
-index b7216952e4ebb0bb57b712bfde929acaa20a5d0d..de07534b79cedc45a3aa00b01c94ac7b2fca0bcf 100644
+index b7216952e4ebb0bb57b712bfde929acaa20a5d0d..b25d74c4ae3258c17897e9dd74020cf0922379a0 100644
 --- a/dist/tsdown/dist-BImdOfKl.js
 +++ b/dist/tsdown/dist-BImdOfKl.js
 @@ -55,7 +55,7 @@ function tryResolve(id) {
@@ -11,3 +11,12 @@ index b7216952e4ebb0bb57b712bfde929acaa20a5d0d..de07534b79cedc45a3aa00b01c94ac7b
  }
  function requireTSApi(mode = "tsc", message = ".") {
  	if (_ts) return _ts;
+@@ -4830,7 +4830,7 @@ function createGenerator({ generator, tsconfig, tsconfigRaw, build, incremental,
+ 	if (generator === "oxc") return new OxcGenerator(oxc, languageContext);
+ 	if (generator === "tsgo") return new TsgoGenerator({
+ 		tsgoPath: tsgo.path,
+-		rootDir: tsconfig ? path.dirname(tsconfig) : cwd,
++		rootDir: path.parse(path.resolve(tsconfig ?? cwd)).root,
+ 		tsconfig,
+ 		sourcemap,
+ 		languageContext

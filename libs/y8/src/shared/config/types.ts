@@ -1,8 +1,8 @@
-import type { RuleEntry, RuleOptions, Severity } from "@r_masseater/lint-host";
+import type { RuleEntry, RuleOptions, Severity } from "@masseater.dev/lint-host";
 
 import type { NodeType } from "#/shared/native/index.ts";
 
-export type { RuleEntry, RuleOptions, Severity } from "@r_masseater/lint-host";
+export type { RuleEntry, RuleOptions, Severity } from "@masseater.dev/lint-host";
 
 export interface Position {
   readonly line: number;

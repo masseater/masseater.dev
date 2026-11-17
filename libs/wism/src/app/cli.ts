@@ -1,4 +1,4 @@
-import { runCli as runLinter } from "@r_masseater/lint-host";
+import { runCli as runLinter } from "@masseater.dev/lint-host";
 
 import { failedWith } from "#/shared/lib/errors.ts";
 
