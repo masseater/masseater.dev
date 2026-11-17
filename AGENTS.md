@@ -1,10 +1,12 @@
+# masseater.dev
+
 `masseater-ecosystem` に従うこと。これは masseater/skills のスキルで、状況ごとに読み込むスキルを指定する。`vp install` はスキルを `.agents/skills/` に配置する。
 
 各ワークスペースには、その内容と当該ワークスペースにのみ適用されるルールが記載された独自の AGENTS.md がある。ワークスペースを変更する前に、これを確認しておくこと。
 
 ## テックスタック
 
-ベーススタックは TypeScript 7、Effect、Alchemy、Cloudflare である。それ以外の項目については、リントルールとスキルルールに従うこと。
+ベーススタックは TypeScript 7、Effect、Alchemy、Cloudflare である。
 
 ## コマンド
 

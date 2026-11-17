@@ -1,9 +1,17 @@
-# oxlint-typed-rules
+# @r_masseater/oxlint-typed-rules
 
 Runs ESLint rules that need type information as oxlint JS plugins.
 oxlint does not pass type information to JS plugins ([oxc#19596](https://github.com/oxc-project/oxc/issues/19596)),
 so this package builds a Program and a type checker with the TypeScript 7 API and provides the `parserServices` the rules read.
 Type-aware rules then run on oxlint alone, without installing ESLint.
+
+```sh
+npm install -D @r_masseater/oxlint-typed-rules
+```
+
+## Agent skills
+
+The package ships TanStack Intent skills for coding agents. Load one with `vp exec intent load @r_masseater/oxlint-typed-rules#<skill>`.
 
 ## Published to
 

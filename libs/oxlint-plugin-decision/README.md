@@ -4,6 +4,7 @@
 > This package is experimental. Use at your own risk.
 
 [Oxlint](https://oxc.rs/docs/guide/usage/linter.html) rules written in plain English, answered by decision models.
+
 The default is [Clef](https://developers.cloudflare.com/workers-ai/models/clef-flash/) on Workers AI through [Cloudflare AI Gateway](https://developers.cloudflare.com/ai-gateway/).
 Jev through the Typesafe System One API also works.
 It never asks a chat model.
@@ -112,6 +113,10 @@ The package root (`@r_masseater/oxlint-plugin-decision/presets`) is the `recomme
 ## Credits
 
 The rules that check a claim the code makes about itself are adapted from [jev-lint](https://github.com/mizchi/jev-lint) by mizchi.
+
+## Agent skills
+
+The package ships TanStack Intent skills for coding agents. Load one with `vp exec intent load @r_masseater/oxlint-plugin-decision#<skill>`.
 
 ## License
 
