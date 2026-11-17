@@ -77,3 +77,10 @@ name, such as `legacy/no-here`.
 
 markdownlint's comments work, and `y8-` works in place of `markdownlint-`, as in
 `<!-- y8-disable-next-line MD033 -->`. Turn them off with `inlineConfig: false`.
+
+## Japanese tokens
+
+`morphemesOf(text)` returns kuromoji-shaped morphemes (`surface_form`, `pos`, `pos_detail_1`,
+`basic_form`, `reading`, `word_position`, ...) from the IPADIC dictionary built into the addon,
+so a rule can look at Japanese words. `@r_masseater/y8/kuromojin` exports `tokenize` and
+`getTokenizer` with kuromojin's signatures.
