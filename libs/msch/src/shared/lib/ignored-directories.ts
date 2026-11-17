@@ -1,6 +1,6 @@
 import { Array as Arr, Effect, Option, String as Str, pipe } from "effect";
 
-import { RepositoryFiles, nodeRepositoryFiles } from "#/shared/lib/repository-files.ts";
+import { RepositoryFiles, nodeRepositoryFiles } from "./repository-files.ts";
 
 const IGNORE_FILES = ":(glob)**/.gitignore";
 const SEPARATOR = "/";

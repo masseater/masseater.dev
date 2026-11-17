@@ -10,6 +10,7 @@
     "effect": "catalog:stack"
   },
   "devDependencies": {
+    "@r_masseater/msch": "workspace:*",
     "vite-plus": "catalog:stack"
   }
 }
