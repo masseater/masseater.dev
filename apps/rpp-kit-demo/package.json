@@ -32,6 +32,7 @@
     "@effect/tsgo": "catalog:stack",
     "@masseater.dev/alchemy-app-name": "workspace:*",
     "@masseater.dev/cloudflare-account": "workspace:*",
+    "@r_masseater/web-vitals-flow": "workspace:*",
     "@tailwindcss/vite": "catalog:",
     "@tanstack/react-start": "catalog:stack",
     "@types/react": "catalog:",

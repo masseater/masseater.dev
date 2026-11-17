@@ -1426,9 +1426,6 @@ importers:
       '@effect/platform-node':
         specifier: 'catalog:'
         version: 4.1.4(effect@4.1.4)(redis@6.2.1(@opentelemetry/api@1.10.0))
-      '@masseater.dev/claude-agent':
-        specifier: workspace:*
-        version: link:../../libs/claude-agent
       '@masseater.dev/ui':
         specifier: workspace:*
         version: link:../../libs/ui
@@ -2480,6 +2477,9 @@ importers:
       '@masseater.dev/cloudflare-account':
         specifier: workspace:*
         version: link:../../infra/cloudflare-account
+      '@r_masseater/web-vitals-flow':
+        specifier: workspace:*
+        version: link:../../libs/web-vitals-flow
       '@tailwindcss/vite':
         specifier: 'catalog:'
         version: 4.3.5(@voidzero-dev/vite-plus-core@1.6.0(patch_hash=b28fd962a73ec6c9915197197f7e549598912400c8517eb2d0d12dc86c2ec9f0)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))
@@ -3362,19 +3362,6 @@ importers:
         specifier: catalog:stack
         version: 1.6.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
 
-  libs/claude-agent:
-    dependencies:
-      '@anthropic-ai/claude-agent-sdk':
-        specifier: 'catalog:'
-        version: 0.3.325(@anthropic-ai/sdk@0.129.0(zod@4.6.7))(@modelcontextprotocol/sdk@1.32.2(@cfworker/json-schema@4.1.6)(supports-color@10.2.2)(zod@4.6.7))(zod@4.6.7)
-      effect:
-        specifier: catalog:stack
-        version: 4.1.4
-    devDependencies:
-      vite-plus:
-        specifier: catalog:stack
-        version: 1.6.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
-
   libs/component-release:
     dependencies:
       '@masseater.dev/node-main':
@@ -3564,6 +3551,9 @@ importers:
         specifier: 'catalog:'
         version: 2.9.1
     devDependencies:
+      '@effect/platform-node':
+        specifier: 'catalog:'
+        version: 4.1.4(effect@4.1.4)(redis@6.2.1(@opentelemetry/api@1.10.0))
       '@tesseract.js-data/eng':
         specifier: 'catalog:'
         version: 1.0.0
@@ -3913,15 +3903,6 @@ importers:
         specifier: catalog:stack
         version: 4.1.4
 
-  libs/ocr-tooling:
-    dependencies:
-      effect:
-        specifier: catalog:stack
-        version: 4.1.4
-      playwright-core:
-        specifier: 'catalog:'
-        version: 1.65.1
-
   libs/owner-auth:
     dependencies:
       '@better-auth/drizzle-adapter':
@@ -4105,6 +4086,18 @@ importers:
 
   libs/pod-rattle-engine:
     devDependencies:
+      '@effect/platform-node':
+        specifier: 'catalog:'
+        version: 4.1.4(effect@4.1.4)(redis@6.2.1(@opentelemetry/api@1.10.0))
+      '@effect/tsgo':
+        specifier: catalog:stack
+        version: 0.69.0
+      '@types/node':
+        specifier: 'catalog:'
+        version: 26.6.6
+      effect:
+        specifier: catalog:stack
+        version: 4.1.4
       vite-plus:
         specifier: catalog:stack
         version: 1.6.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
@@ -4757,12 +4750,6 @@ importers:
         specifier: catalog:stack
         version: 1.6.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
 
-  tools/aredoko-telemetry:
-    devDependencies:
-      vite-plus:
-        specifier: catalog:stack
-        version: 1.6.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
-
   tools/cargo-tools:
     devDependencies:
       '@masseater.dev/component-release':
@@ -4862,25 +4849,6 @@ importers:
         specifier: catalog:stack
         version: 1.6.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
 
-  tools/injection-bisect-cli:
-    dependencies:
-      '@effect/platform-node':
-        specifier: 'catalog:'
-        version: 4.1.4(effect@4.1.4)(redis@6.2.1(@opentelemetry/api@1.10.0))
-      '@r_masseater/injection-bisect':
-        specifier: workspace:*
-        version: link:../../libs/injection-bisect
-      effect:
-        specifier: catalog:stack
-        version: 4.1.4
-    devDependencies:
-      '@types/node':
-        specifier: 'catalog:'
-        version: 26.6.6
-      vite-plus:
-        specifier: catalog:stack
-        version: 1.6.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
-
   tools/mosaic:
     dependencies:
       '@masseater.dev/github-workflow':
@@ -4938,7 +4906,7 @@ importers:
         specifier: catalog:stack
         version: 1.6.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
 
-  tools/ocr-ja-bench:
+  tools/ocr-bench:
     dependencies:
       '@effect/platform-node':
         specifier: 'catalog:'
@@ -4946,9 +4914,6 @@ importers:
       '@ocr-decide/measurements':
         specifier: workspace:*
         version: link:../../libs/ocr-measurements
-      '@ocr-decide/tooling':
-        specifier: workspace:*
-        version: link:../../libs/ocr-tooling
       '@r_masseater/ocr-decide':
         specifier: workspace:*
         version: link:../../libs/ocr-decide
@@ -4964,6 +4929,9 @@ importers:
       hyparquet:
         specifier: 'catalog:'
         version: 1.33.0
+      playwright-core:
+        specifier: 'catalog:'
+        version: 1.65.1
       sharp:
         specifier: 'catalog:'
         version: 0.35.5(@types/node@26.6.6)
@@ -4987,54 +4955,8 @@ importers:
         specifier: catalog:stack
         version: 1.6.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
 
-  tools/ocr-measure:
-    dependencies:
-      '@effect/platform-node':
-        specifier: 'catalog:'
-        version: 4.1.4(effect@4.1.4)(redis@6.2.1(@opentelemetry/api@1.10.0))
-      '@ocr-decide/measurements':
-        specifier: workspace:*
-        version: link:../../libs/ocr-measurements
-      '@ocr-decide/tooling':
-        specifier: workspace:*
-        version: link:../../libs/ocr-tooling
-      '@r_masseater/ocr-decide':
-        specifier: workspace:*
-        version: link:../../libs/ocr-decide
-      effect:
-        specifier: catalog:stack
-        version: 4.1.4
-      entities:
-        specifier: 'catalog:'
-        version: 9.0.0
-    devDependencies:
-      '@types/node':
-        specifier: 'catalog:'
-        version: 26.6.6
-      vite-plus:
-        specifier: catalog:stack
-        version: 1.6.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
-
   tools/pod-rattle-host:
     devDependencies:
-      vite-plus:
-        specifier: catalog:stack
-        version: 1.6.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
-
-  tools/pod-rattle-parity:
-    devDependencies:
-      '@effect/platform-node':
-        specifier: 'catalog:'
-        version: 4.1.4(effect@4.1.4)(redis@6.2.1(@opentelemetry/api@1.10.0))
-      '@effect/tsgo':
-        specifier: catalog:stack
-        version: 0.69.0
-      '@types/node':
-        specifier: 'catalog:'
-        version: 26.6.6
-      effect:
-        specifier: catalog:stack
-        version: 4.1.4
       vite-plus:
         specifier: catalog:stack
         version: 1.6.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
@@ -5128,12 +5050,6 @@ importers:
       vite-plus:
         specifier: catalog:stack
         version: 1.6.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
-
-  tools/web-vitals-measure:
-    devDependencies:
-      '@r_masseater/web-vitals-flow':
-        specifier: workspace:*
-        version: link:../../libs/web-vitals-flow
 
   tools/workers-ai-check:
     dependencies:
