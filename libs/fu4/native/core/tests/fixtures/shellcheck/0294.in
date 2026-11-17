@@ -1,0 +1,1 @@
+echo image is missing in services

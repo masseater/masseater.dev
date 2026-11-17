@@ -1,0 +1,1 @@
+./output_image_tag.sh
