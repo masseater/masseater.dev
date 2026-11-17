@@ -284,7 +284,7 @@ overrides:
   "langium>vscode-languageserver": "catalog:"
   "@remotion/eslint-plugin>@typescript-eslint/utils": "-"
   "@remotion/eslint-plugin>typescript": "-"
-  workerd: 1.20261113.1
+  workerd: 1.20261114.1
   vite@*: "catalog:"
   fflate@>=0.7.0 <0.7.5: ^0.8.0
   glob@>=9.0.0 <=14.0.1: ^14.0.2
