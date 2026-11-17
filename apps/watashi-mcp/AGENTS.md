@@ -1,7 +1,7 @@
 # watashi-mcp
 
-このワークスペースは MCP サーバー `watashi.masseater.dev/mcp` である。そこには、持ち主の人生の記録、AI エージェントの作業メモ、家計簿といった個人データが保持されている。
+This workspace is the MCP server `watashi.masseater.dev/mcp`. It holds the owner's personal data: life records, AI agents' work notes and the household ledger.
 
-作業メモから人生の記録を書かないこと。逆はよく、根拠は `evidence` に残す。持ち主が作って公開するものの道具は、ここではなく sundries に置く。
+Do not write life records from work notes. The reverse is fine; keep the grounds in `evidence`. Tools for what the owner makes and publishes go in sundries, not here.
 
-家計簿の表（`ledger_*`）は銀行やカードの CSV が原本なので、書き込みにリビジョンを残さない。そのため、書き込みを `*-writer.server.ts` に限る lint の決まりから外している。データの形は team-mirai/marumie（AGPL-3.0）を下敷きにしている。
+The ledger tables (`ledger_*`) take bank and card CSVs as the source of truth, so writes keep no revisions. They are therefore exempt from the lint rule that limits writes to `*-writer.server.ts`. The data shape is based on team-mirai/marumie (AGPL-3.0).

@@ -1,5 +1,5 @@
 # injection-bisect-demo
 
-このワークスペースは `injection-bisect` のブラウザデモである。ドキュメントのどこにプロンプトインジェクションが隠れているかを示している。
+This workspace is the browser demo of `injection-bisect`. It shows where in a document a prompt injection is hidden.
 
-デモにはサーバーがない。見る人が自身のOpenRouterキーを入力し、サーバーはそれを保持せず、受け取らない。
+The demo has no server. Viewers enter their own OpenRouter key, and no server keeps or receives it.

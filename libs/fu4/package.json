@@ -25,6 +25,7 @@
   "files": [
     "LICENSE",
     "dist",
+    "logo.svg",
     "skills/lint-workflows"
   ],
   "type": "module",
@@ -61,10 +62,10 @@
     "prepublishOnly": "vp run build"
   },
   "dependencies": {
-    "@effect/platform-node": "catalog:",
-    "@r_masseater/lint-host": "workspace:*"
+    "@effect/platform-node": "catalog:"
   },
   "devDependencies": {
+    "@masseater.dev/lint-host": "workspace:*",
     "@r_masseater/vitest-otlp": "workspace:*",
     "@types/hast": "catalog:",
     "@types/mdast": "catalog:",

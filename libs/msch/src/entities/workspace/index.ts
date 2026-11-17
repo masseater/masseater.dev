@@ -39,3 +39,7 @@ export { deployEntries } from "./model/deploy-entries.ts";
 export { lockedPackages } from "./model/locked-packages.ts";
 export { lockedGraph } from "./model/locked-graph.ts";
 export type { LockedNode } from "./model/locked-graph.ts";
+export { workspaceLinks } from "./model/locked-links.ts";
+export type { WorkspaceLink } from "./model/locked-links.ts";
+export { cratesIn, owningWorkspace } from "./model/cargo-crates.ts";
+export type { Crate } from "./model/cargo-crates.ts";

@@ -1,5 +1,5 @@
 # medley-manager
 
-このワークスペースは `medley-manager.masseater.dev` である。ニコニコメドレーやコラボでどの曲や動画が使われたかを教えてくれるデータベースである。
+This workspace is `medley-manager.masseater.dev`, a database of which songs and videos were used in Niconico medleys and collaborations.
 
-ウェブページは読み取り専用である。データは持ち主のパスキーを用いて、リモートMCPの `/mcp` 経由でのみ書き込まれる。本番ログは `task` ワークフローで `worker-logs` タスクを実行して読み取る。
+The web pages are read-only. Data is written only through the remote MCP at `/mcp` with the owner's passkey. Read production logs by running the `worker-logs` task in the `task` workflow.

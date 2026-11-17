@@ -1,5 +1,5 @@
-import { settingOf } from "@r_masseater/lint-host";
-import type { Setting } from "@r_masseater/lint-host";
+import { settingOf } from "@masseater.dev/lint-host";
+import type { Setting } from "@masseater.dev/lint-host";
 import { Array as Arr, Match, Option, Record as Rec, String as Str, pipe } from "effect";
 
 import type {
@@ -16,7 +16,7 @@ export const BUILTIN = "markdownlint";
 const SEPARATOR = "/";
 const START = 0;
 
-export type { Setting } from "@r_masseater/lint-host";
+export type { Setting } from "@masseater.dev/lint-host";
 
 export const reportedSeverity = (setting: Setting): Diagnostic["severity"] =>
   Match.value(setting.severity).pipe(

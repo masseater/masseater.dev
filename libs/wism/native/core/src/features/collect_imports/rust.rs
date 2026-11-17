@@ -241,4 +241,34 @@ mod tests {
         );
         assert_eq!(found, vec![vec!["entities", "features", "read", "go"]]);
     }
+    #[test]
+    fn reads_renames_globs_and_skips_external_paths() {
+        let found = targets(
+            "use crate::shared::text as t;\nuse crate::entities::*;\nuse ::std::fmt;\nuse std::io::Read;\nfn f() { let _ = core::mem::take(&mut 1); }\n",
+            &["features", "sync"],
+        );
+        assert_eq!(found, vec![vec!["shared", "text"], vec!["entities"]]);
+    }
+
+    #[test]
+    fn reports_the_position_of_each_path() {
+        let edges = uses(
+            "src/features/sync/mod.rs",
+            "fn a() {}\n  use crate::entities::note;\n",
+            vec!["features".to_owned(), "sync".to_owned()],
+        );
+        assert_eq!(edges.len(), 1);
+        assert_eq!((edges[0].line, edges[0].column), (2, 7));
+        assert_eq!(edges[0].specifier, "crate::entities::note");
+    }
+
+    #[test]
+    fn returns_nothing_for_a_file_that_does_not_parse() {
+        assert_eq!(targets("fn (", &[]).len(), 0);
+    }
+
+    #[test]
+    fn stops_at_super_above_the_crate_root() {
+        assert_eq!(targets("use super::x;\n", &[]).len(), 0);
+    }
 }

@@ -1,3 +1,3 @@
 # @masseater.dev/sts2-protocol
 
-このワークスペースは、sts2-mcp と AgentBridge が共有する型を格納している。C# の型はここから作られている。
+This workspace holds the types shared by sts2-mcp and AgentBridge. The C# types are generated from it.

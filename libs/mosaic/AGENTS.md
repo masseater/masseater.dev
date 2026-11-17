@@ -1,3 +1,3 @@
 # @thumb-mosaic/mosaic
 
-このワークスペースには、キャラクターの一覧など、モザイクアートサイトとそのビルドで共有される情報が格納されている。
+This workspace holds information shared by the mosaic art site and its build, such as the list of characters.

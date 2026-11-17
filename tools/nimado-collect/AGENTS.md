@@ -1,5 +1,5 @@
 # nimado-collect
 
-このワークスペースは、nimado のために各曲の再生回数を毎日集める。
+This workspace collects the play count of each song every day for nimado.
 
-リポジトリにYouTubeの値を置かないこと。また、30日を超えて保持しないこと。
+Do not put YouTube values in the repository, and do not keep them for more than 30 days.

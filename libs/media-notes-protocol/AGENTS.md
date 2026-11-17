@@ -1,3 +1,3 @@
 # @masseater.dev/media-notes-protocol
 
-このワークスペースには、メディアの範囲に印やコメントを付けるデスクトップアプリが、画面と Tauri 側のあいだでやり取りする型を置く。
+This workspace holds the types that desktop apps for marking and commenting on ranges of media exchange between the screens and the Tauri side.

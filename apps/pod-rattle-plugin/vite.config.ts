@@ -34,12 +34,6 @@ export default defineConfig({
         dependsOn: ["@masseater.dev/cargo-tools#build"],
         cache: false,
       },
-      "release:tag": { command: "component-tag pod-rattle", cache: false },
-      "release:publish": {
-        command: "component-release pod-rattle pod-rattle release-assets",
-        cache: false,
-      },
-      "release:token": { command: "release-please-token pod-rattle", cache: false },
     },
   },
 });

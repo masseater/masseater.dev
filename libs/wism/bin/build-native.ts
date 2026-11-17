@@ -1,4 +1,4 @@
-import { buildAddon } from "@r_masseater/lint-host";
+import { buildAddon } from "@masseater.dev/lint-host";
 
 buildAddon({
   crate: "wism-node",
