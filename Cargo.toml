@@ -17,6 +17,8 @@ members = [
   "libs/y8/native/node",
   "libs/fu4/native/core",
   "libs/fu4/native/node",
+  "libs/wism/native/core",
+  "libs/wism/native/node",
   "apps/shirushi/src-tauri",
 ]
 

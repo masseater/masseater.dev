@@ -19,9 +19,9 @@ import {
 import type { WorkspaceSource, WorkspaceTasks } from "#/entities/workspace/index.ts";
 import { RepositoryFiles, nodeRepositoryFiles } from "#/shared/lib/repository-files.ts";
 
+import { collectIgnoredDirectories } from "./ignored-directories.ts";
 import type { IgnoredDirectory } from "./ignored-directories.ts";
 import { shadcnUiIn } from "./shadcn-ui.ts";
-import { directoryLayoutIn } from "./source-directories.ts";
 import { publicEntryFiles } from "./workspace-public-entries.ts";
 
 export type RuleSet = Readonly<Record<string, unknown>>;
@@ -31,6 +31,7 @@ export type DependencySets = Readonly<Record<string, readonly string[]>>;
 const CONFIG_FILE = "vite.config.ts";
 const SHADCN_FILE = "components.json";
 const READ_CONCURRENCY = 16;
+const ROOT_WORKSPACE = ".";
 const MSCH_LINT = ["msch", "lint"] as const;
 const MSCH_DEV_DEPENDENCIES = ["msch", "devDependencies"] as const;
 
@@ -79,7 +80,7 @@ export interface WorkspaceLint {
 
 export interface WorkspaceSettings {
   readonly lint: WorkspaceLint;
-  readonly sourceDirectories: readonly string[];
+  readonly members: readonly string[];
   readonly ignoredDirectories: readonly IgnoredDirectory[];
   readonly testProjects: readonly string[];
   readonly tasks: WorkspaceTasks;
@@ -239,7 +240,11 @@ const collectWorkspaceSettings = Effect.fn("collectWorkspaceSettings")(
       { concurrency: READ_CONCURRENCY },
     );
     return {
-      ...(yield* directoryLayoutIn(options.root, directories)),
+      members: pipe(
+        directories,
+        Arr.filter((directory) => directory !== ROOT_WORKSPACE),
+      ),
+      ignoredDirectories: yield* collectIgnoredDirectories(options.root),
       lint: {
         ignorePatterns: pipe(
           found,
