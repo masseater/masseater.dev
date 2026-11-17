@@ -17,7 +17,7 @@ import { Command } from "effect/cli";
 import { HttpClient } from "effect/http";
 import { expect } from "vite-plus/test";
 
-import { githubToken, vendoredBetterleaks } from "#/shared/lib/fake-secrets.test.support.ts";
+import { githubToken } from "#/shared/lib/fake-secrets.test.support.ts";
 import { fakeWatashi } from "#/shared/lib/fake-watashi.test.support.ts";
 import type { FakeWatashi } from "#/shared/lib/fake-watashi.test.support.ts";
 
@@ -48,11 +48,9 @@ const setup = Effect.gen(function* prepare() {
   const transcript = path.join(root, "projects", `${SESSION}.jsonl`);
   yield* fs.makeDirectory(path.dirname(transcript), { recursive: true });
   yield* fs.writeFileString(transcript, "");
-  const betterleaks = yield* vendoredBetterleaks;
   const base: Env = {
     WATASHI_HOME: path.join(root, "home"),
     WATASHI_URL: "https://watashi.test",
-    WATASHI_BETTERLEAKS: betterleaks,
     WATASHI_SEND_CONVERSATIONS: "1",
     WATASHI_TOKEN: TOKEN,
   };
