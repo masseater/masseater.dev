@@ -26,6 +26,7 @@ export const NoteSchema = Schema.Struct({
   midi: Schema.Int,
   cents: Schema.Finite,
   velocity: Share,
+  releaseVelocity: Schema.OptionFromNullOr(Share),
   gate: Share,
   articulation: Schema.OptionFromNullOr(ArticulationSchema),
   lyric: Schema.OptionFromNullOr(LyricSchema),
@@ -39,6 +40,7 @@ export const HitSchema = Schema.Struct({
   ...timedFields,
   voice: Name,
   velocity: Share,
+  releaseVelocity: Schema.OptionFromNullOr(Share),
   params: Schema.Array(PlayParamSchema),
 });
 

@@ -1,7 +1,6 @@
+import { defineRule } from "@r_masseater/y8";
+import type { MarkdownNode, Report, Rule, RuleContext } from "@r_masseater/y8";
 import { Array as Arr, Option, Predicate, String as Str, pipe } from "effect";
-
-import { defineRule } from "#/entities/rule/index.ts";
-import type { MarkdownNode, Report, Rule, RuleContext } from "#/shared/config/index.ts";
 
 import { descendants, proseNodes, skillNamesIn } from "./markdown.ts";
 import { stringOption, stringsOption } from "./options.ts";
@@ -10,7 +9,9 @@ const HYPHEN = "-";
 const SPECIAL = /[.*+?^${}()|[\]\\]/gu;
 const BACKTICKS = /`/gu;
 
-const patternOf = (name: string): RegExp => {
+const patterns = new Map<string, RegExp>();
+
+const compile = (name: string): RegExp => {
   const escaped = Str.replaceAll(SPECIAL, String.raw`\$&`)(name);
   return pipe(
     Option.liftPredicate(name, Str.includes(HYPHEN)),
@@ -20,6 +21,16 @@ const patternOf = (name: string): RegExp => {
     }),
   );
 };
+
+const patternOf = (name: string): RegExp =>
+  pipe(
+    Option.fromNullishOr(patterns.get(name)),
+    Option.getOrElse(() => {
+      const pattern = compile(name);
+      patterns.set(name, pattern);
+      return pattern;
+    }),
+  );
 
 const ownName = (context: RuleContext): readonly string[] =>
   pipe(

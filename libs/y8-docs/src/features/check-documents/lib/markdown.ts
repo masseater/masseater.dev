@@ -1,6 +1,5 @@
+import type { MarkdownNode, RuleContext } from "@r_masseater/y8";
 import { Array as Arr, Option, Predicate, String as Str, pipe } from "effect";
-
-import type { MarkdownNode, RuleContext } from "#/shared/config/index.ts";
 
 const SEPARATOR = "/";
 const PARENT = "..";
@@ -25,11 +24,16 @@ export interface Section {
   readonly blocks: readonly MarkdownNode[];
 }
 
-export const descendants = (node: MarkdownNode): readonly MarkdownNode[] =>
-  pipe(
-    node.children,
-    Arr.flatMap((child) => [child, ...descendants(child)]),
-  );
+export const descendants = (node: MarkdownNode): readonly MarkdownNode[] => {
+  const found: MarkdownNode[] = [];
+  const pending: MarkdownNode[] = Arr.reverse(node.children);
+  while (Arr.isArrayNonEmpty(pending)) {
+    const next = pending.pop() ?? node;
+    found.push(next);
+    pending.push(...Arr.reverse(next.children));
+  }
+  return found;
+};
 
 const isTextual = (node: MarkdownNode): boolean => node.type === "text" || node.type === "code";
 
@@ -212,9 +216,11 @@ export const proseNodes = (context: RuleContext): readonly MarkdownNode[] =>
 
 export const SKILL_FILE = /(?:^|\/)skills\/(?<name>[^/]+)\/SKILL\.md$/u;
 
-export const skillNamesIn = (context: RuleContext): readonly string[] =>
+const skillNamesBy = new WeakMap<RuleContext["filesUnder"], readonly string[]>();
+
+const skillNamesOf = (filesUnder: RuleContext["filesUnder"]): readonly string[] =>
   pipe(
-    context.filesUnder(""),
+    filesUnder(""),
     Arr.flatMap((path) =>
       pipe(
         Option.fromNullishOr(SKILL_FILE.exec(path)),
@@ -224,6 +230,16 @@ export const skillNamesIn = (context: RuleContext): readonly string[] =>
       ),
     ),
     Arr.dedupe,
+  );
+
+export const skillNamesIn = ({ filesUnder }: RuleContext): readonly string[] =>
+  pipe(
+    Option.fromNullishOr(skillNamesBy.get(filesUnder)),
+    Option.getOrElse(() => {
+      const names = skillNamesOf(filesUnder);
+      skillNamesBy.set(filesUnder, names);
+      return names;
+    }),
   );
 
 export const isPublished = (data: Readonly<Record<string, unknown>>): boolean =>

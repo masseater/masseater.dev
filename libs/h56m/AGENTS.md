@@ -1,10 +1,10 @@
 # @r_masseater/h56m
 
-このワークスペースはシークレットスキャナーである。コアは Rust（`native/core`）で記述されており、TypeScript から napi アドオン（`native/node`）経由で呼び出される。設定は vite.config.ts の `h56m` キーに記述する。
+This workspace is a secret scanner. The core is written in Rust (`native/core`) and called from TypeScript through the napi addon (`native/node`). Settings go in the `h56m` key of vite.config.ts.
 
-- kingfisher-rules および kingfisher-scanner のルールとマッチング処理を依存関係として扱う。ルールをこのワークスペースにコピーしてはならない。
-- h56m のエンジン自体にルールは無い。ルールや既定の設定をここに足してはならない。それらは `@r_masseater/h56m-presets` に足す。
-- サービスにシークレットを送信するライブバリデーションを追加してはならない。
-- テスト内であっても、実際のシークレットを記述してはならない。ソースが値全体を保持しないよう、パーツを結合してテストトークンを構築すること。
-- Rust コードにトレーススパンを追加する。`OTEL_EXPORTER_OTLP_ENDPOINT` が設定されている場合、スパンは呼び出し元のトレース配下で送信される。
-- `vp run native` でアドオンをビルドする。テストはこのタスクに依存する。
+- Take the matching engine from kingfisher-rules and kingfisher-scanner as dependencies. Do not copy their code or rules into this workspace.
+- The engine has no rules of its own. Do not add rules or default settings here; add them to `@r_masseater/h56m-presets`.
+- Do not add live validation that sends secrets to services.
+- Do not write real secrets, even in tests. Build test tokens by joining parts so that no source holds the whole value.
+- Add trace spans to the Rust code. When `OTEL_EXPORTER_OTLP_ENDPOINT` is set, the spans are sent under the caller's trace.
+- `vp run native` builds the addon. The tests depend on this task.

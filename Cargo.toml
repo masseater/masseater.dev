@@ -48,6 +48,10 @@ similar_names = "allow"
 many_single_char_names = "allow"
 needless_range_loop = "allow"
 
+[profile.dev]
+debug = 0
+incremental = false
+
 [profile.release]
 lto = "thin"
 strip = "symbols"

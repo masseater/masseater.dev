@@ -1,6 +1,7 @@
+import { defineRule } from "@r_masseater/y8";
+import type { MarkdownNode, Rule } from "@r_masseater/y8";
 import { Array as Arr, Option, String as Str, pipe } from "effect";
 
-import { defineRule } from "#/entities/rule/index.ts";
 import {
   destinationOf,
   isExternal,
@@ -9,7 +10,6 @@ import {
   proseNodes,
 } from "#/features/check-documents/lib/markdown.ts";
 import { stringsOption } from "#/features/check-documents/lib/options.ts";
-import type { MarkdownNode, Rule } from "#/shared/config/index.ts";
 
 const BACKSLASH = "\\";
 const NEXT_LINE = 1;

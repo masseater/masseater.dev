@@ -1,6 +1,7 @@
+import { defineRule } from "@r_masseater/y8";
+import type { Frontmatter, Rule, RuleContext } from "@r_masseater/y8";
 import { Array as Arr, Option, Predicate, String as Str, pipe } from "effect";
 
-import { defineRule } from "#/entities/rule/index.ts";
 import {
   descendants,
   directoryOf,
@@ -15,7 +16,6 @@ import {
 } from "#/features/check-documents/lib/markdown.ts";
 import { numberOption, stringsOption } from "#/features/check-documents/lib/options.ts";
 import { bannedHeading } from "#/features/check-documents/lib/shapes.ts";
-import type { Frontmatter, Rule, RuleContext } from "#/shared/config/index.ts";
 
 const ONE = 1;
 const ORDERED_MAX = 5;

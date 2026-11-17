@@ -1,11 +1,11 @@
-use napi::bindgen_prelude::Result;
+use napi::bindgen_prelude::{Buffer, Result};
 use napi_derive::napi;
 use rayon::prelude::*;
 use serde_json::{Map, Value, json};
 use std::path::PathBuf;
 use tracing::info_span;
 
-use y8_core::{AgentChecker, Input, Linter, builtin_rules};
+use y8_core::{AgentChecker, Input, Linter, Transfer, builtin_rules};
 
 use napi_telemetry as telemetry;
 
@@ -20,9 +20,17 @@ pub struct LintOptions {
     pub config: Option<Value>,
     pub inline_config: Option<bool>,
     pub keep_tree: Option<bool>,
-    pub keep_text: Option<bool>,
+    pub keep_source: Option<bool>,
     pub traceparent: Option<String>,
     pub agnix: Option<AgnixOptions>,
+}
+
+#[napi(object)]
+pub struct FileOutput {
+    pub path: String,
+    pub diagnostics: Value,
+    pub agent_diagnostics: Option<Value>,
+    pub source: Option<Buffer>,
 }
 
 #[napi(object)]
@@ -54,35 +62,46 @@ fn agent_findings(checker: Option<&AgentChecker>, inputs: &[Input]) -> Result<Ve
         .collect()
 }
 
-fn run(inputs: &[Input], options: LintOptions) -> Result<Value> {
-    let keep_tree = options.keep_tree.unwrap_or(false);
-    let keep_text = options.keep_text.unwrap_or(false);
+fn transfer_of(options: &LintOptions) -> Transfer {
+    match (
+        options.keep_tree.unwrap_or(false),
+        options.keep_source.unwrap_or(false),
+    ) {
+        (true, _) => Transfer::TextAndTree,
+        (false, true) => Transfer::Text,
+        (false, false) => Transfer::Nothing,
+    }
+}
+
+fn to_value(value: &[y8_core::Diagnostic]) -> Result<Value> {
+    serde_json::to_value(value).map_err(|error| napi::Error::from_reason(error.to_string()))
+}
+
+fn run(inputs: &[Input], options: LintOptions) -> Result<Vec<FileOutput>> {
+    let transfer = transfer_of(&options);
     let checker = options
         .agnix
         .as_ref()
         .and_then(|agnix| AgentChecker::new(PathBuf::from(&agnix.root), &agnix.disabled));
     let linter = linter(options.config, options.inline_config);
-    let results = linter.lint_all(inputs, keep_tree);
-    let agents = agent_findings(checker.as_ref(), inputs)?;
-    let mut value = serde_json::to_value(results)
-        .map_err(|error| napi::Error::from_reason(error.to_string()))?;
-    if let Value::Array(items) = &mut value {
-        for (index, (item, input)) in items.iter_mut().zip(inputs).enumerate() {
-            if let Value::Object(object) = item {
-                if keep_text {
-                    object.insert("text".to_owned(), Value::String(input.text.clone()));
-                }
-                if let Some(found) = agents.get(index) {
-                    object.insert("agentDiagnostics".to_owned(), found.clone());
-                }
-            }
-        }
-    }
-    Ok(value)
+    let results = linter.lint_all(inputs, transfer);
+    let mut agents = agent_findings(checker.as_ref(), inputs)?.into_iter();
+    let _span = info_span!("y8.to_js", "y8.files" = results.len()).entered();
+    results
+        .into_iter()
+        .map(|result| {
+            Ok(FileOutput {
+                diagnostics: to_value(&result.diagnostics)?,
+                agent_diagnostics: agents.next(),
+                source: result.transfer.map(Buffer::from),
+                path: result.path,
+            })
+        })
+        .collect()
 }
 
 #[napi]
-pub fn lint(files: Vec<FileInput>, options: LintOptions) -> Result<Value> {
+pub fn lint(files: Vec<FileInput>, options: LintOptions) -> Result<Vec<FileOutput>> {
     telemetry::init("y8", env!("CARGO_PKG_VERSION"));
     let span = info_span!("y8.lint", "y8.files" = files.len());
     telemetry::adopt(&span, options.traceparent.as_deref());
@@ -98,7 +117,11 @@ pub fn lint(files: Vec<FileInput>, options: LintOptions) -> Result<Value> {
 }
 
 #[napi]
-pub fn lint_paths(root: String, paths: Vec<String>, options: LintOptions) -> Result<Value> {
+pub fn lint_paths(
+    root: String,
+    paths: Vec<String>,
+    options: LintOptions,
+) -> Result<Vec<FileOutput>> {
     telemetry::init("y8", env!("CARGO_PKG_VERSION"));
     let span = info_span!("y8.lint_paths", "y8.files" = paths.len());
     telemetry::adopt(&span, options.traceparent.as_deref());

@@ -1,3 +1,3 @@
 # @masseater.dev/node-main
 
-このワークスペースでは、Tracing が設定された Effect 製の Node.js プログラムが動作している。
+This workspace runs Node.js programs built with Effect, with tracing set up.

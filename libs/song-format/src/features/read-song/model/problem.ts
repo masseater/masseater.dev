@@ -1,6 +1,8 @@
 import { Array as Arr, pipe } from "effect";
 import type { AstNode } from "langium";
 
+import type { From } from "#/shared/lib/from.ts";
+
 export interface Problem {
   readonly node: AstNode;
   readonly property: string;
@@ -12,7 +14,7 @@ export interface Compiled<Value> {
   readonly problems: readonly Problem[];
 }
 
-export type From<Node, Result> = (node: Node) => Result;
+export type { From } from "#/shared/lib/from.ts";
 
 export type Combine<Value> = (left: Value, right: Value) => Value;
 

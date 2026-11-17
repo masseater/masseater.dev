@@ -1,7 +1,7 @@
 # @r_masseater/h56m-presets
 
-このワークスペースには h56m のルールプリセットを置く。h56m のエンジン自体にルールは無く、プロジェクトはこれらのファイルのいずれかを拡張する。
+This workspace holds the rule presets for h56m. The h56m engine has no rules of its own, and projects extend one of these files.
 
-- このパッケージにはネイティブコードを含めず、OS ごとのビルドを不要にする。ネイティブコードが必要なものは h56m に置く。
-- `vp run native` で依存関係からプリセットを取り出す。ルールファイルをリポジトリにコピーしてはならない。生成された `presets/` ディレクトリはコミットしない。
-- 各エクスポートは、Betterleaks 形式の TOML ファイルの絶対パスである。
+- Keep this package free of native code so that it needs no per-OS builds. Anything that needs native code belongs in h56m.
+- `vp run native` takes the presets out of dependencies. Do not copy rule files into the repository, and do not commit the generated `presets/` directory.
+- Each export is the absolute path of a TOML file in the Betterleaks format.

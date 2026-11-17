@@ -1,5 +1,5 @@
 # @masseater.dev/mcp-portal
 
-このワークスペースは `mcp.masseater.dev` である。持ち主の MCP サーバーを 1 つのエントリにまとめている。
+This workspace is `mcp.masseater.dev`. It gathers the owner's MCP servers behind one entry.
 
-Cloudflare MCPには、読み取り専用のアカウントトークン `CloudflareReader` のみを付与すること。書き込み権限は付与しないこと。
+Give the Cloudflare MCP only the read-only account token `CloudflareReader`. Do not give it write access.

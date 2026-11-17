@@ -1,5 +1,5 @@
 # @r_masseater/oxlint-typed-rules
 
-このワークスペースは、型情報を必要とする ESLint ルールを、TypeScript 7 の上で oxlint のプラグインとして動かす。
+This workspace runs ESLint rules that need type information as oxlint plugins on TypeScript 7.
 
-上流のテストは `upstream/` のまま変更せず、すべてパスさせる。
+Keep the upstream tests in `upstream/` unchanged and make them all pass.
