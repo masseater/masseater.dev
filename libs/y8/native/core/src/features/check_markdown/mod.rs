@@ -14,6 +14,7 @@ use serde_json::{Map, Value};
 use tracing::info_span;
 
 use crate::shared::source::Source;
+use crate::shared::transfer;
 use crate::shared::tree::Tree;
 use config::Names;
 use rule::{Cache, Context, Report};
@@ -35,8 +36,15 @@ pub struct Diagnostic {
 pub struct FileResult {
     pub path: String,
     pub diagnostics: Vec<Diagnostic>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub tree: Option<Tree>,
+    #[serde(skip)]
+    pub transfer: Option<Vec<u8>>,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Transfer {
+    Nothing,
+    Text,
+    TextAndTree,
 }
 
 pub struct Linter {
@@ -65,7 +73,7 @@ impl Linter {
     }
 
     #[must_use]
-    pub fn lint(&self, path: &str, raw: &str, keep_tree: bool) -> FileResult {
+    pub fn lint(&self, path: &str, raw: &str, transfer: Transfer) -> FileResult {
         let _file = info_span!("y8.file", "code.file.path" = path).entered();
         let source = info_span!("y8.read_source").in_scope(|| Source::new(raw));
         let tree = info_span!("y8.parse").in_scope(|| Tree::parse(&source.text, source.body_start));
@@ -123,18 +131,26 @@ impl Linter {
         FileResult {
             path: path.to_owned(),
             diagnostics,
-            tree: keep_tree.then_some(tree),
+            transfer: match transfer {
+                Transfer::Nothing => None,
+                Transfer::Text => Some(transfer::encode(None, &source.text, &source.line_starts)),
+                Transfer::TextAndTree => {
+                    Some(info_span!("y8.encode_tree").in_scope(|| {
+                        transfer::encode(Some(&tree), &source.text, &source.line_starts)
+                    }))
+                }
+            },
         }
     }
 
     #[must_use]
-    pub fn lint_all(&self, inputs: &[Input], keep_tree: bool) -> Vec<FileResult> {
+    pub fn lint_all(&self, inputs: &[Input], transfer: Transfer) -> Vec<FileResult> {
         let parent = tracing::Span::current();
         inputs
             .par_iter()
             .map(|input| {
                 let _guard = parent.enter();
-                self.lint(&input.path, &input.text, keep_tree)
+                self.lint(&input.path, &input.text, transfer)
             })
             .collect()
     }
