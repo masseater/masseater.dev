@@ -1,10 +1,9 @@
-import { Array as Arr, Effect, Option, pipe } from "effect";
-import { isScalar } from "yaml";
+import { Array as Arr, Effect, pipe } from "effect";
 
 import type { Problem, RuleName } from "#/shared/lib/problem.ts";
 import { RepositoryFiles } from "#/shared/lib/repository-files.ts";
 
-import { pairsNamed, workflowCheck } from "./workflow-yaml.ts";
+import { scalarKeyOffsets, workflowCheck } from "./workflow-yaml.ts";
 
 const RULE: RuleName = "release-please";
 const RELEASE_PLEASE = /^googleapis\/release-please-action(?:@|$)/u;
@@ -13,19 +12,10 @@ const FIRST = 1;
 const MESSAGE =
   "releases with release-please. Releases are manual: bump the version in a PR, then run the publish workflow, which runs `msch-publish` for the workspace.";
 
-const releasePleaseOffsetsOf = (source: string): readonly number[] =>
-  pipe(
-    pairsNamed("uses")(source),
-    Arr.filter(({ value }) => isScalar(value) && RELEASE_PLEASE.test(String(value.value))),
-    Arr.flatMap(({ key }) =>
-      pipe(
-        Option.liftPredicate(key, isScalar),
-        Option.flatMap((scalar) => Option.fromNullishOr(scalar.range)),
-        Option.map(([start]) => start),
-        Option.toArray,
-      ),
-    ),
-  );
+const releasePleaseOffsetsOf = scalarKeyOffsets({
+  name: "uses",
+  matches: (value) => RELEASE_PLEASE.test(value),
+});
 
 const checkReleasePleaseSteps = workflowCheck({
   rule: RULE,
