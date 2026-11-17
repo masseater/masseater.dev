@@ -6,12 +6,12 @@ export default defineConfig({
       verify: { command: [], dependsOn: ["cargo"] },
       cargo: {
         command:
-          "cargo fmt -p pod-rattle-host --check && cargo clippy -p pod-rattle-host --all-targets -- -D warnings && cargo test -p pod-rattle-host --test editor",
+          "cargo fmt -p pod-rattle-host --check && cargo clippy -p pod-rattle-host --all-targets -- -D warnings && cargo test -p pod-rattle-host",
         cache: {
           input: [
             "Cargo.toml",
             "src/**",
-            "tests/**",
+            "kittest.toml",
             { pattern: "apps/pod-rattle-plugin/src/**", base: "workspace" },
             { pattern: "apps/pod-rattle-plugin/Cargo.toml", base: "workspace" },
             { pattern: "libs/pod-rattle-engine/src/**", base: "workspace" },

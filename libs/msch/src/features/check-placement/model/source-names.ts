@@ -16,6 +16,7 @@ const MINIMUM_WORDS = 2;
 const FEATURES = "src/features/";
 const SOURCE = "src/";
 const DEPLOY_MARKER = /(?:^|[.-])entrypoints?(?=[.-]|$)|\.worker(?=\.)/iu;
+const SCRIPT = /\.[cm]?[jt]sx?$/u;
 const VERBS: ReadonlySet<string> = new Set(englishVerbs);
 
 const SLICE_MESSAGE =
@@ -23,14 +24,20 @@ const SLICE_MESSAGE =
 const ENTRY_MESSAGE =
   "is named after where it is deployed. Name it after what the code does; the Alchemy resource that deploys it decides which file is the entry.";
 
-const isVerbObject = (slice: string): boolean => {
-  const words = Str.split(slice, WORD_SEPARATOR);
-  return words.length >= MINIMUM_WORDS && Option.exists(Arr.head(words), (word) => VERBS.has(word));
-};
+export const isVerbObjectBy =
+  (separator: string) =>
+  (slice: string): boolean => {
+    const words = Str.split(slice, separator);
+    return (
+      words.length >= MINIMUM_WORDS && Option.exists(Arr.head(words), (word) => VERBS.has(word))
+    );
+  };
+
+const isVerbObject = isVerbObjectBy(WORD_SEPARATOR);
 
 const misnamedSlice = ({ workspace, inner }: Owned): Option.Option<string> =>
   pipe(
-    Option.liftPredicate(inner, Str.startsWith(FEATURES)),
+    Option.liftPredicate(inner, (path) => Str.startsWith(FEATURES)(path) && SCRIPT.test(path)),
     Option.flatMap((path) => Arr.head(Str.split(Str.slice(FEATURES.length)(path), SEPARATOR))),
     Option.filter((slice) => !isVerbObject(slice)),
     Option.map((slice) => `${workspace}${SEPARATOR}${FEATURES}${slice}`),
