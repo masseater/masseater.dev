@@ -1,6 +1,6 @@
-import type { RuleEntry, RuleOptions, Severity } from "@r_masseater/lint-host";
+import type { RuleEntry, RuleOptions, Severity } from "@masseater.dev/lint-host";
 
-export type { RuleEntry, RuleOptions, Severity } from "@r_masseater/lint-host";
+export type { RuleEntry, RuleOptions, Severity } from "@masseater.dev/lint-host";
 
 export interface Placement {
   readonly files: readonly string[];
