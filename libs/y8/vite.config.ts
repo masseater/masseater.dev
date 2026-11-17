@@ -13,6 +13,8 @@ const CARGO_INPUTS = [
   { pattern: "rust-toolchain.toml", base: "workspace" },
 ] as const;
 
+const DOWNLOAD_ENV = ["HTTPS_PROXY", "https_proxy", "NO_PROXY", "no_proxy", "SSL_CERT_FILE"];
+
 export default defineConfig({
   msch: { lint: { ignorePatterns: ["native/core/tests/fixtures/**"] } },
   run: {
@@ -21,11 +23,15 @@ export default defineConfig({
       cargo: {
         command:
           "cargo fmt -p y8-core -p y8-node --check && cargo clippy -p y8-core -p y8-node --all-targets --locked -- -D warnings && cargo test -p y8-core --release --locked",
-        cache: { input: [...CARGO_INPUTS], output: [] },
+        cache: { input: [...CARGO_INPUTS], output: [], untrackedEnv: DOWNLOAD_ENV },
       },
       native: {
         command: "node bin/build-native.ts",
-        cache: { input: [...CARGO_INPUTS, "package.json"], output: ["native/*.node"] },
+        cache: {
+          input: [...CARGO_INPUTS, "package.json"],
+          output: ["native/*.node"],
+          untrackedEnv: DOWNLOAD_ENV,
+        },
       },
       build: { command: "vp pack", dependsOn: ["native"] },
       test: { command: "vp test run", dependsOn: ["native"] },
