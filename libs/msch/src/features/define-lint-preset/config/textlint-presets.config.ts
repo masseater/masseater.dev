@@ -1,5 +1,6 @@
 import { createRequire } from "node:module";
 
+import presetJa from "@r_masseater/textlint-rule-preset-ja";
 import type { ToolSections } from "@r_masseater/vite-plus-adopt";
 import { Option, Predicate, Record as Rec, pipe } from "effect";
 
@@ -30,13 +31,11 @@ const presetIn = (value: unknown): Option.Option<Preset> => {
 
 const required = createRequire(import.meta.url);
 
-const loadPreset = (specifier: string): Preset => {
-  const loaded: unknown = required(specifier);
-  return Option.getOrThrowWith(
+const presetOf = (specifier: string, loaded: unknown): Preset =>
+  Option.getOrThrowWith(
     presetIn(loaded),
     () => new TypeError(`${specifier} does not export a textlint preset`),
   );
-};
 
 const japaneseOnly =
   (reporter: Reporter): Reporter =>
@@ -54,15 +53,19 @@ const forJapanese = (rule: Reporter | Readonly<Fixable>): Rule => {
   return { linter: japaneseOnly(rule.linter), fixer: japaneseOnly(rule.fixer) };
 };
 
-const loadJapanesePreset = (specifier: string): Preset => {
-  const { rules, rulesConfig } = loadPreset(specifier);
+const japanesePreset = (specifier: string, loaded: unknown): Preset => {
+  const { rules, rulesConfig } = presetOf(specifier, loaded);
   return { rules: pipe(rules, Rec.map(forJapanese)), rulesConfig };
 };
 
 export const textlintPresets: NonNullable<NonNullable<ToolSections["textlint"]>["presets"]> = {
-  "@r_masseater/preset-ja": loadJapanesePreset("@r_masseater/textlint-rule-preset-ja"),
-  "@textlint-ja/preset-ai-writing": loadJapanesePreset(
+  "@r_masseater/preset-ja": japanesePreset("@r_masseater/textlint-rule-preset-ja", presetJa),
+  "@textlint-ja/preset-ai-writing": japanesePreset(
     "@textlint-ja/textlint-rule-preset-ai-writing",
+    required("@textlint-ja/textlint-rule-preset-ai-writing"),
   ),
-  "preset-ja-technical-writing": loadJapanesePreset("textlint-rule-preset-ja-technical-writing"),
+  "preset-ja-technical-writing": japanesePreset(
+    "textlint-rule-preset-ja-technical-writing",
+    required("textlint-rule-preset-ja-technical-writing"),
+  ),
 };
