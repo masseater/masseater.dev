@@ -50,7 +50,8 @@
     "provenance": true
   },
   "scripts": {
-    "prepublishOnly": "vp run build"
+    "prepublishOnly": "vp run build",
+    "prepare": "node bin/extract.ts"
   },
   "devDependencies": {
     "@effect/platform-node": "catalog:",
