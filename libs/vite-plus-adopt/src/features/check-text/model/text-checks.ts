@@ -5,7 +5,6 @@ import { listCommitMessages, listGitFiles } from "#/shared/lib/git.ts";
 import type { Report } from "#/shared/lib/report.ts";
 
 import { lintCommitMessages } from "./commitlint.ts";
-import { lintMarkdown } from "./markdownlint.ts";
 import { lintTexts } from "./textlint.ts";
 
 const MARKDOWN = "*.md";
@@ -62,13 +61,6 @@ export const textlintCheck = withSection("textlint", (config, { root }) => {
   );
   return Effect.all([markdown, ...sources], { concurrency: 1 }).pipe(Effect.map(mergeReports));
 });
-
-/** @internal */
-export const markdownlintCheck = withSection("markdownlint", (config, { root }) =>
-  markdownFiles(root, config.ignores).pipe(
-    Effect.flatMap((files) => lintMarkdown(config, root, files)),
-  ),
-);
 
 /** @internal */
 export const commitlintCheck = withSection("commitlint", (config, { root, range }) =>

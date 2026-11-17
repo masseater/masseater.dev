@@ -69,7 +69,7 @@ const readsLiteralSettings = Effect.gen(function* readsLiteralSettings() {
       deployEntries: [],
     },
     testProjects: ["apps/web"],
-    tasks: { verify: ["own#test"] },
+    tasks: { verify: ["own#test"], native: [] },
     devDependencies: {
       "apps/web: spans are sent from the SDK in tests": {
         workspaces: ["apps/web"],
@@ -86,7 +86,7 @@ const readsTasks = Effect.gen(function* readsTasks() {
     "libs/other/package.json": `{ "name": "other" }`,
     "libs/other/vite.config.ts": `export default { run: { tasks: { build: { command: "vp pack" } } } };\n`,
   });
-  expect(settings.tasks).toStrictEqual({ verify: ["own#verify"] });
+  expect(settings.tasks).toStrictEqual({ verify: ["own#verify"], native: [] });
 });
 
 const rejectsRunningCode = Effect.gen(function* rejectsRunningCode() {
@@ -129,6 +129,9 @@ const listsSourcesAndIgnoredDirectories = Effect.gen(function* listsSourcesAndIg
     "apps/web/package.json": `{ "name": "web" }`,
     "apps/web/src/app/main.ts": "export const main = 1;\n",
     "libs/flat/package.json": `{ "name": "flat" }`,
+    "libs/crate/package.json": `{ "name": "crate" }`,
+    "libs/crate/Cargo.toml": '[package]\nname = "crate"\n',
+    "libs/crate/src/lib.rs": "mod shared;\n",
   });
   expect(settings.sourceDirectories).toStrictEqual(["apps/web/src"]);
   expect(settings.ignoredDirectories).toStrictEqual([

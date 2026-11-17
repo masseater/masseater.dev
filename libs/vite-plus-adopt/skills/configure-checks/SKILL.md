@@ -2,7 +2,7 @@
 name: configure-checks
 description: >
   Use when configuring or running the vpa CLI of vite-plus-adopt in a Vite+ repository:
-  the betterleaks, commitlint, textlint, markdownlint, steiger, fallow and dependencyRules sections of
+  the betterleaks, commitlint, textlint, steiger, fallow and dependencyRules sections of
   vite.config.ts, git hooks, the bundled Feature-Sliced Design Steiger plugin and the
   @arethetypeswrong/core replacement for pack.attw. Also use when a vpa check fails.
 metadata:
@@ -20,7 +20,7 @@ sources:
 
 `vpa` runs the checks that the sections of `vite.config.ts` configure.
 They cover secrets with Betterleaks and workflows with actionlint and zizmor.
-They also run commitlint, textlint and markdownlint.
+They also run commitlint and textlint.
 Steiger, fallow and the dependency rules check the code.
 Run without arguments, it runs every configured check in parallel and prints the results together.
 
@@ -53,7 +53,6 @@ Run without arguments, it runs every configured check in parallel and prints the
      betterleaks: { extend: { useDefault: true } },
      steiger: { paths: ["apps/*/src"], rules: [...fsd.configs.recommended] },
      textlint: { ignores: ["CHANGELOG.md"], rules: { "preset-ja-technical-writing": true } },
-     markdownlint: { ignores: ["CHANGELOG.md"] },
      fallow: { production: true, rules: { "unused-files": "error" } },
      run: { tasks: { vpa: { command: "vpa", cache: false } } },
    });

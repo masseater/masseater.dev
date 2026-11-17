@@ -40,7 +40,6 @@ const CONFIG = lines(
   "    ],",
   "  },",
   '  textlint: { ignores: ["skip/**"], rules: {} },',
-  '  markdownlint: { ignores: ["skip/**"] },',
   "};",
 );
 

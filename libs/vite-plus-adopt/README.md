@@ -1,7 +1,7 @@
 # vite-plus-adopt
 
 [Vite+](https://viteplus.dev) checks formatting, lint and types, but leaves out secrets, GitHub Actions workflows, commit messages, prose and dependency rules.
-`vpa` runs the tools for those checks (Betterleaks, actionlint, zizmor, commitlint, textlint, markdownlint, Steiger and fallow) from sections you add to `vite.config.ts`, so the one config file Vite+ already uses holds their settings too.
+`vpa` runs the tools for those checks (Betterleaks, actionlint, zizmor, commitlint, textlint, Steiger and fallow) from sections you add to `vite.config.ts`, so the one config file Vite+ already uses holds their settings too.
 Running `vpa` once with no arguments runs every configured check in parallel and prints the results together.
 Each check runs only when its section exists, so you can adopt them one at a time.
 It also installs agent skills pinned to a commit, and bundles a Feature-Sliced Design plugin for Steiger and @arethetypeswrong/core, both running on TypeScript 7 alone.
@@ -51,13 +51,12 @@ export default defineConfig({
     ignores: ["CHANGELOG.md"],
     rules: { "preset-ja-technical-writing": true },
   },
-  markdownlint: { ignores: ["CHANGELOG.md"] },
   fallow: { production: true, rules: { "unused-files": "error" } },
   run: { tasks: { vpa: { command: "vpa", cache: false } } },
 });
 ```
 
-`import type {} from "vite-plus-adopt"` types the 8 keys above on `defineConfig`.
+`import type {} from "vite-plus-adopt"` types the 7 keys above on `defineConfig`.
 textlint checks the Markdown files Git tracks. To check other files too, list their globs (`files`) and the settings for them in `textlint.sources`. `presets` work there as well.
 Steiger checks only the directories matching `steiger.paths` that directly contain FSD layer folders (`app`, `pages`, `widgets`, `features`, `entities`, `shared` and so on).
 
@@ -76,7 +75,7 @@ Without any of them, `vpa` checks the whole history.
 
 ## No migration command
 
-`vpa` has no command that converts existing config files (`.commitlintrc`, `.textlintrc`, `.markdownlint.json`, `.gitleaks.toml`, Husky or lefthook hooks) into `vite.config.ts`, and will not get one.
+`vpa` has no command that converts existing config files (`.commitlintrc`, `.textlintrc`, `.gitleaks.toml`, Husky or lefthook hooks) into `vite.config.ts`, and will not get one.
 Every repository arranges those files differently, and a converter cannot cover them all.
 Ask a coding agent to move them instead.
 The package ships the `configure-checks` skill (in `skills/`), which tells the agent the shape of each section.

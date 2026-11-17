@@ -68,7 +68,7 @@ export const tasksOf = ({
       dependsOn: ["check"],
       cache: { input: [...inputs, "!**/.cache/**"] },
     },
-    msch: { command: "msch", dependsOn: ["check"], cache: false },
+    msch: { command: "msch", dependsOn: ["check", ...workspace.tasks.native], cache: false },
     audit: { command: AUDIT, cache: false },
     ...commands,
   };

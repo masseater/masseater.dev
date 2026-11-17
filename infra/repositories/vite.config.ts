@@ -21,6 +21,8 @@ export default defineConfig({
       "private-names": { command: "node bin/private-names.ts", cache: false },
       "delete-repositories": { command: "node bin/delete-repositories.ts", cache: false },
       "delete-secrets": { command: "node bin/delete-secrets.ts", cache: false },
+      "secret-keys": { command: "node bin/secret-keys.ts", cache: false },
+      "put-secret": { command: "node bin/put-secret.ts", cache: false },
     },
   },
 });

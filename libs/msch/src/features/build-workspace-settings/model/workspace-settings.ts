@@ -213,6 +213,17 @@ const workspaceIn = Effect.fn("workspaceIn")(function* workspaceIn(
   return { ...settings, publicEntries };
 });
 
+const mergedTasks = (found: readonly { readonly tasks: WorkspaceTasks }[]): WorkspaceTasks => ({
+  verify: pipe(
+    found,
+    Arr.flatMap(({ tasks }) => tasks.verify),
+  ),
+  native: pipe(
+    found,
+    Arr.flatMap(({ tasks }) => tasks.native),
+  ),
+});
+
 const collectWorkspaceSettings = Effect.fn("collectWorkspaceSettings")(
   function* collectWorkspaceSettings(options: SettingsOptions) {
     const files = yield* RepositoryFiles;
@@ -250,12 +261,7 @@ const collectWorkspaceSettings = Effect.fn("collectWorkspaceSettings")(
         Arr.filter(({ ownTests }) => !ownTests),
         Arr.map(({ directory }) => directory),
       ),
-      tasks: {
-        verify: pipe(
-          found,
-          Arr.flatMap(({ tasks }) => tasks.verify),
-        ),
-      },
+      tasks: mergedTasks(found),
       devDependencies: merged(
         pipe(
           found,
