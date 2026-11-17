@@ -350,18 +350,6 @@ patchedDependencies:
   "@tanstack/intent@0.5.6": patches/@tanstack__intent@0.5.6.patch
 minimumReleaseAgeExclude:
   - "@r_masseater/vite-plus-adopt@0.10.2"
-  - "@better-auth/core@1.7.25"
-  - "@better-auth/drizzle-adapter@1.7.25"
-  - "@better-auth/kysely-adapter@1.7.25"
-  - "@better-auth/mcp@1.7.25"
-  - "@better-auth/memory-adapter@1.7.25"
-  - "@better-auth/mongo-adapter@1.7.25"
-  - "@better-auth/oauth-provider@1.7.25"
-  - "@better-auth/passkey@1.7.25"
-  - "@better-auth/prisma-adapter@1.7.25"
-  - "@better-auth/telemetry@1.7.25"
-  - auth@1.7.25
-  - better-auth@1.7.25
   - "@effect/tsgo-darwin-arm64@0.70.0"
   - "@effect/tsgo-darwin-x64@0.70.0"
   - "@effect/tsgo-linux-arm64@0.70.0"
