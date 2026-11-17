@@ -46,7 +46,7 @@ jobs:
         with:
           native: "false"
       - if: inputs.credentials != 'root'
-        uses: masseater/typescript-template/.github/actions/credentials@e80c641e7847e5482f3b043368726580dfd1cc40
+        uses: masseater/typescript-template/.github/actions/credentials@198c4aeeacc5d496486881297a551fcacb33f6a4
       - if: inputs.credentials == 'github'
         run: vp run -r github-token
       - if: inputs.credentials != 'root'
@@ -71,6 +71,6 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: masseater/typescript-template/.github/actions/ci-telemetry@e80c641e7847e5482f3b043368726580dfd1cc40
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@198c4aeeacc5d496486881297a551fcacb33f6a4
         with:
           github-token: ${{ github.token }}
