@@ -5,6 +5,18 @@ import { isScannedText, listedFiles, presentFiles, scanText } from "#/shared/lib
 import type { Listed } from "#/shared/lib/scanned-files.ts";
 import { positionOf } from "#/shared/lib/text-position.ts";
 
+const PROGRAM_SOURCE = /\.(?:[cm]?[jt]sx?|rs|cs|go)$/u;
+const CONFIG_SOURCE = /(?:^|\/)[^/]*\.config\.[cm]?[jt]s$/u;
+
+export const isProgramSource = ({ name }: Listed): boolean =>
+  PROGRAM_SOURCE.test(name) && !CONFIG_SOURCE.test(name);
+
+export const spawnPattern = (program: string): RegExp =>
+  new RegExp(
+    String.raw`(?:\bcommand["']?\s*[:=]\s*|(?:\bspawn\w*|\bexec\w*|\bexeca|Command::new|ChildProcess\.make)\(\s*|\$\(\s*|\$\s*(?=\x60))["'\x60](?:${program})(?=["'\x60\s])`,
+    "gu",
+  );
+
 const FIRST_LINE = 1;
 const FIRST_COLUMN = 1;
 const WHOLE_MATCH = 0;
