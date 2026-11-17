@@ -20,7 +20,7 @@ export type { WorkspaceSource } from "./model/workspace-config-source.ts";
 export { runTasksOf } from "./model/run-tasks.ts";
 export type { RunTask } from "./model/run-tasks.ts";
 export { workspaceManifest } from "./model/workspace-manifest.ts";
-export { workspaceDirectories, workspaceProjects } from "./model/workspace-projects.ts";
+export { publishedProjects, workspaceDirectories } from "./model/workspace-projects.ts";
 export type { WorkspaceProject } from "./model/workspace-projects.ts";
 export { prefixed, withoutRelative } from "./model/workspace-patterns.ts";
 export {

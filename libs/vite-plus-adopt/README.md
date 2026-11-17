@@ -1,20 +1,20 @@
 # vite-plus-adopt
 
-`vpa` は、Betterleaks・actionlint・zizmor・commitlint・textlint・markdownlint・Steiger・fallow とエージェントスキルの導入を Vite+ に取り込む CLI である。設定と依存の規則を `vite.config.ts` に書くと、そこから読んで動かす。
-引数なしの `vpa` を 1 回実行すると、設定のある検査をすべて並行して動かし、結果をまとめて出す。
-TypeScript 7 だけで動く Feature-Sliced Design の Steiger プラグインと @arethetypeswrong/core も同梱する。
+`vpa` is a CLI that brings Betterleaks, actionlint, zizmor, commitlint, textlint, markdownlint, Steiger, fallow and agent skill installation into Vite+. Write their settings and your dependency rules in `vite.config.ts`, and `vpa` reads them from there.
+Running `vpa` once with no arguments runs every configured check in parallel and prints the results together.
+It also bundles a Feature-Sliced Design plugin for Steiger and @arethetypeswrong/core, both running on TypeScript 7 alone.
 
-## 公開先
+## Published to
 
 - npm: [@r_masseater/vite-plus-adopt](https://www.npmjs.com/package/@r_masseater/vite-plus-adopt)
 
-## 使い方
+## Usage
 
 ```sh
 vp add -D @r_masseater/vite-plus-adopt
 ```
 
-postinstall を許すため、`pnpm-workspace.yaml` の `allowBuilds` に足す。
+Allow its postinstall by adding it to `allowBuilds` in `pnpm-workspace.yaml`.
 
 ```yaml
 allowBuilds:
@@ -29,13 +29,13 @@ import { defineConfig } from "vite-plus";
 export default defineConfig({
   commitlint: { extends: ["@commitlint/config-conventional"] },
   dependencyRules: {
-    banned: { "テストは vite-plus/test から読む": ["vitest", "@vitest/*"] },
+    banned: { "Import tests from vite-plus/test": ["vitest", "@vitest/*"] },
     peerRanges: "intersect",
   },
   betterleaks: {
     extend: { useDefault: true },
     filter: 'matchesAny(finding.line, [`\\bCF_BEACON_TOKEN = "[0-9a-f]{32}"`])',
-    ignoredSecrets: ["<秘密の SHA-256>"],
+    ignoredSecrets: ["<SHA-256 of the secret>"],
   },
   steiger: { paths: ["apps/*/src"], rules: [...fsd.configs.recommended] },
   textlint: {
@@ -48,11 +48,11 @@ export default defineConfig({
 });
 ```
 
-`import type {} from "@r_masseater/vite-plus-adopt"` で、`defineConfig` に上の 8 つのキーの型が付く。
-textlint は Git が追跡する Markdown を検査する。ほかのファイルも検査するときは、`textlint.sources` に対象の glob（`files`）とそのファイルに当てる設定を並べる。`presets` はそこでも使える。
-Steiger は `steiger.paths` に合うディレクトリのうち、直下に FSD のレイヤー（`app`・`pages`・`widgets`・`features`・`entities`・`shared` など）のフォルダを持つものだけを検査する。
+`import type {} from "@r_masseater/vite-plus-adopt"` types the 8 keys above on `defineConfig`.
+textlint checks the Markdown files Git tracks. To check other files too, list their globs (`files`) and the settings for them in `textlint.sources`. `presets` work there as well.
+Steiger checks only the directories matching `steiger.paths` that directly contain FSD layer folders (`app`, `pages`, `widgets`, `features`, `entities`, `shared` and so on).
 
-Git のフックは次のように書く。
+Write the Git hooks like this.
 
 ```sh
 # .vite-hooks/pre-commit
@@ -61,9 +61,9 @@ vpa --staged
 vpa --commit-msg "$1"
 ```
 
-## エージェントスキル
+## Agent skills
 
-`skills` に GitHub のリポジトリとコミットを書くと、`vpa --prepare` がそのスキルを `.agents/skills/` に置く。スキルは `SKILL.md` の `name` で選び、`"all"` は `root` の下のすべてを選ぶ。
+List GitHub repositories and commits in `skills`, and `vpa --prepare` puts their skills in `.agents/skills/`. Skills are picked by the `name` in `SKILL.md`, and `"all"` picks every skill under `root`.
 
 ```ts
 export default defineConfig({
@@ -79,21 +79,21 @@ export default defineConfig({
 });
 ```
 
-取得したスキルは `~/.cache/vpa/skills/`（`XDG_CACHE_HOME`、Windows では `LOCALAPPDATA` の下）に読み取り専用で置く。`.agents/skills/` からはシンボリックリンク（Windows ではジャンクション）で指す。同じコミットはマシンのどのワークツリーでも取り直さない。非公開のリポジトリは `GITHUB_TOKEN` で取る。
+Fetched skills are stored read-only in `~/.cache/vpa/skills/` (under `XDG_CACHE_HOME`, or `LOCALAPPDATA` on Windows), and `.agents/skills/` points to them with symbolic links (junctions on Windows). A commit is fetched once per machine and shared by every worktree. Private repositories are fetched with `GITHUB_TOKEN`.
 
-`./` で始まるキーは、このリポジトリのフォルダである。コミットは書かず、`SKILL.md` を持つ直下のフォルダをそのまま指す。
+A key starting with `./` is a folder in this repository. It takes no commit and points directly to the folders under it that contain `SKILL.md`.
 
-`prepare` には `vpa --prepare` を書く。Renovate がコミットを更新できるように、`renovate.json` で次のプリセットを読む。
+Put `vpa --prepare` in `prepare`. To let Renovate update the commits, extend this preset in `renovate.json`.
 
 ```json
 { "extends": ["github>masseater/masseater.dev//libs/vite-plus-adopt/renovate"] }
 ```
 
-## Feature-Sliced Design のプラグイン
+## Feature-Sliced Design plugin
 
-`@r_masseater/vite-plus-adopt/fsd` は [@feature-sliced/steiger-plugin][fsd-plugin] 0.8.2 を同梱したもので、ルールと `configs.recommended` は元と同じである。
-steiger 本体も `@feature-sliced/steiger-plugin` に依存し、それが TypeScript 5 を引き込む。
-vpa は steiger の CLI を使わないので、`pnpm-workspace.yaml` の `overrides` で外せる。
+`@r_masseater/vite-plus-adopt/fsd` bundles [@feature-sliced/steiger-plugin][fsd-plugin] 0.8.2, with the same rules and `configs.recommended` as the original.
+steiger itself also depends on `@feature-sliced/steiger-plugin`, which pulls in TypeScript 5.
+vpa does not use the steiger CLI, so you can drop it with `overrides` in `pnpm-workspace.yaml`.
 
 ```yaml
 overrides:
@@ -102,10 +102,10 @@ overrides:
 
 [fsd-plugin]: https://github.com/feature-sliced/steiger/tree/master/packages/steiger-plugin-fsd
 
-## @arethetypeswrong/core の置き換え
+## Replacement for @arethetypeswrong/core
 
-`@r_masseater/vite-plus-adopt/attw` は [@arethetypeswrong/core][attw] 0.18.5 と同じ API を、TypeScript 7.1 だけで出す。
-`pack.attw.module` にこれを渡せば、`@arethetypeswrong/core` を入れずに同じ検査が動く。
+`@r_masseater/vite-plus-adopt/attw` provides the same API as [@arethetypeswrong/core][attw] 0.18.5, on TypeScript 7.1 alone.
+Pass it to `pack.attw.module`, and the same checks run without installing `@arethetypeswrong/core`.
 
 ```ts
 import * as attw from "@r_masseater/vite-plus-adopt/attw";
@@ -120,6 +120,6 @@ export default defineConfig({
 
 [attw]: https://github.com/arethetypeswrong/arethetypeswrong.github.io/tree/main/packages/core
 
-## ライセンス
+## License
 
-MIT。`dist/fsd.mjs`・`dist/parsers`・`dist/attw.mjs` に同梱した元のパッケージのライセンスは `THIRD-PARTY-NOTICES` にある。
+MIT. The licenses of the original packages bundled in `dist/fsd.mjs`, `dist/parsers` and `dist/attw.mjs` are in `THIRD-PARTY-NOTICES`.
