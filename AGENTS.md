@@ -16,7 +16,7 @@ The base stack is TypeScript 7, Effect, Alchemy and Cloudflare.
 ## Rules
 
 - Build every check of the repository, such as lint rules and convention checks, into msch. Do not create checks anywhere else.
-- Do not write the names of private repositories in this repository or in masseater/skills. Refer to a private repository by its repository ID.
+- Do not write private repository names in this repository or in masseater/skills. Refer to a private repository by its repository ID.
 - Do not write the owner's email address in this repository. Refer to the reusable Access policy `OwnerPolicy` instead.
 - Do not let requests through Cloudflare Access with service tokens or bypass policies. Agents get in with the owner's login through the credential broker.
 - Put a site's resources next to the app's stack. Put parts that affect a whole zone or account in the Cloudflare account stack.
