@@ -5,6 +5,7 @@ import { checkClaudeLinks } from "./claude-link.ts";
 import { checkDanglingLinks } from "./dangling-links.ts";
 import { checkNestedDocs } from "./nested-docs.ts";
 import { checkPublishedReadme } from "./published-readme.ts";
+import { checkPublishedTests } from "./published-tests.ts";
 import { checkRootDocs } from "./root-docs.ts";
 import { checkRootReadme } from "./root-readme.ts";
 
@@ -21,6 +22,7 @@ export const checkDocPlacement = Effect.fn("checkDocPlacement")(function* checkD
       checkAgentDocsLength(root),
       checkDanglingLinks(root),
       checkPublishedReadme(root),
+      checkPublishedTests(root),
     ],
     { concurrency: "unbounded" },
   );
