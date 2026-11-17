@@ -8,7 +8,7 @@ rust-version.workspace = true
 publish = false
 
 [dependencies]
-local-mcp = { path = "../local-mcp" }
+desktop-shell = { path = "../desktop-shell" }
 regex = "1"
 reqwest = { version = "0.13", default-features = false, features = [
   "json",
