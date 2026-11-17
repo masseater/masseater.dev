@@ -11,7 +11,6 @@
     "@masseater.dev/exposure-protocol": "workspace:*",
     "@masseater.dev/mcp-tool-call": "workspace:*",
     "@masseater.dev/owner-stack": "workspace:*",
-    "@masseater.dev/plamo-translate-protocol": "workspace:*",
     "@masseater.dev/portal-protocol": "workspace:*",
     "@modelcontextprotocol/server": "catalog:",
     "@r_masseater/workers-tracing": "workspace:*",

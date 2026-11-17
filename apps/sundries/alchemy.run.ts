@@ -9,7 +9,6 @@ import type { InferEnv } from "@alchemy.run/cloudflare";
 import { ownerMcpAccess } from "@masseater.dev/cloudflare-account/owner-access";
 import { tracedStackProps } from "@masseater.dev/cloudflare-account/traced-providers";
 import { ownerStack } from "@masseater.dev/owner-stack";
-import type { TranslatorRpc } from "@masseater.dev/plamo-translate-protocol";
 import type {
   AccessOAuth,
   ClaudeRoutine,
@@ -42,10 +41,6 @@ const upstreams = Effect.gen(function* upstreams() {
     stack: "masseater-dev-credential-broker",
     stage: PROD,
   });
-  const translate = yield* Workers.Worker.ref("Translate", {
-    stack: "masseater-dev-plamo-translate",
-    stage: PROD,
-  });
   const webAnalyticsToken = yield* Workers.Worker.ref("WebAnalyticsToken", {
     stack: "masseater-dev",
     stage: PROD,
@@ -56,7 +51,6 @@ const upstreams = Effect.gen(function* upstreams() {
     ACCESS_OAUTH: Workers.WorkerEntrypoint<AccessOAuth>(broker, "AccessOAuth"),
     CLAUDE_ROUTINE: Workers.WorkerEntrypoint<ClaudeRoutine>(broker, "ClaudeRoutine"),
     WEB_ANALYTICS_TOKEN: Workers.WorkerEntrypoint(webAnalyticsToken),
-    TRANSLATOR: Workers.WorkerEntrypoint<TranslatorRpc>(translate, "Translator"),
     TAILNET: Workers.WorkerEntrypoint<Tailnet>(broker, "Tailnet"),
   };
 });
