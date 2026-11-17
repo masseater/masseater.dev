@@ -19,7 +19,7 @@ sources:
 # configure-checks
 
 `vpa` runs the checks that the sections of `vite.config.ts` configure.
-They cover secrets with Betterleaks and workflows with zizmor.
+They cover secrets with Betterleaks.
 They also run commitlint and textlint.
 Steiger, fallow and the dependency rules check the code.
 Run without arguments, it runs every configured check in parallel and prints the results together.

@@ -30,3 +30,6 @@ export const WORKFLOW_PARSER_SCHEMA =
 
 export const RUNNER_GITHUB_CONTEXT =
   "https://raw.githubusercontent.com/actions/runner/main/src/Runner.Worker/GitHubContext.cs";
+
+export const ZIZMOR_DATA =
+  "https://raw.githubusercontent.com/zizmorcore/zizmor/v1.32.0/crates/zizmor/data";
