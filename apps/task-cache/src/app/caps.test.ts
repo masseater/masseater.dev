@@ -10,7 +10,7 @@ import { blobResponse, found, lookup, store } from "./routes.test.support.ts";
 
 vi.mock("cloudflare:workers", () => import("#/shared/lib/cloudflare.test.support.ts"));
 
-vi.mock("#/features/admit-caller/api/token.ts", () => import("#/app/token.test.support.ts"));
+vi.mock("jose", () => import("#/app/token.test.support.ts"));
 
 vi.mock("#/shared/config/limits.ts", () => ({
   SECONDS_PER_DAY: 86_400,

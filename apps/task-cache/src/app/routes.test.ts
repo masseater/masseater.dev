@@ -15,7 +15,7 @@ import type { Found } from "./routes.test.support.ts";
 
 vi.mock("cloudflare:workers", () => import("#/shared/lib/cloudflare.test.support.ts"));
 
-vi.mock("#/features/admit-caller/api/token.ts", () => import("#/app/token.test.support.ts"));
+vi.mock("jose", () => import("#/app/token.test.support.ts"));
 
 const OK = 200;
 const UNAUTHORIZED = 401;

@@ -20,12 +20,14 @@ const RUNS = new Map([
   [BRANCH_CI_TOKEN, { repository_visibility: "public", ref: "refs/heads/feature" }],
 ]);
 
-export const verifiedToken = (
-  presented: Readonly<{ token: string; audience: string }>,
+export const createRemoteJWKSet = (): string => "keys";
+
+export const jwtVerify = (
+  ...[token, , expected]: readonly [string, unknown, Readonly<{ audience: string }>]
 ): Promise<Readonly<{ payload: unknown }>> => {
   const run = pipe(
-    Option.fromNullishOr(RUNS.get(presented.token)),
-    Option.filter(() => Str.endsWith(`/projects/${NAMESPACE}`)(presented.audience)),
+    Option.fromNullishOr(RUNS.get(token)),
+    Option.filter(() => Str.endsWith(`/projects/${NAMESPACE}`)(expected.audience)),
   );
   return Option.match(run, {
     onNone: () => Promise.reject(new Error("invalid token")),
