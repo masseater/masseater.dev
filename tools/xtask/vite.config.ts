@@ -1,3 +1,4 @@
+import { cargoInputs } from "@r_masseater/msch/cargo-inputs";
 import { defineConfig } from "vite-plus";
 
 export default defineConfig({
@@ -7,13 +8,7 @@ export default defineConfig({
       cargo: {
         command: "cargo fmt -p xtask --check && cargo clippy -p xtask --all-targets -- -D warnings",
         cache: {
-          input: [
-            "Cargo.toml",
-            "src/**",
-            { pattern: "Cargo.lock", base: "workspace" },
-            { pattern: "Cargo.toml", base: "workspace" },
-            { pattern: "rust-toolchain.toml", base: "workspace" },
-          ],
+          input: [...(await cargoInputs({ directory: import.meta.dirname }))],
           output: [],
         },
       },

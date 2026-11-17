@@ -1,4 +1,5 @@
 import { tauriAppConfig, tauriAppTasks } from "@masseater.dev/tauri-app/vite";
+import { cargoInputs } from "@r_masseater/msch/cargo-inputs";
 import { Option } from "effect";
 import { defineConfig, mergeConfig } from "vite-plus";
 
@@ -10,7 +11,10 @@ export default defineConfig({
   }),
   run: {
     tasks: {
-      ...tauriAppTasks({ crate: "aredoko-desktop", workspaceInputs: [] }),
+      ...tauriAppTasks({
+        crate: "aredoko-desktop",
+        input: await cargoInputs({ directory: import.meta.dirname }),
+      }),
       verify: { command: [], dependsOn: ["cargo"] },
       jaeger: { command: "jaeger --config jaeger.yaml", cache: false },
       installer: {

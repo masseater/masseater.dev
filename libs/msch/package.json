@@ -34,6 +34,7 @@
   },
   "exports": {
     "./cli": "./bin/msch.ts",
+    "./cargo-inputs": "./src/features/derive-cargo-inputs/index.ts",
     "./config": "./src/app/repository-config.ts",
     "./decision-rules": "./src/app/decision-rules.ts",
     "./lint-rules": "./src/features/define-lint-rules/index.ts",
@@ -51,6 +52,10 @@
     },
     "exports": {
       "./cli": "./dist/cli.mjs",
+      "./cargo-inputs": {
+        "types": "./dist/cargo-inputs.d.mts",
+        "default": "./dist/cargo-inputs.mjs"
+      },
       "./config": {
         "types": "./dist/config.d.mts",
         "default": "./dist/config.mjs"
