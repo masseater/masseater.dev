@@ -1,6 +1,6 @@
-use std::collections::{BTreeMap, HashSet};
+use std::collections::{BTreeMap, HashMap, HashSet};
 use std::io::Write;
-use std::sync::Arc;
+use std::sync::{Arc, LazyLock, Mutex, PoisonError};
 
 use anyhow::{Context, Result, bail};
 use kingfisher_rules::{Confidence, RuleCacheConfig, Rules, RulesDatabase};
@@ -11,6 +11,24 @@ use tracing::info_span;
 use crate::shared::finding::Finding;
 
 const ALLOW_MARKER: &[u8] = b"h56m:allow";
+
+static COMPILED: LazyLock<Mutex<HashMap<String, Arc<RulesDatabase>>>> =
+    LazyLock::new(|| Mutex::new(HashMap::new()));
+
+fn compile(config: &Value) -> Result<Arc<RulesDatabase>> {
+    let key = config.to_string();
+    let mut compiled = COMPILED.lock().unwrap_or_else(PoisonError::into_inner);
+    if let Some(database) = compiled.get(&key) {
+        return Ok(Arc::clone(database));
+    }
+    let _span = info_span!("h56m.compile_rules").entered();
+    let database = Arc::new(RulesDatabase::from_rule_collection_with_cache(
+        rules_of(config)?,
+        &RuleCacheConfig::from_dir_or_env(None),
+    )?);
+    compiled.insert(key, Arc::clone(&database));
+    Ok(database)
+}
 
 pub struct Detector {
     scanner: Scanner,
@@ -72,14 +90,8 @@ fn allowed_inline(text: &[u8], finding: &Finding) -> bool {
 
 impl Detector {
     pub fn new(config: &Value, ignored: impl IntoIterator<Item = String>) -> Result<Self> {
-        let _span = info_span!("h56m.compile_rules").entered();
-        let rules = rules_of(config)?;
-        let database = RulesDatabase::from_rule_collection_with_cache(
-            rules,
-            &RuleCacheConfig::from_dir_or_env(None),
-        )?;
         Ok(Self {
-            scanner: Scanner::new(Arc::new(database)),
+            scanner: Scanner::new(compile(config)?),
             ignored: ignored.into_iter().collect(),
         })
     }
@@ -105,7 +117,9 @@ impl Detector {
 mod tests {
     use serde_json::{Value, json};
 
-    use super::Detector;
+    use std::sync::Arc;
+
+    use super::{Detector, compile};
     use crate::shared::finding::{Confidence, Finding, digest_of};
 
     const TOKEN: &str = concat!("ghp", "_4Fq8sLm2Zt9Wn6Rb1Yc3Xv7Hk5Pd0Ja8Qe2T");
@@ -285,6 +299,15 @@ mod tests {
             !found.iter().any(|rule| rule == "generic-username"),
             "{found:?}"
         );
+    }
+
+    #[test]
+    fn compiles_each_config_once() {
+        let config = defaults();
+        let other = json!({ "extend": { "path": PRESET, "disabledRules": ["github-pat"] } });
+        let first = compile(&config).unwrap();
+        assert!(Arc::ptr_eq(&first, &compile(&config).unwrap()));
+        assert!(!Arc::ptr_eq(&first, &compile(&other).unwrap()));
     }
 
     #[test]
