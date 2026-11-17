@@ -31,7 +31,7 @@ wasm-bindgen と wasm-pack は、ブラウザ向けに Rust を WebAssembly に�
 
 [workers-rs](https://github.com/cloudflare/workers-rs) は、Cloudflare Workers 上で Rust を実行する。バージョン 0.9.0 は2026年11月11日にリリースされた[^workers-rs]。
 
-uniffi-bindgen-react-native は、1つの UniFFI 定義から React Native、ブラウザ、および Node.js 向けの TypeScript バインディングを生成する。最新バージョンは2026年11月10日のプレリリース 0.31.0-7 である[^npm-ubrn]。BoltFFI は、1つのクレートから Swift、Kotlin、C#、および TypeScript 向けのバインディングを生成する新しいツールである[^boltffi]。
+uniffi-bindgen-react-native は、1つの UniFFI 定義から React Native、ブラウザ、および Node.js 向けの TypeScript バインディングを生成する。最新バージョンは2026年11月10日のプレリリース 0.31.0-7 である[^npm-ubrn]。BoltFFI は、1つのクレートから Swift、Kotlin、C#、TypeScript 向けのバインディングを生成する新しいツールである[^boltffi]。
 
 ## スキーマファーストの手法
 
