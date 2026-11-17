@@ -62,7 +62,18 @@ const passesTheSessionStartHookAndViteHooks = Effect.gen(
   },
 );
 
+const passesVendoredAndGeneratedFiles = Effect.gen(function* passesVendoredAndGeneratedFiles() {
+  const findings = yield* findingsFor({
+    ".gitattributes": "tests/fixtures/** linguist-vendored\ngen/** linguist-generated\n",
+    "tests/fixtures/upstream/main.sh": "exit 0\n",
+    "gen/run.sh": "exit 0\n",
+    "tools/check.sh": "exit 0\n",
+  });
+  expect(findings).toStrictEqual(["tools/check.sh:1 shell-script"]);
+});
+
 layer(fixtureLayer)("shell scripts are not kept", (it) => {
+  it.effect("passes vendored and generated files", () => passesVendoredAndGeneratedFiles);
   it.effect("flags shell files by extension and by shebang", () => flagsShellFiles);
   it.effect(
     "passes the SessionStart hook, Vite+ hooks and PowerShell",

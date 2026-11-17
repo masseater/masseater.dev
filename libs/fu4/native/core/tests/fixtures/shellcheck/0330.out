@@ -1,0 +1,5 @@
+SC2034:warning:1:1: x appears unused. Verify use (or export if used externally)
+SC2006:style:1:3: Use $(...) notation instead of legacy backticks `...`
+SC2046:warning:2:6: Quote this to prevent word splitting
+SC2005:style:2:6: Useless echo? Instead of 'echo $(cmd)', just use 'cmd'
+SC2006:style:2:6: Use $(...) notation instead of legacy backticks `...`

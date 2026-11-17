@@ -111,7 +111,7 @@ export const checkNestedDocs = Effect.fn("checkNestedDocs")(function* checkNeste
   root: string,
 ) {
   const files = yield* RepositoryFiles;
-  const names = yield* files.listedFiles(root);
+  const names = yield* files.ownedFiles(root);
   const nested = pipe(names, Arr.filter(isNested));
   const workspaceAgentDocs = yield* allowsWorkspaceAgentDocs(root);
   const directories = yield* workspaceDirectories(root);

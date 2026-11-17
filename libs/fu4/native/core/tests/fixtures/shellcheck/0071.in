@@ -1,0 +1,1 @@
+echo "BODIES: $BODIES, EMAILS: $EMAILS"

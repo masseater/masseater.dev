@@ -1,0 +1,1 @@
+echo "test=hello" >> "$GITHUB_OUTPUT"

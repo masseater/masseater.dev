@@ -1,0 +1,15 @@
+{
+  "unix": [
+    "bash",
+    "pwsh",
+    "python",
+    "sh"
+  ],
+  "windows": [
+    "bash",
+    "cmd",
+    "powershell",
+    "pwsh",
+    "python"
+  ]
+}

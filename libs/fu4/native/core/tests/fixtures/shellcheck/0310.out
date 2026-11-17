@@ -1,0 +1,4 @@
+SC1073:error:2:1: Couldn't parse this function. Fix to allow more checks
+SC1065:error:2:7: Trying to declare parameters? Don't. Use () and refer to params as $1, $2.
+SC1064:error:4:1: Expected a { to open the function definition
+SC1072:error:4:1:  Fix any mentioned problems and try again

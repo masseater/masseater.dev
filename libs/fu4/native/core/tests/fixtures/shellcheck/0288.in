@@ -1,0 +1,1 @@
+echo credentials must be a mapping

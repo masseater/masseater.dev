@@ -1,0 +1,1 @@
+echo '::set-output name=foo::bar'
