@@ -755,6 +755,9 @@ catalogs:
     micromatch:
       specifier: 4.0.8
       version: 4.0.8
+    midi-file:
+      specifier: 1.2.4
+      version: 1.2.4
     miniflare:
       specifier: 4.20260730.0
       version: 4.20260730.0
@@ -4249,6 +4252,9 @@ importers:
       '@effect/platform-node-shared':
         specifier: 'catalog:'
         version: 4.1.4(effect@4.1.4)
+      '@masseater.dev/node-main':
+        specifier: workspace:*
+        version: link:../node-main
       effect:
         specifier: catalog:stack
         version: 4.1.4
@@ -4258,6 +4264,9 @@ importers:
       mapped-import:
         specifier: workspace:*
         version: link:../mapped-import
+      midi-file:
+        specifier: 'catalog:'
+        version: 1.2.4
       tonal:
         specifier: 'catalog:'
         version: 6.5.1
@@ -15026,6 +15035,9 @@ packages:
   micromatch@4.0.8:
     resolution: {integrity: sha512-PXwfBhYu0hBCPw8Dn0E+WDYb7af3dSLVWKi3HGv84IdF4TyFoC0ysxFd0Goxw7nSv4T/PzEJQxsYsEiFCKo2BA==}
     engines: {node: '>=8.6'}
+
+  midi-file@1.2.4:
+    resolution: {integrity: sha512-B5SnBC6i2bwJIXTY9MElIydJwAmnKx+r5eJ1jknTLetzLflEl0GWveuBB6ACrQpecSRkOB6fhTx1PwXk2BVxnA==}
 
   mime-db@1.52.0:
     resolution: {integrity: sha512-sPU4uV7dYlvtWJxwwxHD0PuihVNiE7TyAbQ5SWxDCB9mUYvOgroQOwYQQOKPJ8CIbE+1ETVlOoK1UC2nU3gYvg==}
@@ -27730,6 +27742,8 @@ snapshots:
     dependencies:
       braces: 3.0.3
       picomatch: 2.3.2
+
+  midi-file@1.2.4: {}
 
   mime-db@1.52.0: {}
 

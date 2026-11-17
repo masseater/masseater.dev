@@ -30,11 +30,6 @@
       "ignoreTests": false
     },
     {
-      "description": "patches/ は依存の版を緩めた写しで、ルートの Cargo.lock が解決する版に合わせてある。Renovate が中の版だけ上げるとルートの解決と食い違って cargo が落ちるので、更新しない。",
-      "matchFileNames": ["patches/**"],
-      "enabled": false
-    },
-    {
       "matchDepTypes": ["pnpm-workspace.overrides"],
       "matchUpdateTypes": ["major"],
       "enabled": false
