@@ -1,5 +1,7 @@
 # @r_masseater/y8
 
+![y8 logo](logo.svg)
+
 A Markdown linter written in Rust and configured from `vite.config.ts`.
 
 Its built-in rules give the same results as markdownlint's MD001 to MD060.
