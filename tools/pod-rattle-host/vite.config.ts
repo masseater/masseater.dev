@@ -1,3 +1,4 @@
+import { cargoInputs } from "@r_masseater/msch/cargo-inputs";
 import { defineConfig } from "vite-plus";
 
 export default defineConfig({
@@ -8,17 +9,7 @@ export default defineConfig({
         command:
           "cargo fmt -p pod-rattle-host --check && cargo clippy -p pod-rattle-host --all-targets -- -D warnings && cargo test -p pod-rattle-host",
         cache: {
-          input: [
-            "Cargo.toml",
-            "src/**",
-            "kittest.toml",
-            { pattern: "apps/pod-rattle-plugin/src/**", base: "workspace" },
-            { pattern: "apps/pod-rattle-plugin/Cargo.toml", base: "workspace" },
-            { pattern: "libs/pod-rattle-engine/src/**", base: "workspace" },
-            { pattern: "Cargo.lock", base: "workspace" },
-            { pattern: "Cargo.toml", base: "workspace" },
-            { pattern: "rust-toolchain.toml", base: "workspace" },
-          ],
+          input: [...(await cargoInputs({ directory: import.meta.dirname }))],
           output: [],
         },
       },

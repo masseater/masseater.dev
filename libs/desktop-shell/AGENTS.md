@@ -1,4 +1,4 @@
-# desktop-shell
+# @masseater.dev/desktop-shell
 
 このワークスペースには、Tauri のデスクトップアプリが共有するウィンドウとアプリの振る舞いを置く。
 

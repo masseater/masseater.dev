@@ -82,8 +82,8 @@ They also apply `decisionTestRules` to `*.test.ts`.
 
 ## Common mistakes
 
-| Mistake                                                                           | Fix                                                                                                                                 |
-| --------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| Writing a workspace path in the root config                                       | The `root-workspace-path` check rejects it. Use the workspace's `msch` block ([workspace-settings](../workspace-settings/SKILL.md)) |
-| Adding commitlint, textlint presets or `@ast-grep/cli` to the root `package.json` | msch already depends on them                                                                                                        |
-| Running effecttsgo rules on a plain oxlint                                        | Run `effect-tsgo patch --typescript --oxlint` in `prepare`, or lint with `effect-tsgo vp check`                                     |
+| Mistake                                                                           | Fix                                                                                             |
+| --------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| Writing a workspace path in the root config                                       | The `root-workspace-path` check rejects it. Use the workspace's `msch` block                    |
+| Adding commitlint, textlint presets or `@ast-grep/cli` to the root `package.json` | msch already depends on them                                                                    |
+| Running effecttsgo rules on a plain oxlint                                        | Run `effect-tsgo patch --typescript --oxlint` in `prepare`, or lint with `effect-tsgo vp check` |

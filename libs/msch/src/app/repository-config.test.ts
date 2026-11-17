@@ -50,7 +50,7 @@ describe("repositoryConfig", () => {
   it("adds repository words to the shared text rules", () => {
     expect(config).toMatchObject({
       textlint: {
-        ignores: ["AGENTS.md", ".agents/skills/**", "CHANGELOG.md", "docs/**"],
+        ignores: ["AGENTS.md", "CLAUDE.md", ".agents/skills/**", "CHANGELOG.md", "docs/**"],
         rules: {
           "preset-ja-technical-writing": {
             "max-kanji-continuous-len": { max: 6, allow: ["個人情報保護法"] },

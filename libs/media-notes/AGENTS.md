@@ -1,4 +1,4 @@
-# media-notes
+# @masseater.dev/media-notes
 
 このワークスペースには、メディアの範囲に印やコメントを付けるデスクトップアプリが共有する Rust 側を置く。
 

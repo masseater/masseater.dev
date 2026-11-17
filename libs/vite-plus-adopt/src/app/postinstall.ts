@@ -1,11 +1,11 @@
 import { Effect, Layer } from "effect";
 import { FetchHttpClient } from "effect/http";
 
-import { ACTIONLINT, ZIZMOR, installBinary } from "#/entities/binary/index.ts";
+import { ZIZMOR, installBinary } from "#/entities/binary/index.ts";
 
 import { runCli } from "./run-cli.ts";
 
-const BINARIES = [ACTIONLINT, ZIZMOR];
+const BINARIES = [ZIZMOR];
 
 const installAll = Effect.forEach(BINARIES, installBinary, {
   concurrency: "unbounded",

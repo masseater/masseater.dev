@@ -41,8 +41,3 @@ The lint preset `@r_masseater/msch/lint` reports the rest through `vp lint`, inc
 Each finding names the file, the rule and the fix. Apply the fix the message gives.
 
 Never silence a finding with an ignore list, a disable directive or an override. When a finding is wrong, fix the check in msch.
-
-## Related skills
-
-[repository-config](../repository-config/SKILL.md) builds the root `vite.config.ts` that configures these checks.
-[workspace-settings](../workspace-settings/SKILL.md) covers what one workspace may change.

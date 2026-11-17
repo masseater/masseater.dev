@@ -2,7 +2,10 @@ import type { UserConfig } from "vite-plus";
 
 export type Tasks = NonNullable<NonNullable<UserConfig["run"]>["tasks"]>;
 
-export type CacheInput = string | { readonly pattern: string; readonly base: "workspace" };
+export type CacheInput =
+  | string
+  | { readonly pattern: string; readonly base: "workspace" }
+  | { readonly auto: true };
 
 export interface AddonBuildTask {
   readonly command: string;

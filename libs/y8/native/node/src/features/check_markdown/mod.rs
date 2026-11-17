@@ -2,8 +2,10 @@ use napi::bindgen_prelude::Result;
 use napi_derive::napi;
 use rayon::prelude::*;
 use serde_json::{Map, Value, json};
+use std::path::PathBuf;
 use tracing::info_span;
-use y8_core::{Input, Linter, builtin_rules};
+
+use y8_core::{AgentChecker, Input, Linter, builtin_rules};
 
 use napi_telemetry as telemetry;
 
@@ -20,6 +22,13 @@ pub struct LintOptions {
     pub keep_tree: Option<bool>,
     pub keep_text: Option<bool>,
     pub traceparent: Option<String>,
+    pub agnix: Option<AgnixOptions>,
+}
+
+#[napi(object)]
+pub struct AgnixOptions {
+    pub root: String,
+    pub disabled: Vec<String>,
 }
 
 fn linter(config: Option<Value>, inline: Option<bool>) -> Linter {
@@ -30,17 +39,42 @@ fn linter(config: Option<Value>, inline: Option<bool>) -> Linter {
     Linter::new(config, inline.unwrap_or(true))
 }
 
+fn agent_findings(checker: Option<&AgentChecker>, inputs: &[Input]) -> Result<Vec<Value>> {
+    let Some(checker) = checker else {
+        return Ok(Vec::new());
+    };
+    let parent = tracing::Span::current();
+    inputs
+        .par_iter()
+        .map(|input| {
+            let _guard = parent.enter();
+            serde_json::to_value(checker.check(&input.path, &input.text))
+                .map_err(|error| napi::Error::from_reason(error.to_string()))
+        })
+        .collect()
+}
+
 fn run(inputs: &[Input], options: LintOptions) -> Result<Value> {
     let keep_tree = options.keep_tree.unwrap_or(false);
     let keep_text = options.keep_text.unwrap_or(false);
+    let checker = options
+        .agnix
+        .as_ref()
+        .and_then(|agnix| AgentChecker::new(PathBuf::from(&agnix.root), &agnix.disabled));
     let linter = linter(options.config, options.inline_config);
     let results = linter.lint_all(inputs, keep_tree);
+    let agents = agent_findings(checker.as_ref(), inputs)?;
     let mut value = serde_json::to_value(results)
         .map_err(|error| napi::Error::from_reason(error.to_string()))?;
-    if keep_text && let Value::Array(items) = &mut value {
-        for (item, input) in items.iter_mut().zip(inputs) {
+    if let Value::Array(items) = &mut value {
+        for (index, (item, input)) in items.iter_mut().zip(inputs).enumerate() {
             if let Value::Object(object) = item {
-                object.insert("text".to_owned(), Value::String(input.text.clone()));
+                if keep_text {
+                    object.insert("text".to_owned(), Value::String(input.text.clone()));
+                }
+                if let Some(found) = agents.get(index) {
+                    object.insert("agentDiagnostics".to_owned(), found.clone());
+                }
             }
         }
     }

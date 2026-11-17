@@ -1,9 +1,8 @@
 {
   "name": "@r_masseater/vite-plus-adopt",
   "version": "0.11.0",
-  "description": "Adopt h56m secret scanning, actionlint, zizmor, commitlint, textlint, Steiger and dependency checks into Vite+ through the settings in vite.config.ts, and ship the Feature-Sliced Design Steiger plugin and @arethetypeswrong/core for TypeScript 7.",
+  "description": "Adopt h56m secret scanning, zizmor, commitlint, textlint, Steiger and dependency checks into Vite+ through the settings in vite.config.ts, and ship the Feature-Sliced Design Steiger plugin and @arethetypeswrong/core for TypeScript 7.",
   "keywords": [
-    "actionlint",
     "arethetypeswrong",
     "attw",
     "commitlint",

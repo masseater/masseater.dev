@@ -32,6 +32,7 @@ export interface Reported {
 export interface LintCall<Config> {
   readonly root: string;
   readonly files: readonly string[];
+  readonly projectFiles: readonly string[];
   readonly config: Config;
 }
 
@@ -159,7 +160,8 @@ const mainOf = <Config, Found extends Reported, Failure>(
     const files = yield* trackedFiles(root, cli.pathspecs(requestOf(config, patterns))).pipe(
       Effect.withSpan(`${cli.name}.files`),
     );
-    const found = yield* cli.lint({ root, files, config });
+    const projectFiles = yield* trackedFiles(root, []).pipe(Effect.withSpan(`${cli.name}.project`));
+    const found = yield* cli.lint({ root, files, projectFiles, config });
     yield* printAll(found, cli.format);
     yield* failWhen(hasError(found));
   });
