@@ -45,6 +45,15 @@ Every built-in rule is on as an error unless `rules` says otherwise. A rule entr
 Run `y8` in the repository root. It lints the Markdown files git tracks and prints
 `path:line:column severity rule message`. It exits with 1 when any error is reported.
 
+## Per-file rules and presets
+
+`overrides` takes `{ files, rules }` entries, as oxlint does. Globs starting with `!` exclude files,
+and later entries win.
+
+`docsPreset(options)` returns a config with rules for README.md, AGENTS.md and SKILL.md, general link and
+privacy rules, and the `agnix` plugin. `agnix` runs the agnix rules for agent files; turn one off with
+`"agnix/<ID>": "off"`.
+
 ## Rules in TypeScript
 
 ```ts
@@ -65,7 +74,9 @@ export const local = definePlugin({ rules: { "no-todo": noTodo } });
 ```
 
 Register it as `plugins: { local }` and turn it on with `"local/no-todo": "error"`. Visitors are
-keyed by node type, and `<type>:exit` runs after the children.
+keyed by node type, and `<type>:exit` runs after the children. The context also gives the parsed
+`frontmatter`, `exists(path)` and `filesUnder(directory)` for repository files, and the nearest
+`manifest` (package.json).
 
 ## markdownlint custom rules
 

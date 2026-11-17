@@ -28,3 +28,7 @@ export default defineConfig({
 
 Run `fu4` to lint the workflows under `.github/workflows`, or pass pathspecs to lint others.
 Call `lint` to lint from code.
+
+## Agent skills
+
+The package ships TanStack Intent skills for coding agents. Load one with `vp exec intent load @r_masseater/fu4#<skill>`.

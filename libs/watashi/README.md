@@ -1,7 +1,9 @@
 # @r_masseater/watashi
 
 The command-line client of [watashi](https://watashi.masseater.dev). watashi is
-the owner's personal data service. A Stop hook sends Claude Code transcripts to
+the owner's personal data service.
+
+A Stop hook sends Claude Code transcripts to
 it. Secrets are masked on the local machine first, with
 [Betterleaks](https://github.com/betterleaks/betterleaks). The client also signs
 in and manages API tokens.
