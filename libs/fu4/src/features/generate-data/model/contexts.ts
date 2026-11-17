@@ -1,13 +1,12 @@
 import { Array as Arr, Effect, Option, Record as Rec, String as Str, pipe } from "effect";
 import type { HttpClient } from "effect/http";
 import type { TableRow } from "mdast";
-import { toString as textOf } from "mdast-util-to-string";
 
 import type { Fu4Error } from "#/shared/lib/errors.ts";
 
 import { fetchText } from "./fetch.ts";
 import { renderDocs } from "./liquid.ts";
-import { parseMarkdown } from "./markdown.ts";
+import { codeAt, parseMarkdown } from "./markdown.ts";
 import { CONTEXTS, RUNNER_GITHUB_CONTEXT } from "./sources.ts";
 
 const SEPARATOR = ".";
@@ -25,19 +24,10 @@ export interface ContextTree {
 
 type Row = readonly [readonly string[], string];
 
-const codeOf = (row: TableRow, column: number): Option.Option<string> =>
-  pipe(
-    Arr.get(row.children, column),
-    Option.filter((cell) => cell.children.length === SINGLE),
-    Option.flatMap((cell) => Arr.head(cell.children)),
-    Option.filter((child) => child.type === "inlineCode"),
-    Option.map((child) => textOf(child)),
-  );
-
 const splitPath = Str.split(SEPARATOR);
 
 const rowOf = (row: TableRow): Option.Option<Row> =>
-  Option.all([pipe(codeOf(row, PATH_COLUMN), Option.map(splitPath)), codeOf(row, TYPE_COLUMN)]);
+  Option.all([pipe(codeAt(PATH_COLUMN)(row), Option.map(splitPath)), codeAt(TYPE_COLUMN)(row)]);
 
 const TYPE_NAME = /^[a-z]+$/u;
 const NEXT = 1;

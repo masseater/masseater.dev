@@ -6,7 +6,7 @@ import { toString as textOf } from "mdast-util-to-string";
 import { Fu4Error } from "#/shared/lib/errors.ts";
 
 import { renderDocs } from "./liquid.ts";
-import { bodyRows, parseMarkdown } from "./markdown.ts";
+import { bodyRows, codeAt, parseMarkdown } from "./markdown.ts";
 import { SHELLS } from "./sources.ts";
 
 const EVERY_PLATFORM = "All";
@@ -14,7 +14,6 @@ const UNIX = "Linux / macOS";
 const WINDOWS = "Windows";
 const PLATFORM_COLUMN = 0;
 const SHELL_COLUMN = 1;
-const SINGLE = 1;
 
 interface PlatformShell {
   readonly platform: string;
@@ -30,15 +29,6 @@ const platformOf = (row: TableRow): Option.Option<string> =>
   pipe(
     Arr.get(row.children, PLATFORM_COLUMN),
     Option.map((cell) => Str.trim(textOf(cell))),
-  );
-
-const shellOf = (row: TableRow): Option.Option<string> =>
-  pipe(
-    Arr.get(row.children, SHELL_COLUMN),
-    Option.filter((cell) => cell.children.length === SINGLE),
-    Option.flatMap((cell) => Arr.head(cell.children)),
-    Option.filter((child) => child.type === "inlineCode"),
-    Option.map((child) => textOf(child)),
   );
 
 const supported =
@@ -64,7 +54,7 @@ export const shells: Effect.Effect<Shells, Fu4Error, HttpClient.HttpClient> = Ef
     );
     const rows = pipe(
       bodyRows(table),
-      Arr.map((row) => Option.all({ platform: platformOf(row), shell: shellOf(row) })),
+      Arr.map((row) => Option.all({ platform: platformOf(row), shell: codeAt(SHELL_COLUMN)(row) })),
       Arr.getSomes,
     );
     return { unix: supported(rows)(UNIX), windows: supported(rows)(WINDOWS) };

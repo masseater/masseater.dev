@@ -11,6 +11,7 @@ import { visit } from "unist-util-visit";
 
 const HEADER_ROWS = 1;
 const NEXT = 1;
+const SINGLE = 1;
 
 export interface Section {
   readonly title: string;
@@ -28,6 +29,17 @@ export const cellsOf = (row: TableRow): readonly string[] =>
     row.children,
     Arr.map((cell) => textOf(cell)),
   );
+
+export const codeAt =
+  (column: number) =>
+  (row: TableRow): Option.Option<string> =>
+    pipe(
+      Arr.get(row.children, column),
+      Option.filter((cell) => cell.children.length === SINGLE),
+      Option.flatMap((cell) => Arr.head(cell.children)),
+      Option.filter((child) => child.type === "inlineCode"),
+      Option.map((child) => textOf(child)),
+    );
 
 export const bodyRows = (table: Table): readonly TableRow[] =>
   pipe(table.children, Arr.drop(HEADER_ROWS));
