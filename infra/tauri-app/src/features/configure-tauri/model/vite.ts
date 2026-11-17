@@ -1,36 +1,22 @@
 import { browserTest } from "@masseater.dev/browser-test/vite";
+import type { CargoInput } from "@r_masseater/msch/cargo-inputs";
 import tailwindcss from "@tailwindcss/vite";
 import viteReact from "@vitejs/plugin-react";
-import { Array, Option, pipe } from "effect";
+import { Option, pipe } from "effect";
 import type { UserConfig } from "vite-plus";
 
-const CARGO_INPUTS = ["Cargo.lock", "Cargo.toml", "rust-toolchain.toml", ".cargo/**"] as const;
+const GENERATED = ["!src-tauri/gen/**", "!src-tauri/target/**", "!src-tauri/permissions/**"];
 
 const cargoCommand = (crate: string): string =>
   `cargo fmt -p ${crate} --check && cargo clippy -p ${crate} --all-targets --locked -- -D warnings && cargo test -p ${crate} --locked`;
 
 export const tauriAppTasks = ({
   crate,
-  workspaceInputs,
-}: Readonly<{ crate: string; workspaceInputs: readonly string[] }>): NonNullable<
+  input,
+}: Readonly<{ crate: string; input: readonly CargoInput[] }>): NonNullable<
   NonNullable<UserConfig["run"]>["tasks"]
 > => ({
-  cargo: {
-    command: cargoCommand(crate),
-    cache: {
-      input: [
-        "src-tauri/**",
-        "!src-tauri/gen/**",
-        "!src-tauri/target/**",
-        "!src-tauri/permissions/**",
-        ...pipe(
-          [...CARGO_INPUTS, ...workspaceInputs],
-          Array.map((pattern) => ({ pattern, base: "workspace" as const })),
-        ),
-      ],
-      output: [],
-    },
-  },
+  cargo: { command: cargoCommand(crate), cache: { input: [...input, ...GENERATED], output: [] } },
 });
 
 const WINDOWS_INSTALLER =

@@ -31,6 +31,7 @@
     "@masseater.dev/component-release": "workspace:*",
     "@masseater.dev/node-main": "workspace:*",
     "@masseater.dev/tauri-app": "workspace:*",
+    "@r_masseater/msch": "workspace:*",
     "@tauri-apps/cli": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
