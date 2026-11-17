@@ -1,6 +1,6 @@
 import { registerHooks } from "node:module";
 
-const KUROMOJIN = "kuromojin";
+export const KUROMOJIN = "kuromojin";
 const ON_Y8 = "@r_masseater/y8/kuromojin";
 
 registerHooks({
