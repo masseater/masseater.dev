@@ -8,6 +8,7 @@ import { popularActions } from "./model/popular.ts";
 import { runners } from "./model/runners.ts";
 import { shells } from "./model/shells.ts";
 import { webhooks } from "./model/webhooks.ts";
+import { zizmorData } from "./model/zizmor.ts";
 
 const INDENT = 2;
 
@@ -30,7 +31,8 @@ export const generateData = Effect.fn("fu4.generate-data")(function* generateDat
     },
     { concurrency: "unbounded" },
   );
-  yield* fileSystem.makeDirectory(output, { recursive: true });
+  const copied = yield* zizmorData;
+  yield* fileSystem.makeDirectory(path.join(output, "zizmor"), { recursive: true });
   yield* pipe(
     Rec.toEntries(data),
     Arr.map(([name, value]) =>
@@ -38,6 +40,11 @@ export const generateData = Effect.fn("fu4.generate-data")(function* generateDat
         Effect.flatMap((json) => fileSystem.writeFileString(path.join(output, name), `${json}\n`)),
       ),
     ),
+    Effect.all,
+  );
+  yield* pipe(
+    copied,
+    Arr.map(([name, text]) => fileSystem.writeFileString(path.join(output, name), text)),
     Effect.all,
   );
 });
