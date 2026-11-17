@@ -5,7 +5,7 @@ export default defineConfig({
   msch: { publish: { installSize: "48.1 MB" }, lint: { ignorePatterns: ["upstream/**"] } },
   run: {
     tasks: {
-      test: "vp test run",
+      test: { command: "vp test run", dependsOn: [{ task: "build", from: "dependencies" }] },
       verify: { command: [], dependsOn: ["size"] },
       build: "vp pack",
       size: { command: "size-limit", dependsOn: ["build"] },
