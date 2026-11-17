@@ -1,6 +1,6 @@
 {
   "name": "@r_masseater/vite-plus-adopt",
-  "version": "0.10.2",
+  "version": "0.11.0",
   "description": "Adopt Betterleaks, actionlint, zizmor, commitlint, textlint, Steiger and dependency checks into Vite+ through the settings in vite.config.ts, and ship the Feature-Sliced Design Steiger plugin and @arethetypeswrong/core for TypeScript 7.",
   "keywords": [
     "actionlint",
@@ -116,6 +116,11 @@
     "vite": "*",
     "vite-plus": ">=1.5.0"
   },
+  "peerDependenciesMeta": {
+    "typescript": {
+      "optional": true
+    }
+  },
   "size-limit": [
     {
       "name": "tools",
@@ -125,7 +130,7 @@
         "!dist/attw.mjs",
         "!dist/steiger-*.mjs"
       ],
-      "limit": "15500 B"
+      "limit": "15600 B"
     },
     {
       "name": "steiger",

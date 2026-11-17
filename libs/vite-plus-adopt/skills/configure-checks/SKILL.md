@@ -71,12 +71,12 @@ In a repository that uses @r_masseater/msch, `repositoryConfig` writes these sec
 
 ## Section notes
 
-| Section       | Note                                                                                                     |
-| ------------- | -------------------------------------------------------------------------------------------------------- |
-| `textlint`    | Checks the Markdown that git tracks. List other globs (`files`) and their settings in `textlint.sources` |
-| `steiger`     | Checks only the `steiger.paths` directories that hold FSD layer folders such as `features` directly      |
-| `betterleaks` | `filter` is an expression that accepts a finding. `ignoredSecrets` takes SHA-256 hashes of safe secrets  |
-| `commitlint`  | Compares against `VPA_BASE` (default `origin/main`) like the git-history checks. Run with `cache: false` |
+| Section       | Note                                                                                                                               |
+| ------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `textlint`    | Checks the Markdown that git tracks. List other globs (`files`) and their settings in `textlint.sources`                           |
+| `steiger`     | Checks only the `steiger.paths` directories that hold FSD layer folders such as `features` directly                                |
+| `betterleaks` | `filter` is an expression that accepts a finding. `ignoredSecrets` takes SHA-256 hashes of safe secrets                            |
+| `commitlint`  | Compares against `VPA_BASE`, else `origin/HEAD`, `origin/main` or `origin/master`, else the whole history. Run with `cache: false` |
 
 ## Bundled replacements
 
