@@ -18,8 +18,13 @@ export const wismSection = (config: unknown): WismConfig =>
     Option.getOrElse((): WismConfig => ({})),
   );
 
-export const wismPathspecs = (config: WismConfig): readonly string[] => [
-  ".",
+export interface PathspecRequest {
+  readonly config: WismConfig;
+  readonly patterns?: readonly string[];
+}
+
+export const wismPathspecs = ({ config, patterns = [] }: PathspecRequest): readonly string[] => [
+  ...Arr.match(patterns, { onEmpty: () => ["."], onNonEmpty: (given) => given }),
   ...UNOWNED,
   ...pipe(
     config.ignores ?? [],

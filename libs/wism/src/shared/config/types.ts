@@ -1,8 +1,6 @@
-export type Severity = "off" | "warn" | "error";
+import type { RuleEntry, RuleOptions, Severity } from "@r_masseater/lint-host";
 
-export type RuleOptions = Readonly<Record<string, unknown>>;
-
-export type RuleEntry = Severity | readonly [Severity] | readonly [Severity, RuleOptions];
+export type { RuleEntry, RuleOptions, Severity } from "@r_masseater/lint-host";
 
 export interface Placement {
   readonly files: readonly string[];

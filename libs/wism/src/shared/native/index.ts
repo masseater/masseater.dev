@@ -1,11 +1,10 @@
-import { createRequire } from "node:module";
-
-import { Effect, Predicate } from "effect";
+import { loadAddon } from "@r_masseater/lint-host";
+import { Predicate } from "effect";
+import type { Effect } from "effect";
 
 import type { Diagnostic, GraphEdge, GraphNode, Kind, Severity } from "#/shared/config/index.ts";
-import { WismError, failedWith } from "#/shared/lib/errors.ts";
-
-import { addonFile, platformTarget } from "./file.ts";
+import { failedWith } from "#/shared/lib/errors.ts";
+import type { WismError } from "#/shared/lib/errors.ts";
 
 export interface NativeOptions {
   readonly config: {
@@ -33,21 +32,10 @@ const isNative = (value: unknown): value is Native =>
   Predicate.hasProperty(value, "flushTelemetry") &&
   Predicate.isFunction(value.flushTelemetry);
 
-const requireFrom = createRequire(import.meta.url);
-
-const loadFrom = (specifier: string): Effect.Effect<unknown, WismError> =>
-  Effect.try({
-    try: (): unknown => requireFrom(specifier),
-    catch: failedWith(`could not load ${specifier}`),
-  });
-
-const PACKAGE = "@r_masseater/wism";
-
-export const native: Effect.Effect<Native, WismError> = loadFrom(
-  `${PACKAGE}-${platformTarget}`,
-).pipe(
-  Effect.catchTag("WismError", () => loadFrom(`${PACKAGE}/native/${addonFile}`)),
-  Effect.filterOrFail(isNative, () =>
-    WismError.make({ message: `no wism addon for ${platformTarget}` }),
-  ),
-);
+export const native: Effect.Effect<Native, WismError> = loadAddon({
+  packageName: "@r_masseater/wism",
+  binary: "wism",
+  from: import.meta.url,
+  isAddon: isNative,
+  failWith: failedWith,
+});

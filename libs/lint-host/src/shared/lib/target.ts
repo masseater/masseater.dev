@@ -9,4 +9,4 @@ const abiOf = (platform: string): string =>
 
 export const platformTarget = `${process.platform}-${process.arch}${abiOf(process.platform)}`;
 
-export const addonFile = `wism.${platformTarget}.node`;
+export const addonFileOf = (binary: string): string => `${binary}.${platformTarget}.node`;

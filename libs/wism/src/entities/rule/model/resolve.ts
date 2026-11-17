@@ -1,22 +1,11 @@
-import { Array as Arr, Match, Option, Record as Rec, String as Str, pipe } from "effect";
+import { settingOf } from "@r_masseater/lint-host";
+import type { Setting } from "@r_masseater/lint-host";
+import { Array as Arr, Option, Record as Rec, String as Str, pipe } from "effect";
 
-import type {
-  Plugin,
-  Rule,
-  RuleEntry,
-  RuleOptions,
-  Severity,
-  WismConfig,
-} from "#/shared/config/index.ts";
+import type { Plugin, Rule, RuleEntry, Severity, WismConfig } from "#/shared/config/index.ts";
 
 const SEPARATOR = "/";
-const NO_OPTIONS: RuleOptions = {};
 const NAME_START = 1;
-
-export interface Setting {
-  readonly severity: Severity;
-  readonly options: RuleOptions;
-}
 
 export interface ScriptRule {
   readonly id: string;
@@ -28,15 +17,6 @@ export interface Resolved {
   readonly builtin: Readonly<Record<string, Severity>>;
   readonly scripts: readonly ScriptRule[];
 }
-
-const settingOf = (entry: RuleEntry): Setting =>
-  Match.value(entry).pipe(
-    Match.when(Match.string, (severity): Setting => ({ severity, options: NO_OPTIONS })),
-    Match.orElse(([severity, options]): Setting => ({
-      severity,
-      options: options ?? NO_OPTIONS,
-    })),
-  );
 
 const isPluginRule = (id: string): boolean => Str.includes(SEPARATOR)(id);
 

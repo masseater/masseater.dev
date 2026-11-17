@@ -1,7 +1,7 @@
+import { present } from "@r_masseater/lint-host";
 import { Option } from "effect";
 
 import type { Kind } from "#/shared/config/index.ts";
-import { present } from "#/shared/lib/present.ts";
 
 export const FSD_LAYERS: readonly string[] = [
   "app",
