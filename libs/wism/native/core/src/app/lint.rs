@@ -164,3 +164,121 @@ impl Linter {
         })
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::Linter;
+    use crate::shared::diagnostic::Severity;
+    use crate::shared::fixture::{Tree, config};
+
+    const ENTRIES: [(&str, &str); 9] = [
+        ("libs/kit/package.json", "{}"),
+        ("libs/kit/kit.ts", ""),
+        (
+            "libs/kit/src/entities/job/index.ts",
+            "import { run } from \"../../features/run-kit/index.ts\";\n",
+        ),
+        (
+            "libs/kit/src/features/run-kit/index.ts",
+            "export { job } from \"../../entities/job/index.ts\";\n",
+        ),
+        ("libs/kit/README.md", "# kit\n\n[gone](./gone.md)\n"),
+        ("crates/core/Cargo.toml", ""),
+        ("crates/core/src/lib.rs", "mod entities;\n"),
+        (
+            "crates/core/src/entities/note.rs",
+            "\n\nuse crate::app::run;\n",
+        ),
+        ("crates/core/src/app.rs", "pub fn run() {}\n"),
+    ];
+
+    fn lint(rules: serde_json::Value, keep_graph: bool) -> super::Report {
+        let tree = Tree::new(&ENTRIES);
+        let mut config = config();
+        config.rules = serde_json::from_value(rules).expect("the rules are valid");
+        Linter::new(config, tree.root.clone())
+            .lint(Tree::names(&ENTRIES), keep_graph)
+            .expect("the lint runs")
+    }
+
+    #[test]
+    fn reports_every_kind_of_finding_sorted_by_position() {
+        let report = lint(serde_json::json!({}), false);
+        let found: Vec<(String, usize, &str)> = report
+            .diagnostics
+            .iter()
+            .map(|found| (found.path.clone(), found.line, found.rule))
+            .collect();
+        assert_eq!(
+            found,
+            vec![
+                (
+                    "crates/core/src/entities/note.rs".to_owned(),
+                    3,
+                    "layer-import"
+                ),
+                ("libs/kit/README.md".to_owned(), 3, "link-target"),
+                ("libs/kit/kit.ts".to_owned(), 1, "placement"),
+                (
+                    "libs/kit/src/entities/job/index.ts".to_owned(),
+                    1,
+                    "layer-import"
+                ),
+            ]
+        );
+        assert!(report.nodes.is_none());
+        assert!(report.edges.is_none());
+    }
+
+    #[test]
+    fn follows_rule_severities() {
+        let report = lint(
+            serde_json::json!({ "layer-import": "off", "placement": "warn" }),
+            false,
+        );
+        let found: Vec<(&str, Severity)> = report
+            .diagnostics
+            .iter()
+            .map(|found| (found.rule, found.severity))
+            .collect();
+        assert_eq!(
+            found,
+            vec![
+                ("link-target", Severity::Error),
+                ("placement", Severity::Warn)
+            ]
+        );
+    }
+
+    #[test]
+    fn keeps_the_graph_when_asked() {
+        let report = lint(serde_json::json!({}), true);
+        let nodes = report.nodes.expect("the nodes are kept");
+        let edges = report.edges.expect("the edges are kept");
+        assert!(
+            nodes
+                .iter()
+                .any(|node| node.path == "libs/kit/src/entities/job/index.ts"
+                    && node.kind == "workspace"
+                    && node.dir == "libs/kit"
+                    && node.layer.as_deref() == Some("entities")
+                    && node.slice.as_deref() == Some("job"))
+        );
+        assert_eq!(edges.len(), 4);
+    }
+
+    #[test]
+    fn skips_listed_files_that_cannot_be_read() {
+        let tree = Tree::new(&[("libs/kit/package.json", "{}")]);
+        let report = Linter::new(config(), tree.root.clone())
+            .lint(
+                vec![
+                    "libs/kit/package.json".to_owned(),
+                    "libs/kit/src/app/index.ts".to_owned(),
+                ],
+                false,
+            )
+            .expect("the lint runs");
+        assert_eq!(report.diagnostics.len(), 0);
+    }
+}
