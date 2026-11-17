@@ -18,7 +18,6 @@
   "devDependencies": {
     "@alchemy.run/cloudflare": "catalog:stack",
     "@cloudflare/workers-types": "catalog:",
-    "@masseater.dev/alchemy-app-name": "workspace:*",
     "@masseater.dev/cloudflare-account": "workspace:*",
     "@types/node": "catalog:",
     "alchemy": "catalog:stack",

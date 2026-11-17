@@ -12,6 +12,7 @@ export default defineConfig({
     tasks: {
       ...tauriAppTasks({ crate: "aredoko-desktop", workspaceInputs: [] }),
       verify: { command: [], dependsOn: ["cargo"] },
+      jaeger: { command: "jaeger --config jaeger.yaml", cache: false },
       installer: {
         command: "tauri build --config src-tauri/tauri.release.conf.json",
         dependsOn: ["aredoko-server#installer:resources"],

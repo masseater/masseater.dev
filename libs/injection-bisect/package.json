@@ -1,6 +1,6 @@
 {
   "name": "@r_masseater/injection-bisect",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Find whether and where a prompt injection hides in text with fast, cheap decision models.",
   "keywords": [
     "effect",
@@ -20,6 +20,9 @@
     "url": "git+https://github.com/masseater/masseater.dev.git",
     "directory": "libs/injection-bisect"
   },
+  "bin": {
+    "injection-bisect": "./bin/injection-bisect.ts"
+  },
   "files": [
     "LICENSE",
     "dist",
@@ -27,6 +30,7 @@
   ],
   "type": "module",
   "imports": {
+    "#package.json": "./package.json",
     "#/*": "./src/*"
   },
   "exports": {
@@ -34,6 +38,9 @@
     "./package.json": "./package.json"
   },
   "publishConfig": {
+    "bin": {
+      "injection-bisect": "./dist/main.mjs"
+    },
     "exports": {
       ".": {
         "types": "./dist/index.d.ts",
@@ -76,6 +83,7 @@
     "yaml": "catalog:"
   },
   "devDependencies": {
+    "@effect/platform-node": "catalog:",
     "@tesseract.js-data/eng": "catalog:",
     "@types/hast": "catalog:",
     "@types/mdast": "catalog:",
@@ -84,7 +92,13 @@
     "vite-plus": "catalog:stack"
   },
   "peerDependencies": {
+    "@effect/platform-node": "^4.1.4",
     "effect": "^4.1.2"
+  },
+  "peerDependenciesMeta": {
+    "@effect/platform-node": {
+      "optional": true
+    }
   },
   "engines": {
     "node": ">=26"

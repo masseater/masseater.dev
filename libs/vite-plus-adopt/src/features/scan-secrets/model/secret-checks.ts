@@ -106,13 +106,13 @@ const scanCommittedTree = (
   }).pipe(Effect.scoped);
 
 /** @internal */
-export const betterleaksCheck = withSection("betterleaks", (config, { root, base }) =>
+export const betterleaksCheck = withSection("betterleaks", (config, { root, range }) =>
   lacksHistory(root).pipe(
     Effect.flatMap((partial) => {
       if (partial) {
         return scanCommittedTree(config, root);
       }
-      return scanSecrets({ config, root, args: ["git", ".", `--revision=${base}..HEAD`] });
+      return scanSecrets({ config, root, args: ["git", ".", `--revision=${range}`] });
     }),
   ),
 );

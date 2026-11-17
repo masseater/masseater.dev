@@ -239,7 +239,7 @@ const writePlatform = Effect.fn("writePlatform")(function* writePlatform(
   const fileSystem = yield* FileSystem.FileSystem;
   const path = yield* Path.Path;
   const kept = yield* keptFields();
-  const directory = path.join(NPM_DIR, target);
+  const directory = path.resolve(NPM_DIR, target);
   const file = `${native.binary}.${target}.node`;
   yield* fileSystem.makeDirectory(directory, { recursive: true });
   yield* fileSystem.copyFile(path.join(NATIVE_DIR, file), path.join(directory, file));
