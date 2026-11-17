@@ -5,6 +5,8 @@ packages:
   - tools/*
   - .claude
 
+registry: https://npm.flatt.tech/
+
 catalogMode: prefer
 
 catalog:
@@ -57,7 +59,7 @@ catalog:
   "@modelcontextprotocol/server": 2.4.0
   auth: 1.7.25
   "@r_masseater/oxlint-typed-rules": 0.4.1
-  "@r_masseater/vite-plus-adopt": 0.9.0
+  "@r_masseater/vite-plus-adopt": 0.10.2
   "@discordjs/voice": 0.19.2
   "@snazzah/davey": 0.2.0
   discord.js: 14.28.1
@@ -336,7 +338,7 @@ patchedDependencies:
   "@voidzero-dev/vite-plus-core@1.6.0": patches/@voidzero-dev__vite-plus-core@1.6.0.patch
   "@tanstack/intent@0.5.6": patches/@tanstack__intent@0.5.6.patch
 minimumReleaseAgeExclude:
-  - "@r_masseater/vite-plus-adopt@0.9.0"
+  - "@r_masseater/vite-plus-adopt@0.10.2"
   - "@better-auth/core@1.7.25"
   - "@better-auth/drizzle-adapter@1.7.25"
   - "@better-auth/kysely-adapter@1.7.25"
