@@ -3,14 +3,14 @@ import { runMain } from "@masseater.dev/node-main";
 import { Array as Arr, Effect, FileSystem, Option, Schema, String as Str, pipe } from "effect";
 
 const RUNNERS = [
-  { marker: "-linux-", runner: "ubuntu-latest" },
-  { marker: "-windows-", runner: "windows-latest" },
-  { marker: "-apple-", runner: "macos-latest" },
+  { prefix: "linux-", runner: "ubuntu-latest" },
+  { prefix: "win32-", runner: "windows-latest" },
+  { prefix: "darwin-", runner: "macos-latest" },
 ] as const;
 
-const Napi = Schema.Struct({ targets: Schema.Array(Schema.String) });
+const Native = Schema.Struct({ targets: Schema.Array(Schema.String) });
 
-const Manifest = Schema.Struct({ napi: Schema.optional(Napi) });
+const Manifest = Schema.Struct({ native: Schema.optional(Native) });
 
 const Platforms = Schema.fromJsonString(
   Schema.Array(Schema.Struct({ target: Schema.String, runner: Schema.String })),
@@ -19,7 +19,7 @@ const Platforms = Schema.fromJsonString(
 const runnerOf = (target: string): Option.Option<string> =>
   pipe(
     RUNNERS,
-    Arr.findFirst(({ marker }) => pipe(target, Str.includes(marker))),
+    Arr.findFirst(({ prefix }) => pipe(target, Str.startsWith(prefix))),
     Option.map(({ runner }) => runner),
   );
 
@@ -27,7 +27,7 @@ const platforms = Effect.gen(function* platforms() {
   const fileSystem = yield* FileSystem.FileSystem;
   const text = yield* fileSystem.readFileString("package.json");
   const manifest = yield* Schema.decodeEffect(Schema.fromJsonString(Manifest))(text);
-  const targets = Option.match(Option.fromUndefinedOr(manifest.napi), {
+  const targets = Option.match(Option.fromUndefinedOr(manifest.native), {
     onNone: (): readonly string[] => [],
     onSome: ({ targets: declared }) => declared,
   });

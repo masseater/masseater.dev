@@ -44,12 +44,6 @@ Warm is the median of 5 runs with the page cache filled, without ESLint's `--cac
 Memory is the peak total RSS, including the tsgo and tsgolint child processes.
 
 [masseater-dev]: https://github.com/masseater/masseater.dev
-[tanstack]: https://www.npmjs.com/package/@tanstack/eslint-plugin-start
-[tanstack-query]: https://www.npmjs.com/package/@tanstack/eslint-plugin-query
-[tanstack-router]: https://www.npmjs.com/package/@tanstack/eslint-plugin-router
-[drizzle]: https://www.npmjs.com/package/eslint-plugin-drizzle
-[remotion]: https://www.npmjs.com/package/@remotion/eslint-plugin
-[eslint-react]: https://www.npmjs.com/package/@eslint-react/eslint-plugin
 
 Results for `apps/portfolio/src` of masseater.dev:
 

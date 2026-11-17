@@ -24,8 +24,7 @@ export default defineConfig({
         cache: { input: [...CARGO_INPUTS], output: [] },
       },
       native: {
-        command:
-          "napi build --platform --release --manifest-path native/node/Cargo.toml --output-dir native --no-js",
+        command: "node bin/build-native.ts",
         cache: { input: [...CARGO_INPUTS, "package.json"], output: ["native/*.node"] },
       },
       build: { command: "vp pack", dependsOn: ["native"] },
