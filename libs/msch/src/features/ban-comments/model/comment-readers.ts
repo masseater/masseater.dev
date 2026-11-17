@@ -43,8 +43,10 @@ const loadGrammar = (
   grammar: Grammar,
 ): Effect.Effect<readonly [Grammar, Language], CommentsUnreadable> =>
   loadLanguage(grammar).pipe(
-    Effect.mapError(unreadable(grammar)),
-    Effect.map((language) => [grammar, language] as const),
+    Effect.mapBoth({
+      onFailure: ({ message }) => unreadable(grammar)(message),
+      onSuccess: (language) => [grammar, language] as const,
+    }),
   );
 
 export const loadGrammars = Effect.fn("loadGrammars")(function* loadGrammars() {
@@ -58,13 +60,16 @@ export const loadGrammars = Effect.fn("loadGrammars")(function* loadGrammars() {
 
 const commentNodesIn = (language: Language, source: string): readonly FoundComment[] =>
   pipe(
-    readTree(language, source, (root) =>
-      pipe(
-        root.descendantsOfType(COMMENT_NODES),
-        Arr.flatMap((node) => Option.toArray(Option.fromNullishOr(node))),
-        Arr.map((node) => trimmed({ index: node.startIndex, text: node.text })),
-      ),
-    ),
+    readTree({
+      language,
+      source,
+      read: (root) =>
+        pipe(
+          root.descendantsOfType(COMMENT_NODES),
+          Arr.flatMap((node) => Option.toArray(Option.fromNullishOr(node))),
+          Arr.map((node) => trimmed({ index: node.startIndex, text: node.text })),
+        ),
+    }),
     Option.getOrElse(() => NONE),
   );
 

@@ -1,57 +1,72 @@
 import { fileURLToPath } from "node:url";
 
 import treeSitter from "@vscode/tree-sitter-wasm";
-import { Effect, Option } from "effect";
+import { Effect, Option, Schema } from "effect";
 
 export type Language = treeSitter.Language;
 
 export type SyntaxNode = treeSitter.Node;
 
+export interface TreeReading<Result> {
+  readonly language: Language;
+  readonly source: string;
+  readonly read: (root: SyntaxNode) => Result;
+}
+
+const taggedError = Schema.TaggedError;
+
+export class GrammarUnreadable extends taggedError<
+  GrammarUnreadable,
+  { readonly brand: unique symbol }
+>()("GrammarUnreadable", { grammar: Schema.String, message: Schema.String }) {}
+
 const PARSER_KEY = "parser";
 
-const parsers = new Map<string, Promise<void>>();
-
-const languages = new Map<string, Promise<Language>>();
-
-const once = <A>(
-  started: Map<string, Promise<A>>,
-  key: string,
-  start: () => Promise<A>,
-): Promise<A> => {
-  const running = started.get(key);
-  if (running !== undefined) {
-    return running;
-  }
-  const promise = start();
-  started.set(key, promise);
-  return promise;
+const cache = <Value>(): ((key: string, start: () => Promise<Value>) => Promise<Value>) => {
+  const started = new Map<string, Promise<Value>>();
+  return (key, start) =>
+    Option.getOrElse(Option.fromNullishOr(started.get(key)), () => {
+      const promise = start();
+      started.set(key, promise);
+      return promise;
+    });
 };
+
+const initParser = cache<unknown>();
+
+const loadOnce = cache<Language>();
 
 const grammarFile = (grammar: string): string =>
   fileURLToPath(import.meta.resolve(`@vscode/tree-sitter-wasm/wasm/tree-sitter-${grammar}.wasm`));
 
-export const loadLanguage = (grammar: string): Effect.Effect<Language, unknown> =>
-  Effect.tryPromise({
-    try: () =>
-      once(parsers, PARSER_KEY, () => treeSitter.Parser.init()).then(() =>
-        once(languages, grammar, () => treeSitter.Language.load(grammarFile(grammar))),
-      ),
-    catch: (cause) => cause,
-  });
+export const loadLanguage = (grammar: string): Effect.Effect<Language, GrammarUnreadable> => {
+  const unreadable = (cause: unknown): GrammarUnreadable =>
+    GrammarUnreadable.make({ grammar, message: String(cause) });
+  return Effect.tryPromise({
+    try: () => initParser(PARSER_KEY, () => treeSitter.Parser.init()),
+    catch: unreadable,
+  }).pipe(
+    Effect.andThen(
+      Effect.tryPromise({
+        try: () => loadOnce(grammar, () => treeSitter.Language.load(grammarFile(grammar))),
+        catch: unreadable,
+      }),
+    ),
+  );
+};
 
-export const readTree = <A>(
-  language: Language,
-  source: string,
-  read: (root: SyntaxNode) => A,
-): Option.Option<A> => {
+export const readTree = <Result>({
+  language,
+  source,
+  read,
+}: TreeReading<Result>): Option.Option<Result> => {
   const parser = new treeSitter.Parser();
   parser.setLanguage(language);
   const tree = parser.parse(source);
   parser.delete();
-  if (tree === null) {
-    return Option.none();
-  }
-  const result = read(tree.rootNode);
-  tree.delete();
-  return Option.some(result);
+  return Option.map(Option.fromNullishOr(tree), (parsed) => {
+    const result = read(parsed.rootNode);
+    parsed.delete();
+    return result;
+  });
 };

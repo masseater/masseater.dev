@@ -17,10 +17,13 @@ export const directoryLayoutIn = Effect.fn("directoryLayoutIn")(function* direct
     directories,
     (directory) => {
       const source = files.join(directory, SOURCE_DIRECTORY);
-      return Effect.all([
-        files.isDirectory(files.join(root, source)),
-        files.exists(files.join(root, directory, RUST_MANIFEST)),
-      ]).pipe(
+      return Effect.all(
+        [
+          files.isDirectory(files.join(root, source)),
+          files.exists(files.join(root, directory, RUST_MANIFEST)),
+        ],
+        { concurrency: "unbounded" },
+      ).pipe(
         Effect.map(([isDirectory, isRust]) =>
           pipe(
             isDirectory,

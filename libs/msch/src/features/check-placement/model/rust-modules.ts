@@ -1,14 +1,30 @@
-import { Array as Arr, Effect, Option, Order, String as Str, pipe } from "effect";
+import { Array as Arr, Effect, Option, pipe } from "effect";
 
 import type { Problem, RuleName } from "#/shared/lib/problem.ts";
 import { RepositoryFiles } from "#/shared/lib/repository-files.ts";
 import { loadLanguage, readTree } from "#/shared/lib/tree-sitter.ts";
 import type { Language } from "#/shared/lib/tree-sitter.ts";
 
-import englishVerbs from "./english-verbs.json" with { type: "json" };
 import { fileProblem } from "./member-sources.ts";
+import {
+  BINARY,
+  LAYERS,
+  RUST_FILE,
+  SLICE_DEPTH,
+  SOURCE_DIRECTORY,
+  crateDirectories,
+  crateOf,
+  importMessage,
+  isInsideSource,
+  isSliceIndex,
+  kindOf,
+  modulePathOf,
+  resolvedFrom,
+} from "./rust-layout.ts";
+import type { Kind, RustSource } from "./rust-layout.ts";
 import { readRustFile } from "./rust-syntax.ts";
 import type { RustFile, RustItem, RustPath } from "./rust-syntax.ts";
+import { isVerbObjectBy } from "./source-names.ts";
 
 const LAYERED_RULE: RuleName = "layered-source";
 const ENTRY_RULE: RuleName = "public-entry";
@@ -16,20 +32,7 @@ const TEST_RULE: RuleName = "colocated-test";
 const SLICE_RULE: RuleName = "feature-slice-name";
 const IMPORT_RULE: RuleName = "layer-import";
 const GRAMMAR = "rust";
-const MANIFEST = "Cargo.toml";
-const SEPARATOR = "/";
 const WORD_SEPARATOR = "_";
-const MINIMUM_WORDS = 2;
-const SOURCE_DIRECTORY = "src";
-const MODULE_INDEX = "mod";
-const RUST_FILE = /\.rs$/u;
-const CRATE_ROOTS: readonly string[] = ["src/lib.rs", "src/main.rs"];
-const BINARY = /^src\/bin\/[^/]+\.rs$/u;
-const OUTSIDE_ALLOWED = /^(?:build\.rs|benches\/.+)$/u;
-const SEPARATE_TEST = /^tests\/.+$/u;
-const LAYERS: readonly string[] = ["app", "pages", "widgets", "features", "entities", "shared"];
-const SHARED_SLICES: readonly string[] = ["app", "shared"];
-const SLICED_LAYERS: readonly string[] = ["pages", "widgets", "features", "entities", "shared"];
 const FEATURES = "features";
 const MAIN = "main";
 const MAIN_FILE = "src/main.rs";
@@ -44,15 +47,12 @@ const LAYER_ITEMS: readonly string[] = [
   "attribute_item",
   "inner_attribute_item",
 ];
-const SLICE_DEPTH = 2;
-const LAYER_DEPTH = 1;
 const READ_CONCURRENCY = 64;
-const NEXT = 1;
 const EXCLUDED: readonly string[] = [
   ":(exclude,attr:linguist-vendored)",
   ":(exclude,attr:linguist-generated)",
 ];
-const VERBS: ReadonlySet<string> = new Set(englishVerbs);
+const NONE: readonly Problem[] = [];
 
 const OUTSIDE_MESSAGE =
   "sits outside src/. Put every module of a crate under src/ in an FSD layer; only build.rs and benches/ may stay outside.";
@@ -68,89 +68,24 @@ const TEST_MESSAGE =
 const SLICE_MESSAGE =
   "is not named <verb>_<object>. Name a feature slice after the one operation it performs, starting with an English verb (for example check_layout, sync_manuscripts).";
 
-const upwardMessage = (target: string, source: string): string =>
-  `uses the ${target} layer from the ${source} layer. A layer may only use the layers below it (${Arr.join(LAYERS, ", ")}).`;
+const isFeatureName = isVerbObjectBy(WORD_SEPARATOR);
 
-const crossMessage = (layer: string, target: string, source: string): string =>
-  `uses the ${layer} slice ${target} from the slice ${source}. Slices of one layer must not use each other; move what they share down a layer.`;
-
-interface RustSource {
-  readonly crate: string;
-  readonly inner: string;
-  readonly file: string;
-}
+type Join = (...segments: readonly string[]) => string;
 
 interface Read {
   readonly source: RustSource;
   readonly parsed: RustFile;
 }
 
-type Kind = "root" | "layer" | "module" | "test" | "skipped" | "misplaced";
-
-const byLength = Order.mapInput(Order.Number, (directory: string) => directory.length);
-
-const crateDirectories = (listed: readonly string[]): readonly string[] =>
-  pipe(
-    listed,
-    Arr.filter((name) => name === MANIFEST || Str.endsWith(`${SEPARATOR}${MANIFEST}`)(name)),
-    Arr.map((name) => Str.slice(0, Math.max(0, name.length - MANIFEST.length - NEXT))(name)),
-  );
-
-const crateOf =
-  (crates: readonly string[]) =>
-  (name: string): Option.Option<Omit<RustSource, "file">> =>
-    pipe(
-      crates,
-      Arr.filter((crate) => crate === "" || Str.startsWith(`${crate}${SEPARATOR}`)(name)),
-      (owners) => Arr.last(Arr.sort(owners, byLength)),
-      Option.map((crate) => ({
-        crate,
-        inner: crate === "" ? name : Str.slice(crate.length + SEPARATOR.length)(name),
-      })),
-    );
-
-const modulePathOf = (inner: string): readonly string[] => {
-  const parts = Str.split(
-    Str.replace(RUST_FILE, "")(Str.slice(SOURCE_DIRECTORY.length + NEXT)(inner)),
-    SEPARATOR,
-  );
-  return Option.exists(Arr.last(parts), (last) => last === MODULE_INDEX)
-    ? Arr.dropRight(parts, NEXT)
-    : parts;
-};
-
-const kindOf = (inner: string): Kind => {
-  if (Arr.contains(CRATE_ROOTS, inner) || BINARY.test(inner)) {
-    return "root";
-  }
-  if (SEPARATE_TEST.test(inner)) {
-    return "test";
-  }
-  if (OUTSIDE_ALLOWED.test(inner)) {
-    return "skipped";
-  }
-  if (!Str.startsWith(`${SOURCE_DIRECTORY}${SEPARATOR}`)(inner)) {
-    return "misplaced";
-  }
-  const path = modulePathOf(inner);
-  if (!Option.exists(Arr.head(path), (layer) => Arr.contains(LAYERS, layer))) {
-    return "misplaced";
-  }
-  return path.length === LAYER_DEPTH ? "layer" : "module";
-};
-
 const placementProblem = (
   { crate, inner, file }: RustSource,
   root: string,
-  join: (...segments: readonly string[]) => string,
+  join: Join,
 ): Problem => {
-  if (!Str.startsWith(`${SOURCE_DIRECTORY}${SEPARATOR}`)(inner)) {
+  if (!isInsideSource(inner)) {
     return fileProblem({ file, rule: LAYERED_RULE, message: OUTSIDE_MESSAGE });
   }
-  const top = pipe(
-    Arr.head(modulePathOf(inner)),
-    Option.getOrElse(() => ""),
-  );
+  const top = Option.getOrElse(Arr.head(modulePathOf(inner)), () => "");
   return fileProblem({
     file: join(root, crate, SOURCE_DIRECTORY, top),
     rule: LAYERED_RULE,
@@ -187,54 +122,6 @@ const isRootItem =
 const isLayerItem = (item: RustItem): boolean =>
   Arr.contains(LAYER_ITEMS, item.kind) || (item.kind === "mod_item" && !item.inline);
 
-const resolvedFrom = (
-  segments: readonly string[],
-  current: readonly string[],
-): Option.Option<readonly string[]> => {
-  const [first, ...rest] = segments;
-  switch (first) {
-    case "crate": {
-      return Option.some(rest);
-    }
-    case "self": {
-      return resolvedFrom(rest, current);
-    }
-    case "super": {
-      return Arr.isReadonlyArrayNonEmpty(current)
-        ? resolvedFrom(rest, Arr.dropRight(current, NEXT))
-        : Option.none();
-    }
-    default: {
-      return Option.some([...current, ...segments]);
-    }
-  }
-};
-
-const rankOf = (layer: string): number =>
-  Arr.findFirstIndex(LAYERS, (name) => name === layer).pipe(Option.getOrElse(() => -NEXT));
-
-const importMessage = (
-  source: readonly string[],
-  target: readonly string[],
-): Option.Option<string> => {
-  const [sourceLayer = "", sourceSlice = ""] = source;
-  const [targetLayer = "", targetSlice = ""] = target;
-  if (!Arr.contains(LAYERS, targetLayer) || target.length < SLICE_DEPTH) {
-    return Option.none();
-  }
-  if (rankOf(targetLayer) < rankOf(sourceLayer)) {
-    return Option.some(upwardMessage(targetLayer, sourceLayer));
-  }
-  if (
-    targetLayer === sourceLayer &&
-    targetSlice !== sourceSlice &&
-    !Arr.contains(SHARED_SLICES, targetLayer)
-  ) {
-    return Option.some(crossMessage(targetLayer, targetSlice, sourceSlice));
-  }
-  return Option.none();
-};
-
 const importProblems = (
   file: string,
   modulePath: readonly string[],
@@ -244,8 +131,8 @@ const importProblems = (
     paths,
     Arr.flatMap((path) =>
       pipe(
-        resolvedFrom(path.segments, [...modulePath, ...path.scope]),
-        Option.flatMap((target) => importMessage(modulePath, target)),
+        resolvedFrom({ segments: path.segments, current: [...modulePath, ...path.scope] }),
+        Option.flatMap((target) => importMessage({ source: modulePath, target })),
         Option.map((message) => itemProblem(file, IMPORT_RULE, message)(path)),
         Option.toArray,
       ),
@@ -256,115 +143,145 @@ const importProblems = (
     ),
   );
 
-const isSliceIndex = (modulePath: readonly string[]): boolean =>
-  modulePath.length === SLICE_DEPTH &&
-  Option.exists(Arr.head(modulePath), (layer) => Arr.contains(SLICED_LAYERS, layer));
-
-const isVerbObject = (slice: string): boolean => {
-  const words = Str.split(slice, WORD_SEPARATOR);
-  return words.length >= MINIMUM_WORDS && Option.exists(Arr.head(words), (word) => VERBS.has(word));
+const entryProblems = (
+  file: string,
+  modulePath: readonly string[],
+  parsed: RustFile,
+): readonly Problem[] => {
+  if (!isSliceIndex(modulePath)) {
+    return NONE;
+  }
+  return pipe(
+    parsed.items,
+    Arr.filter((item) => item.kind === "mod_item" && item.visible),
+    Arr.map(itemProblem(file, ENTRY_RULE, ENTRY_MESSAGE)),
+  );
 };
 
-const problemsOf = ({ source, parsed }: Read): readonly Problem[] => {
-  const { inner, file } = source;
-  switch (kindOf(inner)) {
-    case "root": {
-      return pipe(
-        parsed.items,
-        Arr.filter((item) => !isRootItem(inner)(item)),
-        Arr.map(itemProblem(file, LAYERED_RULE, ROOT_MESSAGE)),
-      );
-    }
-    case "layer": {
-      return pipe(
-        parsed.items,
-        Arr.filter((item) => !isLayerItem(item)),
-        Arr.map(itemProblem(file, LAYERED_RULE, LAYER_INDEX_MESSAGE)),
-      );
-    }
-    case "test": {
-      return parsed.replacesAllocator
-        ? []
-        : [fileProblem({ file, rule: TEST_RULE, message: TEST_MESSAGE })];
-    }
-    case "module": {
-      const modulePath = modulePathOf(inner);
-      const entry = isSliceIndex(modulePath)
-        ? pipe(
-            parsed.items,
-            Arr.filter((item) => item.kind === "mod_item" && item.visible),
-            Arr.map(itemProblem(file, ENTRY_RULE, ENTRY_MESSAGE)),
-          )
-        : [];
-      return [...entry, ...importProblems(file, modulePath, parsed.paths)];
-    }
-    default: {
-      return [];
-    }
+const moduleProblems = ({ source, parsed }: Read): readonly Problem[] => {
+  const modulePath = modulePathOf(source.inner);
+  return [
+    ...entryProblems(source.file, modulePath, parsed),
+    ...importProblems(source.file, modulePath, parsed.paths),
+  ];
+};
+
+const testProblems = ({ source, parsed }: Read): readonly Problem[] => {
+  if (parsed.replacesAllocator) {
+    return NONE;
   }
+  return [fileProblem({ file: source.file, rule: TEST_RULE, message: TEST_MESSAGE })];
+};
+
+const strayItems = (
+  { source, parsed }: Read,
+  allowed: (item: RustItem) => boolean,
+  message: string,
+): readonly Problem[] =>
+  pipe(
+    parsed.items,
+    Arr.filter((item) => !allowed(item)),
+    Arr.map(itemProblem(source.file, LAYERED_RULE, message)),
+  );
+
+const PROBLEMS: Readonly<Record<Kind, (read: Read) => readonly Problem[]>> = {
+  root: (read) => strayItems(read, isRootItem(read.source.inner), ROOT_MESSAGE),
+  layer: (read) => strayItems(read, isLayerItem, LAYER_INDEX_MESSAGE),
+  test: testProblems,
+  module: moduleProblems,
+  skipped: () => NONE,
+  misplaced: () => NONE,
+};
+
+const problemsOf = (read: Read): readonly Problem[] => PROBLEMS[kindOf(read.source.inner)](read);
+
+const misnamedSlice = (
+  { crate, inner }: RustSource,
+  root: string,
+  join: Join,
+): Option.Option<string> => {
+  const modulePath = modulePathOf(inner);
+  return pipe(
+    Option.liftPredicate(modulePath, (path) => path.length >= SLICE_DEPTH),
+    Option.filter((path) => Option.contains(Arr.head(path), FEATURES)),
+    Option.flatMap((path) => Arr.last(Arr.take(path, SLICE_DEPTH))),
+    Option.filter((slice) => !isFeatureName(slice)),
+    Option.map((slice) => join(root, crate, SOURCE_DIRECTORY, FEATURES, slice)),
+  );
 };
 
 const sliceNameProblems = (
   root: string,
-  join: (...segments: readonly string[]) => string,
+  join: Join,
   sources: readonly RustSource[],
 ): readonly Problem[] =>
   pipe(
     sources,
     Arr.filter(({ inner }) => kindOf(inner) === "module"),
-    Arr.flatMap(({ crate, inner }) => {
-      const [layer, slice] = modulePathOf(inner);
-      return layer === FEATURES && slice !== undefined && !isVerbObject(slice)
-        ? [join(root, crate, SOURCE_DIRECTORY, FEATURES, slice)]
-        : [];
-    }),
+    Arr.flatMap((source) => Option.toArray(misnamedSlice(source, root, join))),
     Arr.dedupe,
     Arr.map((file) => fileProblem({ file, rule: SLICE_RULE, message: SLICE_MESSAGE })),
+  );
+
+const misplacedProblems = (
+  root: string,
+  join: Join,
+  sources: readonly RustSource[],
+): readonly Problem[] =>
+  pipe(
+    sources,
+    Arr.filter(({ inner }) => kindOf(inner) === "misplaced"),
+    Arr.map((source) => placementProblem(source, root, join)),
+    Arr.dedupeWith((left, right) => left.file === right.file),
   );
 
 const parsedWith =
   (language: Language) =>
   (source: RustSource, text: string): Option.Option<Read> =>
-    Option.map(readTree(language, text, readRustFile), (parsed) => ({ source, parsed }));
+    Option.map(readTree({ language, source: text, read: readRustFile }), (parsed) => ({
+      source,
+      parsed,
+    }));
+
+const isRead = ({ inner }: RustSource): boolean => {
+  const kind = kindOf(inner);
+  return kind !== "misplaced" && kind !== "skipped";
+};
+
+const rustSources = Effect.fn("rustSources")(function* rustSources(root: string) {
+  const files = yield* RepositoryFiles;
+  const listed = yield* files.matchingFiles(root, EXCLUDED);
+  const owner = crateOf(crateDirectories(listed));
+  return pipe(
+    listed,
+    Arr.filter((name) => RUST_FILE.test(name)),
+    Arr.flatMap((name) =>
+      Option.toArray(
+        Option.map(owner(name), (owned) => ({ ...owned, file: files.join(root, name) })),
+      ),
+    ),
+  );
+});
 
 /** @internal */
 export const checkRustModules = Effect.fn("checkRustModules")(function* checkRustModules(
   root: string,
 ) {
   const files = yield* RepositoryFiles;
-  const listed = yield* files.matchingFiles(root, EXCLUDED);
-  const rust = Arr.filter(listed, (name) => RUST_FILE.test(name));
-  if (!Arr.isReadonlyArrayNonEmpty(rust)) {
-    return [];
+  const sources = yield* rustSources(root);
+  if (!Arr.isReadonlyArrayNonEmpty(sources)) {
+    return NONE;
   }
-  const crates = crateDirectories(listed);
-  const sources = pipe(
-    rust,
-    Arr.flatMap((name) =>
-      Option.toArray(
-        Option.map(crateOf(crates)(name), (owned) => ({ ...owned, file: files.join(root, name) })),
-      ),
-    ),
-  );
-  const misplaced = pipe(
-    sources,
-    Arr.filter(({ inner }) => kindOf(inner) === "misplaced"),
-    Arr.map((source) => placementProblem(source, root, files.join)),
-    Arr.dedupeWith((left, right) => left.file === right.file),
-  );
   const language = yield* loadLanguage(GRAMMAR).pipe(Effect.orDie);
   const parse = parsedWith(language);
   const read = yield* Effect.forEach(
-    Arr.filter(
-      sources,
-      ({ inner }) => kindOf(inner) !== "misplaced" && kindOf(inner) !== "skipped",
-    ),
+    pipe(sources, Arr.filter(isRead)),
     (source) =>
       files.readFile(source.file).pipe(Effect.map(Option.flatMap((text) => parse(source, text)))),
     { concurrency: READ_CONCURRENCY },
   );
   return [
-    ...misplaced,
+    ...misplacedProblems(root, files.join, sources),
     ...sliceNameProblems(root, files.join, sources),
     ...Arr.flatMap(Arr.getSomes(read), problemsOf),
   ];

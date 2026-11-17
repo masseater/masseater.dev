@@ -126,13 +126,20 @@ const anchoredPaths = (root: SyntaxNode): readonly RustPath[] =>
 
 const joined = (prefix: readonly string[], node: SyntaxNode): readonly string[] => {
   const own = segmentsOf(node);
-  if (own.length === NEXT && own[0] === SELF && Arr.isReadonlyArrayNonEmpty(prefix)) {
+  if (
+    own.length === NEXT &&
+    Option.contains(Arr.head(own), SELF) &&
+    Arr.isReadonlyArrayNonEmpty(prefix)
+  ) {
     return prefix;
   }
   return [...prefix, ...own];
 };
 
-const useTrees = (prefix: readonly string[], node: SyntaxNode): readonly (readonly string[])[] => {
+const treesOfUse = (
+  prefix: readonly string[],
+  node: SyntaxNode,
+): readonly (readonly string[])[] => {
   switch (node.type) {
     case "scoped_use_list": {
       const base = Option.match(field(node, "path"), {
@@ -141,11 +148,11 @@ const useTrees = (prefix: readonly string[], node: SyntaxNode): readonly (readon
       });
       return Option.match(field(node, "list"), {
         onNone: () => [base],
-        onSome: (list) => useTrees(base, list),
+        onSome: (list) => treesOfUse(base, list),
       });
     }
     case "use_list": {
-      return Arr.flatMap(namedChildren(node), (child) => useTrees(prefix, child));
+      return Arr.flatMap(namedChildren(node), (child) => treesOfUse(prefix, child));
     }
     case "use_as_clause": {
       return Option.match(field(node, "path"), {
@@ -165,7 +172,7 @@ const useTrees = (prefix: readonly string[], node: SyntaxNode): readonly (readon
   }
 };
 
-const usePaths = (root: SyntaxNode): readonly RustPath[] =>
+const importedPaths = (root: SyntaxNode): readonly RustPath[] =>
   pipe(
     root.descendantsOfType("use_declaration"),
     Arr.flatMap((node) => Option.toArray(Option.fromNullishOr(node))),
@@ -175,7 +182,7 @@ const usePaths = (root: SyntaxNode): readonly RustPath[] =>
         Option.match({
           onNone: () => [],
           onSome: (argument) =>
-            Arr.map(useTrees([], argument), (segments) => pathAt(declaration, segments)),
+            Arr.map(treesOfUse([], argument), (segments) => pathAt(declaration, segments)),
         }),
       ),
     ),
@@ -203,7 +210,7 @@ const replacesAllocator = (root: SyntaxNode): boolean =>
   );
 
 export const readRustFile = (root: SyntaxNode): RustFile => ({
-  paths: [...usePaths(root), ...anchoredPaths(root)],
+  paths: [...importedPaths(root), ...anchoredPaths(root)],
   items: pipe(
     namedChildren(root),
     Arr.filter((node) => !Arr.contains(IGNORED_ITEMS, node.type)),

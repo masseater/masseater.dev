@@ -24,10 +24,16 @@ const SLICE_MESSAGE =
 const ENTRY_MESSAGE =
   "is named after where it is deployed. Name it after what the code does; the Alchemy resource that deploys it decides which file is the entry.";
 
-const isVerbObject = (slice: string): boolean => {
-  const words = Str.split(slice, WORD_SEPARATOR);
-  return words.length >= MINIMUM_WORDS && Option.exists(Arr.head(words), (word) => VERBS.has(word));
-};
+export const isVerbObjectBy =
+  (separator: string) =>
+  (slice: string): boolean => {
+    const words = Str.split(slice, separator);
+    return (
+      words.length >= MINIMUM_WORDS && Option.exists(Arr.head(words), (word) => VERBS.has(word))
+    );
+  };
+
+const isVerbObject = isVerbObjectBy(WORD_SEPARATOR);
 
 const misnamedSlice = ({ workspace, inner }: Owned): Option.Option<string> =>
   pipe(
