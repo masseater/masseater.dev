@@ -8,9 +8,15 @@ export interface AddonBuildTask {
   readonly command: string;
   readonly inputs: readonly CacheInput[];
   readonly untrackedEnv?: readonly string[];
+  readonly buildAfter?: readonly string[];
 }
 
-export const addonTasks = ({ command, inputs, untrackedEnv = [] }: AddonBuildTask): Tasks => ({
+export const addonTasks = ({
+  command,
+  inputs,
+  untrackedEnv = [],
+  buildAfter = [],
+}: AddonBuildTask): Tasks => ({
   native: {
     command,
     cache: {
@@ -19,6 +25,9 @@ export const addonTasks = ({ command, inputs, untrackedEnv = [] }: AddonBuildTas
       untrackedEnv: [...untrackedEnv],
     },
   },
-  build: { command: "vp pack", dependsOn: ["native", { task: "build", from: "dependencies" }] },
+  build: {
+    command: "vp pack",
+    dependsOn: ["native", ...buildAfter, { task: "build", from: "dependencies" }],
+  },
   test: { command: "vp test run", dependsOn: ["native"] },
 });

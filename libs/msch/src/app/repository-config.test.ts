@@ -62,7 +62,7 @@ describe("repositoryConfig", () => {
 
   it("allows public values on top of the shared ones", () => {
     expect(config).toMatchObject({
-      betterleaks: { filter: `matchesAny(finding.line, [\`${BEACON}\`, \`${OWNER}\`])` },
+      h56m: { filter: `matchesAny(finding.line, [\`${BEACON}\`, \`${OWNER}\`])` },
     });
   });
 });

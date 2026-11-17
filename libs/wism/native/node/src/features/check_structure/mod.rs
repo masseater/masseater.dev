@@ -4,7 +4,7 @@ use serde_json::Value;
 use tracing::info_span;
 use wism_core::{Config, Linter};
 
-use crate::shared::telemetry;
+use napi_telemetry as telemetry;
 
 #[napi(object)]
 pub struct LintOptions {
@@ -19,7 +19,7 @@ fn reason(error: impl std::fmt::Display) -> napi::Error {
 
 #[napi]
 pub fn lint(root: String, files: Vec<String>, options: LintOptions) -> Result<Value> {
-    telemetry::init();
+    telemetry::init("wism", env!("CARGO_PKG_VERSION"));
     let span = info_span!("wism.lint", "wism.files" = files.len());
     telemetry::adopt(&span, options.traceparent.as_deref());
     let _entered = span.enter();

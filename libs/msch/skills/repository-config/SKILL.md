@@ -2,7 +2,7 @@
 name: repository-config
 description: >
   Use when creating or changing the root vite.config.ts of a repository that uses @r_masseater/msch:
-  repositoryConfig, workspaceSettings, the lint preset and its rule sets, extra root tasks, Betterleaks
+  repositoryConfig, workspaceSettings, the lint preset and its rule sets, extra root tasks, h56m
   allowances and textlint words. Not for settings that apply to one workspace only.
 metadata:
   type: core
@@ -51,7 +51,7 @@ The root `vite.config.ts` builds the whole configuration with `repositoryConfig`
 ## What repositoryConfig returns
 
 It returns `lint`, `fmt`, `staged`, `test` and `run`.
-It also returns the vite-plus-adopt sections `commitlint`, `dependencyRules`, `betterleaks` and `textlint`.
+It also returns the vite-plus-adopt sections `commitlint`, `dependencyRules`, `h56m` and `textlint`.
 The `wism` section declares the layout of workspaces, crates and skills.
 
 wism checks the layout and imports of every member workspace, Rust crate and skill.
@@ -66,7 +66,7 @@ They also apply `decisionTestRules` to `*.test.ts`.
 | ----------- | --------------------------------------------------------------------------------------------------------------------------- |
 | `workspace` | The result of `workspaceSettings`                                                                                           |
 | `overrides` | Extra oxlint overrides for the repository                                                                                   |
-| `secrets`   | `lines` and `paths` regular expressions that Betterleaks accepts as public                                                  |
+| `secrets`   | `lines` and `paths` regular expressions that h56m accepts as public                                                         |
 | `textlint`  | `ignores`, `kanji` words allowed past the kanji run limit, `technicalWriting` and `rules` settings, `filters` and `sources` |
 | `run`       | Extra root tasks as `{ name: command }`                                                                                     |
 

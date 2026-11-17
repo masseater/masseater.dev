@@ -16,7 +16,7 @@ import {
 } from "#/features/define-lint-preset/index.ts";
 
 import { tasksOf } from "./repository-tasks.ts";
-import { betterleaksOf, textlintOf } from "./repository-text.ts";
+import { secretsOf, textlintOf } from "./repository-text.ts";
 import type { SecretOptions, TextOptions } from "./repository-text.ts";
 
 export interface RepositoryOptions {
@@ -68,7 +68,7 @@ export const repositoryConfig = (options: RepositoryOptions): UserConfig => {
       banned: requiredStack,
       peerRanges: "intersect",
     },
-    betterleaks: betterleaksOf(secrets),
+    h56m: secretsOf(secrets),
     wism: structureOf({
       members: workspace.members,
       ignorePatterns: workspace.lint.ignorePatterns,

@@ -1,14 +1,11 @@
 import type { ConversationKind } from "@masseater.dev/watashi-protocol";
 import { Array as Arr, Effect } from "effect";
-import type { FileSystem, PlatformError, Scope } from "effect";
-import type { ChildProcessSpawner } from "effect/process";
 
 import type { Settings } from "#/shared/config/index.ts";
-import type { WatashiFailed } from "#/shared/lib/errors.ts";
 import type { Services } from "#/shared/lib/services.ts";
 
-import { betterleaksDetector, resolveBetterleaks } from "./betterleaks.ts";
-import type { Detector } from "./betterleaks.ts";
+import { secretDetector } from "./detector.ts";
+import type { Detector } from "./detector.ts";
 import { pushFile } from "./push.ts";
 import type { PushError, PushResult } from "./push.ts";
 import { transcriptFiles } from "./transcript.ts";
@@ -24,20 +21,11 @@ export type PushRequest = Readonly<{
 const NONE = 0;
 
 /** @internal */
-export const detectorOf = (
-  current: Settings,
-): Effect.Effect<
-  Detector,
-  PlatformError.PlatformError | WatashiFailed,
-  ChildProcessSpawner.ChildProcessSpawner | FileSystem.FileSystem | Scope.Scope
-> => resolveBetterleaks(current.betterleaks).pipe(Effect.flatMap(betterleaksDetector));
-
-/** @internal */
 export const pushSession =
   (current: Settings) =>
   (request: PushRequest): Effect.Effect<readonly PushResult[], PushError, Services> =>
     Effect.gen(function* push() {
-      const detect: Detector = yield* detectorOf(current);
+      const detect: Detector = yield* secretDetector;
       const files = yield* transcriptFiles({ file: request.session, path: request.transcript });
       const target = {
         kind: request.kind,

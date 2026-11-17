@@ -1,3 +1,4 @@
+import type { H56mConfig } from "@r_masseater/h56m";
 import type { ToolSections } from "@r_masseater/vite-plus-adopt";
 import { Array as Arr, pipe } from "effect";
 
@@ -62,10 +63,7 @@ const anyOf =
     return [`matchesAny(${subject}, [${listed}])`];
   };
 
-export const betterleaksOf = ({
-  lines = [],
-  paths = [],
-}: SecretOptions): NonNullable<ToolSections["betterleaks"]> => ({
+export const secretsOf = ({ lines = [], paths = [] }: SecretOptions): H56mConfig => ({
   extend: { useDefault: true },
   filter: pipe(
     [...anyOf("finding.line")([...PUBLIC_LINES, ...lines]), ...anyOf(`attributes["path"]`)(paths)],

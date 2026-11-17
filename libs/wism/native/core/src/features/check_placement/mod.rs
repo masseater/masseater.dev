@@ -42,8 +42,7 @@ fn layer_message(layout: &Layout, instance: usize) -> String {
         .kind(instance)
         .layers
         .as_ref()
-        .map(|layers| layers.order.join(", "))
-        .unwrap_or_default();
+        .map_or_default(|layers| layers.order.join(", "));
     format!("is not a layer. Use one of {order}.")
 }
 
@@ -52,8 +51,7 @@ fn loose_message(layout: &Layout, instance: usize) -> String {
         .kind(instance)
         .layers
         .as_ref()
-        .map(|layers| layers.dir.clone())
-        .unwrap_or_default();
+        .map_or_default(|layers| layers.dir.clone());
     format!("sits directly in {dir}/. Put it in a layer.")
 }
 
@@ -81,8 +79,7 @@ pub fn check(layout: &Layout, files: &[String]) -> Result<Vec<Finding>, String> 
                         .kind(instance)
                         .layers
                         .as_ref()
-                        .map(|layers| layers.dir.clone())
-                        .unwrap_or_default();
+                        .map_or_default(|layers| layers.dir.clone());
                     let base = join(&layout.instances[instance].dir, &join(&dir, &layer));
                     let reported = inside(path, &base).map_or_else(|| path.clone(), |_| base);
                     found.insert((reported, LAYER_NAME, layer_message(layout, instance)));

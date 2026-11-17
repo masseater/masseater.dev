@@ -10,6 +10,8 @@ const CARGO_INPUTS = [
   "native/node/Cargo.toml",
   "native/node/build.rs",
   "native/node/src/**",
+  { pattern: "libs/napi-telemetry/Cargo.toml", base: "workspace" },
+  { pattern: "libs/napi-telemetry/src/**", base: "workspace" },
   { pattern: "Cargo.lock", base: "workspace" },
   { pattern: "Cargo.toml", base: "workspace" },
   { pattern: "rust-toolchain.toml", base: "workspace" },

@@ -2,7 +2,7 @@
 name: configure-checks
 description: >
   Use when configuring or running the vpa CLI of @r_masseater/vite-plus-adopt in a Vite+ repository:
-  the betterleaks, commitlint, textlint, steiger, fallow and dependencyRules sections of
+  the h56m, commitlint, textlint, steiger, fallow and dependencyRules sections of
   vite.config.ts, git hooks, the bundled Feature-Sliced Design Steiger plugin and the
   @arethetypeswrong/core replacement for pack.attw. Also use when a vpa check fails.
 metadata:
@@ -19,7 +19,7 @@ sources:
 # configure-checks
 
 `vpa` runs the checks that the sections of `vite.config.ts` configure.
-They cover secrets with Betterleaks and workflows with actionlint and zizmor.
+They cover secrets with h56m and workflows with actionlint and zizmor.
 They also run commitlint and textlint.
 Steiger, fallow and the dependency rules check the code.
 Run without arguments, it runs every configured check in parallel and prints the results together.
@@ -50,7 +50,7 @@ Run without arguments, it runs every configured check in parallel and prints the
        banned: { "Tests import from vite-plus/test": ["vitest", "@vitest/*"] },
        peerRanges: "intersect",
      },
-     betterleaks: { extend: { useDefault: true } },
+     h56m: { extend: { useDefault: true } },
      steiger: { paths: ["apps/*/src"], rules: [...fsd.configs.recommended] },
      textlint: { ignores: ["CHANGELOG.md"], rules: { "preset-ja-technical-writing": true } },
      fallow: { production: true, rules: { "unused-files": "error" } },
@@ -71,12 +71,12 @@ In a repository that uses @r_masseater/msch, `repositoryConfig` writes these sec
 
 ## Section notes
 
-| Section       | Note                                                                                                                               |
-| ------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| `textlint`    | Checks the Markdown that git tracks. List other globs (`files`) and their settings in `textlint.sources`                           |
-| `steiger`     | Checks only the `steiger.paths` directories that hold FSD layer folders such as `features` directly                                |
-| `betterleaks` | `filter` is an expression that accepts a finding. `ignoredSecrets` takes SHA-256 hashes of safe secrets                            |
-| `commitlint`  | Compares against `VPA_BASE`, else `origin/HEAD`, `origin/main` or `origin/master`, else the whole history. Run with `cache: false` |
+| Section      | Note                                                                                                                                     |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `textlint`   | Checks the Markdown that git tracks. List other globs (`files`) and their settings in `textlint.sources`                                 |
+| `steiger`    | Checks only the `steiger.paths` directories that hold FSD layer folders such as `features` directly                                      |
+| `h56m`       | `filter` is an expression that accepts a finding. `ignoredSecrets` takes SHA-256 hashes of safe secrets. `h56m:allow` on a line skips it |
+| `commitlint` | Compares against `VPA_BASE`, else `origin/HEAD`, `origin/main` or `origin/master`, else the whole history. Run with `cache: false`       |
 
 ## Bundled replacements
 

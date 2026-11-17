@@ -17,26 +17,26 @@ fn configured() -> bool {
     !disabled && (set("OTEL_EXPORTER_OTLP_ENDPOINT") || set("OTEL_EXPORTER_OTLP_TRACES_ENDPOINT"))
 }
 
-fn start() -> Option<SdkTracerProvider> {
+fn start(service: &'static str, version: &'static str) -> Option<SdkTracerProvider> {
     if !configured() {
         return None;
     }
     let resource = init_tracing_opentelemetry::resource::DetectResource::default()
-        .with_fallback_service_name("fu4")
-        .with_fallback_service_version(env!("CARGO_PKG_VERSION"))
+        .with_fallback_service_name(service)
+        .with_fallback_service_version(version)
         .build();
     let provider = init_tracing_opentelemetry::otlp::traces::init_tracerprovider(
         resource,
         init_tracing_opentelemetry::otlp::traces::identity,
     )
     .ok()?;
-    let layer = tracing_opentelemetry::layer().with_tracer(provider.tracer("fu4"));
+    let layer = tracing_opentelemetry::layer().with_tracer(provider.tracer(service));
     tracing::subscriber::set_global_default(tracing_subscriber::registry().with(layer)).ok()?;
     Some(provider)
 }
 
-pub fn init() {
-    PROVIDER.get_or_init(start);
+pub fn init(service: &'static str, version: &'static str) {
+    PROVIDER.get_or_init(|| start(service, version));
 }
 
 pub fn adopt(span: &tracing::Span, traceparent: Option<&str>) {

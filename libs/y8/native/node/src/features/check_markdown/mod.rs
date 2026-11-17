@@ -5,7 +5,7 @@ use serde_json::{Map, Value, json};
 use tracing::info_span;
 use y8_core::{Input, Linter, builtin_rules};
 
-use crate::shared::telemetry;
+use napi_telemetry as telemetry;
 
 #[napi(object)]
 pub struct FileInput {
@@ -49,7 +49,7 @@ fn run(inputs: &[Input], options: LintOptions) -> Result<Value> {
 
 #[napi]
 pub fn lint(files: Vec<FileInput>, options: LintOptions) -> Result<Value> {
-    telemetry::init();
+    telemetry::init("y8", env!("CARGO_PKG_VERSION"));
     let span = info_span!("y8.lint", "y8.files" = files.len());
     telemetry::adopt(&span, options.traceparent.as_deref());
     let _entered = span.enter();
@@ -65,7 +65,7 @@ pub fn lint(files: Vec<FileInput>, options: LintOptions) -> Result<Value> {
 
 #[napi]
 pub fn lint_paths(root: String, paths: Vec<String>, options: LintOptions) -> Result<Value> {
-    telemetry::init();
+    telemetry::init("y8", env!("CARGO_PKG_VERSION"));
     let span = info_span!("y8.lint_paths", "y8.files" = paths.len());
     telemetry::adopt(&span, options.traceparent.as_deref());
     let _entered = span.enter();

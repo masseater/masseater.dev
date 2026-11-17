@@ -1,10 +1,10 @@
 {
   "name": "@r_masseater/watashi",
   "version": "0.1.1",
-  "description": "CLI for watashi (watashi.masseater.dev). Sends Claude Code transcripts from a Stop hook after masking secrets locally with Betterleaks, and manages login and API tokens.",
+  "description": "CLI for watashi (watashi.masseater.dev). Sends Claude Code transcripts from a Stop hook after masking secrets locally with h56m, and manages login and API tokens.",
   "keywords": [
-    "betterleaks",
     "claude-code",
+    "h56m",
     "tanstack-intent",
     "watashi"
   ],
@@ -39,6 +39,9 @@
   },
   "scripts": {
     "prepublishOnly": "vp run build"
+  },
+  "dependencies": {
+    "@r_masseater/h56m": "workspace:*"
   },
   "devDependencies": {
     "@effect/platform-node": "catalog:",

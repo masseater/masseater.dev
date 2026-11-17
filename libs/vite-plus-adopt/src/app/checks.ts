@@ -3,10 +3,10 @@ import { dependenciesCheck, steigerCheck } from "#/features/check-repository/ind
 import { commitlintCheck, textlintCheck } from "#/features/check-text/index.ts";
 import { actionlintCheck, zizmorCheck } from "#/features/check-workflows/index.ts";
 import { fallowCheck } from "#/features/run-fallow/index.ts";
-import { betterleaksCheck } from "#/features/scan-secrets/index.ts";
+import { h56mCheck } from "#/features/scan-secrets/index.ts";
 
 export const CHECKS: readonly NamedCheck[] = [
-  { name: "betterleaks", run: betterleaksCheck },
+  { name: "h56m", run: h56mCheck },
   { name: "commitlint", run: commitlintCheck },
   { name: "actionlint", run: actionlintCheck },
   { name: "zizmor", run: zizmorCheck },

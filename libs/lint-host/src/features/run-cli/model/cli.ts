@@ -5,6 +5,7 @@ import {
   Console,
   Effect,
   FileSystem,
+  Function as Fn,
   Layer,
   Option,
   Path,
@@ -21,6 +22,7 @@ import type { FailWith } from "#/shared/lib/fail.ts";
 
 const CONFIG_FILES = ["vite.config.ts", "vite.config.mts", "vite.config.js", "vite.config.mjs"];
 const FAILED = 1;
+const DATA_FIRST_ARITY = 2;
 const ARGUMENTS_START = 2;
 
 export interface Reported {
@@ -38,17 +40,36 @@ export interface PathspecRequest<Config> {
   readonly patterns?: readonly string[];
 }
 
-export interface Cli<Config, Found extends Reported, Failure> {
+export interface SectionSource<Config, Failure> {
   readonly name: string;
   readonly section: (config: unknown) => Config;
-  readonly pathspecs: (request: PathspecRequest<Config>) => readonly string[];
-  readonly lint: (call: LintCall<Config>) => Effect.Effect<readonly Found[], Failure>;
-  readonly format: (found: Found) => string;
   readonly failWith: FailWith<Failure>;
 }
 
-const configOf = <Config, Found extends Reported, Failure>(
-  cli: Cli<Config, Found, Failure>,
+export interface Cli<Config, Found extends Reported, Failure> extends SectionSource<
+  Config,
+  Failure
+> {
+  readonly pathspecs: (request: PathspecRequest<Config>) => readonly string[];
+  readonly lint: (call: LintCall<Config>) => Effect.Effect<readonly Found[], Failure>;
+  readonly format: (found: Found) => string;
+}
+
+export interface ToolCall<Config> {
+  readonly root: string;
+  readonly config: Config;
+  readonly args: readonly string[];
+}
+
+export interface Tool<Config, Found, Failure> extends SectionSource<Config, Failure> {
+  readonly scan: (call: ToolCall<Config>) => Effect.Effect<readonly Found[], Failure>;
+  readonly format: (found: Found) => string;
+}
+
+type CliServices = FileSystem.FileSystem | Path.Path | ChildProcessSpawner.ChildProcessSpawner;
+
+const readSectionIn = <Config, Failure>(
+  source: SectionSource<Config, Failure>,
   root: string,
 ): Effect.Effect<Config, Failure, FileSystem.FileSystem | Path.Path> =>
   Effect.gen(function* readConfig() {
@@ -64,11 +85,24 @@ const configOf = <Config, Found extends Reported, Failure>(
       onSome: (file) =>
         Effect.tryPromise({
           try: () => resolveConfigFromFile(file),
-          catch: cli.failWith(`could not load ${file}`),
+          catch: source.failWith(`could not load ${file}`),
         }),
     });
-    return cli.section(loaded);
-  }).pipe(Effect.withSpan(`${cli.name}.config`));
+    return source.section(loaded);
+  }).pipe(Effect.withSpan(`${source.name}.config`));
+
+/** @internal */
+export const readSection: {
+  (
+    root: string,
+  ): <Config, Failure>(
+    source: SectionSource<Config, Failure>,
+  ) => Effect.Effect<Config, Failure, FileSystem.FileSystem | Path.Path>;
+  <Config, Failure>(
+    source: SectionSource<Config, Failure>,
+    root: string,
+  ): Effect.Effect<Config, Failure, FileSystem.FileSystem | Path.Path>;
+} = Fn.dual(DATA_FIRST_ARITY, readSectionIn);
 
 const trackedFiles = (
   root: string,
@@ -98,40 +132,67 @@ const hasError = (found: readonly Reported[]): boolean =>
     Arr.some(({ severity }) => severity === "error"),
   );
 
+const failWhen = (failed: boolean): Effect.Effect<void> =>
+  Effect.when(
+    Effect.sync(() => {
+      process.exitCode = FAILED;
+    }),
+    Effect.succeed(failed),
+  ).pipe(Effect.asVoid);
+
+const printAll = <Found>(
+  found: readonly Found[],
+  format: (found: Found) => string,
+): Effect.Effect<void> =>
+  Arr.match(found, {
+    onEmpty: () => Effect.void,
+    onNonEmpty: (all) => Console.log(pipe(all, Arr.map(format), Arr.join("\n"))),
+  });
+
 const mainOf = <Config, Found extends Reported, Failure>(
   cli: Cli<Config, Found, Failure>,
-): Effect.Effect<
-  void,
-  Failure | PlatformError,
-  FileSystem.FileSystem | Path.Path | ChildProcessSpawner.ChildProcessSpawner
-> =>
+): Effect.Effect<void, Failure | PlatformError, CliServices> =>
   Effect.gen(function* main() {
     const root = process.cwd();
-    const config = yield* configOf(cli, root);
+    const config = yield* readSectionIn(cli, root);
     const patterns = process.argv.slice(ARGUMENTS_START);
     const files = yield* trackedFiles(root, cli.pathspecs(requestOf(config, patterns))).pipe(
       Effect.withSpan(`${cli.name}.files`),
     );
     const found = yield* cli.lint({ root, files, config });
-    yield* Arr.match(found, {
-      onEmpty: () => Effect.void,
-      onNonEmpty: (all) => Console.log(pipe(all, Arr.map(cli.format), Arr.join("\n"))),
-    });
-    yield* Effect.when(
-      Effect.sync(() => {
-        process.exitCode = FAILED;
-      }),
-      Effect.sync(() => hasError(found)),
-    );
+    yield* printAll(found, cli.format);
+    yield* failWhen(hasError(found));
   });
 
-export const runCli = <Config, Found extends Reported, Failure>(
-  cli: Cli<Config, Found, Failure>,
+const toolMainOf = <Config, Found, Failure>(
+  tool: Tool<Config, Found, Failure>,
+): Effect.Effect<void, Failure | PlatformError, CliServices> =>
+  Effect.gen(function* main() {
+    const root = process.cwd();
+    const config = yield* readSectionIn(tool, root);
+    const found = yield* tool.scan({ root, config, args: process.argv.slice(ARGUMENTS_START) });
+    yield* printAll(found, tool.format);
+    yield* failWhen(Arr.isReadonlyArrayNonEmpty(found));
+  });
+
+const runTraced = <Failure>(
+  name: string,
+  program: Effect.Effect<void, Failure, CliServices>,
 ): void => {
-  const services = Otlp.layerFromConfig({ resource: { serviceName: cli.name } }).pipe(
+  const services = Otlp.layerFromConfig({ resource: { serviceName: name } }).pipe(
     Layer.provide(OtlpSerialization.layerJson),
     Layer.provide(FetchHttpClient.layer),
     Layer.provideMerge(NodeServices.layer),
   );
-  runMain(mainOf(cli).pipe(Effect.provide(services)));
+  runMain(program.pipe(Effect.provide(services)));
+};
+
+export const runCli = <Config, Found extends Reported, Failure>(
+  cli: Cli<Config, Found, Failure>,
+): void => {
+  runTraced(cli.name, mainOf(cli));
+};
+
+export const runTool = <Config, Found, Failure>(tool: Tool<Config, Found, Failure>): void => {
+  runTraced(tool.name, toolMainOf(tool));
 };

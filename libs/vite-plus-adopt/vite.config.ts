@@ -183,7 +183,7 @@ export default defineConfig({
   run: {
     tasks: {
       verify: { command: [], dependsOn: ["test", "size"] },
-      build: "vp pack",
+      build: { command: "vp pack", dependsOn: [{ task: "build", from: "dependencies" }] },
       test: { command: "vp test run", dependsOn: ["build"] },
       size: { command: "size-limit", dependsOn: ["build"] },
     },

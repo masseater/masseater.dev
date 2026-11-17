@@ -1,6 +1,5 @@
 import {
   Effect,
-  FileSystem,
   Function as Fn,
   Layer,
   Predicate,
@@ -14,7 +13,6 @@ import {
 import type { Exit, Scope } from "effect";
 
 import { VendorDirectory } from "#/entities/binary/index.test.support.ts";
-import { BETTERLEAKS } from "#/entities/binary/index.ts";
 import type { CommandError, CommandServices } from "#/shared/lib/command.ts";
 import { commitEmpty, directoryWith, lines, runGit } from "#/shared/lib/fixture.test.support.ts";
 import { toJson } from "#/shared/lib/json.ts";
@@ -31,7 +29,7 @@ const CONFIG = lines(
   "export default {",
   '  commitlint: { rules: { "type-empty": [2, "never"] } },',
   '  dependencyRules: { banned: { "use the stack": ["left-pad"] } },',
-  '  betterleaks: { extend: { useDefault: true }, ignoredSecrets: ["0".repeat(64)] },',
+  '  h56m: { extend: { useDefault: true }, ignoredSecrets: ["0".repeat(64)] },',
   "  steiger: {",
   '    paths: ["src"],',
   "    rules: [",
@@ -47,24 +45,6 @@ const CONFIG = lines(
 export const manifest = (dependencies: Readonly<Record<string, string>>): string =>
   toJson({ name: "fixture", dependencies });
 
-const DIGEST_LENGTH = 64;
-const ZEROS = Str.repeat(DIGEST_LENGTH)("0");
-
-const FAKE_BETTERLEAKS = lines(
-  "#!/bin/sh",
-  'printf %s "$BETTERLEAKS_CONFIG_TOML" | grep -q "useDefault = true" || exit 3',
-  'case "$1" in',
-  `  git) test "$6" = --ignore-file && grep -qx ${ZEROS} "$7" ;;`,
-  "  stdin) ! grep -q AKIA ;;",
-  '  /*) ! grep -rq --exclude-dir=vendor AKIA "$1" ;;',
-  "  *) exit 2 ;;",
-  "esac",
-);
-
-const VENDORED_BETTERLEAKS = `vendor/betterleaks/${BETTERLEAKS.version}/betterleaks`;
-
-const EXECUTABLE_MODE = 0o755;
-
 const REPOSITORY = {
   "vite.config.ts": CONFIG,
   "package.json": manifest({}),
@@ -73,7 +53,6 @@ const REPOSITORY = {
   "docs/guide.md": "# Guide\n",
   "skip/notes.md": "#Notes\n",
   "src/shared/index.ts": "export {};\n",
-  [VENDORED_BETTERLEAKS]: FAKE_BETTERLEAKS,
 };
 
 const ORIGIN_MAIN: readonly (readonly string[])[] = [
@@ -97,8 +76,6 @@ export const repositoryWith = ({
 }: History = {}): Effect.Effect<string, never, CommandServices | Scope.Scope> =>
   Effect.gen(function* repository() {
     const root = yield* directoryWith({ ...REPOSITORY, ...files });
-    const fs = yield* FileSystem.FileSystem;
-    yield* fs.chmod(`${root}/${VENDORED_BETTERLEAKS}`, EXECUTABLE_MODE).pipe(Effect.orDie);
     yield* commitEmpty(root, base);
     yield* Effect.forEach(remoteRefs, (args) => runGit(root, args), { concurrency: 1 });
     yield* Effect.forEach(commits, (message) => commitEmpty(root, message), { concurrency: 1 });

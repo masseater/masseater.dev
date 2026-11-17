@@ -4,7 +4,8 @@ import { defineConfig } from "vite-plus";
 export default defineConfig({
   run: {
     tasks: {
-      verify: { command: [], dependsOn: ["build"] },
+      verify: { command: [], dependsOn: ["test", "build"] },
+      test: { command: "vp test run" },
       build: { command: "vp pack" },
     },
   },
@@ -14,6 +15,10 @@ export default defineConfig({
     sourcemap: true,
     dts: { generator: "tsgo" },
     publint: { strict: true },
+  },
+  test: {
+    include: ["src/**/*.test.ts"],
+    testTimeout: 60_000,
   },
   plugins: [otlp()],
 });

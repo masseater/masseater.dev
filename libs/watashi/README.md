@@ -3,12 +3,11 @@
 The command-line client of [watashi](https://watashi.masseater.dev). watashi is
 the owner's personal data service. A Stop hook sends Claude Code transcripts to
 it. Secrets are masked on the local machine first, with
-[Betterleaks](https://github.com/betterleaks/betterleaks). The client also signs
+[h56m](https://www.npmjs.com/package/@r_masseater/h56m). The client also signs
 in and manages API tokens.
 
-It needs Node.js 26 or later. It also needs Betterleaks 2.0.0-rc.7, found
-through `mise`, on `PATH`, or at the path in `WATASHI_BETTERLEAKS`. The package
-is one bundled file with no runtime dependencies.
+It needs Node.js 26 or later. The package is one bundled file whose only
+runtime dependency is the native addon of h56m.
 
 ## As a Claude Code plugin
 

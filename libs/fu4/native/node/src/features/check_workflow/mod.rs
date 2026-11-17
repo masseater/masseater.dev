@@ -5,7 +5,7 @@ use rayon::prelude::*;
 use serde_json::{Value, json};
 use tracing::info_span;
 
-use crate::shared::telemetry;
+use napi_telemetry as telemetry;
 
 #[napi(object)]
 pub struct LintOptions {
@@ -15,7 +15,7 @@ pub struct LintOptions {
 
 #[napi]
 pub fn lint_paths(root: String, paths: Vec<String>, options: LintOptions) -> Result<Value> {
-    telemetry::init();
+    telemetry::init("fu4", env!("CARGO_PKG_VERSION"));
     let span = info_span!("fu4.lint_paths", "fu4.files" = paths.len());
     telemetry::adopt(&span, options.traceparent.as_deref());
     let _entered = span.enter();

@@ -35,7 +35,7 @@ buildAddon({
 
 It copies the library to `native/<binary>.<platform>.node`. Declare the tasks with
 `...addonTasks({ command: "node bin/build-native.ts", inputs })` from `@r_masseater/lint-host/vite`; tests and the pack depend on
-`native`.
+`native`. Pass `buildAfter` to run other tasks before the pack.
 
 Load the addon with `loadAddon`. It tries `<packageName>-<platform>` first, then the file under
 `native/`. Call it with `callAddon`, which wraps the call in a `<name>.native` span and flushes the
@@ -47,6 +47,9 @@ addon's telemetry afterwards, so the addon must export `flushTelemetry`.
 tracked files that `pathspecs` selects, runs `lint` and prints each finding with `format`. It exits
 with 1 when a finding has the severity `error`, and exports spans over OTLP when
 `OTEL_EXPORTER_OTLP_ENDPOINT` is set.
+
+A tool that does not lint tracked files uses `runTool` instead. Its `scan` gets the repository root,
+the section and the command-line arguments, and the CLI exits with 1 when `scan` finds anything.
 
 ## Rule settings
 
