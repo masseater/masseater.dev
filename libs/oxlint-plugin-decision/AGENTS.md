@@ -1,9 +1,7 @@
 # @r_masseater/oxlint-plugin-decision
 
-このワークスペースは oxlint プラグインである。平易な英語で書かれたルールに照らしてコードをチェックし、コードがルールに従っているかを decision モデルで判定する。
+This workspace is an oxlint plugin. It checks code against rules written in plain English and uses decision models to judge whether the code follows them.
 
-## 禁止事項
+Make no calls other than to decision models. The plugin calls only the Jev family through the Typesafe System One API and only the Clef family through Cloudflare Workers AI. Do not add chat models, chat completions or OpenAI-compatible endpoints, and do not ask chat models yes/no questions with logprobs.
 
-decision モデル以外の呼び出しは行わないこと。本プラグインは、Typesafe System One API を通じて Jev ファミリーのみを、Cloudflare Workers AI を通じて Clef ファミリーのみを呼び出す。チャットモデル、チャット補完（chat completions）、または OpenAI 互換エンドポイントを追加したり、logprobs を使ってチャットモデルに「はい/いいえ」形式で質問したりしないこと。
-
-プラグインを別のプロバイダーやプラットフォームに移行する際、モデルを別の種類に差し替えないこと。当該プラットフォームで decision モデルが利用できない場合は、オーナーに確認すること。モデルの選択内容をスキルやその他のリポジトリのドキュメントに書き込まないこと。このルールはこのファイルに置く。
+When moving the plugin to another provider or platform, do not swap the model for another kind. If the platform has no decision model, ask the owner. Do not write the choice of models into skills or other repository documents. This rule lives in this file.

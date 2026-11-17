@@ -1,13 +1,14 @@
-import { present } from "@r_masseater/lint-host";
+import { present } from "@masseater.dev/lint-host";
 import { Array as Arr, Option, String as Str, pipe } from "effect";
 
 import { reportedSeverity } from "#/entities/rule/index.ts";
 import type { ScriptRule } from "#/entities/rule/index.ts";
-import type { Diagnostic, MarkdownNode, Report, Visitors } from "#/shared/config/index.ts";
-import type { NativeTree } from "#/shared/native/index.ts";
+import type { Diagnostic, MarkdownNode, Project, Report, Visitors } from "#/shared/config/index.ts";
+import type { SourceView } from "#/shared/native/index.ts";
 
-import { documentOf } from "./document.ts";
+import { documentOf, once } from "./document.ts";
 import type { Document } from "./document.ts";
+import { frontmatterOf } from "./frontmatter.ts";
 
 const EXIT = ":exit";
 const FIRST_LINE = 1;
@@ -15,9 +16,9 @@ const LINE_BREAK = /\r\n|\r|\n/u;
 
 export interface ScriptInput {
   readonly path: string;
-  readonly text: string;
-  readonly tree: NativeTree;
+  readonly source: SourceView;
   readonly rules: readonly ScriptRule[];
+  readonly project: Project;
 }
 
 type Handler = (node: MarkdownNode) => void;
@@ -93,15 +94,25 @@ const diagnosticOf =
 
 const runOn = (input: ScriptInput, document: Document): readonly Diagnostic[] => {
   const found: Diagnostic[] = [];
-  const lines = Str.split(input.text, LINE_BREAK);
+  const text = input.source.text();
+  const lines = once(() => Str.split(text, LINE_BREAK));
+  const frontmatter = once(() => frontmatterOf(text));
   const visitors = pipe(
     input.rules,
     Arr.map((rule) => {
       const toDiagnostic = diagnosticOf(input.path, document, rule);
       return rule.rule.create({
         filename: input.path,
-        text: input.text,
-        lines,
+        get frontmatter() {
+          return frontmatter();
+        },
+        exists: input.project.exists,
+        filesUnder: input.project.under,
+        manifest: input.project.manifestOf(input.path),
+        text,
+        get lines() {
+          return lines();
+        },
         options: rule.setting.options,
         root: document.root,
         textOf: document.textOf,
@@ -118,7 +129,7 @@ const runOn = (input: ScriptInput, document: Document): readonly Diagnostic[] =>
 
 export const runScriptRules = (input: ScriptInput): readonly Diagnostic[] =>
   pipe(
-    documentOf(input),
+    documentOf(input.source),
     Option.filter(() => Arr.isReadonlyArrayNonEmpty(input.rules)),
     Option.map((document) => runOn(input, document)),
     Option.getOrElse((): readonly Diagnostic[] => []),

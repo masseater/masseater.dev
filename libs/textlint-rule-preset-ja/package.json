@@ -52,7 +52,7 @@
     "prepublishOnly": "vp run build"
   },
   "dependencies": {
-    "sentence-splitter": "5.0.3"
+    "sentence-splitter": "5.1.0"
   },
   "devDependencies": {
     "@r_masseater/vite-plus-adopt": "catalog:",

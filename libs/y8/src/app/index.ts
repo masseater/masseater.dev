@@ -1,4 +1,4 @@
-export { definePlugin, defineRule } from "#/entities/rule/index.ts";
+export { agnix, definePlugin, defineRule } from "#/entities/rule/index.ts";
 export { diagnosticDetail, format } from "./format.ts";
 export { lint } from "./lint.ts";
 export { tokenize, morphemesOf } from "#/features/split-morphemes/index.ts";
@@ -9,6 +9,9 @@ export { Y8Error } from "#/shared/lib/errors.ts";
 export type { Morpheme } from "#/shared/native/index.ts";
 export type {
   Diagnostic,
+  Frontmatter,
+  Override,
+  PackageManifest,
   MarkdownNode,
   MarkdownlintRule,
   Y8Config,

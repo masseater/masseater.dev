@@ -1,7 +1,7 @@
 # @r_masseater/wism
 
-このワークスペースはファイル構造と依存関係のリンターである。本体は Rust（`native/core`）で書き、napi のアドオン（`native/node`）を通して TypeScript から呼ぶ。設定は vite.config.ts の `wism` に書く。
+This workspace is the engine of a linter for file structure and dependencies. The Rust core (`native/core`) only reads the tracked files and resolves their imports, `use` paths and Markdown links into one graph, which the napi addon (`native/node`) hands to TypeScript as one `Uint32Array` without copying. Every rule is TypeScript and lives in a plugin package such as `@r_masseater/wism-fsd`. Its settings go in `wism` in vite.config.ts.
 
-- ルールの判定は `native/core/src/features` に置き、ファイルの列挙、設定、診断の出力と分けておくこと。ほかのリンターと共通のエンジンへ載せ替えるとき、ルールだけを移せるようにするためである。
-- Rust 側の処理には tracing の span を付けること。`OTEL_EXPORTER_OTLP_ENDPOINT` があるとき、span は呼び出し側のトレースの下に送られる。
-- アドオンは `vp run native` で作る。テストはこのタスクに依存している。
+- Keep rules out of this workspace. Move work into Rust only where OTel spans show the TypeScript side is too slow.
+- Give Rust code tracing spans. When `OTEL_EXPORTER_OTLP_ENDPOINT` is set, the spans go under the caller's trace.
+- Build the addon with `vp run native`. The tests depend on that task.

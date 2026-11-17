@@ -81,3 +81,6 @@ export const run = Effect.fn("command.run")(function* run({ file, args, cwd }: I
 
 /** @internal */
 export const gh = (args: readonly string[]): Output => output({ file: "gh", args });
+
+/** @internal */
+export const repositoryRoot = output({ file: "git", args: ["rev-parse", "--show-toplevel"] });

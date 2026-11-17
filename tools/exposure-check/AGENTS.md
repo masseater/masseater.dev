@@ -1,3 +1,3 @@
 # exposure-check
 
-このワークスペースは、Cloudflare Access の背後のものと private のリポジトリが外から届かないことを 1 時間ごとに確かめる。ログには件数だけを出し、詳しい内容は broker を通して Claude に届ける。
+This workspace checks every hour that what sits behind Cloudflare Access and the private repositories cannot be reached from outside. Logs show only counts; details go to Claude through the broker.

@@ -1,7 +1,7 @@
 # yakusu
 
-このワークスペースは yakusu で、ユーザー自身の PC 上で PLaMo 3 Translate を使ってテキストを翻訳するデスクトップアプリである。
+This workspace is yakusu, a desktop app that translates text with PLaMo 3 Translate on the user's own PC.
 
-- モデルやllama-serverをリポジトリやインストーラーに配置しないこと。
-- `cargo test -p yakusu --lib -- --ignored translates_with_the_downloaded_model` を指定して、実モデルで翻訳を確認すること。
-- PLaMo Community License に従い、アプリで「Built with PLaMo」と表示し、インストーラーへライセンスのコピーを入れること。配布する派生モデルの名前は「PLaMo」で始める。
+- Do not put the model or llama-server in the repository or the installer.
+- Check translation with the real model by running `cargo test -p yakusu --lib -- --ignored translates_with_the_downloaded_model`.
+- Following the PLaMo Community License, show "Built with PLaMo" in the app and put a copy of the license in the installer. Names of distributed derived models start with "PLaMo".

@@ -1,6 +1,6 @@
 # @r_masseater/workers-tracing
 
-このワークスペースでは、Effect、TanStack Start、Elysia のスパンを Cloudflare Workers が作成するトレースに格納する。
+This workspace puts Effect, TanStack Start and Elysia spans into the traces Cloudflare Workers create.
 
-- Vite+ と Node.js 26 以降のみを前提とすること。`vite-plus` はピア依存関係とし、他の環境向けの分岐は追加しないこと。
-- 本パッケージまたは推奨事項を変更した際は、masseater/skills の `measure-everything` スキルも更新すること。
+- Assume only Vite+ and Node.js 26 or later. Make `vite-plus` a peer dependency and add no branches for other environments.
+- When you change this package or its recommendations, also update the `measure-everything` skill in masseater/skills.

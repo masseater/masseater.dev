@@ -1,5 +1,7 @@
 # @r_masseater/y8
 
+![y8 logo](logo.svg)
+
 A Markdown linter written in Rust and configured from `vite.config.ts`.
 
 Its built-in rules give the same results as markdownlint's MD001 to MD060.
@@ -42,3 +44,7 @@ Run `y8` to lint the Markdown files git tracks, or call `lint` from code.
 [Lindera](https://github.com/lindera/lindera) and the IPADIC dictionary built
 into the addon. `@r_masseater/y8/kuromojin` has the same exports as
 `kuromojin`, so textlint rules that use kuromojin can run on it.
+
+## Agent skills
+
+The package ships TanStack Intent skills for coding agents. Load one with `vp exec intent load @r_masseater/y8#<skill>`.

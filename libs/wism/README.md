@@ -1,16 +1,18 @@
 # @r_masseater/wism
 
-A structure and dependency linter for TypeScript, Rust and Markdown, written in Rust and
-configured from `vite.config.ts`.
+![wism logo](logo.svg)
 
-A marker file such as `package.json`, `Cargo.toml` or `SKILL.md` gives its directory a kind.
-Each kind declares where files may sit and, optionally, the layers its source is split into.
-wism then reads every import, `use` and Markdown link into one graph and checks it against
-those layers, the way steiger checks Feature-Sliced Design.
+The engine of a structure and dependency linter for TypeScript, Rust and Markdown, configured from
+`vite.config.ts`.
+
+A Rust addon reads every import, `use` path and Markdown link of the files git tracks into one
+graph. Rules are TypeScript plugins that check that graph, so a rule package runs on every OS
+without its own native build. `@r_masseater/wism-fsd` holds the Feature-Sliced Design rules.
 
 ```ts
-import { definePlugin, defineRule, fsd, skill } from "@r_masseater/wism";
 import "@r_masseater/wism/vite";
+import { definePlugin, defineRule } from "@r_masseater/wism";
+import { fsdPreset, skill, workspace } from "@r_masseater/wism-fsd";
 import { defineConfig } from "vite-plus";
 
 const noSharedToApp = defineRule({
@@ -24,14 +26,23 @@ const noSharedToApp = defineRule({
   },
 });
 
+const structure = fsdPreset({ kinds: [workspace({ paths: ["libs/*"] }), skill()] });
+
 export default defineConfig({
   wism: {
-    kinds: [...fsd({ paths: ["apps/*", "libs/*"] }), skill()],
-    plugins: { local: definePlugin({ rules: { "no-shared-to-app": noSharedToApp } }) },
-    rules: { "local/no-shared-to-app": "error", "link-target": "warn" },
+    ...structure,
+    plugins: {
+      ...structure.plugins,
+      local: definePlugin({ rules: { "no-shared-to-app": noSharedToApp } }),
+    },
+    rules: { ...structure.rules, "local/no-shared-to-app": "error" },
     ignores: ["**/fixtures/**"],
   },
 });
 ```
 
 Run `wism` to check the files git tracks, or call `lint` from code.
+
+## Agent skills
+
+The package ships TanStack Intent skills for coding agents. Load one with `vp exec intent load @r_masseater/wism#<skill>`.

@@ -4,24 +4,26 @@
   "private": true,
   "bin": {
     "fumx-language-server": "./bin/fumx-language-server.ts",
+    "midi-to-fumx": "./bin/midi-to-fumx.ts",
     "song-report": "./bin/song-report.ts"
   },
   "type": "module",
   "imports": {
-    "#/*": "./src/*",
-    "#generated/*": "./generated/*"
+    "#/*": "./src/*"
   },
   "exports": {
     "./analysis": "./src/features/analyze-song/index.ts",
-    "./read-song": "./src/features/read-song/index.ts",
-    "./song": "./src/entities/song/index.ts",
+    "./convert-midi": "./src/features/convert-midi/index.ts",
     "./vite": "./src/app/vite.ts"
   },
   "dependencies": {
     "@effect/platform-node-shared": "catalog:",
+    "@masseater.dev/node-main": "workspace:*",
+    "@r_masseater/fumx-parser": "workspace:*",
     "effect": "catalog:stack",
     "langium": "catalog:",
     "mapped-import": "workspace:*",
+    "midi-file": "catalog:",
     "tonal": "catalog:",
     "ts-content-mapper": "0.1.1",
     "vscode-languageserver": "catalog:"
@@ -30,7 +32,6 @@
     "@effect/vitest": "catalog:",
     "@masseater.dev/song-format": "workspace:*",
     "@types/node": "catalog:",
-    "langium-cli": "catalog:",
     "typescript": "catalog:stack",
     "vite-plus": "catalog:stack"
   },

@@ -146,10 +146,20 @@ test("a workflow outside the workflow table in an unlisted repository is not gra
   expect(isGranted(BROKER_GRANTS)(outsideWorkflows)).toBe(false);
 });
 
-test("every bot workflow grant except the merge queue carries only contents, pull request and metadata permissions", () => {
+test("the publish workflow grant can only tag, including commits that change workflows", () => {
+  const publish = jobIn({ repository: UNLISTED, workflow: "publish.yml" });
+  expect(workflowGrant(BROKER_GRANTS.workflows)(publish)).toStrictEqual(
+    Option.some({
+      permissions: { contents: "write", workflows: "write", metadata: "read" },
+      repositories: [UNLISTED],
+    }),
+  );
+});
+
+test("every bot workflow grant except the merge queue and publish carries only contents, pull request and metadata permissions", () => {
   const files = pipe(
     Rec.keys(BROKER_GRANTS.workflows),
-    Arr.filter((workflow) => workflow !== "update-branches.yml"),
+    Arr.filter((workflow) => workflow !== "update-branches.yml" && workflow !== "publish.yml"),
   );
   const grants = pipe(
     files,

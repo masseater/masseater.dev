@@ -1,5 +1,5 @@
 # plamo-translate
 
-このワークスペースは `translate.masseater.dev` である。PLaMo 3 Translate を実行し、他の Worker や持ち主向けにテキストを翻訳する。
+This workspace is `translate.masseater.dev`. It runs PLaMo 3 Translate and translates text for other Workers and the owner.
 
-呼び出し元は `libs/plamo-translate-protocol` のみをインポートする。PLaMo Community License に従い、「Built with PLaMo」と表示し、ライセンスのコピーをイメージに配置すること。
+Callers import only `libs/plamo-translate-protocol`. Following the PLaMo Community License, show "Built with PLaMo" and put a copy of the license in the image.

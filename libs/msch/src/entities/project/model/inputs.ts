@@ -51,7 +51,9 @@ const dependenciesOf = Effect.fn("dependenciesOf")(function* dependenciesOf(dire
   );
 });
 
-const workspaceClosure = Effect.fn("workspaceClosure")(function* workspaceClosure(start: string) {
+export const workspaceClosure = Effect.fn("workspaceClosure")(function* workspaceClosure(
+  start: string,
+) {
   const seen = new Set([start]);
   const queue = [start];
   for (const directory of queue) {
@@ -111,7 +113,7 @@ const installedNames = Effect.fn("installedNames")(function* installedNames(modu
   return Arr.flatten(nested);
 });
 
-const installedPackages = Effect.fn("installedPackages")(function* installedPackages(
+export const installedPackages = Effect.fn("installedPackages")(function* installedPackages(
   root: string,
   directory: string,
 ) {

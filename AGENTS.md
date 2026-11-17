@@ -1,22 +1,24 @@
-`masseater-ecosystem` に従うこと。これは masseater/skills のスキルで、状況ごとに読み込むスキルを指定する。`vp install` はスキルを `.agents/skills/` に配置する。
+# masseater.dev
 
-各ワークスペースには、その内容と当該ワークスペースにのみ適用されるルールが記載された独自の AGENTS.md がある。ワークスペースを変更する前に、これを確認しておくこと。
+Follow `masseater-ecosystem`, a skill in masseater/skills that says which skills to load in each situation. `vp install` puts the skills in `.agents/skills/`.
 
-## テックスタック
+Each workspace has its own AGENTS.md describing it and the rules that apply only there. Read it before changing that workspace.
 
-ベーススタックは TypeScript 7、Effect、Alchemy、Cloudflare である。それ以外の項目については、リントルールとスキルルールに従うこと。
+## Tech stack
 
-## コマンド
+The base stack is TypeScript 7, Effect, Alchemy and Cloudflare.
 
-- `vp run verify` はこのリポジトリ内のすべてのチェックを実行する。プリプッシュフックも同様のチェックを実行する。
-- テストを1つ実行するには、そのパッケージのディレクトリで `vp test run <file>` を実行する。
+## Commands
 
-## ルール
+- `vp run verify` runs every check in this repository. The pre-push hook runs the same checks.
+- To run one test, run `vp test run <file>` in that package's directory.
 
-- リントルールや規約チェックなど、リポジトリのあらゆる検査を msch に組み込むこと。それ以外の場所に検査を作らないこと。
-- このリポジトリや masseater/skills 内にプライベートリポジトリの名前を記述しないこと。プライベートリポジトリはリポジトリ ID で参照すること。
-- このリポジトリに持ち主のメールアドレスを記述しないこと。代わりに、再利用可能な Access のポリシー `OwnerPolicy` を参照すること。
-- サービストークンやバイパスポリシーを使用して Cloudflare Access 経由でリクエストを許可しないこと。エージェントはクレデンシャルブローカーを介して持ち主のログイン情報でアクセスする。
-- サイトのリソースはアプリのスタックの隣に配置すること。ゾーンやアカウント全体に影響する部分は、Cloudflare アカウントのスタックに置くこと。
-- 楽曲や元の動画などの著作物をリポジトリに置かないこと。
-- 従量課金はコストが高く予測が困難であり、AIの場合は特にその傾向が強い。原則として、Cloudflareの利用はすべてWorkers Paidプランに含まれる範囲内に収めること。AIを含む従量課金を追加する機能については、作り始める前、完成した後、使用する前、使用した後に、必ずコストを見積もり、実測すること。Workers Paidプランに含まれる利用範囲内に収まるかも確認すること。無料枠またはWorkers Paidに含まれる範囲に収まらず、1日あたり0.1ドルを超える場合は、オーナーが指示しない限り構築しないこと。
+## Rules
+
+- Build every check of the repository, such as lint rules and convention checks, into msch. Do not create checks anywhere else.
+- Do not write private repository names in this repository or in masseater/skills. Refer to a private repository by its repository ID.
+- Do not write the owner's email address in this repository. Refer to the reusable Access policy `OwnerPolicy` instead.
+- Do not let requests through Cloudflare Access with service tokens or bypass policies. Agents get in with the owner's login through the credential broker.
+- Put a site's resources next to the app's stack. Put parts that affect a whole zone or account in the Cloudflare account stack.
+- Do not put copyrighted works such as songs or source videos in the repository.
+- Pay-as-you-go billing is expensive and hard to predict, AI above all. Keep all Cloudflare usage within what the Workers Paid plan includes. For any feature that adds pay-as-you-go usage, including AI, estimate and measure the cost before building it, after building it, before using it and after using it, and check that it stays within the Workers Paid included usage. If it exceeds the free or included usage and costs more than $0.10 a day, do not build it unless the owner says so.

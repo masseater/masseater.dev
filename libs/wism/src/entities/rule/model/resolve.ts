@@ -1,8 +1,8 @@
-import { settingOf } from "@r_masseater/lint-host";
-import type { Setting } from "@r_masseater/lint-host";
+import { settingOf } from "@masseater.dev/lint-host";
+import type { Setting } from "@masseater.dev/lint-host";
 import { Array as Arr, Option, Record as Rec, String as Str, pipe } from "effect";
 
-import type { Plugin, Rule, RuleEntry, Severity, WismConfig } from "#/shared/config/index.ts";
+import type { Plugin, Rule, RuleEntry, WismConfig } from "#/shared/config/index.ts";
 
 const SEPARATOR = "/";
 const NAME_START = 1;
@@ -11,11 +11,6 @@ export interface ScriptRule {
   readonly id: string;
   readonly rule: Rule;
   readonly setting: Setting;
-}
-
-export interface Resolved {
-  readonly builtin: Readonly<Record<string, Severity>>;
-  readonly scripts: readonly ScriptRule[];
 }
 
 const isPluginRule = (id: string): boolean => Str.includes(SEPARATOR)(id);
@@ -35,31 +30,26 @@ const scriptOf =
       Option.filter(({ setting }) => setting.severity !== "off"),
     );
 
-export const resolve = (config: WismConfig): Resolved => {
-  const entries = Rec.toEntries(config.rules ?? {});
-  const builtin = pipe(
-    entries,
-    Arr.filter(([id]) => !isPluginRule(id)),
-  );
-  const plugged = pipe(
-    entries,
-    Arr.filter(([id]) => isPluginRule(id)),
-  );
-  return {
-    builtin: pipe(
-      builtin,
-      Arr.map(([id, entry]) => [id, settingOf(entry).severity] as const),
-      Rec.fromEntries,
-    ),
-    scripts: pipe(plugged, Arr.map(scriptOf(config.plugins ?? {})), Arr.getSomes),
-  };
-};
-
-export const unknownPlugins = (config: WismConfig): readonly string[] =>
+export const resolve = (config: WismConfig): readonly ScriptRule[] =>
   pipe(
-    Rec.keys(config.rules ?? {}),
-    Arr.filter(isPluginRule),
-    Arr.map(pluginOf),
-    Arr.filter((plugin) => !Rec.has(config.plugins ?? {}, plugin)),
-    Arr.dedupe,
+    Rec.toEntries(config.rules ?? {}),
+    Arr.filter(([id]) => isPluginRule(id)),
+    Arr.map(scriptOf(config.plugins ?? {})),
+    Arr.getSomes,
   );
+
+export const unknownRules = (config: WismConfig): readonly string[] => {
+  const plugins = config.plugins ?? {};
+  return pipe(
+    Rec.keys(config.rules ?? {}),
+    Arr.filter(
+      (id) =>
+        !isPluginRule(id) ||
+        pipe(
+          Rec.get(plugins, pluginOf(id)),
+          Option.flatMap((plugin) => Rec.get(plugin.rules ?? {}, nameOf(id))),
+          Option.isNone,
+        ),
+    ),
+  );
+};

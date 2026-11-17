@@ -1,8 +1,8 @@
-import type { RuleEntry, RuleOptions, Severity } from "@r_masseater/lint-host";
+import type { RuleEntry, RuleOptions, Severity } from "@masseater.dev/lint-host";
 
 import type { NodeType } from "#/shared/native/index.ts";
 
-export type { RuleEntry, RuleOptions, Severity } from "@r_masseater/lint-host";
+export type { RuleEntry, RuleOptions, Severity } from "@masseater.dev/lint-host";
 
 export interface Position {
   readonly line: number;
@@ -28,8 +28,25 @@ export interface Report {
   readonly detail?: string;
 }
 
+export type Frontmatter = Readonly<Record<string, unknown>>;
+
+export interface PackageManifest {
+  readonly directory: string;
+  readonly data: Readonly<Record<string, unknown>>;
+}
+
+export interface Project {
+  readonly exists: (path: string) => boolean;
+  readonly under: (directory: string) => readonly string[];
+  readonly manifestOf: (file: string) => PackageManifest | undefined;
+}
+
 export interface RuleContext {
   readonly filename: string;
+  readonly frontmatter: Frontmatter | undefined;
+  readonly exists: (path: string) => boolean;
+  readonly filesUnder: (directory: string) => readonly string[];
+  readonly manifest: PackageManifest | undefined;
   readonly text: string;
   readonly lines: readonly string[];
   readonly options: RuleOptions;
@@ -60,6 +77,12 @@ export interface MarkdownlintRule {
 export interface Plugin {
   readonly rules?: Readonly<Record<string, Rule>>;
   readonly markdownlintRules?: readonly MarkdownlintRule[];
+  readonly agentConfig?: boolean;
+}
+
+export interface Override {
+  readonly files: readonly string[];
+  readonly rules: Readonly<Record<string, RuleEntry>>;
 }
 
 export interface Y8Config {
@@ -67,6 +90,7 @@ export interface Y8Config {
   readonly rules?: Readonly<Record<string, RuleEntry>>;
   readonly ignores?: readonly string[];
   readonly inlineConfig?: boolean;
+  readonly overrides?: readonly Override[];
 }
 
 export interface Diagnostic {
