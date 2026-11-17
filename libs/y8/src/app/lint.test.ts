@@ -4,7 +4,9 @@ import {
   Effect,
   FileSystem,
   ManagedRuntime,
+  Option,
   Path,
+  Record as Rec,
   String as Str,
   pipe,
 } from "effect";
@@ -12,12 +14,13 @@ import type { PlatformError } from "effect/PlatformError";
 import type { Rule as MarkdownlintRule } from "markdownlint";
 import { afterAll, expect, test } from "vite-plus/test";
 
-import { definePlugin, defineRule, lint } from "./index.ts";
+import { agnix, definePlugin, defineRule, lint } from "./index.ts";
 import type {
   Diagnostic,
   Y8Config,
   MarkdownNode,
   RuleContext,
+  RuleEntry,
   Visitors,
   Y8Error,
 } from "./index.ts";
@@ -138,4 +141,102 @@ test("rules for a plugin that is not configured fail loudly", () =>
   Effect.gen(function* unknown() {
     const failure = yield* lintDocument({ rules: { "missing/rule": "error" } }).pipe(Effect.flip);
     expect(failure.message).toContain("missing");
+  }).pipe(services.runPromise));
+
+const lintFiles = (
+  files: Readonly<Record<string, string>>,
+  config: Y8Config,
+): Effect.Effect<
+  readonly Diagnostic[],
+  Y8Error | PlatformError,
+  FileSystem.FileSystem | Path.Path
+> =>
+  Effect.gen(function* fixture() {
+    const fileSystem = yield* FileSystem.FileSystem;
+    const path = yield* Path.Path;
+    const root = yield* fileSystem.makeTempDirectoryScoped();
+    for (const [name, text] of Rec.toEntries(files)) {
+      yield* fileSystem.makeDirectory(path.dirname(path.join(root, name)), { recursive: true });
+      yield* fileSystem.writeFileString(path.join(root, name), text);
+    }
+    return yield* lint({ root, files: Rec.keys(files), config });
+  }).pipe(Effect.scoped);
+
+const rulesOf = (diagnostics: readonly Diagnostic[]): readonly string[] =>
+  pipe(
+    diagnostics,
+    Arr.map(({ path, rule }) => `${path} ${rule}`),
+  );
+
+test("overrides change the rules only for the files they match", () =>
+  Effect.gen(function* overrides() {
+    const diagnostics = yield* lintFiles(
+      { "doc.md": DOCUMENT, "docs/doc.md": DOCUMENT, "docs/keep/doc.md": DOCUMENT },
+      {
+        rules: { "markdownlint/MD009": "off" },
+        overrides: [
+          { files: ["docs/**", "!docs/keep/**"], rules: { "markdownlint/MD009": "warn" } },
+        ],
+      },
+    );
+    expect(rulesOf(diagnostics)).toStrictEqual(["docs/doc.md markdownlint/MD009"]);
+  }).pipe(services.runPromise));
+
+const nameOf = (context: RuleContext): string =>
+  pipe(
+    Option.fromNullishOr(context.frontmatter),
+    Option.flatMap(Rec.get("name")),
+    Option.map(String),
+    Option.getOrElse(() => "none"),
+  );
+
+const frontmatterName = defineRule({
+  meta: { description: "Report the frontmatter name" },
+  create: (context) => ({
+    document: (): void => {
+      context.report({ message: nameOf(context) });
+    },
+  }),
+});
+
+test("rules read the parsed YAML frontmatter", () =>
+  Effect.gen(function* frontmatter() {
+    const diagnostics = yield* lintFiles(
+      { "doc.md": "---\nname: demo\n---\n\n# Demo\n", "plain.md": "# Plain\n" },
+      { plugins: { local: definePlugin({ rules: { name: frontmatterName } }) } },
+    );
+    expect(
+      pipe(
+        diagnostics,
+        Arr.map(({ path, message }) => `${path} ${message}`),
+      ),
+    ).toStrictEqual(["doc.md demo", "plain.md none"]);
+  }).pipe(services.runPromise));
+
+const SKILL = "---\nname: Not_A_Name\ndescription: Demo skill.\n---\n\n# Demo\n";
+
+test("agnix checks agent files and its rules can be turned off by id", () =>
+  Effect.gen(function* agent() {
+    const files = { "skills/demo/SKILL.md": SKILL };
+    const found = yield* lintFiles(files, { plugins: { agnix } });
+    const ids = pipe(
+      found,
+      Arr.map(({ rule }) => rule),
+      Arr.filter(Str.startsWith("agnix/")),
+    );
+    expect(ids).not.toStrictEqual([]);
+    const disabled = yield* lintFiles(files, {
+      plugins: { agnix },
+      rules: pipe(
+        ids,
+        Arr.map((id): readonly [string, RuleEntry] => [id, "off"]),
+        Rec.fromEntries,
+      ),
+    });
+    expect(
+      pipe(
+        disabled,
+        Arr.filter(({ rule }) => Str.startsWith("agnix/")(rule)),
+      ),
+    ).toStrictEqual([]);
   }).pipe(services.runPromise));

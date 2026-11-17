@@ -4635,6 +4635,12 @@ importers:
       '@effect/platform-node':
         specifier: 'catalog:'
         version: 4.1.4(effect@4.1.4)(redis@6.2.1(@opentelemetry/api@1.10.0))
+      minimatch:
+        specifier: 'catalog:'
+        version: 11.0.8
+      yaml:
+        specifier: 'catalog:'
+        version: 2.9.1
     devDependencies:
       '@r_masseater/vitest-otlp':
         specifier: workspace:*

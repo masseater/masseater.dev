@@ -30,8 +30,11 @@ export interface Report {
   readonly detail?: string;
 }
 
+export type Frontmatter = Readonly<Record<string, unknown>>;
+
 export interface RuleContext {
   readonly filename: string;
+  readonly frontmatter: Frontmatter | undefined;
   readonly text: string;
   readonly lines: readonly string[];
   readonly options: RuleOptions;
@@ -62,6 +65,12 @@ export interface MarkdownlintRule {
 export interface Plugin {
   readonly rules?: Readonly<Record<string, Rule>>;
   readonly markdownlintRules?: readonly MarkdownlintRule[];
+  readonly agentConfig?: boolean;
+}
+
+export interface Override {
+  readonly files: readonly string[];
+  readonly rules: Readonly<Record<string, RuleEntry>>;
 }
 
 export interface Y8Config {
@@ -69,6 +78,7 @@ export interface Y8Config {
   readonly rules?: Readonly<Record<string, RuleEntry>>;
   readonly ignores?: readonly string[];
   readonly inlineConfig?: boolean;
+  readonly overrides?: readonly Override[];
 }
 
 export interface Diagnostic {

@@ -61,7 +61,9 @@
     "prepublishOnly": "vp run build"
   },
   "dependencies": {
-    "@effect/platform-node": "catalog:"
+    "@effect/platform-node": "catalog:",
+    "minimatch": "catalog:",
+    "yaml": "catalog:"
   },
   "devDependencies": {
     "@r_masseater/vitest-otlp": "workspace:*",

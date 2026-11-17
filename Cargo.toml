@@ -51,3 +51,6 @@ strip = "none"
 inherits = "release"
 debug = true
 strip = "none"
+
+[patch.crates-io]
+proc-macro-crate = { path = "patches/crates/proc-macro-crate" }

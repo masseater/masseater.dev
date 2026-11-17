@@ -1,4 +1,4 @@
-export { definePlugin, defineRule } from "#/entities/rule/index.ts";
+export { agnix, definePlugin, defineRule } from "#/entities/rule/index.ts";
 export { diagnosticDetail, format } from "./format.ts";
 export { lint } from "./lint.ts";
 export { markdownPathspecs, y8Section } from "./section.ts";
@@ -7,6 +7,8 @@ export type { LintInput } from "./lint.ts";
 export { Y8Error } from "#/shared/lib/errors.ts";
 export type {
   Diagnostic,
+  Frontmatter,
+  Override,
   MarkdownNode,
   MarkdownlintRule,
   Y8Config,

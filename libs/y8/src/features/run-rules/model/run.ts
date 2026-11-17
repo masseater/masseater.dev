@@ -8,6 +8,7 @@ import type { NativeTree } from "#/shared/native/index.ts";
 
 import { documentOf } from "./document.ts";
 import type { Document } from "./document.ts";
+import { frontmatterOf } from "./frontmatter.ts";
 
 const EXIT = ":exit";
 const FIRST_LINE = 1;
@@ -94,12 +95,14 @@ const diagnosticOf =
 const runOn = (input: ScriptInput, document: Document): readonly Diagnostic[] => {
   const found: Diagnostic[] = [];
   const lines = Str.split(input.text, LINE_BREAK);
+  const frontmatter = frontmatterOf(input.text);
   const visitors = pipe(
     input.rules,
     Arr.map((rule) => {
       const toDiagnostic = diagnosticOf(input.path, document, rule);
       return rule.rule.create({
         filename: input.path,
+        frontmatter,
         text: input.text,
         lines,
         options: rule.setting.options,

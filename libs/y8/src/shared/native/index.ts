@@ -65,9 +65,24 @@ export interface NativeDiagnostic {
   readonly severity: "error" | "warning";
 }
 
+export interface AgentDiagnostic {
+  readonly line: number;
+  readonly column: number;
+  readonly rule: string;
+  readonly message: string;
+  readonly suggestion: string | null;
+  readonly level: "error" | "warning" | "info";
+}
+
+export interface AgnixOptions {
+  readonly root: string;
+  readonly disabled: readonly string[];
+}
+
 export interface NativeResult {
   readonly path: string;
   readonly diagnostics: readonly NativeDiagnostic[];
+  readonly agentDiagnostics?: readonly AgentDiagnostic[];
   readonly tree?: NativeTree;
   readonly text?: string;
 }
@@ -78,6 +93,7 @@ export interface NativeOptions {
   readonly keepTree?: boolean;
   readonly keepText?: boolean;
   readonly traceparent?: string;
+  readonly agnix?: AgnixOptions;
 }
 
 export interface SourceFile {

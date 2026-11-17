@@ -1,5 +1,7 @@
 export type {
   Diagnostic,
+  Frontmatter,
+  Override,
   MarkdownNode,
   MarkdownlintRule,
   Y8Config,
