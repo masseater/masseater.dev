@@ -1,4 +1,5 @@
 import { tauriAppConfig, tauriAppTasks, tauriReleaseTasks } from "@masseater.dev/tauri-app/vite";
+import { cargoInputs } from "@r_masseater/msch/cargo-inputs";
 import { Option } from "effect";
 import { defineConfig } from "vite-plus";
 
@@ -8,7 +9,7 @@ export default defineConfig({
     tasks: {
       ...tauriAppTasks({
         crate: "shirushi",
-        workspaceInputs: ["libs/desktop-shell/**", "libs/media-notes/**"],
+        input: await cargoInputs({ directory: import.meta.dirname }),
       }),
       verify: { command: [], dependsOn: ["cargo"] },
       ...tauriReleaseTasks("shirushi"),
