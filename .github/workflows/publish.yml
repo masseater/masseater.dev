@@ -243,6 +243,6 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: masseater/typescript-template/.github/actions/ci-telemetry@e80c641e7847e5482f3b043368726580dfd1cc40
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@5fbdf9423d0e5debb5d59bc6d59bfec624343aff
         with:
           github-token: ${{ github.token }}
