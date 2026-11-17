@@ -111,7 +111,7 @@ const installedNames = Effect.fn("installedNames")(function* installedNames(modu
   return Arr.flatten(nested);
 });
 
-const installedPackages = Effect.fn("installedPackages")(function* installedPackages(
+export const installedPackages = Effect.fn("installedPackages")(function* installedPackages(
   root: string,
   directory: string,
 ) {

@@ -1,4 +1,4 @@
-import { Effect, Record as Rec, Schema, Array as Arr, pipe } from "effect";
+import { Effect, Order, Record as Rec, Schema, Array as Arr, pipe } from "effect";
 
 import type { Problem } from "#/shared/lib/problem.ts";
 import { RepositoryFiles } from "#/shared/lib/repository-files.ts";
@@ -103,6 +103,25 @@ const cacheEntries = Effect.fn("cacheEntries")(function* cacheEntries(root: stri
   yield* checkRepository(root);
   return yield* repositoryFiles.readDirectory(
     repositoryFiles.join(root, "node_modules", ".cache", "msch", "value-owners"),
+  );
+});
+
+export const cacheContentsOf = Effect.fn("cacheContentsOf")(function* cacheContentsOf(
+  files: Readonly<Record<string, string>>,
+) {
+  const fixtures = yield* FixtureFiles;
+  const repositoryFiles = yield* RepositoryFiles;
+  const root = yield* fixtureRepository(files);
+  yield* fixtures.commitAll(root);
+  const names = yield* cacheEntries(root);
+  const directory = repositoryFiles.join(root, "node_modules", ".cache", "msch", "value-owners");
+  return yield* Effect.forEach(
+    Arr.sort(names, Order.String),
+    (name) =>
+      repositoryFiles
+        .readFile(repositoryFiles.join(directory, name))
+        .pipe(Effect.map((text) => [name, text] as const)),
+    { concurrency: 1 },
   );
 });
 
