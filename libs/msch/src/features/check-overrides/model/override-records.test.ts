@@ -12,6 +12,7 @@ const LOCKFILE = "pnpm-lock.yaml";
 const INPUTS = ["package.json", LOCKFILE] as const;
 const SOURCES = { "package.json": "{}", [LOCKFILE]: "lockfileVersion: '9.0'\n" };
 const CLEAN: readonly Problem[] = [];
+const NEVER = 0;
 const ONCE = 1;
 const TWICE = 2;
 
@@ -28,7 +29,7 @@ const runsAfter = Effect.fn("runsAfter")(function* runsAfter(
   between: (root: string) => Effect.Effect<void, never, FixtureFiles | RepositoryFiles>,
 ) {
   const root = yield* directoryWith(SOURCES);
-  const runs = yield* Ref.make(0);
+  const runs = yield* Ref.make(NEVER);
   const check = Ref.update(runs, (count) => count + ONCE).pipe(Effect.as(found(root)));
   const first = yield* unlessPassed(root, INPUTS, check);
   yield* between(root);
