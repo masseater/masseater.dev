@@ -13,12 +13,6 @@ export const deployed = (stack: string): DeploymentRecord => ({
 });
 
 /** @internal */
-export const released = (component: string): DeploymentRecord => ({
-  environment: "release",
-  task: `release:${component}`,
-});
-
-/** @internal */
 export const lastRecorded = Effect.fn("lastRecorded")(
   function* lastRecorded({ environment, task }: DeploymentRecord) {
     const deployments = yield* getJson(Deployments)(

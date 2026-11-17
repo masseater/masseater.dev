@@ -57,6 +57,9 @@ The `wism` section declares the layout of workspaces, crates and skills.
 wism checks the layout and imports of every member workspace, Rust crate and skill.
 The `verify` task depends on every workspace's `verify` and on every root task.
 A task added to `run.tasks` is therefore verified without listing it anywhere.
+The root `check` and `test` tasks run through `msch-changed`.
+It passes them only the workspaces whose files, dependencies or installed packages changed since the last pass.
+It records passes under `node_modules/.cache/msch/changed`; delete that directory to check everything again.
 The lint overrides already relax the rules for shadcn/ui components, public entries and deploy entries.
 They also apply `decisionTestRules` to `*.test.ts`.
 

@@ -1,4 +1,4 @@
-import { loadAddon } from "@r_masseater/lint-host";
+import { loadAddon } from "@masseater.dev/lint-host";
 import { Array as Arr, Predicate, pipe } from "effect";
 import type { Effect } from "effect";
 

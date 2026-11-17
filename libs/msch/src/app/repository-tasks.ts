@@ -44,7 +44,7 @@ const FALLOW = [
 ];
 
 const CHECK =
-  "GOMEMLIMIT=4GiB TSRS_LINT_RUN_EXTERNAL_CODE=1 effect-tsgo --tsrs-lint vp check --deny-warnings --continue-on-error";
+  "GOMEMLIMIT=4GiB TSRS_LINT_RUN_EXTERNAL_CODE=1 msch-changed effect-tsgo --tsrs-lint vp check --deny-warnings --continue-on-error";
 
 const AUDIT =
   'before="$(cksum pnpm-workspace.yaml)"; vp pm audit --fix || exit; if [ "$before" != "$(cksum pnpm-workspace.yaml)" ]; then echo "vp pm audit --fix rewrote pnpm-workspace.yaml. Run vp install and commit the diff." >&2; exit 1; fi';
@@ -67,7 +67,7 @@ export const tasksOf = ({
       cache: { input: inputs, untrackedEnv: UNTRACKED_ENV },
     },
     test: {
-      command: "vp test run",
+      command: "msch-changed vp test run --passWithNoTests",
       dependsOn: ["check", ...workspace.tasks.native],
       cache: { input: [...inputs, "!**/.cache/**"] },
     },

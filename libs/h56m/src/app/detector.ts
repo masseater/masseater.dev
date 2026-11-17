@@ -1,4 +1,4 @@
-import { callAddon, traceparent } from "@r_masseater/lint-host";
+import { callAddon, traceparent } from "@masseater.dev/lint-host";
 import { Effect, Option, Schema } from "effect";
 
 import { FindingSchema } from "#/shared/config/index.ts";

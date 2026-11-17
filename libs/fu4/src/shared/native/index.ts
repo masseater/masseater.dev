@@ -1,8 +1,8 @@
-import { loadAddon } from "@r_masseater/lint-host";
+import { loadAddon } from "@masseater.dev/lint-host";
 import { Predicate } from "effect";
 import type { Effect } from "effect";
 
-import type { Fu4Config } from "#/shared/config/index.ts";
+import type { AuditConfig, Fu4Config } from "#/shared/config/index.ts";
 import { failedWith } from "#/shared/lib/errors.ts";
 import type { Fu4Error } from "#/shared/lib/errors.ts";
 
@@ -18,8 +18,13 @@ export interface NativeResult {
   readonly diagnostics: readonly NativeDiagnostic[];
 }
 
+export interface NativeAuditOptions extends Omit<AuditConfig, "online"> {
+  readonly githubToken?: string;
+}
+
 export interface NativeOptions {
   readonly config?: Fu4Config;
+  readonly audit?: NativeAuditOptions;
   readonly traceparent?: string;
 }
 

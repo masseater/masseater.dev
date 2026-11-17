@@ -1,8 +1,7 @@
+import type { Controller } from "@r_masseater/fumx-parser";
 import { Array as Arr, Order } from "effect";
 import type { Option } from "effect";
 import type { MidiEvent } from "midi-file";
-
-import type { Controller } from "#/entities/song/index.ts";
 
 export interface Timed {
   readonly tick: number;

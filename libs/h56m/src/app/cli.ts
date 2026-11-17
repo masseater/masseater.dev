@@ -1,5 +1,5 @@
-import { runTool } from "@r_masseater/lint-host";
-import type { ToolCall } from "@r_masseater/lint-host";
+import { runTool } from "@masseater.dev/lint-host";
+import type { ToolCall } from "@masseater.dev/lint-host";
 import { Array as Arr, Boolean as Bool, Effect } from "effect";
 
 import type { Finding, GitSource, H56mConfig } from "#/shared/config/index.ts";

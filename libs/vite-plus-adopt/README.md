@@ -1,6 +1,6 @@
 # @r_masseater/vite-plus-adopt
 
-`vpa` is a CLI that brings secret scanning with h56m, zizmor, commitlint, textlint, Steiger, fallow and agent skill installation into Vite+. Write their settings and your dependency rules in `vite.config.ts`, and `vpa` reads them from there.
+`vpa` is a CLI that brings secret scanning with h56m, commitlint, textlint, Steiger, fallow and agent skill installation into Vite+. Write their settings and your dependency rules in `vite.config.ts`, and `vpa` reads them from there.
 Running `vpa` once with no arguments runs every configured check in parallel and prints the results together.
 It also bundles a Feature-Sliced Design plugin for Steiger and @arethetypeswrong/core, both running on TypeScript 7 alone.
 
@@ -12,13 +12,6 @@ It also bundles a Feature-Sliced Design plugin for Steiger and @arethetypeswrong
 
 ```sh
 vp add -D @r_masseater/vite-plus-adopt @r_masseater/h56m-presets
-```
-
-Allow its postinstall by adding it to `allowBuilds` in `pnpm-workspace.yaml`.
-
-```yaml
-allowBuilds:
-  "@r_masseater/vite-plus-adopt": true
 ```
 
 ```ts

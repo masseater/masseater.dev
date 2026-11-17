@@ -2,26 +2,6 @@ use syn::visit::Visit;
 
 use crate::entities::import::{Edge, Target};
 
-const ROOTS: [&str; 2] = ["lib", "main"];
-const BINARIES: &str = "bin";
-const MODULE_INDEX: &str = "mod";
-
-#[must_use]
-pub fn module_of(rest: &str) -> Vec<String> {
-    let trimmed = rest.strip_suffix(".rs").unwrap_or(rest);
-    let mut parts: Vec<String> = trimmed.split('/').map(str::to_owned).collect();
-    if parts.first().is_some_and(|first| first == BINARIES) {
-        return Vec::new();
-    }
-    if parts.len() == 1 && ROOTS.contains(&parts[0].as_str()) {
-        return Vec::new();
-    }
-    if parts.last().is_some_and(|last| last == MODULE_INDEX) {
-        parts.pop();
-    }
-    parts
-}
-
 fn resolve(segments: &[String], current: &[String]) -> Option<Vec<String>> {
     let (first, rest) = segments.split_first()?;
     match first.as_str() {
@@ -194,7 +174,7 @@ pub fn uses(path: &str, text: &str, current: Vec<String>) -> Vec<Edge> {
 
 #[cfg(test)]
 mod tests {
-    use super::{module_of, uses};
+    use super::uses;
     use crate::entities::import::Target;
 
     fn targets(text: &str, current: &[&str]) -> Vec<Vec<String>> {
@@ -206,14 +186,6 @@ mod tests {
                 Target::File(_) => None,
             })
             .collect()
-    }
-
-    #[test]
-    fn maps_files_to_module_paths() {
-        assert_eq!(module_of("lib.rs"), Vec::<String>::new());
-        assert_eq!(module_of("bin/cli.rs"), Vec::<String>::new());
-        assert_eq!(module_of("features/sync/mod.rs"), vec!["features", "sync"]);
-        assert_eq!(module_of("entities/note.rs"), vec!["entities", "note"]);
     }
 
     #[test]
@@ -240,5 +212,35 @@ mod tests {
             &["entities", "note"],
         );
         assert_eq!(found, vec![vec!["entities", "features", "read", "go"]]);
+    }
+    #[test]
+    fn reads_renames_globs_and_skips_external_paths() {
+        let found = targets(
+            "use crate::shared::text as t;\nuse crate::entities::*;\nuse ::std::fmt;\nuse std::io::Read;\nfn f() { let _ = core::mem::take(&mut 1); }\n",
+            &["features", "sync"],
+        );
+        assert_eq!(found, vec![vec!["shared", "text"], vec!["entities"]]);
+    }
+
+    #[test]
+    fn reports_the_position_of_each_path() {
+        let edges = uses(
+            "src/features/sync/mod.rs",
+            "fn a() {}\n  use crate::entities::note;\n",
+            vec!["features".to_owned(), "sync".to_owned()],
+        );
+        assert_eq!(edges.len(), 1);
+        assert_eq!((edges[0].line, edges[0].column), (2, 7));
+        assert_eq!(edges[0].specifier, "crate::entities::note");
+    }
+
+    #[test]
+    fn returns_nothing_for_a_file_that_does_not_parse() {
+        assert_eq!(targets("fn (", &[]).len(), 0);
+    }
+
+    #[test]
+    fn stops_at_super_above_the_crate_root() {
+        assert_eq!(targets("use super::x;\n", &[]).len(), 0);
     }
 }

@@ -13,7 +13,6 @@ import {
 } from "effect";
 import type { Exit, Scope } from "effect";
 
-import { VendorDirectory } from "#/entities/binary/index.test.support.ts";
 import type { CommandError, CommandServices } from "#/shared/lib/command.ts";
 import { commitEmpty, directoryWith, lines, runGit } from "#/shared/lib/fixture.test.support.ts";
 import { toJson } from "#/shared/lib/json.ts";
@@ -99,12 +98,7 @@ export const run: {
       );
       const stdio = Stdio.layerTest({ stdout: () => stdout });
       const context = yield* Layer.build(stdio);
-      const exit = yield* Effect.exit(
-        runVpa(root, args).pipe(
-          Effect.provideContext(context),
-          Effect.provideService(VendorDirectory, `${root}/vendor`),
-        ),
-      );
+      const exit = yield* Effect.exit(runVpa(root, args).pipe(Effect.provideContext(context)));
       const chunks = yield* Ref.get(written);
       return { exit, output: pipe(chunks, Arr.filter(Predicate.isString), Arr.join("")) };
     }).pipe(Effect.scoped),

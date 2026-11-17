@@ -126,13 +126,7 @@ export default defineConfig({
   tsconfig: "tsconfig.json",
   plugins: [attwUpstream, typescriptShim],
   pack: {
-    entry: [
-      "src/app/index.ts",
-      "src/app/cli.ts",
-      "src/app/postinstall.ts",
-      "src/app/fsd.ts",
-      "src/app/attw.ts",
-    ],
+    entry: ["src/app/index.ts", "src/app/cli.ts", "src/app/fsd.ts", "src/app/attw.ts"],
     platform: "node",
     plugins: [attwUpstream, typescriptShim],
     deps: {
