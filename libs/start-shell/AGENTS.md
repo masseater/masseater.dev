@@ -1,3 +1,3 @@
 # @masseater.dev/start-shell
 
-このワークスペースは、TanStack Start アプリのページの外枠を提供する。
+This workspace provides the outer frame of TanStack Start app pages.

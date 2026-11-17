@@ -1,5 +1,5 @@
 # @masseater.dev/pod-rattle-host
 
-このワークスペースは、MIDI で Pod Rattle プラグインを再生し、サウンドと画面をチェックする小規模なホストである。
+This workspace is a small host that plays the Pod Rattle plugin with MIDI and checks its sound and screen.
 
-エディタのスナップショットを `UPDATE_SNAPSHOTS=1` で再描画し、画像を確認してからコミットする。
+Redraw the editor snapshots with `UPDATE_SNAPSHOTS=1` and look at the images before committing.

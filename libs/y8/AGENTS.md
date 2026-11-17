@@ -1,7 +1,7 @@
 # @r_masseater/y8
 
-このワークスペースは Markdown のリンターである。本体は Rust（`native/core`）で書き、napi のアドオン（`native/node`）を通して TypeScript から呼ぶ。設定は vite.config.ts の `y8` に書く。
+This workspace is a Markdown linter. The core is written in Rust (`native/core`) and called from TypeScript through a napi addon (`native/node`). Its settings go in `y8` in vite.config.ts.
 
-- 組み込みのルールは markdownlint のルールと同じ結果を返すこと。`native/core/tests/fixtures/markdownlint/` は markdownlint から取り込んだ fixture と期待値で、手で直さないこと。`cargo test -p y8-core` がすべて一致することを確かめる。
-- Rust 側の処理には tracing の span を付けること。`OTEL_EXPORTER_OTLP_ENDPOINT` があるとき、span は呼び出し側のトレースの下に送られる。
-- アドオンは `vp run native` で作る。テストはこのタスクに依存している。
+- Built-in rules return the same results as markdownlint's rules. `native/core/tests/fixtures/markdownlint/` holds fixtures and expected results taken from markdownlint; do not edit them by hand. Check that `cargo test -p y8-core` matches them all.
+- Give Rust code tracing spans. When `OTEL_EXPORTER_OTLP_ENDPOINT` is set, the spans go under the caller's trace.
+- Build the addon with `vp run native`. The tests depend on that task.

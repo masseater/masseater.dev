@@ -1,7 +1,7 @@
 # @masseater.dev/repositories
 
-このワークスペースは、持ち主の GitHub アカウントとリポジトリを管理する。また、CI やエージェントにトークンを渡すブローカーも保持している。
+This workspace manages the owner's GitHub account and repositories. It also holds the broker that hands tokens to CI and agents.
 
-- リポジトリの公開・非公開の設定は変更しないこと。
-- リポジトリを削除するときは、main で `task` ワークフローを `delete-repositories` のタスクと `github` の認証情報で手動実行する。
-- `SealKey` の名前を変更するか、ステートから削除すると、キーが再作成され、保存済みの値を読み取れなくなる。その後、AppキーとBlueskyアプリのパスワードを再度インポートすること。
+- Do not change whether a repository is public or private.
+- To delete a repository, run the `task` workflow on main by hand with the `delete-repositories` task and the `github` credentials.
+- Renaming `SealKey` or removing it from the state recreates the key, and the stored values can no longer be read. Then import the App key and the Bluesky app password again.

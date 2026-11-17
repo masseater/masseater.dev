@@ -1,3 +1,3 @@
 # security-headers
 
-このワークスペースには、持ち主のサイトがレスポンスに追加するセキュリティヘッダーが格納されている。
+This workspace holds the security headers the owner's sites add to responses.

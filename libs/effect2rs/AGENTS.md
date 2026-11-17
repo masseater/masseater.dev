@@ -1,3 +1,3 @@
 # @masseater.dev/effect2rs
 
-このワークスペースは、Effect の SchemaRepresentation を走査することで、Effect Schema から serde の Rust 型を生成する。`tools/protocol-codegen` がこれを呼び出し、出力を書き出す。
+This workspace generates serde Rust types from Effect Schema by walking Effect's SchemaRepresentation. `tools/protocol-codegen` calls it and writes the output.

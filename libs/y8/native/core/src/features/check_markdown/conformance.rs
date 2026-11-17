@@ -34,7 +34,8 @@ fn matches_markdownlint_on_its_fixtures() {
             text: std::fs::read_to_string(dir.join(name)).expect("fixture"),
         })
         .collect();
-    let results = Linter::new(serde_json::Map::new(), true).lint_all(&inputs, false);
+    let results =
+        Linter::new(serde_json::Map::new(), true).lint_all(&inputs, super::Transfer::Nothing);
     let mut mismatches = Vec::new();
     for result in results {
         let actual: Vec<Entry> = result

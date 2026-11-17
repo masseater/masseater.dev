@@ -1,3 +1,3 @@
 # @masseater.dev/exposure-protocol
 
-このワークスペースには、exposure-check・credential broker・sundries の間で、見つけた公開の記録と Claude への知らせをやり取りする型を置く。
+This workspace holds the types that exposure-check, the credential broker and sundries use to exchange records of found exposures and notices to Claude.

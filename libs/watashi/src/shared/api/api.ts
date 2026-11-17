@@ -59,9 +59,7 @@ export const asWatashi =
   <Value, Failure, Requirement>(
     effect: Effect.Effect<Value, Failure, Requirement>,
   ): Effect.Effect<Value, Failure, Requirement | HttpClient.HttpClient> =>
-    watashiClient(target).pipe(
-      Effect.flatMap((client) => Effect.provideService(effect, HttpClient.HttpClient, client)),
-    );
+    Effect.provideServiceEffect(effect, HttpClient.HttpClient, watashiClient(target));
 
 /** @internal */
 export const committedOffset = (
