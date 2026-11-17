@@ -2,7 +2,7 @@
 name: configure-checks
 description: >
   Use when configuring or running the vpa CLI of @r_masseater/vite-plus-adopt in a Vite+ repository:
-  the betterleaks, commitlint, textlint, steiger, fallow and dependencyRules sections of
+  the h56m, commitlint, textlint, steiger, fallow and dependencyRules sections of
   vite.config.ts, git hooks, the bundled Feature-Sliced Design Steiger plugin and the
   @arethetypeswrong/core replacement for pack.attw. Also use when a vpa check fails.
 metadata:
@@ -19,27 +19,23 @@ sources:
 # configure-checks
 
 `vpa` runs the checks that the sections of `vite.config.ts` configure.
-They cover secrets with Betterleaks.
+They cover secrets with h56m.
 They also run commitlint and textlint.
 Steiger, fallow and the dependency rules check the code.
 Run without arguments, it runs every configured check in parallel and prints the results together.
 
 ## Setup
 
-1. Install it and allow its postinstall, which fetches the tool binaries.
+1. Install it.
 
    ```sh
-   vp add -D @r_masseater/vite-plus-adopt
-   ```
-
-   ```yaml
-   allowBuilds:
-     "@r_masseater/vite-plus-adopt": true
+   vp add -D @r_masseater/vite-plus-adopt @r_masseater/h56m-presets
    ```
 
 2. Write the sections. `import type {} from "@r_masseater/vite-plus-adopt"` types them in `defineConfig`.
 
    ```ts
+   import { betterleaks } from "@r_masseater/h56m-presets";
    import type {} from "@r_masseater/vite-plus-adopt";
    import fsd from "@r_masseater/vite-plus-adopt/fsd";
    import { defineConfig } from "vite-plus";
@@ -50,7 +46,7 @@ Run without arguments, it runs every configured check in parallel and prints the
        banned: { "Tests import from vite-plus/test": ["vitest", "@vitest/*"] },
        peerRanges: "intersect",
      },
-     betterleaks: { extend: { useDefault: true } },
+     h56m: { extend: { path: betterleaks } },
      steiger: { paths: ["apps/*/src"], rules: [...fsd.configs.recommended] },
      textlint: { ignores: ["CHANGELOG.md"], rules: { "preset-ja-technical-writing": true } },
      fallow: { production: true, rules: { "unused-files": "error" } },
@@ -71,12 +67,12 @@ In a repository that uses @r_masseater/msch, `repositoryConfig` writes these sec
 
 ## Section notes
 
-| Section       | Note                                                                                                                               |
-| ------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| `textlint`    | Checks the Markdown that git tracks. List other globs (`files`) and their settings in `textlint.sources`                           |
-| `steiger`     | Checks only the `steiger.paths` directories that hold FSD layer folders such as `features` directly                                |
-| `betterleaks` | `filter` is an expression that accepts a finding. `ignoredSecrets` takes SHA-256 hashes of safe secrets                            |
-| `commitlint`  | Compares against `VPA_BASE`, else `origin/HEAD`, `origin/main` or `origin/master`, else the whole history. Run with `cache: false` |
+| Section      | Note                                                                                                                                     |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `textlint`   | Checks the Markdown that git tracks. List other globs (`files`) and their settings in `textlint.sources`                                 |
+| `steiger`    | Checks only the `steiger.paths` directories that hold FSD layer folders such as `features` directly                                      |
+| `h56m`       | `filter` is an expression that accepts a finding. `ignoredSecrets` takes SHA-256 hashes of safe secrets. `h56m:allow` on a line skips it |
+| `commitlint` | Compares against `VPA_BASE`, else `origin/HEAD`, `origin/main` or `origin/master`, else the whole history. Run with `cache: false`       |
 
 ## Bundled replacements
 

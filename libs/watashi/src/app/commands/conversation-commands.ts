@@ -4,7 +4,7 @@ import type { PlatformError } from "effect";
 import { Argument, Command, Flag } from "effect/cli";
 
 import { authorized } from "#/features/authenticate-user/index.ts";
-import { maskWith, detectorOf, pushSession, summaryOf } from "#/features/push-session/index.ts";
+import { maskWith, pushSession, secretDetector, summaryOf } from "#/features/push-session/index.ts";
 import { asWatashi } from "#/shared/api/index.ts";
 import { settings } from "#/shared/config/index.ts";
 
@@ -49,8 +49,7 @@ export const conversationCommand = Command.make("conversation").pipe(
 /** @internal */
 export const maskCommand = Command.make("mask", {}, () =>
   Effect.gen(function* mask() {
-    const current = yield* settings;
-    const detect = yield* detectorOf(current);
+    const detect = yield* secretDetector;
     const input = yield* readStdin;
     const masked = yield* maskWith(detect)(input);
     const stdio = yield* Stdio.Stdio;

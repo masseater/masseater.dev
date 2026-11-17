@@ -3,7 +3,7 @@ import type { HttpBody, HttpClientError } from "effect/http";
 
 const taggedError = Schema.TaggedError;
 
-const REASONS = ["NotLoggedIn", "Api", "Betterleaks", "Masking", "Login", "Conflicts"] as const;
+const REASONS = ["NotLoggedIn", "Api", "Secrets", "Masking", "Login", "Conflicts"] as const;
 
 /** @internal */
 export class WatashiFailed extends taggedError<WatashiFailed, { readonly brand: unique symbol }>()(

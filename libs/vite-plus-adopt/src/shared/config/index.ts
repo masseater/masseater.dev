@@ -1,7 +1,5 @@
 export type {
   AllowedDependencies,
-  BetterleaksConfig,
-  BetterleaksRule,
   CommitlintConfig,
   DependencyRules,
   FallowConfig,
