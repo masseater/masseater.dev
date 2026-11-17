@@ -1,11 +1,7 @@
 export type {
   Diagnostic,
   GraphEdge,
-  GraphNode,
   ImportTarget,
-  Kind,
-  Layers,
-  Placement,
   Plugin,
   Report,
   Rule,

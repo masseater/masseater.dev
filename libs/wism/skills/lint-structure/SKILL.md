@@ -1,38 +1,37 @@
 ---
 name: lint-structure
 description: >
-  Use when setting up @r_masseater/wism in vite.config.ts, declaring directory kinds with marker
-  files, laying out TypeScript workspaces or Rust crates in FSD layers, writing a structure rule in
-  TypeScript with defineRule, or fixing what wism reports.
+  Use when setting up @r_masseater/wism in vite.config.ts, writing a structure or dependency rule
+  in TypeScript with defineRule and definePlugin, reading the import graph a rule receives, or
+  running wism on a repository.
 metadata:
   type: core
   library: "@r_masseater/wism"
-  library_version: 0.1.0
+  library_version: 0.2.0
 sources:
   - src/app/index.ts
   - src/shared/config/types.ts
-  - src/entities/kind/model/presets.ts
 ---
 
 # lint-structure
 
-wism checks where files sit and what they import. A marker file gives its directory a kind, and
-the kind says which paths may hold files and how its source is layered.
+wism is an engine. It reads the import graph of the files git tracks and runs the TypeScript rules
+that plugins give it. It reports nothing on its own: add a plugin such as `@r_masseater/wism-fsd`.
 
 ## Setup
 
 ```sh
-vp add -D @r_masseater/wism
+vp add -D @r_masseater/wism @r_masseater/wism-fsd
 ```
 
 ```ts
-import { rustCrate, skill, workspace } from "@r_masseater/wism";
 import "@r_masseater/wism/vite";
+import { fsdPreset, rustCrate, skill, workspace } from "@r_masseater/wism-fsd";
 import { defineConfig } from "vite-plus";
 
 export default defineConfig({
   wism: {
-    kinds: [workspace({ paths: ["apps/*", "libs/*"] }), rustCrate(), skill()],
+    ...fsdPreset({ kinds: [workspace({ paths: ["apps/*", "libs/*"] }), rustCrate(), skill()] }),
     ignores: ["**/fixtures/**"],
   },
 });
@@ -42,42 +41,18 @@ Run `wism` in the repository root. It checks the files git tracks, leaving out f
 `linguist-vendored`, `linguist-generated` or `linguist-documentation` and the `ignores` globs. It
 prints `path:line:column severity rule message` and exits with 1 when any error is reported.
 
-## Kinds
-
-A kind has a `name`, a `marker` file and optional `paths` globs that the marker's directory must
-match. A file belongs to the innermost directory that holds a marker.
-
-- `placements` list which files (`files`) may sit where (`allow`). A file outside them is a
-  `placement` error.
-- `layers` split `dir` into the ordered layers `order`. `sliced` layers hold slices, `segmented`
-  layers hold segments, `entries` are a slice's public API, `open` globs may be imported directly,
-  `cross` names the folder for cross-imports such as `@x`, and `moduleFiles` lets Rust use
-  `features.rs` next to `features/`.
-
-The presets `workspace`, `rustCrate` and `skill` cover package.json workspaces in FSD, Cargo crates
-in FSD and the Agent Skill layout. `fsd` returns the first two.
-
-## Built-in rules
-
-`placement`, `loose-file`, `layer-name`, `layer-import`, `cross-slice`, `public-api`,
-`wildcard-export` and `link-target` are on as errors unless `rules` says otherwise.
-
-- Move a module down a layer or into its own slice when `layer-import` or `cross-slice` fires.
-- Import a slice through its `index.*` when `public-api` fires.
-- Track the linked file or fix the path when `link-target` fires.
-
 ## Rules in TypeScript
 
 ```ts
 import { definePlugin, defineRule } from "@r_masseater/wism";
 
 const noOrphans = defineRule({
-  meta: { description: "Every slice is imported by something" },
-  check: ({ nodes, edges, report }) => {
+  meta: { description: "Every TypeScript file is imported by something" },
+  check: ({ files, edges, report }) => {
     const used = new Set(edges.map((edge) => edge.target.value));
-    for (const node of nodes) {
-      if (node.slice !== null && !used.has(node.path)) {
-        report({ path: node.path, message: "is never imported" });
+    for (const file of files) {
+      if (file.endsWith(".ts") && !used.has(file)) {
+        report({ path: file, message: "is never imported" });
       }
     }
   },
@@ -86,5 +61,11 @@ const noOrphans = defineRule({
 export const local = definePlugin({ rules: { "no-orphans": noOrphans } });
 ```
 
-Register it as `plugins: { local }` and turn it on with `"local/no-orphans": "error"`. A rule gets
-every file, a node per file with its kind, layer and slice, and every import edge.
+Register it as `plugins: { local }` and turn it on with `"local/no-orphans": "error"`. Every rule is
+named `plugin/rule`; a rule name without a configured plugin is an error.
+
+A rule gets the repository `root`, every tracked file and every edge. An edge has `from`, the
+written `specifier`, its `line` and `column`, `wildcard` for `export *`, and a `target` that is
+either `{ type: "file", value: path }` for a resolved script import or a Markdown link, or
+`{ type: "module", value: ["features", "sync"] }` for a Rust `crate::`, `self::` or `super::` path
+inside its crate.

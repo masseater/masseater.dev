@@ -2759,7 +2759,7 @@ name = "fu4-core"
 version = "0.1.0"
 dependencies = [
  "anyhow",
- "base64 0.22.1",
+ "base64 0.23.1",
  "camino",
  "github-actions-expressions",
  "github-actions-models",
@@ -11102,7 +11102,6 @@ dependencies = [
 name = "wism-core"
 version = "0.1.0"
 dependencies = [
- "globset",
  "oxc_allocator",
  "oxc_parser",
  "oxc_resolver",
@@ -11110,8 +11109,6 @@ dependencies = [
  "proc-macro2",
  "pulldown-cmark",
  "rayon",
- "serde",
- "serde_json",
  "syn 3.0.10",
  "tracing",
 ]
@@ -11126,7 +11123,6 @@ dependencies = [
  "napi-derive",
  "opentelemetry",
  "opentelemetry_sdk",
- "serde_json",
  "tracing",
  "tracing-opentelemetry",
  "tracing-subscriber",
