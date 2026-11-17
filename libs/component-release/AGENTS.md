@@ -1,3 +1,3 @@
 # @masseater.dev/component-release
 
-This workspace creates, from GitHub Actions, the tags and releases of the apps that release-please versions (yakusu, Pod Rattle, Yohaku).
+This workspace holds the helpers that app release builds share: `bundle-collect`, which copies Tauri bundles into `release-assets/`, and the command runners. Publishing itself goes through `msch-publish` and the publish workflow.

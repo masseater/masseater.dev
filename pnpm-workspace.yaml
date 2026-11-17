@@ -69,7 +69,7 @@ catalog:
   "@snazzah/davey": 0.2.0
   discord.js: 14.28.1
   discord-api-types: 0.38.59
-  oxlint-plugin-eslint: 1.93.0
+  oxlint-plugin-eslint: 1.94.0
   "@cloudflare/workers-types": 5.20261114.1
   "@effect/platform-node": 4.1.4
   "@effect/platform-node-shared": 4.1.4
@@ -85,7 +85,7 @@ catalog:
   "@shadcn/lint": 0.2.5
   "@types/node": 26.6.6
   eslint-plugin-react-hooks: 7.1.1
-  vite: npm:@voidzero-dev/vite-plus-core@1.6.0
+  vite: npm:@voidzero-dev/vite-plus-core@8.3.8000
   eslint-plugin-no-comments: 1.2.1
   eslint-plugin-baseline-js: 0.7.7
   "@html-eslint/eslint-plugin-react": 0.68.0
@@ -198,8 +198,9 @@ catalog:
   "@types/seedrandom": 3.0.8
   claude-code-jsonl-parser: 0.1.3
   synckit: 0.12.3
-  "@oxlint/plugins": 1.93.0
-  oxlint: 1.93.0
+  "@oxlint/plugins": 1.94.0
+  oxlint: 1.94.0
+  oxlint-tsgolint: 7.0.2007
   "@eslint-react/eslint-plugin": 5.30.2
   "@remotion/eslint-plugin": 4.0.543
   "@tanstack/eslint-plugin-query": 5.107.1
@@ -279,7 +280,7 @@ catalogs:
     "@distilled.cloud/cloudflare": 1.0.0-rc.20
     "@effect/atom-react": 4.1.4
     "@huggingface/transformers": 4.3.2
-    "@effect/tsgo": 0.69.0
+    "@effect/tsgo": 0.70.0
     "@elysiajs/eden": 1.4.9
     "@tanstack/react-query": 5.107.1
     "@tanstack/react-start": 1.169.5
@@ -297,7 +298,7 @@ catalogs:
     radix-ui: 1.8.1
     tailwindcss: 4.3.5
     typescript: 7.1.0-beta
-    vite-plus: 1.6.0
+    vite-plus: 1.7.0
 overrides:
   "@feature-sliced/filesystem>typescript": "catalog:stack"
   "langium>vscode-languageserver": "catalog:"
@@ -345,7 +346,7 @@ patchedDependencies:
   "@tanstack/eslint-plugin-start@0.1.0": patches/@tanstack__eslint-plugin-start@0.1.0.patch
   eslint-plugin-drizzle@0.2.3: patches/eslint-plugin-drizzle@0.2.3.patch
   eslint-plugin-react-jsx@^5.30.1: patches/eslint-plugin-react-jsx.patch
-  "@voidzero-dev/vite-plus-core@1.6.0": patches/@voidzero-dev__vite-plus-core@1.6.0.patch
+  "@voidzero-dev/vite-plus-core@8.3.8000": patches/@voidzero-dev__vite-plus-core@8.3.8000.patch
   "@tanstack/intent@0.5.6": patches/@tanstack__intent@0.5.6.patch
 minimumReleaseAgeExclude:
   - "@r_masseater/vite-plus-adopt@0.10.2"
@@ -361,6 +362,24 @@ minimumReleaseAgeExclude:
   - "@better-auth/telemetry@1.7.25"
   - auth@1.7.25
   - better-auth@1.7.25
+  - "@effect/tsgo-darwin-arm64@0.70.0"
+  - "@effect/tsgo-darwin-x64@0.70.0"
+  - "@effect/tsgo-linux-arm64@0.70.0"
+  - "@effect/tsgo-linux-arm@0.70.0"
+  - "@effect/tsgo-linux-x64@0.70.0"
+  - "@effect/tsgo-win32-arm64@0.70.0"
+  - "@effect/tsgo-win32-x64@0.70.0"
+  - "@effect/tsgo@0.70.0"
+  - "@voidzero-dev/vite-plus-core@8.3.8000"
+  - "@voidzero-dev/vite-plus-darwin-arm64@1.7.0"
+  - "@voidzero-dev/vite-plus-darwin-x64@1.7.0"
+  - "@voidzero-dev/vite-plus-linux-arm64-gnu@1.7.0"
+  - "@voidzero-dev/vite-plus-linux-arm64-musl@1.7.0"
+  - "@voidzero-dev/vite-plus-linux-x64-gnu@1.7.0"
+  - "@voidzero-dev/vite-plus-linux-x64-musl@1.7.0"
+  - "@voidzero-dev/vite-plus-win32-arm64-msvc@1.7.0"
+  - "@voidzero-dev/vite-plus-win32-x64-msvc@1.7.0"
+  - vite-plus@1.7.0
 
 cargo:
   enabled: true

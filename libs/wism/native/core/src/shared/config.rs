@@ -75,3 +75,29 @@ impl Config {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::Config;
+    use crate::shared::diagnostic::Severity;
+
+    #[test]
+    fn reads_rule_severities_and_defaults_to_error() {
+        let config: Config = serde_json::from_value(serde_json::json!({
+            "rules": { "placement": "off", "public-api": "warn", "cross-slice": "error" }
+        }))
+        .expect("the config is valid");
+        assert_eq!(config.severity("placement"), None);
+        assert_eq!(config.severity("public-api"), Some(Severity::Warn));
+        assert_eq!(config.severity("cross-slice"), Some(Severity::Error));
+        assert_eq!(config.severity("layer-import"), Some(Severity::Error));
+    }
+
+    #[test]
+    fn rejects_an_unknown_severity() {
+        let parsed: Result<Config, _> = serde_json::from_value(serde_json::json!({
+            "rules": { "placement": "loud" }
+        }));
+        assert!(parsed.is_err());
+    }
+}

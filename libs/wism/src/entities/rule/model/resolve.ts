@@ -1,5 +1,5 @@
-import { settingOf } from "@r_masseater/lint-host";
-import type { Setting } from "@r_masseater/lint-host";
+import { settingOf } from "@masseater.dev/lint-host";
+import type { Setting } from "@masseater.dev/lint-host";
 import { Array as Arr, Option, Record as Rec, String as Str, pipe } from "effect";
 
 import type { Plugin, Rule, RuleEntry, Severity, WismConfig } from "#/shared/config/index.ts";

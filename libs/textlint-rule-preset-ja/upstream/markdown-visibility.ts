@@ -50,6 +50,8 @@ export type Analysis = {
   mask_ends: number[];
   _line_visible_cache?: Map<string, string>;
   _kind_mask_cache?: Map<string, readonly [(readonly [number, number])[], number[]]>;
+  _image_link_start_indexes?: readonly [Map<number, number>, Map<number, number>];
+  _end_quote_closers?: Map<number, string>;
   [key: string]: unknown;
 };
 
