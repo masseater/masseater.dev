@@ -1,7 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
   "env": {
-    "CLAUDE_CODE_ENABLE_FUNCTION_HOOKS": "1"
+    "CLAUDE_CODE_ENABLE_FUNCTION_HOOKS": "1",
+    "VP_REMOTE_CACHE_URL": "https://task-cache.masseater.dev/projects/masseater.dev"
   },
   "attribution": {
     "commit": "",
