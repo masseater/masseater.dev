@@ -29,7 +29,7 @@ thiserror = "2.0.21"
 itertools = "0.15.0"
 anyhow = "1.0.104"
 yaml_serde = "0.10.7"
-base64 = "0.22.1"
+base64 = "0.23.0"
 ureq = { version = "3.5.2", features = ["platform-verifier"] }
 camino = { version = "1.2.6", features = ["serde1"] }
 url = "2.5.8"
