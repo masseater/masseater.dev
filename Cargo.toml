@@ -16,6 +16,8 @@ members = [
   "libs/media-notes",
   "libs/y8/native/core",
   "libs/y8/native/node",
+  "libs/wism/native/core",
+  "libs/wism/native/node",
   "apps/shirushi/src-tauri",
 ]
 
