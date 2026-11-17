@@ -154,17 +154,6 @@ const addsMetadata = Effect.gen(function* metadata() {
   ]);
 }).pipe(Effect.scoped);
 
-const logsMissingBetterleaks = Effect.gen(function* missing() {
-  const fs = yield* FileSystem.FileSystem;
-  const path = yield* Path.Path;
-  const test = yield* setup;
-  yield* append(test, lineOf("1"));
-  yield* stop(test, { WATASHI_BETTERLEAKS: path.join(test.root, "missing-betterleaks") });
-  expect(test.server.count("PUT")).toBe(NONE);
-  const log = yield* fs.readFileString(path.join(test.root, "home", "hook.log"));
-  expect(log).toContain("betterleaks");
-}).pipe(Effect.scoped);
-
 const respectsOptOut = Effect.gen(function* disabled() {
   const test = yield* setup;
   yield* append(test, lineOf("1"));
@@ -192,7 +181,6 @@ layer(nodeServices)("hook stop sends what grew", (it) => {
   it.effect("realigns with the server when the offsets disagree", () => realigns);
   it.effect("sends subagent transcripts as their own files", () => sendsSubagents);
   it.effect("adds the source, the cwd and the cloud session", () => addsMetadata);
-  it.effect("sends nothing and logs when betterleaks is missing", () => logsMissingBetterleaks);
   it.effect("does nothing unless sending is allowed", () => respectsOptOut);
   it.effect("does nothing without a login", () => needsLogin);
 });

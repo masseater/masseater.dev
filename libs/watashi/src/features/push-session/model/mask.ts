@@ -4,10 +4,9 @@ import { WatashiFailed } from "#/shared/lib/errors.ts";
 import { joinLines, parseLines, redactedLine, scanView } from "#/shared/lib/json-lines.ts";
 import type { Line, View } from "#/shared/lib/json-lines.ts";
 
-import type { Detector } from "./betterleaks.ts";
+import type { Detector, Finding } from "./detector.ts";
 import { applyTargets } from "./replace.ts";
 import type { Target, Targets } from "./replace.ts";
-import type { Finding } from "./report.ts";
 
 /** @internal */
 export type Masked = Readonly<{ text: string; redactions: number }>;
