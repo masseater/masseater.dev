@@ -1,8 +1,8 @@
+import { TICKS_PER_WHOLE } from "@r_masseater/fumx-parser";
 import { Array as Arr, Match, Option, Order, Record as Rec, pipe } from "effect";
 import type { MidiData, MidiEvent } from "midi-file";
 
 import type { From } from "#/shared/lib/from.ts";
-import { TICKS_PER_WHOLE } from "#/shared/lib/ticks.ts";
 
 import { channelReadOf } from "./channel.ts";
 import type { ChannelRead } from "./channel.ts";
