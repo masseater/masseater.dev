@@ -11,7 +11,7 @@ import {
 import type {
   AnalysisRequestValue,
   AnalysisResultValue,
-  TranslatorBinding,
+  TranslatorModel,
 } from "#/entities/trait/index.ts";
 import { encodeJson } from "#/shared/db/index.server.ts";
 
@@ -113,7 +113,7 @@ export const buildTraits = ({
   ai,
 }: Readonly<{
   conversation: Conversation;
-  translator: TranslatorBinding;
+  translator: TranslatorModel;
   ai: ProfileModel;
 }>): Effect.Effect<RunSummary, StepFailure> =>
   Effect.gen(function* buildAll() {
