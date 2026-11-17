@@ -1,5 +1,5 @@
-import { rustCrate, skill, workspace } from "@r_masseater/wism";
 import type { WismConfig } from "@r_masseater/wism";
+import { fsdPreset, rustCrate, skill, workspace } from "@r_masseater/wism-fsd";
 import { Array as Arr, Predicate, String as Str, pipe } from "effect";
 
 const NEGATION = "!";
@@ -10,7 +10,8 @@ export interface StructureOptions {
   readonly ignorePatterns: readonly string[];
 }
 
-export const structureOf = ({ members, ignorePatterns }: StructureOptions): WismConfig => ({
-  kinds: [workspace({ paths: members }), rustCrate(), skill()],
-  ignores: pipe(ignorePatterns, Arr.filter(isIgnore)),
-});
+export const structureOf = ({ members, ignorePatterns }: StructureOptions): WismConfig =>
+  fsdPreset({
+    kinds: [workspace({ paths: members }), rustCrate(), skill()],
+    ignores: pipe(ignorePatterns, Arr.filter(isIgnore)),
+  });

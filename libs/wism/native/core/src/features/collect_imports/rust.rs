@@ -2,26 +2,6 @@ use syn::visit::Visit;
 
 use crate::entities::import::{Edge, Target};
 
-const ROOTS: [&str; 2] = ["lib", "main"];
-const BINARIES: &str = "bin";
-const MODULE_INDEX: &str = "mod";
-
-#[must_use]
-pub fn module_of(rest: &str) -> Vec<String> {
-    let trimmed = rest.strip_suffix(".rs").unwrap_or(rest);
-    let mut parts: Vec<String> = trimmed.split('/').map(str::to_owned).collect();
-    if parts.first().is_some_and(|first| first == BINARIES) {
-        return Vec::new();
-    }
-    if parts.len() == 1 && ROOTS.contains(&parts[0].as_str()) {
-        return Vec::new();
-    }
-    if parts.last().is_some_and(|last| last == MODULE_INDEX) {
-        parts.pop();
-    }
-    parts
-}
-
 fn resolve(segments: &[String], current: &[String]) -> Option<Vec<String>> {
     let (first, rest) = segments.split_first()?;
     match first.as_str() {
@@ -194,7 +174,7 @@ pub fn uses(path: &str, text: &str, current: Vec<String>) -> Vec<Edge> {
 
 #[cfg(test)]
 mod tests {
-    use super::{module_of, uses};
+    use super::uses;
     use crate::entities::import::Target;
 
     fn targets(text: &str, current: &[&str]) -> Vec<Vec<String>> {
@@ -206,14 +186,6 @@ mod tests {
                 Target::File(_) => None,
             })
             .collect()
-    }
-
-    #[test]
-    fn maps_files_to_module_paths() {
-        assert_eq!(module_of("lib.rs"), Vec::<String>::new());
-        assert_eq!(module_of("bin/cli.rs"), Vec::<String>::new());
-        assert_eq!(module_of("features/sync/mod.rs"), vec!["features", "sync"]);
-        assert_eq!(module_of("entities/note.rs"), vec!["entities", "note"]);
     }
 
     #[test]
