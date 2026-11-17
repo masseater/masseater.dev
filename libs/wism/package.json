@@ -26,6 +26,7 @@
   "files": [
     "LICENSE",
     "dist",
+    "logo.svg",
     "skills/lint-structure"
   ],
   "type": "module",
