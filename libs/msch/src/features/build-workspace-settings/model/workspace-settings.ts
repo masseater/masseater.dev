@@ -17,10 +17,10 @@ import {
   tasksOf,
 } from "#/entities/workspace/index.ts";
 import type { WorkspaceSource, WorkspaceTasks } from "#/entities/workspace/index.ts";
+import { collectIgnoredDirectories } from "#/shared/lib/ignored-directories.ts";
+import type { IgnoredDirectory } from "#/shared/lib/ignored-directories.ts";
 import { RepositoryFiles, nodeRepositoryFiles } from "#/shared/lib/repository-files.ts";
 
-import { collectIgnoredDirectories } from "./ignored-directories.ts";
-import type { IgnoredDirectory } from "./ignored-directories.ts";
 import { shadcnUiIn } from "./shadcn-ui.ts";
 import { publicEntryFiles } from "./workspace-public-entries.ts";
 
