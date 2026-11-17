@@ -37,7 +37,7 @@ const USAGE = pipe(
 const usage: CommandEffect = Effect.fail(checksFailed(USAGE));
 
 const stagedSecrets = (root: string): CommandEffect =>
-  loadSection(root, "betterleaks").pipe(
+  loadSection(root, "h56m").pipe(
     Effect.flatMap((config) => scanStagedSecrets(config, root)),
     Effect.flatMap(finish),
   );

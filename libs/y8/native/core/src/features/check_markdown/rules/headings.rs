@@ -639,8 +639,7 @@ impl Rule for Md041 {
                 {
                     let tag = TAG_NAME
                         .captures(html.trim_start())
-                        .map(|c| c[1].to_lowercase())
-                        .unwrap_or_default();
+                        .map_or_default(|c| c[1].to_lowercase());
                     if tag != format!("h{level}") {
                         report.context(line, ctx.line(line), false, false);
                     }

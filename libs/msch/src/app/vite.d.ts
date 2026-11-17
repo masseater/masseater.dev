@@ -1,4 +1,5 @@
 import type { Fu4Config } from "@r_masseater/fu4";
+import type { H56mConfig } from "@r_masseater/h56m";
 import type { WismConfig } from "@r_masseater/wism";
 import type { Y8Config } from "@r_masseater/y8";
 import type { OxlintOverride } from "vite-plus/lint";
@@ -44,6 +45,7 @@ declare module "vite" {
   interface UserConfig {
     readonly msch?: MschConfig;
     readonly fu4?: Fu4Config;
+    readonly h56m?: H56mConfig;
     readonly wism?: WismConfig;
     readonly y8?: Y8Config;
   }
