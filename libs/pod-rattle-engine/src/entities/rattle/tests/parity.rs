@@ -71,7 +71,7 @@ enum Event {
 }
 
 fn parity_dir() -> PathBuf {
-    PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../tools/pod-rattle-parity")
+    PathBuf::from(env!("CARGO_MANIFEST_DIR"))
 }
 
 fn render(s: &Scenario) -> Vec<f64> {
@@ -128,7 +128,7 @@ fn reference(name: &str) -> Vec<f64> {
     let dir = std::env::var("POD_RATTLE_REFERENCE")
         .map_or_else(|_| parity_dir().join("reference"), PathBuf::from);
     let bytes = std::fs::read(dir.join(format!("{name}.f64")))
-        .unwrap_or_else(|e| panic!("{name}: {e}. Run `vp run render` in tools/pod-rattle-parity"));
+        .unwrap_or_else(|e| panic!("{name}: {e}. Run `vp run render` in libs/pod-rattle-engine"));
     bytes
         .as_chunks::<8>()
         .0
