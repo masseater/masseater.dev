@@ -1,5 +1,5 @@
-import { Array as Arr, Effect, pipe } from "effect";
-import { isPair, isScalar, parseDocument, visit } from "yaml";
+import { Array as Arr, Effect, Option, pipe } from "effect";
+import { isMap, isPair, isScalar, parseDocument, visit } from "yaml";
 import type { Pair } from "yaml";
 
 import type { Finding, Problem } from "#/shared/lib/problem.ts";
@@ -20,6 +20,26 @@ export const pairsNamed =
     });
     return found;
   };
+
+export const pairIn =
+  (name: string) =>
+  (node: unknown): Option.Option<Pair> =>
+    pipe(
+      Option.liftPredicate(node, isMap),
+      Option.flatMap((map) =>
+        Arr.findFirst(map.items, (item) => isScalar(item.key) && item.key.value === name),
+      ),
+    );
+
+export const keyOffsetIn =
+  (name: string) =>
+  (node: unknown): Option.Option<number> =>
+    pipe(
+      pairIn(name)(node),
+      Option.flatMap(({ key }) => Option.liftPredicate(key, isScalar)),
+      Option.flatMap((key) => Option.fromNullishOr(key.range)),
+      Option.map(([start]) => start),
+    );
 
 export interface WorkflowFinding extends Finding {
   readonly offsetsOf: (source: string) => readonly number[];
