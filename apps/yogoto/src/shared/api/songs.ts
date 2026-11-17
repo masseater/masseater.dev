@@ -36,10 +36,6 @@ export const separateSong =
     settled(() => commands.separateSong({ songId, model }));
 
 /** @internal */
-export const removeSong = (id: string): Effect.Effect<boolean, ApiFailed> =>
-  settled(() => commands.removeSong(id));
-
-/** @internal */
 export const chooseAudioFiles: Effect.Effect<readonly string[], ApiFailed> = Effect.suspend(() =>
   settled(() => commands.chooseAudioFiles()),
 );

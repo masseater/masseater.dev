@@ -6,6 +6,5 @@ export {
   fetchSongs,
   folderOf,
   importSong,
-  removeSong,
   separateSong,
 } from "./songs.ts";

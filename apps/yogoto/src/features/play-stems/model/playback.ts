@@ -8,7 +8,7 @@ import type { Track } from "./tracks.ts";
 
 export type Mix = Readonly<{ muted: readonly string[]; soloed: readonly string[] }>;
 
-type Running = Readonly<{ stop: () => void; remix: (mix: Mix) => void }>;
+export type Running = Readonly<{ stop: () => void; remix: (mix: Mix) => void }>;
 
 export type Playback =
   | Readonly<{ status: "stopped"; position: number }>
