@@ -15,6 +15,7 @@ export interface Command {
   readonly command: string;
   readonly args: readonly string[];
   readonly env?: Readonly<Record<string, string>>;
+  readonly cwd?: string;
 }
 
 type Spawned<Success> = Effect.Effect<
@@ -26,10 +27,16 @@ type Spawned<Success> = Effect.Effect<
 const failed = ({ command, args }: Command): CommandFailed =>
   CommandFailed.make({ message: `${command} ${Arr.join(args, " ")} failed` });
 
-const exitCodeOf = Effect.fn("exitCodeOf")(function* exitCodeOf({ command, args, env }: Command) {
+const exitCodeOf = Effect.fn("exitCodeOf")(function* exitCodeOf({
+  command,
+  args,
+  env,
+  cwd,
+}: Command) {
   const spawner = yield* ChildProcessSpawner.ChildProcessSpawner;
   return yield* spawner.exitCode(
     ChildProcess.make(command, args, {
+      cwd,
       env,
       extendEnv: true,
       stdin: "ignore",
@@ -51,8 +58,9 @@ const mustSucceedWith = (command: Command): Spawned<void> =>
     Effect.asVoid,
   );
 
-const collected = Effect.fn("collected")(function* collected({ command, args, env }: Command) {
+const collected = Effect.fn("collected")(function* collected({ command, args, env, cwd }: Command) {
   const handle = yield* ChildProcess.make(command, args, {
+    cwd,
     env,
     extendEnv: true,
     stdin: "ignore",
