@@ -1,7 +1,6 @@
 import { Array as Arr, Option, pipe } from "effect";
 import { expect, test } from "vite-plus/test";
 
-import { rustCrate, skill, workspace } from "#/entities/kind/@x/layout.ts";
 import type { Kind } from "#/entities/kind/@x/layout.ts";
 
 import { makeLayout } from "./layout.ts";
@@ -22,7 +21,39 @@ const FILES: readonly string[] = [
   "skills/write/SKILL.md",
 ];
 
-const KINDS: readonly Kind[] = [workspace(), rustCrate(), skill()];
+const ORDER: readonly string[] = ["app", "pages", "widgets", "features", "entities", "shared"];
+const SLICED: readonly string[] = ["pages", "widgets", "features", "entities"];
+
+const WORKSPACE: Kind = {
+  name: "workspace",
+  marker: "package.json",
+  layers: {
+    dir: "src",
+    files: ["**/*.ts"],
+    order: ORDER,
+    sliced: SLICED,
+    segmented: ["shared"],
+    entries: ["index.*"],
+  },
+};
+
+const KINDS: readonly Kind[] = [
+  WORKSPACE,
+  {
+    name: "crate",
+    marker: "Cargo.toml",
+    layers: {
+      dir: "src",
+      files: ["**/*.rs"],
+      order: ORDER,
+      sliced: SLICED,
+      segmented: ["shared"],
+      loose: ["lib.rs", "main.rs", "bin/**"],
+      moduleFiles: true,
+    },
+  },
+  { name: "skill", marker: "SKILL.md" },
+];
 
 const layout = makeLayout(KINDS)(FILES);
 
@@ -98,7 +129,7 @@ test("tells loose, outside and ignored files apart", () => {
 });
 
 test("limits a kind to its paths", () => {
-  const limited = makeLayout([workspace({ paths: ["libs/*"] })])(FILES);
+  const limited = makeLayout([{ ...WORKSPACE, paths: ["libs/*"] }])(FILES);
   expect(
     pipe(
       limited.instances,
