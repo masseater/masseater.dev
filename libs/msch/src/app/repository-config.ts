@@ -12,7 +12,7 @@ import {
   lint as preset,
   markdownOf,
   requiredStack,
-  steigerRules,
+  structureOf,
 } from "#/features/define-lint-preset/index.ts";
 
 import { tasksOf } from "./repository-tasks.ts";
@@ -69,7 +69,10 @@ export const repositoryConfig = (options: RepositoryOptions): UserConfig => {
       peerRanges: "intersect",
     },
     betterleaks: betterleaksOf(secrets),
-    steiger: { paths: workspace.sourceDirectories, rules: steigerRules },
+    wism: structureOf({
+      members: workspace.members,
+      ignorePatterns: workspace.lint.ignorePatterns,
+    }),
     textlint: textlintOf(textlint),
     y8: markdownOf(markdown),
     test: { projects: [...workspace.testProjects], passWithNoTests: true },

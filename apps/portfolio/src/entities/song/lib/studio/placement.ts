@@ -2,6 +2,15 @@ import { Schema } from "effect";
 
 import type { Point } from "#/entities/song/lib/dsp/shape.ts";
 
+export interface Sweep {
+  readonly from: number;
+  readonly to: number;
+}
+
+export interface Reversal {
+  readonly from?: number;
+}
+
 export interface Placement {
   readonly gain?: number;
   readonly pan?: number;
@@ -13,13 +22,11 @@ export interface Placement {
   readonly release?: number;
   readonly decay?: number;
   readonly pitch?: readonly Point[];
-  readonly lowPass?: number;
-  readonly lowPassEnd?: number;
+  readonly lowPass?: number | Sweep;
   readonly highPass?: number;
   readonly resonance?: number;
   readonly drive?: number;
-  readonly reverse?: boolean;
-  readonly reverseFrom?: number;
+  readonly reverse?: Reversal;
   readonly midi?: number;
 }
 

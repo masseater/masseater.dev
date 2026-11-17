@@ -1,9 +1,9 @@
+import { present } from "@r_masseater/lint-host";
 import { Array as Arr, Option, String as Str, pipe } from "effect";
 
 import { reportedSeverity } from "#/entities/rule/index.ts";
 import type { ScriptRule } from "#/entities/rule/index.ts";
 import type { Diagnostic, MarkdownNode, Project, Report, Visitors } from "#/shared/config/index.ts";
-import { present } from "#/shared/lib/present.ts";
 import type { NativeTree } from "#/shared/native/index.ts";
 
 import { documentOf } from "./document.ts";

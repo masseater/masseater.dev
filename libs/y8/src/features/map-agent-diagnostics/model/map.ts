@@ -1,9 +1,9 @@
+import { present } from "@r_masseater/lint-host";
 import { Array as Arr, Match, Option, Record as Rec, pipe } from "effect";
 
 import { reportedSeverity } from "#/entities/rule/index.ts";
 import type { AgentRules } from "#/entities/rule/index.ts";
 import type { Diagnostic } from "#/shared/config/index.ts";
-import { present } from "#/shared/lib/present.ts";
 import type { AgentDiagnostic, NativeResult } from "#/shared/native/index.ts";
 
 const SEPARATOR = "/";

@@ -1,3 +1,5 @@
+import { settingOf } from "@r_masseater/lint-host";
+import type { Setting } from "@r_masseater/lint-host";
 import { Array as Arr, Match, Option, Record as Rec, String as Str, pipe } from "effect";
 
 import type {
@@ -6,8 +8,6 @@ import type {
   Y8Config,
   Plugin,
   Rule,
-  RuleEntry,
-  RuleOptions,
   Severity,
 } from "#/shared/config/index.ts";
 
@@ -15,12 +15,8 @@ export const BUILTIN = "markdownlint";
 
 const SEPARATOR = "/";
 const START = 0;
-const NO_OPTIONS: RuleOptions = {};
 
-export interface Setting {
-  readonly severity: Severity;
-  readonly options: RuleOptions;
-}
+export type { Setting } from "@r_masseater/lint-host";
 
 export const reportedSeverity = (setting: Setting): Diagnostic["severity"] =>
   Match.value(setting.severity).pipe(
@@ -60,15 +56,6 @@ interface RuleId {
 
 type PluginEntry = readonly [string, Plugin];
 
-const settingOf = (entry: RuleEntry): Setting =>
-  Match.value(entry).pipe(
-    Match.when(Match.string, (severity): Setting => ({ severity, options: NO_OPTIONS })),
-    Match.orElse(([severity, options]): Setting => ({
-      severity,
-      options: options ?? NO_OPTIONS,
-    })),
-  );
-
 const ruleIdOf = (id: string): RuleId =>
   pipe(
     Str.indexOf(SEPARATOR)(id),
@@ -95,7 +82,7 @@ const coreEntry = (setting: Setting): unknown =>
     Match.orElse((severity): unknown => ({ ...setting.options, severity: coreSeverity(severity) })),
   );
 
-const ENABLED: Setting = { severity: "error", options: NO_OPTIONS };
+const ENABLED: Setting = settingOf("error");
 
 const configured =
   (config: Y8Config, plugin: string) =>

@@ -51,9 +51,10 @@ The root `vite.config.ts` builds the whole configuration with `repositoryConfig`
 ## What repositoryConfig returns
 
 It returns `lint`, `fmt`, `staged`, `test` and `run`.
-It also returns the vite-plus-adopt sections `commitlint`, `dependencyRules`, `betterleaks`, `steiger` and `textlint`.
+It also returns the vite-plus-adopt sections `commitlint`, `dependencyRules`, `betterleaks` and `textlint`.
+The `wism` section declares the layout of workspaces, crates and skills.
 
-Steiger checks the `src` directory of every workspace.
+wism checks the layout and imports of every member workspace, Rust crate and skill.
 The `verify` task depends on every workspace's `verify` and on every root task.
 A task added to `run.tasks` is therefore verified without listing it anywhere.
 The lint overrides already relax the rules for shadcn/ui components, public entries and deploy entries.

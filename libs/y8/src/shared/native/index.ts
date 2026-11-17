@@ -1,10 +1,9 @@
-import { createRequire } from "node:module";
+import { loadAddon } from "@r_masseater/lint-host";
+import { Predicate } from "effect";
+import type { Effect } from "effect";
 
-import { Effect, Predicate } from "effect";
-
-import { Y8Error, failedWith } from "#/shared/lib/errors.ts";
-
-import { addonFile, platformTarget } from "./file.ts";
+import { failedWith } from "#/shared/lib/errors.ts";
+import type { Y8Error } from "#/shared/lib/errors.ts";
 
 export type NodeType =
   | "document"
@@ -124,19 +123,10 @@ const isNative = (value: unknown): value is Native =>
   Predicate.hasProperty(value, "readTexts") &&
   Predicate.isFunction(value.readTexts);
 
-const requireFrom = createRequire(import.meta.url);
-
-const loadFrom = (specifier: string): Effect.Effect<unknown, Y8Error> =>
-  Effect.try({
-    try: (): unknown => requireFrom(specifier),
-    catch: failedWith(`could not load ${specifier}`),
-  });
-
-const PACKAGE = "@r_masseater/y8";
-
-export const native: Effect.Effect<Native, Y8Error> = loadFrom(`${PACKAGE}-${platformTarget}`).pipe(
-  Effect.catchTag("Y8Error", () => loadFrom(`${PACKAGE}/native/${addonFile}`)),
-  Effect.filterOrFail(isNative, () =>
-    Y8Error.make({ message: `no y8 addon for ${platformTarget}` }),
-  ),
-);
+export const native: Effect.Effect<Native, Y8Error> = loadAddon({
+  packageName: "@r_masseater/y8",
+  binary: "y8",
+  from: import.meta.url,
+  isAddon: isNative,
+  failWith: failedWith,
+});

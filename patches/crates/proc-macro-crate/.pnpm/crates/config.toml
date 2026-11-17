@@ -1,0 +1,5 @@
+[source.crates-io]
+replace-with = "pnpm-crates-io"
+
+[source.pnpm-crates-io]
+directory = "crates/crates-io"

@@ -6,6 +6,10 @@ packages:
   - .claude
 
 registry: https://npm.flatt.tech/
+networkConcurrency: 8
+fetchRetries: 6
+fetchRetryMintimeout: 10000
+fetchRetryMaxtimeout: 120000
 
 catalogMode: prefer
 

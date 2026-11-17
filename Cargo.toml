@@ -15,8 +15,11 @@ members = [
   "libs/media-notes",
   "libs/y8/native/core",
   "libs/y8/native/node",
+  "libs/wism/native/core",
+  "libs/wism/native/node",
   "apps/shirushi/src-tauri",
 ]
+exclude = ["patches/crates/proc-macro-crate"]
 
 [workspace.package]
 version = "0.0.0"
