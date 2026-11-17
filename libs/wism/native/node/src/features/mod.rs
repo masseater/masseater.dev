@@ -1,1 +1,1 @@
-pub mod check_structure;
+pub mod collect_graph;

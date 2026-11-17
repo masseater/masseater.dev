@@ -1,6 +1,6 @@
 {
   "name": "@r_masseater/wism",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A structure and dependency linter for TypeScript, Rust and Markdown, written in Rust and configured from vite.config.ts: directory kinds chosen by marker files, allowed layouts, FSD layers and import rules.",
   "keywords": [
     "architecture",
