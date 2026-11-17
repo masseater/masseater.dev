@@ -19,7 +19,9 @@ const requestTo = Effect.fn("requestTo")(function* requestTo(
   path: string,
 ) {
   const repository = yield* Config.String("GITHUB_REPOSITORY");
-  const token = yield* Config.Redacted("GH_TOKEN");
+  const token = yield* Config.Redacted("GH_TOKEN").pipe(
+    Config.orElse(() => Config.Redacted("GITHUB_TOKEN")),
+  );
   return HttpClientRequest.make(method)(`${API}/repos/${repository}/${path}`).pipe(
     HttpClientRequest.bearerToken(Redacted.value(token)),
     HttpClientRequest.setHeaders(HEADERS),
