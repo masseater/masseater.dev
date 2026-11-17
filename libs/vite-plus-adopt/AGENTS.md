@@ -1,7 +1,5 @@
-# vite-plus-adopt
+# @r_masseater/vite-plus-adopt
 
 このワークスペースは `vpa` である。Betterleaks、actionlint、zizmor といった外部チェックを Vite+ に取り込み、すべてのチェックを単一のコマンドで実行する。
 
 サブコマンドを追加しないこと。引数なしで1回実行すると、設定済みのチェックがすべて行われる。betterleaks、actionlint、zizmor は postinstall でインストールし、実行時にダウンロードしないこと。
-
-ユーザーの既存の設定ファイルをvite.config.tsに変換するマイグレーション機能は追加しないこと。リポジトリごとの差分を吸収するのはコストがかかりすぎるため、代わりにコーディングエージェントで移行してもらう。エージェントが対応できるよう、configure-checksのスキルは正確に維持すること。

@@ -28,7 +28,7 @@ type InstallError = VpToolsError | PlatformError.PlatformError;
 const EXECUTABLE = 0o755;
 
 const NOT_INSTALLED =
-  "was not installed. Let your package manager run the postinstall of vite-plus-adopt (allowBuilds in pnpm-workspace.yaml, trustedDependencies in package.json for Bun) and install again.";
+  "was not installed. Let your package manager run the postinstall of @r_masseater/vite-plus-adopt (allowBuilds in pnpm-workspace.yaml, trustedDependencies in package.json for Bun) and install again.";
 
 const currentPlatform = (): Option.Option<Platform> =>
   Arr.findFirst(PLATFORMS, (platform) => platform === `${process.platform}-${process.arch}`);

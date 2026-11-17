@@ -1,13 +1,13 @@
 ---
 name: configure-checks
 description: >
-  Use when configuring or running the vpa CLI of vite-plus-adopt in a Vite+ repository:
+  Use when configuring or running the vpa CLI of @r_masseater/vite-plus-adopt in a Vite+ repository:
   the betterleaks, commitlint, textlint, steiger, fallow and dependencyRules sections of
   vite.config.ts, git hooks, the bundled Feature-Sliced Design Steiger plugin and the
   @arethetypeswrong/core replacement for pack.attw. Also use when a vpa check fails.
 metadata:
   type: core
-  library: "vite-plus-adopt"
+  library: "@r_masseater/vite-plus-adopt"
   library_version: 0.8.1
 sources:
   - src/app/**
@@ -29,20 +29,20 @@ Run without arguments, it runs every configured check in parallel and prints the
 1. Install it and allow its postinstall, which fetches the tool binaries.
 
    ```sh
-   vp add -D vite-plus-adopt
+   vp add -D @r_masseater/vite-plus-adopt
    ```
 
    ```yaml
    allowBuilds:
-     "vite-plus-adopt": true
+     "@r_masseater/vite-plus-adopt": true
    ```
 
-2. Write the sections. `import type {} from "vite-plus-adopt"` types them in `defineConfig`.
+2. Write the sections. `import type {} from "@r_masseater/vite-plus-adopt"` types them in `defineConfig`.
 
    ```ts
+   import type {} from "@r_masseater/vite-plus-adopt";
+   import fsd from "@r_masseater/vite-plus-adopt/fsd";
    import { defineConfig } from "vite-plus";
-   import type {} from "vite-plus-adopt";
-   import fsd from "vite-plus-adopt/fsd";
 
    export default defineConfig({
      commitlint: { extends: ["@commitlint/config-conventional"] },
@@ -71,26 +71,26 @@ In a repository that uses @r_masseater/msch, `repositoryConfig` writes these sec
 
 ## Section notes
 
-| Section       | Note                                                                                                     |
-| ------------- | -------------------------------------------------------------------------------------------------------- |
-| `textlint`    | Checks the Markdown that git tracks. List other globs (`files`) and their settings in `textlint.sources` |
-| `steiger`     | Checks only the `steiger.paths` directories that hold FSD layer folders such as `features` directly      |
-| `betterleaks` | `filter` is an expression that accepts a finding. `ignoredSecrets` takes SHA-256 hashes of safe secrets  |
-| `commitlint`  | Compares against `VPA_BASE` (default `origin/main`) like the git-history checks. Run with `cache: false` |
+| Section       | Note                                                                                                                               |
+| ------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `textlint`    | Checks the Markdown that git tracks. List other globs (`files`) and their settings in `textlint.sources`                           |
+| `steiger`     | Checks only the `steiger.paths` directories that hold FSD layer folders such as `features` directly                                |
+| `betterleaks` | `filter` is an expression that accepts a finding. `ignoredSecrets` takes SHA-256 hashes of safe secrets                            |
+| `commitlint`  | Compares against `VPA_BASE`, else `origin/HEAD`, `origin/main` or `origin/master`, else the whole history. Run with `cache: false` |
 
 ## Bundled replacements
 
-`vite-plus-adopt/fsd` bundles @feature-sliced/steiger-plugin with the same rules and `configs.recommended`.
+`@r_masseater/vite-plus-adopt/fsd` bundles @feature-sliced/steiger-plugin with the same rules and `configs.recommended`.
 vpa does not use Steiger's CLI.
 The plugin pulls in TypeScript 5.
 Add `overrides: { "steiger>@feature-sliced/steiger-plugin": "-" }` to `pnpm-workspace.yaml` to drop it.
 
-`vite-plus-adopt/attw` has the API of @arethetypeswrong/core on TypeScript 7.1 alone.
+`@r_masseater/vite-plus-adopt/attw` has the API of @arethetypeswrong/core on TypeScript 7.1 alone.
 Pass it as `pack.attw.module`.
 
 ```ts
+import * as attw from "@r_masseater/vite-plus-adopt/attw";
 import { defineConfig } from "vite-plus";
-import * as attw from "vite-plus-adopt/attw";
 
 export default defineConfig({
   pack: { attw: { module: attw, profile: "esm-only", level: "error" } },

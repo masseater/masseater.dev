@@ -1,7 +1,7 @@
 {
-  "name": "vite-plus-adopt",
+  "name": "@r_masseater/vite-plus-adopt",
   "version": "0.11.0",
-  "description": "Run the checks Vite+ does not cover (secrets, GitHub Actions workflows, commit messages, prose, Markdown, dependency rules, Feature-Sliced Design, dead code) from settings in vite.config.ts, with one command.",
+  "description": "Adopt Betterleaks, actionlint, zizmor, commitlint, textlint, Steiger and dependency checks into Vite+ through the settings in vite.config.ts, and ship the Feature-Sliced Design Steiger plugin and @arethetypeswrong/core for TypeScript 7.",
   "keywords": [
     "actionlint",
     "arethetypeswrong",
