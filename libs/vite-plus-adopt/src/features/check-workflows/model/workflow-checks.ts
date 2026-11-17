@@ -1,6 +1,6 @@
 import { Config, Effect, FileSystem, Option, Path, pipe } from "effect";
 
-import { ACTIONLINT, ZIZMOR, runVendored } from "#/entities/binary/index.ts";
+import { ZIZMOR, runVendored } from "#/entities/binary/index.ts";
 import type { Binary } from "#/entities/binary/index.ts";
 import type { Check } from "#/entities/check/index.ts";
 
@@ -19,9 +19,6 @@ const onWorkflows =
       const ran = yield* runVendored(binary, { root, args: resolvedArgs });
       return Option.some(ran);
     });
-
-/** @internal */
-export const actionlintCheck = onWorkflows(ACTIONLINT, Effect.succeed([]));
 
 const zizmorArgs = Effect.gen(function* zizmorArgs() {
   const remote = yield* Config.option(Config.String("CLAUDE_CODE_REMOTE")).pipe(Effect.orDie);
