@@ -1,7 +1,5 @@
-import { Array as Arr, Effect, Option, Path, String as Str, pipe } from "effect";
+import { Array as Arr, Effect, Option, String as Str, pipe } from "effect";
 import { Base64, Base64Url } from "effect/encoding";
-
-import { BETTERLEAKS_VERSION } from "#/shared/config/index.ts";
 
 import { encodeJson } from "./json-lines.ts";
 import type { Json } from "./json-lines.ts";
@@ -274,17 +272,3 @@ export const imageLine = (data: string): Effect.Effect<string> =>
       content: [{ type: "image", source: { type: "base64", media_type: "image/png", data } }],
     },
   });
-
-/** @internal */
-export const vendoredBetterleaks: Effect.Effect<string, never, Path.Path> = Effect.service(
-  Path.Path,
-).pipe(
-  Effect.map((path) =>
-    path.resolve(
-      import.meta.dirname,
-      "../../../../../node_modules/@r_masseater/vite-plus-adopt/vendor/betterleaks",
-      BETTERLEAKS_VERSION,
-      "betterleaks",
-    ),
-  ),
-);

@@ -8,6 +8,8 @@ import { settingsInvalid } from "./workspace-config-source.ts";
 
 export const VERIFY_TASK = ["tasks", "verify"] as const;
 
+export const TEST_TASK = ["tasks", "test"] as const;
+
 export const RUN_TASKS = ["run", "tasks"] as const;
 
 export interface WorkspaceTasks {
@@ -41,7 +43,10 @@ export const tasksOf =
       Option.match({
         onNone: () => NO_TASKS,
         onSome: (name) => ({
-          verify: Arr.filter([`${name}#verify`], () => definesTask(VERIFY_TASK)(program)),
+          verify: Arr.getSomes([
+            Option.liftPredicate(`${name}#verify`, () => definesTask(VERIFY_TASK)(program)),
+            Option.liftPredicate(`${name}#test`, () => definesTask(TEST_TASK)(program)),
+          ]),
         }),
       }),
     );
