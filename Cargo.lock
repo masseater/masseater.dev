@@ -1760,13 +1760,18 @@ dependencies = [
 name = "desktop-shell"
 version = "0.0.0"
 dependencies = [
- "local-mcp",
+ "axum",
+ "constant_time_eq",
+ "getrandom 0.4.3",
+ "rmcp",
  "tauri",
  "tauri-plugin-dialog",
  "tauri-plugin-localhost",
  "tauri-plugin-prevent-default",
  "tauri-plugin-single-instance",
  "tauri-plugin-window-state",
+ "tempfile",
+ "tokio",
  "url",
 ]
 
@@ -4076,18 +4081,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4744e383959f0db86ede514b809b1c53251889093803c05267acc7d4e7030d70"
 
 [[package]]
-name = "local-mcp"
-version = "0.0.0"
-dependencies = [
- "axum",
- "constant_time_eq",
- "getrandom 0.4.3",
- "rmcp",
- "tempfile",
- "tokio",
-]
-
-[[package]]
 name = "lock_api"
 version = "0.4.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4144,7 +4137,7 @@ checksum = "47e1ffaa40ddd1f3ed91f717a33c8c0ee23fff369e3aa8772b9605cc1d22f4c3"
 name = "media-notes"
 version = "0.0.0"
 dependencies = [
- "local-mcp",
+ "desktop-shell",
  "regex",
  "reqwest",
  "rmcp",
@@ -7076,7 +7069,6 @@ version = "0.0.0"
 dependencies = [
  "axum",
  "desktop-shell",
- "local-mcp",
  "media-notes",
  "reqwest",
  "rmcp",
@@ -9984,7 +9976,6 @@ dependencies = [
  "desktop-shell",
  "dunce",
  "keyring",
- "local-mcp",
  "log",
  "oauth2",
  "regex",

@@ -149,7 +149,7 @@ impl ServerHandler for Tools {
 async fn signed_in(State(syncer): State<Syncer>, RawQuery(query): RawQuery) -> Response {
     let callback = format!(
         "http://{}:{PORT}{CALLBACK_PATH}?{}",
-        local_mcp::HOST,
+        desktop_shell::HOST,
         query.unwrap_or_default()
     );
     match syncer.callback(&callback).await {
@@ -164,11 +164,13 @@ async fn signed_in(State(syncer): State<Syncer>, RawQuery(query): RawQuery) -> R
 fn router(store: Store, syncer: Syncer, token: String) -> Router {
     Router::new()
         .route(CALLBACK_PATH, get(signed_in).with_state(syncer))
-        .merge(local_mcp::router(token, move || Tools::new(store.clone())))
+        .merge(desktop_shell::mcp_router(token, move || {
+            Tools::new(store.clone())
+        }))
 }
 
 pub async fn serve(store: Store, syncer: Syncer, token: String) -> Outcome<()> {
-    local_mcp::serve(PORT, router(store, syncer, token)).await?;
+    desktop_shell::serve_mcp(PORT, router(store, syncer, token)).await?;
     Ok(())
 }
 
