@@ -1,4 +1,4 @@
-import { Array as Arr, Match, Option, String as Str, pipe } from "effect";
+import { Array as Arr, Option, String as Str, pipe } from "effect";
 import type { Code, Nodes } from "mdast";
 import { fromMarkdown } from "mdast-util-from-markdown";
 import { frontmatterFromMarkdown } from "mdast-util-frontmatter";
@@ -18,7 +18,7 @@ const NEWLINE = "\n";
 
 const FRONTMATTER = "yaml";
 
-const NO_UNITS: readonly Unit[] = [];
+const NO_NODES: readonly Nodes[] = [];
 
 const looksLikeMarkdown = (text: string): boolean => SIGNS.test(text) && !MARKUP_START.test(text);
 
@@ -61,11 +61,12 @@ const codeUnits = (text: string, code: Code, span: Span): readonly Unit[] => [
   { kind: "nested", format: code.lang ?? "", ...fencedBodyOf(text, span) },
 ];
 
-const childrenOf = (node: Nodes): readonly Nodes[] =>
-  Match.value(node).pipe(
-    Match.when({ children: Match.defined }, ({ children }) => children),
-    Match.orElse(() => []),
-  );
+const childrenOf = (node: Nodes): readonly Nodes[] => {
+  if ("children" in node) {
+    return node.children;
+  }
+  return NO_NODES;
+};
 
 const imagesIn = (node: Nodes): readonly Span[] => {
   if (node.type === "image" || node.type === "imageReference") {
@@ -102,40 +103,52 @@ const blockUnits = (block: Nodes, span: Span): readonly Unit[] => {
   ];
 };
 
+const HTML = "html";
+
+const nestedUnits = (format: string, span: Span): readonly Unit[] => [
+  { kind: "nested", format, ...span },
+];
+
+const nestedIn = (text: string, node: Nodes, span: Span): Option.Option<readonly Unit[]> => {
+  if (node.type === "code") {
+    return Option.some(codeUnits(text, node, span));
+  }
+  if (node.type === HTML) {
+    return Option.some(nestedUnits(HTML, span));
+  }
+  if (node.type === FRONTMATTER) {
+    return Option.some(nestedUnits(FRONTMATTER, bodyOf(text, span)));
+  }
+  return Option.none();
+};
+
+const proseIn = (node: Nodes, span: Span): Option.Option<readonly Unit[]> => {
+  if (node.type === "paragraph" || node.type === "heading") {
+    return Option.some(blockUnits(node, span));
+  }
+  if (node.type === "tableCell" || node.type === "definition") {
+    return Option.some([{ kind: "prose", ...span }]);
+  }
+  return Option.none();
+};
+
+const leafUnits = (text: string, node: Nodes, span: Span): Option.Option<readonly Unit[]> =>
+  pipe(
+    nestedIn(text, node, span),
+    Option.orElse(() => proseIn(node, span)),
+  );
+
 const unitsIn = (text: string, node: Nodes): readonly Unit[] =>
-  Option.match(spanOf(node), {
-    onNone: () =>
+  pipe(
+    spanOf(node),
+    Option.flatMap((span) => leafUnits(text, node, span)),
+    Option.getOrElse(() =>
       pipe(
         childrenOf(node),
         Arr.flatMap((child) => unitsIn(text, child)),
       ),
-    onSome: (span) =>
-      Match.value(node).pipe(
-        Match.when({ type: "code" }, (code) => codeUnits(text, code, span)),
-        Match.when({ type: "html" }, (): readonly Unit[] => [
-          { kind: "nested", format: "html", ...span },
-        ]),
-        Match.when({ type: "yaml" }, (): readonly Unit[] => [
-          { kind: "nested", format: "yaml", ...bodyOf(text, span) },
-        ]),
-        Match.whenOr({ type: "paragraph" }, { type: "heading" }, (block) =>
-          blockUnits(block, span),
-        ),
-        Match.whenOr({ type: "tableCell" }, { type: "definition" }, (): readonly Unit[] => [
-          { kind: "prose", ...span },
-        ]),
-        Match.orElse(() => {
-          const children = childrenOf(node);
-          if (Arr.isReadonlyArrayEmpty(children)) {
-            return NO_UNITS;
-          }
-          return pipe(
-            children,
-            Arr.flatMap((child) => unitsIn(text, child)),
-          );
-        }),
-      ),
-  });
+    ),
+  );
 
 const markdownUnitsOf = (text: string): readonly Unit[] =>
   unitsIn(
