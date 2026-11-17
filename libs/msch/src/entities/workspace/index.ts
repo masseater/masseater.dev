@@ -26,6 +26,7 @@ export { prefixed, withoutRelative } from "./model/workspace-patterns.ts";
 export {
   NO_TASKS,
   RUN_TASKS,
+  TEST_TASK,
   VERIFY_TASK,
   definesTask,
   hasVerifyTask,

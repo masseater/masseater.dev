@@ -15,7 +15,6 @@ import {
   nonSecretLine,
   pick,
   userMessage,
-  vendoredBetterleaks,
 } from "#/shared/lib/fake-secrets.test.support.ts";
 import type { FakeSecret, Placement } from "#/shared/lib/fake-secrets.test.support.ts";
 import { encodeJson, isJsonArray, isObject, parseLines } from "#/shared/lib/json-lines.ts";
@@ -35,10 +34,7 @@ const REPEATED = 3;
 const NONE = 0;
 const ONE = 1;
 
-const realDetector = vendoredBetterleaks.pipe(
-  Effect.flatMap((path) => resolveBetterleaks(Option.some(path))),
-  Effect.flatMap(betterleaksDetector),
-);
+const realDetector = resolveBetterleaks(Option.none()).pipe(Effect.flatMap(betterleaksDetector));
 
 const stringsOf = (value: Json): readonly string[] => {
   if (typeof value === "string") {
