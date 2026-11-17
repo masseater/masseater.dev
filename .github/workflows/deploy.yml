@@ -11,8 +11,13 @@ on:
         required: true
       NPM_TOKEN:
         required: true
+      TAKUMI_GUARD_TOKEN:
+        required: false
 
 permissions: {}
+
+env:
+  TAKUMI_GUARD_TOKEN: ${{ secrets.TAKUMI_GUARD_TOKEN }}
 
 jobs:
   bootstrap:

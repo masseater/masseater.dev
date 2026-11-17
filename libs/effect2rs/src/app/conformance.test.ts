@@ -75,7 +75,7 @@ layer(NodeServices.layer)("conformance", (it) => {
         definitions: conformance,
       });
       yield* Effect.promise(() =>
-        expect(source).toMatchFileSnapshot("../../conformance/protocol.rs"),
+        expect(source).toMatchFileSnapshot("../../conformance/src/shared/protocol.rs"),
       );
     }),
   );

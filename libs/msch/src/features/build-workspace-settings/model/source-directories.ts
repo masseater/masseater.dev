@@ -5,6 +5,7 @@ import { RepositoryFiles } from "#/shared/lib/repository-files.ts";
 import { collectIgnoredDirectories } from "./ignored-directories.ts";
 
 const SOURCE_DIRECTORY = "src";
+const RUST_MANIFEST = "Cargo.toml";
 const READ_CONCURRENCY = 16;
 
 export const directoryLayoutIn = Effect.fn("directoryLayoutIn")(function* directoryLayoutIn(
@@ -16,11 +17,21 @@ export const directoryLayoutIn = Effect.fn("directoryLayoutIn")(function* direct
     directories,
     (directory) => {
       const source = files.join(directory, SOURCE_DIRECTORY);
-      return files
-        .isDirectory(files.join(root, source))
-        .pipe(
-          Effect.map((isDirectory) => pipe(isDirectory, Option.filter(Boolean), Option.as(source))),
-        );
+      return Effect.all(
+        [
+          files.isDirectory(files.join(root, source)),
+          files.exists(files.join(root, directory, RUST_MANIFEST)),
+        ],
+        { concurrency: "unbounded" },
+      ).pipe(
+        Effect.map(([isDirectory, isRust]) =>
+          pipe(
+            isDirectory,
+            Option.filter((found) => found && !isRust),
+            Option.as(source),
+          ),
+        ),
+      );
     },
     { concurrency: READ_CONCURRENCY },
   );

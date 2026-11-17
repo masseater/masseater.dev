@@ -7,7 +7,6 @@ export type {
   CommitlintConfig,
   DependencyRules,
   FallowConfig,
-  MarkdownlintConfig,
   SkillsSection,
   SteigerConfig,
   SteigerSection,

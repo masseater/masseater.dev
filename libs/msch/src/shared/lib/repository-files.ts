@@ -1,4 +1,10 @@
 import {
+  NodeChildProcessSpawner,
+  NodeFileSystem,
+  NodePath,
+  NodeStdio,
+} from "@effect/platform-node-shared";
+import {
   Array as Arr,
   Context,
   Effect,
@@ -14,7 +20,12 @@ import { Digest } from "effect/crypto";
 import { ChildProcess, ChildProcessSpawner } from "effect/process";
 
 import { groupOf } from "./match-groups.ts";
-import { nodeServicesLayer } from "./node-services.ts";
+
+/** @internal */
+export const nodeServicesLayer = Layer.provideMerge(
+  NodeChildProcessSpawner.layer,
+  Layer.mergeAll(NodeFileSystem.layer, NodePath.layer, NodeStdio.layer),
+);
 
 const MISSING_SIZE = 0;
 const GENERATED_PATHSPEC = ":(attr:linguist-generated)";

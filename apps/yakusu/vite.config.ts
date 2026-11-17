@@ -10,17 +10,17 @@ export default defineConfig({
       verify: { command: [], dependsOn: ["cargo"] },
       "release:linux": {
         command:
-          "node bin/fetch-runtime.ts linux-x64 && cargo test --package yakusu --test engine --locked -- --ignored && tauri build --config src-tauri/tauri.release.conf.json --bundles deb,appimage && bundle-collect deb appimage",
+          "node bin/fetch-runtime.ts linux-x64 && cargo test --package yakusu --lib --locked -- --ignored translates_with_the_downloaded_model && tauri build --config src-tauri/tauri.release.conf.json --bundles deb,appimage && bundle-collect deb appimage",
         cache: false,
       },
       "release:windows": {
         command:
-          "node bin/fetch-runtime.ts windows-x64 && cargo test --package yakusu --test engine --locked -- --ignored && tauri build --config src-tauri/tauri.release.conf.json --bundles nsis && bundle-collect nsis",
+          "node bin/fetch-runtime.ts windows-x64 && cargo test --package yakusu --lib --locked -- --ignored translates_with_the_downloaded_model && tauri build --config src-tauri/tauri.release.conf.json --bundles nsis && bundle-collect nsis",
         cache: false,
       },
       "release:macos": {
         command:
-          "node bin/fetch-runtime.ts macos-arm64 && cargo test --package yakusu --test engine --locked -- --ignored && tauri build --config src-tauri/tauri.release.conf.json --bundles dmg && bundle-collect dmg",
+          "node bin/fetch-runtime.ts macos-arm64 && cargo test --package yakusu --lib --locked -- --ignored translates_with_the_downloaded_model && tauri build --config src-tauri/tauri.release.conf.json --bundles dmg && bundle-collect dmg",
         cache: false,
       },
       "release:check:linux": {

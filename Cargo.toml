@@ -10,12 +10,12 @@ members = [
   "tools/seikin-dance",
   "tools/pod-rattle-host",
   "tools/xtask",
-  "libs/effect2rs",
+  "libs/effect2rs/conformance",
   "libs/local-mcp",
   "libs/desktop-shell",
   "libs/media-notes",
-  "libs/mdlint/native/core",
-  "libs/mdlint/native/node",
+  "libs/y8/native/core",
+  "libs/y8/native/node",
   "apps/shirushi/src-tauri",
 ]
 

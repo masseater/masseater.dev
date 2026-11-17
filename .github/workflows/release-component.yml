@@ -11,10 +11,13 @@ on:
       TAURI_SIGNING_PRIVATE_KEY:
         description: The updater signing key; the caller passes it by name so the environment secret of the build job reaches it
         required: false
+      TAKUMI_GUARD_TOKEN:
+        required: false
 
 permissions: {}
 
 env:
+  TAKUMI_GUARD_TOKEN: ${{ secrets.TAKUMI_GUARD_TOKEN }}
   CARGO_TERM_COLOR: always
   GIT_CONFIG_COUNT: 1
   GIT_CONFIG_KEY_0: core.autocrlf

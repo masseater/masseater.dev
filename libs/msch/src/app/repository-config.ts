@@ -5,10 +5,12 @@ import type { UserConfig } from "vite-plus";
 import type { OxlintOverride } from "vite-plus/lint";
 
 import type { WorkspaceSettings } from "#/features/build-workspace-settings/index.ts";
+import type { MarkdownOptions } from "#/features/define-lint-preset/index.ts";
 import {
   decisionTestRules,
   generated,
   lint as preset,
+  markdownOf,
   requiredStack,
   steigerRules,
 } from "#/features/define-lint-preset/index.ts";
@@ -22,6 +24,7 @@ export interface RepositoryOptions {
   readonly overrides?: readonly OxlintOverride[];
   readonly secrets?: SecretOptions;
   readonly textlint?: TextOptions;
+  readonly markdown?: MarkdownOptions;
   readonly run?: { readonly tasks?: Readonly<Record<string, string>> };
 }
 
@@ -50,7 +53,7 @@ const lintOf = ({
 });
 
 export const repositoryConfig = (options: RepositoryOptions): UserConfig => {
-  const { workspace, secrets = {}, textlint = {}, run = {} } = options;
+  const { workspace, secrets = {}, textlint = {}, markdown = {}, run = {} } = options;
   return {
     commitlint: { extends: [COMMIT_CONVENTION] },
     dependencyRules: {
@@ -68,6 +71,7 @@ export const repositoryConfig = (options: RepositoryOptions): UserConfig => {
     betterleaks: betterleaksOf(secrets),
     steiger: { paths: workspace.sourceDirectories, rules: steigerRules },
     textlint: textlintOf(textlint),
+    y8: markdownOf(markdown),
     test: { projects: [...workspace.testProjects], passWithNoTests: true },
     staged: { "*": "vp fmt --no-error-on-unmatched-pattern" },
     fmt: {
