@@ -50,7 +50,8 @@ const PlanSchema = Schema.Struct({
   hook: Schema.Boolean,
 });
 
-type Plan = typeof PlanSchema.Type;
+/** @internal */
+export type Plan = typeof PlanSchema.Type;
 
 const AssetCount = Schema.fromJsonString(Schema.Finite);
 
