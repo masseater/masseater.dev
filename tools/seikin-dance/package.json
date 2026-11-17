@@ -5,6 +5,7 @@
   "type": "module",
   "devDependencies": {
     "@mediapipe/tasks-vision": "1.2.3",
+    "@r_masseater/msch": "workspace:*",
     "vite-plus": "catalog:stack"
   }
 }

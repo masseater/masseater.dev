@@ -1,4 +1,5 @@
 import { tauriAppConfig, tauriAppTasks } from "@masseater.dev/tauri-app/vite";
+import { cargoInputs } from "@r_masseater/msch/cargo-inputs";
 import { Option } from "effect";
 import { defineConfig, mergeConfig } from "vite-plus";
 
@@ -12,7 +13,7 @@ export default defineConfig({
     tasks: {
       ...tauriAppTasks({
         crate: "yohaku-desktop",
-        workspaceInputs: ["libs/desktop-shell/**"],
+        input: await cargoInputs({ directory: import.meta.dirname }),
       }),
       verify: { command: [], dependsOn: ["cargo"] },
       "release:tag": { command: "component-tag yohaku", cache: false },

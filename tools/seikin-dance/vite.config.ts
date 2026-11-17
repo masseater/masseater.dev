@@ -1,3 +1,4 @@
+import { cargoInputs } from "@r_masseater/msch/cargo-inputs";
 import { defineConfig } from "vite-plus";
 
 export default defineConfig({
@@ -9,17 +10,11 @@ export default defineConfig({
           "cargo fmt -p seikin-dance --check && cargo clippy -p seikin-dance --all-targets -- -D warnings && cargo test -p seikin-dance",
         cache: {
           input: [
-            "Cargo.toml",
-            "package.json",
-            "src/**",
-            "tests/**",
+            ...(await cargoInputs({ directory: import.meta.dirname })),
             {
               pattern: "apps/portfolio/src/features/dance-stage/model/generated/track.json",
               base: "workspace",
             },
-            { pattern: "Cargo.lock", base: "workspace" },
-            { pattern: "Cargo.toml", base: "workspace" },
-            { pattern: "rust-toolchain.toml", base: "workspace" },
           ],
           output: [],
         },
