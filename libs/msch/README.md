@@ -18,15 +18,16 @@ Guidance for agents ships in the package as TanStack Intent skills. Load one wit
 
 The package has these entry points.
 
-| Entry point                            | Contents                                                     |
-| -------------------------------------- | ------------------------------------------------------------ |
-| `msch` (bin)                           | Runs every check against the repository                      |
-| `msch-publish` (bin)                   | Plans and publishes a workspace to npm and GitHub Releases   |
-| `@r_masseater/msch/config`             | `repositoryConfig`, which builds the root `vite.config.ts`   |
-| `@r_masseater/msch/workspace-settings` | `workspaceSettings`, which loads the settings of a workspace |
-| `@r_masseater/msch/lint`               | The oxlint preset and rule sets                              |
-| `@r_masseater/msch/oxlint`             | A JS plugin that reports msch findings as oxlint diagnostics |
-| `@r_masseater/msch/decision-rules`     | The decision rule plugin that the preset loads               |
+| Entry point                            | Contents                                                      |
+| -------------------------------------- | ------------------------------------------------------------- |
+| `msch` (bin)                           | Runs every check against the repository                       |
+| `msch-changed` (bin)                   | Runs a command on the workspaces that changed since it passed |
+| `msch-publish` (bin)                   | Plans and publishes a workspace to npm and GitHub Releases    |
+| `@r_masseater/msch/config`             | `repositoryConfig`, which builds the root `vite.config.ts`    |
+| `@r_masseater/msch/workspace-settings` | `workspaceSettings`, which loads the settings of a workspace  |
+| `@r_masseater/msch/lint`               | The oxlint preset and rule sets                               |
+| `@r_masseater/msch/oxlint`             | A JS plugin that reports msch findings as oxlint diagnostics  |
+| `@r_masseater/msch/decision-rules`     | The decision rule plugin that the preset loads                |
 
 ## Published to
 
