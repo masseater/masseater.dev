@@ -1,4 +1,4 @@
-import { present } from "@r_masseater/lint-host";
+import { present } from "@masseater.dev/lint-host";
 import { Option } from "effect";
 
 import type { Kind } from "#/shared/config/index.ts";
