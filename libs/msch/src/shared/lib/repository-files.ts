@@ -29,6 +29,7 @@ export const nodeServicesLayer = Layer.provideMerge(
 
 const MISSING_SIZE = 0;
 const GENERATED_PATHSPEC = ":(attr:linguist-generated)";
+const OWNED_PATHSPECS = [":(exclude,attr:linguist-vendored)", ":(exclude,attr:linguist-generated)"];
 const LISTED_ARGS = ["--cached", "--others", "--exclude-standard"];
 const IGNORED_ARGS = ["--others", "--ignored", "--exclude-standard"];
 const STAGED_ARGS = ["--stage"];
@@ -49,6 +50,7 @@ export class RepositoryFiles extends Context.Service<
     readonly hash: (text: string) => Effect.Effect<string>;
     readonly generatedFiles: (root: string) => Effect.Effect<readonly string[]>;
     readonly listedFiles: (root: string) => Effect.Effect<readonly string[]>;
+    readonly ownedFiles: (root: string) => Effect.Effect<readonly string[]>;
     readonly linkedFiles: (root: string) => Effect.Effect<readonly string[]>;
     readonly readLink: (file: string) => Effect.Effect<Option.Option<string>>;
     readonly mergeBase: (root: string, revision: string) => Effect.Effect<Option.Option<string>>;
@@ -166,6 +168,7 @@ export const nodeRepositoryFiles = Layer.effect(
           Effect.map(Arr.map((file) => path.join(root, file))),
         ),
       listedFiles: (root) => gitFiles(root, LISTED_ARGS),
+      ownedFiles: (root) => gitFiles(root, [...LISTED_ARGS, "--", ...OWNED_PATHSPECS]),
       linkedFiles: (root) => gitFiles(root, STAGED_ARGS).pipe(Effect.map(Arr.flatMap(linkName))),
       readLink: (file) => fs.readLink(file).pipe(Effect.option),
       mergeBase: (root, revision) =>

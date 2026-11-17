@@ -1,0 +1,1 @@
+echo '::save-state name=foo::bar'

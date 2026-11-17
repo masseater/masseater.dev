@@ -1,6 +1,7 @@
 import { BINARY_DATA } from "./readonly-binary.config.ts";
 import { BROWSER_HANDLES, WEBGPU_HANDLES } from "./readonly-browser.config.ts";
 import { lintToolReadonlyAllow } from "./readonly-lint-tools.config.ts";
+import { markdownReadonlyAllow } from "./readonly-markdown.config.ts";
 
 export const readonlyParameterAllow = [
   {
@@ -183,9 +184,7 @@ export const readonlyParameterAllow = [
     package: "@discordjs/voice",
     name: ["AudioPlayer", "VoiceConnection"],
   },
-  { from: "package" as const, package: "mdast", name: ["Root", "RootContent", "Yaml"] },
-  { from: "package" as const, package: "@types/mdast", name: ["Code", "Nodes"] },
-  { from: "package" as const, package: "@types/hast", name: ["Element", "RootContent"] },
+  ...markdownReadonlyAllow,
   { from: "package" as const, package: "ical.js", name: "Component" },
   {
     from: "package" as const,

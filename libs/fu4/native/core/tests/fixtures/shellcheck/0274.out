@@ -1,0 +1,2 @@
+SC2046:warning:1:15: Quote this to prevent word splitting
+SC2006:style:1:15: Use $(...) notation instead of legacy backticks `...`

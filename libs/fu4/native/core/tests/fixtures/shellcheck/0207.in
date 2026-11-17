@@ -1,0 +1,1 @@
+echo '::add-path::/path/to/foo'

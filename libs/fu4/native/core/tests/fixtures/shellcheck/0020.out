@@ -1,0 +1,2 @@
+SC2086:info:1:4: Double quote to prevent globbing and word splitting
+SC2086:info:1:18: Double quote to prevent globbing and word splitting

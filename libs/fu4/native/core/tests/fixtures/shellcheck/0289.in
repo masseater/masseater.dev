@@ -1,0 +1,1 @@
+echo credentials value must be an object
