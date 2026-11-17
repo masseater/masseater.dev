@@ -1,10 +1,9 @@
 import { Array as Arr, Option, pipe } from "effect";
-import { isMap, isScalar, isSeq } from "yaml";
-import type { Pair } from "yaml";
+import { isScalar, isSeq } from "yaml";
 
 import type { RuleName } from "#/shared/lib/problem.ts";
 
-import { pairsNamed, workflowCheck } from "./workflow-yaml.ts";
+import { keyOffsetIn, pairIn, pairsNamed, workflowCheck } from "./workflow-yaml.ts";
 
 const RULE: RuleName = "release-pr-auto-merge";
 const RELEASE_PLEASE = /^googleapis\/release-please-action(?:@|$)/u;
@@ -18,35 +17,22 @@ interface Step {
   readonly offset: Option.Option<number>;
 }
 
-const pairOf = (node: unknown, name: string): Option.Option<Pair> =>
-  pipe(
-    Option.liftPredicate(node, isMap),
-    Option.flatMap((map) =>
-      Arr.findFirst(map.items, (item) => isScalar(item.key) && item.key.value === name),
-    ),
-  );
-
 const textOf = (node: unknown, name: string): string =>
   pipe(
-    pairOf(node, name),
+    pairIn(name)(node),
     Option.flatMap(({ value }) => Option.liftPredicate(value, isScalar)),
     Option.map((scalar) => String(scalar.value)),
     Option.getOrElse(() => ""),
   );
 
 const stepOf = (node: unknown): Step => {
-  const inputs = Option.getOrUndefined(Option.map(pairOf(node, "with"), ({ value }) => value));
+  const inputs = Option.getOrUndefined(Option.map(pairIn("with")(node), ({ value }) => value));
   return {
     opensReleasePr:
       RELEASE_PLEASE.test(textOf(node, "uses")) &&
       textOf(inputs, "skip-github-pull-request") !== "true",
     turnsOnAutoMerge: AUTO_MERGE.test(textOf(node, "run")),
-    offset: pipe(
-      pairOf(node, "uses"),
-      Option.flatMap(({ key }) => Option.liftPredicate(key, isScalar)),
-      Option.flatMap((key) => Option.fromNullishOr(key.range)),
-      Option.map(([start]) => start),
-    ),
+    offset: keyOffsetIn("uses")(node),
   };
 };
 
