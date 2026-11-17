@@ -23,7 +23,7 @@ Every release is manual. Nothing publishes on a push to main, and msch reports r
 2. Merge the PR.
 3. Dispatch the `publish` workflow on main with the workspace directory, such as `libs/y8` or `apps/yakusu`.
 
-A version that is already on npm or already has a GitHub Release with assets is skipped, so dispatching twice is safe. A version that is published but has no tag gets its tag on the next dispatch, on the commit its npm provenance names. The tag is created with a GitHub token from the credential broker when the broker grants one, because the workflow token cannot tag a commit that changes `.github/workflows`. A package whose `workspace:` dependencies are not on npm at their current versions is refused; publish those first.
+A version that is already on npm or already has a GitHub Release with assets is skipped, so dispatching twice is safe. A version that is published but has no tag, including an older version, gets its tag on the next dispatch, on the commit its npm provenance names. The tag is created with a GitHub token from the credential broker when the broker grants one, because the workflow token cannot tag a commit that changes `.github/workflows`. A package whose `workspace:` dependencies are not on npm at their current versions is refused; publish those first.
 
 ## What the workspace declares
 
