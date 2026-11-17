@@ -1,5 +1,5 @@
 # three-twelve
 
-このワークスペースは Discord ボットである。毎朝 3 時 12 分（JST）に、参加者がいるボイスチャンネルに参加し、1 曲流して退出する。
+This workspace is a Discord bot. Every morning at 3:12 JST it joins a voice channel that has people in it, plays one song and leaves.
 
-この楽曲は著作物なので、リポジトリに置かないこと。ボットトークンは `PUT /three-twelve/token` で、楽曲（Ogg Opus）は `PUT /three-twelve/audio` でアップロードする。
+The song is a copyrighted work, so do not put it in the repository. Upload the bot token with `PUT /three-twelve/token` and the song (Ogg Opus) with `PUT /three-twelve/audio`.

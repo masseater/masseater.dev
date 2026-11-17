@@ -1,5 +1,5 @@
 # @masseater.dev/mcp-tool-call
 
-このワークスペースには、すべてのMCPサーバーで共有される各パーツが格納されている。具体的には、Cloudflare Accessトークンを検証するエンドポイントと、サーバーごとに同一形式でAnalytics Engineに書き込まれる各ツール呼び出しのレコードである。
+This workspace holds the parts shared by every MCP server: the endpoint that verifies Cloudflare Access tokens, and the record of each tool call that every server writes to Analytics Engine in the same shape.
 
-列の順序は変更しないこと。どのサーバーでも同じ列を書き込む。
+Do not change the column order. Every server writes the same columns.

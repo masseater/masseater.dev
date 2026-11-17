@@ -1,5 +1,5 @@
 # @masseater.dev/seikin-dance
 
-このワークスペースは、元の動画からセイキンダンスのページの動画データとポーズデータを作成する。
+This workspace makes the video data and pose data for the Seikin Dance page from the source video.
 
-元の動画はクラウドから取得できない。`vp run --filter @masseater.dev/seikin-dance generate -- <video>` で渡すか、`.cache/source.mp4` に配置する。
+The source video cannot be fetched from the cloud. Pass it with `vp run --filter @masseater.dev/seikin-dance generate -- <video>` or put it at `.cache/source.mp4`.

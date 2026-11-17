@@ -1,3 +1,3 @@
 # nimado
 
-このワークスペースは `masseater.dev/nimado` のサイトである。ニコニコ動画と YouTube の各楽曲の再生回数を並べて表示している。
+This workspace is the site at `masseater.dev/nimado`. It shows the play counts of each song on Niconico and YouTube side by side.

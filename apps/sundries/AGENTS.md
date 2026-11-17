@@ -1,5 +1,5 @@
 # sundries
 
-このワークスペースは MCP サーバー `sundries.masseater.dev/mcp` である。Sloppedia、アナリティクス、スライド検索、翻訳など、持ち主の小規模なツールを集約している。
+This workspace is the MCP server `sundries.masseater.dev/mcp`. It gathers the owner's small tools, such as Sloppedia, analytics, slide search and translation.
 
-ここには個人データを置かないこと。ポータルのアップストリームID `sundries` は、Access DCRが許可するダッシュボードコールバックの末尾と同じにすること。
+Do not put personal data here. Keep the portal upstream ID `sundries` the same as the end of the dashboard callback that Access DCR allows.

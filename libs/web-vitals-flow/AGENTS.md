@@ -1,6 +1,6 @@
 # @r_masseater/web-vitals-flow
 
-このワークスペースは、Lighthouse でページ読み込みとページ移動の Core Web Vitals を測定し、それらがパスしなかった場合に失敗する。
+This workspace measures the Core Web Vitals of page loads and page navigations with Lighthouse and fails when they do not pass.
 
-- Vite+ と Node.js 26 以降のみを前提とすること。`vite-plus` はピア依存関係とし、他の環境向けの分岐は追加しないこと。
-- 本パッケージまたは推奨事項を変更した際は、masseater/skills の `measure-everything` スキルも更新すること。
+- Assume only Vite+ and Node.js 26 or later. Make `vite-plus` a peer dependency and add no branches for other environments.
+- When you change this package or its recommendations, also update the `measure-everything` skill in masseater/skills.

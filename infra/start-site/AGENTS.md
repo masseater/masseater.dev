@@ -1,3 +1,3 @@
 # @masseater.dev/start-site
 
-このワークスペースには、TanStack Start アプリをサイトとして公開するための、共有の Vite および Alchemy 設定が保持されている。
+This workspace holds the shared Vite and Alchemy settings for publishing a TanStack Start app as a site.
