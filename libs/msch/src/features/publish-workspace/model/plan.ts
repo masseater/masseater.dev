@@ -11,9 +11,11 @@ import {
   pipe,
 } from "effect";
 
+import { onNpm, requirePublishedDependencies } from "./dependencies.ts";
 import {
   environmentOf,
   goesToNpm,
+  isRoot,
   isVersioned,
   manifestIn,
   releaseName,
@@ -47,6 +49,7 @@ const PlanSchema = Schema.Struct({
   builds: Schema.Array(Runner),
   checks: Schema.Array(Runner),
   release: Schema.Boolean,
+  tagged: Schema.Boolean,
   hook: Schema.Boolean,
 });
 
@@ -55,33 +58,56 @@ export type Plan = typeof PlanSchema.Type;
 
 const AssetCount = Schema.fromJsonString(Schema.Finite);
 
-/** @internal */
-export interface Published {
-  readonly directory: string;
-  readonly name: string;
-  readonly version: string;
-}
+const graphTasks = outputOf({ command: "vp", args: ["run", "--json"] }).pipe(
+  Effect.flatMap(Schema.decodeEffect(TaskGraph)),
+  Effect.map(({ tasks }) => Rec.values(tasks)),
+);
 
-const tasksOf = Effect.fn("publish.tasks")(function* tasksOf(directory: string) {
-  const text = yield* outputOf({ command: "vp", args: ["run", "--json"] });
-  const graph = yield* Schema.decodeEffect(TaskGraph)(text);
-  return pipe(
-    Rec.values(graph.tasks),
+const tasksIn = (tasks: readonly (typeof Task.Type)[], directory: string): readonly string[] =>
+  pipe(
+    tasks,
     Arr.filter((task) => task.package === directory),
     Arr.map(({ name }) => name),
   );
-});
+
+const workspacesOf = (tasks: readonly (typeof Task.Type)[]): readonly string[] =>
+  pipe(
+    tasks,
+    Arr.map((task) => task.package),
+    Arr.dedupe,
+  );
 
 /** @internal */
-export const onNpm = ({ directory, name, version }: Published): ReturnType<typeof succeeds> =>
-  succeeds({ command: "npm", args: ["view", `${name}@${version}`, "version"], cwd: directory });
+export const tagged = Effect.fn("publish.tagged")(function* tagged(tag: string) {
+  const repository = yield* Config.String("GITHUB_REPOSITORY");
+  return yield* succeeds({
+    command: "gh",
+    args: ["api", `repos/${repository}/git/ref/tags/${tag}`],
+  });
+});
+
+const taggedOrUnversioned = (manifest: Manifest, tag: string): ReturnType<typeof tagged> => {
+  if (!isVersioned(manifest)) {
+    return Effect.succeed(true);
+  }
+  return tagged(tag);
+};
+
+const workspaceOf = (directory: string): Effect.Effect<string, never, Path.Path> =>
+  Path.Path.pipe(Effect.map((path) => Str.replace(TRAILING_SLASH, "")(path.normalize(directory))));
+
+/** @internal */
+export const released = Effect.fn("publish.released")(function* released(tag: string) {
+  const repository = yield* Config.String("GITHUB_REPOSITORY");
+  return yield* succeeds({ command: "gh", args: ["release", "view", tag, "--repo", repository] });
+});
 
 /** @internal */
 export const releasedWithAssets = Effect.fn("publish.releasedWithAssets")(
   function* releasedWithAssets(tag: string) {
     const repository = yield* Config.String("GITHUB_REPOSITORY");
     const view = ["release", "view", tag, "--repo", repository];
-    const exists = yield* succeeds({ command: "gh", args: view });
+    const exists = yield* released(tag);
     if (!exists) {
       return false;
     }
@@ -104,23 +130,35 @@ const keepWhen =
 const needsNpm = Effect.fn("publish.needsNpm")(function* needsNpm(
   directory: string,
   manifest: Manifest,
+  workspaces: readonly string[],
 ) {
   if (!goesToNpm(manifest)) {
     return false;
   }
   const published = yield* onNpm({ directory, ...manifest });
-  return !published;
+  if (published) {
+    return false;
+  }
+  yield* requirePublishedDependencies({ manifest, workspaces });
+  return true;
 });
 
 const needsRelease = Effect.fn("publish.needsRelease")(function* needsRelease(
+  directory: string,
   manifest: Manifest,
   builds: readonly unknown[],
 ) {
-  if (!isVersioned(manifest) || Arr.isReadonlyArrayEmpty(builds)) {
+  const tag = tagOf({ directory, ...manifest });
+  if (!isVersioned(manifest)) {
     return false;
   }
-  const released = yield* releasedWithAssets(tagOf(manifest));
-  return !released;
+  if (isRoot(directory)) {
+    return !(yield* released(tag));
+  }
+  if (Arr.isReadonlyArrayEmpty(builds)) {
+    return false;
+  }
+  return !(yield* releasedWithAssets(tag));
 });
 
 const nativeOf = (manifest: Manifest): readonly (typeof NativeTarget.Type)[] =>
@@ -132,18 +170,20 @@ const nativeOf = (manifest: Manifest): readonly (typeof NativeTarget.Type)[] =>
 
 /** @internal */
 export const planOf = Effect.fn("publish.plan")(function* planOf(directory: string) {
-  const path = yield* Path.Path;
-  const workspace = Str.replace(TRAILING_SLASH, "")(path.normalize(directory));
+  const workspace = yield* workspaceOf(directory);
   const manifest = yield* manifestIn(workspace);
-  const tasks = yield* tasksOf(workspace);
-  const npm = yield* needsNpm(workspace, manifest);
-  const release = yield* needsRelease(manifest, buildsOf(tasks));
+  const graph = yield* graphTasks;
+  const tasks = tasksIn(graph, workspace);
+  const npm = yield* needsNpm(workspace, manifest, workspacesOf(graph));
+  const release = yield* needsRelease(workspace, manifest, buildsOf(tasks));
   const built = keepWhen(release || !isVersioned(manifest));
+  const tag = tagOf({ directory: workspace, ...manifest });
   return {
     directory: workspace,
     name: releaseName(manifest),
     version: manifest.version,
-    tag: tagOf(manifest),
+    tag,
+    tagged: yield* taggedOrUnversioned(manifest, tag),
     environment: environmentOf(manifest),
     npm,
     native: keepWhen(npm)(nativeOf(manifest)),

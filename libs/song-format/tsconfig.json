@@ -1,6 +1,6 @@
 {
   "extends": "../../tsconfig.json",
-  "include": ["src", "bin", "generated", "*.ts"],
+  "include": ["src", "bin", "*.ts"],
   "compilerOptions": {
     "allowArbitraryExtensions": true
   },

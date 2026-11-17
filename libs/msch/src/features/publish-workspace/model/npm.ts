@@ -1,7 +1,6 @@
-import { mask, mustSucceed } from "@masseater.dev/github-workflow";
+import { mustSucceed } from "@masseater.dev/github-workflow";
 import {
   Array as Arr,
-  Config,
   Console,
   Effect,
   FileSystem,
@@ -9,20 +8,17 @@ import {
   Path,
   Predicate,
   Record as Rec,
-  Redacted,
   Schema,
   pipe,
 } from "effect";
-import { HttpClient, HttpClientRequest, HttpClientResponse } from "effect/http";
 
+import { brokerCredential } from "./broker.ts";
+import { onNpm } from "./dependencies.ts";
 import { manifestIn } from "./manifest.ts";
 import type { Manifest } from "./manifest.ts";
-import { onNpm } from "./plan.ts";
 import { nativeFields, nativeFileOf, nativeReadme } from "./platforms.ts";
 import type { NativePackage } from "./platforms.ts";
 
-const BROKER = "https://credentials.masseater.dev/";
-const AUDIENCE = "masseater-dev-credential-broker";
 const TARBALL = "package.tgz";
 const NPM_DIR = "npm";
 const NATIVE_DIR = "native";
@@ -36,46 +32,8 @@ const PackageJson = Schema.fromJsonString(Schema.Record(Schema.String, Schema.Un
 const PlatformManifest = Schema.fromJsonString(
   Schema.Struct({ name: Schema.String, version: Schema.String }),
 );
-const IdToken = Schema.Struct({ value: Schema.String });
-const Grants = Schema.Struct({ npmToken: Schema.optional(Schema.String) });
-
-const oidcToken = Effect.fn("publish.oidc")(function* oidcToken(
-  requestUrl: string,
-  requestToken: Redacted.Redacted,
-) {
-  const client = yield* HttpClient.HttpClient;
-  const request = HttpClientRequest.get(`${requestUrl}&audience=${AUDIENCE}`).pipe(
-    HttpClientRequest.bearerToken(Redacted.value(requestToken)),
-  );
-  const response = yield* HttpClient.filterStatusOk(client).execute(request);
-  const { value } = yield* HttpClientResponse.schemaBodyJson(IdToken)(response);
-  yield* mask(value);
-  return value;
-});
-
-const brokerToken = Effect.fn("publish.brokerToken")(function* brokerToken(oidc: string) {
-  const client = yield* HttpClient.HttpClient;
-  const request = HttpClientRequest.post(BROKER).pipe(HttpClientRequest.bearerToken(oidc));
-  const response = yield* HttpClient.filterStatusOk(client).execute(request);
-  const grants = yield* HttpClientResponse.schemaBodyJson(Grants)(response);
-  const token = Option.fromUndefinedOr(grants.npmToken);
-  yield* Effect.forEach(Option.toArray(token), mask, { concurrency: 1, discard: true });
-  return token;
-});
-
 const authEnv = Effect.fn("publish.authEnv")(function* authEnv() {
-  const requestUrl = yield* Config.option(Config.String("ACTIONS_ID_TOKEN_REQUEST_URL"));
-  const requestToken = yield* Config.option(Config.Redacted("ACTIONS_ID_TOKEN_REQUEST_TOKEN"));
-  if (Option.isNone(requestUrl) || Option.isNone(requestToken)) {
-    return {} satisfies Env;
-  }
-  const token = yield* oidcToken(requestUrl.value, requestToken.value).pipe(
-    Effect.flatMap(brokerToken),
-    Effect.tapError(() =>
-      Console.log("The credential broker gave no npm token; npm uses Trusted Publishing alone"),
-    ),
-    Effect.orElseSucceed(() => Option.none<string>()),
-  );
+  const token = yield* brokerCredential({ kind: "npm", field: "npmToken" });
   return Option.match(token, {
     onNone: (): Env => ({}),
     onSome: (value): Env => ({ NODE_AUTH_TOKEN: value }),

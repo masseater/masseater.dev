@@ -1,8 +1,8 @@
+import { fractionOf } from "@r_masseater/fumx-parser";
 import { Array as Arr, Option, String as Str, pipe } from "effect";
 import { Midi } from "tonal";
 
 import type { From } from "#/shared/lib/from.ts";
-import { fractionOf } from "#/shared/lib/ticks.ts";
 
 const NONE = 0;
 const FULL = 127;

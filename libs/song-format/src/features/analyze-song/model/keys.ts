@@ -1,6 +1,5 @@
+import type { Song } from "@r_masseater/fumx-parser";
 import { Array as Arr, Option, Order, Record, Schema, pipe } from "effect";
-
-import type { Song } from "#/entities/song/index.ts";
 
 import { overlapOf, soundingsOf } from "./sounding.ts";
 import type { Sounding, Span } from "./sounding.ts";

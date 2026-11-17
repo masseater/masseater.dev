@@ -25,8 +25,10 @@ const MISPLACED_COUNT = 2;
 const services = ManagedRuntime.make(NodeServices.layer);
 afterAll(() => services.dispose());
 
-const configWith = (section: string): string =>
-  `export default {\n  wism: {\n    kinds: [{ name: "workspace", marker: "package.json", placements: [{ files: ["**/*.ts"], allow: ["src/**"], message: "sits outside src/." }] }],\n    ${section}\n  },\n};\n`;
+const PLUGIN = `{ rules: { "outside-src": { meta: { description: "Scripts sit in src/" }, check: ({ files, report }) => { for (const path of files) { if (path.endsWith(".ts") && !path.includes("/src/")) { report({ path, message: "sits outside src/." }); } } } } } }`;
+
+const configWith = (section: string, severity = "error"): string =>
+  `export default {\n  wism: {\n    plugins: { local: ${PLUGIN} },\n    rules: { "local/outside-src": "${severity}" },\n    ${section}\n  },\n};\n`;
 
 const MISPLACED: Readonly<Record<string, string>> = {
   "libs/kit/package.json": "{}\n",
@@ -120,8 +122,8 @@ test(
       const ran = yield* run({ "vite.config.mjs": configWith(""), ...MISPLACED });
       expect(ran.status).toBe(FAILED);
       expect(linesOf(ran.stdout)).toStrictEqual([
-        "libs/kit/kit.ts:1:1 error placement sits outside src/.",
-        "libs/other/other.ts:1:1 error placement sits outside src/.",
+        "libs/kit/kit.ts:1:1 error local/outside-src sits outside src/.",
+        "libs/other/other.ts:1:1 error local/outside-src sits outside src/.",
       ]);
     }).pipe(services.runPromise),
   CLI_TIMEOUT,
@@ -132,7 +134,7 @@ test(
   () =>
     Effect.gen(function* warnings() {
       const ran = yield* run({
-        "vite.config.mjs": configWith(`rules: { placement: "warn" },`),
+        "vite.config.mjs": configWith("", "warn"),
         ...MISPLACED,
       });
       expect(ran.status).toBe(PASSED);

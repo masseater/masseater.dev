@@ -1,6 +1,6 @@
 {
   "name": "@r_masseater/msch",
-  "version": "0.42.0",
+  "version": "0.44.0",
   "description": "masseater's check policy: points every finite value set and object shape at its one owner, and ships the oxlint preset of plugins and rules.",
   "keywords": [
     "lint",
@@ -20,6 +20,7 @@
   },
   "bin": {
     "msch": "./bin/msch.ts",
+    "msch-changed": "./bin/msch-changed.ts",
     "msch-publish": "./bin/msch-publish.ts"
   },
   "files": [
@@ -51,6 +52,7 @@
   "publishConfig": {
     "bin": {
       "msch": "./dist/cli.mjs",
+      "msch-changed": "./dist/changed.mjs",
       "msch-publish": "./dist/publish.mjs"
     },
     "exports": {
@@ -110,6 +112,7 @@
     "@r_masseater/textlint-rule-preset-ja": "workspace:*",
     "@r_masseater/vite-plus-adopt": "catalog:",
     "@r_masseater/wism": "workspace:*",
+    "@r_masseater/wism-fsd": "workspace:*",
     "@r_masseater/y8": "workspace:*",
     "@r_masseater/y8-docs": "workspace:*",
     "@shadcn/lint": "catalog:",

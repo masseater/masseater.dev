@@ -1,0 +1,67 @@
+{
+  "name": "@r_masseater/wism-fsd",
+  "version": "0.1.0",
+  "description": "wism rules for Feature-Sliced Design layers, slices and public APIs, file placement and Markdown links, with presets for workspaces, Rust crates and Agent Skills.",
+  "keywords": [
+    "feature-sliced-design",
+    "fsd",
+    "lint",
+    "structure",
+    "tanstack-intent",
+    "wism"
+  ],
+  "homepage": "https://github.com/masseater/masseater.dev/tree/main/libs/wism-fsd#readme",
+  "bugs": {
+    "url": "https://github.com/masseater/masseater.dev/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/masseater/masseater.dev.git",
+    "directory": "libs/wism-fsd"
+  },
+  "files": [
+    "LICENSE",
+    "dist",
+    "skills/lint-fsd"
+  ],
+  "type": "module",
+  "imports": {
+    "#/*": "./src/*"
+  },
+  "exports": {
+    ".": "./src/app/index.ts",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "./package.json": "./package.json"
+    },
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "prepublishOnly": "vp run build"
+  },
+  "dependencies": {
+    "minimatch": "catalog:"
+  },
+  "devDependencies": {
+    "@effect/platform-node": "catalog:",
+    "@r_masseater/wism": "workspace:*",
+    "@types/node": "catalog:",
+    "effect": "catalog:stack",
+    "vite-plus": "catalog:stack"
+  },
+  "peerDependencies": {
+    "@r_masseater/wism": "workspace:^",
+    "effect": "^4.1.2"
+  },
+  "engines": {
+    "node": ">=26"
+  }
+}

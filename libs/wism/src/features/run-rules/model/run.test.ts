@@ -7,8 +7,8 @@ import type { RuleContext } from "#/shared/config/index.ts";
 import { runScriptRules } from "./run.ts";
 
 const graph = {
+  root: "/repo",
   files: ["a.ts", "b.ts"],
-  nodes: [],
   edges: [],
 };
 

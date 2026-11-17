@@ -7,7 +7,7 @@ description: >
 metadata:
   type: core
   library: "@r_masseater/msch"
-  library_version: 0.42.0
+  library_version: 0.43.0
 sources:
   - bin/msch-publish.ts
   - src/features/publish-workspace/**
@@ -23,7 +23,7 @@ Every release is manual. Nothing publishes on a push to main, and msch reports r
 2. Merge the PR.
 3. Dispatch the `publish` workflow on main with the workspace directory, such as `libs/y8` or `apps/yakusu`.
 
-A version that is already on npm or already has a GitHub Release with assets is skipped, so dispatching twice is safe.
+A version that is already on npm or already has a GitHub Release with assets is skipped, so dispatching twice is safe. A version that is published but has no tag gets its tag on the next dispatch, on the commit its npm provenance names. The tag is created with a GitHub token from the credential broker when the broker grants one, because the workflow token cannot tag a commit that changes `.github/workflows`. A package whose `workspace:` dependencies are not on npm at their current versions is refused; publish those first.
 
 ## What the workspace declares
 
@@ -37,8 +37,8 @@ A version that is already on npm or already has a GitHub Release with assets is 
 | `release:check:<os>` tasks                                | Checks the built files on that OS before anything is published        |
 | `release:publish` task                                    | Runs after the GitHub Release exists, with the tag in `RELEASE_TAG`   |
 
-The tag is the package name without its scope, then `-v` and the version. Release builds run in the GitHub environment `<name>-release`, which holds signing keys. A workspace at version `0.0.0` only builds; it publishes nothing.
+The tag is the package name without its scope, then `-v` and the version. The repository root (`.`) is tagged `v` and the version, and always gets a GitHub Release with generated notes, marked latest, even without assets; a template repository releases this way. Release builds run in the GitHub environment `<name>-release`, which holds signing keys. A workspace at version `0.0.0` only builds; it publishes nothing.
 
 ## The workflow
 
-The `publish` workflow runs `msch-publish plan`, the builds and checks the plan lists, `msch-publish npm` in the `npm` environment, and `msch-publish release`, which tags the commit and uploads `release-assets/`. Runs are serialized and never cancelled.
+The `publish` workflow runs `msch-publish plan`, the builds and checks the plan lists, `msch-publish npm` in the `npm` environment, and `msch-publish release`, which tags the commit and uploads `release-assets/`. Runs for the same workspace are serialized and never cancelled; different workspaces publish independently.

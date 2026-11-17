@@ -1,7 +1,7 @@
+import { fractionOf } from "@r_masseater/fumx-parser";
 import { Array as Arr, Option, pipe } from "effect";
 
 import type { From } from "#/shared/lib/from.ts";
-import { fractionOf } from "#/shared/lib/ticks.ts";
 
 import { quoted } from "./cells.ts";
 import { controlLinesOf } from "./control-lines.ts";

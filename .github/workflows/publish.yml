@@ -18,7 +18,7 @@ env:
   GIT_CONFIG_VALUE_0: "false"
 
 concurrency:
-  group: publish
+  group: publish-${{ inputs.workspace }}
   cancel-in-progress: false
 
 jobs:
@@ -200,13 +200,15 @@ jobs:
   release:
     needs: [plan, build, check, npm]
     if: >-
-      !cancelled() && (fromJSON(needs.plan.outputs.plan).npm || fromJSON(needs.plan.outputs.plan).release)
+      !cancelled() && (fromJSON(needs.plan.outputs.plan).npm || fromJSON(needs.plan.outputs.plan).release
+        || !fromJSON(needs.plan.outputs.plan).tagged)
       && contains(fromJSON('["success", "skipped"]'), needs.build.result)
       && contains(fromJSON('["success", "skipped"]'), needs.check.result)
       && contains(fromJSON('["success", "skipped"]'), needs.npm.result)
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      id-token: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -241,6 +243,6 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: masseater/typescript-template/.github/actions/ci-telemetry@d79be66b83e21575c7f40a75453fea5a51aaff8c
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@e80c641e7847e5482f3b043368726580dfd1cc40
         with:
           github-token: ${{ github.token }}

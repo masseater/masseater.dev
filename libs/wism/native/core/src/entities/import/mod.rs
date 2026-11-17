@@ -1,14 +1,10 @@
-use serde::Serialize;
-
-#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
-#[serde(rename_all = "camelCase", tag = "type", content = "value")]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Target {
     File(String),
     Module(Vec<String>),
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
-#[serde(rename_all = "camelCase")]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Edge {
     pub from: String,
     pub specifier: String,

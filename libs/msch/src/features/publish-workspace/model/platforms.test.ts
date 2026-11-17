@@ -6,11 +6,15 @@ import { buildsOf, checksOf, nativeFields, nativeTargetsOf } from "./platforms.t
 describe("publish names", () => {
   it("names the tag and environment after the unscoped package name", () => {
     const manifest = { name: "@r_masseater/y8", version: "0.2.0" };
-    expect([releaseName(manifest), tagOf(manifest), environmentOf(manifest)]).toStrictEqual([
-      "y8",
-      "y8-v0.2.0",
-      "y8-release",
-    ]);
+    expect([
+      releaseName(manifest),
+      tagOf({ directory: "libs/y8", ...manifest }),
+      environmentOf(manifest),
+    ]).toStrictEqual(["y8", "y8-v0.2.0", "y8-release"]);
+  });
+
+  it("tags the repository root with the bare version", () => {
+    expect(tagOf({ directory: ".", name: "typescript-template", version: "1.2.0" })).toBe("v1.2.0");
   });
 
   it("publishes to npm unless private and releases only versioned workspaces", () => {
