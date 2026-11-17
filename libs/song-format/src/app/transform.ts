@@ -4,7 +4,7 @@ import { mappedOutput } from "mapped-import/mapper";
 import type { Request } from "mapped-import/mapper";
 import type { TransformResult } from "ts-content-mapper";
 
-import { songModuleOf } from "#/features/read-song/index.ts";
+import { songModuleOf } from "#/features/build-song-module/index.ts";
 
 const transformSong = Effect.fn("transformSong")(function* transformSong(request: Request) {
   const fileSystem = yield* FileSystem.FileSystem;

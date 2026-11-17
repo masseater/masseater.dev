@@ -1,11 +1,11 @@
+import { FumxLanguageMetaData } from "@r_masseater/fumx-parser/language";
 import { Array as Arr, Effect, Match, Option, pipe } from "effect";
 import { renderSegments } from "mapped-import";
 import type { Mapped } from "mapped-import/mapper";
 import { contentImport } from "mapped-import/vite";
 import type { Plugin } from "vite-plus";
 
-import { songCodeOf, songModuleOf } from "#/features/read-song/index.ts";
-import { FumxLanguageMetaData } from "#generated/langium/module.ts";
+import { songCodeOf, songModuleOf } from "#/features/build-song-module/index.ts";
 
 const [EXTENSION] = FumxLanguageMetaData.fileExtensions;
 

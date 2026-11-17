@@ -1,9 +1,9 @@
+import { readSong } from "@r_masseater/fumx-parser";
+import type { SourceIssue } from "@r_masseater/fumx-parser";
 import { Array as Arr, Effect, Schema, pipe } from "effect";
 
 import { compareWithMidi, midiToFumx } from "#/features/convert-midi/index.ts";
 import type { Comparison, MidiFile } from "#/features/convert-midi/index.ts";
-import { readSong } from "#/features/read-song/index.ts";
-import type { SourceIssue } from "#/features/read-song/index.ts";
 
 const taggedError = Schema.TaggedError;
 

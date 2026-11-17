@@ -1,9 +1,8 @@
+import { FumxTerminals, FumxGrammar } from "@r_masseater/fumx-parser/language";
 import { Array as Arr, Option, Record as Rec, String as Str, pipe } from "effect";
 import { AstUtils, GrammarAST } from "langium";
 
 import type { From } from "#/shared/lib/from.ts";
-import { FumxTerminals } from "#generated/langium/ast.ts";
-import { FumxGrammar } from "#generated/langium/grammar.ts";
 
 const FIRST_SUFFIX = 2;
 

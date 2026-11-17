@@ -1,10 +1,9 @@
 import { NodeFileSystem } from "@effect/platform-node-shared";
 import { expect, expectTypeOf, it, layer } from "@effect/vitest";
+import { FumxLanguageMetaData } from "@r_masseater/fumx-parser/language";
 import { Array as Arr, Effect, FileSystem, Option, String as Str, pipe } from "effect";
 import { renderSegments } from "mapped-import";
 import { declarationPathOf } from "mapped-import/vite";
-
-import { FumxLanguageMetaData } from "#generated/langium/module.ts";
 
 import { song } from "./fixtures/two-five-one.fumx";
 import { songModuleOf } from "./song-module.ts";
