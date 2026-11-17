@@ -1,0 +1,56 @@
+diff --git a/dist/blocks-LWaO8Rg8.mjs b/dist/blocks-LWaO8Rg8.mjs
+index e09476c5464efe48b84e8bdb46b438c23e5555fb..6e637c547b28c9acbd87cd619eec398fbf641815 100644
+--- a/dist/blocks-LWaO8Rg8.mjs
++++ b/dist/blocks-LWaO8Rg8.mjs
+@@ -102,15 +102,16 @@ function loadTypeScript(root) {
+ }
+ const hasCompilerApi = (ts) => typeof ts.createProgram === "function";
+ async function loadNativeTypeScript(root) {
+-	for (const from of [join(root, "package.json"), import.meta.url]) {
++	for (const from of [join(root, "package.json"), import.meta.url]) for (const prefix of ["typescript/", "typescript/unstable/"]) {
+ 		const load = createRequire(from);
+-		const entry = (name) => import(pathToFileURL(load.resolve(`typescript/unstable/${name}`)).href);
++		const entry = (name) => import(pathToFileURL(load.resolve(`${prefix}${name}`)).href);
+ 		try {
+ 			return {
+ 				api: await entry("async"),
+ 				ast: await entry("ast"),
+ 				is: await entry("ast/is"),
+-				scanner: await entry("ast/scanner")
++				scanner: await entry("ast/scanner"),
++				serverFS: prefix === "typescript/" ? (await entry("fs")).serverFS : void 0
+ 			};
+ 		} catch {}
+ 	}
+@@ -121,7 +122,16 @@ async function withNativeCompiler(native, root, virtualDir, run) {
+ 	let projects = 0;
+ 	const api = new native.api.API({
+ 		cwd: root,
+-		fs: {
++		fs: native.serverFS ? {
++			readFile: (path) => files.has(slash(path)) ? files.get(slash(path)) : native.serverFS.useOS,
++			fileExists: (path) => files.has(slash(path)) || native.serverFS.useOS,
++			directoryExists: (path) => `${virtualDir}/`.startsWith(`${slash(path)}/`) || native.serverFS.useOS,
++			getAccessibleEntries: native.serverFS.useOS,
++			realpath: native.serverFS.useOS,
++			stat: native.serverFS.useOS,
++			writeFile: native.serverFS.noop,
++			removeFile: native.serverFS.noop
++		} : {
+ 			readFile: (path) => files.get(slash(path)),
+ 			fileExists: (path) => files.has(slash(path)) || void 0,
+ 			directoryExists: (path) => `${virtualDir}/`.startsWith(`${slash(path)}/`) || void 0
+@@ -140,11 +150,11 @@ async function withNativeCompiler(native, root, virtualDir, run) {
+ 			if (first) process.chdir(dirname(root));
+ 			let snapshot;
+ 			try {
+-				snapshot = await api.updateSnapshot({ openProjects: [config] });
++				snapshot = await (native.serverFS ? api.createSnapshot({ openProjects: [config] }) : api.updateSnapshot({ openProjects: [config] }));
+ 			} finally {
+ 				if (first) process.chdir(cwd);
+ 			}
+-			const project = snapshot.getProject(config);
++			const project = native.serverFS ? snapshot.getConfiguredProject(config) : snapshot.getProject(config);
+ 			if (!project) throw new Error(`could not open ${config}`);
+ 			return project;
+ 		});

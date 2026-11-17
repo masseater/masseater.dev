@@ -371,6 +371,9 @@ catalogs:
     '@plussub/srt-vtt-parser':
       specifier: ^2.0.5
       version: 2.0.5
+    '@pnpm/deps.path':
+      specifier: 1101.0.9
+      version: 1101.0.9
     '@pnpm/lockfile.fs':
       specifier: 1100.2.18
       version: 1100.2.18
@@ -533,9 +536,6 @@ catalogs:
     '@typescript/typescript-wasip1-wasm':
       specifier: 7.1.0-dev.20261106.1
       version: 7.1.0-dev.20261106.1
-    '@typescript/typescript6':
-      specifier: 6.0.2
-      version: 6.0.2
     '@vitejs/plugin-react':
       specifier: 6.3.0
       version: 6.3.0
@@ -575,6 +575,9 @@ catalogs:
     cfb:
       specifier: ^1.2.2
       version: 1.2.2
+    chokidar:
+      specifier: 4.0.3
+      version: 4.0.3
     chrome-launcher:
       specifier: 1.2.3
       version: 1.2.3
@@ -626,6 +629,12 @@ catalogs:
     driver.js:
       specifier: 1.14.0
       version: 1.14.0
+    effector:
+      specifier: 23.4.4
+      version: 23.4.4
+    empathic:
+      specifier: 1.1.0
+      version: 1.1.0
     entities:
       specifier: 9.0.0
       version: 9.0.0
@@ -665,6 +674,9 @@ catalogs:
     fzstd:
       specifier: 0.1.1
       version: 0.1.1
+    globby:
+      specifier: 16.2.4
+      version: 16.2.4
     happy-dom:
       specifier: 21.0.4
       version: 21.0.4
@@ -677,6 +689,9 @@ catalogs:
     ical.js:
       specifier: ^2.2.1
       version: 2.2.1
+    immer:
+      specifier: 10.2.0
+      version: 10.2.0
     jose:
       specifier: 6.2.17
       version: 6.2.17
@@ -725,6 +740,9 @@ catalogs:
     micromark-extension-gfm:
       specifier: ^3.0.0
       version: 3.0.0
+    micromatch:
+      specifier: 4.0.8
+      version: 4.0.8
     miniflare:
       specifier: 4.20260730.0
       version: 4.20260730.0
@@ -755,6 +773,9 @@ catalogs:
     parse5:
       specifier: ^8.1.0
       version: 8.1.1
+    patronum:
+      specifier: 2.3.0
+      version: 2.3.0
     playwright-core:
       specifier: 1.65.1
       version: 1.65.1
@@ -1004,6 +1025,7 @@ packageExtensionsChecksum: sha256-SqfXtVpCAJmGL3APfI2ziuDBnmuD/5vP1525qAbmGOg=
 
 patchedDependencies:
   '@tanstack/eslint-plugin-start@0.1.0': 364cc40b73326fe59c5d685ac247690de2302e3e731b7b7d37583701f9370644
+  '@tanstack/intent@0.5.6': 6a437296d250871cc7a7bf8a24c623bc98963f6b76ce91ae6ef37bd765613196
   '@voidzero-dev/vite-plus-core@1.6.0': b28fd962a73ec6c9915197197f7e549598912400c8517eb2d0d12dc86c2ec9f0
   eslint-plugin-drizzle@0.2.3: 970a4ab095ef16d6b77ccac81c31e17b85e1423d06ec977be44ac76a52a6251a
   eslint-plugin-react-jsx@^5.30.1: b992c01baefacc91e5b12432715428f4c3ec7bc2494b0cbae68d0a20e7e10ebe
@@ -1023,13 +1045,10 @@ importers:
         version: link:libs/workers-tracing
       '@tanstack/intent':
         specifier: 'catalog:'
-        version: 0.5.6
+        version: 0.5.6(patch_hash=6a437296d250871cc7a7bf8a24c623bc98963f6b76ce91ae6ef37bd765613196)
       '@types/node':
         specifier: 'catalog:'
         version: 26.6.6
-      '@typescript/typescript6':
-        specifier: 'catalog:'
-        version: 6.0.2
       effect:
         specifier: catalog:stack
         version: 4.1.4
@@ -3731,6 +3750,9 @@ importers:
       '@html-eslint/eslint-plugin-react':
         specifier: 'catalog:'
         version: 0.68.0(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))
+      '@pnpm/deps.path':
+        specifier: 'catalog:'
+        version: 1101.0.9
       '@pnpm/lockfile.fs':
         specifier: 'catalog:'
         version: 1100.2.18(@pnpm/logger@1100.0.0)
@@ -3763,7 +3785,7 @@ importers:
         version: 0.2.5(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))
       '@tanstack/intent':
         specifier: 'catalog:'
-        version: 0.5.6
+        version: 0.5.6(patch_hash=6a437296d250871cc7a7bf8a24c623bc98963f6b76ce91ae6ef37bd765613196)
       '@textlint-ja/textlint-rule-preset-ai-writing':
         specifier: 'catalog:'
         version: 1.7.0
@@ -4403,21 +4425,42 @@ importers:
       '@textlint/utils':
         specifier: 'catalog:'
         version: 15.8.0
+      chokidar:
+        specifier: 'catalog:'
+        version: 4.0.3
       cjs-module-lexer:
         specifier: 'catalog:'
         version: 2.3.0
+      effector:
+        specifier: 'catalog:'
+        version: 23.4.4
+      empathic:
+        specifier: 'catalog:'
+        version: 1.1.0
       fastest-levenshtein:
         specifier: 'catalog:'
         version: 1.0.16
       fflate:
         specifier: 'catalog:'
         version: 0.8.3
+      globby:
+        specifier: 'catalog:'
+        version: 16.2.4
+      immer:
+        specifier: 'catalog:'
+        version: 10.2.0
       markdownlint:
         specifier: 'catalog:'
         version: 0.42.1(supports-color@10.2.2)
+      micromatch:
+        specifier: 'catalog:'
+        version: 4.0.8
       minimatch:
         specifier: 'catalog:'
         version: 11.0.8
+      patronum:
+        specifier: 'catalog:'
+        version: 2.3.0(effector@23.4.4)
       pluralize:
         specifier: 'catalog:'
         version: 8.0.0
@@ -4427,9 +4470,6 @@ importers:
       smol-toml:
         specifier: 'catalog:'
         version: 1.9.1
-      steiger:
-        specifier: 'catalog:'
-        version: 0.10.0(typescript@7.1.0-beta)
       textlint:
         specifier: 'catalog:'
         version: 15.8.0(supports-color@10.2.2)
@@ -4473,6 +4513,9 @@ importers:
       size-limit:
         specifier: 'catalog:'
         version: 14.3.0
+      steiger:
+        specifier: 'catalog:'
+        version: 0.10.0(typescript@7.1.0-beta)
       typescript:
         specifier: catalog:stack
         version: 7.1.0-beta
@@ -11481,10 +11524,6 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@typescript/typescript6@6.0.2':
-    resolution: {integrity: sha512-mbCddXd+jm7hfx7w2YU64/Av4/NqqeG3GoRZgxPcgoTxYjhrcfJRw9ULch71SS4G+Q3bOXFhRvPqjguN0Hyp5w==}
-    hasBin: true
-
   '@ungap/structured-clone@1.4.0':
     resolution: {integrity: sha512-1mEZtMKPM09vDmQt5y7YvmN2+DFTP7Tg0EWXdic8/C6VRnpb33e4ghisCIE3WZjsE2N8mf+QV1Zqh7ZFYLWInQ==}
 
@@ -16603,11 +16642,6 @@ packages:
   typedarray.prototype.slice@1.0.5:
     resolution: {integrity: sha512-q7QNVDGTdl702bVFiI5eY4l/HkgCM6at9KhcFbgUAzezHFbOVy4+0O/lCjsABEQwbZPravVfBIiBVGo89yzHFg==}
     engines: {node: '>= 0.4'}
-
-  typescript@6.0.3:
-    resolution: {integrity: sha512-y2TvuxSZPDyQakkFRPZHKFm+KKVqIisdg9/CZwm9ftvKXLP8NRWj38/ODjNbr43SsoXqNuAisEf1GdCxqWcdBw==}
-    engines: {node: '>=14.17'}
-    hasBin: true
 
   typescript@7.0.2:
     resolution: {integrity: sha512-8FYau96o3NKOhbjKi/qNvG/W5jhzxkbdm5sj9AbZ/5T5sWqn3hJgLfGx27sRKZWTvyzCP8dLRBTf5tBTSRVUNA==}
@@ -22572,7 +22606,7 @@ snapshots:
 
   '@tanstack/history@1.162.5': {}
 
-  '@tanstack/intent@0.5.6': {}
+  '@tanstack/intent@0.5.6(patch_hash=6a437296d250871cc7a7bf8a24c623bc98963f6b76ce91ae6ef37bd765613196)': {}
 
   '@tanstack/match-sorter-utils@9.1.2':
     dependencies:
@@ -23719,10 +23753,6 @@ snapshots:
 
   '@typescript/typescript-win32-x64@7.1.0-dev.20261106.1':
     optional: true
-
-  '@typescript/typescript6@6.0.2':
-    dependencies:
-      '@typescript/old': typescript@6.0.3
 
   '@ungap/structured-clone@1.4.0': {}
 
@@ -29715,8 +29745,6 @@ snapshots:
       math-intrinsics: 1.1.0
       typed-array-buffer: 1.0.3
       typed-array-byte-offset: 1.0.5
-
-  typescript@6.0.3: {}
 
   typescript@7.0.2:
     optionalDependencies:
