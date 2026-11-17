@@ -1,4 +1,4 @@
-import { present } from "@r_masseater/lint-host";
+import { present } from "@masseater.dev/lint-host";
 import { Array as Arr, Effect, Option, Predicate, Record as Rec, pipe } from "effect";
 
 import { reportedSeverity } from "#/entities/rule/index.ts";
