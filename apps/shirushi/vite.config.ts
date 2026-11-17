@@ -8,7 +8,7 @@ export default defineConfig({
     tasks: {
       ...tauriAppTasks({
         crate: "shirushi",
-        workspaceInputs: ["libs/local-mcp/**", "libs/desktop-shell/**", "libs/media-notes/**"],
+        workspaceInputs: ["libs/desktop-shell/**", "libs/media-notes/**"],
       }),
       verify: { command: [], dependsOn: ["cargo"] },
       ...tauriReleaseTasks("shirushi"),

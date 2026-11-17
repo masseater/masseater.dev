@@ -9,7 +9,7 @@ import type { Report } from "#/shared/lib/report.ts";
 export interface CheckContext {
   readonly root: string;
   readonly config: ToolSections;
-  readonly base: string;
+  readonly range: string;
 }
 
 /** @internal */
