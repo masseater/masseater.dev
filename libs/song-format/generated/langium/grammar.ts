@@ -46,7 +46,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@129"
+                    "$ref": "#/rules@137"
                   },
                   "arguments": []
                 }
@@ -148,7 +148,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@129"
+                "$ref": "#/rules@137"
               },
               "arguments": []
             }
@@ -174,7 +174,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
           "terminal": {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@113"
+              "$ref": "#/rules@121"
             },
             "arguments": []
           },
@@ -278,7 +278,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@130"
+                "$ref": "#/rules@138"
               },
               "arguments": []
             }
@@ -294,7 +294,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@129"
+                "$ref": "#/rules@137"
               },
               "arguments": []
             }
@@ -339,7 +339,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@113"
+                "$ref": "#/rules@121"
               },
               "arguments": []
             }
@@ -406,7 +406,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
               "terminal": {
                 "$type": "RuleCall",
                 "rule": {
-                  "$ref": "#/rules@130"
+                  "$ref": "#/rules@138"
                 },
                 "arguments": []
               },
@@ -446,7 +446,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@113"
+                "$ref": "#/rules@121"
               },
               "arguments": []
             }
@@ -490,7 +490,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@118"
+                "$ref": "#/rules@126"
               },
               "arguments": []
             }
@@ -502,7 +502,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@125"
+                "$ref": "#/rules@133"
               },
               "arguments": []
             }
@@ -530,7 +530,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@113"
+                "$ref": "#/rules@121"
               },
               "arguments": []
             }
@@ -542,7 +542,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@129"
+                "$ref": "#/rules@137"
               },
               "arguments": []
             }
@@ -573,7 +573,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
                     "terminal": {
                       "$type": "RuleCall",
                       "rule": {
-                        "$ref": "#/rules@128"
+                        "$ref": "#/rules@136"
                       },
                       "arguments": []
                     }
@@ -606,7 +606,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@113"
+                "$ref": "#/rules@121"
               },
               "arguments": []
             }
@@ -651,7 +651,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@113"
+                "$ref": "#/rules@121"
               },
               "arguments": []
             }
@@ -663,7 +663,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@129"
+                "$ref": "#/rules@137"
               },
               "arguments": []
             }
@@ -704,7 +704,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@113"
+                "$ref": "#/rules@121"
               },
               "arguments": []
             }
@@ -842,7 +842,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@129"
+                "$ref": "#/rules@137"
               },
               "arguments": []
             }
@@ -858,7 +858,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@117"
+                "$ref": "#/rules@125"
               },
               "arguments": []
             }
@@ -882,7 +882,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@129"
+                "$ref": "#/rules@137"
               },
               "arguments": []
             }
@@ -898,7 +898,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@117"
+                "$ref": "#/rules@125"
               },
               "arguments": []
             }
@@ -1029,7 +1029,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@126"
+                "$ref": "#/rules@134"
               },
               "arguments": []
             }
@@ -1057,7 +1057,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@122"
+                "$ref": "#/rules@130"
               },
               "arguments": []
             }
@@ -1085,7 +1085,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@122"
+                "$ref": "#/rules@130"
               },
               "arguments": []
             }
@@ -1113,7 +1113,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@122"
+                "$ref": "#/rules@130"
               },
               "arguments": []
             }
@@ -1141,7 +1141,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@122"
+                "$ref": "#/rules@130"
               },
               "arguments": []
             }
@@ -1169,7 +1169,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@122"
+                "$ref": "#/rules@130"
               },
               "arguments": []
             }
@@ -1197,7 +1197,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@123"
+                "$ref": "#/rules@131"
               },
               "arguments": []
             }
@@ -1216,7 +1216,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@128"
+                    "$ref": "#/rules@136"
                   },
                   "arguments": []
                 }
@@ -1247,7 +1247,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@123"
+                "$ref": "#/rules@131"
               },
               "arguments": []
             }
@@ -1266,7 +1266,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@123"
+                    "$ref": "#/rules@131"
                   },
                   "arguments": []
                 }
@@ -1288,7 +1288,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@128"
+                    "$ref": "#/rules@136"
                   },
                   "arguments": []
                 }
@@ -1319,7 +1319,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@124"
+                "$ref": "#/rules@132"
               },
               "arguments": []
             }
@@ -1347,7 +1347,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@125"
+                "$ref": "#/rules@133"
               },
               "arguments": []
             }
@@ -1375,7 +1375,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@128"
+                "$ref": "#/rules@136"
               },
               "arguments": []
             }
@@ -1408,7 +1408,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
               "terminal": {
                 "$type": "RuleCall",
                 "rule": {
-                  "$ref": "#/rules@113"
+                  "$ref": "#/rules@121"
                 },
                 "arguments": []
               },
@@ -1423,7 +1423,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@125"
+                "$ref": "#/rules@133"
               },
               "arguments": []
             }
@@ -1467,7 +1467,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@113"
+                "$ref": "#/rules@121"
               },
               "arguments": []
             }
@@ -1537,7 +1537,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@113"
+                "$ref": "#/rules@121"
               },
               "arguments": []
             }
@@ -1645,7 +1645,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@124"
+                    "$ref": "#/rules@132"
                   },
                   "arguments": []
                 }
@@ -1667,7 +1667,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@125"
+                    "$ref": "#/rules@133"
                   },
                   "arguments": []
                 }
@@ -1745,7 +1745,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
               "terminal": {
                 "$type": "RuleCall",
                 "rule": {
-                  "$ref": "#/rules@113"
+                  "$ref": "#/rules@121"
                 },
                 "arguments": []
               },
@@ -1781,7 +1781,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
               "terminal": {
                 "$type": "RuleCall",
                 "rule": {
-                  "$ref": "#/rules@113"
+                  "$ref": "#/rules@121"
                 },
                 "arguments": []
               },
@@ -1870,7 +1870,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
               "terminal": {
                 "$type": "RuleCall",
                 "rule": {
-                  "$ref": "#/rules@113"
+                  "$ref": "#/rules@121"
                 },
                 "arguments": []
               },
@@ -1897,7 +1897,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
                   "terminal": {
                     "$type": "RuleCall",
                     "rule": {
-                      "$ref": "#/rules@113"
+                      "$ref": "#/rules@121"
                     },
                     "arguments": []
                   },
@@ -1924,7 +1924,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
               "terminal": {
                 "$type": "RuleCall",
                 "rule": {
-                  "$ref": "#/rules@113"
+                  "$ref": "#/rules@121"
                 },
                 "arguments": []
               },
@@ -1943,7 +1943,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@122"
+                "$ref": "#/rules@130"
               },
               "arguments": []
             }
@@ -1959,7 +1959,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@122"
+                "$ref": "#/rules@130"
               },
               "arguments": []
             }
@@ -2026,7 +2026,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
               "terminal": {
                 "$type": "RuleCall",
                 "rule": {
-                  "$ref": "#/rules@113"
+                  "$ref": "#/rules@121"
                 },
                 "arguments": []
               },
@@ -2041,7 +2041,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@125"
+                "$ref": "#/rules@133"
               },
               "arguments": []
             }
@@ -2281,7 +2281,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@129"
+                "$ref": "#/rules@137"
               },
               "arguments": []
             }
@@ -2293,7 +2293,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@129"
+                "$ref": "#/rules@137"
               },
               "arguments": []
             },
@@ -2313,7 +2313,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@122"
+                    "$ref": "#/rules@130"
                   },
                   "arguments": []
                 }
@@ -2335,7 +2335,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@125"
+                    "$ref": "#/rules@133"
                   },
                   "arguments": []
                 }
@@ -2369,7 +2369,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@118"
+                    "$ref": "#/rules@126"
                   },
                   "arguments": []
                 }
@@ -2381,7 +2381,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@122"
+                    "$ref": "#/rules@130"
                   },
                   "arguments": []
                 }
@@ -2399,7 +2399,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@125"
+                "$ref": "#/rules@133"
               },
               "arguments": []
             }
@@ -2418,7 +2418,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@123"
+                    "$ref": "#/rules@131"
                   },
                   "arguments": []
                 }
@@ -2440,7 +2440,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@123"
+                    "$ref": "#/rules@131"
                   },
                   "arguments": []
                 }
@@ -2462,7 +2462,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@125"
+                    "$ref": "#/rules@133"
                   },
                   "arguments": []
                 }
@@ -2493,7 +2493,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@124"
+                "$ref": "#/rules@132"
               },
               "arguments": []
             }
@@ -2505,7 +2505,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@119"
+                "$ref": "#/rules@127"
               },
               "arguments": []
             }
@@ -2524,7 +2524,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@122"
+                    "$ref": "#/rules@130"
                   },
                   "arguments": []
                 }
@@ -2546,7 +2546,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@122"
+                    "$ref": "#/rules@130"
                   },
                   "arguments": []
                 }
@@ -2568,7 +2568,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@124"
+                    "$ref": "#/rules@132"
                   },
                   "arguments": []
                 }
@@ -2599,7 +2599,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@122"
+                "$ref": "#/rules@130"
               },
               "arguments": []
             }
@@ -2611,7 +2611,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@123"
+                "$ref": "#/rules@131"
               },
               "arguments": []
             }
@@ -2623,7 +2623,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@125"
+                "$ref": "#/rules@133"
               },
               "arguments": []
             }
@@ -2642,7 +2642,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@122"
+                    "$ref": "#/rules@130"
                   },
                   "arguments": []
                 }
@@ -2673,7 +2673,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@125"
+                "$ref": "#/rules@133"
               },
               "arguments": []
             }
@@ -2692,7 +2692,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@123"
+                    "$ref": "#/rules@131"
                   },
                   "arguments": []
                 }
@@ -2723,7 +2723,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@124"
+                "$ref": "#/rules@132"
               },
               "arguments": []
             }
@@ -2742,7 +2742,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@122"
+                    "$ref": "#/rules@130"
                   },
                   "arguments": []
                 }
@@ -2764,7 +2764,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@122"
+                    "$ref": "#/rules@130"
                   },
                   "arguments": []
                 }
@@ -2795,7 +2795,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@123"
+                "$ref": "#/rules@131"
               },
               "arguments": []
             }
@@ -2811,7 +2811,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@123"
+                "$ref": "#/rules@131"
               },
               "arguments": []
             }
@@ -2827,7 +2827,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@123"
+                "$ref": "#/rules@131"
               },
               "arguments": []
             }
@@ -2846,7 +2846,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@125"
+                    "$ref": "#/rules@133"
                   },
                   "arguments": []
                 }
@@ -2868,7 +2868,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@125"
+                    "$ref": "#/rules@133"
                   },
                   "arguments": []
                 }
@@ -2899,7 +2899,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@123"
+                "$ref": "#/rules@131"
               },
               "arguments": []
             }
@@ -2911,7 +2911,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@125"
+                "$ref": "#/rules@133"
               },
               "arguments": []
             }
@@ -3021,7 +3021,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@113"
+                "$ref": "#/rules@121"
               },
               "arguments": []
             }
@@ -3087,7 +3087,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@113"
+                "$ref": "#/rules@121"
               },
               "arguments": []
             }
@@ -3202,7 +3202,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@113"
+                "$ref": "#/rules@121"
               },
               "arguments": []
             }
@@ -3348,7 +3348,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@113"
+                "$ref": "#/rules@121"
               },
               "arguments": []
             }
@@ -3548,7 +3548,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
               "terminal": {
                 "$type": "RuleCall",
                 "rule": {
-                  "$ref": "#/rules@113"
+                  "$ref": "#/rules@121"
                 },
                 "arguments": []
               },
@@ -3596,7 +3596,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
               "terminal": {
                 "$type": "RuleCall",
                 "rule": {
-                  "$ref": "#/rules@113"
+                  "$ref": "#/rules@121"
                 },
                 "arguments": []
               },
@@ -4355,7 +4355,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@117"
+                "$ref": "#/rules@125"
               },
               "arguments": []
             }
@@ -4367,7 +4367,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@118"
+                "$ref": "#/rules@126"
               },
               "arguments": []
             }
@@ -4379,7 +4379,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@124"
+                "$ref": "#/rules@132"
               },
               "arguments": []
             }
@@ -4391,7 +4391,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@125"
+                "$ref": "#/rules@133"
               },
               "arguments": []
             }
@@ -4403,7 +4403,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@123"
+                "$ref": "#/rules@131"
               },
               "arguments": []
             }
@@ -4415,7 +4415,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@122"
+                "$ref": "#/rules@130"
               },
               "arguments": []
             }
@@ -4427,7 +4427,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@126"
+                "$ref": "#/rules@134"
               },
               "arguments": []
             }
@@ -4439,7 +4439,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@129"
+                "$ref": "#/rules@137"
               },
               "arguments": []
             }
@@ -4451,7 +4451,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@128"
+                "$ref": "#/rules@136"
               },
               "arguments": []
             }
@@ -4655,7 +4655,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
               "terminal": {
                 "$type": "RuleCall",
                 "rule": {
-                  "$ref": "#/rules@113"
+                  "$ref": "#/rules@121"
                 },
                 "arguments": []
               },
@@ -4732,7 +4732,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
           "terminal": {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@113"
+              "$ref": "#/rules@121"
             },
             "arguments": []
           },
@@ -4819,7 +4819,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@113"
+                    "$ref": "#/rules@121"
                   },
                   "arguments": []
                 }
@@ -4841,7 +4841,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@129"
+                    "$ref": "#/rules@137"
                   },
                   "arguments": []
                 }
@@ -4889,7 +4889,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@118"
+                "$ref": "#/rules@126"
               },
               "arguments": []
             }
@@ -4908,7 +4908,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@128"
+                    "$ref": "#/rules@136"
                   },
                   "arguments": []
                 }
@@ -4927,7 +4927,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
                     "terminal": {
                       "$type": "RuleCall",
                       "rule": {
-                        "$ref": "#/rules@128"
+                        "$ref": "#/rules@136"
                       },
                       "arguments": []
                     }
@@ -4961,7 +4961,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@120"
+                "$ref": "#/rules@128"
               },
               "arguments": []
             }
@@ -4980,7 +4980,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@120"
+                    "$ref": "#/rules@128"
                   },
                   "arguments": []
                 }
@@ -4996,7 +4996,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@121"
+                    "$ref": "#/rules@129"
                   },
                   "arguments": []
                 }
@@ -5019,6 +5019,13 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
           {
             "$type": "RuleCall",
             "rule": {
+              "$ref": "#/rules@94"
+            },
+            "arguments": []
+          },
+          {
+            "$type": "RuleCall",
+            "rule": {
               "$ref": "#/rules@87"
             },
             "arguments": []
@@ -5026,9 +5033,417 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@88"
+              "$ref": "#/rules@92"
             },
             "arguments": []
+          },
+          {
+            "$type": "RuleCall",
+            "rule": {
+              "$ref": "#/rules@95"
+            },
+            "arguments": []
+          }
+        ]
+      },
+      "entry": false,
+      "fragment": false,
+      "parameters": []
+    },
+    {
+      "$type": "ParserRule",
+      "name": "ControlLine",
+      "definition": {
+        "$type": "Group",
+        "elements": [
+          {
+            "$type": "Assignment",
+            "feature": "track",
+            "operator": "=",
+            "terminal": {
+              "$type": "CrossReference",
+              "type": {
+                "$ref": "#/rules@33"
+              },
+              "terminal": {
+                "$type": "RuleCall",
+                "rule": {
+                  "$ref": "#/rules@121"
+                },
+                "arguments": []
+              },
+              "deprecatedSyntax": false,
+              "isMulti": false
+            }
+          },
+          {
+            "$type": "Keyword",
+            "value": "."
+          },
+          {
+            "$type": "Assignment",
+            "feature": "control",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$ref": "#/rules@88"
+              },
+              "arguments": []
+            }
+          },
+          {
+            "$type": "Keyword",
+            "value": ":"
+          },
+          {
+            "$type": "Assignment",
+            "feature": "steps",
+            "operator": "+=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$ref": "#/rules@89"
+              },
+              "arguments": []
+            }
+          },
+          {
+            "$type": "Group",
+            "elements": [
+              {
+                "$type": "Keyword",
+                "value": ","
+              },
+              {
+                "$type": "Assignment",
+                "feature": "steps",
+                "operator": "+=",
+                "terminal": {
+                  "$type": "RuleCall",
+                  "rule": {
+                    "$ref": "#/rules@89"
+                  },
+                  "arguments": []
+                }
+              }
+            ],
+            "cardinality": "*"
+          }
+        ]
+      },
+      "entry": false,
+      "fragment": false,
+      "parameters": []
+    },
+    {
+      "$type": "ParserRule",
+      "name": "Control",
+      "definition": {
+        "$type": "Alternatives",
+        "elements": [
+          {
+            "$type": "Group",
+            "elements": [
+              {
+                "$type": "Assignment",
+                "feature": "kind",
+                "operator": "=",
+                "terminal": {
+                  "$type": "Keyword",
+                  "value": "cc"
+                }
+              },
+              {
+                "$type": "Assignment",
+                "feature": "number",
+                "operator": "=",
+                "terminal": {
+                  "$type": "RuleCall",
+                  "rule": {
+                    "$ref": "#/rules@136"
+                  },
+                  "arguments": []
+                }
+              }
+            ]
+          },
+          {
+            "$type": "Group",
+            "elements": [
+              {
+                "$type": "Assignment",
+                "feature": "kind",
+                "operator": "=",
+                "terminal": {
+                  "$type": "Keyword",
+                  "value": "pressure"
+                }
+              },
+              {
+                "$type": "Assignment",
+                "feature": "pitch",
+                "operator": "=",
+                "terminal": {
+                  "$type": "RuleCall",
+                  "rule": {
+                    "$ref": "#/rules@125"
+                  },
+                  "arguments": []
+                },
+                "cardinality": "?"
+              }
+            ]
+          },
+          {
+            "$type": "Assignment",
+            "feature": "kind",
+            "operator": "=",
+            "terminal": {
+              "$type": "Alternatives",
+              "elements": [
+                {
+                  "$type": "Keyword",
+                  "value": "bend"
+                },
+                {
+                  "$type": "Keyword",
+                  "value": "program"
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "entry": false,
+      "fragment": false,
+      "parameters": []
+    },
+    {
+      "$type": "ParserRule",
+      "name": "ControlStep",
+      "definition": {
+        "$type": "Alternatives",
+        "elements": [
+          {
+            "$type": "RuleCall",
+            "rule": {
+              "$ref": "#/rules@90"
+            },
+            "arguments": []
+          },
+          {
+            "$type": "RuleCall",
+            "rule": {
+              "$ref": "#/rules@99"
+            },
+            "arguments": []
+          }
+        ]
+      },
+      "entry": false,
+      "fragment": false,
+      "parameters": []
+    },
+    {
+      "$type": "ParserRule",
+      "name": "ControlHold",
+      "definition": {
+        "$type": "Group",
+        "elements": [
+          {
+            "$type": "Assignment",
+            "feature": "value",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$ref": "#/rules@91"
+              },
+              "arguments": []
+            }
+          },
+          {
+            "$type": "Group",
+            "elements": [
+              {
+                "$type": "Keyword",
+                "value": "->"
+              },
+              {
+                "$type": "Assignment",
+                "feature": "target",
+                "operator": "=",
+                "terminal": {
+                  "$type": "RuleCall",
+                  "rule": {
+                    "$ref": "#/rules@91"
+                  },
+                  "arguments": []
+                }
+              }
+            ],
+            "cardinality": "?"
+          },
+          {
+            "$type": "Assignment",
+            "feature": "duration",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$ref": "#/rules@126"
+              },
+              "arguments": []
+            }
+          }
+        ]
+      },
+      "entry": false,
+      "fragment": false,
+      "parameters": []
+    },
+    {
+      "$type": "ParserRule",
+      "name": "ControlValue",
+      "definition": {
+        "$type": "Alternatives",
+        "elements": [
+          {
+            "$type": "Assignment",
+            "feature": "number",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$ref": "#/rules@136"
+              },
+              "arguments": []
+            }
+          },
+          {
+            "$type": "Assignment",
+            "feature": "semitones",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$ref": "#/rules@134"
+              },
+              "arguments": []
+            }
+          }
+        ]
+      },
+      "entry": false,
+      "fragment": false,
+      "parameters": []
+    },
+    {
+      "$type": "ParserRule",
+      "name": "TempoLine",
+      "definition": {
+        "$type": "Group",
+        "elements": [
+          {
+            "$type": "Keyword",
+            "value": "tempo"
+          },
+          {
+            "$type": "Keyword",
+            "value": ":"
+          },
+          {
+            "$type": "Assignment",
+            "feature": "steps",
+            "operator": "+=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$ref": "#/rules@93"
+              },
+              "arguments": []
+            }
+          },
+          {
+            "$type": "Group",
+            "elements": [
+              {
+                "$type": "Keyword",
+                "value": ","
+              },
+              {
+                "$type": "Assignment",
+                "feature": "steps",
+                "operator": "+=",
+                "terminal": {
+                  "$type": "RuleCall",
+                  "rule": {
+                    "$ref": "#/rules@93"
+                  },
+                  "arguments": []
+                }
+              }
+            ],
+            "cardinality": "*"
+          }
+        ]
+      },
+      "entry": false,
+      "fragment": false,
+      "parameters": []
+    },
+    {
+      "$type": "ParserRule",
+      "name": "TempoStep",
+      "definition": {
+        "$type": "Group",
+        "elements": [
+          {
+            "$type": "Assignment",
+            "feature": "bpm",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$ref": "#/rules@128"
+              },
+              "arguments": []
+            }
+          },
+          {
+            "$type": "Group",
+            "elements": [
+              {
+                "$type": "Keyword",
+                "value": "->"
+              },
+              {
+                "$type": "Assignment",
+                "feature": "target",
+                "operator": "=",
+                "terminal": {
+                  "$type": "RuleCall",
+                  "rule": {
+                    "$ref": "#/rules@128"
+                  },
+                  "arguments": []
+                }
+              }
+            ],
+            "cardinality": "?"
+          },
+          {
+            "$type": "Assignment",
+            "feature": "duration",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$ref": "#/rules@126"
+              },
+              "arguments": []
+            }
           }
         ]
       },
@@ -5066,7 +5481,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
                   "terminal": {
                     "$type": "RuleCall",
                     "rule": {
-                      "$ref": "#/rules@113"
+                      "$ref": "#/rules@121"
                     },
                     "arguments": []
                   },
@@ -5087,7 +5502,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@90"
+                "$ref": "#/rules@97"
               },
               "arguments": []
             }
@@ -5106,7 +5521,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@90"
+                    "$ref": "#/rules@97"
                   },
                   "arguments": []
                 }
@@ -5142,7 +5557,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
               "terminal": {
                 "$type": "RuleCall",
                 "rule": {
-                  "$ref": "#/rules@113"
+                  "$ref": "#/rules@121"
                 },
                 "arguments": []
               },
@@ -5161,7 +5576,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@113"
+                "$ref": "#/rules@121"
               },
               "arguments": []
             }
@@ -5180,7 +5595,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@113"
+                    "$ref": "#/rules@121"
                   },
                   "arguments": []
                 }
@@ -5195,7 +5610,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@89"
+                "$ref": "#/rules@96"
               },
               "arguments": []
             }
@@ -5211,7 +5626,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@89"
+                "$ref": "#/rules@96"
               },
               "arguments": []
             }
@@ -5227,7 +5642,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@121"
+                "$ref": "#/rules@129"
               },
               "arguments": []
             }
@@ -5279,42 +5694,42 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@123"
+                "$ref": "#/rules@131"
               },
               "arguments": []
             },
             {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@124"
+                "$ref": "#/rules@132"
               },
               "arguments": []
             },
             {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@125"
+                "$ref": "#/rules@133"
               },
               "arguments": []
             },
             {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@122"
+                "$ref": "#/rules@130"
               },
               "arguments": []
             },
             {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@126"
+                "$ref": "#/rules@134"
               },
               "arguments": []
             },
             {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@128"
+                "$ref": "#/rules@136"
               },
               "arguments": []
             }
@@ -5334,28 +5749,28 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@92"
+              "$ref": "#/rules@99"
             },
             "arguments": []
           },
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@93"
+              "$ref": "#/rules@100"
             },
             "arguments": []
           },
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@91"
+              "$ref": "#/rules@98"
             },
             "arguments": []
           },
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@94"
+              "$ref": "#/rules@101"
             },
             "arguments": []
           }
@@ -5382,7 +5797,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@113"
+                "$ref": "#/rules@121"
               },
               "arguments": []
             }
@@ -5414,7 +5829,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@90"
+                "$ref": "#/rules@97"
               },
               "arguments": []
             }
@@ -5433,7 +5848,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@90"
+                    "$ref": "#/rules@97"
                   },
                   "arguments": []
                 }
@@ -5471,7 +5886,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@118"
+                    "$ref": "#/rules@126"
                   },
                   "arguments": []
                 }
@@ -5526,7 +5941,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@119"
+                "$ref": "#/rules@127"
               },
               "arguments": []
             }
@@ -5542,7 +5957,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@90"
+                "$ref": "#/rules@97"
               },
               "arguments": []
             }
@@ -5561,7 +5976,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@90"
+                    "$ref": "#/rules@97"
                   },
                   "arguments": []
                 }
@@ -5592,7 +6007,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@95"
+                "$ref": "#/rules@102"
               },
               "arguments": []
             }
@@ -5607,7 +6022,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@118"
+                    "$ref": "#/rules@126"
                   },
                   "arguments": []
                 }
@@ -5646,7 +6061,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@102"
+                "$ref": "#/rules@109"
               },
               "arguments": []
             },
@@ -5667,42 +6082,42 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@97"
+              "$ref": "#/rules@104"
             },
             "arguments": []
           },
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@98"
+              "$ref": "#/rules@105"
             },
             "arguments": []
           },
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@99"
+              "$ref": "#/rules@106"
             },
             "arguments": []
           },
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@100"
+              "$ref": "#/rules@107"
             },
             "arguments": []
           },
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@101"
+              "$ref": "#/rules@108"
             },
             "arguments": []
           },
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@96"
+              "$ref": "#/rules@103"
             },
             "arguments": []
           }
@@ -5761,7 +6176,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@98"
+                "$ref": "#/rules@105"
               },
               "arguments": []
             },
@@ -5787,7 +6202,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
         "terminal": {
           "$type": "RuleCall",
           "rule": {
-            "$ref": "#/rules@117"
+            "$ref": "#/rules@125"
           },
           "arguments": []
         }
@@ -5814,7 +6229,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
               "terminal": {
                 "$type": "RuleCall",
                 "rule": {
-                  "$ref": "#/rules@113"
+                  "$ref": "#/rules@121"
                 },
                 "arguments": []
               },
@@ -5841,7 +6256,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@128"
+                "$ref": "#/rules@136"
               },
               "arguments": []
             }
@@ -5899,7 +6314,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
         "terminal": {
           "$type": "RuleCall",
           "rule": {
-            "$ref": "#/rules@113"
+            "$ref": "#/rules@121"
           },
           "arguments": []
         }
@@ -5914,48 +6329,6 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
       "definition": {
         "$type": "Alternatives",
         "elements": [
-          {
-            "$type": "RuleCall",
-            "rule": {
-              "$ref": "#/rules@103"
-            },
-            "arguments": []
-          },
-          {
-            "$type": "RuleCall",
-            "rule": {
-              "$ref": "#/rules@104"
-            },
-            "arguments": []
-          },
-          {
-            "$type": "RuleCall",
-            "rule": {
-              "$ref": "#/rules@105"
-            },
-            "arguments": []
-          },
-          {
-            "$type": "RuleCall",
-            "rule": {
-              "$ref": "#/rules@106"
-            },
-            "arguments": []
-          },
-          {
-            "$type": "RuleCall",
-            "rule": {
-              "$ref": "#/rules@107"
-            },
-            "arguments": []
-          },
-          {
-            "$type": "RuleCall",
-            "rule": {
-              "$ref": "#/rules@108"
-            },
-            "arguments": []
-          },
           {
             "$type": "RuleCall",
             "rule": {
@@ -5974,6 +6347,55 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "$type": "RuleCall",
             "rule": {
               "$ref": "#/rules@112"
+            },
+            "arguments": []
+          },
+          {
+            "$type": "RuleCall",
+            "rule": {
+              "$ref": "#/rules@113"
+            },
+            "arguments": []
+          },
+          {
+            "$type": "RuleCall",
+            "rule": {
+              "$ref": "#/rules@114"
+            },
+            "arguments": []
+          },
+          {
+            "$type": "RuleCall",
+            "rule": {
+              "$ref": "#/rules@115"
+            },
+            "arguments": []
+          },
+          {
+            "$type": "RuleCall",
+            "rule": {
+              "$ref": "#/rules@116"
+            },
+            "arguments": []
+          },
+          {
+            "$type": "RuleCall",
+            "rule": {
+              "$ref": "#/rules@118"
+            },
+            "arguments": []
+          },
+          {
+            "$type": "RuleCall",
+            "rule": {
+              "$ref": "#/rules@119"
+            },
+            "arguments": []
+          },
+          {
+            "$type": "RuleCall",
+            "rule": {
+              "$ref": "#/rules@120"
             },
             "arguments": []
           },
@@ -6010,7 +6432,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@128"
+                    "$ref": "#/rules@136"
                   },
                   "arguments": []
                 }
@@ -6050,6 +6472,34 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
     },
     {
       "$type": "ParserRule",
+      "name": "ReleaseVelocity",
+      "definition": {
+        "$type": "Group",
+        "elements": [
+          {
+            "$type": "Keyword",
+            "value": "off"
+          },
+          {
+            "$type": "Assignment",
+            "feature": "value",
+            "operator": "=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$ref": "#/rules@136"
+              },
+              "arguments": []
+            }
+          }
+        ]
+      },
+      "entry": false,
+      "fragment": false,
+      "parameters": []
+    },
+    {
+      "$type": "ParserRule",
       "name": "GateLength",
       "definition": {
         "$type": "Group",
@@ -6065,7 +6515,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@125"
+                "$ref": "#/rules@133"
               },
               "arguments": []
             }
@@ -6141,7 +6591,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
                 "terminal": {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@129"
+                    "$ref": "#/rules@137"
                   },
                   "arguments": []
                 }
@@ -6180,7 +6630,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@109"
+                "$ref": "#/rules@117"
               },
               "arguments": []
             },
@@ -6205,7 +6655,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@122"
+                "$ref": "#/rules@130"
               },
               "arguments": []
             }
@@ -6221,7 +6671,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@126"
+                "$ref": "#/rules@134"
               },
               "arguments": []
             }
@@ -6249,7 +6699,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@122"
+                "$ref": "#/rules@130"
               },
               "arguments": []
             }
@@ -6277,7 +6727,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@122"
+                "$ref": "#/rules@130"
               },
               "arguments": []
             }
@@ -6305,7 +6755,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@118"
+                "$ref": "#/rules@126"
               },
               "arguments": []
             }
@@ -6317,7 +6767,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@127"
+                "$ref": "#/rules@135"
               },
               "arguments": []
             },
@@ -6339,7 +6789,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
           {
             "$type": "RuleCall",
             "rule": {
-              "$ref": "#/rules@130"
+              "$ref": "#/rules@138"
             },
             "arguments": []
           },
@@ -6710,6 +7160,22 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
           {
             "$type": "Keyword",
             "value": "bool"
+          },
+          {
+            "$type": "Keyword",
+            "value": "cc"
+          },
+          {
+            "$type": "Keyword",
+            "value": "pressure"
+          },
+          {
+            "$type": "Keyword",
+            "value": "program"
+          },
+          {
+            "$type": "Keyword",
+            "value": "off"
           }
         ]
       },
@@ -7015,7 +7481,7 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
           {
             "$type": "SimpleType",
             "typeRef": {
-              "$ref": "#/rules@91"
+              "$ref": "#/rules@98"
             }
           }
         ]
