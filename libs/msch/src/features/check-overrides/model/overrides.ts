@@ -103,9 +103,13 @@ const copyFiles = Effect.fn("copyFiles")(function* copyFiles(
   const fs = yield* FileSystem.FileSystem;
   const path = yield* Path.Path;
   const copyOne = (file: string): Effect.Effect<void, PlatformError.PlatformError> => {
+    const source = path.join(workspace.root, file);
     const target = path.join(directory, file);
-    const copy = fs.copyFile(path.join(workspace.root, file), target);
-    return fs.makeDirectory(path.dirname(target), { recursive: true }).pipe(Effect.andThen(copy));
+    const copy = fs.copyFile(source, target);
+    const write = fs
+      .makeDirectory(path.dirname(target), { recursive: true })
+      .pipe(Effect.andThen(copy));
+    return Effect.when(write, fs.exists(source));
   };
   yield* Effect.forEach(workspace.files, copyOne, { concurrency: 1, discard: true });
 });

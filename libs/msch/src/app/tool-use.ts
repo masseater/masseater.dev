@@ -1,6 +1,7 @@
 import { Array as Arr, Effect } from "effect";
 
 import { checkMissingHooks } from "#/features/check-agent-settings/index.ts";
+import { checkMarkdown } from "#/features/check-markdown/index.ts";
 import { checkRestrictedRules } from "#/features/check-overrides/index.ts";
 import { checkScripts } from "#/features/check-scripts/index.ts";
 import { checkVitePlus } from "#/features/check-vite-plus/index.ts";
@@ -23,6 +24,7 @@ export const checkToolUse = Effect.fn("checkToolUse")(function* checkToolUse(roo
       checkFullHistoryCheckout(root),
       checkReleasePrAutoMerge(root),
       checkRestrictedRules(root),
+      checkMarkdown(root),
     ],
     { concurrency: "unbounded" },
   );

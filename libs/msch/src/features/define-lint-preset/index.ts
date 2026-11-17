@@ -14,3 +14,5 @@ export { steigerRules } from "./config/fsd-rules.ts";
 export { textlintPresets } from "./config/textlint-presets.config.ts";
 export { readonlyParameterAllow } from "./config/readonly-types.config.ts";
 export { default as decisionPlugin } from "./config/decision-rules.ts";
+export { markdownOf } from "./config/markdown.config.ts";
+export type { MarkdownOptions } from "./config/markdown.config.ts";

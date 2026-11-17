@@ -48,7 +48,6 @@ const CONFIG = lines(
   "    ],",
   "  },",
   '  textlint: { ignores: ["skip/**"], rules: {} },',
-  '  markdownlint: { ignores: ["skip/**"] },',
   "};",
 );
 
@@ -138,19 +137,17 @@ const passesEveryConfiguredCheck = Effect.gen(function* passesEveryConfiguredChe
     "✓ dependencies",
     "✓ steiger",
     "✓ textlint",
-    "✓ markdownlint",
   ]);
 });
 
 const namesTheFailingChecks = Effect.gen(function* namesTheFailingChecks() {
-  const root = yield* repositoryWith(
-    { "libs/a/package.json": manifest({ "left-pad": "1.0.0" }), "docs/guide.md": "#Guide\n" },
-    ["no type"],
-  );
+  const root = yield* repositoryWith({ "libs/a/package.json": manifest({ "left-pad": "1.0.0" }) }, [
+    "no type",
+  ]);
   const { exit, output } = yield* run(root, []);
   assertFalse(Exit.isSuccess(exit));
   const failed = failedChecksOf(output);
-  deepStrictEqual(failed, ["✗ commitlint", "✗ dependencies", "✗ markdownlint"]);
+  deepStrictEqual(failed, ["✗ commitlint", "✗ dependencies"]);
 });
 
 const SOURCE_CONFIG = lines(
