@@ -23,7 +23,7 @@ export default defineConfig({
   },
   run: {
     tasks: {
-      test: "vp test run",
+      test: { command: "vp test run", dependsOn: [{ task: "native", from: "dependencies" }] },
       build: "vp pack",
     },
   },
