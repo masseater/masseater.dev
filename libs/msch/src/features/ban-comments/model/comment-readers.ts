@@ -1,10 +1,10 @@
-import { fileURLToPath } from "node:url";
-
-import treeSitter from "@vscode/tree-sitter-wasm";
 import { isComment, isTag, isText } from "domhandler";
 import type { AnyNode, Text } from "domhandler";
 import { Array as Arr, Effect, Option, Record as Rec, String as Str, pipe } from "effect";
 import { DomUtils, parseDocument } from "htmlparser2";
+
+import { loadLanguage, readTree } from "#/shared/lib/tree-sitter.ts";
+import type { Language } from "#/shared/lib/tree-sitter.ts";
 
 import { dockerfileComments, sqlComments, tomlComments, yamlComments } from "./config-comments.ts";
 import { trimmed, unreadable } from "./found-comment.ts";
@@ -32,29 +32,22 @@ export type Markup = "html" | "xml";
 
 export type Reader = Grammar | Markup | "yaml" | "toml" | "sql" | "dockerfile";
 
-export type Grammars = (grammar: Grammar) => Option.Option<treeSitter.Language>;
+export type Grammars = (grammar: Grammar) => Option.Option<Language>;
 
 const COMMENT_NODES = ["comment", "line_comment", "block_comment", "multiline_comment"];
 const START = 0;
 const NEXT = 1;
 const NONE: readonly FoundComment[] = [];
 
-const grammarFile = (grammar: Grammar): string =>
-  fileURLToPath(import.meta.resolve(`@vscode/tree-sitter-wasm/wasm/tree-sitter-${grammar}.wasm`));
-
 const loadGrammar = (
   grammar: Grammar,
-): Effect.Effect<readonly [Grammar, treeSitter.Language], CommentsUnreadable> =>
-  Effect.tryPromise({
-    try: () => treeSitter.Language.load(grammarFile(grammar)),
-    catch: unreadable(grammar),
-  }).pipe(Effect.map((language) => [grammar, language] as const));
+): Effect.Effect<readonly [Grammar, Language], CommentsUnreadable> =>
+  loadLanguage(grammar).pipe(
+    Effect.mapError(unreadable(grammar)),
+    Effect.map((language) => [grammar, language] as const),
+  );
 
 export const loadGrammars = Effect.fn("loadGrammars")(function* loadGrammars() {
-  yield* Effect.tryPromise({
-    try: () => treeSitter.Parser.init(),
-    catch: unreadable("javascript"),
-  });
   const loaded = yield* Effect.forEach(GRAMMARS, (grammar) => loadGrammar(grammar), {
     concurrency: 1,
   });
@@ -63,22 +56,17 @@ export const loadGrammars = Effect.fn("loadGrammars")(function* loadGrammars() {
   return grammars;
 });
 
-const commentNodesIn = (language: treeSitter.Language, source: string): readonly FoundComment[] => {
-  const parser = new treeSitter.Parser();
-  parser.setLanguage(language);
-  const tree = parser.parse(source);
-  parser.delete();
-  if (tree === null) {
-    return NONE;
-  }
-  const found = pipe(
-    tree.rootNode.descendantsOfType(COMMENT_NODES),
-    Arr.flatMap((node) => Option.toArray(Option.fromNullishOr(node))),
-    Arr.map((node) => trimmed({ index: node.startIndex, text: node.text })),
+const commentNodesIn = (language: Language, source: string): readonly FoundComment[] =>
+  pipe(
+    readTree(language, source, (root) =>
+      pipe(
+        root.descendantsOfType(COMMENT_NODES),
+        Arr.flatMap((node) => Option.toArray(Option.fromNullishOr(node))),
+        Arr.map((node) => trimmed({ index: node.startIndex, text: node.text })),
+      ),
+    ),
+    Option.getOrElse(() => NONE),
   );
-  tree.delete();
-  return found;
-};
 
 const syntaxComments =
   (grammars: Grammars, grammar: Grammar) =>

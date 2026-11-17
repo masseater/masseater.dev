@@ -16,6 +16,7 @@ const MINIMUM_WORDS = 2;
 const FEATURES = "src/features/";
 const SOURCE = "src/";
 const DEPLOY_MARKER = /(?:^|[.-])entrypoints?(?=[.-]|$)|\.worker(?=\.)/iu;
+const SCRIPT = /\.[cm]?[jt]sx?$/u;
 const VERBS: ReadonlySet<string> = new Set(englishVerbs);
 
 const SLICE_MESSAGE =
@@ -30,7 +31,7 @@ const isVerbObject = (slice: string): boolean => {
 
 const misnamedSlice = ({ workspace, inner }: Owned): Option.Option<string> =>
   pipe(
-    Option.liftPredicate(inner, Str.startsWith(FEATURES)),
+    Option.liftPredicate(inner, (path) => Str.startsWith(FEATURES)(path) && SCRIPT.test(path)),
     Option.flatMap((path) => Arr.head(Str.split(Str.slice(FEATURES.length)(path), SEPARATOR))),
     Option.filter((slice) => !isVerbObject(slice)),
     Option.map((slice) => `${workspace}${SEPARATOR}${FEATURES}${slice}`),
