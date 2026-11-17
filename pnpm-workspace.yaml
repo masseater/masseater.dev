@@ -12,7 +12,7 @@ catalog:
   effector: 23.4.4
   empathic: 2.1.0
   globby: 16.2.4
-  immer: 10.2.0
+  immer: 11.2.10
   micromatch: 4.0.8
   patronum: 2.3.0
   "@pnpm/deps.path": 1101.0.9
