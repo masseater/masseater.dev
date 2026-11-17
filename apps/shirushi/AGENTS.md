@@ -1,7 +1,7 @@
 # shirushi
 
-このワークスペースはデスクトップアプリの shirushi である。オーナーは創作の参考にする YouTube、ニコニコ、SoundCloud、PC 上のファイルの曲や動画を再生し、好きな範囲や苦手な範囲にしるしを付ける。しるしはオーナーの PC に保存する。曲や絵や映像を作る AI は、アプリが `127.0.0.1` で提供する MCP でそれを読み取る。AI は同じ MCP で、二択、好みの見立て、まだ見ていない曲や動画への予想を置き、オーナーの答えを読む。
+This workspace is the desktop app shirushi. The owner plays songs and videos from YouTube, Niconico, SoundCloud and files on the PC that they use as references for their creative work, and marks the ranges they like or dislike. Marks are saved on the owner's PC. AIs that make songs, pictures or video read them through the MCP the app serves on `127.0.0.1`. Through the same MCP, the AI posts two-way choices, guesses about the owner's taste and predictions for songs and videos the owner has not seen, and reads the owner's answers.
 
-他人の曲や動画、それから作ったステムや静止画は、このリポジトリやインストーラーへ入れないこと。
+Do not put other people's songs or videos, or stems and stills made from them, in this repository or the installer.
 
-画面は `tauri://localhost` ではなく、tauri-plugin-localhost が `http://127.0.0.1` の空きポートから配る。カスタムスキームの画面からは Referer が送られず、YouTube の埋め込みが Error 153 で止まるからである。このため、コマンドを足したら `src-tauri/build.rs` と `capabilities/default.json` にも足す。
+The screens are served by tauri-plugin-localhost from a free port on `http://127.0.0.1`, not from `tauri://localhost`. Screens on a custom scheme send no Referer, and YouTube embeds stop with Error 153. So when you add a command, also add it to `src-tauri/build.rs` and `capabilities/default.json`.

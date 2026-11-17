@@ -13,11 +13,6 @@
   "minimumReleaseAge": "3 days",
   "packageRules": [
     {
-      "description": "patches/crates は上流の crate を Cargo の [patch] で差し替えるコピーである。renovate はこの中の Cargo.toml と Cargo.lock だけを上げ、ルートの Cargo.lock を直さないので、patch が使われなくなって cargo が解決できなくなる（#1283）。上げるときはルートの Cargo.lock と src を合わせて手で直す。",
-      "matchFileNames": ["patches/crates/**"],
-      "enabled": false
-    },
-    {
       "matchPackageNames": [
         "effect",
         "@effect/**",
@@ -29,10 +24,21 @@
       "groupName": "effect and alchemy"
     },
     {
-      "description": "@effect/tsgo は対応している版の oxlint にしかパッチを当てられず、合わないと prepare が落ちて vp install が失敗する。組で上げ、up-to-date の install が通ったときだけマージする。",
-      "matchPackageNames": ["oxlint", "@oxlint/plugins", "@effect/tsgo"],
+      "description": "vite-plus は oxlint と tsrs の版を固定し、@effect/tsgo は対応している版の oxlint と oxlint-tsgolint にしかパッチを当てられない。合わないと prepare が落ちて vp install が失敗する。組で上げ、up-to-date の install が通ったときだけマージする。",
+      "matchPackageNames": [
+        "vite-plus",
+        "oxlint",
+        "@oxlint/plugins",
+        "oxlint-tsgolint",
+        "@effect/tsgo"
+      ],
       "groupName": "oxlint and effect-tsgo",
       "ignoreTests": false
+    },
+    {
+      "description": "patches/ の crate はルートの Cargo.lock で解決される。Renovate は写しの Cargo.toml と写し自身の Cargo.lock だけを上げ、ルートの Cargo.lock と食い違って cargo の --locked が落ちる (#1283, #1284, #1289)。更新しない。",
+      "matchFileNames": ["patches/**"],
+      "enabled": false
     },
     {
       "matchDepTypes": ["pnpm-workspace.overrides"],

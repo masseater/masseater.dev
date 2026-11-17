@@ -1,5 +1,5 @@
 # npm-publish
 
-このワークスペースは、`libs/` のパッケージを npm に出す。
+This workspace claims new npm names. Publishing itself goes through `msch-publish` and the publish workflow.
 
-npm にまだ無い名前は publish.yml の OIDC では出せない。task ワークフローで `claim-npm-names` を credentials `github` で動かすと、本人の承認 1 回のログインで仮の版を出し、Trusted Publisher を登録する。承認リンクは Issue に書き込まれる。
+A name not yet on npm cannot be published through the OIDC of publish.yml. Running `claim-npm-names` in the task workflow with the `github` credentials publishes a placeholder version with one owner-approved login and registers the Trusted Publisher. The approval link is posted to an Issue.

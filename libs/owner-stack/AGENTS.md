@@ -1,3 +1,3 @@
 # @masseater.dev/owner-stack
 
-このワークスペースは、持ち主だけを通す Access の部品（`OwnerPolicy`・Google の IdP・Zero Trust の組織）とスライドの索引を持つスタックを、Alchemy の state から探す。そのスタックは private のリポにあり、名前をこのリポのコードに書かないためである。
+This workspace finds, in the Alchemy state, the stack that holds the owner-only Access parts (`OwnerPolicy`, the Google IdP, the Zero Trust organization) and the slide index. That stack lives in a private repository, and its name must not be written in this repository's code.

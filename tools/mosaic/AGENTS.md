@@ -1,5 +1,5 @@
 # @masseater.dev/mosaic-build
 
-このワークスペースでは、モザイクアートサイトが各キャラクター向けに提供するファイルを作成する。
+This workspace builds the files the mosaic art site serves for each character.
 
-`site.rs` や `image.rs` を変更すると、公開ファイルのリビジョンが変更され、すべてのキャラのファイルが再ビルドされる。
+Changing `site.rs` or `image.rs` changes the revision of the published files, and every character's files are rebuilt.

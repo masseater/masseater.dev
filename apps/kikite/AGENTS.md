@@ -1,3 +1,3 @@
 # kikite
 
-このワークスペースは `kikite.masseater.dev` で、音声回答を聞いて次の質問を投げかける擬似インタビュアーである。持ち主はこれを使って、質問の仕方を比較検討している。
+This workspace is `kikite.masseater.dev`, a mock interviewer that listens to spoken answers and asks the next question. The owner uses it to compare ways of asking questions.

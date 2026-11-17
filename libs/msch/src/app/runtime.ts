@@ -2,6 +2,7 @@ import { runMain } from "@effect/platform-node-shared/NodeRuntime";
 import { Cause, Effect, Layer, Option, Schema, Stdio, Stream } from "effect";
 import type { FileSystem, Path } from "effect";
 import { FetchHttpClient } from "effect/http";
+import type { HttpClient } from "effect/http";
 import { Otlp, OtlpSerialization } from "effect/observability";
 import type { ChildProcessSpawner } from "effect/process";
 
@@ -37,9 +38,10 @@ export const runCli = <Value, Failure>(
     | FileSystem.FileSystem
     | Path.Path
     | ChildProcessSpawner.ChildProcessSpawner
+    | HttpClient.HttpClient
   >,
 ): void => {
-  const services = Layer.mergeAll(nodeRepositoryFiles, tracing).pipe(
+  const services = Layer.mergeAll(nodeRepositoryFiles, tracing, FetchHttpClient.layer).pipe(
     Layer.provideMerge(nodeServicesLayer),
   );
   const main = Layer.build(services).pipe(

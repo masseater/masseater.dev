@@ -1,5 +1,5 @@
 # workers-ai-check
 
-このワークスペースは、リポジトリのコードが使う Workers AI のモデルが廃止の予定に入っていないかを毎日確かめる。
+This workspace checks every day that the Workers AI models the repository's code uses are not scheduled for deprecation.
 
-使うモデルはコードの `@cf/` の文字列から集める。モデルの一覧を手で持たない。
+It collects the models from the `@cf/` strings in the code. Do not keep a hand-written list of models.

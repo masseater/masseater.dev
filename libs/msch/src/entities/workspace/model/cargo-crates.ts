@@ -7,6 +7,7 @@ const CrateTarget = Schema.Struct({ kind: Schema.Array(Schema.String) });
 const CrateDependency = Schema.Struct({ path: Schema.optional(Schema.String) });
 const CrateEntry = Schema.Struct({
   name: Schema.String,
+  version: Schema.String,
   manifest_path: Schema.String,
   targets: Schema.Array(CrateTarget),
   dependencies: Schema.Array(CrateDependency),
@@ -16,6 +17,7 @@ const decodeCrateList = Schema.decodeUnknownEffect(CrateList);
 
 export interface Crate {
   readonly name: string;
+  readonly version: string;
   readonly manifest: string;
   readonly kinds: readonly string[];
   readonly pathDependencies: readonly string[];
@@ -23,6 +25,7 @@ export interface Crate {
 
 const crateOf = (crate: typeof CrateEntry.Type): Crate => ({
   name: crate.name,
+  version: crate.version,
   manifest: crate.manifest_path,
   kinds: pipe(
     crate.targets,

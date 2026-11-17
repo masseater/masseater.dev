@@ -1,4 +1,5 @@
 import { Array as Arr, Option, pipe } from "effect";
+import type { AstNode } from "langium";
 
 import type { Edit, Lyric, PlayParam } from "#/entities/song/index.ts";
 import { ticksOf } from "#/shared/lib/ticks.ts";
@@ -12,6 +13,7 @@ import {
   isLyric,
   isNudge,
   isPlayParam,
+  isReleaseVelocity,
   isTie,
   isVelocity,
 } from "#generated/langium/ast.ts";
@@ -44,6 +46,7 @@ export const paramsOf: From<Attributes, readonly PlayParam[]> = (attributes) =>
 
 const isNoteOnly: From<Attribute, boolean> = (attribute) =>
   isTie(attribute) ||
+  isReleaseVelocity(attribute) ||
   isLyric(attribute) ||
   isBend(attribute) ||
   isGateLength(attribute) ||
@@ -66,6 +69,23 @@ export const misplacedOnSound = misplacedOf(
   (attribute) => !isNoteOnly(attribute) && !isEditOnly(attribute),
   "この音",
 );
+
+export const misplacedOnHit = misplacedOf(
+  (attribute) =>
+    isTie(attribute) ||
+    isReleaseVelocity(attribute) ||
+    (!isNoteOnly(attribute) && !isEditOnly(attribute)),
+  "この音",
+);
+
+export const releaseVelocityOf: From<Attributes, Option.Option<number>> = (attributes) =>
+  pipe(
+    Arr.findFirst(attributes, isReleaseVelocity),
+    Option.map((node) => node.value),
+  );
+
+export const tieOf: From<Attributes, Option.Option<AstNode>> = (attributes) =>
+  Arr.findFirst(attributes, isTie);
 
 export const misplacedOnEdit = misplacedOf(
   (attribute) => isEditOnly(attribute) || isNudge(attribute),
@@ -104,6 +124,7 @@ const bendOf: From<Attributes, NoteFields["bend"]> = (attributes) =>
 
 export const noteFieldsOf: From<Attributes, NoteFields> = (attributes) => ({
   velocity: velocityOf(attributes),
+  releaseVelocity: releaseVelocityOf(attributes),
   gate: gateOf(attributes),
   articulation: pipe(
     Arr.findFirst(attributes, isArticulation),
@@ -112,7 +133,7 @@ export const noteFieldsOf: From<Attributes, NoteFields> = (attributes) => ({
   lyric: lyricOf(attributes),
   bend: bendOf(attributes),
   params: paramsOf(attributes),
-  tie: Arr.findFirst(attributes, isTie),
+  tie: tieOf(attributes),
 });
 
 export const everyOf: From<Attributes, Edit["every"]> = (attributes) =>
