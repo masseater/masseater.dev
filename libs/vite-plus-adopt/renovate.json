@@ -16,8 +16,7 @@
       "matchManagers": ["custom.regex"],
       "matchDatasources": ["git-refs"],
       "matchFileNames": ["**/vite.config.ts"],
-      "minimumReleaseAge": null,
-      "ignoreTests": false
+      "minimumReleaseAge": null
     }
   ]
 }
