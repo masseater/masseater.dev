@@ -1,5 +1,7 @@
-import { docsPreset } from "@r_masseater/y8";
-import type { DocsPresetOptions, RuleEntry, Y8Config } from "@r_masseater/y8";
+import { agnix } from "@r_masseater/y8";
+import type { RuleEntry, Y8Config } from "@r_masseater/y8";
+import { docsPreset } from "@r_masseater/y8-docs";
+import type { DocsPresetOptions } from "@r_masseater/y8-docs";
 
 const INDEX_SKILL = "masseater-ecosystem";
 
@@ -36,7 +38,8 @@ export const markdownOf = ({ ignores = [], rules = {}, docs = {} }: MarkdownOpti
   });
   return {
     ...preset,
-    rules: { ...preset.rules, ...rules },
+    plugins: { ...preset.plugins, agnix },
+    rules: { ...preset.rules, "agnix/XP-001": "off", ...rules },
     ignores: [...MARKDOWN_IGNORES, ...ignores],
   };
 };

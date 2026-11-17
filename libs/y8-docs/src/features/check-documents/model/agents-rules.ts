@@ -1,6 +1,7 @@
+import { defineRule } from "@r_masseater/y8";
+import type { MarkdownNode, Rule, RuleContext } from "@r_masseater/y8";
 import { Array as Arr, Option, Predicate, pipe } from "effect";
 
-import { defineRule } from "#/entities/rule/index.ts";
 import {
   afterTitle,
   descendants,
@@ -21,7 +22,6 @@ import {
   stringsOption,
 } from "#/features/check-documents/lib/options.ts";
 import { bannedHeading, titleRule } from "#/features/check-documents/lib/shapes.ts";
-import type { MarkdownNode, Rule, RuleContext } from "#/shared/config/index.ts";
 
 const ONE = 1;
 const TREE = /[├└]──/u;

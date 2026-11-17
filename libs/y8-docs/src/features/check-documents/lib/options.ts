@@ -1,6 +1,5 @@
+import type { RuleContext } from "@r_masseater/y8";
 import { Array as Arr, Option, Predicate, pipe } from "effect";
-
-import type { RuleContext } from "#/shared/config/index.ts";
 
 export interface OptionKey<Value> {
   readonly key: string;

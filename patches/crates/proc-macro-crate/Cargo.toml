@@ -25,10 +25,10 @@ license = "MIT OR Apache-2.0"
 repository = "https://github.com/bkchr/proc-macro-crate"
 
 [dependencies.toml_datetime]
-version = "0.7.0"
+version = "0.6.3"
 
 [dependencies.toml_edit]
-version = "=0.25.19"
+version = "=0.20.2"
 
 [dev-dependencies.proc-macro2]
 version = "1.0.67"

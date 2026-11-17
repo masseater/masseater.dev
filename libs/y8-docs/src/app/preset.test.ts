@@ -1,4 +1,6 @@
 import { NodeServices } from "@effect/platform-node";
+import { lint } from "@r_masseater/y8";
+import type { Diagnostic, Y8Error } from "@r_masseater/y8";
 import {
   Array as Arr,
   Effect,
@@ -12,8 +14,7 @@ import {
 import type { PlatformError } from "effect/PlatformError";
 import { afterAll, expect, test } from "vite-plus/test";
 
-import { docsPreset, lint } from "./index.ts";
-import type { Diagnostic, Y8Error } from "./index.ts";
+import { docsPreset } from "./index.ts";
 
 const services = ManagedRuntime.make(NodeServices.layer);
 afterAll(() => services.dispose());
@@ -109,8 +110,6 @@ test("each file kind gets its own rules", () =>
       "skills/demo/SKILL.md docs/skill-title",
       "skills/demo/SKILL.md docs/skill-purpose-first",
       "skills/demo/SKILL.md docs/skill-description-person",
-      "skills/demo/SKILL.md agnix/AS-004",
-      "skills/demo/SKILL.md agnix/AS-017",
       "skills/demo/SKILL.md docs/skill-no-when-section",
     ]);
   }).pipe(services.runPromise));
