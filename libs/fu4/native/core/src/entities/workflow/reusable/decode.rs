@@ -1,7 +1,7 @@
 use std::collections::BTreeMap;
 
 use super::{CallInput, CallSecret, ReusableMetadata};
-use crate::shared::expression::types::ExprType;
+use crate::shared::expression::ExprType;
 use crate::shared::yaml::{Decoder, Kind, Node, load};
 
 fn input(d: &mut Decoder, name: &str, node: &Node) -> Option<CallInput> {

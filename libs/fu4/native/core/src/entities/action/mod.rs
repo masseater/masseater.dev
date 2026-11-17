@@ -90,7 +90,7 @@ fn clean_join(root: &Path, spec: &str) -> PathBuf {
 
 impl LocalActions {
     pub fn find(&self, root: &Path, spec: &str) -> Result<Option<Found>, String> {
-        let Some(relative) = crate::entities::workflow::local_path(spec) else {
+        let Some(relative) = crate::shared::uses::local_path(spec) else {
             return Ok(None);
         };
         if let Ok(cache) = self.cache.lock()

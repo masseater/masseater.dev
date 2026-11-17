@@ -5,4 +5,5 @@ pub mod glob;
 pub mod product;
 pub mod shell;
 pub mod text;
+pub mod uses;
 pub mod yaml;

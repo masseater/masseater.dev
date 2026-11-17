@@ -5,9 +5,9 @@ use serde::Deserialize;
 
 use crate::entities::workflow::{Job, Matrix, RawValue, Text, contains_expression};
 use crate::features::check_workflow::{CONFIG_NAME, Report, Rule};
-use crate::shared::expression::ast::Expr;
-use crate::shared::expression::lexer::Lexer;
-use crate::shared::expression::parser::parse;
+use crate::shared::expression::Expr;
+use crate::shared::expression::Lexer;
+use crate::shared::expression::parse;
 use crate::shared::text::quote;
 
 #[derive(Deserialize)]

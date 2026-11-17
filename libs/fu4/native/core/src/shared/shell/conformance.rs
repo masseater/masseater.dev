@@ -19,7 +19,7 @@ fn matches_shellcheck_on_its_recorded_corpus() {
         .flatten()
         .flatten()
         .map(|entry| entry.path())
-        .filter(|path| path.extension().is_some_and(|ext| ext == "sh"))
+        .filter(|path| path.extension().is_some_and(|ext| ext == "in"))
         .collect();
     scripts.sort();
     assert!(scripts.len() > 300);

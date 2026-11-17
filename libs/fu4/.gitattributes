@@ -1,2 +1,2 @@
-native/core/data/** linguist-generated=true
-native/core/tests/fixtures/** linguist-vendored=true
+native/core/data/** linguist-generated
+native/core/tests/fixtures/** linguist-vendored

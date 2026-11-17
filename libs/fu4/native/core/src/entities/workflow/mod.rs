@@ -1,7 +1,7 @@
 mod model;
 mod parse;
-mod uses;
+mod reusable;
 
 pub use model::*;
 pub use parse::parse;
-pub use uses::{is_self_reference_with_ref, local_path, self_reference_error};
+pub use reusable::{LocalWorkflows, input_type};

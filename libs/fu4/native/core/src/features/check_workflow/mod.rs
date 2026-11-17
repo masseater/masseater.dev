@@ -9,7 +9,7 @@ use std::path::PathBuf;
 use std::sync::Arc;
 
 use crate::entities::action::LocalActions;
-use crate::entities::reusable_workflow::LocalWorkflows;
+use crate::entities::workflow::LocalWorkflows;
 use crate::entities::workflow::{Workflow, parse};
 use crate::shared::diagnostic::Diagnostic;
 use tracing::info_span;

@@ -5,11 +5,10 @@ use regex::Regex;
 use serde::Deserialize;
 
 use crate::entities::action::{ActionMetadata, ActionRuns, display_path, is_outdated, popular};
-use crate::entities::workflow::{
-    Exec, ExecAction, Step, is_self_reference_with_ref, local_path, self_reference_error,
-};
+use crate::entities::workflow::{Exec, ExecAction, Step};
 use crate::features::check_workflow::{Project, Report, Rule};
 use crate::shared::text::{quote, sorted_quotes};
+use crate::shared::uses::{is_self_reference_with_ref, local_path, self_reference_error};
 use crate::shared::yaml::Pos;
 
 #[derive(Deserialize)]

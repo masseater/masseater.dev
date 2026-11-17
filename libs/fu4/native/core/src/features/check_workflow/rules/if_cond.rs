@@ -1,8 +1,8 @@
 use crate::entities::workflow::{Job, Step, Text};
 use crate::features::check_workflow::{Report, Rule};
-use crate::shared::expression::lexer::Lexer;
-use crate::shared::expression::parser::parse;
-use crate::shared::expression::sema::Checker;
+use crate::shared::expression::Checker;
+use crate::shared::expression::Lexer;
+use crate::shared::expression::parse;
 use crate::shared::text::quote;
 use crate::shared::yaml::Pos;
 

@@ -4,11 +4,10 @@ use std::collections::{BTreeMap, HashMap};
 use std::path::Path;
 use std::sync::{Arc, Mutex};
 
-use crate::entities::workflow::{
-    CallInputType, WorkflowCallEvent, contains_expression, local_path,
-};
-use crate::shared::expression::types::ExprType;
+use super::{CallInputType, WorkflowCallEvent, contains_expression};
+use crate::shared::expression::ExprType;
 use crate::shared::text::quote;
+use crate::shared::uses::local_path;
 
 #[derive(Debug, Clone)]
 pub struct CallInput {

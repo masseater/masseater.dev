@@ -1,11 +1,9 @@
 use std::sync::Arc;
 
-use crate::entities::workflow::{
-    Job, Workflow, WorkflowCall as Call, is_self_reference_with_ref, local_path,
-    self_reference_error,
-};
+use crate::entities::workflow::{Job, Workflow, WorkflowCall as Call};
 use crate::features::check_workflow::{Project, Report, Rule};
 use crate::shared::text::{quote, sorted_quotes};
+use crate::shared::uses::{is_self_reference_with_ref, local_path, self_reference_error};
 
 pub struct WorkflowCall {
     report: Report,

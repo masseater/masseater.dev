@@ -2,19 +2,19 @@ use std::collections::BTreeMap;
 use std::sync::Arc;
 
 use crate::entities::action::{ActionMetadata, popular};
-use crate::entities::reusable_workflow::input_type;
 use crate::entities::workflow::Event;
+use crate::entities::workflow::input_type;
 use crate::entities::workflow::{
     Bool, CallEventOutput, CallInputType, Concurrency, Container, Defaults, DispatchInputType, Env,
     EventFilter, Exec, Float, Int, Job, Matrix, MatrixRow, RawValue, Snapshot, Step, Text,
     Workflow, WorkflowCall, is_expression_assigned,
 };
 use crate::features::check_workflow::{Project, Report, Rule};
-use crate::shared::expression::ast::{Expr, ExprError};
-use crate::shared::expression::lexer::Lexer;
-use crate::shared::expression::parser::parse;
-use crate::shared::expression::sema::Checker;
-use crate::shared::expression::types::{ArrayType, ExprType, ObjectType};
+use crate::shared::expression::Checker;
+use crate::shared::expression::Lexer;
+use crate::shared::expression::parse;
+use crate::shared::expression::{ArrayType, ExprType, ObjectType};
+use crate::shared::expression::{Expr, ExprError};
 use crate::shared::text::quote;
 use crate::shared::yaml::{Pos, parse_go_float};
 
@@ -126,7 +126,7 @@ impl Expression {
         }
         if !key.is_empty() {
             debug_assert!(
-                crate::shared::expression::availability::workflow_key(key).is_some(),
+                crate::shared::expression::workflow_key(key).is_some(),
                 "{key} is missing in availability.json"
             );
             checker.set_workflow_key(key);
@@ -458,7 +458,7 @@ impl Expression {
         let Some(uses) = uses else {
             return string_map();
         };
-        if crate::entities::workflow::local_path(&uses.value).is_some() {
+        if crate::shared::uses::local_path(&uses.value).is_some() {
             let Some(project) = self.project.clone() else {
                 return string_map();
             };
