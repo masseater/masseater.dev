@@ -3771,6 +3771,9 @@ importers:
       '@pnpm/workspace.workspace-manifest-writer':
         specifier: 'catalog:'
         version: 1100.2.11
+      '@r_masseater/fu4':
+        specifier: workspace:*
+        version: link:../fu4
       '@r_masseater/oxlint-plugin-decision':
         specifier: workspace:*
         version: link:../oxlint-plugin-decision
