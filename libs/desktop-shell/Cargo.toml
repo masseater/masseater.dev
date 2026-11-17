@@ -8,14 +8,21 @@ rust-version.workspace = true
 publish = false
 
 [dependencies]
-local-mcp = { path = "../local-mcp" }
+axum = "0.8"
+constant_time_eq = "0.6"
+getrandom = "0.4"
+rmcp = { version = "3.10", features = ["macros", "server", "transport-streamable-http-server"] }
 tauri = { version = "2", features = [] }
 tauri-plugin-dialog = "2"
 tauri-plugin-localhost = "2"
 tauri-plugin-prevent-default = "6"
 tauri-plugin-single-instance = "2"
 tauri-plugin-window-state = "2"
+tokio = { version = "1", features = ["net"] }
 url = "2"
+
+[dev-dependencies]
+tempfile = "3"
 
 [lints]
 workspace = true

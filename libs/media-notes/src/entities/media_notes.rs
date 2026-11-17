@@ -24,8 +24,8 @@ pub fn media_notes(setting: &Setting<'_>) -> Outcome<MediaNotes> {
             .build()?,
         sites: setting.sites,
         mcp: McpAccess {
-            url: local_mcp::url(setting.port),
-            token: local_mcp::token(setting.data)?,
+            url: desktop_shell::mcp_url(setting.port),
+            token: desktop_shell::mcp_token(setting.data)?,
         },
     })
 }

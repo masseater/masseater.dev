@@ -7,9 +7,8 @@ use rmcp::transport::streamable_http_server::session::local::LocalSessionManager
 use rmcp::transport::streamable_http_server::{StreamableHttpServerConfig, StreamableHttpService};
 use tokio::net::TcpListener;
 
-use crate::shared::lib::guarded;
+use crate::shared::lib::{HOST, guarded};
 
-pub const HOST: &str = "127.0.0.1";
 pub const MCP_PATH: &str = "/mcp";
 
 #[must_use]
