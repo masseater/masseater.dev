@@ -29,6 +29,7 @@
     "@tauri-apps/cli": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
+    "@types/youtube": "catalog:",
     "typescript": "catalog:stack",
     "vite": "catalog:",
     "vite-plus": "catalog:stack"

@@ -3095,6 +3095,9 @@ importers:
       '@types/react-dom':
         specifier: 'catalog:'
         version: 19.3.0(@types/react@19.3.0)
+      '@types/youtube':
+        specifier: 'catalog:'
+        version: 0.3.0
       typescript:
         specifier: catalog:stack
         version: 7.1.0-beta
