@@ -4364,6 +4364,9 @@ importers:
       '@textlint/ast-node-types':
         specifier: 'catalog:'
         version: 15.8.0
+      '@textlint/kernel':
+        specifier: 'catalog:'
+        version: 15.8.0(supports-color@10.2.2)
       '@textlint/types':
         specifier: 'catalog:'
         version: 15.8.0
@@ -4376,6 +4379,9 @@ importers:
       size-limit:
         specifier: 'catalog:'
         version: 14.3.0
+      textlint:
+        specifier: 'catalog:'
+        version: 15.8.0(supports-color@10.2.2)
       typescript:
         specifier: catalog:stack
         version: 7.1.0-beta
