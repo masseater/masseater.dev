@@ -6,6 +6,8 @@ const Text = Schema.String;
 const maybe = Schema.optionalKey;
 const Times = Schema.Array(Schema.Finite);
 const PitchPoint = Schema.Tuple([Schema.Finite, Schema.Finite]);
+const Sweep = Schema.Struct({ from: Schema.Finite, to: Schema.Finite });
+const Reversal = Schema.Struct({ from: maybe(Schema.Finite) });
 const LoopPart = Schema.Struct({ steps: Schema.Finite, count: Schema.Finite });
 
 export const ClipSchema = Schema.Struct({
@@ -22,13 +24,11 @@ export const ClipSchema = Schema.Struct({
   release: maybe(Schema.Finite),
   decay: maybe(Schema.Finite),
   pitch: maybe(Schema.Array(PitchPoint)),
-  lowPass: maybe(Schema.Finite),
-  lowPassEnd: maybe(Schema.Finite),
+  lowPass: maybe(Schema.Union([Schema.Finite, Sweep])),
   highPass: maybe(Schema.Finite),
   resonance: maybe(Schema.Finite),
   drive: maybe(Schema.Finite),
-  reverse: maybe(Schema.Boolean),
-  reverseFrom: maybe(Schema.Finite),
+  reverse: maybe(Reversal),
   midi: maybe(Schema.Finite),
 });
 

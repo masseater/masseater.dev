@@ -6,7 +6,7 @@ import { curve } from "#/entities/song/lib/dsp/shape.ts";
 import constants from "#/entities/song/lib/dsp/tuning.json";
 
 import type { Bus } from "./bus.ts";
-import type { Label, Ledger, Placement, SampleInfo } from "./placement.ts";
+import type { Label, Ledger, Placement, SampleInfo, Sweep } from "./placement.ts";
 
 const CONTROL_RATE = 16;
 const ONE = 1;
@@ -115,11 +115,12 @@ export const planOf =
   };
 
 const firstPosition = ({ x, placement }: Plan): number => {
-  if (placement.reverse !== true) {
+  const { reverse } = placement;
+  if (Predicate.isUndefined(reverse)) {
     return orDefault(SILENT)(placement.offset) * SAMPLE_RATE;
   }
-  if (Predicate.isNotUndefined(placement.reverseFrom)) {
-    return placement.reverseFrom * SAMPLE_RATE;
+  if (Predicate.isNotUndefined(reverse.from)) {
+    return reverse.from * SAMPLE_RATE;
   }
   return x.length - ONE;
 };
@@ -158,7 +159,7 @@ const glideOf = (plan: Plan): ((frame: number, rate: number) => number) => {
 };
 
 const directionOf = ({ reverse }: Placement): number => {
-  if (reverse === true) {
+  if (Predicate.isNotUndefined(reverse)) {
     return -ONE;
   }
   return ONE;
@@ -215,8 +216,15 @@ export const writerOf = ({ bus, plan, scratch }: Target): Writer => {
   };
 };
 
+export const isLowPassed = (lowPass?: number | Sweep): lowPass is number | Sweep => {
+  if (Predicate.isNumber(lowPass)) {
+    return isGiven(lowPass);
+  }
+  return Predicate.isNotUndefined(lowPass);
+};
+
 export const needsScratch = ({ lowPass, highPass, drive: driven }: Placement): boolean =>
-  Arr.some([lowPass, highPass, driven], isGiven);
+  isLowPassed(lowPass) || Arr.some([highPass, driven], isGiven);
 
 export const played =
   (plan: Plan) =>
