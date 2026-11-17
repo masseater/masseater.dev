@@ -6,6 +6,7 @@ import { checkScripts } from "#/features/check-scripts/index.ts";
 import { checkVitePlus } from "#/features/check-vite-plus/index.ts";
 import {
   checkFullHistoryCheckout,
+  checkReleasePrAutoMerge,
   checkWorkflowCommits,
   checkWorkflowQueues,
 } from "#/features/check-workflows/index.ts";
@@ -20,6 +21,7 @@ export const checkToolUse = Effect.fn("checkToolUse")(function* checkToolUse(roo
       checkWorkflowQueues(root),
       checkWorkflowCommits(root),
       checkFullHistoryCheckout(root),
+      checkReleasePrAutoMerge(root),
       checkRestrictedRules(root),
     ],
     { concurrency: "unbounded" },
