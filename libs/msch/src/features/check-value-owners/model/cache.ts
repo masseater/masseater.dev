@@ -1,18 +1,13 @@
-import { Array as Arr, Boolean as Bool, Effect, Option, Schema, String as Str, pipe } from "effect";
+import { Array as Arr, Effect, Option, Schema, String as Str, pipe } from "effect";
 
-import { installedPackages, nearestManifestDirectory } from "#/entities/project/index.ts";
+import { implementationFingerprint } from "#/entities/project/index.ts";
 import type { ProjectInputs } from "#/entities/project/index.ts";
 import { ProblemList } from "#/shared/lib/problem.ts";
 import { NODE_MODULES, RepositoryFiles } from "#/shared/lib/repository-files.ts";
 
 const CACHE_DIRECTORY = [NODE_MODULES, ".cache", "msch", "value-owners"] as const;
 const CACHE_SUFFIX = ".json";
-const MANIFEST_ENTRY = "package.json";
-const SOURCE_ENTRY = "src";
-const LOWER_LAYERS = ["entities", "shared"] as const;
-const PATH_SEPARATOR = "/";
 const EMPTY = "";
-const NOT_INSTALLED: readonly string[] = [];
 const FIELD_SEPARATOR = "\0";
 const LINE_SEPARATOR = "\n";
 
@@ -95,85 +90,13 @@ const digestEntries =
       { concurrency: 1 },
     );
 
-const walked = (directory: string): Effect.Effect<readonly string[], never, RepositoryFiles> =>
-  Effect.gen(function* walkFrom() {
-    const files = yield* RepositoryFiles;
-    const found = yield* files.walkDirectory(directory);
-    return pipe(
-      found,
-      Arr.map((file) => files.join(directory, file)),
-    );
-  });
-
-const sourceFiles = Effect.fn("sourceFiles")(function* sourceFiles(
-  root: string,
-  moduleDirectory: string,
-) {
-  const files = yield* RepositoryFiles;
-  const source = files.join(root, SOURCE_ENTRY);
-  const layers = pipe(
-    LOWER_LAYERS,
-    Arr.map((layer) => files.join(source, layer)),
-  );
-  const nested = yield* Effect.forEach([files.dirname(moduleDirectory), ...layers], walked, {
-    concurrency: 1,
-  });
-  return Arr.flatten(nested);
-});
-
-const bundleParts = Effect.fn("bundleParts")(function* bundleParts(
-  root: string,
-  moduleDirectory: string,
-) {
-  const files = yield* RepositoryFiles;
-  const bundled = yield* walked(moduleDirectory);
-  return { listed: [files.join(root, MANIFEST_ENTRY), ...bundled], installed: NOT_INSTALLED };
-});
-
-const sourceParts = Effect.fn("sourceParts")(function* sourceParts(
-  root: string,
-  moduleDirectory: string,
-) {
-  const listed = yield* sourceFiles(root, moduleDirectory);
-  const installed = yield* installedPackages(root, root);
-  return { listed, installed };
-});
-
-/** @internal */
-export const implementationOf = Effect.fn("implementationOf")(function* implementationOf(
-  moduleDirectory: string,
-) {
-  const files = yield* RepositoryFiles;
-  const root = yield* nearestManifestDirectory(moduleDirectory);
-  const fromSource = Str.startsWith(`${files.join(root, SOURCE_ENTRY)}${PATH_SEPARATOR}`)(
-    moduleDirectory,
-  );
-  const parts = yield* Bool.match(fromSource, {
-    onFalse: () => bundleParts(root, moduleDirectory),
-    onTrue: () => sourceParts(root, moduleDirectory),
-  });
-  return {
-    files: pipe(
-      Arr.sort(parts.listed, Str.Order),
-      Arr.map((file) => [files.relative(root, file), file] as const),
-    ),
-    installed: parts.installed,
-  };
-});
-
-const fingerprintOf = Effect.fn("fingerprintOf")(function* fingerprintOf(hash: Hasher) {
-  const implementation = yield* implementationOf(import.meta.dirname);
-  const entries = yield* digestEntries(fileDigest(hash))(implementation.files);
-  return yield* hash(Arr.join([...implementation.installed, ...entries], LINE_SEPARATOR));
-});
-
 export const analysisCache = Effect.fn("analysisCache")(function* analysisCache(
   root: string,
   owners: string,
 ) {
   const files = yield* RepositoryFiles;
   const hash = yield* hasher;
-  const fingerprint = yield* fingerprintOf(hash);
+  const fingerprint = yield* implementationFingerprint(import.meta.dirname);
   const salt = yield* hash(
     Arr.join([fingerprint, Str.replaceAll(root, EMPTY)(owners)], FIELD_SEPARATOR),
   );

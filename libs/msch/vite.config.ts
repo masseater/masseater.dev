@@ -2,6 +2,8 @@ import { ignoredDirectories } from "@r_masseater/msch/workspace-settings";
 import { otlp } from "@r_masseater/vitest-otlp";
 import { defineConfig } from "vite-plus";
 
+const inputs = [{ auto: true }, ...(await ignoredDirectories(`${import.meta.dirname}/../..`))];
+
 export default defineConfig({
   msch: {
     publish: { installSize: "330 MB" },
@@ -55,14 +57,12 @@ export default defineConfig({
   },
   run: {
     tasks: {
-      test: "vp test run",
+      test: { command: "vp test run", cache: { input: inputs } },
       verify: { command: [], dependsOn: ["build"] },
       build: {
         command: "vp pack",
         dependsOn: [{ task: "build", from: "dependencies" }],
-        cache: {
-          input: [{ auto: true }, ...(await ignoredDirectories(`${import.meta.dirname}/../..`))],
-        },
+        cache: { input: inputs },
       },
     },
   },
