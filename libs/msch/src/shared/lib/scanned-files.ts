@@ -25,7 +25,7 @@ export const isToolVersions = ({ name }: Listed): boolean => TOOL_VERSIONS.test(
 /** @internal */
 export const listedFiles = Effect.fn("listedFiles")(function* listedFiles(root: string) {
   const files = yield* RepositoryFiles;
-  const names = yield* files.listedFiles(root);
+  const names = yield* files.ownedFiles(root);
   return pipe(
     names,
     Arr.map((name): Listed => ({ name, file: files.join(root, name) })),

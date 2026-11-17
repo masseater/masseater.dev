@@ -1,0 +1,152 @@
+{
+  "hosted": [
+    {
+      "label": "ubuntu-slim",
+      "os": "linux",
+      "image": "ubuntu-slim-Readme.md"
+    },
+    {
+      "label": "ubuntu-latest",
+      "os": "linux",
+      "image": "Ubuntu2404-Readme.md"
+    },
+    {
+      "label": "ubuntu-24.04",
+      "os": "linux",
+      "image": "Ubuntu2404-Readme.md"
+    },
+    {
+      "label": "ubuntu-22.04",
+      "os": "linux",
+      "image": "Ubuntu2204-Readme.md"
+    },
+    {
+      "label": "ubuntu-26.04",
+      "os": "linux",
+      "image": "Ubuntu2604-Readme.md"
+    },
+    {
+      "label": "windows-latest",
+      "os": "windows",
+      "image": "Windows2025-VS2026-Readme.md"
+    },
+    {
+      "label": "windows-2025",
+      "os": "windows",
+      "image": "Windows2025-VS2026-Readme.md"
+    },
+    {
+      "label": "windows-2025-vs2026",
+      "os": "windows",
+      "image": "Windows2025-VS2026-Readme.md"
+    },
+    {
+      "label": "windows-2022",
+      "os": "windows",
+      "image": "Windows2022-Readme.md"
+    },
+    {
+      "label": "ubuntu-24.04-arm",
+      "os": "linux",
+      "image": "Ubuntu2404-Arm64-Readme.md"
+    },
+    {
+      "label": "ubuntu-22.04-arm",
+      "os": "linux",
+      "image": "Ubuntu2204-Arm64-Readme.md"
+    },
+    {
+      "label": "ubuntu-26.04-arm",
+      "os": "linux",
+      "image": "Ubuntu2604-Arm64-Readme.md"
+    },
+    {
+      "label": "windows-11-arm",
+      "os": "windows",
+      "image": "Windows11-VS2026-Arm64-Readme.md"
+    },
+    {
+      "label": "windows-11-vs2026-arm",
+      "os": "windows",
+      "image": "Windows11-VS2026-Arm64-Readme.md"
+    },
+    {
+      "label": "macos-15-intel",
+      "os": "macos",
+      "image": "macos-15-Readme.md"
+    },
+    {
+      "label": "macos-26-intel",
+      "os": "macos",
+      "image": "macos-26-Readme.md"
+    },
+    {
+      "label": "macos-latest",
+      "os": "macos",
+      "image": "macos-26-arm64-Readme.md"
+    },
+    {
+      "label": "macos-15",
+      "os": "macos",
+      "image": "macos-15-arm64-Readme.md"
+    },
+    {
+      "label": "macos-26",
+      "os": "macos",
+      "image": "macos-26-arm64-Readme.md"
+    },
+    {
+      "label": "xcode-27",
+      "os": "macos",
+      "image": "xcode-27-arm64-Readme.md"
+    },
+    {
+      "label": "macos-latest-large",
+      "os": "macos",
+      "image": "macOS-larger-0"
+    },
+    {
+      "label": "macos-15-large",
+      "os": "macos",
+      "image": "macOS-larger-0"
+    },
+    {
+      "label": "macos-26-large",
+      "os": "macos",
+      "image": "macOS-larger-0"
+    },
+    {
+      "label": "macos-latest-xlarge",
+      "os": "macos",
+      "image": "macOS-larger-1"
+    },
+    {
+      "label": "macos-15-xlarge",
+      "os": "macos",
+      "image": "macOS-larger-1"
+    },
+    {
+      "label": "macos-26-xlarge",
+      "os": "macos",
+      "image": "macOS-larger-1"
+    },
+    {
+      "label": "xcode-27-xlarge",
+      "os": "macos",
+      "image": "macOS-larger-1"
+    }
+  ],
+  "selfHosted": {
+    "os": [
+      "linux",
+      "windows",
+      "macos"
+    ],
+    "other": [
+      "self-hosted",
+      "x64",
+      "arm",
+      "arm64"
+    ]
+  }
+}

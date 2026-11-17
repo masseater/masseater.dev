@@ -1,0 +1,1 @@
+echo 'Commit is pushed to main'

@@ -1,0 +1,1 @@
+echo 'must not be empty'

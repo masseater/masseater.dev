@@ -1,0 +1,1 @@
+echo "foo=value" >> "$GITHUB_OUTPUT"

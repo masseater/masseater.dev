@@ -1,0 +1,1 @@
+echo 'macOS 12 is no longer supported'

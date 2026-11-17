@@ -1,0 +1,5 @@
+err/expr_check_in_matrix_row_assign # github.retention_days is a string in the GitHub docs' github context table, which fu4 reads; actionlint types it as a number
+err/invalid_permissions # permission scopes come from the current SchemaStore workflow schema, which lists scopes added after actionlint v1.7.12
+examples/permissions # same as err/invalid_permissions
+examples/webhook_checks # activity types come from the current GitHub docs, which list types added after actionlint v1.7.12
+ok/issue-442-download-artifact-v3-workaround # actions/download-artifact@v3-node20 omits download-path from its action.yml; actionlint patches its data by hand, fu4 takes the action.yml as published

@@ -1,0 +1,3 @@
+SC2034:warning:1:1: a appears unused. Verify use (or export if used externally)
+SC2168:error:2:1: 'local' is only valid in functions
+SC2034:warning:2:7: c appears unused. Verify use (or export if used externally)
