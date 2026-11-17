@@ -23,8 +23,9 @@ const PORTED: &[&str] = &[
     "action",
     "workflow-call",
     "expression",
+    "shellcheck",
 ];
-const SKIPPED: &[&str] = &["shellcheck", "pyflakes"];
+const SKIPPED: &[&str] = &["pyflakes"];
 
 fn kind_of(line: &str) -> Option<&str> {
     if line.starts_with('/') && !line.ends_with("\\]/") {
@@ -92,7 +93,7 @@ fn workflows(dir: &Path) -> Vec<PathBuf> {
     files
 }
 
-fn lint(dir: &Path, file: &Path) -> Vec<String> {
+fn lint(dir: &Path, file: &Path, shellcheck: bool) -> Vec<String> {
     let context = Context {
         path: "test.yaml".to_owned(),
         project: Some(Project::new(dir.to_path_buf(), &Config::default()).expect("config")),
@@ -101,6 +102,7 @@ fn lint(dir: &Path, file: &Path) -> Vec<String> {
     check(&context, &source)
         .into_iter()
         .filter(|d| PORTED.contains(&d.kind.as_str()))
+        .filter(|d| shellcheck || d.kind != "shellcheck")
         .map(|d| {
             format!(
                 "test.yaml:{}:{}: {} [{}]",
@@ -167,7 +169,7 @@ fn matches_actionlint_on_its_error_fixtures() {
                 .filter(|line| kind_of(line).is_some_and(is_ported))
                 .map(str::to_owned)
                 .collect();
-            let actual = lint(&dir, &file);
+            let actual = lint(&dir, &file, name.contains("shellcheck"));
             let same = expected.len() == actual.len()
                 && expected.iter().zip(&actual).all(|(w, h)| matches(w, h));
             if !same {
@@ -207,7 +209,7 @@ fn accepts_actionlint_ok_fixtures() {
         if SKIPPED.iter().any(|skip| name.contains(skip)) {
             continue;
         }
-        let actual = lint(&dir, &file);
+        let actual = lint(&dir, &file, true);
         let id = format!(
             "ok/{}",
             name.trim_end_matches(".yaml").trim_end_matches(".yml")

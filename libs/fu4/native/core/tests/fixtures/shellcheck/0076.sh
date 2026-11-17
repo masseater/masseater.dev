@@ -1,0 +1,1 @@
+echo "firstword=hello, ______________________" >> "$GITHUB_OUTPUT"

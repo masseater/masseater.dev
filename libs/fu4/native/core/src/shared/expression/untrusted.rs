@@ -275,12 +275,35 @@ mod tests {
     use crate::shared::expression::lexer::Lexer;
     use crate::shared::expression::parser::parse;
 
+    fn walk<'a>(expr: &'a Expr, f: &mut dyn FnMut(&'a Expr, bool)) {
+        f(expr, true);
+        match expr {
+            Expr::ObjectDeref { receiver, .. } | Expr::ArrayDeref { receiver } => walk(receiver, f),
+            Expr::Index { operand, index } => {
+                walk(index, f);
+                walk(operand, f);
+            }
+            Expr::Not { operand, .. } => walk(operand, f),
+            Expr::Compare { left, right, .. } | Expr::Logical { left, right, .. } => {
+                walk(left, f);
+                walk(right, f);
+            }
+            Expr::Call { args, .. } => {
+                for arg in args {
+                    walk(arg, f);
+                }
+            }
+            _ => {}
+        }
+        f(expr, false);
+    }
+
     fn errors_of(source: &str) -> Vec<String> {
         let mut lexer = Lexer::new(source);
         let expr = parse(&mut lexer).unwrap_or_else(|e| panic!("{}", e.message));
         let mut checker = Untrusted::new();
         checker.init();
-        expr.visit(None, &mut |node, _, entering| {
+        walk(&expr, &mut |node, entering| {
             if entering {
                 checker.enter(node);
             } else {

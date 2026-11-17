@@ -77,7 +77,6 @@ impl<'a> Lexer<'a> {
         if self.error.is_none() {
             self.error = Some(ExprError {
                 message,
-                offset: self.pos.offset,
                 line: self.pos.line,
                 column: self.pos.column,
             });
@@ -88,7 +87,6 @@ impl<'a> Lexer<'a> {
         let token = Token {
             kind,
             value: self.src[self.start.offset..self.pos.offset].to_owned(),
-            offset: self.start.offset,
             line: self.start.line,
             column: self.start.column,
         };
@@ -100,7 +98,6 @@ impl<'a> Lexer<'a> {
         Token {
             kind: TokenKind::End,
             value: String::new(),
-            offset: self.start.offset,
             line: self.start.line,
             column: self.start.column,
         }

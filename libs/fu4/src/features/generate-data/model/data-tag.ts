@@ -4,7 +4,7 @@ import type { Context, Emitter, Liquid } from "liquidjs";
 
 export type Resolve = (path: string) => Promise<string>;
 
-type TagDefinition =
+export type TagDefinition =
   Parameters<Liquid["registerTag"]> extends readonly [string, infer Definition]
     ? Definition
     : never;

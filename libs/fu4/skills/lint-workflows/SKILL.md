@@ -16,7 +16,8 @@ sources:
 # lint-workflows
 
 fu4 is a GitHub Actions workflow linter written in Rust. It reports what actionlint reports,
-with the same messages and positions, except for actionlint's shellcheck and pyflakes checks.
+with the same messages and positions, except for actionlint's pyflakes check. It checks `run:`
+scripts with its own subset of shellcheck's checks, so shellcheck does not need to be installed.
 
 ## Setup
 

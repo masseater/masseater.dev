@@ -103,14 +103,7 @@ impl Parser<'_, '_> {
         }
         Some(match ident.value.as_str() {
             "null" => Expr::Null { token: ident },
-            "true" => Expr::Bool {
-                value: true,
-                token: ident,
-            },
-            "false" => Expr::Bool {
-                value: false,
-                token: ident,
-            },
+            "true" | "false" => Expr::Bool { token: ident },
             _ => Expr::Variable {
                 name: ident.value.to_lowercase(),
                 token: ident,
@@ -135,9 +128,9 @@ impl Parser<'_, '_> {
 
     fn parse_int(&mut self) -> Option<Expr> {
         match go_parse_int(&self.cur.value) {
-            Ok(value) => {
+            Ok(_) => {
                 let token = self.next();
-                Some(Expr::Int { value, token })
+                Some(Expr::Int { token })
             }
             Err(error) => {
                 let text = quote(&self.cur.value);
@@ -151,7 +144,7 @@ impl Parser<'_, '_> {
         match self.cur.value.parse::<f64>() {
             Ok(value) if value.is_finite() => {
                 let token = self.next();
-                Some(Expr::Float { value, token })
+                Some(Expr::Float { token })
             }
             _ => {
                 let text = quote(&self.cur.value);

@@ -19,15 +19,21 @@ import { isRetiredRuntime } from "./runtime.ts";
 import { POPULAR_SEED, rawFile } from "./sources.ts";
 
 const FETCH_CONCURRENCY = 8;
-const DEFAULT_EXTENSION = "yml";
+const EMPTY = Effect.succeed("");
+const NOT_SKIPPED = Effect.succeed(false);
+const YML = Effect.succeed("yml");
+const NO_FIELDS = Effect.succeed({});
+
+const Text = Schema.String.pipe(Schema.withDecodingDefaultKey(EMPTY));
+const Skip = Schema.Boolean.pipe(Schema.withDecodingDefaultKey(NOT_SKIPPED));
 
 const RegistryEntry = Schema.Struct({
   slug: Schema.String,
-  path: Schema.optionalKey(Schema.String),
+  path: Text,
   tags: Schema.Array(Schema.String),
-  file_ext: Schema.optionalKey(Schema.String),
-  skip_inputs: Schema.optionalKey(Schema.Boolean),
-  skip_outputs: Schema.optionalKey(Schema.Boolean),
+  file_ext: Schema.String.pipe(Schema.withDecodingDefaultKey(YML)),
+  skip_inputs: Skip,
+  skip_outputs: Skip,
 });
 
 const decodeRegistry = Schema.decodeEffect(Schema.fromJsonString(Schema.Array(RegistryEntry)));
@@ -38,15 +44,17 @@ const Fields = Schema.Record(Schema.String, Schema.Unknown);
 
 const Input = Schema.NullOr(Fields);
 
-const Inputs = Schema.optionalKey(Schema.NullOr(Schema.Record(Schema.String, Input)));
+const Inputs = Schema.NullOr(Schema.Record(Schema.String, Input)).pipe(
+  Schema.withDecodingDefaultKey(NO_FIELDS),
+);
 
-const Outputs = Schema.optionalKey(Schema.NullOr(Fields));
+const Outputs = Schema.NullOr(Fields).pipe(Schema.withDecodingDefaultKey(NO_FIELDS));
 
 const ActionYaml = Schema.Struct({
-  name: Schema.optionalKey(Schema.String),
+  name: Text,
   inputs: Inputs,
   outputs: Outputs,
-  runs: Schema.Struct({ using: Schema.optionalKey(Schema.String) }),
+  runs: Schema.Struct({ using: Text }),
 });
 
 const decodeAction = Schema.decodeUnknownEffect(ActionYaml);
@@ -101,7 +109,7 @@ const inputOf = (name: string, input: typeof Input.Type): readonly [string, Popu
 const toAction =
   (entry: Entry) =>
   (metadata: typeof ActionYaml.Type): PopularAction => ({
-    name: metadata.name ?? "",
+    name: metadata.name,
     inputs: pipe(
       Rec.toEntries(metadata.inputs ?? {}),
       Arr.map(([name, input]) => inputOf(name, input)),
@@ -112,16 +120,15 @@ const toAction =
       Arr.map((name) => [Str.toLowerCase(name), { name }] as const),
       Rec.fromEntries,
     ),
-    skipInputs: entry.skip_inputs ?? false,
-    skipOutputs: entry.skip_outputs ?? false,
-    using: metadata.runs.using ?? "",
+    skipInputs: entry.skip_inputs,
+    skipOutputs: entry.skip_outputs,
+    using: metadata.runs.using,
   });
 
 const fetchAction =
   (entry: Entry) =>
   (tag: string): Effect.Effect<Option.Option<Fetched>, never, HttpClient.HttpClient> => {
-    const path = entry.path ?? "";
-    const file = `${path}/action.${entry.file_ext ?? DEFAULT_EXTENSION}`;
+    const file = `${entry.path}/action.${entry.file_ext}`;
     return fetchText(rawFile(`${entry.slug}/${tag}${file}`)).pipe(
       Effect.flatMap((source) =>
         Effect.mapBoth(decodeAction(parseYaml(source, { uniqueKeys: false })), {
@@ -129,7 +136,7 @@ const fetchAction =
           onSuccess: toAction(entry),
         }),
       ),
-      Effect.map((action) => ({ spec: `${entry.slug}${path}@${tag}`, action })),
+      Effect.map((action) => ({ spec: `${entry.slug}${entry.path}@${tag}`, action })),
       Effect.option,
     );
   };

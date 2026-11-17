@@ -20,7 +20,7 @@ pub fn lint_paths(root: String, paths: Vec<String>, options: LintOptions) -> Res
     telemetry::adopt(&span, options.traceparent.as_deref());
     let _entered = span.enter();
     let parent = tracing::Span::current();
-    let base = std::path::PathBuf::from(&root);
+    let base = std::path::PathBuf::from(root);
     let config: Config = match options.config {
         Some(value) => serde_json::from_value(value)
             .map_err(|error| napi::Error::from_reason(format!("invalid fu4 config: {error}")))?,

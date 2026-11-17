@@ -46,14 +46,12 @@ pub struct Bool {
 pub struct Int {
     pub value: i64,
     pub expression: Option<Text>,
-    pub pos: Pos,
 }
 
 #[derive(Debug, Clone)]
 pub struct Float {
     pub value: f64,
     pub expression: Option<Text>,
-    pub pos: Pos,
 }
 
 #[derive(Debug, Clone)]
@@ -154,7 +152,6 @@ pub enum Event {
     Webhook(Box<WebhookEvent>),
     Schedule {
         schedules: Vec<ScheduleEntry>,
-        pos: Pos,
     },
     WorkflowDispatch {
         inputs: BTreeMap<String, DispatchInput>,
@@ -162,40 +159,12 @@ pub enum Event {
     },
     RepositoryDispatch {
         types: Vec<Text>,
-        pos: Pos,
     },
     WorkflowCall(WorkflowCallEvent),
     ImageVersion {
         names: Vec<Text>,
         versions: Vec<Text>,
-        pos: Pos,
     },
-}
-
-impl Event {
-    #[must_use]
-    pub fn name(&self) -> &str {
-        match self {
-            Event::Webhook(hook) => &hook.hook.value,
-            Event::Schedule { .. } => "schedule",
-            Event::WorkflowDispatch { .. } => "workflow_dispatch",
-            Event::RepositoryDispatch { .. } => "repository_dispatch",
-            Event::WorkflowCall(_) => "workflow_call",
-            Event::ImageVersion { .. } => "image_version",
-        }
-    }
-
-    #[must_use]
-    pub fn pos(&self) -> Pos {
-        match self {
-            Event::Webhook(hook) => hook.pos,
-            Event::WorkflowCall(call) => call.pos,
-            Event::Schedule { pos, .. }
-            | Event::WorkflowDispatch { pos, .. }
-            | Event::RepositoryDispatch { pos, .. }
-            | Event::ImageVersion { pos, .. } => *pos,
-        }
-    }
 }
 
 #[derive(Debug, Clone)]
@@ -208,27 +177,23 @@ pub struct PermissionScope {
 pub struct Permissions {
     pub all: Option<Text>,
     pub scopes: BTreeMap<String, PermissionScope>,
-    pub pos: Pos,
 }
 
 #[derive(Debug, Clone)]
 pub struct DefaultsRun {
     pub shell: Option<Text>,
     pub working_directory: Option<Text>,
-    pub pos: Pos,
 }
 
 #[derive(Debug, Clone)]
 pub struct Defaults {
     pub run: Option<DefaultsRun>,
-    pub pos: Pos,
 }
 
 #[derive(Debug, Clone)]
 pub struct Concurrency {
     pub group: Option<Text>,
     pub cancel_in_progress: Option<Bool>,
-    pub pos: Pos,
 }
 
 #[derive(Debug, Clone)]
@@ -236,7 +201,6 @@ pub struct Environment {
     pub name: Option<Text>,
     pub url: Option<Text>,
     pub deployment: Option<Bool>,
-    pub pos: Pos,
 }
 
 #[derive(Debug, Clone)]
@@ -380,7 +344,6 @@ pub struct Strategy {
     pub matrix: Option<Matrix>,
     pub fail_fast: Option<Bool>,
     pub max_parallel: Option<Int>,
-    pub pos: Pos,
 }
 
 #[derive(Debug, Clone)]
@@ -404,7 +367,6 @@ pub struct Step {
     pub env: Option<Env>,
     pub continue_on_error: Option<Bool>,
     pub timeout_minutes: Option<Float>,
-    pub pos: Pos,
 }
 
 #[derive(Debug, Clone)]
@@ -412,7 +374,6 @@ pub struct Credentials {
     pub username: Option<Text>,
     pub password: Option<Text>,
     pub expression: Option<Text>,
-    pub pos: Pos,
 }
 
 #[derive(Debug, Clone)]
@@ -423,7 +384,6 @@ pub struct Container {
     pub ports: Vec<Text>,
     pub volumes: Vec<Text>,
     pub options: Option<Text>,
-    pub pos: Pos,
 }
 
 #[derive(Debug, Clone)]
@@ -436,12 +396,10 @@ pub struct Service {
 pub struct Services {
     pub value: BTreeMap<String, Service>,
     pub expression: Option<Text>,
-    pub pos: Pos,
 }
 
 #[derive(Debug, Clone)]
 pub struct Output {
-    pub name: Text,
     pub value: Text,
 }
 

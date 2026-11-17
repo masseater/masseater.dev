@@ -243,14 +243,12 @@ impl Parser {
             return Some(Int {
                 value: 0,
                 expression: Some(expression),
-                pos: node.pos,
             });
         }
         match atoi(&node.value) {
             Ok(value) => Some(Int {
                 value,
                 expression: None,
-                pos: node.pos,
             }),
             Err(reason) => {
                 self.error(
@@ -284,14 +282,12 @@ impl Parser {
             return Some(Float {
                 value: 0.0,
                 expression: Some(expression),
-                pos: node.pos,
             });
         }
         match parse_go_float(&node.value) {
             Some(value) if !value.is_nan() => Some(Float {
                 value,
                 expression: None,
-                pos: node.pos,
             }),
             _ => {
                 self.error(
@@ -396,7 +392,7 @@ impl Parser {
         )
     }
 
-    fn parse_schedule(&mut self, pos: Pos, node: &Node) -> Option<Event> {
+    fn parse_schedule(&mut self, node: &Node) -> Option<Event> {
         if !self.check_sequence("schedule", node, false) {
             return None;
         }
@@ -429,7 +425,7 @@ impl Parser {
                 schedules.push(ScheduleEntry { cron, timezone });
             }
         }
-        Some(Event::Schedule { schedules, pos })
+        Some(Event::Schedule { schedules })
     }
 
     fn parse_dispatch_input(&mut self, name: Text, node: &Node) -> DispatchInput {
@@ -502,7 +498,7 @@ impl Parser {
         Event::WorkflowDispatch { inputs, pos }
     }
 
-    fn parse_repository_dispatch(&mut self, pos: Pos, node: &Node) -> Event {
+    fn parse_repository_dispatch(&mut self, node: &Node) -> Event {
         let mut types = Vec::new();
         for entry in self.parse_section("repository_dispatch", node, true, true) {
             if entry.id == "types" {
@@ -511,7 +507,7 @@ impl Parser {
                 self.unexpected_key(&entry.key, "repository_dispatch", &["types"]);
             }
         }
-        Event::RepositoryDispatch { types, pos }
+        Event::RepositoryDispatch { types }
     }
 
     fn parse_filter(&mut self, name: Text, node: &Node) -> EventFilter {
@@ -703,7 +699,7 @@ impl Parser {
         Event::WorkflowCall(call)
     }
 
-    fn parse_image_version(&mut self, pos: Pos, node: &Node) -> Event {
+    fn parse_image_version(&mut self, node: &Node) -> Event {
         let mut names = Vec::new();
         let mut versions = Vec::new();
         for entry in self.parse_section("image_version", node, true, true) {
@@ -715,11 +711,7 @@ impl Parser {
                 _ => self.unexpected_key(&entry.key, "image_version", &["names", "versions"]),
             }
         }
-        Event::ImageVersion {
-            names,
-            versions,
-            pos,
-        }
+        Event::ImageVersion { names, versions }
     }
 
     fn parse_event_without_config(&mut self, node: &Node) -> Option<Event> {
@@ -734,10 +726,7 @@ impl Parser {
                 );
                 None
             }
-            "repository_dispatch" => Some(Event::RepositoryDispatch {
-                types: Vec::new(),
-                pos,
-            }),
+            "repository_dispatch" => Some(Event::RepositoryDispatch { types: Vec::new() }),
             "workflow_dispatch" => Some(Event::WorkflowDispatch {
                 inputs: BTreeMap::new(),
                 pos,
@@ -749,7 +738,6 @@ impl Parser {
             "image_version" => Some(Event::ImageVersion {
                 names: Vec::new(),
                 versions: Vec::new(),
-                pos,
             }),
             _ => Some(Event::Webhook(Box::new(WebhookEvent {
                 hook: name,
@@ -774,15 +762,15 @@ impl Parser {
                 for entry in self.parse_section("on", node, false, true) {
                     let pos = entry.key.pos;
                     match entry.id.as_str() {
-                        "schedule" => events.extend(self.parse_schedule(pos, &entry.val)),
+                        "schedule" => events.extend(self.parse_schedule(&entry.val)),
                         "workflow_dispatch" => {
                             events.push(self.parse_workflow_dispatch(pos, &entry.val));
                         }
                         "repository_dispatch" => {
-                            events.push(self.parse_repository_dispatch(pos, &entry.val));
+                            events.push(self.parse_repository_dispatch(&entry.val));
                         }
                         "workflow_call" => events.push(self.parse_workflow_call(pos, &entry.val)),
-                        "image_version" => events.push(self.parse_image_version(pos, &entry.val)),
+                        "image_version" => events.push(self.parse_image_version(&entry.val)),
                         _ => events.push(self.parse_webhook(&entry.key, &entry.val)),
                     }
                 }
@@ -810,12 +798,11 @@ impl Parser {
         }
     }
 
-    fn parse_permissions(&mut self, pos: Pos, node: &Node) -> Permissions {
+    fn parse_permissions(&mut self, node: &Node) -> Permissions {
         if node.kind == Kind::Scalar {
             return Permissions {
                 all: Some(self.parse_string(node, false)),
                 scopes: BTreeMap::new(),
-                pos,
             };
         }
         let mut scopes = BTreeMap::new();
@@ -829,11 +816,7 @@ impl Parser {
                 },
             );
         }
-        Permissions {
-            all: None,
-            scopes,
-            pos,
-        }
+        Permissions { all: None, scopes }
     }
 
     fn parse_env(&mut self, node: &Node) -> Env {
@@ -860,8 +843,8 @@ impl Parser {
         }
     }
 
-    fn parse_defaults(&mut self, pos: Pos, node: &Node) -> Defaults {
-        let mut defaults = Defaults { run: None, pos };
+    fn parse_defaults(&mut self, node: &Node) -> Defaults {
+        let mut defaults = Defaults { run: None };
         for entry in self.parse_section("defaults", node, false, true) {
             if entry.id != "run" {
                 self.unexpected_key(&entry.key, "defaults", &["run"]);
@@ -870,7 +853,6 @@ impl Parser {
             let mut run = DefaultsRun {
                 shell: None,
                 working_directory: None,
-                pos: entry.key.pos,
             };
             for item in self.parse_section("run", &entry.val, false, true) {
                 match item.id.as_str() {
@@ -896,7 +878,6 @@ impl Parser {
         let mut concurrency = Concurrency {
             group: None,
             cancel_in_progress: None,
-            pos,
         };
         if node.kind == Kind::Scalar {
             concurrency.group = Some(self.parse_string(node, false));
@@ -931,7 +912,6 @@ impl Parser {
             name: None,
             url: None,
             deployment: None,
-            pos,
         };
         if node.kind == Kind::Scalar {
             environment.name = Some(self.parse_string(node, false));
@@ -955,13 +935,7 @@ impl Parser {
         let mut outputs = BTreeMap::new();
         for entry in self.parse_section("outputs", node, false, false) {
             let value = self.parse_string(&entry.val, true);
-            outputs.insert(
-                entry.id,
-                Output {
-                    name: entry.key,
-                    value,
-                },
-            );
+            outputs.insert(entry.id, Output { value });
         }
         self.check_not_empty("outputs", outputs.len(), node);
         outputs
@@ -1115,12 +1089,11 @@ impl Parser {
         matrix
     }
 
-    fn parse_strategy(&mut self, pos: Pos, node: &Node) -> Strategy {
+    fn parse_strategy(&mut self, node: &Node) -> Strategy {
         let mut strategy = Strategy {
             matrix: None,
             fail_fast: None,
             max_parallel: None,
-            pos,
         };
         for entry in self.parse_section("strategy", node, false, true) {
             match entry.id.as_str() {
@@ -1158,14 +1131,12 @@ impl Parser {
                 username: None,
                 password: None,
                 expression: Some(expression),
-                pos,
             });
         }
         let mut credentials = Credentials {
             username: None,
             password: None,
             expression: None,
-            pos,
         };
         for entry in self.parse_section("credentials", node, false, true) {
             match entry.id.as_str() {
@@ -1193,7 +1164,6 @@ impl Parser {
             ports: Vec::new(),
             volumes: Vec::new(),
             options: None,
-            pos,
         };
         if node.kind == Kind::Scalar {
             container.image = Some(self.parse_string(node, false));
@@ -1235,7 +1205,6 @@ impl Parser {
             return Services {
                 value: BTreeMap::new(),
                 expression: Some(expression),
-                pos: node.pos,
             };
         }
         let mut value = BTreeMap::new();
@@ -1252,7 +1221,6 @@ impl Parser {
         Services {
             value,
             expression: None,
-            pos: node.pos,
         }
     }
 
@@ -1376,7 +1344,6 @@ impl Parser {
             env: None,
             continue_on_error: None,
             timeout_minutes: None,
-            pos: node.pos,
         };
         let mut shape = Shape::Unknown;
         let entries = self.parse_mapping("element of \"steps\" section", node, false, true);
@@ -1559,7 +1526,7 @@ impl Parser {
                     job.runs_on = Some(self.parse_runs_on(&value));
                     steps_only = Some(key);
                 }
-                "permissions" => job.permissions = Some(self.parse_permissions(key.pos, &value)),
+                "permissions" => job.permissions = Some(self.parse_permissions(&value)),
                 "environment" => {
                     job.environment = Some(self.parse_environment(key.pos, &value));
                     steps_only = Some(key);
@@ -1574,7 +1541,7 @@ impl Parser {
                     steps_only = Some(key);
                 }
                 "defaults" => {
-                    job.defaults = Some(self.parse_defaults(key.pos, &value));
+                    job.defaults = Some(self.parse_defaults(&value));
                     steps_only = Some(key);
                 }
                 "if" => job.condition = Some(self.parse_string(&value, false)),
@@ -1586,7 +1553,7 @@ impl Parser {
                     job.timeout_minutes = self.parse_timeout_minutes(&value);
                     steps_only = Some(key);
                 }
-                "strategy" => job.strategy = Some(self.parse_strategy(key.pos, &value)),
+                "strategy" => job.strategy = Some(self.parse_strategy(&value)),
                 "continue-on-error" => {
                     job.continue_on_error = self.parse_bool(&value);
                     steps_only = Some(key);
@@ -1683,10 +1650,10 @@ impl Parser {
                 "name" => workflow.name = Some(self.parse_string(&value, true)),
                 "on" => workflow.on = self.parse_events(&value),
                 "permissions" => {
-                    workflow.permissions = Some(self.parse_permissions(key.pos, &value));
+                    workflow.permissions = Some(self.parse_permissions(&value));
                 }
                 "env" => workflow.env = Some(self.parse_env(&value)),
-                "defaults" => workflow.defaults = Some(self.parse_defaults(key.pos, &value)),
+                "defaults" => workflow.defaults = Some(self.parse_defaults(&value)),
                 "concurrency" => {
                     workflow.concurrency = Some(self.parse_concurrency(key.pos, &value));
                 }

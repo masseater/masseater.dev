@@ -56,7 +56,6 @@ impl TokenKind {
 pub struct Token {
     pub kind: TokenKind,
     pub value: String,
-    pub offset: usize,
     pub line: usize,
     pub column: usize,
 }
@@ -64,7 +63,6 @@ pub struct Token {
 #[derive(Debug, Clone)]
 pub struct ExprError {
     pub message: String,
-    pub offset: usize,
     pub line: usize,
     pub column: usize,
 }
@@ -74,7 +72,6 @@ impl ExprError {
     pub fn at(token: &Token, message: String) -> Self {
         Self {
             message,
-            offset: token.offset,
             line: token.line,
             column: token.column,
         }
@@ -121,15 +118,12 @@ pub enum Expr {
         token: Token,
     },
     Bool {
-        value: bool,
         token: Token,
     },
     Int {
-        value: i64,
         token: Token,
     },
     Float {
-        value: f64,
         token: Token,
     },
     Str {
@@ -184,34 +178,5 @@ impl Expr {
             Expr::Index { operand, .. } => operand.token(),
             Expr::Compare { left, .. } | Expr::Logical { left, .. } => left.token(),
         }
-    }
-
-    pub fn visit<'a>(
-        &'a self,
-        parent: Option<&'a Expr>,
-        f: &mut dyn FnMut(&'a Expr, Option<&'a Expr>, bool),
-    ) {
-        f(self, parent, true);
-        match self {
-            Expr::ObjectDeref { receiver, .. } | Expr::ArrayDeref { receiver } => {
-                receiver.visit(Some(self), f);
-            }
-            Expr::Index { operand, index } => {
-                index.visit(Some(self), f);
-                operand.visit(Some(self), f);
-            }
-            Expr::Not { operand, .. } => operand.visit(Some(self), f),
-            Expr::Compare { left, right, .. } | Expr::Logical { left, right, .. } => {
-                left.visit(Some(self), f);
-                right.visit(Some(self), f);
-            }
-            Expr::Call { args, .. } => {
-                for arg in args {
-                    arg.visit(Some(self), f);
-                }
-            }
-            _ => {}
-        }
-        f(self, parent, false);
     }
 }

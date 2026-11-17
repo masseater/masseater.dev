@@ -3,7 +3,9 @@
 A GitHub Actions workflow linter written in Rust and configured from `vite.config.ts`.
 
 It reports what [actionlint](https://github.com/rhysd/actionlint) reports, with the same
-messages and positions, except for its shellcheck and pyflakes integrations. Its knowledge of
+messages and positions, except for its pyflakes integration. Instead of running shellcheck,
+it checks `run:` scripts itself with tree-sitter-bash for the most common shellcheck findings.
+Its knowledge of
 contexts, events, permissions, runners and popular actions is generated from GitHub's docs and
 schemas.
 

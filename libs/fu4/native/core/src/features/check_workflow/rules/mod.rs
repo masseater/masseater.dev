@@ -12,6 +12,7 @@ mod matrix;
 mod permissions;
 mod runner_label;
 mod shell_name;
+mod shellcheck;
 mod workflow_call;
 
 use super::{Context, Rule};
@@ -41,5 +42,6 @@ pub fn all(context: &Context) -> Vec<Box<dyn Rule>> {
         Box::new(expression::Expression::new(context.project.clone())),
         Box::new(deprecated_commands::DeprecatedCommands::default()),
         Box::new(if_cond::IfCond::default()),
+        Box::new(shellcheck::Shellcheck::default()),
     ]
 }
