@@ -90,6 +90,7 @@ const flagsSpawnedCommandsAndTools = Effect.gen(function* flagsSpawnedCommandsAn
   const findings = yield* findingsFor({
     "src/read.ts": `ChildProcess.make(\n  "${MANAGER}",\n  ["run", "-q"],\n);\n`,
     "src/main.rs": `let mut command = Command::new("${MANAGER}");\n`,
+    "src/run.ts": `execFileSync("${INTERPRETER} -m venv .venv");\n`,
     ".mcp.json": `{ "mcpServers": { "serena": { "command": "${RUNNER}" } } }\n`,
     ".codex/config.toml": `[mcp_servers.serena]\ncommand = "${RUNNER}"\n`,
     "mise.toml": `[tools]\nnode = "26"\n${MANAGER} = "latest"\n"pipx:zizmor" = "1"\n`,
@@ -101,6 +102,7 @@ const flagsSpawnedCommandsAndTools = Effect.gen(function* flagsSpawnedCommandsAn
     "mise.toml:4 python-command",
     "src/main.rs:1 python-command",
     "src/read.ts:1 python-command",
+    "src/run.ts:1 python-command",
   ]);
 });
 
@@ -113,6 +115,8 @@ const passesCodeThatOnlyNamesPython = Effect.gen(function* passesCodeThatOnlyNam
     "docs/uv.md": `${MANAGER} run は命令を動かす。${INSTALLER} install と同じ形である。\n`,
     "pnpm-lock.yaml": `packages:\n  ${MANAGER} run: {}\n`,
     "mise.toml": '[tools]\nnode = "26"\nrust = "1.95"\n',
+    "src/cases.rs": `const CASES: &[(&str, bool)] = &[("${INTERPRETER} -m twine upload dist/*", true)];\n`,
+    "src/hints.ts": `export const HINT = "run ${MANAGER} run --project app";\n`,
   });
   expect(findings).toStrictEqual([]);
 });

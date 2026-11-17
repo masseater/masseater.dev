@@ -18,5 +18,25 @@ tracing = "0.1.44"
 
 tree-sitter = "0.27.2"
 tree-sitter-bash = "0.25.1"
+github-actions-expressions = "1.32.0"
+indexmap = "2.14.2"
+github-actions-models = "1.32.0"
+subfeature = "1.32.0"
+line-index = "0.1.2"
+yamlpath = "1.32.0"
+pre-commit-models = "1.32.0"
+thiserror = "2.0.21"
+itertools = "0.15.0"
+anyhow = "1.0.104"
+yaml_serde = "0.10.7"
+base64 = "0.23.0"
+ureq = { version = "3.5.2", features = ["platform-verifier"] }
+camino = { version = "1.2.6", features = ["serde1"] }
+url = "2.5.8"
+typomania = { version = "0.2.0", default-features = false }
+tree-sitter-powershell = { package = "woodruffw-trough-tree-sitter-powershell", version = "0.1.6" }
 [lints]
 workspace = true
+
+[dev-dependencies]
+insta = "1.49.0"
