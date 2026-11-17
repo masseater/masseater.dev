@@ -1,7 +1,7 @@
 {
   "name": "@r_masseater/h56m",
   "version": "0.1.0",
-  "description": "A secret scanner written in Rust that runs the Betterleaks rules on git history, the staged changes or any text, configured from vite.config.ts.",
+  "description": "A secret scanner engine written in Rust that scans git history, the staged changes or any text with Betterleaks-format rules from a preset, configured from vite.config.ts.",
   "keywords": [
     "betterleaks",
     "gitleaks",

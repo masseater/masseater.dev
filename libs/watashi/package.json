@@ -41,7 +41,8 @@
     "prepublishOnly": "vp run build"
   },
   "dependencies": {
-    "@r_masseater/h56m": "workspace:*"
+    "@r_masseater/h56m": "workspace:*",
+    "@r_masseater/h56m-presets": "workspace:*"
   },
   "devDependencies": {
     "@effect/platform-node": "catalog:",

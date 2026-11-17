@@ -11,9 +11,13 @@ const FAILED = 1;
 const SHORT_COMMIT = 12;
 const START = 0;
 const TIMEOUT = 120_000;
-const LEAK = { "key.ts": `export const k = "${TOKEN}";\n` };
-const CLEAN = { "a.ts": "export const a = 1;\n" };
-const DISABLED = `export default { h56m: { extend: { useDefault: true, disabledRules: ["github-pat"] } } };\n`;
+const PRESET = `${import.meta.dirname}/../../native/core/tests/fixtures/preset.toml`;
+const configOf = (more: string): string =>
+  `export default { h56m: { extend: { path: "${PRESET}"${more} } } };\n`;
+const CONFIG = { "vite.config.ts": configOf("") };
+const LEAK = { ...CONFIG, "key.ts": `export const k = "${TOKEN}";\n` };
+const CLEAN = { ...CONFIG, "a.ts": "export const a = 1;\n" };
+const DISABLED = configOf(', disabledRules: ["github-pat"]');
 
 const textOf = <Err, Req>(
   stream: Stream.Stream<Uint8Array, Err, Req>,
@@ -65,7 +69,7 @@ const scansAfterBase = Effect.gen(function* scansAfterBase() {
 const scansIndex = Effect.gen(function* scansIndex() {
   const root = yield* emptyRepository;
   yield* commit(root, CLEAN);
-  yield* write(root, LEAK);
+  yield* write(root, { "key.ts": LEAK["key.ts"] });
   const unstaged = yield* h56mIn(root, ["--staged"]);
   yield* git(root, ["add", "key.ts"]);
   const staged = yield* h56mIn(root, ["--staged"]);

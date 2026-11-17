@@ -29,7 +29,7 @@ Run without arguments, it runs every configured check in parallel and prints the
 1. Install it and allow its postinstall, which fetches the tool binaries.
 
    ```sh
-   vp add -D @r_masseater/vite-plus-adopt
+   vp add -D @r_masseater/vite-plus-adopt @r_masseater/h56m-presets
    ```
 
    ```yaml
@@ -40,6 +40,7 @@ Run without arguments, it runs every configured check in parallel and prints the
 2. Write the sections. `import type {} from "@r_masseater/vite-plus-adopt"` types them in `defineConfig`.
 
    ```ts
+   import { betterleaks } from "@r_masseater/h56m-presets";
    import type {} from "@r_masseater/vite-plus-adopt";
    import fsd from "@r_masseater/vite-plus-adopt/fsd";
    import { defineConfig } from "vite-plus";
@@ -50,7 +51,7 @@ Run without arguments, it runs every configured check in parallel and prints the
        banned: { "Tests import from vite-plus/test": ["vitest", "@vitest/*"] },
        peerRanges: "intersect",
      },
-     h56m: { extend: { useDefault: true } },
+     h56m: { extend: { path: betterleaks } },
      steiger: { paths: ["apps/*/src"], rules: [...fsd.configs.recommended] },
      textlint: { ignores: ["CHANGELOG.md"], rules: { "preset-ja-technical-writing": true } },
      fallow: { production: true, rules: { "unused-files": "error" } },

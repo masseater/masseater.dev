@@ -3,7 +3,7 @@ name: scan-secrets
 description: >
   Use when setting up @r_masseater/h56m in vite.config.ts, scanning commits, staged changes or
   text for leaked secrets, writing a custom secret rule or filter, or silencing a finding that is
-  not a secret. Covers the Betterleaks-format settings, ignoredSecrets, h56m:allow, the CLI and
+  not a secret. Covers extending a preset, the Betterleaks-format settings, ignoredSecrets, h56m:allow, the CLI and
   makeDetector.
 metadata:
   type: core
@@ -16,22 +16,24 @@ sources:
 
 # scan-secrets
 
-h56m finds secrets with the rules of Kingfisher, which include the Betterleaks and Veles rule sets.
-It never sends a secret anywhere to check whether it is live.
+h56m finds secrets with the Kingfisher engine. It has no rules of its own, so extend a preset from
+`@r_masseater/h56m-presets` or a TOML file of your own. It never sends a secret anywhere to check
+whether it is live.
 
 ## Setup
 
 ```sh
-vp add -D @r_masseater/h56m
+vp add -D @r_masseater/h56m @r_masseater/h56m-presets
 ```
 
 ```ts
 import "@r_masseater/h56m/vite";
+import { betterleaks } from "@r_masseater/h56m-presets";
 import { defineConfig } from "vite-plus";
 
 export default defineConfig({
   h56m: {
-    extend: { useDefault: true, disabledRules: ["generic-api-key"] },
+    extend: { path: betterleaks, disabledRules: ["generic-api-key"] },
     filter:
       'matchesAny(finding.line, [`EXAMPLE_KEY`]) || matchesAny(attributes["path"], [`^fixtures/`])',
     rules: [{ id: "my-token", regex: "\\b(my_[A-Za-z0-9]{20})\\b", keywords: ["my_"] }],
@@ -39,8 +41,9 @@ export default defineConfig({
 });
 ```
 
-The settings use the Betterleaks format. Without `extend`, the built-in rules are on. With
-`extend: { useDefault: false }`, only `rules` run. `filter` on the top level or on a rule is an
+The settings use the Betterleaks format. `extend.path` names the preset file and
+`disabledRules` turns off rules of it. Without `extend`, only `rules` run. `extend.useDefault` is
+rejected. `filter` on the top level or on a rule is an
 Expr expression that drops a finding when it is true. It sees `finding` (`secret`, `line`, ...)
 and `attributes["path"]`, and has `matchesAny`, `entropy` and the other Betterleaks helpers.
 
@@ -67,14 +70,14 @@ in order:
 import { makeDetector } from "@r_masseater/h56m";
 
 const program = Effect.gen(function* () {
-  const detector = yield* makeDetector({ rules: [] });
+  const detector = yield* makeDetector({ extend: { path: betterleaks } });
   const inText = yield* detector.scanText({ path: "chat.md", text });
   const staged = yield* detector.scanGit({ root, source: { type: "staged" } });
 });
 ```
 
 `scanGit` takes `{ type: "history", bases, head }`, which scans the commits after the first of `bases`
-that names a commit,, `{ type: "staged" }` or
+that names a commit, `{ type: "staged" }` or
 `{ type: "snapshot", revision }`. A finding has `rule`, `confidence`, 1-based `line` and `column`
 in UTF-16 code units, `secret`, its SHA-256 `digest`, and `commit` for history scans. Errors are
 `H56mError`.

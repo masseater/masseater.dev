@@ -15,7 +15,6 @@ export interface H56mRule {
 }
 
 export interface H56mExtend {
-  readonly useDefault?: boolean;
   readonly path?: string;
   readonly disabledRules?: readonly string[];
 }

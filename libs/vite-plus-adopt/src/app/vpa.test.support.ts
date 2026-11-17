@@ -1,3 +1,4 @@
+import { betterleaks } from "@r_masseater/h56m-presets";
 import {
   Effect,
   Function as Fn,
@@ -29,7 +30,7 @@ const CONFIG = lines(
   "export default {",
   '  commitlint: { rules: { "type-empty": [2, "never"] } },',
   '  dependencyRules: { banned: { "use the stack": ["left-pad"] } },',
-  '  h56m: { extend: { useDefault: true }, ignoredSecrets: ["0".repeat(64)] },',
+  `  h56m: { extend: { path: "${betterleaks}" }, ignoredSecrets: ["0".repeat(64)] },`,
   "  steiger: {",
   '    paths: ["src"],',
   "    rules: [",

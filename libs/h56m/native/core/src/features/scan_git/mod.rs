@@ -114,6 +114,7 @@ mod tests {
     use crate::entities::detector::Detector;
 
     const TOKEN: &str = concat!("ghp", "_4Fq8sLm2Zt9Wn6Rb1Yc3Xv7Hk5Pd0Ja8Qe2T");
+    const PRESET: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/tests/fixtures/preset.toml");
     const NONE: [&str; 0] = [];
 
     fn git(root: &std::path::Path, args: &[&str]) -> String {
@@ -150,7 +151,7 @@ mod tests {
     }
 
     fn detector() -> Detector {
-        Detector::new(&json!({ "extend": { "useDefault": true } }), []).unwrap()
+        Detector::new(&json!({ "extend": { "path": PRESET } }), []).unwrap()
     }
 
     #[test]

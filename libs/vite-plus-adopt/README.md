@@ -11,7 +11,7 @@ It also bundles a Feature-Sliced Design plugin for Steiger and @arethetypeswrong
 ## Usage
 
 ```sh
-vp add -D @r_masseater/vite-plus-adopt
+vp add -D @r_masseater/vite-plus-adopt @r_masseater/h56m-presets
 ```
 
 Allow its postinstall by adding it to `allowBuilds` in `pnpm-workspace.yaml`.
@@ -22,6 +22,7 @@ allowBuilds:
 ```
 
 ```ts
+import { betterleaks } from "@r_masseater/h56m-presets";
 import type {} from "@r_masseater/vite-plus-adopt";
 import fsd from "@r_masseater/vite-plus-adopt/fsd";
 import { defineConfig } from "vite-plus";
@@ -33,7 +34,7 @@ export default defineConfig({
     peerRanges: "intersect",
   },
   h56m: {
-    extend: { useDefault: true },
+    extend: { path: betterleaks },
     filter: 'matchesAny(finding.line, [`\\bCF_BEACON_TOKEN = "[0-9a-f]{32}"`])',
     ignoredSecrets: ["<SHA-256 of the secret>"],
   },

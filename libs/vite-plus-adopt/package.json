@@ -99,6 +99,7 @@
     "@effect/vitest": "catalog:",
     "@feature-sliced/filesystem": "catalog:",
     "@feature-sliced/steiger-plugin": "catalog:",
+    "@r_masseater/h56m-presets": "workspace:*",
     "@size-limit/file": "catalog:",
     "@types/node": "catalog:",
     "@types/semver": "catalog:",

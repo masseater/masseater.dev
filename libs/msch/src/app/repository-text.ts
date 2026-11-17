@@ -1,4 +1,5 @@
 import type { H56mConfig } from "@r_masseater/h56m";
+import { betterleaks } from "@r_masseater/h56m-presets";
 import type { ToolSections } from "@r_masseater/vite-plus-adopt";
 import { Array as Arr, pipe } from "effect";
 
@@ -64,7 +65,7 @@ const anyOf =
   };
 
 export const secretsOf = ({ lines = [], paths = [] }: SecretOptions): H56mConfig => ({
-  extend: { useDefault: true },
+  extend: { path: betterleaks },
   filter: pipe(
     [...anyOf("finding.line")([...PUBLIC_LINES, ...lines]), ...anyOf(`attributes["path"]`)(paths)],
     Arr.join(" || "),

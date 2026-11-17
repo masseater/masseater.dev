@@ -65,7 +65,7 @@ export const tasksOf = ({
     },
     test: {
       command: "vp test run",
-      dependsOn: ["check"],
+      dependsOn: ["check", ...workspace.tasks.native],
       cache: { input: [...inputs, "!**/.cache/**"] },
     },
     msch: { command: "msch", dependsOn: ["check", ...workspace.tasks.native], cache: false },

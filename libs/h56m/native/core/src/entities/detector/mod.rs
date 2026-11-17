@@ -2,7 +2,7 @@ use std::collections::{BTreeMap, HashSet};
 use std::io::Write;
 use std::sync::Arc;
 
-use anyhow::{Context, Result};
+use anyhow::{Context, Result, bail};
 use kingfisher_rules::{Confidence, RuleCacheConfig, Rules, RulesDatabase};
 use kingfisher_scanner::{Blob, Scanner};
 use serde_json::Value;
@@ -18,6 +18,11 @@ pub struct Detector {
 }
 
 fn rules_of(config: &Value) -> Result<Rules> {
+    if config.pointer("/extend/useDefault") == Some(&Value::Bool(true)) {
+        bail!(
+            "h56m has no built-in rules; extend a preset file with extend.path instead of useDefault"
+        );
+    }
     let text = toml::to_string(config).context("h56m config is not representable as TOML")?;
     let mut file = tempfile::Builder::new()
         .prefix("h56m-")
@@ -104,10 +109,11 @@ mod tests {
     use crate::shared::finding::{Confidence, Finding, digest_of};
 
     const TOKEN: &str = concat!("ghp", "_4Fq8sLm2Zt9Wn6Rb1Yc3Xv7Hk5Pd0Ja8Qe2T");
+    const PRESET: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/tests/fixtures/preset.toml");
     const NONE: [&str; 0] = [];
 
     fn defaults() -> Value {
-        json!({ "extend": { "useDefault": true } })
+        json!({ "extend": { "path": PRESET } })
     }
 
     fn detector(config: &Value) -> Detector {
@@ -126,7 +132,7 @@ mod tests {
     }
 
     #[test]
-    fn reports_an_upstream_rule_with_its_metadata() {
+    fn reports_a_preset_rule_with_its_metadata() {
         let found = found(
             &detector(&defaults()),
             "a.ts",
@@ -138,7 +144,7 @@ mod tests {
         assert_eq!(finding.path, "a.ts");
         assert_eq!(finding.secret, TOKEN);
         assert_eq!(finding.digest, digest_of(TOKEN));
-        assert_eq!(finding.confidence, Confidence::High);
+        assert_eq!(finding.confidence, Confidence::Medium);
         assert!(!finding.encoded);
         assert!(finding.description.contains("GitHub"));
     }
@@ -207,7 +213,7 @@ mod tests {
     #[test]
     fn adds_configured_rules_next_to_the_defaults() {
         let config = json!({
-            "extend": { "useDefault": true },
+            "extend": { "path": PRESET },
             "rules": [{ "id": "watashi-token", "regex": "\\b(wt_[A-Za-z0-9]{20})\\b", "keywords": ["wt_"] }]
         });
         let text = format!("x = wt_abcdefghij0123456789\ny = \"{TOKEN}\"\n");
@@ -226,7 +232,7 @@ mod tests {
 
     #[test]
     fn disabled_rules_stop_reporting() {
-        let config = json!({ "extend": { "useDefault": true, "disabledRules": ["github-pat"] } });
+        let config = json!({ "extend": { "path": PRESET, "disabledRules": ["github-pat"] } });
         assert_eq!(
             rules(&detector(&config), &format!("t = \"{TOKEN}\"\n")),
             NONE
@@ -236,7 +242,7 @@ mod tests {
     #[test]
     fn the_global_filter_sees_the_line_and_the_path() {
         let config = json!({
-            "extend": { "useDefault": true },
+            "extend": { "path": PRESET },
             "filter": "matchesAny(finding.line, [`PUBLIC_FIXTURE`]) || matchesAny(attributes[\"path\"], [`^fixtures/`])"
         });
         let detector = detector(&config);
@@ -282,17 +288,28 @@ mod tests {
     }
 
     #[test]
+    fn has_no_rules_of_its_own() {
+        let built_in = json!({ "extend": { "useDefault": true } });
+        assert!(Detector::new(&built_in, []).is_err());
+        let custom = json!({ "rules": [{ "id": "only", "regex": "\\b(only_[0-9]{8})\\b" }] });
+        assert_eq!(
+            rules(&detector(&custom), &format!("t = \"{TOKEN}\"\n")),
+            NONE
+        );
+    }
+
+    #[test]
     fn rejects_an_invalid_config() {
         let bad_regex = json!({ "rules": [{ "id": "bad", "regex": "(" }] });
         assert!(Detector::new(&bad_regex, []).is_err());
-        let unknown = json!({ "extend": { "useDefault": true }, "unknownKey": true });
+        let unknown = json!({ "extend": { "path": PRESET }, "unknownKey": true });
         assert!(Detector::new(&unknown, []).is_err());
     }
 
     #[test]
     fn orders_findings_by_position() {
         let config = json!({
-            "extend": { "useDefault": true },
+            "extend": { "path": PRESET },
             "rules": [{ "id": "watashi-token", "regex": "\\b(wt_[A-Za-z0-9]{20})\\b", "keywords": ["wt_"] }]
         });
         let text = format!("{TOKEN}\nwt_abcdefghij0123456789\n");

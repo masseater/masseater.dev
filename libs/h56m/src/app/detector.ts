@@ -8,7 +8,6 @@ import type { H56mError } from "#/shared/lib/errors.ts";
 import { native } from "#/shared/native/index.ts";
 import type { NativeDetector } from "#/shared/native/index.ts";
 
-const DEFAULT_EXTEND = { useDefault: true } as const;
 const ONE_FILE = 1;
 const WHOLE_REPOSITORY = 0;
 
@@ -74,8 +73,8 @@ const scannerOf = (detector: NativeDetector): Detector => ({
 export const makeDetector = Effect.fn("h56m.detector")(function* makeDetector(
   config: H56mConfig = {},
 ) {
-  const { ignoredSecrets = [], extend = DEFAULT_EXTEND, ...rest } = config;
-  const input = yield* withParent({ config: { ...rest, extend }, ignored: ignoredSecrets });
+  const { ignoredSecrets = [], ...rest } = config;
+  const input = yield* withParent({ config: rest, ignored: ignoredSecrets });
   const detector = yield* callAddon({
     addon: native,
     name: "h56m",
