@@ -10,6 +10,14 @@ pub(crate) struct AuditState {
 }
 
 impl AuditState {
+    #[cfg(test)]
+    pub(crate) fn online(client: Client) -> Self {
+        Self {
+            no_online_audits: false,
+            gh_client: Some(client),
+        }
+    }
+
     pub(crate) fn new(options: &AuditOptions) -> Result<Self, String> {
         let Some(token) = options.github_token.as_deref() else {
             return Ok(Self {

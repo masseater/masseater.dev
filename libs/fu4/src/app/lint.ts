@@ -1,10 +1,10 @@
 import { callAddon, present, sortByPosition, traceparent } from "@r_masseater/lint-host";
-import { Array as Arr, Effect, pipe } from "effect";
+import { Array as Arr, Config, Effect, Option, Redacted, pipe } from "effect";
 
-import type { Diagnostic, Fu4Config } from "#/shared/config/index.ts";
+import type { AuditConfig, Diagnostic, Fu4Config } from "#/shared/config/index.ts";
 import { failedWith } from "#/shared/lib/errors.ts";
 import { native } from "#/shared/native/index.ts";
-import type { NativeOptions, NativeResult } from "#/shared/native/index.ts";
+import type { NativeAuditOptions, NativeOptions, NativeResult } from "#/shared/native/index.ts";
 
 export interface LintInput {
   readonly root: string;
@@ -25,10 +25,31 @@ const diagnosticsOf = (result: NativeResult): readonly Diagnostic[] =>
     })),
   );
 
+const githubToken = Config.option(Config.Redacted("GH_TOKEN")).pipe(
+  Effect.map(Option.filter((token) => Redacted.value(token) !== "")),
+  Effect.orDie,
+);
+
+const auditOptions = Effect.fn("fu4.auditOptions")(function* auditOptions(
+  config: AuditConfig = {},
+) {
+  const { online = true, ...rest } = config;
+  if (!online) {
+    return rest;
+  }
+  const token = yield* githubToken;
+  return {
+    ...rest,
+    ...present(token, (value) => ({ githubToken: Redacted.value(value) })),
+  } satisfies NativeAuditOptions;
+});
+
 export const lint = Effect.fn("fu4.lint")(function* lint(input: LintInput) {
   const parent = yield* traceparent;
+  const config = input.config ?? {};
   const options: NativeOptions = {
-    config: input.config ?? {},
+    config,
+    audit: yield* auditOptions(config.audit),
     ...present(parent, (value) => ({ traceparent: value })),
   };
   const results = yield* callAddon({

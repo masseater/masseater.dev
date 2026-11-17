@@ -6,7 +6,8 @@ use serde::Deserialize;
 
 use super::finding::Persona;
 use super::registry::input::InputKind;
-use super::{AuditOptions, findings, group_of};
+use super::state::AuditState;
+use super::{AuditOptions, findings_in, group_of};
 
 #[derive(Deserialize)]
 struct Case {
@@ -58,23 +59,26 @@ fn actual(case: &Case) -> Vec<Expected> {
     if group.register(kind, &text, key).is_err() {
         return Vec::new();
     }
-    let mut found: Vec<Expected> = findings(&group, &options)
-        .expect("audits run")
-        .iter()
-        .map(|finding| {
-            let primary = finding.primary_location();
-            let point = primary.concrete.location.start_point;
-            Expected {
-                ident: finding.ident.to_owned(),
-                line: point.row + 1,
-                column: point.column + 1,
-                annotation: primary.symbolic.annotation.to_string(),
-                severity: format!("{:?}", finding.determinations.severity),
-                confidence: format!("{:?}", finding.determinations.confidence),
-                persona: format!("{:?}", finding.determinations.persona),
-            }
-        })
-        .collect();
+    let mut found: Vec<Expected> = findings_in(
+        &group,
+        &options,
+        &AuditState::new(&options).expect("offline state builds"),
+    )
+    .iter()
+    .map(|finding| {
+        let primary = finding.primary_location();
+        let point = primary.concrete.location.start_point;
+        Expected {
+            ident: finding.ident.to_owned(),
+            line: point.row + 1,
+            column: point.column + 1,
+            annotation: primary.symbolic.annotation.to_string(),
+            severity: format!("{:?}", finding.determinations.severity),
+            confidence: format!("{:?}", finding.determinations.confidence),
+            persona: format!("{:?}", finding.determinations.persona),
+        }
+    })
+    .collect();
     found.sort();
     found
 }

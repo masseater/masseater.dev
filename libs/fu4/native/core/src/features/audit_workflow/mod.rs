@@ -9,6 +9,8 @@ mod utils;
 
 #[cfg(test)]
 mod conformance;
+#[cfg(test)]
+mod online;
 
 use camino::Utf8Path;
 use serde::Deserialize;
@@ -88,9 +90,12 @@ fn group_of(root: &Utf8Path, options: &AuditOptions) -> Result<InputGroup, Strin
     InputGroup::new(config, Some(Root::new(root))).map_err(|error| error.to_string())
 }
 
-fn findings<'a>(group: &'a InputGroup, options: &AuditOptions) -> Result<Vec<Finding<'a>>, String> {
-    let state = AuditState::new(options)?;
-    let audits = AuditRegistry::default_audits(&state);
+fn findings_in<'a>(
+    group: &'a InputGroup,
+    options: &AuditOptions,
+    state: &AuditState,
+) -> Vec<Finding<'a>> {
+    let audits = AuditRegistry::default_audits(state);
     let mut findings = FindingRegistry::new(
         group.config(),
         options.min_severity,
@@ -106,10 +111,19 @@ fn findings<'a>(group: &'a InputGroup, options: &AuditOptions) -> Result<Vec<Fin
             }
         }
     }
-    Ok(findings.into_findings())
+    findings.into_findings()
 }
 
 pub fn audit(
+    root: &str,
+    files: Vec<AuditFile>,
+    options: &AuditOptions,
+) -> Result<Vec<AuditReport>, String> {
+    audit_in(&AuditState::new(options)?, root, files, options)
+}
+
+fn audit_in(
+    state: &AuditState,
     root: &str,
     files: Vec<AuditFile>,
     options: &AuditOptions,
@@ -132,7 +146,7 @@ pub fn audit(
         });
     }
 
-    for (path, diagnostic) in findings(&group, options)?.iter().map(diagnostic) {
+    for (path, diagnostic) in findings_in(&group, options, state).iter().map(diagnostic) {
         let relative = Utf8Path::new(&path)
             .strip_prefix(root)
             .map_or(path.clone(), std::string::ToString::to_string);
@@ -146,4 +160,68 @@ pub fn audit(
             .sort_by(|a, b| a.pos.cmp(&b.pos).then_with(|| a.kind.cmp(&b.kind)));
     }
     Ok(reports)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{AuditFile, AuditOptions, audit, is_workflow};
+
+    const WORKFLOW: &str = "on: push\njobs:\n  test:\n    runs-on: ubuntu-latest\n    steps:\n      - run: echo ${{ github.event.issue.title }}\n";
+
+    fn file(path: &str, text: &str) -> AuditFile {
+        AuditFile {
+            path: path.to_owned(),
+            text: text.to_owned(),
+        }
+    }
+
+    #[test]
+    fn reports_findings_under_the_given_relative_path() {
+        let reports = audit(
+            "/repo",
+            vec![file(".github/workflows/ci.yml", WORKFLOW)],
+            &AuditOptions::default(),
+        )
+        .expect("audits run");
+        assert_eq!(reports.len(), 1);
+        assert_eq!(reports[0].path, ".github/workflows/ci.yml");
+        let kinds: Vec<&str> = reports[0]
+            .diagnostics
+            .iter()
+            .map(|d| d.kind.as_ref())
+            .collect();
+        assert!(kinds.contains(&"template-injection"), "{kinds:?}");
+        assert!(kinds.contains(&"excessive-permissions"), "{kinds:?}");
+    }
+
+    #[test]
+    fn skips_files_that_are_not_yaml_or_do_not_parse() {
+        let reports = audit(
+            "/repo",
+            vec![
+                file("README.md", "# readme"),
+                file(".github/workflows/broken.yml", "jobs: ["),
+            ],
+            &AuditOptions::default(),
+        )
+        .expect("audits run");
+        assert!(reports.is_empty());
+    }
+
+    #[test]
+    fn rejects_rules_that_are_not_a_valid_config() {
+        let options = AuditOptions {
+            rules: Some(serde_json::json!({ "template-injection": { "unknown": true } })),
+            ..AuditOptions::default()
+        };
+        assert!(audit("/repo", Vec::new(), &options).is_err());
+    }
+
+    #[test]
+    fn tells_workflows_from_other_inputs() {
+        assert!(is_workflow(".github/workflows/ci.yml"));
+        assert!(!is_workflow("actions/setup/action.yml"));
+        assert!(!is_workflow(".github/dependabot.yml"));
+        assert!(!is_workflow("README.md"));
+    }
 }

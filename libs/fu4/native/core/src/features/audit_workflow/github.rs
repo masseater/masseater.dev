@@ -18,6 +18,8 @@ use ureq::{
 use crate::features::audit_workflow::{models::repo_ref::Slug, utils::ZIZMOR_AGENT};
 
 mod lineref;
+#[cfg(test)]
+pub(crate) mod mock;
 mod pktline;
 
 const RETRIES: usize = 3;
@@ -183,7 +185,7 @@ struct Fetched {
 #[derive(Clone)]
 pub(crate) struct Client {
     api_base: String,
-    host: GitHubHost,
+    web_base: String,
     token: GitHubToken,
     agent: Agent,
     ref_cache: Arc<Mutex<HashMap<String, Vec<RemoteHead>>>>,
@@ -210,6 +212,10 @@ fn decode<T: DeserializeOwned>(fetched: &Fetched) -> Result<T, ClientError> {
 
 impl Client {
     pub(crate) fn new(host: &GitHubHost, token: &GitHubToken) -> Self {
+        Self::at(host.to_api_url(), format!("https://{host}"), token)
+    }
+
+    fn at(api_base: String, web_base: String, token: &GitHubToken) -> Self {
         let agent = Agent::config_builder()
             .user_agent(ZIZMOR_AGENT)
             .http_status_as_error(false)
@@ -222,13 +228,22 @@ impl Client {
             .new_agent();
 
         Self {
-            api_base: host.to_api_url(),
-            host: host.clone(),
+            api_base,
+            web_base,
             token: token.clone(),
             agent,
             ref_cache: Arc::default(),
             api_cache: Arc::default(),
         }
+    }
+
+    #[cfg(test)]
+    pub(crate) fn local(base: &str) -> Self {
+        Self::at(
+            base.to_owned(),
+            base.to_owned(),
+            &GitHubToken::new("test-token").expect("test token is valid"),
+        )
     }
 
     fn with_retries(
@@ -276,8 +291,8 @@ impl Client {
 
     fn list_refs(&self, slug: &Slug<'_>) -> Result<Vec<RemoteHead>, ClientError> {
         let url = format!(
-            "https://{host}/{slug}.git/git-upload-pack",
-            host = self.host
+            "{web_base}/{slug}.git/git-upload-pack",
+            web_base = self.web_base
         );
 
         if let Some(heads) = self
@@ -499,8 +514,8 @@ impl Client {
         commit: &str,
     ) -> Result<BranchCommits, ClientError> {
         let url = format!(
-            "https://{host}/{slug}/branch_commits/{commit}",
-            host = self.host
+            "{web_base}/{slug}/branch_commits/{commit}",
+            web_base = self.web_base
         );
 
         let resp = Self::with_retries(|| {
