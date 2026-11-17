@@ -1,4 +1,4 @@
-import type { Song } from "@masseater.dev/song-format/song";
+import type { Song } from "@r_masseater/fumx-parser";
 export declare const song: Song & {
   readonly title: "two five one";
   readonly samples: readonly [

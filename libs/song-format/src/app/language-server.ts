@@ -1,10 +1,13 @@
+import {
+  FumxModule,
+  registerChecks,
+  FumxGeneratedModule,
+  FumxGeneratedSharedModule,
+} from "@r_masseater/fumx-parser/language";
 import { inject } from "langium";
 import { createDefaultModule, createDefaultSharedModule, startLanguageServer } from "langium/lsp";
 import { NodeFileSystem } from "langium/node";
 import { createConnection, ProposedFeatures } from "vscode-languageserver/node";
-
-import { FumxModule, registerChecks } from "#/features/read-song/index.ts";
-import { FumxGeneratedModule, FumxGeneratedSharedModule } from "#generated/langium/module.ts";
 
 export const serveLanguage = (): void => {
   const connection = createConnection(ProposedFeatures.all);
