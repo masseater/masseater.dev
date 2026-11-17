@@ -21,8 +21,7 @@ pub fn all(context: &Context) -> Vec<Box<dyn Rule>> {
     let labels = context
         .project
         .as_ref()
-        .map(|p| p.config.labels.clone())
-        .unwrap_or_default();
+        .map_or_default(|p| p.config.labels.clone());
     vec![
         Box::new(matrix::Matrix::default()),
         Box::new(credentials::Credentials::default()),

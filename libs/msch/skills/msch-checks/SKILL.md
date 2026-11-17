@@ -22,7 +22,7 @@ msch holds masseater's repository conventions as checks. No list of those conven
 Run `vp exec msch` at the repository root. It takes no subcommand, checks the whole repository and exits with 1 when it finds anything. `--json` prints the findings as JSON.
 
 msch also runs every vite-plus-adopt check that the root `vite.config.ts` configures.
-Those include Betterleaks, commitlint and textlint.
+Those include h56m, commitlint and textlint.
 Steiger, the dependency rules and fallow run as well.
 They read `VPA_BASE` (default `origin/main`) and other environment variables.
 A task that runs msch therefore sets `cache: false`.

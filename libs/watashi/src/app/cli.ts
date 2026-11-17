@@ -36,7 +36,7 @@ const logoutCommand = Command.make("logout", {}, () =>
 /** @internal */
 export const watashi = Command.make("watashi").pipe(
   Command.withDescription(
-    "watashi（watashi.masseater.dev）の CLI。環境変数は WATASHI_SEND_CONVERSATIONS・WATASHI_TOKEN・WATASHI_URL・WATASHI_HOME・WATASHI_BETTERLEAKS",
+    "watashi（watashi.masseater.dev）の CLI。環境変数は WATASHI_SEND_CONVERSATIONS・WATASHI_TOKEN・WATASHI_URL・WATASHI_HOME",
   ),
   Command.withSubcommands([
     loginCommand,

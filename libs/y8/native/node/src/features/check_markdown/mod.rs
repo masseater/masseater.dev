@@ -7,7 +7,7 @@ use tracing::info_span;
 
 use y8_core::{AgentChecker, Input, Linter, Transfer, builtin_rules};
 
-use crate::shared::telemetry;
+use napi_telemetry as telemetry;
 
 #[napi(object)]
 pub struct FileInput {
@@ -102,7 +102,7 @@ fn run(inputs: &[Input], options: LintOptions) -> Result<Vec<FileOutput>> {
 
 #[napi]
 pub fn lint(files: Vec<FileInput>, options: LintOptions) -> Result<Vec<FileOutput>> {
-    telemetry::init();
+    telemetry::init("y8", env!("CARGO_PKG_VERSION"));
     let span = info_span!("y8.lint", "y8.files" = files.len());
     telemetry::adopt(&span, options.traceparent.as_deref());
     let _entered = span.enter();
@@ -122,7 +122,7 @@ pub fn lint_paths(
     paths: Vec<String>,
     options: LintOptions,
 ) -> Result<Vec<FileOutput>> {
-    telemetry::init();
+    telemetry::init("y8", env!("CARGO_PKG_VERSION"));
     let span = info_span!("y8.lint_paths", "y8.files" = paths.len());
     telemetry::adopt(&span, options.traceparent.as_deref());
     let _entered = span.enter();

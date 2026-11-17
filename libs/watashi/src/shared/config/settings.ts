@@ -11,7 +11,6 @@ export type Settings = Readonly<{
   send: boolean;
   source: ConversationSource;
   remoteSession: string;
-  betterleaks: Option.Option<string>;
 }>;
 
 const [LOCAL, CLOUD] = CONVERSATION_SOURCES;
@@ -46,5 +45,4 @@ export const settings: Config.Config<Settings> = Config.all({
   send: Config.Boolean("WATASHI_SEND_CONVERSATIONS").pipe(Config.withDefault(false)),
   source: Config.String("CLAUDE_CODE_REMOTE").pipe(Config.withDefault(""), Config.map(sourceOf)),
   remoteSession: Config.String("CLAUDE_CODE_REMOTE_SESSION_ID").pipe(Config.withDefault("")),
-  betterleaks: Config.option(Config.String("WATASHI_BETTERLEAKS")),
 });

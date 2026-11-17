@@ -10,9 +10,7 @@ import {
 } from "effect";
 import type { Scope } from "effect";
 import { Tar } from "effect/encoding";
-import { encode as encodeHex } from "effect/encoding/Hex";
 import { ChildProcess, ChildProcessSpawner } from "effect/process";
-import { zip } from "fflate";
 
 const DATA_FIRST_ARITY = 2;
 
@@ -138,18 +136,6 @@ export const NO_FOO_RULE = lines(
   "});",
 );
 
-export const zipArchive = (files: Readonly<Record<string, string>>): Effect.Effect<Uint8Array> =>
-  Effect.callback<Uint8Array>((resume) => {
-    const encoder = new TextEncoder();
-    const entries = pipe(
-      files,
-      Rec.map((source) => encoder.encode(source)),
-    );
-    zip(entries, (_failure, zipped) => {
-      resume(Effect.succeed(zipped));
-    });
-  });
-
 /** @internal */
 export const tarGzArchive = (files: Readonly<Record<string, string>>): Effect.Effect<Uint8Array> =>
   Stream.fromIterable(
@@ -167,11 +153,3 @@ export const tarGzArchive = (files: Readonly<Record<string, string>>): Effect.Ef
     ),
     Effect.orDie,
   );
-
-/** @internal */
-export const sha256Hex = (data: Uint8Array): Effect.Effect<string> => {
-  const copy = new Uint8Array(data);
-  return Effect.promise(() => crypto.subtle.digest("SHA-256", copy)).pipe(
-    Effect.map((digest) => encodeHex(new Uint8Array(digest))),
-  );
-};
