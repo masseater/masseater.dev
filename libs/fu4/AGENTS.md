@@ -6,6 +6,6 @@
 
 `run:` のスクリプトは shellcheck を呼ばずに tree-sitter-bash で調べ、shellcheck と同じ結果を出す。`native/core/tests/fixtures/shellcheck/` の期待値は shellcheck 0.9.0 が actionlint と同じ引数で出したものであり、手で直してはならない。検査を足したら、その SC コードを `shared/shell/conformance.rs` の対象に加える。
 
-zizmor の監査は zizmor の公開クレートの上に `features/audit_workflow` として移植したものであり、zizmor と同じ結果を返すこと。`native/core/tests/fixtures/zizmor/` は zizmor の test-data と、zizmor 1.32.0 を `--offline --persona auditor` で動かした期待値（`expected.json`）であり、手で直してはならない。GitHub に問い合わせる監査は、`online.rs` が手元に立てた偽の GitHub に対して確かめる。
+zizmor の監査は zizmor の公開クレートの上に `features/audit_workflow` として移植したものであり、zizmor と同じ結果を返すこと。`native/core/tests/fixtures/zizmor/` には zizmor の test-data と期待値の `expected.json` がある。期待値は zizmor 1.32.0 を `--offline --persona auditor` で動かした結果であり、手で直してはならない。GitHub に問い合わせる監査は、`online.rs` が手元に立てた偽の GitHub に対して確かめる。
 
 `native/core/data/` は `vp run generate-data` が GitHub の docs とスキーマ、zizmor のリポジトリから作るので、手で直してはならない。Rust 側の処理には tracing の span を付けること。`OTEL_EXPORTER_OTLP_ENDPOINT` があるとき、span は呼び出し側のトレースの下に送られる。
