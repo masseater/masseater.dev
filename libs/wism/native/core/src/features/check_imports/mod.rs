@@ -219,7 +219,7 @@ mod tests {
     use crate::entities::layout::Layout;
     use crate::shared::fixture::{config, files};
 
-    const FILES: [&str; 14] = [
+    const FILES: [&str; 17] = [
         "libs/kit/package.json",
         "libs/kit/README.md",
         "libs/kit/src/app/index.ts",
@@ -231,9 +231,12 @@ mod tests {
         "libs/kit/src/entities/job/@x/user.ts",
         "libs/kit/src/entities/user/index.ts",
         "libs/kit/src/shared/lib/text.ts",
+        "libs/kit/src/shared/config/types.ts",
+        "libs/kit/CHANGELOG.md",
         "crates/core/Cargo.toml",
         "crates/core/src/features/sync_notes/mod.rs",
         "crates/core/src/entities/note.rs",
+        "crates/core/src/features/read_notes/mod.rs",
     ];
 
     fn edge(from: &str, target: Target) -> Edge {
@@ -334,5 +337,117 @@ mod tests {
                 LAYER_IMPORT
             ]
         );
+    }
+    #[test]
+    fn allows_cross_imports_only_through_the_matching_x_file() {
+        let found = rules(&[
+            file(
+                "libs/kit/src/entities/user/index.ts",
+                "libs/kit/src/entities/job/@x/user.ts",
+            ),
+            file(
+                "libs/kit/src/features/run-kit/model/run.ts",
+                "libs/kit/src/entities/job/@x/user.ts",
+            ),
+        ]);
+        assert_eq!(found, vec![PUBLIC_API]);
+    }
+
+    #[test]
+    fn reports_slices_of_one_layer_that_use_each_other() {
+        let found = rules(&[file(
+            "libs/kit/src/features/read-kit/index.ts",
+            "libs/kit/src/features/run-kit/index.ts",
+        )]);
+        assert_eq!(found, vec![CROSS_SLICE]);
+    }
+
+    #[test]
+    fn lets_open_segments_be_imported_past_their_entry() {
+        let found = rules(&[
+            file(
+                "libs/kit/src/entities/user/index.ts",
+                "libs/kit/src/shared/lib/text.ts",
+            ),
+            file(
+                "libs/kit/src/entities/user/index.ts",
+                "libs/kit/src/shared/config/types.ts",
+            ),
+        ]);
+        assert_eq!(found, vec![PUBLIC_API]);
+    }
+
+    #[test]
+    fn reports_wildcard_exports_only_in_entry_files() {
+        let mut entry = file(
+            "libs/kit/src/entities/job/index.ts",
+            "libs/kit/src/entities/job/model/job.ts",
+        );
+        entry.wildcard = true;
+        let mut inner = file(
+            "libs/kit/src/entities/job/model/job.ts",
+            "libs/kit/src/shared/lib/text.ts",
+        );
+        inner.wildcard = true;
+        assert_eq!(rules(&[entry, inner]), vec![WILDCARD_EXPORT]);
+    }
+
+    #[test]
+    fn checks_markdown_links_against_files_and_directories() {
+        let found = rules(&[
+            file("libs/kit/README.md", "libs/kit/src"),
+            file("libs/kit/README.md", "libs/kit/src/entities/job/index.ts"),
+            file("libs/kit/README.md", "libs/kit/CHANGELOG.md"),
+            file("libs/kit/README.md", "../outside.md"),
+        ]);
+        assert_eq!(found, vec![LINK_TARGET]);
+    }
+
+    #[test]
+    fn ignores_imports_that_leave_the_instance() {
+        let found = rules(&[file(
+            "libs/kit/src/entities/job/model/job.ts",
+            "crates/core/src/features/sync_notes/mod.rs",
+        )]);
+        assert_eq!(found, Vec::<&str>::new());
+    }
+
+    #[test]
+    fn checks_rust_paths_between_slices_and_layers() {
+        let found = rules(&[
+            module(
+                "crates/core/src/features/sync_notes/mod.rs",
+                &["features", "read_notes", "read"],
+            ),
+            module(
+                "crates/core/src/features/sync_notes/mod.rs",
+                &["features", "sync_notes", "inner"],
+            ),
+            module("crates/core/src/entities/note.rs", &["app", "run"]),
+            module("crates/core/src/entities/note.rs", &["std"]),
+            module("crates/core/src/entities/note.rs", &["helpers", "run"]),
+        ]);
+        assert_eq!(found, vec![CROSS_SLICE, LAYER_IMPORT]);
+    }
+
+    #[test]
+    fn reports_where_the_import_is_written() {
+        let config = config();
+        let layout = Layout::new(&config, files(&FILES)).expect("the layout builds");
+        let mut upward = file(
+            "libs/kit/src/entities/job/model/job.ts",
+            "libs/kit/src/app/index.ts",
+        );
+        upward.line = 7;
+        upward.column = 21;
+        upward.specifier = "#/app/index.ts".to_owned();
+        let found = check(&layout, &[upward]);
+        assert_eq!(found.len(), 1);
+        assert_eq!(
+            (found[0].path.as_str(), found[0].line, found[0].column),
+            ("libs/kit/src/entities/job/model/job.ts", 7, 21)
+        );
+        assert!(found[0].message.contains("#/app/index.ts"));
+        assert!(found[0].message.contains("app"));
     }
 }

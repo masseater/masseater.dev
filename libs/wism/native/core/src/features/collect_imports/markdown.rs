@@ -96,4 +96,28 @@ mod tests {
             ]
         );
     }
+    #[test]
+    fn reads_reference_links_and_skips_code() {
+        let text = "See [guide][g] and `[x](./code.md)`.\n\n```md\n[y](./fenced.md)\n```\n\n[g]: ../guide.md\n";
+        let found: Vec<(String, usize, usize)> = links("docs/a/index.md", text)
+            .into_iter()
+            .map(|edge| match edge.target {
+                Target::File(path) => (path, edge.line, edge.column),
+                Target::Module(path) => (path.join("::"), edge.line, edge.column),
+            })
+            .collect();
+        assert_eq!(found, vec![("docs/guide.md".to_owned(), 1, 5)]);
+    }
+
+    #[test]
+    fn keeps_links_that_climb_out_of_the_repository() {
+        let found: Vec<String> = links("README.md", "[up](../../x.md)\n")
+            .into_iter()
+            .map(|edge| match edge.target {
+                Target::File(path) => path,
+                Target::Module(path) => path.join("::"),
+            })
+            .collect();
+        assert_eq!(found, vec!["../../../x.md"]);
+    }
 }

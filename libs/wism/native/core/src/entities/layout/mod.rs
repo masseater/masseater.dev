@@ -268,3 +268,197 @@ fn locate_rest(
         [] => Position::Loose,
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::{Layout, Position};
+    use crate::shared::fixture::{config, files};
+
+    const FILES: [&str; 12] = [
+        "package.json",
+        "src/app/index.ts",
+        "libs/kit/package.json",
+        "libs/kit/src/features/auth/login/index.ts",
+        "libs/kit/src/features/auth/login/model/run.ts",
+        "libs/kit/src/entities/job/index.ts",
+        "libs/kit/src/shared/lib/text.ts",
+        "libs/kit/native/Cargo.toml",
+        "libs/kit/native/src/lib.rs",
+        "libs/kit/native/src/features/sync_notes/mod.rs",
+        "libs/kit/native/src/shared/text.rs",
+        "skills/write/SKILL.md",
+    ];
+
+    fn layer(layer: &str, slice: Option<&str>, inner: Option<&str>) -> Position {
+        Position::Layer {
+            layer: layer.to_owned(),
+            slice: slice.map(str::to_owned),
+            inner: inner.map(str::to_owned),
+        }
+    }
+
+    fn positions(path: &str) -> Vec<(String, Position)> {
+        let config = config();
+        let layout = Layout::new(&config, files(&FILES)).expect("the layout builds");
+        layout
+            .located(path)
+            .into_iter()
+            .map(|located| {
+                (
+                    layout.instances[located.instance].dir.clone(),
+                    located.position,
+                )
+            })
+            .collect()
+    }
+
+    #[test]
+    fn finds_markers_at_the_root_and_in_nested_directories() {
+        let config = config();
+        let layout = Layout::new(&config, files(&FILES)).expect("the layout builds");
+        let dirs: Vec<(&str, &str)> = layout
+            .instances
+            .iter()
+            .map(|instance| {
+                (
+                    config.kinds[instance.kind].name.as_str(),
+                    instance.dir.as_str(),
+                )
+            })
+            .collect();
+        assert_eq!(
+            dirs,
+            vec![
+                ("workspace", ""),
+                ("workspace", "libs/kit"),
+                ("crate", "libs/kit/native"),
+                ("skill", "skills/write"),
+            ]
+        );
+    }
+
+    #[test]
+    fn places_files_in_layers_slices_and_segments() {
+        assert_eq!(
+            positions("src/app/index.ts"),
+            vec![(String::new(), layer("app", None, None))]
+        );
+        assert_eq!(
+            positions("libs/kit/src/entities/job/index.ts"),
+            vec![(
+                "libs/kit".to_owned(),
+                layer("entities", Some("job"), Some("index.ts"))
+            )]
+        );
+        assert_eq!(
+            positions("libs/kit/src/shared/lib/text.ts"),
+            vec![(
+                "libs/kit".to_owned(),
+                layer("shared", Some("lib"), Some("text.ts"))
+            )]
+        );
+    }
+
+    #[test]
+    fn treats_a_directory_with_an_entry_file_as_a_grouped_slice() {
+        assert_eq!(
+            positions("libs/kit/src/features/auth/login/model/run.ts"),
+            vec![(
+                "libs/kit".to_owned(),
+                layer("features", Some("auth/login"), Some("model/run.ts"))
+            )]
+        );
+    }
+
+    #[test]
+    fn places_rust_modules_by_file_and_directory() {
+        assert_eq!(
+            positions("libs/kit/native/src/lib.rs"),
+            vec![("libs/kit/native".to_owned(), Position::Root)]
+        );
+        assert_eq!(
+            positions("libs/kit/native/src/features/sync_notes/mod.rs"),
+            vec![(
+                "libs/kit/native".to_owned(),
+                layer("features", Some("sync_notes"), Some("mod.rs"))
+            )]
+        );
+        assert_eq!(
+            positions("libs/kit/native/src/shared/text.rs"),
+            vec![(
+                "libs/kit/native".to_owned(),
+                layer("shared", Some("text"), None)
+            )]
+        );
+        assert_eq!(
+            positions("libs/kit/native/src/features.rs"),
+            vec![("libs/kit/native".to_owned(), layer("features", None, None))]
+        );
+        assert_eq!(
+            positions("libs/kit/native/src/util.rs"),
+            vec![(
+                "libs/kit/native".to_owned(),
+                Position::UnknownLayer("util".to_owned())
+            )]
+        );
+    }
+
+    #[test]
+    fn tells_loose_outside_and_ignored_files_apart() {
+        assert_eq!(
+            positions("libs/kit/src/index.ts"),
+            vec![("libs/kit".to_owned(), Position::Loose)]
+        );
+        assert_eq!(
+            positions("libs/kit/src/utils/a.ts"),
+            vec![(
+                "libs/kit".to_owned(),
+                Position::UnknownLayer("utils".to_owned())
+            )]
+        );
+        assert_eq!(
+            positions("libs/kit/bin/kit.ts"),
+            vec![("libs/kit".to_owned(), Position::Outside)]
+        );
+        assert_eq!(
+            positions("libs/kit/README.md"),
+            vec![("libs/kit".to_owned(), Position::Ignored)]
+        );
+        assert_eq!(
+            positions("skills/write/SKILL.md"),
+            vec![("skills/write".to_owned(), Position::Ignored)]
+        );
+    }
+
+    #[test]
+    fn limits_a_kind_to_its_paths() {
+        let mut config = config();
+        config.kinds[0].paths = Some(vec!["libs/*".to_owned()]);
+        let layout = Layout::new(&config, files(&FILES)).expect("the layout builds");
+        let dirs: Vec<&str> = layout
+            .instances
+            .iter()
+            .filter(|instance| instance.kind == 0)
+            .map(|instance| instance.dir.as_str())
+            .collect();
+        assert_eq!(dirs, vec!["libs/kit"]);
+        assert_eq!(layout.located("src/app/index.ts").len(), 0);
+    }
+
+    #[test]
+    fn knows_which_files_and_directories_exist() {
+        let config = config();
+        let layout = Layout::new(&config, files(&FILES)).expect("the layout builds");
+        assert!(layout.exists("libs/kit/src/entities/job/index.ts"));
+        assert!(layout.exists("libs/kit/src/entities"));
+        assert!(layout.exists(""));
+        assert!(!layout.exists("libs/kit/src/entities/user"));
+    }
+
+    #[test]
+    fn rejects_an_invalid_glob() {
+        let mut config = config();
+        config.kinds[0].paths = Some(vec!["libs/[".to_owned()]);
+        assert!(Layout::new(&config, files(&FILES)).is_err());
+    }
+}

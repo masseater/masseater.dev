@@ -1,4 +1,4 @@
-import { callAddon, present, sortByPosition, traceparent } from "@r_masseater/lint-host";
+import { callAddon, present, sortByPosition, traceparent } from "@masseater.dev/lint-host";
 import { Array as Arr, Effect, pipe } from "effect";
 
 import type { Diagnostic, Fu4Config } from "#/shared/config/index.ts";
