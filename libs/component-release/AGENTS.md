@@ -1,3 +1,3 @@
 # @masseater.dev/component-release
 
-このワークスペースは、release-please で版を出すアプリ（yakusu・Pod Rattle・余白）のタグとリリースを GitHub Actions から作る。
+このワークスペースには、アプリのリリースビルドで共有されるヘルパーとして、Tauriバンドルを `release-assets/` にコピーする `bundle-collect` と、コマンドランナーが格納されています。パブリッシング自体は、`msch-publish` とパブリッシングワークフローを経て行われます。

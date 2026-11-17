@@ -1,6 +1,6 @@
 {
-  "name": "yohaku-desktop",
-  "version": "0.0.0",
+  "name": "yohaku",
+  "version": "0.1.7",
   "private": true,
   "type": "module",
   "imports": {
