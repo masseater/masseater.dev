@@ -48,6 +48,11 @@ impl Separator {
         self.file.stems()
     }
 
+    pub const fn set_chunk(&mut self, chunk_size: usize, overlap: usize) {
+        self.file.inference.chunk_size = Some(chunk_size);
+        self.file.inference.num_overlap = Some(overlap);
+    }
+
     #[must_use]
     pub fn sample_rate(&self) -> u32 {
         self.file.audio.sample_rate
@@ -256,8 +261,7 @@ mod tests {
         let mix = [flat[..samples].to_vec(), flat[samples..].to_vec()];
         let config = std::fs::read_to_string(fetch(&SW_CONFIG)).unwrap();
         let mut separator = Separator::load(&fetch(&SW_CHECKPOINT), &config, Device::Cpu).unwrap();
-        separator.file.inference.chunk_size = Some(samples);
-        separator.file.inference.num_overlap = Some(1);
+        separator.set_chunk(samples, 1);
         let stems = separator.separate(&mix, |_, _| {}).unwrap();
         let reference = expected.as_slice().unwrap();
         for (stem, output) in stems.iter().enumerate() {

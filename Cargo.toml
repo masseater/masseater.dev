@@ -21,6 +21,8 @@ members = [
   "libs/wism/native/node",
   "apps/shirushi/src-tauri",
   "libs/roformer",
+  "libs/audio-fetch",
+  "apps/yogoto/src-tauri",
 ]
 
 [workspace.package]
