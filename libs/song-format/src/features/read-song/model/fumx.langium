@@ -234,7 +234,28 @@ Tempo:
     bpm=BPM ('->' target=BPM 'over' span=BARS)?;
 
 Line:
-    VoiceLine | Automation;
+    VoiceLine | ControlLine | TempoLine | Automation;
+
+ControlLine:
+    track=[Track:Name] '.' control=Control ':' steps+=ControlStep (',' steps+=ControlStep)*;
+
+Control:
+    kind='cc' number=NUMBER | kind='pressure' pitch=PITCH? | kind=('bend' | 'program');
+
+ControlStep:
+    ControlHold | Rest;
+
+ControlHold:
+    value=ControlValue ('->' target=ControlValue)? duration=FRACTION;
+
+ControlValue:
+    number=NUMBER | semitones=SEMITONES;
+
+TempoLine:
+    'tempo' ':' steps+=TempoStep (',' steps+=TempoStep)*;
+
+TempoStep:
+    bpm=BPM ('->' target=BPM)? duration=FRACTION;
 
 VoiceLine:
     (master?='master' | track=[Track:Name]) ':' events+=Event (',' events+=Event)*;
@@ -272,9 +293,10 @@ Edit: kind=('mute' | 'stutter' | 'tapestop' | 'reverse-slice');
 Hit: voice=Name;
 
 Attribute:
-    Velocity | GateLength | Tie | Articulation | Lyric | Bend | Nudge | Fade | Every | PlayParam;
+    Velocity | ReleaseVelocity | GateLength | Tie | Articulation | Lyric | Bend | Nudge | Fade | Every | PlayParam;
 
 Velocity: 'vel' (value=NUMBER | '(' computed=Expression ')');
+ReleaseVelocity: 'off' value=NUMBER;
 GateLength: 'gate' amount=PERCENT;
 Tie: tie?='tie';
 Articulation: kind=('staccato' | 'legato' | 'accent');
@@ -286,7 +308,7 @@ Fade: 'fade' time=MILLISECONDS;
 Every: 'every' slice=FRACTION count=COUNT?;
 
 Name returns string:
-    ID | 'melody' | 'countermelody' | 'bass' | 'harmony' | 'drums' | 'texture' | 'delay' | 'reverb' | 'chorus' | 'comp' | 'limit' | 'width' | 'phaser' | 'tremolo' | 'drive' | 'gain' | 'pan' | 'sample' | 'release' | 'attack' | 'decay' | 'offset' | 'length' | 'mix' | 'base' | 'from' | 'to' | 'q' | 'ir' | 'predelay' | 'feedback' | 'pingpong' | 'lookahead' | 'makeup' | 'semi' | 'highpass' | 'lowpass' | 'slice' | 'slices' | 'onsets' | 'root' | 'hold' | 'depth' | 'by' | 'over' | 'curve' | 'linear' | 'exp' | 'every' | 'fade' | 'nudge' | 'bend' | 'lyric' | 'gate' | 'vel' | 'tie' | 'staccato' | 'legato' | 'accent' | 'reverse' | 'audio' | 'kit' | 'instrument' | 'track' | 'bus' | 'duck' | 'groove' | 'swing' | 'multisample' | 'song' | 'bar' | 'meter' | 'tempo' | 'section' | 'mark' | 'automate' | 'fx' | 'send' | 'role' | 'mono-below' | 'volume' | 'plugin' | 'number' | 'pitch' | 'duration' | 'decibels' | 'percent' | 'hertz' | 'time' | 'semitones' | 'string' | 'bool';
+    ID | 'melody' | 'countermelody' | 'bass' | 'harmony' | 'drums' | 'texture' | 'delay' | 'reverb' | 'chorus' | 'comp' | 'limit' | 'width' | 'phaser' | 'tremolo' | 'drive' | 'gain' | 'pan' | 'sample' | 'release' | 'attack' | 'decay' | 'offset' | 'length' | 'mix' | 'base' | 'from' | 'to' | 'q' | 'ir' | 'predelay' | 'feedback' | 'pingpong' | 'lookahead' | 'makeup' | 'semi' | 'highpass' | 'lowpass' | 'slice' | 'slices' | 'onsets' | 'root' | 'hold' | 'depth' | 'by' | 'over' | 'curve' | 'linear' | 'exp' | 'every' | 'fade' | 'nudge' | 'bend' | 'lyric' | 'gate' | 'vel' | 'tie' | 'staccato' | 'legato' | 'accent' | 'reverse' | 'audio' | 'kit' | 'instrument' | 'track' | 'bus' | 'duck' | 'groove' | 'swing' | 'multisample' | 'song' | 'bar' | 'meter' | 'tempo' | 'section' | 'mark' | 'automate' | 'fx' | 'send' | 'role' | 'mono-below' | 'volume' | 'plugin' | 'number' | 'pitch' | 'duration' | 'decibels' | 'percent' | 'hertz' | 'time' | 'semitones' | 'string' | 'bool' | 'cc' | 'pressure' | 'program' | 'off';
 
 hidden terminal WS: /\s+/;
 hidden terminal ML_COMMENT: /\/\*[\s\S]*?\*\//;

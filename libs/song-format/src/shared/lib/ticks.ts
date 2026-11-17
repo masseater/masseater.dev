@@ -2,7 +2,7 @@ import { Option, pipe } from "effect";
 
 import { groupsOf } from "./groups.ts";
 
-export const TICKS_PER_WHOLE = 13_440;
+export const TICKS_PER_WHOLE = 129_024_000;
 
 const FRACTION = /^(?<numerator>\d+)\/(?<denominator>\d+)$/u;
 const NONE = 0;

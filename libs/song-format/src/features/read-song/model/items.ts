@@ -17,7 +17,7 @@ export interface Placed {
 
 export type NoteFields = Pick<
   Note,
-  "velocity" | "gate" | "articulation" | "lyric" | "bend" | "params"
+  "velocity" | "releaseVelocity" | "gate" | "articulation" | "lyric" | "bend" | "params"
 > & { readonly tie: Option.Option<AstNode> };
 
 export type NoteItem = Placed &
@@ -26,6 +26,10 @@ export type NoteItem = Placed &
 
 export type Item =
   | NoteItem
-  | (Placed & Pick<Hit, "voice" | "velocity" | "params"> & { readonly kind: "hit" })
+  | (Placed &
+      Pick<Hit, "voice" | "velocity" | "releaseVelocity" | "params"> & {
+        readonly kind: "hit";
+        readonly tie: Option.Option<AstNode>;
+      })
   | (Placed & Pick<Slice, "sample" | "index" | "velocity" | "params"> & { readonly kind: "slice" })
   | (Placed & Pick<Edit, "edit" | "every" | "fadeMilliseconds"> & { readonly kind: "edit" });

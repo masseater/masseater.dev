@@ -94,7 +94,7 @@ use std::{
     time::SystemTime,
 };
 
-use toml_edit::{Document, Item, Table, TomlError};
+use toml_edit::{DocumentMut as Document, Item, Table, TomlError};
 
 /// Error type used by this crate.
 pub enum Error {

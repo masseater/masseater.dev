@@ -1,4 +1,4 @@
-import { Array as Arr, Option, Predicate, Record as Rec, pipe } from "effect";
+import { Array as Arr, Predicate, pipe } from "effect";
 
 import type { Edit, Hit, Note, Slice, Song } from "#/entities/song/index.ts";
 import { isBar } from "#generated/langium/ast.ts";
@@ -8,11 +8,15 @@ import { barsOfSong } from "./bars.ts";
 import type { PlacedItem } from "./bars.ts";
 import { declarationsOf } from "./declarations.ts";
 import { clashProblemsOf, importedOf, withImported } from "./imports.ts";
-import type { Item, NoteItem } from "./items.ts";
 import { automationsProblemsOf } from "./mixer.ts";
-import { problemAt, problemsOf } from "./problem.ts";
+import { problemAt } from "./problem.ts";
 import type { Compiled, From, Problem } from "./problem.ts";
 import { programOf } from "./program.ts";
+import { joined, tieChains } from "./ties.ts";
+
+type Item = PlacedItem["item"];
+
+type NoteItem = Extract<Item, { readonly kind: "note" }>;
 
 type PlacedOf<Kind extends Item["kind"]> = PlacedItem & {
   readonly item: Extract<Item, { readonly kind: Kind }>;
@@ -36,61 +40,41 @@ const timedOf: From<PlacedItem, Timed> = (placed) => ({
 });
 
 const noteOf: From<PlacedNote, Note> = (placed) => {
-  const { midi, cents, velocity, gate, articulation, lyric, bend, params }: NoteItem = placed.item;
-  return { ...timedOf(placed), midi, cents, velocity, gate, articulation, lyric, bend, params };
-};
-
-const joined = (head: Note, tail: Note): Note => {
-  const length = head.length + tail.length;
-  return { ...head, length, gate: (head.length + tail.length * tail.gate) / length };
-};
-
-const keyOf = (track: string, midi: number, start: number): string =>
-  `${track}:${String(midi)}:${String(start)}`;
-
-interface Tied {
-  readonly notes: readonly Note[];
-  readonly problems: readonly Problem[];
-}
-
-const tieNotes: From<readonly PlacedNote[], Tied> = (placed) => {
-  const byStart = Arr.groupBy(placed, (note) => keyOf(note.track, note.item.midi, note.start));
-  const successorOf: From<PlacedNote, Option.Option<PlacedNote>> = (note) =>
-    pipe(
-      note.item.tie,
-      Option.flatMap(() =>
-        Rec.get(byStart, keyOf(note.track, note.item.midi, note.start + note.item.length)),
-      ),
-      Option.map(Arr.headNonEmpty),
-    );
-  const consumed: ReadonlySet<PlacedNote> = new Set(
-    pipe(placed, Arr.map(successorOf), Arr.getSomes),
-  );
-  const follow: From<Note, From<PlacedNote, Compiled<Note>>> = (note) => (current) =>
-    Option.match(current.item.tie, {
-      onNone: () => ({ value: note, problems: [] }),
-      onSome: (tie) =>
-        Option.match(successorOf(current), {
-          onNone: () => ({
-            value: note,
-            problems: [problemAt(tie)("tie")("tie の続きの音が次の小節の頭にありません")],
-          }),
-          onSome: (next) => follow(joined(note, noteOf(next)))(next),
-        }),
-    });
-  const chains = pipe(
-    placed,
-    Arr.filter((note) => !consumed.has(note)),
-    Arr.map((head) => follow(noteOf(head))(head)),
-  );
+  const {
+    midi,
+    cents,
+    velocity,
+    releaseVelocity,
+    gate,
+    articulation,
+    lyric,
+    bend,
+    params,
+  }: NoteItem = placed.item;
   return {
-    notes: pipe(
-      chains,
-      Arr.map((chain) => chain.value),
-    ),
-    problems: problemsOf(chains),
+    ...timedOf(placed),
+    midi,
+    cents,
+    velocity,
+    releaseVelocity,
+    gate,
+    articulation,
+    lyric,
+    bend,
+    params,
   };
 };
+
+const gateJoined: From<readonly [Note, Note], Note> = ([head, tail]) => {
+  const length = head.length + tail.length;
+  return { ...joined([head, tail]), gate: (head.length + tail.length * tail.gate) / length };
+};
+
+const tieNotes = tieChains<PlacedNote, Note>({
+  identity: (note) => `${note.track}:${String(note.item.midi)}`,
+  valueOf: (note) => noteOf(note),
+  join: gateJoined,
+});
 
 const isKind =
   <Kind extends Item["kind"]>(kind: Kind): Predicate.Refinement<PlacedItem, PlacedOf<Kind>> =>
@@ -98,9 +82,15 @@ const isKind =
     placed.item.kind === kind;
 
 const hitOf: From<PlacedOf<"hit">, Hit> = (placed) => {
-  const { voice, velocity, params } = placed.item;
-  return { ...timedOf(placed), voice, velocity, params };
+  const { voice, velocity, releaseVelocity, params } = placed.item;
+  return { ...timedOf(placed), voice, velocity, releaseVelocity, params };
 };
+
+const tieHits = tieChains<PlacedOf<"hit">, Hit>({
+  identity: (hit) => `${hit.track}:${hit.item.voice}`,
+  valueOf: hitOf,
+  join: joined,
+});
 
 const sliceOf: From<PlacedOf<"slice">, Slice> = (placed) => {
   const { sample, index, velocity, params } = placed.item;
@@ -134,6 +124,8 @@ export const compileSong: From<SongNode, Compiled<Song>> = (song) => {
   );
   const notes = pipe(placed, Arr.filter(isKind("note")));
   const tied = tieNotes(notes);
+  const hitItems = pipe(placed, Arr.filter(isKind("hit")));
+  const hits = tieHits(hitItems);
   return {
     value: {
       title: song.title ?? "",
@@ -142,19 +134,24 @@ export const compileSong: From<SongNode, Compiled<Song>> = (song) => {
         bars.value,
         Arr.map((bar) => bar.bar),
       ),
-      notes: tied.notes,
-      hits: pipe(placed, Arr.filter(isKind("hit")), Arr.map(hitOf)),
+      notes: tied.values,
+      hits: hits.values,
       slices: pipe(placed, Arr.filter(isKind("slice")), Arr.map(sliceOf)),
       edits: pipe(placed, Arr.filter(isKind("edit")), Arr.map(editOf)),
       automations: pipe(
         bars.value,
         Arr.flatMap((bar) => bar.automations),
       ),
+      controls: pipe(
+        bars.value,
+        Arr.flatMap((bar) => bar.controls),
+      ),
     },
     problems: [
       ...declarations.problems,
       ...bars.problems,
       ...tied.problems,
+      ...hits.problems,
       ...automationsProblemsOf(program.value),
       ...clashProblemsOf(song),
       ...titleProblemsOf(song),
