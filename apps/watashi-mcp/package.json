@@ -42,7 +42,6 @@
     "@cloudflare/workers-types": "catalog:",
     "@effect/tsgo": "catalog:stack",
     "@effect/vitest": "catalog:",
-    "@masseater.dev/alchemy-app-name": "workspace:*",
     "@masseater.dev/cloudflare-account": "workspace:*",
     "@masseater.dev/d1-test": "workspace:*",
     "@tailwindcss/vite": "catalog:",
