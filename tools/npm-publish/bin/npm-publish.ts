@@ -11,11 +11,13 @@ import {
   Record as Rec,
   Redacted,
   Schema,
-  String as Str,
   pipe,
 } from "effect";
 import { HttpClient, HttpClientRequest, HttpClientResponse } from "effect/http";
 import { ChildProcess, ChildProcessSpawner } from "effect/process";
+
+import { platformFields, platformReadme } from "./lib/platform.ts";
+import type { Platform } from "./lib/platform.ts";
 
 const BROKER = "https://credentials.masseater.dev/";
 const AUDIENCE = "masseater-dev-credential-broker";
@@ -43,9 +45,6 @@ const PlatformManifest = Schema.Struct({ name: Schema.String, version: Schema.St
 
 const NPM_DIR = "npm";
 const KEPT_FIELDS: readonly string[] = ["license", "repository", "homepage", "bugs", "engines"];
-const LIBC: Readonly<Record<string, string>> = { gnu: "glibc", musl: "musl" };
-const CPU_INDEX = 1;
-const ABI_INDEX = 2;
 const NATIVE_DIR = "native";
 const IdToken = Schema.Struct({ value: Schema.String });
 const Grants = Schema.Struct({ npmToken: Schema.optional(Schema.String) });
@@ -194,33 +193,6 @@ const addOptionalDependencies = Effect.fn("optionalDependencies")(function* addO
   yield* fileSystem.writeFileString("package.json", updated);
 });
 
-type Native = NonNullable<typeof Manifest.Type.native>;
-
-const libcOf = (parts: readonly string[]): Readonly<Record<string, readonly string[]>> =>
-  pipe(
-    Arr.get(parts, ABI_INDEX),
-    Option.flatMap((abi) => Rec.get(LIBC, abi)),
-    Option.match({ onNone: () => ({}), onSome: (libc) => ({ libc: [libc] }) }),
-  );
-
-const platformFields = (
-  manifest: typeof Manifest.Type,
-  binary: string,
-  target: string,
-): Readonly<Record<string, unknown>> => {
-  const parts = Str.split(target, "-");
-  const file = `${binary}.${target}.node`;
-  return {
-    name: `${manifest.name}-${target}`,
-    version: manifest.version,
-    os: [Arr.headNonEmpty(parts)],
-    cpu: Option.toArray(Arr.get(parts, CPU_INDEX)),
-    ...libcOf(parts),
-    main: file,
-    files: [file],
-  };
-};
-
 const keptFields = Effect.fn("keptFields")(function* keptFields() {
   const fileSystem = yield* FileSystem.FileSystem;
   const text = yield* fileSystem.readFileString("package.json");
@@ -231,23 +203,25 @@ const keptFields = Effect.fn("keptFields")(function* keptFields() {
   );
 });
 
-const writePlatform = Effect.fn("writePlatform")(function* writePlatform(
-  manifest: typeof Manifest.Type,
-  native: Native,
-  target: string,
-) {
+const writePlatform = Effect.fn("writePlatform")(function* writePlatform(platform: Platform) {
   const fileSystem = yield* FileSystem.FileSystem;
   const path = yield* Path.Path;
   const kept = yield* keptFields();
-  const directory = path.resolve(NPM_DIR, target);
-  const file = `${native.binary}.${target}.node`;
+  const directory = path.resolve(NPM_DIR, platform.target);
+  const file = `${platform.binary}.${platform.target}.node`;
   yield* fileSystem.makeDirectory(directory, { recursive: true });
   yield* fileSystem.copyFile(path.join(NATIVE_DIR, file), path.join(directory, file));
   const text = yield* Schema.encodeEffect(PackageJson)({
     ...kept,
-    ...platformFields(manifest, native.binary, target),
+    ...platformFields(platform),
   });
-  yield* fileSystem.writeFileString(path.join(directory, "package.json"), text);
+  yield* Effect.all(
+    [
+      fileSystem.writeFileString(path.join(directory, "package.json"), text),
+      fileSystem.writeFileString(path.join(directory, "README.md"), platformReadme(platform)),
+    ],
+    { concurrency: "unbounded" },
+  );
   return directory;
 });
 
@@ -261,7 +235,13 @@ const publishPlatforms = Effect.fn("publishPlatforms")(function* publishPlatform
   const { native } = manifest;
   const directories = yield* Effect.forEach(
     native.targets,
-    (target) => writePlatform(manifest, native, target),
+    (target) =>
+      writePlatform({
+        name: manifest.name,
+        version: manifest.version,
+        binary: native.binary,
+        target,
+      }),
     { concurrency: 1 },
   );
   const names = yield* Effect.forEach(directories, (directory) => publishPlatform(directory, env), {

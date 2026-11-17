@@ -42,3 +42,7 @@ skip the audits that query GitHub.
 Run `fu4` to lint the workflows under `.github/workflows`, the `action.yml` files, the
 Dependabot config and the pre-commit configs, or pass pathspecs to lint others.
 Call `lint` to lint from code.
+
+## Agent skills
+
+The package ships TanStack Intent skills for coding agents. Load one with `vp exec intent load @r_masseater/fu4#<skill>`.

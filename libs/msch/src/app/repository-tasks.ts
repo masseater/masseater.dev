@@ -60,7 +60,7 @@ export const tasksOf = ({
       },
     },
     check: {
-      command: "GOMEMLIMIT=4GiB vp check --deny-warnings",
+      command: "GOMEMLIMIT=4GiB vp check --deny-warnings --continue-on-error",
       cache: { input: inputs, untrackedEnv: UNTRACKED_ENV },
     },
     test: {
