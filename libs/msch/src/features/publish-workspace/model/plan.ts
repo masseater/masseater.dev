@@ -23,6 +23,7 @@ import {
 } from "./manifest.ts";
 import type { Manifest } from "./manifest.ts";
 import { buildsOf, checksOf, nativeTargetsOf } from "./platforms.ts";
+import { tagged, untaggedVersions } from "./tags.ts";
 
 const HOOK = "release:publish";
 const NONE = 0;
@@ -77,21 +78,17 @@ const workspacesOf = (tasks: readonly (typeof Task.Type)[]): readonly string[] =
     Arr.dedupe,
   );
 
-/** @internal */
-export const tagged = Effect.fn("publish.tagged")(function* tagged(tag: string) {
-  const repository = yield* Config.String("GITHUB_REPOSITORY");
-  return yield* succeeds({
-    command: "gh",
-    args: ["api", `repos/${repository}/git/ref/tags/${tag}`],
-  });
-});
-
-const taggedOrUnversioned = (manifest: Manifest, tag: string): ReturnType<typeof tagged> => {
+const allTagged = Effect.fn("publish.allTagged")(function* allTagged(
+  directory: string,
+  manifest: Manifest,
+) {
   if (!isVersioned(manifest)) {
-    return Effect.succeed(true);
+    return true;
   }
-  return tagged(tag);
-};
+  const current = yield* tagged(tagOf({ directory, ...manifest }));
+  const older = yield* untaggedVersions({ directory, manifest });
+  return current && Arr.isReadonlyArrayEmpty(older);
+});
 
 const workspaceOf = (directory: string): Effect.Effect<string, never, Path.Path> =>
   Path.Path.pipe(Effect.map((path) => Str.replace(TRAILING_SLASH, "")(path.normalize(directory))));
@@ -183,7 +180,7 @@ export const planOf = Effect.fn("publish.plan")(function* planOf(directory: stri
     name: releaseName(manifest),
     version: manifest.version,
     tag,
-    tagged: yield* taggedOrUnversioned(manifest, tag),
+    tagged: yield* allTagged(workspace, manifest),
     environment: environmentOf(manifest),
     npm,
     native: keepWhen(npm)(nativeOf(manifest)),
