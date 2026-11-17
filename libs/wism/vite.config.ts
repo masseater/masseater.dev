@@ -1,17 +1,9 @@
 import { addonTasks } from "@r_masseater/lint-host/vite";
+import { cargoInputs } from "@r_masseater/msch/cargo-inputs";
 import { otlp } from "@r_masseater/vitest-otlp";
 import { defineConfig } from "vite-plus";
 
-const CARGO_INPUTS = [
-  "native/core/Cargo.toml",
-  "native/core/src/**",
-  "native/node/Cargo.toml",
-  "native/node/build.rs",
-  "native/node/src/**",
-  { pattern: "Cargo.lock", base: "workspace" },
-  { pattern: "Cargo.toml", base: "workspace" },
-  { pattern: "rust-toolchain.toml", base: "workspace" },
-] as const;
+const CARGO_INPUTS = await cargoInputs({ directory: import.meta.dirname });
 
 export default defineConfig({
   run: {
