@@ -8,6 +8,9 @@ on:
 
 permissions: {}
 
+env:
+  TAKUMI_GUARD_TOKEN: ${{ secrets.TAKUMI_GUARD_TOKEN }}
+
 jobs:
   check:
     if: github.ref == 'refs/heads/main'

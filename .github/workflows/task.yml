@@ -24,6 +24,9 @@ on:
 
 permissions: {}
 
+env:
+  TAKUMI_GUARD_TOKEN: ${{ secrets.TAKUMI_GUARD_TOKEN }}
+
 concurrency:
   group: task-${{ inputs.task }}
 

@@ -9,6 +9,9 @@ on:
 
 permissions: {}
 
+env:
+  TAKUMI_GUARD_TOKEN: ${{ secrets.TAKUMI_GUARD_TOKEN }}
+
 jobs:
   verify:
     runs-on: ubuntu-latest
@@ -111,6 +114,7 @@ jobs:
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      TAKUMI_GUARD_TOKEN: ${{ secrets.TAKUMI_GUARD_TOKEN }}
 
   private-names:
     needs: deploy
