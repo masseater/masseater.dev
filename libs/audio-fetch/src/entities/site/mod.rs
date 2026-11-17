@@ -1,6 +1,10 @@
-pub mod niconico;
-pub mod soundcloud;
-pub mod youtube;
+use std::path::Path;
+
+use crate::shared::error::{Fetching, site_failure};
+
+mod niconico;
+mod soundcloud;
+mod youtube;
 
 #[derive(Debug, PartialEq, Eq)]
 pub enum Stream {
@@ -30,6 +34,15 @@ pub fn page_of(url: &str) -> Option<Page> {
         .map(Page::Youtube)
         .or_else(|| niconico::video_id(url).map(Page::Niconico))
         .or_else(|| soundcloud::track_url(url).map(Page::Soundcloud))
+}
+
+pub async fn extract(client: &reqwest::Client, url: &str, cache: &Path) -> Fetching<Found> {
+    match page_of(url) {
+        Some(Page::Youtube(id)) => youtube::extract(client, &id).await,
+        Some(Page::Niconico(id)) => niconico::extract(client, &id).await,
+        Some(Page::Soundcloud(track)) => soundcloud::extract(client, &track, cache).await,
+        None => Err(site_failure(format!("no built-in extractor for {url}"))),
+    }
 }
 
 fn text_at(value: &serde_json::Value, pointer: &str) -> String {

@@ -1,6 +1,6 @@
 use std::path::{Path, PathBuf};
 
-use crate::entities::site::{Found, Page, Stream, niconico, page_of, soundcloud, youtube};
+use crate::entities::site::{Stream, extract};
 use crate::entities::yt_dlp;
 use crate::shared::error::{Fetching, site_failure};
 use crate::shared::{hls, http, ranged};
@@ -37,21 +37,9 @@ pub struct Fetched {
     pub route: Route,
 }
 
-async fn found(client: &reqwest::Client, request: &Request<'_>) -> Fetching<Found> {
-    match page_of(request.url) {
-        Some(Page::Youtube(id)) => youtube::extract(client, &id).await,
-        Some(Page::Niconico(id)) => niconico::extract(client, &id).await,
-        Some(Page::Soundcloud(url)) => soundcloud::extract(client, &url, request.cache).await,
-        None => Err(site_failure(format!(
-            "no built-in extractor for {}",
-            request.url
-        ))),
-    }
-}
-
 #[tracing::instrument(skip_all)]
 async fn native(client: &reqwest::Client, request: &Request<'_>) -> Fetching<Fetched> {
-    let found = found(client, request).await?;
+    let found = extract(client, request.url, request.cache).await?;
     let bytes = match &found.stream {
         Stream::Ranged { url, length } => {
             ranged::download(client, url, *length, RANGE_CHUNK, request.concurrency).await?

@@ -3,7 +3,7 @@ use roformer::features::separate_stems::Separator;
 
 use crate::entities::model::Model;
 use crate::entities::song::Library;
-use crate::shared::lib::audio::{Stereo, decode, resample, write_flac};
+use crate::shared::lib::{Stereo, decode, resample, write_flac};
 use crate::shared::protocol::{Separation, Song, StemFile};
 
 const STEMS: &str = "stems";
@@ -85,7 +85,7 @@ mod tests {
     use super::separate_song;
     use crate::entities::model::{MODELS, load_separator};
     use crate::entities::song::Library;
-    use crate::shared::lib::audio::{decode, write_flac};
+    use crate::shared::lib::{decode, write_flac};
     use crate::shared::protocol::{Origin, SongSource};
 
     #[test]

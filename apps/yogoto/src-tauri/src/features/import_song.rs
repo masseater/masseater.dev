@@ -5,7 +5,7 @@ use media_notes::{Failure, Outcome, fresh_id, now};
 use sha2::{Digest, Sha256};
 
 use crate::entities::song::Library;
-use crate::shared::lib::audio::decode;
+use crate::shared::lib::decode;
 use crate::shared::protocol::{Origin, Song, SongSource};
 
 const SOURCES: &str = "sources";
@@ -165,7 +165,7 @@ async fn settle(library: &Library, arrival: Arrival) -> Outcome<Imported> {
 mod tests {
     use super::import_song;
     use crate::entities::song::Library;
-    use crate::shared::lib::audio::write_flac;
+    use crate::shared::lib::write_flac;
     use crate::shared::protocol::Origin;
 
     #[tokio::test]
