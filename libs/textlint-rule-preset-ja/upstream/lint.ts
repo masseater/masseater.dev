@@ -286,7 +286,7 @@ const imageOnlyRow = (analysis: Analysis, row: Row, visible: string): boolean =>
   if (!pyStrip(visible)) return rangeOverlapsProtected(analysis, row.start, row.start + row.raw.length, ["image"]);
   const raw = row.raw;
   if (!pyStrip(raw).startsWith("[![")) return false;
-  let indexes = analysis._image_link_start_indexes as readonly [Map<number, number>, Map<number, number>] | undefined;
+  let indexes = analysis["_image_link_start_indexes"] as readonly [Map<number, number>, Map<number, number>] | undefined;
   if (indexes === undefined) {
     const images = new Map<number, number>();
     const destinations = new Map<number, number>();
@@ -295,7 +295,7 @@ const imageOnlyRow = (analysis: Analysis, row: Row, visible: string): boolean =>
       else if (kind === "link_destination") destinations.set(left, right);
     }
     indexes = [images, destinations];
-    analysis._image_link_start_indexes = indexes;
+    analysis["_image_link_start_indexes"] = indexes;
   }
   const [images, destinations] = indexes;
   const start = row.start + raw.length - lstrip(raw).length;
@@ -327,10 +327,10 @@ const endQuoteClosers = (analysis: Analysis): Map<number, string> => {
 };
 
 const endClosersFor = (analysis: Analysis, lineNo: number): string => {
-  let allowed = analysis._end_quote_closers as Map<number, string> | undefined;
+  let allowed = analysis["_end_quote_closers"] as Map<number, string> | undefined;
   if (allowed === undefined) {
     allowed = endQuoteClosers(analysis);
-    analysis._end_quote_closers = allowed;
+    analysis["_end_quote_closers"] = allowed;
   }
   return END_CLOSERS + (allowed.get(lineNo) ?? "");
 };

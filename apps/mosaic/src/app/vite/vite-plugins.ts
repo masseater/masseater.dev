@@ -21,7 +21,6 @@ export const mosaicPlugins = (): PluginOption[] => [
   tailwindcss(),
   tanstackStart({
     srcDirectory: "src/app",
-    router: { routeTreeFileHeader: [] },
     rsc: { enabled: true },
     prerender: { enabled: true, crawlLinks: false, autoSubfolderIndex: false },
     pages: [{ path: "/" }, ...characterPages],
