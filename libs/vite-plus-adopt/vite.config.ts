@@ -126,13 +126,7 @@ export default defineConfig({
   tsconfig: "tsconfig.json",
   plugins: [attwUpstream, typescriptShim],
   pack: {
-    entry: [
-      "src/app/index.ts",
-      "src/app/cli.ts",
-      "src/app/postinstall.ts",
-      "src/app/fsd.ts",
-      "src/app/attw.ts",
-    ],
+    entry: ["src/app/index.ts", "src/app/cli.ts", "src/app/fsd.ts", "src/app/attw.ts"],
     platform: "node",
     plugins: [attwUpstream, typescriptShim],
     deps: {
@@ -183,7 +177,7 @@ export default defineConfig({
   run: {
     tasks: {
       verify: { command: [], dependsOn: ["test", "size"] },
-      build: "vp pack",
+      build: { command: "vp pack", dependsOn: [{ task: "build", from: "dependencies" }] },
       test: { command: "vp test run", dependsOn: ["build"] },
       size: { command: "size-limit", dependsOn: ["build"] },
     },

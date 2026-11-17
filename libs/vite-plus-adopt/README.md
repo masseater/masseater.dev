@@ -1,6 +1,6 @@
 # @r_masseater/vite-plus-adopt
 
-`vpa` is a CLI that brings Betterleaks, commitlint, textlint, Steiger, fallow and agent skill installation into Vite+. Write their settings and your dependency rules in `vite.config.ts`, and `vpa` reads them from there.
+`vpa` is a CLI that brings secret scanning with h56m, commitlint, textlint, Steiger, fallow and agent skill installation into Vite+. Write their settings and your dependency rules in `vite.config.ts`, and `vpa` reads them from there.
 Running `vpa` once with no arguments runs every configured check in parallel and prints the results together.
 It also bundles a Feature-Sliced Design plugin for Steiger and @arethetypeswrong/core, both running on TypeScript 7 alone.
 
@@ -11,17 +11,11 @@ It also bundles a Feature-Sliced Design plugin for Steiger and @arethetypeswrong
 ## Usage
 
 ```sh
-vp add -D @r_masseater/vite-plus-adopt
-```
-
-Allow its postinstall by adding it to `allowBuilds` in `pnpm-workspace.yaml`.
-
-```yaml
-allowBuilds:
-  "@r_masseater/vite-plus-adopt": true
+vp add -D @r_masseater/vite-plus-adopt @r_masseater/h56m-presets
 ```
 
 ```ts
+import { betterleaks } from "@r_masseater/h56m-presets";
 import type {} from "@r_masseater/vite-plus-adopt";
 import fsd from "@r_masseater/vite-plus-adopt/fsd";
 import { defineConfig } from "vite-plus";
@@ -32,8 +26,8 @@ export default defineConfig({
     banned: { "Import tests from vite-plus/test": ["vitest", "@vitest/*"] },
     peerRanges: "intersect",
   },
-  betterleaks: {
-    extend: { useDefault: true },
+  h56m: {
+    extend: { path: betterleaks },
     filter: 'matchesAny(finding.line, [`\\bCF_BEACON_TOKEN = "[0-9a-f]{32}"`])',
     ignoredSecrets: ["<SHA-256 of the secret>"],
   },

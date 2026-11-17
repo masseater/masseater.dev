@@ -1,4 +1,5 @@
 import type { UserConfig as CommitlintUserConfig } from "@commitlint/types";
+import type { H56mConfig } from "@r_masseater/h56m";
 import type { TextlintRcConfig } from "@textlint/config-loader";
 import type { TextlintKernelRule } from "@textlint/kernel";
 import type { defineConfig as defineSteigerConfig } from "steiger";
@@ -10,38 +11,6 @@ import type { SkillsSection } from "./skills.ts";
 export interface CommitlintConfig extends Readonly<CommitlintUserConfig> {}
 
 export type SteigerConfig = readonly ReturnType<typeof defineSteigerConfig>[number][];
-
-export interface BetterleaksRule {
-  readonly id: string;
-  readonly description?: string;
-  readonly keywords?: readonly string[];
-  readonly regex?: string;
-  readonly path?: string;
-  readonly valueGroup?: number;
-  readonly specificity?: number;
-  readonly tags?: readonly string[];
-  readonly skipReport?: boolean;
-  readonly filter?: string;
-  readonly confidence?: "low" | "medium" | "high";
-  readonly validate?: string;
-  readonly analyze?: string;
-  readonly revoke?: string;
-}
-
-export interface BetterleaksConfig {
-  readonly title?: string;
-  readonly description?: string;
-  readonly minVersion?: string;
-  readonly prefilter?: string;
-  readonly filter?: string;
-  readonly extend?: Readonly<{
-    useDefault?: boolean;
-    path?: string;
-    disabledRules?: readonly string[];
-  }>;
-  readonly rules?: readonly BetterleaksRule[];
-  readonly ignoredSecrets?: readonly string[];
-}
 
 export type TextlintRuleOptions = NonNullable<TextlintKernelRule["options"]>;
 
@@ -83,10 +52,10 @@ export interface DependencyRules {
 }
 
 export interface ToolSections {
-  readonly betterleaks?: BetterleaksConfig;
   readonly commitlint?: CommitlintConfig;
   readonly dependencyRules?: DependencyRules;
   readonly fallow?: FallowConfig;
+  readonly h56m?: H56mConfig;
   readonly skills?: SkillsSection;
   readonly steiger?: SteigerSection;
   readonly textlint?: TextlintConfig;

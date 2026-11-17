@@ -1,13 +1,13 @@
 {
   "name": "@r_masseater/vite-plus-adopt",
   "version": "0.11.0",
-  "description": "Adopt Betterleaks, commitlint, textlint, Steiger and dependency checks into Vite+ through the settings in vite.config.ts, and ship the Feature-Sliced Design Steiger plugin and @arethetypeswrong/core for TypeScript 7.",
+  "description": "Adopt h56m secret scanning, commitlint, textlint, Steiger and dependency checks into Vite+ through the settings in vite.config.ts, and ship the Feature-Sliced Design Steiger plugin and @arethetypeswrong/core for TypeScript 7.",
   "keywords": [
     "arethetypeswrong",
     "attw",
-    "betterleaks",
     "commitlint",
     "feature-sliced",
+    "h56m",
     "steiger",
     "tanstack-intent",
     "textlint",
@@ -56,8 +56,7 @@
     "provenance": true
   },
   "scripts": {
-    "prepublishOnly": "vp run build",
-    "postinstall": "node -e \"require('fs').existsSync('dist/postinstall.mjs') && import('./dist/postinstall.mjs')\""
+    "prepublishOnly": "vp run build"
   },
   "dependencies": {
     "@andrewbranch/untar.js": "catalog:",
@@ -70,6 +69,7 @@
     "@pnpm/logger": "catalog:",
     "@pnpm/workspace.projects-reader": "catalog:",
     "@pnpm/workspace.workspace-manifest-reader": "catalog:",
+    "@r_masseater/h56m": "workspace:*",
     "@textlint/config-loader": "catalog:",
     "@textlint/kernel": "catalog:",
     "@textlint/utils": "catalog:",
@@ -86,7 +86,6 @@
     "patronum": "catalog:",
     "pluralize": "catalog:",
     "semver": "catalog:",
-    "smol-toml": "catalog:",
     "textlint": "catalog:",
     "tsconfck": "catalog:",
     "validate-npm-package-name": "catalog:",
@@ -98,6 +97,7 @@
     "@effect/vitest": "catalog:",
     "@feature-sliced/filesystem": "catalog:",
     "@feature-sliced/steiger-plugin": "catalog:",
+    "@r_masseater/h56m-presets": "workspace:*",
     "@size-limit/file": "catalog:",
     "@types/node": "catalog:",
     "@types/semver": "catalog:",
