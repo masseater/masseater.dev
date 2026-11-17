@@ -1,11 +1,14 @@
 import { findWorkspaceProjectsNoCheck } from "@pnpm/workspace.projects-reader";
 import type { Project } from "@pnpm/workspace.projects-reader";
-import { Array as Arr, Effect, Option, Order, String as Str, pipe } from "effect";
+import { Array as Arr, Effect, Option, Order, Schema, String as Str, pipe } from "effect";
 
 import { RepositoryFiles } from "#/shared/lib/repository-files.ts";
 
 import { workspaceManifest } from "./workspace-manifest.ts";
 import { WorkspaceUnreadable } from "./workspace-unreadable.ts";
+
+const MANIFEST_FILE = "package.json";
+const ROOT_DIRECTORY = "";
 
 export interface WorkspaceProject {
   readonly directory: string;
@@ -65,3 +68,43 @@ export const workspaceDirectories = Effect.fn("workspaceDirectories")(
     );
   },
 );
+
+const Strings = Schema.Array(Schema.String);
+const RootManifest = Schema.fromJsonString(
+  Schema.Struct({
+    name: Schema.String,
+    private: Schema.optional(Schema.Boolean),
+    keywords: Schema.optional(Strings),
+    files: Schema.optional(Strings),
+  }),
+);
+
+const rootProject = Effect.fn("rootProject")(function* rootProject(root: string) {
+  const files = yield* RepositoryFiles;
+  const text = yield* files.readFile(files.join(root, MANIFEST_FILE));
+  return pipe(
+    text,
+    Option.flatMap(Schema.decodeOption(RootManifest)),
+    Option.map((own): WorkspaceProject => ({
+      directory: ROOT_DIRECTORY,
+      packageName: Option.some(own.name),
+      published: own.private !== true,
+      keywords: own.keywords ?? [],
+      files: Option.fromUndefinedOr(own.files),
+    })),
+  );
+});
+
+/** @internal */
+export const publishedProjects = Effect.fn("publishedProjects")(function* publishedProjects(
+  root: string,
+) {
+  const [own, members] = yield* Effect.all([rootProject(root), workspaceProjects(root)], {
+    concurrency: "unbounded",
+  });
+  return pipe(
+    Option.toArray(own),
+    Arr.appendAll(members),
+    Arr.filter(({ published }) => published),
+  );
+});

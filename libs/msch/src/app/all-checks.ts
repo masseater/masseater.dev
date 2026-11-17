@@ -4,6 +4,7 @@ import { checkMarkdown } from "#/features/check-markdown/index.ts";
 import { checkOverrides } from "#/features/check-overrides/index.ts";
 import { checkPlacement } from "#/features/check-placement/index.ts";
 import { checkWorkspaces } from "#/features/check-repository-layout/index.ts";
+import { checkTypescriptGeneration } from "#/features/check-typescript-generation/index.ts";
 import { checkPublishedPackages } from "#/features/measure-install-size/index.ts";
 import type { Problem } from "#/shared/lib/problem.ts";
 
@@ -39,6 +40,7 @@ export const checkAll: (
       checkWorkspaces(root),
       checkToolUse(root),
       checkMarkdown(root),
+      checkTypescriptGeneration(root),
     ],
     { concurrency: "unbounded" },
   );
