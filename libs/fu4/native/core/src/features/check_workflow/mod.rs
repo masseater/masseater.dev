@@ -1,3 +1,4 @@
+mod config;
 mod rule;
 mod rules;
 
@@ -5,15 +6,35 @@ mod rules;
 mod conformance;
 
 use std::path::PathBuf;
+use std::sync::Arc;
 
+use crate::entities::action::LocalActions;
 use crate::entities::workflow::{Workflow, parse};
 use crate::shared::diagnostic::Diagnostic;
 
+pub use config::{CONFIG_NAME, Compiled, Config, PathConfig, SelfHostedRunner};
 pub use rule::{Report, Rule};
+
+pub struct Project {
+    pub root: PathBuf,
+    pub config: Compiled,
+    pub actions: LocalActions,
+}
+
+impl Project {
+    #[must_use]
+    pub fn new(root: PathBuf, config: &Config) -> Result<Arc<Self>, String> {
+        Ok(Arc::new(Self {
+            root,
+            config: config.compile()?,
+            actions: LocalActions::default(),
+        }))
+    }
+}
 
 pub struct Context {
     pub path: String,
-    pub root: Option<PathBuf>,
+    pub project: Option<Arc<Project>>,
 }
 
 fn visit(workflow: &Workflow, rules: &mut [Box<dyn Rule>]) {
@@ -51,5 +72,8 @@ pub fn check(context: &Context, source: &str) -> Vec<Diagnostic> {
     }
     all.sort_by(|a, b| a.pos.cmp(&b.pos).then_with(|| a.message.cmp(&b.message)));
     all.dedup_by(|a, b| a.pos == b.pos && a.message == b.message);
+    if let Some(project) = &context.project {
+        all.retain(|d| !project.config.ignores(&context.path, &d.message));
+    }
     all
 }

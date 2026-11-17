@@ -1,4 +1,4 @@
-use fu4_core::{Context, check};
+use fu4_core::{Context, Project, check};
 use napi::bindgen_prelude::Result;
 use napi_derive::napi;
 use rayon::prelude::*;
@@ -20,6 +20,7 @@ pub fn lint_paths(root: String, paths: Vec<String>, options: LintOptions) -> Res
     let _entered = span.enter();
     let parent = tracing::Span::current();
     let base = std::path::PathBuf::from(&root);
+    let project = Project::new(base.clone());
     let results = paths
         .into_par_iter()
         .map(|path| {
@@ -31,7 +32,7 @@ pub fn lint_paths(root: String, paths: Vec<String>, options: LintOptions) -> Res
             };
             let context = Context {
                 path: path.clone(),
-                root: Some(base.clone()),
+                project: Some(std::sync::Arc::clone(&project)),
             };
             let diagnostics: Vec<Value> = check(&context, &text)
                 .into_iter()

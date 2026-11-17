@@ -3,7 +3,8 @@ use std::path::{Path, PathBuf};
 
 use regex::Regex;
 
-use super::{Context, check};
+use super::{CONFIG_NAME, Config, Context, Project, check};
+use crate::shared::yaml::{Kind, Node, load};
 
 const PORTED: &[&str] = &[
     "syntax-check",
@@ -19,6 +20,7 @@ const PORTED: &[&str] = &[
     "runner-label",
     "deprecated-commands",
     "if-cond",
+    "action",
 ];
 const SKIPPED: &[&str] = &["shellcheck", "pyflakes"];
 
@@ -64,7 +66,7 @@ fn workflows(dir: &Path) -> Vec<PathBuf> {
 fn lint(dir: &Path, file: &Path) -> Vec<String> {
     let context = Context {
         path: "test.yaml".to_owned(),
-        root: Some(dir.to_path_buf()),
+        project: Some(Project::new(dir.to_path_buf(), &Config::default()).expect("config")),
     };
     let source = std::fs::read_to_string(file).expect("workflow");
     check(&context, &source)
@@ -73,10 +75,22 @@ fn lint(dir: &Path, file: &Path) -> Vec<String> {
         .map(|d| {
             format!(
                 "test.yaml:{}:{}: {} [{}]",
-                d.pos.line, d.pos.col, d.message, d.kind
+                d.pos.line,
+                d.pos.col,
+                normalize(&d.message),
+                d.kind
             )
         })
         .collect()
+}
+
+fn normalize(message: &str) -> String {
+    message
+        .replace(
+            &format!("variables in {CONFIG_NAME} are"),
+            "variables in actionlint.yaml are",
+        )
+        .replace(CONFIG_NAME, "actionlint.yaml config file")
 }
 
 fn fixtures() -> PathBuf {
@@ -132,7 +146,10 @@ fn matches_actionlint_on_its_error_fixtures() {
             }
         }
     }
-    let fixed: Vec<&String> = known.difference(&failures).collect();
+    let fixed: Vec<&String> = known
+        .difference(&failures)
+        .filter(|id| !id.starts_with("projects/"))
+        .collect();
     assert!(
         report.is_empty() && fixed.is_empty(),
         "{} unexpected mismatches, {} known failures now pass {fixed:?}\n{}",
@@ -161,4 +178,156 @@ fn accepts_actionlint_ok_fixtures() {
         }
     }
     assert!(report.is_empty(), "{}", report.join("\n"));
+}
+
+fn expected_lines(out: &Path) -> Vec<String> {
+    std::fs::read_to_string(out)
+        .expect("out file")
+        .lines()
+        .filter(|line| kind_of(line).is_some_and(|kind| PORTED.contains(&kind)))
+        .map(str::to_owned)
+        .collect()
+}
+
+fn camel(key: &str) -> String {
+    let mut out = String::new();
+    let mut upper = false;
+    for c in key.chars() {
+        if c == '-' {
+            upper = true;
+        } else if upper {
+            out.extend(c.to_uppercase());
+            upper = false;
+        } else {
+            out.push(c);
+        }
+    }
+    out
+}
+
+fn to_json(node: &Node, top: bool) -> serde_json::Value {
+    match node.kind {
+        Kind::Mapping => serde_json::Value::Object(
+            node.pairs()
+                .map(|(k, v)| {
+                    let key = if top {
+                        camel(&k.value)
+                    } else {
+                        k.value.clone()
+                    };
+                    let nested = top || k.value == "self-hosted-runner";
+                    (
+                        key,
+                        to_json(v, nested && !k.value.contains('/') && k.value != "paths"),
+                    )
+                })
+                .collect(),
+        ),
+        Kind::Sequence => {
+            serde_json::Value::Array(node.content.iter().map(|n| to_json(n, false)).collect())
+        }
+        _ if node.is_null() => serde_json::Value::Null,
+        _ => serde_json::Value::String(node.value.clone()),
+    }
+}
+
+fn project_config(dir: &Path) -> Config {
+    let Ok(source) = std::fs::read_to_string(dir.join("actionlint.yaml")) else {
+        return Config::default();
+    };
+    let root = load(&source).root.expect("config root");
+    serde_json::from_value(to_json(&root, true)).expect("config shape")
+}
+
+fn workflow_files(dir: &Path, prefix: &str, out: &mut Vec<(String, PathBuf)>) {
+    let mut entries: Vec<PathBuf> = std::fs::read_dir(dir)
+        .expect("workflows")
+        .filter_map(Result::ok)
+        .map(|e| e.path())
+        .collect();
+    entries.sort();
+    for path in entries {
+        let name = path
+            .file_name()
+            .and_then(|s| s.to_str())
+            .unwrap_or_default()
+            .to_owned();
+        if path.is_dir() {
+            workflow_files(&path, &format!("{prefix}{name}/"), out);
+        } else if name.ends_with(".yaml") || name.ends_with(".yml") {
+            out.push((format!("{prefix}{name}"), path));
+        }
+    }
+}
+
+fn lint_project(dir: &Path, name: &str) -> Vec<String> {
+    let project = Project::new(dir.to_path_buf(), &project_config(dir)).expect("config");
+    let shown_root = dir.to_string_lossy().into_owned();
+    let mut lines = Vec::new();
+    let mut files = Vec::new();
+    workflow_files(&dir.join("workflows"), "", &mut files);
+    for (file_name, file) in files {
+        let context = Context {
+            path: format!("workflows/{file_name}"),
+            project: Some(std::sync::Arc::clone(&project)),
+        };
+        let source = std::fs::read_to_string(&file).expect("workflow");
+        lines.extend(
+            check(&context, &source)
+                .into_iter()
+                .filter(|d| PORTED.contains(&d.kind.as_str()))
+                .map(|d| {
+                    format!(
+                        "workflows/{file_name}:{}:{}: {} [{}]",
+                        d.pos.line,
+                        d.pos.col,
+                        normalize(&d.message)
+                            .replace(&shown_root, &format!("testdata/projects/{name}")),
+                        d.kind
+                    )
+                }),
+        );
+    }
+    lines
+}
+
+#[test]
+fn matches_actionlint_on_its_project_fixtures() {
+    let known = known_failures();
+    let root = fixtures().join("projects");
+    let mut names: Vec<String> = std::fs::read_dir(&root)
+        .expect("projects")
+        .filter_map(Result::ok)
+        .filter(|entry| entry.path().is_dir())
+        .filter_map(|entry| entry.file_name().to_str().map(str::to_owned))
+        .collect();
+    names.sort();
+    let mut failures = BTreeSet::new();
+    let mut report = Vec::new();
+    for name in names {
+        let dir = root.join(&name);
+        let expected = expected_lines(&root.join(format!("{name}.out")));
+        let actual = lint_project(&dir, &name);
+        let same = expected.len() == actual.len()
+            && expected.iter().zip(&actual).all(|(w, h)| matches(w, h));
+        if !same {
+            let id = format!("projects/{name}");
+            if !known.contains(&id) {
+                report.push(format!("{id}\n  want {expected:#?}\n  have {actual:#?}"));
+            }
+            failures.insert(id);
+        }
+    }
+    let fixed: Vec<&String> = known
+        .iter()
+        .filter(|id| id.starts_with("projects/"))
+        .filter(|id| !failures.contains(*id))
+        .collect();
+    assert!(
+        report.is_empty() && fixed.is_empty(),
+        "{} unexpected mismatches, {} known failures now pass {fixed:?}\n{}",
+        report.len(),
+        fixed.len(),
+        report.join("\n")
+    );
 }

@@ -4,7 +4,7 @@ use std::sync::LazyLock;
 use serde::Deserialize;
 
 use crate::entities::workflow::{Job, Matrix, RawValue, Text, contains_expression};
-use crate::features::check_workflow::{Report, Rule};
+use crate::features::check_workflow::{CONFIG_NAME, Report, Rule};
 use crate::shared::expression::ast::Expr;
 use crate::shared::expression::lexer::Lexer;
 use crate::shared::expression::parser::parse;
@@ -116,6 +116,13 @@ pub struct RunnerLabel {
 }
 
 impl RunnerLabel {
+    pub fn new(known: Vec<String>) -> Self {
+        Self {
+            known,
+            ..Self::default()
+        }
+    }
+
     fn verify(&mut self, label: &Text) -> Compat {
         let table = &*TABLE;
         let lower = label.value.to_lowercase();
@@ -150,7 +157,7 @@ impl RunnerLabel {
         self.error(
             label.pos,
             format!(
-                "label {} is unknown. available labels are {}. if it is a custom label for self-hosted runner, set list of labels in actionlint.yaml config file",
+                "label {} is unknown. available labels are {}. if it is a custom label for self-hosted runner, set list of labels in {CONFIG_NAME}",
                 quote(&label.value),
                 crate::shared::text::quotes(&all)
             ),

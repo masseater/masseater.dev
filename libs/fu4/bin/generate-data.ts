@@ -251,6 +251,32 @@ const permissions = Effect.gen(function* permissions() {
   );
 });
 
+const ACTION_SCHEMA =
+  "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/github-action.json";
+
+const Enumerated = Schema.Struct({ enum: Schema.Array(Schema.String) });
+
+const ActionSchema = Schema.Struct({
+  properties: Schema.Struct({
+    branding: Schema.Struct({ properties: Schema.Struct({ color: Enumerated, icon: Enumerated }) }),
+  }),
+  definitions: Schema.Struct({
+    "runs-javascript": Schema.Struct({ properties: Schema.Struct({ using: Enumerated }) }),
+  }),
+});
+
+const actionMetadata = Effect.gen(function* actionMetadata() {
+  const schema = yield* Schema.decodeUnknownEffect(Schema.fromJsonString(ActionSchema))(
+    yield* fetchText(ACTION_SCHEMA),
+  ).pipe(Effect.mapError(failedWith("could not read the action schema")));
+  const { color, icon } = schema.properties.branding.properties;
+  const runtimes = Arr.filter(
+    schema.definitions["runs-javascript"].properties.using.enum,
+    (using) => !isOutdated("", using),
+  );
+  return { colors: color.enum, icons: icon.enum, runtimes };
+});
+
 const SHELLS = `${DOCS_ROOT}/data/reusables/actions/supported-shells.md`;
 
 const shells = Effect.gen(function* shells() {
@@ -462,8 +488,8 @@ const generate = Effect.gen(function* generate() {
   const path = yield* Path.Path;
   const output = path.resolve(import.meta.dirname, "..", "native", "core", "data");
   yield* fileSystem.makeDirectory(output, { recursive: true });
-  const [contexts, hooks, actions, scopes, shellNames, runnerLabels] = yield* Effect.all(
-    [availability, webhooks, popularActions, permissions, shells, runners],
+  const [contexts, hooks, actions, scopes, shellNames, runnerLabels, metadata] = yield* Effect.all(
+    [availability, webhooks, popularActions, permissions, shells, runners, actionMetadata],
     {
       concurrency: "unbounded",
     },
@@ -476,6 +502,7 @@ const generate = Effect.gen(function* generate() {
   yield* write("permissions.json", scopes);
   yield* write("shells.json", shellNames);
   yield* write("runners.json", runnerLabels);
+  yield* write("action.json", metadata);
 });
 
 runMain(generate.pipe(Effect.provide(NodeServices.layer)));
