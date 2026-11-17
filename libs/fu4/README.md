@@ -1,6 +1,14 @@
 # @r_masseater/fu4
 
+<<<<<<< HEAD
 A GitHub Actions linter written in Rust and configured from `vite.config.ts`.
+=======
+
+![fu4 logo](logo.svg)
+
+A GitHub Actions workflow linter written in Rust and configured from `vite.config.ts`.
+
+> > > > > > > origin/main
 
 It reports what [actionlint](https://github.com/rhysd/actionlint) reports, with the same
 messages and positions, except for its pyflakes integration. Instead of running shellcheck,
