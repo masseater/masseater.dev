@@ -100,12 +100,22 @@ const TempoSchema = Schema.Struct({
 
 export type Tempo = typeof TempoSchema.Type;
 
+const TempoStepSchema = Schema.Struct({
+  offset: Ticks,
+  length: Ticks,
+  bpm: Schema.Finite,
+  target: Schema.OptionFromNullOr(Schema.Finite),
+});
+
+export type TempoStep = typeof TempoStepSchema.Type;
+
 const BarSchema = Schema.Struct({
   index: Schema.Int,
   start: Ticks,
   length: Ticks,
   meter: MeterSchema,
   tempo: TempoSchema,
+  tempoSteps: Schema.Array(TempoStepSchema),
   section: Schema.OptionFromNullOr(Schema.String),
   mark: Schema.OptionFromNullOr(Schema.String),
 });
@@ -132,6 +142,27 @@ const AutomationSchema = Schema.Struct({
 
 export type Automation = typeof AutomationSchema.Type;
 
+const ControllerSchema = Schema.Union([
+  kind("cc")({ number: Schema.Int }),
+  kind("pressure")({ midi: Schema.OptionFromNullOr(Schema.Int) }),
+  kind("bend")({}),
+  kind("program")({}),
+]);
+
+export type Controller = typeof ControllerSchema.Type;
+
+const ControlSchema = Schema.Struct({
+  track: Name,
+  controller: ControllerSchema,
+  bar: Schema.Int,
+  start: Ticks,
+  length: Ticks,
+  value: Schema.Finite,
+  target: Schema.OptionFromNullOr(Schema.Finite),
+});
+
+export type Control = typeof ControlSchema.Type;
+
 const GrooveSchema = Schema.Struct({ grid: Ticks, amount: Share });
 
 export const SongSchema = Schema.Struct({
@@ -151,6 +182,7 @@ export const SongSchema = Schema.Struct({
   slices: Schema.Array(SliceSchema),
   edits: Schema.Array(EditSchema),
   automations: Schema.Array(AutomationSchema),
+  controls: Schema.Array(ControlSchema),
 });
 
 export type Song = typeof SongSchema.Type;

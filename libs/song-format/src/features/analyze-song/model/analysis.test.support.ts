@@ -21,6 +21,7 @@ const barOf = (index: number): Bar => ({
   length: TICKS_PER_WHOLE,
   meter: { numerator: BEATS, denominator: BEATS, groups: [] },
   tempo: { bpm: BPM, ramp: Option.none() },
+  tempoSteps: [],
   section: Option.none(),
   mark: Option.none(),
 });
@@ -42,6 +43,7 @@ const notesOf =
         midi,
         cents: NONE,
         velocity: FULL,
+        releaseVelocity: Option.none(),
         gate: FULL,
         articulation: Option.none(),
         lyric: Option.none(),
@@ -90,6 +92,7 @@ export const songOf = (specs: readonly BarSpec[]): Song => {
     slices: [],
     edits: [],
     automations: [],
+    controls: [],
   };
 };
 
