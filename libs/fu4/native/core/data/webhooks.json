@@ -155,7 +155,7 @@
     "prereleased",
     "released"
   ],
-  "repository_dispatch": null,
+  "repository_dispatch": "custom",
   "schedule": [],
   "status": [],
   "watch": [

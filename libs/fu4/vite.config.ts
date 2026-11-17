@@ -15,7 +15,17 @@ const CARGO_INPUTS = [
 ] as const;
 
 export default defineConfig({
-  msch: { lint: { ignorePatterns: ["native/core/tests/fixtures/**", "native/core/data/**"] } },
+  msch: {
+    lint: {
+      ignorePatterns: ["native/core/tests/fixtures/**", "native/core/data/**"],
+      overrides: [
+        {
+          files: ["src/features/generate-data/model/if-version.ts"],
+          rules: { "typescript/prefer-readonly-parameter-types": "off" },
+        },
+      ],
+    },
+  },
   run: {
     tasks: {
       verify: { command: [], dependsOn: ["cargo", "test", "build"] },

@@ -1,4 +1,4 @@
-use fu4_core::{Context, Project, check};
+use fu4_core::{Config, Context, Project, check};
 use napi::bindgen_prelude::Result;
 use napi_derive::napi;
 use rayon::prelude::*;
@@ -10,6 +10,7 @@ use crate::shared::telemetry;
 #[napi(object)]
 pub struct LintOptions {
     pub traceparent: Option<String>,
+    pub config: Option<Value>,
 }
 
 #[napi]
@@ -20,7 +21,12 @@ pub fn lint_paths(root: String, paths: Vec<String>, options: LintOptions) -> Res
     let _entered = span.enter();
     let parent = tracing::Span::current();
     let base = std::path::PathBuf::from(&root);
-    let project = Project::new(base.clone());
+    let config: Config = match options.config {
+        Some(value) => serde_json::from_value(value)
+            .map_err(|error| napi::Error::from_reason(format!("invalid fu4 config: {error}")))?,
+        None => Config::default(),
+    };
+    let project = Project::new(base.clone(), &config).map_err(napi::Error::from_reason)?;
     let results = paths
         .into_par_iter()
         .map(|path| {

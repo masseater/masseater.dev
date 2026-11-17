@@ -208,7 +208,10 @@ fn accepts_actionlint_ok_fixtures() {
             continue;
         }
         let actual = lint(&dir, &file);
-        let id = format!("ok/{}", name.trim_end_matches(".yaml").trim_end_matches(".yml"));
+        let id = format!(
+            "ok/{}",
+            name.trim_end_matches(".yaml").trim_end_matches(".yml")
+        );
         if !actual.is_empty() {
             if !known.contains(&id) {
                 report.push(format!("{name}: {actual:#?}"));

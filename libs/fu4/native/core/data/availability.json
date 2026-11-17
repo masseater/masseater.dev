@@ -1,12 +1,4 @@
 {
-  "run-name": {
-    "contexts": [
-      "github",
-      "inputs",
-      "vars"
-    ],
-    "functions": []
-  },
   "concurrency": {
     "contexts": [
       "github",
@@ -20,6 +12,17 @@
       "github",
       "inputs",
       "secrets",
+      "vars"
+    ],
+    "functions": []
+  },
+  "jobs.<job_id>.cancel-timeout-minutes": {
+    "contexts": [
+      "github",
+      "inputs",
+      "matrix",
+      "needs",
+      "strategy",
       "vars"
     ],
     "functions": []
@@ -131,6 +134,17 @@
     ],
     "functions": []
   },
+  "jobs.<job_id>.environment.name": {
+    "contexts": [
+      "github",
+      "inputs",
+      "matrix",
+      "needs",
+      "strategy",
+      "vars"
+    ],
+    "functions": []
+  },
   "jobs.<job_id>.environment.url": {
     "contexts": [
       "env",
@@ -221,6 +235,17 @@
     ],
     "functions": []
   },
+  "jobs.<job_id>.services.<service_id>": {
+    "contexts": [
+      "github",
+      "inputs",
+      "matrix",
+      "needs",
+      "strategy",
+      "vars"
+    ],
+    "functions": []
+  },
   "jobs.<job_id>.services.<service_id>.credentials": {
     "contexts": [
       "env",
@@ -244,6 +269,17 @@
       "needs",
       "runner",
       "secrets",
+      "strategy",
+      "vars"
+    ],
+    "functions": []
+  },
+  "jobs.<job_id>.snapshot.if": {
+    "contexts": [
+      "github",
+      "inputs",
+      "matrix",
+      "needs",
       "strategy",
       "vars"
     ],
@@ -444,13 +480,10 @@
     ],
     "functions": []
   },
-  "jobs.<job_id>.snapshot.if": {
+  "run-name": {
     "contexts": [
       "github",
       "inputs",
-      "matrix",
-      "needs",
-      "strategy",
       "vars"
     ],
     "functions": []
