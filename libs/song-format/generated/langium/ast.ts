@@ -61,6 +61,7 @@ export type FumxKeywordNames =
     | "bool"
     | "bus"
     | "by"
+    | "cc"
     | "chorus"
     | "comp"
     | "countermelody"
@@ -120,6 +121,7 @@ export type FumxKeywordNames =
     | "not"
     | "nudge"
     | "number"
+    | "off"
     | "offset"
     | "onsets"
     | "or"
@@ -131,6 +133,8 @@ export type FumxKeywordNames =
     | "pitch"
     | "plugin"
     | "predelay"
+    | "pressure"
+    | "program"
     | "push"
     | "q"
     | "random"
@@ -237,7 +241,7 @@ export function isAttack(item: unknown): item is Attack {
     return reflection.isInstance(item, Attack.$type);
 }
 
-export type Attribute = Articulation | Bend | Every | Fade | GateLength | Lyric | Nudge | PlayParam | Tie | Velocity;
+export type Attribute = Articulation | Bend | Every | Fade | GateLength | Lyric | Nudge | PlayParam | ReleaseVelocity | Tie | Velocity;
 
 export const Attribute = {
     $type: 'Attribute'
@@ -521,6 +525,90 @@ export const Computed = {
 
 export function isComputed(item: unknown): item is Computed {
     return reflection.isInstance(item, Computed.$type);
+}
+
+export interface Control extends langium.AstNode {
+    readonly $container: ControlLine;
+    readonly $type: 'Control';
+    kind: 'bend' | 'cc' | 'pressure' | 'program';
+    number?: number;
+    pitch?: string;
+}
+
+export const Control = {
+    $type: 'Control',
+    kind: 'kind',
+    number: 'number',
+    pitch: 'pitch'
+} as const;
+
+export function isControl(item: unknown): item is Control {
+    return reflection.isInstance(item, Control.$type);
+}
+
+export interface ControlHold extends langium.AstNode {
+    readonly $container: ControlLine;
+    readonly $type: 'ControlHold';
+    duration: string;
+    target?: ControlValue;
+    value: ControlValue;
+}
+
+export const ControlHold = {
+    $type: 'ControlHold',
+    duration: 'duration',
+    target: 'target',
+    value: 'value'
+} as const;
+
+export function isControlHold(item: unknown): item is ControlHold {
+    return reflection.isInstance(item, ControlHold.$type);
+}
+
+export interface ControlLine extends langium.AstNode {
+    readonly $container: Bar;
+    readonly $type: 'ControlLine';
+    control: Control;
+    steps: Array<ControlStep>;
+    track: langium.Reference<Track>;
+}
+
+export const ControlLine = {
+    $type: 'ControlLine',
+    control: 'control',
+    steps: 'steps',
+    track: 'track'
+} as const;
+
+export function isControlLine(item: unknown): item is ControlLine {
+    return reflection.isInstance(item, ControlLine.$type);
+}
+
+export type ControlStep = ControlHold | Rest;
+
+export const ControlStep = {
+    $type: 'ControlStep'
+} as const;
+
+export function isControlStep(item: unknown): item is ControlStep {
+    return reflection.isInstance(item, ControlStep.$type);
+}
+
+export interface ControlValue extends langium.AstNode {
+    readonly $container: ControlHold;
+    readonly $type: 'ControlValue';
+    number?: number;
+    semitones?: string;
+}
+
+export const ControlValue = {
+    $type: 'ControlValue',
+    number: 'number',
+    semitones: 'semitones'
+} as const;
+
+export function isControlValue(item: unknown): item is ControlValue {
+    return reflection.isInstance(item, ControlValue.$type);
 }
 
 export interface Decay extends langium.AstNode {
@@ -1109,7 +1197,7 @@ export function isLimit(item: unknown): item is Limit {
     return reflection.isInstance(item, Limit.$type);
 }
 
-export type Line = Automation | VoiceLine;
+export type Line = Automation | ControlLine | TempoLine | VoiceLine;
 
 export const Line = {
     $type: 'Line'
@@ -1275,10 +1363,10 @@ export function isMultiSample(item: unknown): item is MultiSample {
     return reflection.isInstance(item, MultiSample.$type);
 }
 
-export type Name = 'accent' | 'attack' | 'audio' | 'automate' | 'bar' | 'base' | 'bass' | 'bend' | 'bool' | 'bus' | 'by' | 'chorus' | 'comp' | 'countermelody' | 'curve' | 'decay' | 'decibels' | 'delay' | 'depth' | 'drive' | 'drums' | 'duck' | 'duration' | 'every' | 'exp' | 'fade' | 'feedback' | 'from' | 'fx' | 'gain' | 'gate' | 'groove' | 'harmony' | 'hertz' | 'highpass' | 'hold' | 'instrument' | 'ir' | 'kit' | 'legato' | 'length' | 'limit' | 'linear' | 'lookahead' | 'lowpass' | 'lyric' | 'makeup' | 'mark' | 'melody' | 'meter' | 'mix' | 'mono-below' | 'multisample' | 'nudge' | 'number' | 'offset' | 'onsets' | 'over' | 'pan' | 'percent' | 'phaser' | 'pingpong' | 'pitch' | 'plugin' | 'predelay' | 'q' | 'release' | 'reverb' | 'reverse' | 'role' | 'root' | 'sample' | 'section' | 'semi' | 'semitones' | 'send' | 'slice' | 'slices' | 'song' | 'staccato' | 'string' | 'swing' | 'tempo' | 'texture' | 'tie' | 'time' | 'to' | 'track' | 'tremolo' | 'vel' | 'volume' | 'width' | string;
+export type Name = 'accent' | 'attack' | 'audio' | 'automate' | 'bar' | 'base' | 'bass' | 'bend' | 'bool' | 'bus' | 'by' | 'cc' | 'chorus' | 'comp' | 'countermelody' | 'curve' | 'decay' | 'decibels' | 'delay' | 'depth' | 'drive' | 'drums' | 'duck' | 'duration' | 'every' | 'exp' | 'fade' | 'feedback' | 'from' | 'fx' | 'gain' | 'gate' | 'groove' | 'harmony' | 'hertz' | 'highpass' | 'hold' | 'instrument' | 'ir' | 'kit' | 'legato' | 'length' | 'limit' | 'linear' | 'lookahead' | 'lowpass' | 'lyric' | 'makeup' | 'mark' | 'melody' | 'meter' | 'mix' | 'mono-below' | 'multisample' | 'nudge' | 'number' | 'off' | 'offset' | 'onsets' | 'over' | 'pan' | 'percent' | 'phaser' | 'pingpong' | 'pitch' | 'plugin' | 'predelay' | 'pressure' | 'program' | 'q' | 'release' | 'reverb' | 'reverse' | 'role' | 'root' | 'sample' | 'section' | 'semi' | 'semitones' | 'send' | 'slice' | 'slices' | 'song' | 'staccato' | 'string' | 'swing' | 'tempo' | 'texture' | 'tie' | 'time' | 'to' | 'track' | 'tremolo' | 'vel' | 'volume' | 'width' | string;
 
 export function isName(item: unknown): item is Name {
-    return item === 'melody' || item === 'countermelody' || item === 'bass' || item === 'harmony' || item === 'drums' || item === 'texture' || item === 'delay' || item === 'reverb' || item === 'chorus' || item === 'comp' || item === 'limit' || item === 'width' || item === 'phaser' || item === 'tremolo' || item === 'drive' || item === 'gain' || item === 'pan' || item === 'sample' || item === 'release' || item === 'attack' || item === 'decay' || item === 'offset' || item === 'length' || item === 'mix' || item === 'base' || item === 'from' || item === 'to' || item === 'q' || item === 'ir' || item === 'predelay' || item === 'feedback' || item === 'pingpong' || item === 'lookahead' || item === 'makeup' || item === 'semi' || item === 'highpass' || item === 'lowpass' || item === 'slice' || item === 'slices' || item === 'onsets' || item === 'root' || item === 'hold' || item === 'depth' || item === 'by' || item === 'over' || item === 'curve' || item === 'linear' || item === 'exp' || item === 'every' || item === 'fade' || item === 'nudge' || item === 'bend' || item === 'lyric' || item === 'gate' || item === 'vel' || item === 'tie' || item === 'staccato' || item === 'legato' || item === 'accent' || item === 'reverse' || item === 'audio' || item === 'kit' || item === 'instrument' || item === 'track' || item === 'bus' || item === 'duck' || item === 'groove' || item === 'swing' || item === 'multisample' || item === 'song' || item === 'bar' || item === 'meter' || item === 'tempo' || item === 'section' || item === 'mark' || item === 'automate' || item === 'fx' || item === 'send' || item === 'role' || item === 'mono-below' || item === 'volume' || item === 'plugin' || item === 'number' || item === 'pitch' || item === 'duration' || item === 'decibels' || item === 'percent' || item === 'hertz' || item === 'time' || item === 'semitones' || item === 'string' || item === 'bool' || (typeof item === 'string' && (/[a-z][a-z0-9]*(-[a-z0-9]+)*/.test(item)));
+    return item === 'melody' || item === 'countermelody' || item === 'bass' || item === 'harmony' || item === 'drums' || item === 'texture' || item === 'delay' || item === 'reverb' || item === 'chorus' || item === 'comp' || item === 'limit' || item === 'width' || item === 'phaser' || item === 'tremolo' || item === 'drive' || item === 'gain' || item === 'pan' || item === 'sample' || item === 'release' || item === 'attack' || item === 'decay' || item === 'offset' || item === 'length' || item === 'mix' || item === 'base' || item === 'from' || item === 'to' || item === 'q' || item === 'ir' || item === 'predelay' || item === 'feedback' || item === 'pingpong' || item === 'lookahead' || item === 'makeup' || item === 'semi' || item === 'highpass' || item === 'lowpass' || item === 'slice' || item === 'slices' || item === 'onsets' || item === 'root' || item === 'hold' || item === 'depth' || item === 'by' || item === 'over' || item === 'curve' || item === 'linear' || item === 'exp' || item === 'every' || item === 'fade' || item === 'nudge' || item === 'bend' || item === 'lyric' || item === 'gate' || item === 'vel' || item === 'tie' || item === 'staccato' || item === 'legato' || item === 'accent' || item === 'reverse' || item === 'audio' || item === 'kit' || item === 'instrument' || item === 'track' || item === 'bus' || item === 'duck' || item === 'groove' || item === 'swing' || item === 'multisample' || item === 'song' || item === 'bar' || item === 'meter' || item === 'tempo' || item === 'section' || item === 'mark' || item === 'automate' || item === 'fx' || item === 'send' || item === 'role' || item === 'mono-below' || item === 'volume' || item === 'plugin' || item === 'number' || item === 'pitch' || item === 'duration' || item === 'decibels' || item === 'percent' || item === 'hertz' || item === 'time' || item === 'semitones' || item === 'string' || item === 'bool' || item === 'cc' || item === 'pressure' || item === 'program' || item === 'off' || (typeof item === 'string' && (/[a-z][a-z0-9]*(-[a-z0-9]+)*/.test(item)));
 }
 
 export interface Note extends langium.AstNode {
@@ -1523,6 +1611,21 @@ export function isRelease(item: unknown): item is Release {
     return reflection.isInstance(item, Release.$type);
 }
 
+export interface ReleaseVelocity extends langium.AstNode {
+    readonly $container: Sounding;
+    readonly $type: 'ReleaseVelocity';
+    value: number;
+}
+
+export const ReleaseVelocity = {
+    $type: 'ReleaseVelocity',
+    value: 'value'
+} as const;
+
+export function isReleaseVelocity(item: unknown): item is ReleaseVelocity {
+    return reflection.isInstance(item, ReleaseVelocity.$type);
+}
+
 export interface Repeat extends langium.AstNode {
     readonly $container: Fn | For | If | Repeat | Song | While;
     readonly $type: 'Repeat';
@@ -1541,7 +1644,7 @@ export function isRepeat(item: unknown): item is Repeat {
 }
 
 export interface Rest extends langium.AstNode {
-    readonly $container: Each | Tuplet | VoiceLine;
+    readonly $container: ControlLine | Each | Tuplet | VoiceLine;
     readonly $type: 'Rest';
     computedDuration?: Expression;
     duration?: string;
@@ -1786,6 +1889,40 @@ export function isTempo(item: unknown): item is Tempo {
     return reflection.isInstance(item, Tempo.$type);
 }
 
+export interface TempoLine extends langium.AstNode {
+    readonly $container: Bar;
+    readonly $type: 'TempoLine';
+    steps: Array<TempoStep>;
+}
+
+export const TempoLine = {
+    $type: 'TempoLine',
+    steps: 'steps'
+} as const;
+
+export function isTempoLine(item: unknown): item is TempoLine {
+    return reflection.isInstance(item, TempoLine.$type);
+}
+
+export interface TempoStep extends langium.AstNode {
+    readonly $container: TempoLine;
+    readonly $type: 'TempoStep';
+    bpm: string;
+    duration: string;
+    target?: string;
+}
+
+export const TempoStep = {
+    $type: 'TempoStep',
+    bpm: 'bpm',
+    duration: 'duration',
+    target: 'target'
+} as const;
+
+export function isTempoStep(item: unknown): item is TempoStep {
+    return reflection.isInstance(item, TempoStep.$type);
+}
+
 export interface Tie extends langium.AstNode {
     readonly $container: Sounding;
     readonly $type: 'Tie';
@@ -2009,6 +2146,11 @@ export type FumxAstType = {
     Chorus: Chorus
     Comp: Comp
     Computed: Computed
+    Control: Control
+    ControlHold: ControlHold
+    ControlLine: ControlLine
+    ControlStep: ControlStep
+    ControlValue: ControlValue
     Decay: Decay
     Declaration: Declaration
     Delay: Delay
@@ -2071,6 +2213,7 @@ export type FumxAstType = {
     PluginUse: PluginUse
     Ref: Ref
     Release: Release
+    ReleaseVelocity: ReleaseVelocity
     Repeat: Repeat
     Rest: Rest
     Return: Return
@@ -2086,6 +2229,8 @@ export type FumxAstType = {
     Sounding: Sounding
     Statement: Statement
     Tempo: Tempo
+    TempoLine: TempoLine
+    TempoStep: TempoStep
     Tie: Tie
     Track: Track
     TrackSource: TrackSource
@@ -2394,6 +2539,76 @@ export class FumxAstReflection extends langium.AbstractAstReflection {
                 }
             },
             superTypes: [Head.$type]
+        },
+        Control: {
+            name: Control.$type,
+            properties: {
+                kind: {
+                    name: Control.kind
+                },
+                number: {
+                    name: Control.number,
+                    optional: true
+                },
+                pitch: {
+                    name: Control.pitch,
+                    optional: true
+                }
+            },
+            superTypes: []
+        },
+        ControlHold: {
+            name: ControlHold.$type,
+            properties: {
+                duration: {
+                    name: ControlHold.duration
+                },
+                target: {
+                    name: ControlHold.target,
+                    optional: true
+                },
+                value: {
+                    name: ControlHold.value
+                }
+            },
+            superTypes: [ControlStep.$type]
+        },
+        ControlLine: {
+            name: ControlLine.$type,
+            properties: {
+                control: {
+                    name: ControlLine.control
+                },
+                steps: {
+                    name: ControlLine.steps,
+                    defaultValue: []
+                },
+                track: {
+                    name: ControlLine.track,
+                    referenceType: Track.$type
+                }
+            },
+            superTypes: [Line.$type]
+        },
+        ControlStep: {
+            name: ControlStep.$type,
+            properties: {
+            },
+            superTypes: []
+        },
+        ControlValue: {
+            name: ControlValue.$type,
+            properties: {
+                number: {
+                    name: ControlValue.number,
+                    optional: true
+                },
+                semitones: {
+                    name: ControlValue.semitones,
+                    optional: true
+                }
+            },
+            superTypes: []
         },
         Decay: {
             name: Decay.$type,
@@ -3161,6 +3376,15 @@ export class FumxAstReflection extends langium.AbstractAstReflection {
             },
             superTypes: [PlayParam.$type]
         },
+        ReleaseVelocity: {
+            name: ReleaseVelocity.$type,
+            properties: {
+                value: {
+                    name: ReleaseVelocity.value
+                }
+            },
+            superTypes: [Attribute.$type]
+        },
         Repeat: {
             name: Repeat.$type,
             properties: {
@@ -3187,7 +3411,7 @@ export class FumxAstReflection extends langium.AbstractAstReflection {
                     optional: true
                 }
             },
-            superTypes: [Event.$type]
+            superTypes: [ControlStep.$type, Event.$type]
         },
         Return: {
             name: Return.$type,
@@ -3372,6 +3596,32 @@ export class FumxAstReflection extends langium.AbstractAstReflection {
                 },
                 target: {
                     name: Tempo.target,
+                    optional: true
+                }
+            },
+            superTypes: []
+        },
+        TempoLine: {
+            name: TempoLine.$type,
+            properties: {
+                steps: {
+                    name: TempoLine.steps,
+                    defaultValue: []
+                }
+            },
+            superTypes: [Line.$type]
+        },
+        TempoStep: {
+            name: TempoStep.$type,
+            properties: {
+                bpm: {
+                    name: TempoStep.bpm
+                },
+                duration: {
+                    name: TempoStep.duration
+                },
+                target: {
+                    name: TempoStep.target,
                     optional: true
                 }
             },

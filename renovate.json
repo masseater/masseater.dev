@@ -89,11 +89,6 @@
       "matchDepNames": ["masseater/skills", "masseater/typescript-template"],
       "groupName": "masseater digests",
       "schedule": ["* 4 * * *"]
-    },
-    {
-      "description": "patches/crates は依存の版を固定したまま直したコピーで、本体の Cargo.lock が使う版に合わせてある。Renovate が中の依存を上げると patch が解決できなくなり、cargo がすべて落ちる。",
-      "matchFileNames": ["patches/**"],
-      "enabled": false
     }
   ],
   "customManagers": [
