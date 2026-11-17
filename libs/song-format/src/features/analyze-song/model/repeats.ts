@@ -1,6 +1,5 @@
+import type { Song } from "@r_masseater/fumx-parser";
 import { Array as Arr, Option, Order, pipe } from "effect";
-
-import type { Song } from "#/entities/song/index.ts";
 
 import type { BarRange } from "./keys.ts";
 

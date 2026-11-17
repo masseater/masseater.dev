@@ -1,8 +1,7 @@
+import type { Role, Song } from "@r_masseater/fumx-parser";
+import { fractionOf } from "@r_masseater/fumx-parser";
 import { Array as Arr, Option, pipe } from "effect";
 import { Note as TonalNote } from "tonal";
-
-import type { Role, Song } from "#/entities/song/index.ts";
-import { fractionOf } from "#/shared/lib/ticks.ts";
 
 const NONE = 0;
 const FIRST = 1;
