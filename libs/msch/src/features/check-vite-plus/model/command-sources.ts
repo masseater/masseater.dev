@@ -24,6 +24,8 @@ import { RepositoryFiles } from "#/shared/lib/repository-files.ts";
 import { positionOf } from "#/shared/lib/text-position.ts";
 import { runScriptsOf } from "#/shared/lib/workflow-run.ts";
 
+import { docSources } from "./doc-sources.ts";
+
 const ROOT_DIRECTORY = ".";
 const COMMAND_KEY = "command";
 const ARGUMENTS_KEY = "args";
@@ -41,12 +43,13 @@ const STEP_FILES: readonly string[] = [
 ];
 const HOOK_FILES: readonly string[] = [":(glob).vite-hooks/*"];
 const AGENT_FILES: readonly string[] = [".claude/settings.json", ".mcp.json"];
+const AGENT_DOCS: readonly string[] = [":(glob)**/AGENTS.md", ":(glob)**/CLAUDE.md", ...EXCLUDED];
 const READ_CONCURRENCY = 16;
 const START = 0;
 const FIRST = 1;
 const LINE = "\n";
 
-export type CommandKind = "script" | "task" | "step" | "hook" | "agent";
+export type CommandKind = "script" | "task" | "step" | "hook" | "agent" | "doc";
 
 export interface CommandSource {
   readonly kind: CommandKind;
@@ -228,11 +231,12 @@ const readSources = Effect.fn("readSources")(function* readSources(
 /** @internal */
 export const commandSources = Effect.fn("commandSources")(function* commandSources(root: string) {
   const files = yield* RepositoryFiles;
-  const [manifests, steps, hooks, workspaces] = yield* Effect.all(
+  const [manifests, steps, hooks, docs, workspaces] = yield* Effect.all(
     [
       files.matchingFiles(root, MANIFESTS),
       files.matchingFiles(root, STEP_FILES),
       files.matchingFiles(root, HOOK_FILES),
+      files.matchingFiles(root, AGENT_DOCS),
       workspaceDirectories(root),
     ],
     { concurrency: "unbounded" },
@@ -243,6 +247,7 @@ export const commandSources = Effect.fn("commandSources")(function* commandSourc
       readSources(root, steps, stepSources),
       readSources(root, hooks, hookSources),
       readSources(root, AGENT_FILES, agentSources),
+      readSources(root, docs, docSources),
       workspaceTasks(root, Arr.dedupe([ROOT_DIRECTORY, ...workspaces])),
     ],
     { concurrency: "unbounded" },
