@@ -8,8 +8,10 @@ import {
   Option,
   Path,
   Predicate,
+  Record as Rec,
   Redacted,
   Schema,
+  String as Str,
   pipe,
 } from "effect";
 import { HttpClient, HttpClientRequest, HttpClientResponse } from "effect/http";
@@ -27,11 +29,24 @@ class PublishFailed extends taggedError<PublishFailed, { readonly brand: unique 
   { message: Schema.String },
 ) {}
 
+const Targets = Schema.Array(Schema.String);
+const NativeSettings = Schema.Struct({ binary: Schema.String, targets: Targets });
+
 const Manifest = Schema.Struct({
   name: Schema.String,
   version: Schema.String,
   "size-limit": Schema.optional(Schema.Unknown),
+  native: Schema.optional(NativeSettings),
 });
+const PackageJson = Schema.fromJsonString(Schema.Record(Schema.String, Schema.Unknown));
+const PlatformManifest = Schema.Struct({ name: Schema.String, version: Schema.String });
+
+const NPM_DIR = "npm";
+const KEPT_FIELDS: readonly string[] = ["license", "repository", "homepage", "bugs", "engines"];
+const LIBC: Readonly<Record<string, string>> = { gnu: "glibc", musl: "musl" };
+const CPU_INDEX = 1;
+const ABI_INDEX = 2;
+const NATIVE_DIR = "native";
 const IdToken = Schema.Struct({ value: Schema.String });
 const Grants = Schema.Struct({ npmToken: Schema.optional(Schema.String) });
 
@@ -39,6 +54,15 @@ const manifestOf = Effect.fn("manifest")(function* manifestOf() {
   const fileSystem = yield* FileSystem.FileSystem;
   const text = yield* fileSystem.readFileString("package.json");
   return yield* Schema.decodeEffect(Schema.fromJsonString(Manifest))(text);
+});
+
+const platformManifestOf = Effect.fn("platformManifest")(function* platformManifestOf(
+  directory: string,
+) {
+  const fileSystem = yield* FileSystem.FileSystem;
+  const path = yield* Path.Path;
+  const text = yield* fileSystem.readFileString(path.join(directory, "package.json"));
+  return yield* Schema.decodeEffect(Schema.fromJsonString(PlatformManifest))(text);
 });
 
 const NO_ENV: Readonly<Record<string, string>> = {};
@@ -136,16 +160,126 @@ const authEnv = Effect.fn("authEnv")(function* authEnv() {
   });
 });
 
+const isPublished = Effect.fn("isPublished")(function* isPublished(name: string, version: string) {
+  const exitCode = yield* exitCodeOf("npm", ["view", `${name}@${version}`, "version"]);
+  return exitCode === SUCCESS;
+});
+
+const publishPlatform = Effect.fn("publishPlatform")(function* publishPlatform(
+  directory: string,
+  env: Readonly<Record<string, string>>,
+) {
+  const { name, version } = yield* platformManifestOf(directory);
+  if (yield* isPublished(name, version)) {
+    yield* Console.log(`${name}@${version} is already published, skipping`);
+    return name;
+  }
+  yield* runOrFail("npm", ["publish", directory, "--provenance", "--access", "public"], env);
+  return name;
+});
+
+const addOptionalDependencies = Effect.fn("optionalDependencies")(function* addOptionalDependencies(
+  names: readonly string[],
+  version: string,
+) {
+  const fileSystem = yield* FileSystem.FileSystem;
+  const text = yield* fileSystem.readFileString("package.json");
+  const manifest = yield* Schema.decodeEffect(PackageJson)(text);
+  const optionalDependencies = pipe(
+    names,
+    Arr.map((name): readonly [string, string] => [name, version]),
+    Rec.fromEntries,
+  );
+  const updated = yield* Schema.encodeEffect(PackageJson)({ ...manifest, optionalDependencies });
+  yield* fileSystem.writeFileString("package.json", updated);
+});
+
+type Native = NonNullable<typeof Manifest.Type.native>;
+
+const libcOf = (parts: readonly string[]): Readonly<Record<string, readonly string[]>> =>
+  pipe(
+    Arr.get(parts, ABI_INDEX),
+    Option.flatMap((abi) => Rec.get(LIBC, abi)),
+    Option.match({ onNone: () => ({}), onSome: (libc) => ({ libc: [libc] }) }),
+  );
+
+const platformFields = (
+  manifest: typeof Manifest.Type,
+  binary: string,
+  target: string,
+): Readonly<Record<string, unknown>> => {
+  const parts = Str.split(target, "-");
+  const file = `${binary}.${target}.node`;
+  return {
+    name: `${manifest.name}-${target}`,
+    version: manifest.version,
+    os: [Arr.headNonEmpty(parts)],
+    cpu: Option.toArray(Arr.get(parts, CPU_INDEX)),
+    ...libcOf(parts),
+    main: file,
+    files: [file],
+  };
+};
+
+const keptFields = Effect.fn("keptFields")(function* keptFields() {
+  const fileSystem = yield* FileSystem.FileSystem;
+  const text = yield* fileSystem.readFileString("package.json");
+  const raw = yield* Schema.decodeEffect(PackageJson)(text);
+  return pipe(
+    raw,
+    Rec.filter((_value, key) => pipe(KEPT_FIELDS, Arr.contains(key))),
+  );
+});
+
+const writePlatform = Effect.fn("writePlatform")(function* writePlatform(
+  manifest: typeof Manifest.Type,
+  native: Native,
+  target: string,
+) {
+  const fileSystem = yield* FileSystem.FileSystem;
+  const path = yield* Path.Path;
+  const kept = yield* keptFields();
+  const directory = path.join(NPM_DIR, target);
+  const file = `${native.binary}.${target}.node`;
+  yield* fileSystem.makeDirectory(directory, { recursive: true });
+  yield* fileSystem.copyFile(path.join(NATIVE_DIR, file), path.join(directory, file));
+  const text = yield* Schema.encodeEffect(PackageJson)({
+    ...kept,
+    ...platformFields(manifest, native.binary, target),
+  });
+  yield* fileSystem.writeFileString(path.join(directory, "package.json"), text);
+  return directory;
+});
+
+const publishPlatforms = Effect.fn("publishPlatforms")(function* publishPlatforms(
+  manifest: typeof Manifest.Type,
+  env: Readonly<Record<string, string>>,
+) {
+  if (Predicate.isUndefined(manifest.native)) {
+    return;
+  }
+  const { native } = manifest;
+  const directories = yield* Effect.forEach(
+    native.targets,
+    (target) => writePlatform(manifest, native, target),
+    { concurrency: 1 },
+  );
+  const names = yield* Effect.forEach(directories, (directory) => publishPlatform(directory, env), {
+    concurrency: 1,
+  });
+  yield* addOptionalDependencies(names, manifest.version);
+});
+
 const publishNew = Effect.fn("publishNew")(function* publishNew(
   manifest: typeof Manifest.Type,
   env: Readonly<Record<string, string>>,
 ) {
   const { name, version } = manifest;
-  const published = yield* exitCodeOf("npm", ["view", `${name}@${version}`, "version"]);
-  if (published === SUCCESS) {
+  if (yield* isPublished(name, version)) {
     return yield* Console.log(`${name}@${version} is already published, skipping`);
   }
   yield* check(Predicate.isNotUndefined(manifest["size-limit"]));
+  yield* publishPlatforms(manifest, env);
   const tarball = yield* pack();
   return yield* runOrFail("npm", ["publish", tarball, "--provenance", "--access", "public"], env);
 });

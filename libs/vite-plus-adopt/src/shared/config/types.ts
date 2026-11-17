@@ -1,10 +1,6 @@
 import type { UserConfig as CommitlintUserConfig } from "@commitlint/types";
 import type { TextlintRcConfig } from "@textlint/config-loader";
 import type { TextlintKernelRule } from "@textlint/kernel";
-import type {
-  Configuration as MarkdownlintConfiguration,
-  Rule as MarkdownlintRule,
-} from "markdownlint";
 import type { defineConfig as defineSteigerConfig } from "steiger";
 
 import type { DependencyField } from "#/shared/lib/workspace.ts";
@@ -64,12 +60,6 @@ export interface TextlintConfig extends TextlintRcConfig {
   readonly sources?: readonly TextlintSource[];
 }
 
-export interface MarkdownlintConfig {
-  readonly config?: MarkdownlintConfiguration;
-  readonly customRules?: readonly MarkdownlintRule[];
-  readonly ignores?: readonly string[];
-}
-
 export interface SteigerSection {
   readonly paths: readonly string[];
   readonly rules: SteigerConfig;
@@ -97,7 +87,6 @@ export interface ToolSections {
   readonly commitlint?: CommitlintConfig;
   readonly dependencyRules?: DependencyRules;
   readonly fallow?: FallowConfig;
-  readonly markdownlint?: MarkdownlintConfig;
   readonly skills?: SkillsSection;
   readonly steiger?: SteigerSection;
   readonly textlint?: TextlintConfig;
