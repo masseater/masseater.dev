@@ -1,11 +1,15 @@
 import { isToolVersions } from "#/shared/lib/scanned-files.ts";
 import type { Listed } from "#/shared/lib/scanned-files.ts";
 
-import { checkBannedTool } from "./banned-tool.ts";
+import { checkBannedTool, isProgramSource, spawnPattern } from "./banned-tool.ts";
 import type { BannedTool } from "./banned-tool.ts";
 
 const PYTHON_FILE =
   /(?:\.(?:py|pyi|pyw|pyx|ipynb)|(?:^|\/)(?:pyproject\.toml|uv\.lock|uv\.toml|poetry\.lock|Pipfile|Pipfile\.lock|setup\.cfg|tox\.ini|pytest\.ini|\.python-version|requirements[^/]*\.txt))$/u;
+
+const SPAWN_PATTERNS: readonly RegExp[] = [
+  spawnPattern(String.raw`python[\d.]*|pip3?|pipx|uvx?|poetry`),
+];
 
 const COMMAND_PATTERNS: readonly RegExp[] = [
   /(?<![\w./@-])python[\d.]*[ \t]+(?:[-"'$./]|\S+\.py\b)/gu,
@@ -14,7 +18,7 @@ const COMMAND_PATTERNS: readonly RegExp[] = [
   /(?<![\w./@-])uvx[ \t]+[^\s=:,;)|&]/gu,
   /(?<![\w./@-])uv[ \t]+(?:run|sync|lock|pip|tool|venv|add|remove|python|export|build|publish|init|tree|cache|self)\b/gu,
   /(?<![\w./@-])poetry[ \t]+(?:run|install|add|lock|build|publish|shell|export)\b/gu,
-  /(?:\bcommand["']?\s*[:=]\s*|(?:\bspawn\w*|\bexec\w*|\bexeca|Command::new|ChildProcess\.make|\$)\(\s*)["'`](?:python[\d.]*|pip3?|pipx|uvx?|poetry)["'`]/gu,
+  ...SPAWN_PATTERNS,
   /\buses:\s*["']?(?:actions\/setup-python|astral-sh\/setup-uv|astral-sh\/ruff-action|pypa\/[\w.-]+|snok\/install-poetry|abatilo\/actions-poetry|conda-incubator\/setup-miniconda|mamba-org\/setup-micromamba|pdm-project\/setup-pdm)\b/gu,
 ];
 
@@ -23,6 +27,9 @@ const TOOL_PATTERNS: readonly RegExp[] = [
 ];
 
 const patternsFor = (entry: Listed): readonly RegExp[] => {
+  if (isProgramSource(entry)) {
+    return SPAWN_PATTERNS;
+  }
   if (isToolVersions(entry)) {
     return [...COMMAND_PATTERNS, ...TOOL_PATTERNS];
   }
