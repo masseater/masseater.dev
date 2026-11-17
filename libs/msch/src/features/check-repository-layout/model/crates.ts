@@ -1,52 +1,20 @@
-import { Array as Arr, Effect, Option, Schema, Stream, String as Str, pipe } from "effect";
-import { ChildProcess } from "effect/process";
+import { Array as Arr, Effect, Option } from "effect";
 
-import { workspaceDirectories, hasVerifyTask } from "#/entities/workspace/index.ts";
+import {
+  cratesIn,
+  hasVerifyTask,
+  owningWorkspace,
+  workspaceDirectories,
+} from "#/entities/workspace/index.ts";
+import type { Crate } from "#/entities/workspace/index.ts";
 import type { Problem, RuleName } from "#/shared/lib/problem.ts";
 import { RepositoryFiles } from "#/shared/lib/repository-files.ts";
 
 const RULE: RuleName = "unverified-crate";
 const CARGO_FILE = "Cargo.toml";
 const CONFIG_FILE = "vite.config.ts";
-const SEPARATOR = "/";
 const FIRST = 1;
 const READ_CONCURRENCY = 8;
-
-const CrateEntry = Schema.Struct({ name: Schema.String, manifest_path: Schema.String });
-const CrateList = Schema.fromJsonString(Schema.Struct({ packages: Schema.Array(CrateEntry) }));
-const decodeCrateList = Schema.decodeUnknownEffect(CrateList);
-
-interface Crate {
-  readonly name: string;
-  readonly manifest: string;
-}
-
-const cratesIn = Effect.fn("cratesIn")(function* cratesIn(root: string) {
-  const handle = yield* ChildProcess.make(
-    "cargo",
-    ["metadata", "--no-deps", "--format-version", "1", "--offline"],
-    { cwd: root, extendEnv: true, stdin: "ignore" },
-  );
-  const output = yield* handle.stdout.pipe(Stream.decodeText(), Stream.mkString);
-  const list = yield* decodeCrateList(output);
-  return pipe(
-    list.packages,
-    Arr.map((crate): Crate => ({ name: crate.name, manifest: crate.manifest_path })),
-  );
-}, Effect.scoped);
-
-const owningWorkspace =
-  (directories: readonly string[]) =>
-  (directory: string): Option.Option<string> => {
-    const owners = pipe(
-      directories,
-      Arr.filter(
-        (workspace) =>
-          directory === workspace || Str.startsWith(`${workspace}${SEPARATOR}`)(directory),
-      ),
-    );
-    return Arr.last(Arr.sort(owners, Str.Order));
-  };
 
 const problemFor = (crate: Crate, message: string): Problem => ({
   file: crate.manifest,
