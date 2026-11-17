@@ -1,7 +1,6 @@
-import { present } from "@masseater.dev/lint-host";
 import { Option } from "effect";
 
-import type { Kind } from "#/shared/config/index.ts";
+import type { Kind } from "./types.ts";
 
 export const FSD_LAYERS: readonly string[] = [
   "app",
@@ -21,7 +20,10 @@ export interface PresetOptions {
 }
 
 const pathsOf = ({ paths }: PresetOptions): Pick<Kind, "paths"> =>
-  present(Option.fromUndefinedOr(paths), (value) => ({ paths: value }));
+  Option.match(Option.fromUndefinedOr(paths), {
+    onNone: () => ({}),
+    onSome: (value) => ({ paths: value }),
+  });
 
 export const workspace = (options: PresetOptions = {}): Kind => ({
   name: "workspace",
