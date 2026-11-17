@@ -10,7 +10,6 @@
     "@alchemy.run/cloudflare": "catalog:stack",
     "@effect/atom-react": "catalog:stack",
     "@elysiajs/eden": "catalog:stack",
-    "@masseater.dev/alchemy-app-name": "workspace:*",
     "@masseater.dev/cloudflare-account": "workspace:*",
     "@masseater.dev/daw-view": "workspace:*",
     "@masseater.dev/repositories": "workspace:*",

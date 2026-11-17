@@ -1,7 +1,8 @@
-import { textStream, toolResult } from "@masseater.dev/claude-agent";
-import type { Tooling } from "@masseater.dev/claude-agent";
 import type { Effect, Stream } from "effect";
 import { Context, Layer } from "effect";
+
+import { textStream, toolResult } from "#/shared/lib/agent-text-stream.ts";
+import type { Tooling } from "#/shared/lib/agent-text-stream.ts";
 
 import { failed } from "./generation-failed.ts";
 import type { GenerationFailed } from "./generation-failed.ts";
