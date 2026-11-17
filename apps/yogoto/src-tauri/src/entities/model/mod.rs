@@ -20,8 +20,18 @@ const SW_REVISION: &str = "a443a2985534b3bc815ef54a5d446c6a0390f974";
 pub const MODELS: &[Model] = &[Model {
     id: "bs-roformer-sw",
     label: "BS-RoFormer SW (6 stems)",
-    checkpoint: HubFile { owner: SW_OWNER, name: SW_NAME, revision: SW_REVISION, filename: "BS-Rofo-SW-Fixed.ckpt" },
-    config: HubFile { owner: SW_OWNER, name: SW_NAME, revision: SW_REVISION, filename: "BS-Rofo-SW-Fixed.yaml" },
+    checkpoint: HubFile {
+        owner: SW_OWNER,
+        name: SW_NAME,
+        revision: SW_REVISION,
+        filename: "BS-Rofo-SW-Fixed.ckpt",
+    },
+    config: HubFile {
+        owner: SW_OWNER,
+        name: SW_NAME,
+        revision: SW_REVISION,
+        filename: "BS-Rofo-SW-Fixed.yaml",
+    },
     stems: &["bass", "drums", "other", "vocals", "guitar", "piano"],
 }];
 
@@ -55,7 +65,11 @@ mod tests {
     #[test]
     fn ids_are_unique_and_defaults_exist() {
         for (index, entry) in MODELS.iter().enumerate() {
-            assert!(MODELS[index + 1..].iter().all(|other| other.id != entry.id), "{}", entry.id);
+            assert!(
+                MODELS[index + 1..].iter().all(|other| other.id != entry.id),
+                "{}",
+                entry.id
+            );
         }
         assert!(DEFAULT_MODELS.iter().all(|id| model(id).is_some()));
     }

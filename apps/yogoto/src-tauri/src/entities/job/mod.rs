@@ -17,7 +17,10 @@ pub struct Jobs {
 impl Jobs {
     #[must_use]
     pub fn new(notify: Notify) -> Self {
-        Self { jobs: Arc::new(Mutex::new(Vec::new())), notify }
+        Self {
+            jobs: Arc::new(Mutex::new(Vec::new())),
+            notify,
+        }
     }
 
     fn change(&self, id: &str, edit: impl FnOnce(&mut Job)) {
@@ -82,7 +85,10 @@ impl Jobs {
 
     #[must_use]
     pub fn list(&self) -> Vec<Job> {
-        self.jobs.lock().unwrap_or_else(PoisonError::into_inner).clone()
+        self.jobs
+            .lock()
+            .unwrap_or_else(PoisonError::into_inner)
+            .clone()
     }
 }
 
@@ -106,7 +112,10 @@ mod tests {
         assert_eq!(jobs.list()[0].state, JobState::Running);
         jobs.finish(&id, "song");
         let job = &jobs.list()[0];
-        assert_eq!((job.state, job.song_id.as_deref()), (JobState::Done, Some("song")));
+        assert_eq!(
+            (job.state, job.song_id.as_deref()),
+            (JobState::Done, Some("song"))
+        );
         let failed = jobs.queue(JobKind::Separate, "x", Some("song"));
         jobs.fail(&failed, "boom");
         assert_eq!(jobs.list()[0].message, "boom");

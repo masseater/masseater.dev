@@ -14,7 +14,9 @@ pub struct Library {
 impl Library {
     pub fn open(root: &Path) -> Outcome<Self> {
         std::fs::create_dir_all(root.join(SONGS))?;
-        Ok(Self { root: root.to_path_buf() })
+        Ok(Self {
+            root: root.to_path_buf(),
+        })
     }
 
     #[must_use]
@@ -80,7 +82,10 @@ impl Library {
     }
 
     pub fn find_by_digest(&self, sha256: &str) -> Outcome<Option<Song>> {
-        Ok(self.list()?.into_iter().find(|song| song.sources.iter().any(|source| source.sha256 == sha256)))
+        Ok(self
+            .list()?
+            .into_iter()
+            .find(|song| song.sources.iter().any(|source| source.sha256 == sha256)))
     }
 }
 
@@ -97,7 +102,9 @@ mod tests {
         first.added_at = 1;
         first.sources.push(SongSource {
             id: "s".into(),
-            origin: Origin::File { name: "a.flac".into() },
+            origin: Origin::File {
+                name: "a.flac".into(),
+            },
             file: "sources/s.flac".into(),
             sha256: "abc".into(),
             sample_rate: 44_100,
@@ -108,9 +115,17 @@ mod tests {
         let mut second = library.create("Second", "B").unwrap();
         second.added_at = 2;
         library.save(&second).unwrap();
-        let titles: Vec<String> = library.list().unwrap().into_iter().map(|song| song.title).collect();
+        let titles: Vec<String> = library
+            .list()
+            .unwrap()
+            .into_iter()
+            .map(|song| song.title)
+            .collect();
         assert_eq!(titles, ["Second", "First"]);
-        assert_eq!(library.find_by_digest("abc").unwrap().map(|song| song.id), Some(first.id.clone()));
+        assert_eq!(
+            library.find_by_digest("abc").unwrap().map(|song| song.id),
+            Some(first.id.clone())
+        );
         assert!(library.remove(&first.id).unwrap());
         assert_eq!(library.get(&first.id).unwrap(), None);
     }

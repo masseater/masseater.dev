@@ -21,9 +21,13 @@ pub struct Serving {
 
 #[derive(Deserialize, JsonSchema)]
 struct ImportInput {
-    #[schemars(description = "YouTube・ニコニコ・SoundCloud などのリンク、または PC の音声ファイルの絶対パス")]
+    #[schemars(
+        description = "YouTube・ニコニコ・SoundCloud などのリンク、または PC の音声ファイルの絶対パス"
+    )]
     location: String,
-    #[schemars(description = "取り込んだ後に分離するモデルの id。省くと既定のモデルで分離する。list_models で選べる id を確かめる")]
+    #[schemars(
+        description = "取り込んだ後に分離するモデルの id。省くと既定のモデルで分離する。list_models で選べる id を確かめる"
+    )]
     models: Option<Vec<String>>,
 }
 
@@ -90,7 +94,13 @@ fn seconds(frames: i64, sample_rate: i64) -> f64 {
 }
 
 fn brief_of(workshop: &Workshop, song: Song) -> SongBrief {
-    let path = |relative: &str| workshop.library.path(&song, relative).to_string_lossy().into_owned();
+    let path = |relative: &str| {
+        workshop
+            .library
+            .path(&song, relative)
+            .to_string_lossy()
+            .into_owned()
+    };
     SongBrief {
         sources: song
             .sources
@@ -110,7 +120,10 @@ fn brief_of(workshop: &Workshop, song: Song) -> SongBrief {
                 stems: separation
                     .stems
                     .iter()
-                    .map(|stem| StemBrief { stem: stem.stem.clone(), path: path(&stem.file) })
+                    .map(|stem| StemBrief {
+                        stem: stem.stem.clone(),
+                        path: path(&stem.file),
+                    })
                     .collect(),
             })
             .collect(),
@@ -145,27 +158,46 @@ struct Tools {
 
 impl Tools {
     fn song(&self, id: &str) -> Outcome<Song> {
-        self.serving.workshop.library.get(id)?.ok_or_else(|| Failure::new("曲が見つかりません"))
+        self.serving
+            .workshop
+            .library
+            .get(id)?
+            .ok_or_else(|| Failure::new("曲が見つかりません"))
     }
 }
 
 #[tool_router]
 impl Tools {
     fn new(serving: Serving) -> Self {
-        Self { serving, tool_router: Self::tool_router() }
+        Self {
+            serving,
+            tool_router: Self::tool_router(),
+        }
     }
 
     #[tool(
         description = "曲を取り込み、続けて音源分離を予約する。リンクなら音声だけを取得し、ファイルならそのまま写す。元の音声は再エンコードせずに保管する。同じ音声が既にあれば新しい曲を作らずその曲を返す。返す job の id は list_jobs で進み具合を確かめる。"
     )]
-    async fn import_song(&self, Parameters(input): Parameters<ImportInput>) -> Result<CallToolResult, ErrorData> {
+    async fn import_song(
+        &self,
+        Parameters(input): Parameters<ImportInput>,
+    ) -> Result<CallToolResult, ErrorData> {
         let models = input.models.unwrap_or_default();
-        Ok(answer(self.serving.workshop.import(&input.location, &models)))
+        Ok(answer(
+            self.serving.workshop.import(&input.location, &models),
+        ))
     }
 
-    #[tool(description = "取り込み済みの曲を、指定したモデルで分離し直す。返す job の id は list_jobs で進み具合を確かめる。")]
-    async fn separate_song(&self, Parameters(input): Parameters<SeparateInput>) -> Result<CallToolResult, ErrorData> {
-        let outcome = self.song(&input.song_id).and_then(|song| self.serving.workshop.separate(&song, &input.model));
+    #[tool(
+        description = "取り込み済みの曲を、指定したモデルで分離し直す。返す job の id は list_jobs で進み具合を確かめる。"
+    )]
+    async fn separate_song(
+        &self,
+        Parameters(input): Parameters<SeparateInput>,
+    ) -> Result<CallToolResult, ErrorData> {
+        let outcome = self
+            .song(&input.song_id)
+            .and_then(|song| self.serving.workshop.separate(&song, &input.model));
         Ok(answer(outcome))
     }
 
@@ -181,23 +213,47 @@ impl Tools {
         description = "ライブラリの曲を新しい順に返す。各曲の元の音声と、分離した stem の FLAC の絶対パスを含む。stem は元の音声と同じ長さ・同じサンプル位置にそろっている。",
         annotations(read_only_hint = true)
     )]
-    async fn list_songs(&self, Parameters(input): Parameters<SongQuery>) -> Result<CallToolResult, ErrorData> {
-        Ok(answer(listed(&self.serving.workshop, input.query.as_deref())))
+    async fn list_songs(
+        &self,
+        Parameters(input): Parameters<SongQuery>,
+    ) -> Result<CallToolResult, ErrorData> {
+        Ok(answer(listed(
+            &self.serving.workshop,
+            input.query.as_deref(),
+        )))
     }
 
-    #[tool(description = "曲を 1 つ、元の音声と stem の絶対パス付きで返す。", annotations(read_only_hint = true))]
-    async fn get_song(&self, Parameters(input): Parameters<SongInput>) -> Result<CallToolResult, ErrorData> {
-        Ok(answer(self.song(&input.id).map(|song| brief_of(&self.serving.workshop, song))))
+    #[tool(
+        description = "曲を 1 つ、元の音声と stem の絶対パス付きで返す。",
+        annotations(read_only_hint = true)
+    )]
+    async fn get_song(
+        &self,
+        Parameters(input): Parameters<SongInput>,
+    ) -> Result<CallToolResult, ErrorData> {
+        Ok(answer(
+            self.song(&input.id)
+                .map(|song| brief_of(&self.serving.workshop, song)),
+        ))
     }
 
-    #[tool(description = "分離に使えるモデルと、それぞれが出す stem の名前を返す。", annotations(read_only_hint = true))]
+    #[tool(
+        description = "分離に使えるモデルと、それぞれが出す stem の名前を返す。",
+        annotations(read_only_hint = true)
+    )]
     async fn list_models(&self) -> Result<CallToolResult, ErrorData> {
-        Ok(answer(Ok(MODELS.iter().map(model_info).collect::<Vec<_>>())))
+        Ok(answer(Ok(MODELS
+            .iter()
+            .map(model_info)
+            .collect::<Vec<_>>())))
     }
 }
 
 #[tool_handler(router = self.tool_router)]
-#[expect(clippy::unused_async_trait_impl, reason = "rmcp's tool_handler generates the async handlers")]
+#[expect(
+    clippy::unused_async_trait_impl,
+    reason = "rmcp's tool_handler generates the async handlers"
+)]
 impl ServerHandler for Tools {
     fn get_info(&self) -> ServerConfig {
         ServerConfig::new(ServerCapabilities::builder().enable_tools().build())
@@ -229,7 +285,12 @@ mod tests {
 
     fn workshop(root: &std::path::Path) -> Workshop {
         let library = Library::open(&root.join("library")).expect("library");
-        Workshop::start(library, reqwest::Client::new(), root.join("cache"), Jobs::new(Arc::new(|| {})))
+        Workshop::start(
+            library,
+            reqwest::Client::new(),
+            root.join("cache"),
+            Jobs::new(Arc::new(|| {})),
+        )
     }
 
     #[tokio::test]
@@ -237,7 +298,10 @@ mod tests {
         let directory = tempfile::tempdir().expect("directory");
         let listener = TcpListener::bind(("127.0.0.1", 0)).await.expect("listener");
         let address = listener.local_addr().expect("address");
-        let serving = Serving { workshop: workshop(directory.path()), token: "secret".to_owned() };
+        let serving = Serving {
+            workshop: workshop(directory.path()),
+            token: "secret".to_owned(),
+        };
         tokio::spawn(desktop_shell::serve_mcp_on(listener, router(serving)));
         let client = reqwest::Client::new();
         let url = format!("http://{address}/mcp");
@@ -260,12 +324,19 @@ mod tests {
     fn songs_are_found_by_title_or_artist() {
         let directory = tempfile::tempdir().expect("directory");
         let workshop = workshop(directory.path());
-        let first = workshop.library.create("Night Drive", "Alpha").expect("first");
+        let first = workshop
+            .library
+            .create("Night Drive", "Alpha")
+            .expect("first");
         workshop.library.save(&first).expect("saved");
         let second = workshop.library.create("Morning", "Beta").expect("second");
         workshop.library.save(&second).expect("saved");
         let titles = |query| {
-            listed(&workshop, query).expect("listed").into_iter().map(|song| song.title).collect::<Vec<_>>()
+            listed(&workshop, query)
+                .expect("listed")
+                .into_iter()
+                .map(|song| song.title)
+                .collect::<Vec<_>>()
         };
         assert_eq!(titles(Some("night")), ["Night Drive"]);
         assert_eq!(titles(Some("BETA")), ["Morning"]);

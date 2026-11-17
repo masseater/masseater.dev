@@ -8,7 +8,9 @@ use crate::shared::protocol::{ImportRequest, Job, ModelInfo, SeparateRequest, So
 
 type Answer<T> = Result<T, Failure>;
 
-const AUDIO_EXTENSIONS: &[&str] = &["wav", "flac", "mp3", "m4a", "aac", "ogg", "opus", "webm", "mp4", "aiff", "aif"];
+const AUDIO_EXTENSIONS: &[&str] = &[
+    "wav", "flac", "mp3", "m4a", "aac", "ogg", "opus", "webm", "mp4", "aiff", "aif",
+];
 
 #[tauri::command]
 #[specta::specta]
@@ -50,8 +52,14 @@ pub async fn import_song(workshop: State<'_, Workshop>, request: ImportRequest) 
 
 #[tauri::command]
 #[specta::specta]
-pub async fn separate_song(workshop: State<'_, Workshop>, request: SeparateRequest) -> Answer<String> {
-    let song = workshop.library.get(&request.song_id)?.ok_or_else(|| Failure::new("song not found"))?;
+pub async fn separate_song(
+    workshop: State<'_, Workshop>,
+    request: SeparateRequest,
+) -> Answer<String> {
+    let song = workshop
+        .library
+        .get(&request.song_id)?
+        .ok_or_else(|| Failure::new("song not found"))?;
     workshop.separate(&song, &request.model)
 }
 
@@ -59,9 +67,18 @@ pub async fn separate_song(workshop: State<'_, Workshop>, request: SeparateReque
 #[specta::specta]
 pub async fn choose_audio_files(app: AppHandle) -> Answer<Vec<String>> {
     let (sender, receiver) = tokio::sync::oneshot::channel();
-    app.dialog().file().add_filter("audio", AUDIO_EXTENSIONS).pick_files(move |picked| {
-        let _ = sender.send(picked.unwrap_or_default());
-    });
-    let picked = receiver.await.map_err(|error| Failure::new(error.to_string()))?;
-    Ok(picked.into_iter().filter_map(|path| path.into_path().ok()).map(|path| path.to_string_lossy().into_owned()).collect())
+    app.dialog()
+        .file()
+        .add_filter("audio", AUDIO_EXTENSIONS)
+        .pick_files(move |picked| {
+            let _ = sender.send(picked.unwrap_or_default());
+        });
+    let picked = receiver
+        .await
+        .map_err(|error| Failure::new(error.to_string()))?;
+    Ok(picked
+        .into_iter()
+        .filter_map(|path| path.into_path().ok())
+        .map(|path| path.to_string_lossy().into_owned())
+        .collect())
 }

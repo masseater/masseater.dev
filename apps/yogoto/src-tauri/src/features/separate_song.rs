@@ -39,7 +39,12 @@ pub fn separate_song(
     let input = resample(&mix, rate, model_rate).map_err(|error| failure(&error))?;
     let stems = separator
         .separate(&input, |done, total| {
-            let ratio = if total == 0 { 1.0 } else { f64::from(u32::try_from(done).unwrap_or(u32::MAX)) / f64::from(u32::try_from(total).unwrap_or(u32::MAX)) };
+            let ratio = if total == 0 {
+                1.0
+            } else {
+                f64::from(u32::try_from(done).unwrap_or(u32::MAX))
+                    / f64::from(u32::try_from(total).unwrap_or(u32::MAX))
+            };
             progress(ratio * 0.95, "separating");
         })
         .map_err(|error| failure(&error))?;
@@ -49,7 +54,10 @@ pub fn separate_song(
     let mut files = Vec::new();
     for (name, audio) in separator.stems().into_iter().zip(stems) {
         progress(0.95, "writing stems");
-        let back = fit(resample(&audio, model_rate, rate).map_err(|error| failure(&error))?, frames);
+        let back = fit(
+            resample(&audio, model_rate, rate).map_err(|error| failure(&error))?,
+            frames,
+        );
         let file = format!("{folder}/{name}.flac");
         write_flac(&library.path(song, &file), &back, rate).map_err(|error| failure(&error))?;
         files.push(StemFile { stem: name, file });
@@ -86,12 +94,21 @@ mod tests {
         let library = Library::open(directory.path()).unwrap();
         let mut song = library.create("Tone", "").unwrap();
         let frames: usize = 48_017;
-        let wave: Vec<f32> = (0..48_017u32).map(|index| (f32::from(u16::try_from(index % 109).unwrap()) / 109.0 - 0.5) * 0.4).collect();
+        let wave: Vec<f32> = (0..48_017u32)
+            .map(|index| (f32::from(u16::try_from(index % 109).unwrap()) / 109.0 - 0.5) * 0.4)
+            .collect();
         std::fs::create_dir_all(library.path(&song, "sources")).unwrap();
-        write_flac(&library.path(&song, "sources/a.flac"), &[wave.clone(), wave], 48_000).unwrap();
+        write_flac(
+            &library.path(&song, "sources/a.flac"),
+            &[wave.clone(), wave],
+            48_000,
+        )
+        .unwrap();
         song.sources.push(SongSource {
             id: "a".into(),
-            origin: Origin::File { name: "a.flac".into() },
+            origin: Origin::File {
+                name: "a.flac".into(),
+            },
             file: "sources/a.flac".into(),
             sha256: String::new(),
             sample_rate: 48_000,
@@ -109,7 +126,11 @@ mod tests {
             let (audio, rate) = decode(&library.path(&separated, &stem.file)).unwrap();
             assert_eq!((rate, audio[0].len()), (48_000, frames), "{}", stem.stem);
         }
-        let names: Vec<&str> = separation.stems.iter().map(|stem| stem.stem.as_str()).collect();
+        let names: Vec<&str> = separation
+            .stems
+            .iter()
+            .map(|stem| stem.stem.as_str())
+            .collect();
         assert_eq!(names, MODELS[0].stems);
     }
 }
