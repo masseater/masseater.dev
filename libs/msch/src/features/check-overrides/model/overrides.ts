@@ -18,6 +18,7 @@ import { lockedPackages, workspaceManifest } from "#/entities/workspace/index.ts
 import type { Problem } from "#/shared/lib/problem.ts";
 
 import { overrideProblem } from "./override-findings.ts";
+import { unlessPassed } from "./override-records.ts";
 import {
   BASELINE_PROBE,
   advisoriesIn,
@@ -146,13 +147,11 @@ const resolutionWith = Effect.fn("resolutionWith")(function* resolutionWith(
 }, Effect.scoped);
 
 const problemsFor = Effect.fn("problemsFor")(function* problemsFor(
-  root: string,
-  overrides: Overrides,
+  workspace: Workspace,
   keys: readonly OverrideKey[],
 ) {
   const path = yield* Path.Path;
-  const files = yield* trackedResolutionFiles(root);
-  const workspace: Workspace = { root, files, overrides };
+  const { root, overrides } = workspace;
   const baseline = yield* resolutionWith(workspace, BASELINE_PROBE, withBaselineProbe(overrides));
   const judgeAgainstBaseline = judge(baseline);
   const file = path.join(root, WORKSPACE_FILE);
@@ -189,5 +188,6 @@ export const checkOverrides = Effect.fn("checkOverrides")(function* checkOverrid
   if (!Arr.isReadonlyArrayNonEmpty(keys)) {
     return [];
   }
-  return yield* problemsFor(root, overrides, keys);
+  const files = yield* trackedResolutionFiles(root);
+  return yield* unlessPassed(root, files, problemsFor({ root, files, overrides }, keys));
 });
