@@ -90,9 +90,9 @@ fn clean_join(root: &Path, spec: &str) -> PathBuf {
 
 impl LocalActions {
     pub fn find(&self, root: &Path, spec: &str) -> Result<Option<Found>, String> {
-        if !spec.starts_with("./") {
+        let Some(relative) = crate::entities::workflow::local_path(spec) else {
             return Ok(None);
-        }
+        };
         if let Ok(cache) = self.cache.lock()
             && let Some(hit) = cache.get(spec)
         {
@@ -101,7 +101,7 @@ impl LocalActions {
                 cached: true,
             }));
         }
-        let dir = clean_join(root, spec);
+        let dir = clean_join(root, relative);
         let read = ["action.yaml", "action.yml"]
             .iter()
             .find_map(|file| Some((std::fs::read_to_string(dir.join(file)).ok()?, *file)));

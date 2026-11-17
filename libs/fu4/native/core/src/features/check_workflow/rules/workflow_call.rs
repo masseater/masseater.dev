@@ -1,6 +1,9 @@
 use std::sync::Arc;
 
-use crate::entities::workflow::{Job, Workflow, WorkflowCall as Call};
+use crate::entities::workflow::{
+    Job, Workflow, WorkflowCall as Call, is_self_reference_with_ref, local_path,
+    self_reference_error,
+};
 use crate::features::check_workflow::{Project, Report, Rule};
 use crate::shared::text::{quote, sorted_quotes};
 
@@ -11,8 +14,7 @@ pub struct WorkflowCall {
 }
 
 fn is_local_format(uses: &str) -> bool {
-    uses.strip_prefix("./")
-        .is_some_and(|rest| !rest.is_empty() && rest.find('@').is_none_or(|i| i == 0))
+    local_path(uses).is_some_and(|rest| !rest.is_empty() && rest.find('@').is_none_or(|i| i == 0))
 }
 
 fn is_repo_format(uses: &str) -> bool {
@@ -147,6 +149,10 @@ impl Rule for WorkflowCall {
             return;
         }
         if is_repo_format(&uses.value) {
+            return;
+        }
+        if is_self_reference_with_ref(&uses.value) {
+            self.error(uses.pos, self_reference_error(&uses.value));
             return;
         }
         if let Some(project) = &self.project

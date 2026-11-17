@@ -55,9 +55,16 @@ test("accepts configured self-hosted labels and ignores matching messages", () =
   }).pipe(services.runPromise));
 
 test("formats a diagnostic like actionlint", () => {
-  expect(format({ path: WORKFLOW, line: 1, column: 2, rule: "events", message: "bad" })).toBe(
-    `${WORKFLOW}:1:2: bad [events]`,
-  );
+  expect(
+    format({
+      path: WORKFLOW,
+      line: 1,
+      column: 2,
+      rule: "events",
+      message: "bad",
+      severity: "error",
+    }),
+  ).toBe(`${WORKFLOW}:1:2: bad [events]`);
 });
 
 test("reads the fu4 section and excludes ignored workflows", () => {

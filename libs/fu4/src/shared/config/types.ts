@@ -19,4 +19,5 @@ export interface Diagnostic {
   readonly column: number;
   readonly rule: string;
   readonly message: string;
+  readonly severity: "error";
 }

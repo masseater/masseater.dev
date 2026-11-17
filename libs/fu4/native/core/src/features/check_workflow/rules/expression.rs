@@ -458,7 +458,7 @@ impl Expression {
         let Some(uses) = uses else {
             return string_map();
         };
-        if uses.value.starts_with("./") {
+        if crate::entities::workflow::local_path(&uses.value).is_some() {
             let Some(project) = self.project.clone() else {
                 return string_map();
             };

@@ -5,6 +5,7 @@ A GitHub Actions workflow linter written in Rust and configured from `vite.confi
 It reports what [actionlint](https://github.com/rhysd/actionlint) reports, with the same
 messages and positions, except for its pyflakes integration. Instead of running shellcheck,
 it checks `run:` scripts itself with tree-sitter-bash for the most common shellcheck findings.
+It also accepts the `$/` self repository reference in `uses:`, which actionlint 1.7.12 rejects.
 Its knowledge of
 contexts, events, permissions, runners and popular actions is generated from GitHub's docs and
 schemas.

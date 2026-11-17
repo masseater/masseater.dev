@@ -5,7 +5,9 @@ use regex::Regex;
 use serde::Deserialize;
 
 use crate::entities::action::{ActionMetadata, ActionRuns, display_path, is_outdated, popular};
-use crate::entities::workflow::{Exec, ExecAction, Step};
+use crate::entities::workflow::{
+    Exec, ExecAction, Step, is_self_reference_with_ref, local_path, self_reference_error,
+};
 use crate::features::check_workflow::{Project, Report, Rule};
 use crate::shared::text::{quote, sorted_quotes};
 use crate::shared::yaml::Pos;
@@ -447,7 +449,9 @@ impl Rule for Action {
             return;
         }
         let spec = uses.value.as_str();
-        if spec.starts_with("./") {
+        if is_self_reference_with_ref(spec) {
+            self.error(uses.pos, self_reference_error(spec));
+        } else if local_path(spec).is_some() {
             self.check_local(spec, exec, uses.pos);
         } else if spec.starts_with("docker://") {
             self.check_docker(spec, uses.pos);
@@ -460,6 +464,23 @@ impl Rule for Action {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn accepts_self_repository_actions_without_a_ref() {
+        let context = crate::features::check_workflow::Context {
+            path: "test.yaml".to_owned(),
+            project: None,
+        };
+        let source = "on: push\njobs:\n  a:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: $/.github/actions/setup\n      - uses: $/.github/actions/setup@v1\n";
+        let messages: Vec<(usize, String)> =
+            crate::features::check_workflow::check(&context, source)
+                .into_iter()
+                .map(|d| (d.pos.line, d.message))
+                .collect();
+        assert_eq!(messages.len(), 1);
+        assert_eq!(messages[0].0, 7);
+        assert!(messages[0].1.starts_with("self repository reference"));
+    }
 
     #[test]
     fn lists_runtimes_like_actionlint() {

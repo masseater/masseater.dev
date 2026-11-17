@@ -3426,6 +3426,9 @@ importers:
       '@effect/platform-node':
         specifier: 'catalog:'
         version: 4.1.4(effect@4.1.4)(redis@6.2.1(@opentelemetry/api@1.10.0))
+      '@r_masseater/lint-host':
+        specifier: workspace:*
+        version: link:../lint-host
     devDependencies:
       '@r_masseater/vitest-otlp':
         specifier: workspace:*

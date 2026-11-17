@@ -1,3 +1,4 @@
+import { addonTasks } from "@r_masseater/lint-host/vite";
 import { otlp } from "@r_masseater/vitest-otlp";
 import { defineConfig } from "vite-plus";
 
@@ -34,13 +35,8 @@ export default defineConfig({
           "cargo fmt -p fu4-core -p fu4-node --check && cargo clippy -p fu4-core -p fu4-node --all-targets --locked -- -D warnings && cargo test -p fu4-core --release --locked",
         cache: { input: [...CARGO_INPUTS], output: [] },
       },
-      native: {
-        command: "node bin/build-native.ts",
-        cache: { input: [...CARGO_INPUTS, "package.json"], output: ["native/*.node"] },
-      },
       "generate-data": { command: "node bin/generate-data.ts", cache: false },
-      build: { command: "vp pack", dependsOn: ["native"] },
-      test: { command: "vp test run", dependsOn: ["native"] },
+      ...addonTasks({ command: "node bin/build-native.ts", inputs: CARGO_INPUTS }),
     },
   },
   pack: {

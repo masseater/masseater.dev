@@ -4,7 +4,9 @@ use std::collections::{BTreeMap, HashMap};
 use std::path::Path;
 use std::sync::{Arc, Mutex};
 
-use crate::entities::workflow::{CallInputType, WorkflowCallEvent, contains_expression};
+use crate::entities::workflow::{
+    CallInputType, WorkflowCallEvent, contains_expression, local_path,
+};
 use crate::shared::expression::types::ExprType;
 use crate::shared::text::quote;
 
@@ -89,15 +91,15 @@ pub struct LocalWorkflows {
 
 impl LocalWorkflows {
     pub fn find(&self, root: &Path, spec: &str) -> Result<Option<Arc<ReusableMetadata>>, String> {
-        if !spec.starts_with("./") || contains_expression(spec) {
+        let Some(relative) = local_path(spec).filter(|_| !contains_expression(spec)) else {
             return Ok(None);
-        }
+        };
         if let Ok(cache) = self.cache.lock()
             && let Some(hit) = cache.get(spec)
         {
             return Ok(hit.clone());
         }
-        let file = root.join(spec.trim_start_matches("./"));
+        let file = root.join(relative);
         let source = match std::fs::read_to_string(&file) {
             Ok(source) => source,
             Err(error) => {
