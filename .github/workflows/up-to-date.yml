@@ -22,10 +22,10 @@ jobs:
       contents: read
       pull-requests: read
     steps:
-      - uses: masseater/typescript-template/.github/actions/auto-merge-gate@25f5f5f1e1dde24ba41c9107e88b130f2939574b
+      - uses: masseater/typescript-template/.github/actions/auto-merge-gate@e80c641e7847e5482f3b043368726580dfd1cc40
       - id: lockfile
         if: github.event_name == 'pull_request'
-        uses: masseater/typescript-template/.github/actions/pr-changed@d79be66b83e21575c7f40a75453fea5a51aaff8c
+        uses: masseater/typescript-template/.github/actions/pr-changed@e80c641e7847e5482f3b043368726580dfd1cc40
         with:
           file: pnpm-lock.yaml
           github-token: ${{ github.token }}
