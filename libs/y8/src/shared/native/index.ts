@@ -1,9 +1,12 @@
-import { loadAddon } from "@r_masseater/lint-host";
+import { loadAddon } from "@masseater.dev/lint-host";
 import { Array as Arr, Predicate, pipe } from "effect";
 import type { Effect } from "effect";
 
 import { failedWith } from "#/shared/lib/errors.ts";
 import type { Y8Error } from "#/shared/lib/errors.ts";
+
+export { FIELD, NODE_WORDS, TAGS, sourceView } from "./source.ts";
+export type { SourceView } from "./source.ts";
 
 export type NodeType =
   | "document"
@@ -37,23 +40,6 @@ export type NodeType =
   | "taskListMarker"
   | "other";
 
-export interface NodeKind {
-  readonly type: NodeType;
-  readonly [field: string]: unknown;
-}
-
-export interface NativeNode {
-  readonly kind: NodeKind;
-  readonly start: number;
-  readonly end: number;
-  readonly parent: number | null;
-  readonly children: readonly number[];
-}
-
-export interface NativeTree {
-  readonly nodes: readonly NativeNode[];
-}
-
 export type Level = "error" | "warning" | "info";
 
 export interface NativeDiagnostic {
@@ -83,16 +69,15 @@ export interface AgnixOptions {
 export interface NativeResult {
   readonly path: string;
   readonly diagnostics: readonly NativeDiagnostic[];
-  readonly agentDiagnostics?: readonly AgentDiagnostic[];
-  readonly tree?: NativeTree;
-  readonly text?: string;
+  readonly agentDiagnostics?: readonly AgentDiagnostic[] | null;
+  readonly source?: Uint8Array | null;
 }
 
 export interface NativeOptions {
   readonly config?: Readonly<Record<string, unknown>>;
   readonly inlineConfig?: boolean;
   readonly keepTree?: boolean;
-  readonly keepText?: boolean;
+  readonly keepSource?: boolean;
   readonly traceparent?: string;
   readonly agnix?: AgnixOptions;
 }

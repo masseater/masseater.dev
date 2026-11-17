@@ -13,4 +13,5 @@ plugins:
     opt:
       - target=ts
       - import_extension=ts
+      - ts_nocheck=true
 clean: true

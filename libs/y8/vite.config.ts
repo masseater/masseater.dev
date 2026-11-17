@@ -1,4 +1,4 @@
-import { addonTasks } from "@r_masseater/lint-host/vite";
+import { addonTasks } from "@masseater.dev/lint-host/vite";
 import { cargoInputs } from "@r_masseater/msch/cargo-inputs";
 import { otlp } from "@r_masseater/vitest-otlp";
 import { defineConfig } from "vite-plus";
@@ -33,6 +33,7 @@ export default defineConfig({
     },
     platform: "node",
     sourcemap: true,
+    deps: { alwaysBundle: ["@masseater.dev/lint-host"] },
     dts: { generator: "tsgo" },
     publint: { strict: true },
   },
