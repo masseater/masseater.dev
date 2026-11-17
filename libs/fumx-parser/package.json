@@ -1,0 +1,75 @@
+{
+  "name": "@r_masseater/fumx-parser",
+  "version": "0.0.0",
+  "description": "Reads .fumx, a text format for music, into a typed song value with notes, hits, controllers and tempo placed in time, so tools can lint musical rules.",
+  "keywords": [
+    "fumx",
+    "langium",
+    "midi",
+    "music",
+    "parser",
+    "tanstack-intent"
+  ],
+  "homepage": "https://github.com/masseater/masseater.dev/tree/main/libs/fumx-parser#readme",
+  "bugs": {
+    "url": "https://github.com/masseater/masseater.dev/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/masseater/masseater.dev.git",
+    "directory": "libs/fumx-parser"
+  },
+  "files": [
+    "LICENSE",
+    "dist",
+    "skills/read-fumx"
+  ],
+  "type": "module",
+  "imports": {
+    "#/*": "./src/*",
+    "#generated/*": "./generated/*"
+  },
+  "exports": {
+    ".": "./src/app/index.ts",
+    "./language": "./src/app/language.ts",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "./language": {
+        "types": "./dist/language.d.ts",
+        "default": "./dist/language.js"
+      },
+      "./package.json": "./package.json"
+    },
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "prepublishOnly": "node -e \"if (!process.env.npm_config_user_agent?.startsWith('pnpm/')) { console.error('npm publish leaves catalog: in dependencies. Publish the tarball from vp pm pack instead.'); process.exit(1) }\" && vp run build"
+  },
+  "dependencies": {
+    "langium": "catalog:",
+    "tonal": "catalog:",
+    "vscode-languageserver": "catalog:"
+  },
+  "devDependencies": {
+    "@effect/vitest": "catalog:",
+    "@types/node": "catalog:",
+    "effect": "catalog:stack",
+    "langium-cli": "catalog:",
+    "typescript": "catalog:stack",
+    "vite-plus": "catalog:stack"
+  },
+  "peerDependencies": {
+    "effect": "^4.1.4"
+  },
+  "engines": {
+    "node": ">=26"
+  }
+}
