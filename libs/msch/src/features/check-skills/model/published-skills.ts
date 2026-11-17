@@ -4,7 +4,7 @@ import { findSkillFiles } from "@tanstack/intent";
 import { Array as Arr, Effect, Option, Stream, String as Str, pipe } from "effect";
 import { ChildProcess } from "effect/process";
 
-import { workspaceProjects } from "#/entities/workspace/index.ts";
+import { publishedProjects } from "#/entities/workspace/index.ts";
 import type { WorkspaceProject } from "#/entities/workspace/index.ts";
 import type { Problem, RuleName } from "#/shared/lib/problem.ts";
 import { RepositoryFiles } from "#/shared/lib/repository-files.ts";
@@ -120,15 +120,10 @@ const problemsIn = Effect.fn("problemsIn")(function* problemsIn(
 /** @internal */
 export const checkPublishedSkills = Effect.fn("checkPublishedSkills")(
   function* checkPublishedSkills(root: string) {
-    const projects = yield* workspaceProjects(root);
-    const problems = yield* Effect.forEach(
-      pipe(
-        projects,
-        Arr.filter(({ published }) => published),
-      ),
-      (project) => problemsIn(root, project),
-      { concurrency: 1 },
-    );
+    const projects = yield* publishedProjects(root);
+    const problems = yield* Effect.forEach(projects, (project) => problemsIn(root, project), {
+      concurrency: 1,
+    });
     return Arr.flatten(problems);
   },
 );
