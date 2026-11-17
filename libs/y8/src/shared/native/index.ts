@@ -1,5 +1,5 @@
 import { loadAddon } from "@r_masseater/lint-host";
-import { Predicate } from "effect";
+import { Array as Arr, Predicate, pipe } from "effect";
 import type { Effect } from "effect";
 
 import { failedWith } from "#/shared/lib/errors.ts";
@@ -130,17 +130,15 @@ export interface Native {
   readonly tokenize: (text: string) => string;
 }
 
+const NATIVE_FUNCTIONS = ["lint", "lintPaths", "flushTelemetry", "readTexts", "tokenize"] as const;
+
+const hasFunction =
+  (value: unknown) =>
+  (name: string): boolean =>
+    Predicate.hasProperty(value, name) && Predicate.isFunction(value[name]);
+
 const isNative = (value: unknown): value is Native =>
-  Predicate.hasProperty(value, "lint") &&
-  Predicate.isFunction(value.lint) &&
-  Predicate.hasProperty(value, "lintPaths") &&
-  Predicate.isFunction(value.lintPaths) &&
-  Predicate.hasProperty(value, "flushTelemetry") &&
-  Predicate.isFunction(value.flushTelemetry) &&
-  Predicate.hasProperty(value, "readTexts") &&
-  Predicate.isFunction(value.readTexts) &&
-  Predicate.hasProperty(value, "tokenize") &&
-  Predicate.isFunction(value.tokenize);
+  pipe(NATIVE_FUNCTIONS, Arr.every(hasFunction(value)));
 
 export const native: Effect.Effect<Native, Y8Error> = loadAddon({
   packageName: "@r_masseater/y8",
