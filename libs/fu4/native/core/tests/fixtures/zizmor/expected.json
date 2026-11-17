@@ -1,0 +1,7958 @@
+[
+ {
+  "input": "adhoc-packages.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "adhoc-packages",
+    "line": 18,
+    "column": 14,
+    "annotation": "installs a package outside of a lockfile",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "adhoc-packages",
+    "line": 22,
+    "column": 14,
+    "annotation": "installs a package outside of a lockfile",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "adhoc-packages",
+    "line": 26,
+    "column": 14,
+    "annotation": "installs a package outside of a lockfile",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "adhoc-packages",
+    "line": 30,
+    "column": 14,
+    "annotation": "installs a package outside of a lockfile",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "adhoc-packages",
+    "line": 34,
+    "column": 14,
+    "annotation": "installs a package outside of a lockfile",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "adhoc-packages",
+    "line": 38,
+    "column": 14,
+    "annotation": "installs a package outside of a lockfile",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "adhoc-packages",
+    "line": 44,
+    "column": 11,
+    "annotation": "installs a package outside of a lockfile",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "adhoc-packages",
+    "line": 45,
+    "column": 11,
+    "annotation": "installs a package outside of a lockfile",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "adhoc-packages",
+    "line": 50,
+    "column": 14,
+    "annotation": "installs a package outside of a lockfile",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "adhoc-packages",
+    "line": 54,
+    "column": 14,
+    "annotation": "installs a package outside of a lockfile",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "adhoc-packages",
+    "line": 56,
+    "column": 14,
+    "annotation": "installs a package outside of a lockfile",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "adhoc-packages",
+    "line": 60,
+    "column": 14,
+    "annotation": "installs a package outside of a lockfile",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "adhoc-packages",
+    "line": 64,
+    "column": 14,
+    "annotation": "installs a package outside of a lockfile",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "adhoc-packages",
+    "line": 68,
+    "column": 14,
+    "annotation": "installs a package outside of a lockfile",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "adhoc-packages",
+    "line": 110,
+    "column": 14,
+    "annotation": "installs a package outside of a lockfile",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "adhoc-packages",
+    "line": 114,
+    "column": 14,
+    "annotation": "installs a package outside of a lockfile",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "adhoc-packages",
+    "line": 118,
+    "column": 14,
+    "annotation": "installs a package outside of a lockfile",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "adhoc-packages",
+    "line": 122,
+    "column": 14,
+    "annotation": "installs a package outside of a lockfile",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "adhoc-packages",
+    "line": 124,
+    "column": 14,
+    "annotation": "installs a package outside of a lockfile",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "adhoc-packages",
+    "line": 130,
+    "column": 11,
+    "annotation": "installs a package outside of a lockfile",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "adhoc-packages",
+    "line": 135,
+    "column": 14,
+    "annotation": "installs a package outside of a lockfile",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "adhoc-packages",
+    "line": 139,
+    "column": 14,
+    "annotation": "installs a package outside of a lockfile",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   }
+  ]
+ },
+ {
+  "input": "anchors/basic.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "template-injection",
+    "line": 13,
+    "column": 31,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "template-injection",
+    "line": 13,
+    "column": 31,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "template-injection",
+    "line": 18,
+    "column": 49,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "template-injection",
+    "line": 18,
+    "column": 49,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 3,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "anchors/cross-key-scalar.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "template-injection",
+    "line": 10,
+    "column": 42,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "template-injection",
+    "line": 10,
+    "column": 42,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "anonymous-definition",
+    "line": 5,
+    "column": 3,
+    "annotation": "this job",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 2,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "anchors/dummy-job-anchors.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "artipacked",
+    "line": 9,
+    "column": 9,
+    "annotation": "does not set persist-credentials: false",
+    "severity": "Medium",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "artipacked",
+    "line": 14,
+    "column": 9,
+    "annotation": "does not set persist-credentials: false",
+    "severity": "Medium",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "anonymous-definition",
+    "line": 5,
+    "column": 3,
+    "annotation": "this job",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "anonymous-definition",
+    "line": 11,
+    "column": 3,
+    "annotation": "this job",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 2,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "anchors/flow-mapping-step.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "artipacked",
+    "line": 8,
+    "column": 9,
+    "annotation": "does not set persist-credentials: false",
+    "severity": "Medium",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "artipacked",
+    "line": 9,
+    "column": 9,
+    "annotation": "does not set persist-credentials: false",
+    "severity": "Medium",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unpinned-uses",
+    "line": 8,
+    "column": 28,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unpinned-uses",
+    "line": 8,
+    "column": 28,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "anonymous-definition",
+    "line": 5,
+    "column": 3,
+    "annotation": "this job",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 2,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "anchors/inputs-block-alias.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "anonymous-definition",
+    "line": 13,
+    "column": 3,
+    "annotation": "this job",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 2,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "anchors/multi-scalar-anchors.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "template-injection",
+    "line": 11,
+    "column": 37,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "template-injection",
+    "line": 10,
+    "column": 39,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "template-injection",
+    "line": 11,
+    "column": 37,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "template-injection",
+    "line": 10,
+    "column": 39,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "anonymous-definition",
+    "line": 5,
+    "column": 3,
+    "annotation": "this job",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 2,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "anchors/scalar-cross-context.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "template-injection",
+    "line": 5,
+    "column": 23,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "anonymous-definition",
+    "line": 7,
+    "column": 3,
+    "annotation": "this job",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 2,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "anchors/steps-list-alias.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "template-injection",
+    "line": 8,
+    "column": 24,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "template-injection",
+    "line": 8,
+    "column": 24,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "anonymous-definition",
+    "line": 5,
+    "column": 3,
+    "annotation": "this job",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "anonymous-definition",
+    "line": 9,
+    "column": 3,
+    "annotation": "this job",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 2,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "anchors/trigger-block-alias.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "dangerous-triggers",
+    "line": 7,
+    "column": 3,
+    "annotation": "pull_request_target is almost always used insecurely",
+    "severity": "High",
+    "confidence": "Medium",
+    "persona": "Regular"
+   },
+   {
+    "ident": "anonymous-definition",
+    "line": 10,
+    "column": 3,
+    "annotation": "this job",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 2,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "anchors/trigger-paths-anchor.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "dangerous-triggers",
+    "line": 3,
+    "column": 3,
+    "annotation": "pull_request_target is almost always used insecurely",
+    "severity": "High",
+    "confidence": "Medium",
+    "persona": "Regular"
+   },
+   {
+    "ident": "anonymous-definition",
+    "line": 11,
+    "column": 3,
+    "annotation": "this job",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 2,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "anchors/with-mapping-alias.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "artipacked",
+    "line": 8,
+    "column": 9,
+    "annotation": "does not set persist-credentials: false",
+    "severity": "Medium",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "artipacked",
+    "line": 11,
+    "column": 9,
+    "annotation": "does not set persist-credentials: false",
+    "severity": "Medium",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "anonymous-definition",
+    "line": 5,
+    "column": 3,
+    "annotation": "this job",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 2,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "anonymous-definition.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "anonymous-definition",
+    "line": 5,
+    "column": 1,
+    "annotation": "this workflow",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "anonymous-definition",
+    "line": 21,
+    "column": 3,
+    "annotation": "this job",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "archived-uses.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "archived-uses",
+    "line": 17,
+    "column": 15,
+    "annotation": "repository is archived",
+    "severity": "Medium",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "archived-uses",
+    "line": 20,
+    "column": 15,
+    "annotation": "repository is archived",
+    "severity": "Medium",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "archived-uses",
+    "line": 24,
+    "column": 11,
+    "annotation": "repository is archived",
+    "severity": "Medium",
+    "confidence": "High",
+    "persona": "Regular"
+   }
+  ]
+ },
+ {
+  "input": "archived-uses/action/action.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "archived-uses",
+    "line": 9,
+    "column": 13,
+    "annotation": "repository is archived",
+    "severity": "Medium",
+    "confidence": "High",
+    "persona": "Regular"
+   }
+  ]
+ },
+ {
+  "input": "archived-uses/pre-commit/.pre-commit-config.yaml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "archived-uses",
+    "line": 2,
+    "column": 11,
+    "annotation": "repository is archived",
+    "severity": "Medium",
+    "confidence": "High",
+    "persona": "Regular"
+   }
+  ]
+ },
+ {
+  "input": "artipacked.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "artipacked",
+    "line": 22,
+    "column": 9,
+    "annotation": "does not set persist-credentials: false",
+    "severity": "Medium",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "artipacked",
+    "line": 28,
+    "column": 9,
+    "annotation": "does not set persist-credentials: false",
+    "severity": "Medium",
+    "confidence": "Low",
+    "persona": "Auditor"
+   }
+  ]
+ },
+ {
+  "input": "artipacked/demo-action/action.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "artipacked",
+    "line": 9,
+    "column": 7,
+    "annotation": "does not set persist-credentials: false",
+    "severity": "Medium",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "artipacked",
+    "line": 12,
+    "column": 7,
+    "annotation": "does not set persist-credentials: false",
+    "severity": "Medium",
+    "confidence": "Low",
+    "persona": "Auditor"
+   }
+  ]
+ },
+ {
+  "input": "artipacked/issue-1709-repro.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "artipacked",
+    "line": 18,
+    "column": 9,
+    "annotation": "does not set persist-credentials: false",
+    "severity": "Medium",
+    "confidence": "Low",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "artipacked/issue-447-repro.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "artipacked",
+    "line": 24,
+    "column": 9,
+    "annotation": "does not set persist-credentials: false",
+    "severity": "Medium",
+    "confidence": "Low",
+    "persona": "Auditor"
+   }
+  ]
+ },
+ {
+  "input": "bot-conditions.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "dangerous-triggers",
+    "line": 1,
+    "column": 1,
+    "annotation": "pull_request_target is almost always used insecurely",
+    "severity": "High",
+    "confidence": "Medium",
+    "persona": "Regular"
+   },
+   {
+    "ident": "bot-conditions",
+    "line": 11,
+    "column": 9,
+    "annotation": "actor context may be spoofable",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "bot-conditions",
+    "line": 15,
+    "column": 17,
+    "annotation": "actor context may be spoofable",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "bot-conditions",
+    "line": 19,
+    "column": 17,
+    "annotation": "actor context may be spoofable",
+    "severity": "High",
+    "confidence": "Medium",
+    "persona": "Regular"
+   },
+   {
+    "ident": "bot-conditions",
+    "line": 23,
+    "column": 13,
+    "annotation": "actor context may be spoofable",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "bot-conditions",
+    "line": 32,
+    "column": 13,
+    "annotation": "actor context may be spoofable",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "bot-conditions",
+    "line": 37,
+    "column": 13,
+    "annotation": "actor context may be spoofable",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "bot-conditions",
+    "line": 42,
+    "column": 13,
+    "annotation": "actor context may be spoofable",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "bot-conditions",
+    "line": 47,
+    "column": 13,
+    "annotation": "actor context may be spoofable",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "bot-conditions",
+    "line": 52,
+    "column": 13,
+    "annotation": "actor context may be spoofable",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "bot-conditions",
+    "line": 56,
+    "column": 13,
+    "annotation": "actor context may be spoofable",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "bot-conditions",
+    "line": 60,
+    "column": 17,
+    "annotation": "actor context may be spoofable",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "bot-conditions",
+    "line": 65,
+    "column": 9,
+    "annotation": "actor context may be spoofable",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 1,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "cache-poisoning.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "cache-poisoning",
+    "line": 13,
+    "column": 9,
+    "annotation": "action version may enable caching",
+    "severity": "High",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 1,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "secrets-outside-env",
+    "line": 20,
+    "column": 33,
+    "annotation": "secret is accessed outside of a dedicated environment",
+    "severity": "Medium",
+    "confidence": "High",
+    "persona": "Auditor"
+   }
+  ]
+ },
+ {
+  "input": "cache-poisoning/caching-disabled-by-default.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "concurrency-limits",
+    "line": 1,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "cache-poisoning/caching-enabled-by-default.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "cache-poisoning",
+    "line": 21,
+    "column": 9,
+    "annotation": "omitting `lookup-only` enables caching",
+    "severity": "High",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 1,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "cache-poisoning/caching-not-configurable.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "template-injection",
+    "line": 26,
+    "column": 40,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "cache-poisoning",
+    "line": 23,
+    "column": 9,
+    "annotation": "always restores from cache",
+    "severity": "High",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 1,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "cache-poisoning/caching-opt-in-boolean-toggle.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "template-injection",
+    "line": 27,
+    "column": 63,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "cache-poisoning",
+    "line": 19,
+    "column": 9,
+    "annotation": "this step",
+    "severity": "High",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 1,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "cache-poisoning/caching-opt-in-boolish-toggle.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "cache-poisoning",
+    "line": 17,
+    "column": 9,
+    "annotation": "this step",
+    "severity": "High",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 4,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "cache-poisoning/caching-opt-in-expression.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "cache-poisoning",
+    "line": 19,
+    "column": 9,
+    "annotation": "action version may enable caching",
+    "severity": "High",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 1,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "cache-poisoning/caching-opt-in-multi-value-toggle.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "cache-poisoning",
+    "line": 18,
+    "column": 9,
+    "annotation": "this step",
+    "severity": "High",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 1,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "cache-poisoning/caching-opt-out.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "concurrency-limits",
+    "line": 1,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "cache-poisoning/dangerous-trigger-write-cache-job.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "cache-poisoning",
+    "line": 16,
+    "column": 5,
+    "annotation": "cache writes enabled here",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   }
+  ]
+ },
+ {
+  "input": "cache-poisoning/dangerous-trigger-write-cache.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "cache-poisoning",
+    "line": 7,
+    "column": 1,
+    "annotation": "cache writes enabled here",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   }
+  ]
+ },
+ {
+  "input": "cache-poisoning/issue-1081-repro.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "cache-poisoning",
+    "line": 15,
+    "column": 9,
+    "annotation": "omitting `enable-cache` enables caching for this action version",
+    "severity": "High",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "cache-poisoning",
+    "line": 18,
+    "column": 9,
+    "annotation": "this step",
+    "severity": "High",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "cache-poisoning",
+    "line": 23,
+    "column": 9,
+    "annotation": "this step",
+    "severity": "High",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 5,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "cache-poisoning/issue-1152-repro.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "cache-poisoning",
+    "line": 16,
+    "column": 9,
+    "annotation": "omitting `package-manager-cache` enables caching",
+    "severity": "High",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "cache-poisoning",
+    "line": 20,
+    "column": 9,
+    "annotation": "this step",
+    "severity": "High",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "cache-poisoning",
+    "line": 42,
+    "column": 9,
+    "annotation": "omitting `package-manager-cache` enables caching",
+    "severity": "High",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 5,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "cache-poisoning/issue-1485-repro.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "anonymous-definition",
+    "line": 11,
+    "column": 3,
+    "annotation": "this job",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 3,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "cache-poisoning/issue-1940-repro.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "anonymous-definition",
+    "line": 15,
+    "column": 3,
+    "annotation": "this job",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 5,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "cache-poisoning/issue-2320-repro.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "cache-poisoning",
+    "line": 19,
+    "column": 9,
+    "annotation": "this step",
+    "severity": "High",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "cache-poisoning",
+    "line": 24,
+    "column": 9,
+    "annotation": "this step",
+    "severity": "High",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "cache-poisoning",
+    "line": 29,
+    "column": 9,
+    "annotation": "action version may enable caching",
+    "severity": "High",
+    "confidence": "Low",
+    "persona": "Regular"
+   }
+  ]
+ },
+ {
+  "input": "cache-poisoning/issue-343-repro.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "undocumented-permissions",
+    "line": 17,
+    "column": 7,
+    "annotation": "needs an explanatory comment",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "cache-poisoning",
+    "line": 28,
+    "column": 9,
+    "annotation": "omitting `cache` enables caching",
+    "severity": "High",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "cache-poisoning",
+    "line": 34,
+    "column": 9,
+    "annotation": "this step",
+    "severity": "High",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "cache-poisoning",
+    "line": 41,
+    "column": 9,
+    "annotation": "this step",
+    "severity": "High",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 5,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "cache-poisoning/issue-378-repro.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "concurrency-limits",
+    "line": 5,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "cache-poisoning/issue-642-repro.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "cache-poisoning",
+    "line": 15,
+    "column": 9,
+    "annotation": "this step",
+    "severity": "High",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 5,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "cache-poisoning/job-effective-cache-mode-none.yml",
+  "config": null,
+  "findings": []
+ },
+ {
+  "input": "cache-poisoning/no-cache-aware-steps.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "template-injection",
+    "line": 20,
+    "column": 40,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 1,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "cache-poisoning/publisher-step.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "cache-poisoning",
+    "line": 23,
+    "column": 9,
+    "annotation": "omitting `lookup-only` enables caching",
+    "severity": "High",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 1,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "cache-poisoning/ramsey-composer-install.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "cache-poisoning",
+    "line": 13,
+    "column": 9,
+    "annotation": "omitting `ignore-cache` enables caching",
+    "severity": "High",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "cache-poisoning",
+    "line": 15,
+    "column": 9,
+    "annotation": "this step",
+    "severity": "High",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 1,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "cache-poisoning/trigger-heuristics/tag-and-branch.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "cache-poisoning",
+    "line": 17,
+    "column": 9,
+    "annotation": "this step",
+    "severity": "High",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "cache-poisoning",
+    "line": 23,
+    "column": 9,
+    "annotation": "this step",
+    "severity": "High",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "anonymous-definition",
+    "line": 14,
+    "column": 3,
+    "annotation": "this job",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 3,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "cache-poisoning/trigger-heuristics/tag-and-release.yml",
+  "config": null,
+  "findings": []
+ },
+ {
+  "input": "cache-poisoning/trigger-heuristics/tag-only.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "cache-poisoning",
+    "line": 16,
+    "column": 9,
+    "annotation": "this step",
+    "severity": "High",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "cache-poisoning",
+    "line": 22,
+    "column": 9,
+    "annotation": "this step",
+    "severity": "High",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "anonymous-definition",
+    "line": 13,
+    "column": 3,
+    "annotation": "this job",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 3,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "cache-poisoning/workflow-effective-cache-mode-none.yml",
+  "config": null,
+  "findings": []
+ },
+ {
+  "input": "cache-poisoning/workflow-release-branch-trigger.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "template-injection",
+    "line": 25,
+    "column": 40,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "cache-poisoning",
+    "line": 22,
+    "column": 9,
+    "annotation": "omitting `lookup-only` enables caching",
+    "severity": "High",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 1,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "cache-poisoning/workflow-release-trigger-object.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "template-injection",
+    "line": 26,
+    "column": 40,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "cache-poisoning",
+    "line": 23,
+    "column": 9,
+    "annotation": "omitting `lookup-only` enables caching",
+    "severity": "High",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 1,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "cache-poisoning/workflow-tag-trigger.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "template-injection",
+    "line": 27,
+    "column": 40,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "cache-poisoning",
+    "line": 23,
+    "column": 9,
+    "annotation": "omitting `lookup-only` enables caching",
+    "severity": "High",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 1,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "concurrency-limits/cancel-expr.yml",
+  "config": null,
+  "findings": []
+ },
+ {
+  "input": "concurrency-limits/cancel-false.yml",
+  "config": null,
+  "findings": []
+ },
+ {
+  "input": "concurrency-limits/cancel-true.yml",
+  "config": null,
+  "findings": []
+ },
+ {
+  "input": "concurrency-limits/issue-1511-repro.yml",
+  "config": null,
+  "findings": []
+ },
+ {
+  "input": "concurrency-limits/job-cancel-true.yml",
+  "config": null,
+  "findings": []
+ },
+ {
+  "input": "concurrency-limits/jobs-missing-no-cancel.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "concurrency-limits",
+    "line": 2,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 2,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "concurrency-limits/missing.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "concurrency-limits",
+    "line": 2,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "concurrency-limits/no-cancel.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "concurrency-limits",
+    "line": 5,
+    "column": 1,
+    "annotation": "workflow concurrency is missing cancel-in-progress",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "dangerous-triggers/actions-labeler.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "anonymous-definition",
+    "line": 4,
+    "column": 1,
+    "annotation": "this workflow",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "anonymous-definition",
+    "line": 10,
+    "column": 3,
+    "annotation": "this job",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 4,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "dangerous-triggers/dangerous-bare.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "dangerous-triggers",
+    "line": 1,
+    "column": 1,
+    "annotation": "pull_request_target is almost always used insecurely",
+    "severity": "High",
+    "confidence": "Medium",
+    "persona": "Regular"
+   },
+   {
+    "ident": "anonymous-definition",
+    "line": 1,
+    "column": 1,
+    "annotation": "this workflow",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "anonymous-definition",
+    "line": 6,
+    "column": 3,
+    "annotation": "this job",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 1,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "dangerous-triggers/dangerous-block-list.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "dangerous-triggers",
+    "line": 3,
+    "column": 5,
+    "annotation": "pull_request_target is almost always used insecurely",
+    "severity": "High",
+    "confidence": "Medium",
+    "persona": "Regular"
+   },
+   {
+    "ident": "anonymous-definition",
+    "line": 1,
+    "column": 1,
+    "annotation": "this workflow",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "anonymous-definition",
+    "line": 9,
+    "column": 3,
+    "annotation": "this job",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 1,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "dangerous-triggers/dangerous-flow-list.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "dangerous-triggers",
+    "line": 1,
+    "column": 12,
+    "annotation": "pull_request_target is almost always used insecurely",
+    "severity": "High",
+    "confidence": "Medium",
+    "persona": "Regular"
+   },
+   {
+    "ident": "anonymous-definition",
+    "line": 1,
+    "column": 1,
+    "annotation": "this workflow",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "anonymous-definition",
+    "line": 6,
+    "column": 3,
+    "annotation": "this job",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 1,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "dangerous-triggers/issue-2448-repro.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "anonymous-definition",
+    "line": 1,
+    "column": 1,
+    "annotation": "this workflow",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "anonymous-definition",
+    "line": 7,
+    "column": 3,
+    "annotation": "this job",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 1,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "dangerous-triggers/issue-comment.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "dangerous-triggers",
+    "line": 2,
+    "column": 3,
+    "annotation": "issue_comment is almost always used insecurely",
+    "severity": "High",
+    "confidence": "Medium",
+    "persona": "Regular"
+   },
+   {
+    "ident": "anonymous-definition",
+    "line": 1,
+    "column": 1,
+    "annotation": "this workflow",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "anonymous-definition",
+    "line": 7,
+    "column": 3,
+    "annotation": "this job",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 1,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "dependabot-cooldown/default-days-too-short/dependabot.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "dependabot-cooldown",
+    "line": 7,
+    "column": 7,
+    "annotation": "insufficient default-days configured (less than 7)",
+    "severity": "Medium",
+    "confidence": "High",
+    "persona": "Regular"
+   }
+  ]
+ },
+ {
+  "input": "dependabot-cooldown/default-days-too-short/dependabot.yml",
+  "config": "dependabot-cooldown/configs/cooldown-one-day.yml",
+  "findings": []
+ },
+ {
+  "input": "dependabot-cooldown/missing/dependabot.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "dependabot-cooldown",
+    "line": 4,
+    "column": 5,
+    "annotation": "insufficient implicit default-days (less than 7)",
+    "severity": "Medium",
+    "confidence": "High",
+    "persona": "Regular"
+   }
+  ]
+ },
+ {
+  "input": "dependabot-cooldown/missing/dependabot.yml",
+  "config": "dependabot-cooldown/configs/cooldown-one-day.yml",
+  "findings": []
+ },
+ {
+  "input": "dependabot-cooldown/multi-ecosystem-group-with-cooldown/dependabot.yml",
+  "config": null,
+  "findings": []
+ },
+ {
+  "input": "dependabot-cooldown/multi-ecosystem-group-with-cooldown/dependabot.yml",
+  "config": "dependabot-cooldown/configs/cooldown-one-day.yml",
+  "findings": []
+ },
+ {
+  "input": "dependabot-cooldown/no-default-days/dependabot.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "dependabot-cooldown",
+    "line": 6,
+    "column": 5,
+    "annotation": "insufficient implicit default-days (less than 7)",
+    "severity": "Medium",
+    "confidence": "High",
+    "persona": "Regular"
+   }
+  ]
+ },
+ {
+  "input": "dependabot-cooldown/no-default-days/dependabot.yml",
+  "config": "dependabot-cooldown/configs/cooldown-one-day.yml",
+  "findings": []
+ },
+ {
+  "input": "dependabot-cooldown/opentofu-no-cooldown/dependabot.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "dependabot-cooldown",
+    "line": 5,
+    "column": 5,
+    "annotation": "insufficient implicit default-days (less than 7)",
+    "severity": "Medium",
+    "confidence": "High",
+    "persona": "Regular"
+   }
+  ]
+ },
+ {
+  "input": "dependabot-cooldown/opentofu-no-cooldown/dependabot.yml",
+  "config": "dependabot-cooldown/configs/cooldown-one-day.yml",
+  "findings": []
+ },
+ {
+  "input": "dependabot-execution/basic/dependabot.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "dependabot-execution",
+    "line": 10,
+    "column": 5,
+    "annotation": "enabled here",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   }
+  ]
+ },
+ {
+  "input": "e2e-menagerie/.github/dummy-action-2/action.yml",
+  "config": null,
+  "findings": []
+ },
+ {
+  "input": "e2e-menagerie/.github/workflows/another-dummy.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "concurrency-limits",
+    "line": 1,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "e2e-menagerie/.github/workflows/dummy.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "concurrency-limits",
+    "line": 1,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "e2e-menagerie/.github/workflows/ignored.yaml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "dangerous-triggers",
+    "line": 4,
+    "column": 1,
+    "annotation": "pull_request_target is almost always used insecurely",
+    "severity": "High",
+    "confidence": "Medium",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 4,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "e2e-menagerie/dummy-action-1/action.yaml",
+  "config": null,
+  "findings": []
+ },
+ {
+  "input": "excessive-permissions.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "excessive-permissions",
+    "line": 4,
+    "column": 1,
+    "annotation": "default permissions used due to no permissions: block",
+    "severity": "Medium",
+    "confidence": "Medium",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "excessive-permissions",
+    "line": 12,
+    "column": 5,
+    "annotation": "uses write-all permissions",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 4,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "excessive-permissions/issue-336-repro.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "excessive-permissions",
+    "line": 6,
+    "column": 3,
+    "annotation": "contents: write is overly broad at the workflow level",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "excessive-permissions/issue-472-repro.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "excessive-permissions",
+    "line": 3,
+    "column": 1,
+    "annotation": "default permissions used due to no permissions: block",
+    "severity": "Medium",
+    "confidence": "Medium",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "excessive-permissions",
+    "line": 12,
+    "column": 3,
+    "annotation": "default permissions used due to no permissions: block",
+    "severity": "Medium",
+    "confidence": "Medium",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "excessive-permissions",
+    "line": 20,
+    "column": 3,
+    "annotation": "default permissions used due to no permissions: block",
+    "severity": "Medium",
+    "confidence": "Medium",
+    "persona": "Regular"
+   }
+  ]
+ },
+ {
+  "input": "excessive-permissions/jobs-broaden-permissions.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "excessive-permissions",
+    "line": 11,
+    "column": 5,
+    "annotation": "uses read-all permissions",
+    "severity": "Medium",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "excessive-permissions",
+    "line": 20,
+    "column": 5,
+    "annotation": "uses write-all permissions",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 1,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "excessive-permissions/reusable-workflow-call.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "excessive-permissions",
+    "line": 1,
+    "column": 1,
+    "annotation": "default permissions used due to no permissions: block",
+    "severity": "Medium",
+    "confidence": "Medium",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "excessive-permissions",
+    "line": 7,
+    "column": 3,
+    "annotation": "default permissions used due to no permissions: block",
+    "severity": "Medium",
+    "confidence": "Medium",
+    "persona": "Regular"
+   }
+  ]
+ },
+ {
+  "input": "excessive-permissions/reusable-workflow-other-triggers.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "excessive-permissions",
+    "line": 1,
+    "column": 1,
+    "annotation": "default permissions used due to no permissions: block",
+    "severity": "Medium",
+    "confidence": "Medium",
+    "persona": "Regular"
+   },
+   {
+    "ident": "excessive-permissions",
+    "line": 11,
+    "column": 3,
+    "annotation": "default permissions used due to no permissions: block",
+    "severity": "Medium",
+    "confidence": "Medium",
+    "persona": "Regular"
+   },
+   {
+    "ident": "excessive-permissions",
+    "line": 19,
+    "column": 3,
+    "annotation": "default permissions used due to no permissions: block",
+    "severity": "Medium",
+    "confidence": "Medium",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 3,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "excessive-permissions/workflow-default-perms-all-jobs-explicit.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "excessive-permissions",
+    "line": 5,
+    "column": 1,
+    "annotation": "default permissions used due to no permissions: block",
+    "severity": "Medium",
+    "confidence": "Medium",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "undocumented-permissions",
+    "line": 14,
+    "column": 7,
+    "annotation": "needs an explanatory comment",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "undocumented-permissions",
+    "line": 24,
+    "column": 7,
+    "annotation": "needs an explanatory comment",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 5,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "excessive-permissions/workflow-default-perms.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "excessive-permissions",
+    "line": 5,
+    "column": 1,
+    "annotation": "default permissions used due to no permissions: block",
+    "severity": "Medium",
+    "confidence": "Medium",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "excessive-permissions",
+    "line": 14,
+    "column": 3,
+    "annotation": "default permissions used due to no permissions: block",
+    "severity": "Medium",
+    "confidence": "Medium",
+    "persona": "Regular"
+   }
+  ]
+ },
+ {
+  "input": "excessive-permissions/workflow-empty-perms.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "concurrency-limits",
+    "line": 1,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "excessive-permissions/workflow-read-all.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "excessive-permissions",
+    "line": 5,
+    "column": 1,
+    "annotation": "uses read-all permissions",
+    "severity": "Medium",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 1,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "excessive-permissions/workflow-write-all.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "excessive-permissions",
+    "line": 5,
+    "column": 1,
+    "annotation": "uses write-all permissions",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 1,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "excessive-permissions/workflow-write-explicit.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "excessive-permissions",
+    "line": 7,
+    "column": 3,
+    "annotation": "contents: write is overly broad at the workflow level",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "excessive-permissions",
+    "line": 8,
+    "column": 3,
+    "annotation": "id-token: write is overly broad at the workflow level",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "excessive-permissions",
+    "line": 9,
+    "column": 3,
+    "annotation": "nonexistent: write is overly broad at the workflow level",
+    "severity": "Medium",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "undocumented-permissions",
+    "line": 7,
+    "column": 3,
+    "annotation": "needs an explanatory comment",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "undocumented-permissions",
+    "line": 17,
+    "column": 7,
+    "annotation": "needs an explanatory comment",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 1,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "forbidden-uses/forbidden-uses-menagerie.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "unpinned-uses",
+    "line": 13,
+    "column": 15,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unpinned-uses",
+    "line": 14,
+    "column": 15,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unpinned-uses",
+    "line": 15,
+    "column": 15,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 3,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "forbidden-uses/forbidden-uses-menagerie.yml",
+  "config": "forbidden-uses/configs/allow-all.yml",
+  "findings": [
+   {
+    "ident": "concurrency-limits",
+    "line": 3,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "forbidden-uses/forbidden-uses-menagerie.yml",
+  "config": "forbidden-uses/configs/allow-some-refs.yml",
+  "findings": [
+   {
+    "ident": "forbidden-uses",
+    "line": 15,
+    "column": 15,
+    "annotation": "use of this action is forbidden",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 3,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "forbidden-uses/forbidden-uses-menagerie.yml",
+  "config": "forbidden-uses/configs/allow-some.yml",
+  "findings": [
+   {
+    "ident": "forbidden-uses",
+    "line": 13,
+    "column": 15,
+    "annotation": "use of this action is forbidden",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 3,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "forbidden-uses/forbidden-uses-menagerie.yml",
+  "config": "forbidden-uses/configs/deny-all.yml",
+  "findings": [
+   {
+    "ident": "forbidden-uses",
+    "line": 13,
+    "column": 15,
+    "annotation": "use of this action is forbidden",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "forbidden-uses",
+    "line": 14,
+    "column": 15,
+    "annotation": "use of this action is forbidden",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "forbidden-uses",
+    "line": 15,
+    "column": 15,
+    "annotation": "use of this action is forbidden",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 3,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "forbidden-uses/forbidden-uses-menagerie.yml",
+  "config": "forbidden-uses/configs/deny-some-refs.yml",
+  "findings": [
+   {
+    "ident": "forbidden-uses",
+    "line": 13,
+    "column": 15,
+    "annotation": "use of this action is forbidden",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "forbidden-uses",
+    "line": 14,
+    "column": 15,
+    "annotation": "use of this action is forbidden",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 3,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "forbidden-uses/forbidden-uses-menagerie.yml",
+  "config": "forbidden-uses/configs/deny-some.yml",
+  "findings": [
+   {
+    "ident": "forbidden-uses",
+    "line": 14,
+    "column": 15,
+    "annotation": "use of this action is forbidden",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "forbidden-uses",
+    "line": 15,
+    "column": 15,
+    "annotation": "use of this action is forbidden",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 3,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "github-app.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "github-app",
+    "line": 21,
+    "column": 11,
+    "annotation": "token revocation disabled here",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "github-app",
+    "line": 29,
+    "column": 11,
+    "annotation": "token revocation conditionally disabled here",
+    "severity": "High",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "github-app",
+    "line": 37,
+    "column": 11,
+    "annotation": "token granted access to all repositories for this owner's app installation",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "github-app",
+    "line": 45,
+    "column": 11,
+    "annotation": "token granted access to all repositories for this owner's app installation",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "github-app",
+    "line": 43,
+    "column": 15,
+    "annotation": "app token inherits blanket installation permissions",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "github-app",
+    "line": 83,
+    "column": 11,
+    "annotation": "token granted access to all repositories for this owner's app installation",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   }
+  ]
+ },
+ {
+  "input": "github-app/issue-2219-repro.yml",
+  "config": null,
+  "findings": []
+ },
+ {
+  "input": "github-env/action.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "github-env",
+    "line": 10,
+    "column": 7,
+    "annotation": "write to GITHUB_ENV may allow code execution",
+    "severity": "High",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "github-env",
+    "line": 15,
+    "column": 7,
+    "annotation": "write to $env:GITHUB_ENV may allow code execution",
+    "severity": "High",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "github-env",
+    "line": 20,
+    "column": 7,
+    "annotation": "write to GITHUB_ENV may allow code execution",
+    "severity": "High",
+    "confidence": "Low",
+    "persona": "Regular"
+   }
+  ]
+ },
+ {
+  "input": "github-env/github-path.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "github-env",
+    "line": 17,
+    "column": 9,
+    "annotation": "write to GITHUB_PATH may allow code execution",
+    "severity": "High",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 1,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "github-env/issue-1333/action.yml",
+  "config": null,
+  "findings": []
+ },
+ {
+  "input": "github-env/issue-2200-repro.yml",
+  "config": null,
+  "findings": []
+ },
+ {
+  "input": "github-env/issue-397-repro.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "github-env",
+    "line": 17,
+    "column": 9,
+    "annotation": "write to GITHUB_PATH may allow code execution",
+    "severity": "High",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 1,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "github_env.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "github-env",
+    "line": 17,
+    "column": 9,
+    "annotation": "write to GITHUB_ENV may allow code execution",
+    "severity": "High",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 1,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "hardcoded-credentials.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "hardcoded-container-credentials",
+    "line": 20,
+    "column": 7,
+    "annotation": "container registry password is hard-coded",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unpinned-images",
+    "line": 19,
+    "column": 7,
+    "annotation": "container image is unpinned",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 4,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "ignore.yml",
+  "config": null,
+  "findings": []
+ },
+ {
+  "input": "impostor-commit.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "anonymous-definition",
+    "line": 24,
+    "column": 3,
+    "annotation": "this job",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 19,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "impostor-commit/.pre-commit-config.yaml",
+  "config": null,
+  "findings": []
+ },
+ {
+  "input": "impostor-commit/sha-is-tag.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "anonymous-definition",
+    "line": 7,
+    "column": 3,
+    "annotation": "this job",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 2,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "inlined-ignores.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "anonymous-definition",
+    "line": 12,
+    "column": 3,
+    "annotation": "this job",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "anonymous-definition",
+    "line": 17,
+    "column": 3,
+    "annotation": "this job",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "anonymous-definition",
+    "line": 24,
+    "column": 3,
+    "annotation": "this job",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "anonymous-definition",
+    "line": 34,
+    "column": 3,
+    "annotation": "this job",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 1,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "insecure-commands.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "insecure-commands",
+    "line": 15,
+    "column": 5,
+    "annotation": "insecure commands enabled here",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "insecure-commands",
+    "line": 30,
+    "column": 9,
+    "annotation": "non-static environment may contain ACTIONS_ALLOW_UNSECURE_COMMANDS",
+    "severity": "High",
+    "confidence": "Low",
+    "persona": "Auditor"
+   }
+  ]
+ },
+ {
+  "input": "insecure-commands/action.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "insecure-commands",
+    "line": 18,
+    "column": 7,
+    "annotation": "insecure commands enabled here",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "insecure-commands",
+    "line": 25,
+    "column": 7,
+    "annotation": "insecure commands enabled here",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "insecure-commands",
+    "line": 32,
+    "column": 7,
+    "annotation": "non-static environment may contain ACTIONS_ALLOW_UNSECURE_COMMANDS",
+    "severity": "High",
+    "confidence": "Low",
+    "persona": "Auditor"
+   }
+  ]
+ },
+ {
+  "input": "insecure-commands/issue-839-repro.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "insecure-commands",
+    "line": 15,
+    "column": 5,
+    "annotation": "insecure commands enabled here",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "insecure-commands",
+    "line": 30,
+    "column": 9,
+    "annotation": "non-static environment may contain ACTIONS_ALLOW_UNSECURE_COMMANDS",
+    "severity": "High",
+    "confidence": "Low",
+    "persona": "Auditor"
+   }
+  ]
+ },
+ {
+  "input": "insecure-url-scheme/.pre-commit-config.yaml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "insecure-url-scheme",
+    "line": 2,
+    "column": 11,
+    "annotation": "repository URL uses an insecure scheme: \"http\"",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "insecure-url-scheme",
+    "line": 6,
+    "column": 11,
+    "annotation": "repository URL uses an insecure scheme: \"git\"",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   }
+  ]
+ },
+ {
+  "input": "issue-1065.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "excessive-permissions",
+    "line": 6,
+    "column": 1,
+    "annotation": "default permissions used due to no permissions: block",
+    "severity": "Medium",
+    "confidence": "Medium",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "excessive-permissions",
+    "line": 12,
+    "column": 3,
+    "annotation": "default permissions used due to no permissions: block",
+    "severity": "Medium",
+    "confidence": "Medium",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unpinned-uses",
+    "line": 17,
+    "column": 15,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "anonymous-definition",
+    "line": 12,
+    "column": 3,
+    "annotation": "this job",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 8,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "issue-1286.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "unpinned-uses",
+    "line": 19,
+    "column": 15,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   }
+  ]
+ },
+ {
+  "input": "issue-1341-repro/.github/workflows/dependabot.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "anonymous-definition",
+    "line": 5,
+    "column": 3,
+    "annotation": "this job",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 2,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "issue-1745-repro/.github/workflows/test.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "artipacked",
+    "line": 10,
+    "column": 9,
+    "annotation": "does not set persist-credentials: false",
+    "severity": "Medium",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unpinned-uses",
+    "line": 10,
+    "column": 15,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "anonymous-definition",
+    "line": 7,
+    "column": 3,
+    "annotation": "this job",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 2,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "issue-1907-repro/.github/workflows/test.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "concurrency-limits",
+    "line": 1,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "issue-612-repro/action.yml",
+  "config": null,
+  "findings": []
+ },
+ {
+  "input": "known-vulnerable-actions/setup-php.yml",
+  "config": null,
+  "findings": []
+ },
+ {
+  "input": "known-vulnerable-actions/setup-php.yml",
+  "config": "known-vulnerable-actions/configs/allow.yml",
+  "findings": []
+ },
+ {
+  "input": "misfeature/issue-1414-repro.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "anonymous-definition",
+    "line": 9,
+    "column": 3,
+    "annotation": "this job",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 3,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "misfeature",
+    "line": 13,
+    "column": 9,
+    "annotation": "job default shell defined here",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   }
+  ]
+ },
+ {
+  "input": "misfeature/non-well-known-shell.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "misfeature",
+    "line": 18,
+    "column": 9,
+    "annotation": "shell defined here",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Auditor"
+   }
+  ]
+ },
+ {
+  "input": "misfeature/setup-python-pip-install.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "anonymous-definition",
+    "line": 9,
+    "column": 3,
+    "annotation": "this job",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 3,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "misfeature",
+    "line": 14,
+    "column": 11,
+    "annotation": "installs packages in a brittle manner",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   }
+  ]
+ },
+ {
+  "input": "misfeature/workflow-cmd-default-shell.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "anonymous-definition",
+    "line": 13,
+    "column": 3,
+    "annotation": "this job",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 3,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "misfeature",
+    "line": 10,
+    "column": 5,
+    "annotation": "workflow default shell defined here",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   }
+  ]
+ },
+ {
+  "input": "neutral.yml",
+  "config": null,
+  "findings": []
+ },
+ {
+  "input": "obfuscation.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "template-injection",
+    "line": 34,
+    "column": 20,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "template-injection",
+    "line": 35,
+    "column": 20,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "template-injection",
+    "line": 36,
+    "column": 20,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "template-injection",
+    "line": 37,
+    "column": 20,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "template-injection",
+    "line": 38,
+    "column": 20,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "template-injection",
+    "line": 39,
+    "column": 20,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "template-injection",
+    "line": 40,
+    "column": 20,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "template-injection",
+    "line": 44,
+    "column": 20,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "template-injection",
+    "line": 45,
+    "column": 20,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "template-injection",
+    "line": 46,
+    "column": 20,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "template-injection",
+    "line": 47,
+    "column": 20,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "template-injection",
+    "line": 48,
+    "column": 20,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "obfuscation",
+    "line": 13,
+    "column": 9,
+    "annotation": "actions reference contains empty component",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "obfuscation",
+    "line": 16,
+    "column": 9,
+    "annotation": "actions reference contains empty component",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "obfuscation",
+    "line": 19,
+    "column": 9,
+    "annotation": "actions reference contains '.'",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "obfuscation",
+    "line": 20,
+    "column": 9,
+    "annotation": "actions reference contains '.'",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "obfuscation",
+    "line": 23,
+    "column": 9,
+    "annotation": "actions reference contains '..'",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "obfuscation",
+    "line": 26,
+    "column": 9,
+    "annotation": "actions reference contains '..'",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "obfuscation",
+    "line": 34,
+    "column": 20,
+    "annotation": "can be replaced by its static evaluation",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "obfuscation",
+    "line": 35,
+    "column": 20,
+    "annotation": "can be replaced by its static evaluation",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "obfuscation",
+    "line": 36,
+    "column": 20,
+    "annotation": "can be replaced by its static evaluation",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "obfuscation",
+    "line": 37,
+    "column": 20,
+    "annotation": "can be replaced by its static evaluation",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "obfuscation",
+    "line": 38,
+    "column": 20,
+    "annotation": "can be replaced by its static evaluation",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "obfuscation",
+    "line": 39,
+    "column": 20,
+    "annotation": "can be replaced by its static evaluation",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "obfuscation",
+    "line": 40,
+    "column": 20,
+    "annotation": "can be replaced by its static evaluation",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "obfuscation",
+    "line": 44,
+    "column": 20,
+    "annotation": "can be replaced by its static evaluation",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "obfuscation",
+    "line": 45,
+    "column": 20,
+    "annotation": "can be replaced by its static evaluation",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "obfuscation",
+    "line": 46,
+    "column": 20,
+    "annotation": "can be replaced by its static evaluation",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "obfuscation",
+    "line": 47,
+    "column": 20,
+    "annotation": "can be replaced by its static evaluation",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "obfuscation",
+    "line": 48,
+    "column": 20,
+    "annotation": "can be replaced by its static evaluation",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "obfuscation",
+    "line": 53,
+    "column": 60,
+    "annotation": "can be reduced to a constant",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "obfuscation",
+    "line": 55,
+    "column": 99,
+    "annotation": "can be reduced to a constant",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "obfuscation",
+    "line": 57,
+    "column": 27,
+    "annotation": "can be reduced to a constant",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 1,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "obfuscation/computed-indices.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "obfuscation",
+    "line": 18,
+    "column": 23,
+    "annotation": "index expression is computed",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "obfuscation/issue-1177-repro.yml",
+  "config": null,
+  "findings": []
+ },
+ {
+  "input": "obfuscation/issue-1769-repro.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "obfuscation",
+    "line": 19,
+    "column": 9,
+    "annotation": "use of an expression for `with:` prevents analysis",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Regular"
+   }
+  ]
+ },
+ {
+  "input": "obfuscation/issue-2464-repro.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "template-injection",
+    "line": 15,
+    "column": 36,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "template-injection",
+    "line": 16,
+    "column": 36,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "overprovisioned-secrets.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "overprovisioned-secrets",
+    "line": 16,
+    "column": 18,
+    "annotation": "injects the entire secrets context into the runner",
+    "severity": "Medium",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "overprovisioned-secrets",
+    "line": 25,
+    "column": 25,
+    "annotation": "injects the entire secrets context into the runner",
+    "severity": "Medium",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 1,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "parallel-steps/basic.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "excessive-permissions",
+    "line": 5,
+    "column": 1,
+    "annotation": "uses write-all permissions",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "template-injection",
+    "line": 16,
+    "column": 28,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 2,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "pr-960-backstop/action.yml",
+  "config": null,
+  "findings": []
+ },
+ {
+  "input": "ref-confusion.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "anonymous-definition",
+    "line": 7,
+    "column": 3,
+    "annotation": "this job",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 2,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "ref-confusion/issue-518-repro.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "concurrency-limits",
+    "line": 2,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "ref-confusion/pre-commit/.pre-commit-config.yaml",
+  "config": null,
+  "findings": []
+ },
+ {
+  "input": "ref-version-mismatch.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "unpinned-uses",
+    "line": 22,
+    "column": 15,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 3,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "ref-version-mismatch/issue-1853-repro.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "concurrency-limits",
+    "line": 3,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "ref-version-mismatch/issue-1869-repro.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "concurrency-limits",
+    "line": 3,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "ref-version-mismatch/issue-1899-repro.yml",
+  "config": null,
+  "findings": []
+ },
+ {
+  "input": "ref-version-mismatch/issue-1938-repro.yml",
+  "config": null,
+  "findings": []
+ },
+ {
+  "input": "ref-version-mismatch/issue-2039-repro.yml",
+  "config": null,
+  "findings": []
+ },
+ {
+  "input": "ref-version-mismatch/issue-2165-repro.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "concurrency-limits",
+    "line": 3,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "ref-version-mismatch/issue-2321-repro.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "concurrency-limits",
+    "line": 3,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "ref-version-mismatch/issue-2324-repro.yml",
+  "config": null,
+  "findings": []
+ },
+ {
+  "input": "ref-version-mismatch/issue-2393-repro.yml",
+  "config": null,
+  "findings": []
+ },
+ {
+  "input": "ref-version-mismatch/nested-annotated-tags.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "concurrency-limits",
+    "line": 10,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "secrets-inherit.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "unpinned-uses",
+    "line": 10,
+    "column": 11,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unpinned-uses",
+    "line": 16,
+    "column": 11,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unpinned-uses",
+    "line": 23,
+    "column": 11,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unpinned-uses",
+    "line": 28,
+    "column": 11,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "secrets-inherit",
+    "line": 10,
+    "column": 11,
+    "annotation": "this reusable workflow",
+    "severity": "Medium",
+    "confidence": "High",
+    "persona": "Regular"
+   }
+  ]
+ },
+ {
+  "input": "secrets-outside-env.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "secrets-outside-env",
+    "line": 20,
+    "column": 20,
+    "annotation": "secret is accessed outside of a dedicated environment",
+    "severity": "Medium",
+    "confidence": "High",
+    "persona": "Auditor"
+   }
+  ]
+ },
+ {
+  "input": "secrets-outside-env/issue-2157-repro.yml",
+  "config": null,
+  "findings": []
+ },
+ {
+  "input": "secrets-outside-env/issue-2157-repro.yml",
+  "config": "secrets-outside-env/configs/allow-none.yml",
+  "findings": []
+ },
+ {
+  "input": "secrets-outside-env/issue-2157-repro.yml",
+  "config": "secrets-outside-env/configs/allow-one.yml",
+  "findings": []
+ },
+ {
+  "input": "secrets-outside-env/issue-2157-repro.yml",
+  "config": "secrets-outside-env/configs/allow-some.yml",
+  "findings": []
+ },
+ {
+  "input": "secrets-outside-env/multiple-secrets.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "secrets-outside-env",
+    "line": 20,
+    "column": 30,
+    "annotation": "secret is accessed outside of a dedicated environment",
+    "severity": "Medium",
+    "confidence": "High",
+    "persona": "Auditor"
+   },
+   {
+    "ident": "secrets-outside-env",
+    "line": 25,
+    "column": 30,
+    "annotation": "secret is accessed outside of a dedicated environment",
+    "severity": "Medium",
+    "confidence": "High",
+    "persona": "Auditor"
+   },
+   {
+    "ident": "secrets-outside-env",
+    "line": 30,
+    "column": 30,
+    "annotation": "secret is accessed outside of a dedicated environment",
+    "severity": "Medium",
+    "confidence": "High",
+    "persona": "Auditor"
+   },
+   {
+    "ident": "secrets-outside-env",
+    "line": 35,
+    "column": 35,
+    "annotation": "secret is accessed outside of a dedicated environment",
+    "severity": "Medium",
+    "confidence": "High",
+    "persona": "Auditor"
+   }
+  ]
+ },
+ {
+  "input": "secrets-outside-env/multiple-secrets.yml",
+  "config": "secrets-outside-env/configs/allow-none.yml",
+  "findings": [
+   {
+    "ident": "secrets-outside-env",
+    "line": 20,
+    "column": 30,
+    "annotation": "secret is accessed outside of a dedicated environment",
+    "severity": "Medium",
+    "confidence": "High",
+    "persona": "Auditor"
+   },
+   {
+    "ident": "secrets-outside-env",
+    "line": 25,
+    "column": 30,
+    "annotation": "secret is accessed outside of a dedicated environment",
+    "severity": "Medium",
+    "confidence": "High",
+    "persona": "Auditor"
+   },
+   {
+    "ident": "secrets-outside-env",
+    "line": 30,
+    "column": 30,
+    "annotation": "secret is accessed outside of a dedicated environment",
+    "severity": "Medium",
+    "confidence": "High",
+    "persona": "Auditor"
+   },
+   {
+    "ident": "secrets-outside-env",
+    "line": 35,
+    "column": 35,
+    "annotation": "secret is accessed outside of a dedicated environment",
+    "severity": "Medium",
+    "confidence": "High",
+    "persona": "Auditor"
+   }
+  ]
+ },
+ {
+  "input": "secrets-outside-env/multiple-secrets.yml",
+  "config": "secrets-outside-env/configs/allow-one.yml",
+  "findings": [
+   {
+    "ident": "secrets-outside-env",
+    "line": 35,
+    "column": 35,
+    "annotation": "secret is accessed outside of a dedicated environment",
+    "severity": "Medium",
+    "confidence": "High",
+    "persona": "Auditor"
+   }
+  ]
+ },
+ {
+  "input": "secrets-outside-env/multiple-secrets.yml",
+  "config": "secrets-outside-env/configs/allow-some.yml",
+  "findings": []
+ },
+ {
+  "input": "self-hosted.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "self-hosted-runner",
+    "line": 26,
+    "column": 5,
+    "annotation": "self-hosted runner used here",
+    "severity": "Medium",
+    "confidence": "High",
+    "persona": "Auditor"
+   },
+   {
+    "ident": "self-hosted-runner",
+    "line": 42,
+    "column": 5,
+    "annotation": "runner group used here",
+    "severity": "Medium",
+    "confidence": "High",
+    "persona": "Auditor"
+   },
+   {
+    "ident": "self-hosted-runner",
+    "line": 59,
+    "column": 5,
+    "annotation": "expression may expand into a self-hosted runner",
+    "severity": "Medium",
+    "confidence": "Low",
+    "persona": "Auditor"
+   }
+  ]
+ },
+ {
+  "input": "self-hosted/issue-283-repro.yml",
+  "config": null,
+  "findings": []
+ },
+ {
+  "input": "self-hosted/issue-283-repro.yml",
+  "config": "self-hosted/configs/allow-all.yml",
+  "findings": []
+ },
+ {
+  "input": "self-hosted/self-hosted-matrix-dimension.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "self-hosted-runner",
+    "line": 15,
+    "column": 5,
+    "annotation": "self-hosted runner used here",
+    "severity": "Medium",
+    "confidence": "High",
+    "persona": "Auditor"
+   }
+  ]
+ },
+ {
+  "input": "self-hosted/self-hosted-matrix-dimension.yml",
+  "config": "self-hosted/configs/allow-all.yml",
+  "findings": [
+   {
+    "ident": "self-hosted-runner",
+    "line": 15,
+    "column": 5,
+    "annotation": "self-hosted runner used here",
+    "severity": "Medium",
+    "confidence": "High",
+    "persona": "Auditor"
+   }
+  ]
+ },
+ {
+  "input": "self-hosted/self-hosted-matrix-exclusion.yml",
+  "config": null,
+  "findings": []
+ },
+ {
+  "input": "self-hosted/self-hosted-matrix-exclusion.yml",
+  "config": "self-hosted/configs/allow-all.yml",
+  "findings": []
+ },
+ {
+  "input": "self-hosted/self-hosted-matrix-inclusion.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "self-hosted-runner",
+    "line": 15,
+    "column": 5,
+    "annotation": "self-hosted runner used here",
+    "severity": "Medium",
+    "confidence": "High",
+    "persona": "Auditor"
+   }
+  ]
+ },
+ {
+  "input": "self-hosted/self-hosted-matrix-inclusion.yml",
+  "config": "self-hosted/configs/allow-all.yml",
+  "findings": [
+   {
+    "ident": "self-hosted-runner",
+    "line": 15,
+    "column": 5,
+    "annotation": "self-hosted runner used here",
+    "severity": "Medium",
+    "confidence": "High",
+    "persona": "Auditor"
+   }
+  ]
+ },
+ {
+  "input": "self-hosted/self-hosted-providers.yml",
+  "config": null,
+  "findings": []
+ },
+ {
+  "input": "self-hosted/self-hosted-providers.yml",
+  "config": "self-hosted/configs/allow-all.yml",
+  "findings": []
+ },
+ {
+  "input": "self-hosted/self-hosted-runner-group.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "self-hosted-runner",
+    "line": 15,
+    "column": 5,
+    "annotation": "runner group used here",
+    "severity": "Medium",
+    "confidence": "High",
+    "persona": "Auditor"
+   }
+  ]
+ },
+ {
+  "input": "self-hosted/self-hosted-runner-group.yml",
+  "config": "self-hosted/configs/allow-all.yml",
+  "findings": [
+   {
+    "ident": "self-hosted-runner",
+    "line": 15,
+    "column": 5,
+    "annotation": "runner group used here",
+    "severity": "Medium",
+    "confidence": "High",
+    "persona": "Auditor"
+   }
+  ]
+ },
+ {
+  "input": "self-hosted/self-hosted-runner-label.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "self-hosted-runner",
+    "line": 15,
+    "column": 5,
+    "annotation": "self-hosted runner used here",
+    "severity": "Medium",
+    "confidence": "High",
+    "persona": "Auditor"
+   }
+  ]
+ },
+ {
+  "input": "self-hosted/self-hosted-runner-label.yml",
+  "config": "self-hosted/configs/allow-all.yml",
+  "findings": [
+   {
+    "ident": "self-hosted-runner",
+    "line": 15,
+    "column": 5,
+    "annotation": "self-hosted runner used here",
+    "severity": "Medium",
+    "confidence": "High",
+    "persona": "Auditor"
+   }
+  ]
+ },
+ {
+  "input": "self-repository.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "self-repository",
+    "line": 18,
+    "column": 15,
+    "annotation": "use '$/...' instead of './...'",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "self-repository",
+    "line": 23,
+    "column": 11,
+    "annotation": "use '$/...' instead of './...'",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   }
+  ]
+ },
+ {
+  "input": "several-vulnerabilities.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "excessive-permissions",
+    "line": 5,
+    "column": 1,
+    "annotation": "uses write-all permissions",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "excessive-permissions",
+    "line": 11,
+    "column": 5,
+    "annotation": "uses write-all permissions",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "dangerous-triggers",
+    "line": 3,
+    "column": 3,
+    "annotation": "pull_request_target is almost always used insecurely",
+    "severity": "High",
+    "confidence": "Medium",
+    "persona": "Regular"
+   },
+   {
+    "ident": "template-injection",
+    "line": 16,
+    "column": 21,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 2,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "stale-action-refs.yml",
+  "config": null,
+  "findings": []
+ },
+ {
+  "input": "stale-action-refs/stale-reusable-workflow.yml",
+  "config": null,
+  "findings": []
+ },
+ {
+  "input": "superfluous-actions.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "superfluous-actions",
+    "line": 16,
+    "column": 15,
+    "annotation": "use `rustup` and/or `cargo` in a script step",
+    "severity": "Informational",
+    "confidence": "Medium",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "superfluous-actions",
+    "line": 19,
+    "column": 15,
+    "annotation": "use `gh pr comment` or `gh issue comment` in a script step",
+    "severity": "Informational",
+    "confidence": "Low",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "template-injection.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "template-injection",
+    "line": 19,
+    "column": 40,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 5,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "template-injection/addnab-docker-run-action.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "template-injection",
+    "line": 20,
+    "column": 45,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "template-injection",
+    "line": 26,
+    "column": 24,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 4,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "superfluous-actions",
+    "line": 15,
+    "column": 15,
+    "annotation": "use `docker run` in a script step, or use a container step",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "superfluous-actions",
+    "line": 23,
+    "column": 15,
+    "annotation": "use `docker run` in a script step, or use a container step",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Regular"
+   }
+  ]
+ },
+ {
+  "input": "template-injection/codeql-sinks.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "template-injection",
+    "line": 17,
+    "column": 20,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 5,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "template-injection/dataflow.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "template-injection",
+    "line": 15,
+    "column": 35,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "template-injection",
+    "line": 16,
+    "column": 41,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "template-injection",
+    "line": 21,
+    "column": 28,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "template-injection",
+    "line": 22,
+    "column": 35,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "template-injection",
+    "line": 23,
+    "column": 26,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "template-injection",
+    "line": 28,
+    "column": 21,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "template-injection",
+    "line": 28,
+    "column": 56,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "template-injection",
+    "line": 29,
+    "column": 30,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "anonymous-definition",
+    "line": 8,
+    "column": 3,
+    "annotation": "this job",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 3,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "template-injection/false-positive-menagerie.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "template-injection",
+    "line": 16,
+    "column": 21,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "template-injection",
+    "line": 18,
+    "column": 21,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "template-injection",
+    "line": 20,
+    "column": 21,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "template-injection",
+    "line": 22,
+    "column": 21,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "template-injection",
+    "line": 24,
+    "column": 21,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "template-injection",
+    "line": 26,
+    "column": 21,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 3,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "template-injection/input-caps.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "template-injection",
+    "line": 18,
+    "column": 36,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "anonymous-definition",
+    "line": 13,
+    "column": 3,
+    "annotation": "this job",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "template-injection/issue-1638-repro.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "template-injection",
+    "line": 19,
+    "column": 24,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "template-injection/issue-1664-repro.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "template-injection",
+    "line": 17,
+    "column": 15,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 3,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "template-injection/issue-1802-repro.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "template-injection",
+    "line": 20,
+    "column": 21,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "template-injection",
+    "line": 21,
+    "column": 21,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "template-injection",
+    "line": 22,
+    "column": 21,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "template-injection/issue-1903-repro.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "template-injection",
+    "line": 21,
+    "column": 24,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Informational",
+    "confidence": "Low",
+    "persona": "Regular"
+   }
+  ]
+ },
+ {
+  "input": "template-injection/issue-2197-repro.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "template-injection",
+    "line": 20,
+    "column": 24,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "template-injection/issue-22-repro.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "template-injection",
+    "line": 53,
+    "column": 33,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "template-injection",
+    "line": 55,
+    "column": 53,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "template-injection",
+    "line": 62,
+    "column": 82,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "template-injection",
+    "line": 63,
+    "column": 42,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "template-injection",
+    "line": 64,
+    "column": 53,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 6,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "template-injection/issue-2490-repro.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "template-injection",
+    "line": 19,
+    "column": 40,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 8,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "template-injection/issue-2502-repro.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "template-injection",
+    "line": 19,
+    "column": 62,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 8,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "template-injection/issue-339-repro.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "template-injection",
+    "line": 30,
+    "column": 28,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Informational",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 5,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "template-injection/issue-418-repro.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "template-injection",
+    "line": 19,
+    "column": 36,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 5,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "template-injection/issue-749-repro.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "template-injection",
+    "line": 21,
+    "column": 40,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 5,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "template-injection/issue-883-repro/action.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "template-injection",
+    "line": 48,
+    "column": 53,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "template-injection",
+    "line": 56,
+    "column": 26,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "template-injection",
+    "line": 57,
+    "column": 29,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "template-injection",
+    "line": 60,
+    "column": 19,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "template-injection",
+    "line": 65,
+    "column": 32,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "template-injection",
+    "line": 110,
+    "column": 33,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "template-injection",
+    "line": 111,
+    "column": 34,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   }
+  ]
+ },
+ {
+  "input": "template-injection/issue-988-repro.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "template-injection",
+    "line": 19,
+    "column": 29,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "template-injection",
+    "line": 30,
+    "column": 63,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "template-injection/multiline-expression.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "template-injection",
+    "line": 19,
+    "column": 16,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Informational",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "template-injection",
+    "line": 20,
+    "column": 16,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Informational",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "template-injection",
+    "line": 26,
+    "column": 15,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "template-injection/patterns.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "template-injection",
+    "line": 21,
+    "column": 21,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "template-injection",
+    "line": 22,
+    "column": 21,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "template-injection",
+    "line": 23,
+    "column": 21,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "template-injection",
+    "line": 30,
+    "column": 21,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "template-injection",
+    "line": 31,
+    "column": 21,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "template-injection",
+    "line": 32,
+    "column": 21,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 6,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "template-injection/pr-317-repro.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "template-injection",
+    "line": 28,
+    "column": 20,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Medium",
+    "confidence": "Medium",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 4,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "template-injection/pr-425-backstop/action.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "template-injection",
+    "line": 14,
+    "column": 19,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "template-injection",
+    "line": 20,
+    "column": 29,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "template-injection",
+    "line": 26,
+    "column": 27,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "template-injection",
+    "line": 31,
+    "column": 56,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unpinned-uses",
+    "line": 29,
+    "column": 13,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   }
+  ]
+ },
+ {
+  "input": "template-injection/pwsh-script.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "template-injection",
+    "line": 16,
+    "column": 61,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 3,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "template-injection/static-env.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "template-injection",
+    "line": 26,
+    "column": 20,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "template-injection",
+    "line": 33,
+    "column": 20,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "template-injection",
+    "line": 38,
+    "column": 20,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "template-injection",
+    "line": 43,
+    "column": 20,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "template-injection",
+    "line": 50,
+    "column": 20,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "template-injection",
+    "line": 55,
+    "column": 20,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 2,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "template-injection/template-injection-dynamic-matrix.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "template-injection",
+    "line": 26,
+    "column": 36,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Medium",
+    "confidence": "Medium",
+    "persona": "Regular"
+   }
+  ]
+ },
+ {
+  "input": "template-injection/template-injection-static-matrix.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "template-injection",
+    "line": 25,
+    "column": 36,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "typosquat-uses.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "typosquat-uses",
+    "line": 17,
+    "column": 15,
+    "annotation": "action/checkout omits characters in actions/checkout",
+    "severity": "High",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "typosquat-uses",
+    "line": 20,
+    "column": 15,
+    "annotation": "cations/checkout swaps characters in actions/checkout",
+    "severity": "High",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "typosquat-uses",
+    "line": 23,
+    "column": 15,
+    "annotation": "acti0ns/checkout uses a common typo for actions/checkout",
+    "severity": "High",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "typosquat-uses",
+    "line": 26,
+    "column": 15,
+    "annotation": "actiions/checkout repeats characters in actions/checkout",
+    "severity": "High",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "typosquat-uses",
+    "line": 29,
+    "column": 15,
+    "annotation": "dokcer/login-action swaps characters in docker/login-action",
+    "severity": "High",
+    "confidence": "Low",
+    "persona": "Regular"
+   }
+  ]
+ },
+ {
+  "input": "typosquat-uses/pre-commit/.pre-commit-config.yaml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "typosquat-uses",
+    "line": 3,
+    "column": 11,
+    "annotation": "pre-comit/pre-commit-hooks omits characters in pre-commit/pre-commit-hooks",
+    "severity": "High",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "typosquat-uses",
+    "line": 9,
+    "column": 11,
+    "annotation": "astarl-sh/ruff-pre-commit swaps characters in astral-sh/ruff-pre-commit",
+    "severity": "High",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "typosquat-uses",
+    "line": 15,
+    "column": 11,
+    "annotation": "a5ottile/pyupgrade uses a common typo for asottile/pyupgrade",
+    "severity": "High",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "typosquat-uses",
+    "line": 21,
+    "column": 11,
+    "annotation": "psff/black repeats characters in psf/black",
+    "severity": "High",
+    "confidence": "Low",
+    "persona": "Regular"
+   }
+  ]
+ },
+ {
+  "input": "undocumented-permissions.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "undocumented-permissions",
+    "line": 8,
+    "column": 3,
+    "annotation": "needs an explanatory comment",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "undocumented-permissions",
+    "line": 33,
+    "column": 7,
+    "annotation": "needs an explanatory comment",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "undocumented-permissions",
+    "line": 48,
+    "column": 7,
+    "annotation": "needs an explanatory comment",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "undocumented-permissions",
+    "line": 60,
+    "column": 7,
+    "annotation": "needs an explanatory comment",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "undocumented-permissions/contents-read-only.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "unpinned-uses",
+    "line": 21,
+    "column": 15,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   }
+  ]
+ },
+ {
+  "input": "undocumented-permissions/contents-read-with-other.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "excessive-permissions",
+    "line": 8,
+    "column": 3,
+    "annotation": "issues: write is overly broad at the workflow level",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "unpinned-uses",
+    "line": 19,
+    "column": 15,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "undocumented-permissions",
+    "line": 8,
+    "column": 3,
+    "annotation": "needs an explanatory comment",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "undocumented-permissions/documented.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "unpinned-uses",
+    "line": 23,
+    "column": 15,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unpinned-uses",
+    "line": 37,
+    "column": 15,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unpinned-uses",
+    "line": 50,
+    "column": 15,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   }
+  ]
+ },
+ {
+  "input": "undocumented-permissions/empty-permissions.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "unpinned-uses",
+    "line": 19,
+    "column": 15,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   }
+  ]
+ },
+ {
+  "input": "undocumented-permissions/partially-documented.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "unpinned-uses",
+    "line": 25,
+    "column": 15,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unpinned-uses",
+    "line": 38,
+    "column": 15,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "undocumented-permissions",
+    "line": 8,
+    "column": 3,
+    "annotation": "needs an explanatory comment",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "undocumented-permissions",
+    "line": 22,
+    "column": 7,
+    "annotation": "needs an explanatory comment",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "undocumented-permissions",
+    "line": 35,
+    "column": 7,
+    "annotation": "needs an explanatory comment",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "unpinned-images.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "unpinned-images",
+    "line": 23,
+    "column": 7,
+    "annotation": "container image is unpinned",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unpinned-images",
+    "line": 32,
+    "column": 9,
+    "annotation": "container image is unpinned",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unpinned-images",
+    "line": 40,
+    "column": 7,
+    "annotation": "container image uses the floating 'latest' tag",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unpinned-images",
+    "line": 49,
+    "column": 9,
+    "annotation": "container image uses the floating 'latest' tag",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unpinned-images",
+    "line": 57,
+    "column": 7,
+    "annotation": "container image is not pinned to a SHA256 hash",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "unpinned-images",
+    "line": 66,
+    "column": 9,
+    "annotation": "container image is not pinned to a SHA256 hash",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "unpinned-images",
+    "line": 101,
+    "column": 50,
+    "annotation": "container image is not pinned to a SHA256 hash",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "unpinned-images",
+    "line": 118,
+    "column": 18,
+    "annotation": "container image may be unpinned",
+    "severity": "High",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unpinned-images",
+    "line": 118,
+    "column": 34,
+    "annotation": "container image may be unpinned",
+    "severity": "High",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unpinned-images",
+    "line": 126,
+    "column": 24,
+    "annotation": "container image is unpinned",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unpinned-images",
+    "line": 127,
+    "column": 24,
+    "annotation": "container image uses the floating 'latest' tag",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unpinned-images",
+    "line": 128,
+    "column": 24,
+    "annotation": "container image is unpinned",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   }
+  ]
+ },
+ {
+  "input": "unpinned-images/docker-action/action.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "unpinned-images",
+    "line": 7,
+    "column": 3,
+    "annotation": "container image is not pinned to a SHA256 hash",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "unpinned-images/indirect-matrices.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "unpinned-images",
+    "line": 18,
+    "column": 7,
+    "annotation": "container image may be unpinned",
+    "severity": "High",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unpinned-images",
+    "line": 29,
+    "column": 7,
+    "annotation": "container image uses the floating 'latest' tag",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unpinned-images",
+    "line": 29,
+    "column": 7,
+    "annotation": "container image may be unpinned",
+    "severity": "High",
+    "confidence": "Low",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unpinned-images",
+    "line": 45,
+    "column": 7,
+    "annotation": "container image uses the floating 'latest' tag",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   }
+  ]
+ },
+ {
+  "input": "unpinned-images/issue-1942-repro.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "unpinned-images",
+    "line": 13,
+    "column": 5,
+    "annotation": "container image is not pinned to a SHA256 hash",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "unpinned-images/issue-2097-repro.yml",
+  "config": null,
+  "findings": []
+ },
+ {
+  "input": "unpinned-images/matrix-in-image.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "unpinned-images",
+    "line": 20,
+    "column": 7,
+    "annotation": "container image is not pinned to a SHA256 hash",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "unpinned-images",
+    "line": 20,
+    "column": 7,
+    "annotation": "container image is not pinned to a SHA256 hash",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "unpinned-images",
+    "line": 20,
+    "column": 7,
+    "annotation": "container image is unpinned",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unpinned-images",
+    "line": 20,
+    "column": 7,
+    "annotation": "container image uses the floating 'latest' tag",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   }
+  ]
+ },
+ {
+  "input": "unpinned-images/urllib3-empty-matrix-container.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "unpinned-images",
+    "line": 51,
+    "column": 5,
+    "annotation": "container image is not pinned to a SHA256 hash",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "unpinned-images",
+    "line": 51,
+    "column": 5,
+    "annotation": "container image is unpinned",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   }
+  ]
+ },
+ {
+  "input": "unpinned-tools.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "unpinned-tools",
+    "line": 16,
+    "column": 15,
+    "annotation": "omitting `version` implicitly selects an unpinned tool version",
+    "severity": "Medium",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unpinned-tools",
+    "line": 19,
+    "column": 11,
+    "annotation": "selects an unpinned tool version",
+    "severity": "Medium",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unpinned-tools",
+    "line": 20,
+    "column": 15,
+    "annotation": "omitting `version` implicitly selects an unpinned tool version",
+    "severity": "Medium",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unpinned-tools",
+    "line": 23,
+    "column": 11,
+    "annotation": "selects an unpinned tool version",
+    "severity": "Medium",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unpinned-tools",
+    "line": 26,
+    "column": 11,
+    "annotation": "tool version may be unpinned",
+    "severity": "Medium",
+    "confidence": "Low",
+    "persona": "Regular"
+   }
+  ]
+ },
+ {
+  "input": "unpinned-tools/if-false.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "concurrency-limits",
+    "line": 3,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "unpinned-tools/setup-just.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "unpinned-tools",
+    "line": 16,
+    "column": 15,
+    "annotation": "omitting `just-version` implicitly selects an unpinned tool version",
+    "severity": "Medium",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unpinned-tools",
+    "line": 19,
+    "column": 11,
+    "annotation": "selects an unpinned tool version",
+    "severity": "Medium",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unpinned-tools",
+    "line": 22,
+    "column": 11,
+    "annotation": "tool version may be unpinned",
+    "severity": "Medium",
+    "confidence": "Low",
+    "persona": "Regular"
+   }
+  ]
+ },
+ {
+  "input": "unpinned-uses.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "unpinned-uses",
+    "line": 16,
+    "column": 15,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   }
+  ]
+ },
+ {
+  "input": "unpinned-uses/action.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "unpinned-uses",
+    "line": 12,
+    "column": 13,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unpinned-uses",
+    "line": 15,
+    "column": 13,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   }
+  ]
+ },
+ {
+  "input": "unpinned-uses/action.yml",
+  "config": "unpinned-uses/configs/composite-2.yml",
+  "findings": [
+   {
+    "ident": "unpinned-uses",
+    "line": 12,
+    "column": 13,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unpinned-uses",
+    "line": 15,
+    "column": 13,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   }
+  ]
+ },
+ {
+  "input": "unpinned-uses/action.yml",
+  "config": "unpinned-uses/configs/composite.yml",
+  "findings": [
+   {
+    "ident": "unpinned-uses",
+    "line": 12,
+    "column": 13,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unpinned-uses",
+    "line": 15,
+    "column": 13,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   }
+  ]
+ },
+ {
+  "input": "unpinned-uses/action.yml",
+  "config": "unpinned-uses/configs/empty.yml",
+  "findings": [
+   {
+    "ident": "unpinned-uses",
+    "line": 12,
+    "column": 13,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unpinned-uses",
+    "line": 15,
+    "column": 13,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   }
+  ]
+ },
+ {
+  "input": "unpinned-uses/action.yml",
+  "config": "unpinned-uses/configs/hash-pin-everything.yml",
+  "findings": [
+   {
+    "ident": "unpinned-uses",
+    "line": 12,
+    "column": 13,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unpinned-uses",
+    "line": 15,
+    "column": 13,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   }
+  ]
+ },
+ {
+  "input": "unpinned-uses/action.yml",
+  "config": "unpinned-uses/configs/ref-pin-everything.yml",
+  "findings": []
+ },
+ {
+  "input": "unpinned-uses/issue-1543-repro.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "unpinned-uses",
+    "line": 18,
+    "column": 11,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 2,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "unpinned-uses/issue-1543-repro.yml",
+  "config": "unpinned-uses/configs/composite-2.yml",
+  "findings": [
+   {
+    "ident": "concurrency-limits",
+    "line": 2,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "unpinned-uses/issue-1543-repro.yml",
+  "config": "unpinned-uses/configs/composite.yml",
+  "findings": [
+   {
+    "ident": "concurrency-limits",
+    "line": 2,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "unpinned-uses/issue-1543-repro.yml",
+  "config": "unpinned-uses/configs/empty.yml",
+  "findings": [
+   {
+    "ident": "unpinned-uses",
+    "line": 18,
+    "column": 11,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 2,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "unpinned-uses/issue-1543-repro.yml",
+  "config": "unpinned-uses/configs/hash-pin-everything.yml",
+  "findings": [
+   {
+    "ident": "unpinned-uses",
+    "line": 18,
+    "column": 11,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 2,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "unpinned-uses/issue-1543-repro.yml",
+  "config": "unpinned-uses/configs/ref-pin-everything.yml",
+  "findings": [
+   {
+    "ident": "concurrency-limits",
+    "line": 2,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "unpinned-uses/issue-433-repro.yml",
+  "config": null,
+  "findings": []
+ },
+ {
+  "input": "unpinned-uses/issue-433-repro.yml",
+  "config": "unpinned-uses/configs/composite-2.yml",
+  "findings": []
+ },
+ {
+  "input": "unpinned-uses/issue-433-repro.yml",
+  "config": "unpinned-uses/configs/composite.yml",
+  "findings": []
+ },
+ {
+  "input": "unpinned-uses/issue-433-repro.yml",
+  "config": "unpinned-uses/configs/empty.yml",
+  "findings": []
+ },
+ {
+  "input": "unpinned-uses/issue-433-repro.yml",
+  "config": "unpinned-uses/configs/hash-pin-everything.yml",
+  "findings": []
+ },
+ {
+  "input": "unpinned-uses/issue-433-repro.yml",
+  "config": "unpinned-uses/configs/ref-pin-everything.yml",
+  "findings": []
+ },
+ {
+  "input": "unpinned-uses/issue-659-repro.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "unpinned-uses",
+    "line": 24,
+    "column": 15,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   }
+  ]
+ },
+ {
+  "input": "unpinned-uses/issue-659-repro.yml",
+  "config": "unpinned-uses/configs/composite-2.yml",
+  "findings": []
+ },
+ {
+  "input": "unpinned-uses/issue-659-repro.yml",
+  "config": "unpinned-uses/configs/composite.yml",
+  "findings": []
+ },
+ {
+  "input": "unpinned-uses/issue-659-repro.yml",
+  "config": "unpinned-uses/configs/empty.yml",
+  "findings": [
+   {
+    "ident": "unpinned-uses",
+    "line": 24,
+    "column": 15,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   }
+  ]
+ },
+ {
+  "input": "unpinned-uses/issue-659-repro.yml",
+  "config": "unpinned-uses/configs/hash-pin-everything.yml",
+  "findings": [
+   {
+    "ident": "unpinned-uses",
+    "line": 24,
+    "column": 15,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   }
+  ]
+ },
+ {
+  "input": "unpinned-uses/issue-659-repro.yml",
+  "config": "unpinned-uses/configs/ref-pin-everything.yml",
+  "findings": []
+ },
+ {
+  "input": "unpinned-uses/menagerie-of-uses.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "unpinned-uses",
+    "line": 12,
+    "column": 15,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unpinned-uses",
+    "line": 14,
+    "column": 15,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unpinned-uses",
+    "line": 22,
+    "column": 15,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unpinned-uses",
+    "line": 24,
+    "column": 15,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unpinned-uses",
+    "line": 26,
+    "column": 15,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 2,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "unpinned-uses/menagerie-of-uses.yml",
+  "config": "unpinned-uses/configs/composite-2.yml",
+  "findings": [
+   {
+    "ident": "unpinned-uses",
+    "line": 24,
+    "column": 15,
+    "annotation": "action is not pinned to a hash (required by github/codeql-action/init policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unpinned-uses",
+    "line": 26,
+    "column": 15,
+    "annotation": "action is not pinned to a hash (required by github/codeql-action/upload-sarif policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 2,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "unpinned-uses/menagerie-of-uses.yml",
+  "config": "unpinned-uses/configs/composite.yml",
+  "findings": [
+   {
+    "ident": "unpinned-uses",
+    "line": 12,
+    "column": 15,
+    "annotation": "action is not pinned to a hash (required by actions/setup-python policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unpinned-uses",
+    "line": 24,
+    "column": 15,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unpinned-uses",
+    "line": 26,
+    "column": 15,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 2,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "unpinned-uses/menagerie-of-uses.yml",
+  "config": "unpinned-uses/configs/empty.yml",
+  "findings": [
+   {
+    "ident": "unpinned-uses",
+    "line": 12,
+    "column": 15,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unpinned-uses",
+    "line": 14,
+    "column": 15,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unpinned-uses",
+    "line": 22,
+    "column": 15,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unpinned-uses",
+    "line": 24,
+    "column": 15,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unpinned-uses",
+    "line": 26,
+    "column": 15,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 2,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "unpinned-uses/menagerie-of-uses.yml",
+  "config": "unpinned-uses/configs/hash-pin-everything.yml",
+  "findings": [
+   {
+    "ident": "unpinned-uses",
+    "line": 12,
+    "column": 15,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unpinned-uses",
+    "line": 14,
+    "column": 15,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unpinned-uses",
+    "line": 22,
+    "column": 15,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unpinned-uses",
+    "line": 24,
+    "column": 15,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unpinned-uses",
+    "line": 26,
+    "column": 15,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 2,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "unpinned-uses/menagerie-of-uses.yml",
+  "config": "unpinned-uses/configs/ref-pin-everything.yml",
+  "findings": [
+   {
+    "ident": "concurrency-limits",
+    "line": 2,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "unpinned-uses/reusable-workflow-unpinned.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "unpinned-uses",
+    "line": 17,
+    "column": 11,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unpinned-uses",
+    "line": 21,
+    "column": 11,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "self-repository",
+    "line": 13,
+    "column": 11,
+    "annotation": "use '$/...' instead of './...'",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   }
+  ]
+ },
+ {
+  "input": "unpinned-uses/reusable-workflow-unpinned.yml",
+  "config": "unpinned-uses/configs/composite-2.yml",
+  "findings": [
+   {
+    "ident": "unpinned-uses",
+    "line": 17,
+    "column": 11,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unpinned-uses",
+    "line": 21,
+    "column": 11,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "self-repository",
+    "line": 13,
+    "column": 11,
+    "annotation": "use '$/...' instead of './...'",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   }
+  ]
+ },
+ {
+  "input": "unpinned-uses/reusable-workflow-unpinned.yml",
+  "config": "unpinned-uses/configs/composite.yml",
+  "findings": [
+   {
+    "ident": "unpinned-uses",
+    "line": 17,
+    "column": 11,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unpinned-uses",
+    "line": 21,
+    "column": 11,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "self-repository",
+    "line": 13,
+    "column": 11,
+    "annotation": "use '$/...' instead of './...'",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   }
+  ]
+ },
+ {
+  "input": "unpinned-uses/reusable-workflow-unpinned.yml",
+  "config": "unpinned-uses/configs/empty.yml",
+  "findings": [
+   {
+    "ident": "unpinned-uses",
+    "line": 17,
+    "column": 11,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unpinned-uses",
+    "line": 21,
+    "column": 11,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "self-repository",
+    "line": 13,
+    "column": 11,
+    "annotation": "use '$/...' instead of './...'",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   }
+  ]
+ },
+ {
+  "input": "unpinned-uses/reusable-workflow-unpinned.yml",
+  "config": "unpinned-uses/configs/hash-pin-everything.yml",
+  "findings": [
+   {
+    "ident": "unpinned-uses",
+    "line": 17,
+    "column": 11,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unpinned-uses",
+    "line": 21,
+    "column": 11,
+    "annotation": "action is not pinned to a hash (required by blanket policy)",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "self-repository",
+    "line": 13,
+    "column": 11,
+    "annotation": "use '$/...' instead of './...'",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   }
+  ]
+ },
+ {
+  "input": "unpinned-uses/reusable-workflow-unpinned.yml",
+  "config": "unpinned-uses/configs/ref-pin-everything.yml",
+  "findings": [
+   {
+    "ident": "self-repository",
+    "line": 13,
+    "column": 11,
+    "annotation": "use '$/...' instead of './...'",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   }
+  ]
+ },
+ {
+  "input": "unredacted-secrets.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "unredacted-secrets",
+    "line": 18,
+    "column": 18,
+    "annotation": "bypasses secret redaction",
+    "severity": "Medium",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unredacted-secrets",
+    "line": 21,
+    "column": 23,
+    "annotation": "bypasses secret redaction",
+    "severity": "Medium",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 3,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "unsound-condition.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "unsound-condition",
+    "line": 27,
+    "column": 9,
+    "annotation": "condition always evaluates to true",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unsound-condition",
+    "line": 33,
+    "column": 9,
+    "annotation": "condition always evaluates to true",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unsound-condition",
+    "line": 60,
+    "column": 9,
+    "annotation": "condition always evaluates to true",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unsound-condition",
+    "line": 68,
+    "column": 9,
+    "annotation": "condition always evaluates to true",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unsound-condition",
+    "line": 73,
+    "column": 9,
+    "annotation": "condition always evaluates to true",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unsound-condition",
+    "line": 78,
+    "column": 9,
+    "annotation": "condition always evaluates to true",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unsound-condition",
+    "line": 83,
+    "column": 9,
+    "annotation": "condition always evaluates to true",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unsound-condition",
+    "line": 88,
+    "column": 9,
+    "annotation": "condition always evaluates to true",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unsound-condition",
+    "line": 93,
+    "column": 9,
+    "annotation": "condition always evaluates to true",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 2,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "unsound-contains.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "unsound-contains",
+    "line": 20,
+    "column": 9,
+    "annotation": "contains(..) condition can be bypassed if attacker can control 'github.ref'",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unsound-contains",
+    "line": 24,
+    "column": 9,
+    "annotation": "contains(..) condition can be bypassed if attacker can control 'env.GITHUB_REF_NAME'",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unsound-contains",
+    "line": 28,
+    "column": 9,
+    "annotation": "contains(..) condition can be bypassed if attacker can control 'github.ref_name'",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unsound-contains",
+    "line": 28,
+    "column": 9,
+    "annotation": "contains(..) condition can be bypassed if attacker can control 'github.actor'",
+    "severity": "High",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "unsound-contains",
+    "line": 32,
+    "column": 9,
+    "annotation": "contains(..) condition can be bypassed if attacker can control 'runner.name'",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 1,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "unsound-ternary/issue-746-repro.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "unsound-ternary",
+    "line": 11,
+    "column": 30,
+    "annotation": "pseudo-ternary has falsy true value",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "template-injection",
+    "line": 11,
+    "column": 23,
+    "annotation": "may expand into attacker-controllable code",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "anonymous-definition",
+    "line": 8,
+    "column": 3,
+    "annotation": "this job",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 1,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "use-trusted-publishing.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "excessive-permissions",
+    "line": 4,
+    "column": 1,
+    "annotation": "default permissions used due to no permissions: block",
+    "severity": "Medium",
+    "confidence": "Medium",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "use-trusted-publishing",
+    "line": 19,
+    "column": 9,
+    "annotation": "this step",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "use-trusted-publishing",
+    "line": 26,
+    "column": 9,
+    "annotation": "this step",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "use-trusted-publishing",
+    "line": 34,
+    "column": 9,
+    "annotation": "this step",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "use-trusted-publishing",
+    "line": 52,
+    "column": 9,
+    "annotation": "this step",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "use-trusted-publishing",
+    "line": 59,
+    "column": 9,
+    "annotation": "this step",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "use-trusted-publishing",
+    "line": 66,
+    "column": 9,
+    "annotation": "this step",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "use-trusted-publishing",
+    "line": 83,
+    "column": 9,
+    "annotation": "this step",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "use-trusted-publishing",
+    "line": 96,
+    "column": 9,
+    "annotation": "this step",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "undocumented-permissions",
+    "line": 13,
+    "column": 7,
+    "annotation": "needs an explanatory comment",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 4,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "use-trusted-publishing/bun-publish.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "excessive-permissions",
+    "line": 1,
+    "column": 1,
+    "annotation": "default permissions used due to no permissions: block",
+    "severity": "Medium",
+    "confidence": "Medium",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "use-trusted-publishing",
+    "line": 12,
+    "column": 14,
+    "annotation": "this command",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "use-trusted-publishing",
+    "line": 15,
+    "column": 14,
+    "annotation": "this command",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "use-trusted-publishing",
+    "line": 20,
+    "column": 11,
+    "annotation": "this command",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "use-trusted-publishing",
+    "line": 27,
+    "column": 14,
+    "annotation": "this command",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "undocumented-permissions",
+    "line": 37,
+    "column": 7,
+    "annotation": "needs an explanatory comment",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 1,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "use-trusted-publishing/cargo-publish.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "excessive-permissions",
+    "line": 1,
+    "column": 1,
+    "annotation": "default permissions used due to no permissions: block",
+    "severity": "Medium",
+    "confidence": "Medium",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "use-trusted-publishing",
+    "line": 13,
+    "column": 14,
+    "annotation": "this command",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "use-trusted-publishing",
+    "line": 18,
+    "column": 14,
+    "annotation": "this command",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "use-trusted-publishing",
+    "line": 25,
+    "column": 11,
+    "annotation": "this command",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "use-trusted-publishing",
+    "line": 50,
+    "column": 14,
+    "annotation": "this command",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "use-trusted-publishing",
+    "line": 55,
+    "column": 14,
+    "annotation": "this command",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "use-trusted-publishing",
+    "line": 62,
+    "column": 11,
+    "annotation": "this command",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 1,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "secrets-outside-env",
+    "line": 52,
+    "column": 37,
+    "annotation": "secret is accessed outside of a dedicated environment",
+    "severity": "Medium",
+    "confidence": "High",
+    "persona": "Auditor"
+   },
+   {
+    "ident": "secrets-outside-env",
+    "line": 57,
+    "column": 37,
+    "annotation": "secret is accessed outside of a dedicated environment",
+    "severity": "Medium",
+    "confidence": "High",
+    "persona": "Auditor"
+   }
+  ]
+ },
+ {
+  "input": "use-trusted-publishing/demo-action/action.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "use-trusted-publishing",
+    "line": 9,
+    "column": 7,
+    "annotation": "this step",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Regular"
+   }
+  ]
+ },
+ {
+  "input": "use-trusted-publishing/gem-push.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "excessive-permissions",
+    "line": 1,
+    "column": 1,
+    "annotation": "default permissions used due to no permissions: block",
+    "severity": "Medium",
+    "confidence": "Medium",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "use-trusted-publishing",
+    "line": 12,
+    "column": 14,
+    "annotation": "this command",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "use-trusted-publishing",
+    "line": 15,
+    "column": 14,
+    "annotation": "this command",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "use-trusted-publishing",
+    "line": 20,
+    "column": 11,
+    "annotation": "this command",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 1,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "use-trusted-publishing/issue-1191-repro.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "excessive-permissions",
+    "line": 2,
+    "column": 1,
+    "annotation": "default permissions used due to no permissions: block",
+    "severity": "Medium",
+    "confidence": "Medium",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "undocumented-permissions",
+    "line": 15,
+    "column": 7,
+    "annotation": "needs an explanatory comment",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "use-trusted-publishing/npm-publish.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "excessive-permissions",
+    "line": 1,
+    "column": 1,
+    "annotation": "default permissions used due to no permissions: block",
+    "severity": "Medium",
+    "confidence": "Medium",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "use-trusted-publishing",
+    "line": 15,
+    "column": 9,
+    "annotation": "this step",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "use-trusted-publishing",
+    "line": 21,
+    "column": 14,
+    "annotation": "this command",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "use-trusted-publishing",
+    "line": 27,
+    "column": 9,
+    "annotation": "this step",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "use-trusted-publishing",
+    "line": 33,
+    "column": 14,
+    "annotation": "this command",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "use-trusted-publishing",
+    "line": 44,
+    "column": 14,
+    "annotation": "this command",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "use-trusted-publishing",
+    "line": 50,
+    "column": 14,
+    "annotation": "this command",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "use-trusted-publishing",
+    "line": 58,
+    "column": 11,
+    "annotation": "this command",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "use-trusted-publishing",
+    "line": 64,
+    "column": 14,
+    "annotation": "this command",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "use-trusted-publishing",
+    "line": 70,
+    "column": 14,
+    "annotation": "this command",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "use-trusted-publishing",
+    "line": 76,
+    "column": 14,
+    "annotation": "this command",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "use-trusted-publishing",
+    "line": 82,
+    "column": 14,
+    "annotation": "this command",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "use-trusted-publishing",
+    "line": 130,
+    "column": 9,
+    "annotation": "this step",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 1,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "secrets-outside-env",
+    "line": 46,
+    "column": 26,
+    "annotation": "secret is accessed outside of a dedicated environment",
+    "severity": "Medium",
+    "confidence": "High",
+    "persona": "Auditor"
+   },
+   {
+    "ident": "secrets-outside-env",
+    "line": 52,
+    "column": 26,
+    "annotation": "secret is accessed outside of a dedicated environment",
+    "severity": "Medium",
+    "confidence": "High",
+    "persona": "Auditor"
+   },
+   {
+    "ident": "secrets-outside-env",
+    "line": 60,
+    "column": 26,
+    "annotation": "secret is accessed outside of a dedicated environment",
+    "severity": "Medium",
+    "confidence": "High",
+    "persona": "Auditor"
+   },
+   {
+    "ident": "secrets-outside-env",
+    "line": 66,
+    "column": 36,
+    "annotation": "secret is accessed outside of a dedicated environment",
+    "severity": "Medium",
+    "confidence": "High",
+    "persona": "Auditor"
+   },
+   {
+    "ident": "secrets-outside-env",
+    "line": 72,
+    "column": 36,
+    "annotation": "secret is accessed outside of a dedicated environment",
+    "severity": "Medium",
+    "confidence": "High",
+    "persona": "Auditor"
+   },
+   {
+    "ident": "secrets-outside-env",
+    "line": 78,
+    "column": 26,
+    "annotation": "secret is accessed outside of a dedicated environment",
+    "severity": "Medium",
+    "confidence": "High",
+    "persona": "Auditor"
+   },
+   {
+    "ident": "secrets-outside-env",
+    "line": 84,
+    "column": 26,
+    "annotation": "secret is accessed outside of a dedicated environment",
+    "severity": "Medium",
+    "confidence": "High",
+    "persona": "Auditor"
+   },
+   {
+    "ident": "secrets-outside-env",
+    "line": 126,
+    "column": 32,
+    "annotation": "secret is accessed outside of a dedicated environment",
+    "severity": "Medium",
+    "confidence": "High",
+    "persona": "Auditor"
+   },
+   {
+    "ident": "secrets-outside-env",
+    "line": 137,
+    "column": 32,
+    "annotation": "secret is accessed outside of a dedicated environment",
+    "severity": "Medium",
+    "confidence": "High",
+    "persona": "Auditor"
+   }
+  ]
+ },
+ {
+  "input": "use-trusted-publishing/nuget-push.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "excessive-permissions",
+    "line": 1,
+    "column": 1,
+    "annotation": "default permissions used due to no permissions: block",
+    "severity": "Medium",
+    "confidence": "Medium",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "use-trusted-publishing",
+    "line": 12,
+    "column": 14,
+    "annotation": "this command",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "use-trusted-publishing",
+    "line": 15,
+    "column": 14,
+    "annotation": "this command",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "use-trusted-publishing",
+    "line": 18,
+    "column": 14,
+    "annotation": "this command",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "undocumented-permissions",
+    "line": 24,
+    "column": 7,
+    "annotation": "needs an explanatory comment",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 1,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ },
+ {
+  "input": "use-trusted-publishing/twine-upload.yml",
+  "config": null,
+  "findings": [
+   {
+    "ident": "excessive-permissions",
+    "line": 1,
+    "column": 1,
+    "annotation": "default permissions used due to no permissions: block",
+    "severity": "Medium",
+    "confidence": "Medium",
+    "persona": "Pedantic"
+   },
+   {
+    "ident": "use-trusted-publishing",
+    "line": 12,
+    "column": 14,
+    "annotation": "this command",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "use-trusted-publishing",
+    "line": 15,
+    "column": 14,
+    "annotation": "this command",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "use-trusted-publishing",
+    "line": 19,
+    "column": 11,
+    "annotation": "this command",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "use-trusted-publishing",
+    "line": 26,
+    "column": 11,
+    "annotation": "this command",
+    "severity": "Informational",
+    "confidence": "High",
+    "persona": "Regular"
+   },
+   {
+    "ident": "concurrency-limits",
+    "line": 1,
+    "column": 1,
+    "annotation": "workflow is missing concurrency setting",
+    "severity": "Low",
+    "confidence": "High",
+    "persona": "Pedantic"
+   }
+  ]
+ }
+]
