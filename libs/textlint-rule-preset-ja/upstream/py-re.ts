@@ -153,9 +153,6 @@ export const finditer = (value: Pattern | string, text: string, flags = ""): Mat
   return out;
 };
 
-// re.findall の件数（グループの中身は使わない）
-const count = (value: Pattern | string, text: string, flags = ""): number => finditer(value, text, flags).length;
-
 // re.sub(p, replacement, text)
 export const sub = (value: Pattern | string, replacement: string | ((found: Match) => string), text: string, flags = ""): string => {
   let out = "";

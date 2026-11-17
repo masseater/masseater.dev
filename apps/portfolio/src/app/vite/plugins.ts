@@ -19,7 +19,6 @@ export const portfolioPlugins = (): PluginOption[] => [
   ...clientAssets(),
   tanstackStart({
     srcDirectory: "src/app",
-    router: { routeTreeFileHeader: [] },
     rsc: { enabled: true },
     prerender: {
       enabled: true,

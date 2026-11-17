@@ -38,7 +38,7 @@
     },
   ],
   "overrides": [{ "files": ["**/generated/**"], "rules": { "unused-enum-members": "off" } }],
-  "ignoreDependencies": ["@effect/language-service"],
+  "ignoreDependencies": ["@effect/language-service", "oxlint-tsgolint"],
   "workspaces": {
     "settings": {
       "libs/msch": {
