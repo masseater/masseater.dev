@@ -14,6 +14,7 @@ import {
 import {
   environmentOf,
   goesToNpm,
+  isRoot,
   isVersioned,
   manifestIn,
   releaseName,
@@ -77,11 +78,17 @@ export const onNpm = ({ directory, name, version }: Published): ReturnType<typeo
   succeeds({ command: "npm", args: ["view", `${name}@${version}`, "version"], cwd: directory });
 
 /** @internal */
+export const released = Effect.fn("publish.released")(function* released(tag: string) {
+  const repository = yield* Config.String("GITHUB_REPOSITORY");
+  return yield* succeeds({ command: "gh", args: ["release", "view", tag, "--repo", repository] });
+});
+
+/** @internal */
 export const releasedWithAssets = Effect.fn("publish.releasedWithAssets")(
   function* releasedWithAssets(tag: string) {
     const repository = yield* Config.String("GITHUB_REPOSITORY");
     const view = ["release", "view", tag, "--repo", repository];
-    const exists = yield* succeeds({ command: "gh", args: view });
+    const exists = yield* released(tag);
     if (!exists) {
       return false;
     }
@@ -113,14 +120,21 @@ const needsNpm = Effect.fn("publish.needsNpm")(function* needsNpm(
 });
 
 const needsRelease = Effect.fn("publish.needsRelease")(function* needsRelease(
+  directory: string,
   manifest: Manifest,
   builds: readonly unknown[],
 ) {
-  if (!isVersioned(manifest) || Arr.isReadonlyArrayEmpty(builds)) {
+  const tag = tagOf({ directory, ...manifest });
+  if (!isVersioned(manifest)) {
     return false;
   }
-  const released = yield* releasedWithAssets(tagOf(manifest));
-  return !released;
+  if (isRoot(directory)) {
+    return !(yield* released(tag));
+  }
+  if (Arr.isReadonlyArrayEmpty(builds)) {
+    return false;
+  }
+  return !(yield* releasedWithAssets(tag));
 });
 
 const nativeOf = (manifest: Manifest): readonly (typeof NativeTarget.Type)[] =>
@@ -137,13 +151,13 @@ export const planOf = Effect.fn("publish.plan")(function* planOf(directory: stri
   const manifest = yield* manifestIn(workspace);
   const tasks = yield* tasksOf(workspace);
   const npm = yield* needsNpm(workspace, manifest);
-  const release = yield* needsRelease(manifest, buildsOf(tasks));
+  const release = yield* needsRelease(workspace, manifest, buildsOf(tasks));
   const built = keepWhen(release || !isVersioned(manifest));
   return {
     directory: workspace,
     name: releaseName(manifest),
     version: manifest.version,
-    tag: tagOf(manifest),
+    tag: tagOf({ directory: workspace, ...manifest }),
     environment: environmentOf(manifest),
     npm,
     native: keepWhen(npm)(nativeOf(manifest)),

@@ -7,7 +7,7 @@ description: >
 metadata:
   type: core
   library: "@r_masseater/msch"
-  library_version: 0.42.0
+  library_version: 0.43.0
 sources:
   - bin/msch-publish.ts
   - src/features/publish-workspace/**
@@ -37,7 +37,7 @@ A version that is already on npm or already has a GitHub Release with assets is 
 | `release:check:<os>` tasks                                | Checks the built files on that OS before anything is published        |
 | `release:publish` task                                    | Runs after the GitHub Release exists, with the tag in `RELEASE_TAG`   |
 
-The tag is the package name without its scope, then `-v` and the version. Release builds run in the GitHub environment `<name>-release`, which holds signing keys. A workspace at version `0.0.0` only builds; it publishes nothing.
+The tag is the package name without its scope, then `-v` and the version. The repository root (`.`) is tagged `v` and the version, and always gets a GitHub Release with generated notes, marked latest, even without assets; a template repository releases this way. Release builds run in the GitHub environment `<name>-release`, which holds signing keys. A workspace at version `0.0.0` only builds; it publishes nothing.
 
 ## The workflow
 
