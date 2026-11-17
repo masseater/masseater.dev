@@ -1,6 +1,6 @@
 {
-  "name": "@masseater.dev/pod-rattle-plugin",
-  "version": "0.0.0",
+  "name": "@masseater.dev/pod-rattle",
+  "version": "0.0.10",
   "private": true,
   "type": "module",
   "devDependencies": {
