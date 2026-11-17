@@ -1,3 +1,3 @@
 # @masseater.dev/nimado
 
-このワークスペースには、コレクターとサイトで共有されている nimado データのパスと設定が格納されている。
+This workspace holds the nimado data paths and settings shared by the collector and the site.

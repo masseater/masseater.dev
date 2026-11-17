@@ -1,20 +1,20 @@
 # portfolio
 
-このワークスペースは masseater.dev そのものである。ブログや Sloppedia、プロジェクトが揃っている持ち主のサイトである。
+This workspace is masseater.dev itself, the owner's site with the blog, Sloppedia and projects.
 
-Blog および Sloppedia の記事は `content/` 内の Markdown ファイルである。外部 CMS に移動させないこと。
+Blog and Sloppedia articles are Markdown files in `content/`. Do not move them to an external CMS.
 
-`/projects` には、各プロジェクトの名称、1行の説明、タグ、およびリンクのみが表示される。詳細はブログ記事に記述し、そこへリンクを貼ること。Sloppedia のページは `noindex` となっており、サイトマップやフィードには含まれない。
+`/projects` shows only each project's name, a one-line description, tags and links. Write details in a blog post and link to it. Sloppedia pages are `noindex` and are left out of the sitemap and feeds.
 
-frontmatter に日付を記載しないこと。ビルドでは、最初にファイルを追加したコミットの日付が使用される。
-出典は `[^codmon-retrospective]` のような名前ラベルを付けた脚注として記述すること。番号や出典リストを手書きで記載しないこと。
-出典ではないリンクは `[文言](URL)` と記述すること。URL をそのまま残さないこと。
-Claude との対話は `:::masseater` および `:::claude` ブロック内に記述すること。
-まだ薄いアイデア段階にあるブログ記事の frontmatter に、`stage: idea` を追加すること。
-ブログ記事を投稿する MCP ツールを追加しないこと。持ち主は公開前にブログ記事を推敲するため、AI が記事を執筆するのは Sloppedia のみである。
-Sloppedia の記事同士は、記事がまだ存在しない場合でも `[語](/sloppedia/<slug>)` でリンクを貼ること。新しい記事には、既存のリンクが既に使用しているスラッグを付けること。
-Sloppedia の記事は百科事典のようなスタイルで記述すること。「題名は、〜である。」で書き始めること。持ち主の意見は「Sloppedia の持ち主の masseater は〜と考えている」と記述すること。
+Do not put dates in frontmatter. The build uses the date of the commit that first added the file.
+Write sources as footnotes with name labels such as `[^codmon-retrospective]`. Do not hand-write numbers or source lists.
+Write links that are not sources as `[text](URL)`. Do not leave bare URLs.
+Write conversations with Claude inside `:::masseater` and `:::claude` blocks.
+Add `stage: idea` to the frontmatter of blog posts that are still thin ideas.
+Do not add MCP tools that post blog articles. The owner edits blog posts before publishing, so AI writes articles only for Sloppedia.
+Link Sloppedia articles to each other with `[term](/sloppedia/<slug>)`, even when the article does not exist yet. Give a new article the slug that existing links already use.
+Write Sloppedia articles in an encyclopedia style. Start with `題名は、〜である。`. Write the owner's opinions as `Sloppedia の持ち主の masseater は〜と考えている`.
 
-曲は `src/entities/song/catalog/<slug>/` に 1 曲ずつ置く。一覧とページは、そこにある `work.ts`、`recording.ts`、`thumb.webp` から作る。
+Each song lives in its own `src/entities/song/catalog/<slug>/`. The list and pages are built from the `work.ts`, `recording.ts` and `thumb.webp` there.
 
-曲の音を作るコードも TypeScript で書き、lint を通す。譜面の値は `score/` のデータに置き、音の処理は `engine/` に置く。書き出す音が変わる変更は曲の作り直しとして扱う。それ以外の変更では、書き出した音がビット単位で変わらないことを確かめる。
+Write the code that makes a song's sound in TypeScript too, and pass lint. Put score values in the `score/` data and sound processing in `engine/`. Treat a change that alters the rendered sound as remaking the song. For any other change, check that the rendered sound stays bit-identical.

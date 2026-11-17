@@ -1,7 +1,7 @@
 # @masseater.dev/daw-view
 
-このワークスペースは、DAW風の楽曲ページ（トランスポート、波形、トラック、ピアノロール）を描く。portfolio の `/ai-produced/<曲>` がこれを使う。
+This workspace draws DAW-style song pages (transport, waveform, tracks, piano roll). portfolio's `/ai-produced/<song>` uses it.
 
-音を作るのはページの側で、このワークスペースはページが報告した内容だけを表示・再生する。
+The page makes the sound. This workspace only shows and plays what the page reports.
 
-トラックの音量、パン、ミュートは、名前と単位を `libs/song-format` の `.fumx` のミキサーにそろえる。ソロは画面の状態で、曲には書かない。
+Track volume, pan and mute use the names and units of the `.fumx` mixer in `libs/song-format`. Solo is screen state and is not written to the song.

@@ -1,7 +1,6 @@
+import { defineRule } from "@r_masseater/y8";
+import type { Rule, RuleContext } from "@r_masseater/y8";
 import { Array as Arr, Option, String as Str, pipe } from "effect";
-
-import { defineRule } from "#/entities/rule/index.ts";
-import type { Rule, RuleContext } from "#/shared/config/index.ts";
 
 import { proseNodes, subHeadingsOf, titleOf } from "./markdown.ts";
 import { numberOption } from "./options.ts";
