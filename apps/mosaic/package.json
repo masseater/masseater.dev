@@ -9,7 +9,6 @@
   "dependencies": {
     "@effect/atom-react": "catalog:stack",
     "@effect/platform-node": "catalog:",
-    "@masseater.dev/alchemy-app-name": "workspace:*",
     "@masseater.dev/cloudflare-account": "workspace:*",
     "@masseater.dev/github-workflow": "workspace:*",
     "@masseater.dev/node-main": "workspace:*",

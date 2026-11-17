@@ -8,6 +8,15 @@ Use it before passing the contents of a web page, an email or a file to an AI ag
 
 In the [demo](https://masseater.dev/injection-bisect/), pick an example or open a local file. It reads text, HTML, Markdown, Office documents, PDFs, images and more, and marks the parts it judges to be injected.
 
+## Use it from the command line
+
+It needs Node.js and an OpenRouter API key. Pass the text as an argument or a file with `--file`. It prints the result as JSON, with the injected parts and the cleaned text.
+
+```sh
+export OPENROUTER_API_KEY=sk-or-...
+npx -p @r_masseater/injection-bisect -p @effect/platform-node -p effect injection-bisect --file page.html
+```
+
 ## Use it from npm
 
 It needs Node.js and an OpenRouter API key.
