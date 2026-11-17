@@ -1,7 +1,7 @@
 # @masseater.dev/pod-rattle-engine
 
-このワークスペースは、Rust で書かれた Pod Rattle のサウンドエンジンである。
+This workspace is the Pod Rattle sound engine, written in Rust.
 
-- 性能の判定は時間ではなく、Valgrindベンチマークの命令カウントに基づいて行う。CIランナーによって速度が異なるため、時間で判定すると一部のマシンで落ちる。
-- オーディオスレッドで確保しないこと。エンジンの初期化時に配列を確保すること。
-- パリティテストでは、サウンドをlabsページのサウンドと比較する。labsでサウンドを変更する際は、このエンジンも変更すること。高速化する場合でも、浮動小数点の演算順は維持すること。
+- Judge performance by instruction counts from the Valgrind benchmarks, not by time. CI runners differ in speed, so time-based checks fail on some machines.
+- Do not allocate on the audio thread. Allocate arrays when the engine is initialized.
+- The parity tests compare the sound with the sound of the labs page. When you change the sound in labs, change this engine too. Keep the order of floating-point operations even when optimizing.

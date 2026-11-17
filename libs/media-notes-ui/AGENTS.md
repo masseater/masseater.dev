@@ -1,3 +1,3 @@
 # @masseater.dev/media-notes-ui
 
-このワークスペースには、メディアの範囲に印やコメントを付けるデスクトップアプリが共有する画面の部品を置く。各アプリのページはこれらの部品を並べ、自分が保存するメモのフォームと一覧を足す。
+This workspace holds the screen parts shared by desktop apps for marking and commenting on ranges of media. Each app's page lays out these parts and adds the form and list for the notes it saves.

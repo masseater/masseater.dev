@@ -1,5 +1,5 @@
 # ocr-decide
 
-このワークスペースは、`ocr-decide` のブラウザデモである。OCR および decision モデルを用いて請求書を読み取り、測定結果を表示する。
+This workspace is the browser demo of `ocr-decide`. It reads invoices with OCR and decision models and shows the measurements.
 
-デモにはサーバーがない。見る人が自身のOpenRouterキーを入力し、サーバーはそれを保持せず、受け取らない。
+The demo has no server. Viewers enter their own OpenRouter key, and no server keeps or receives it.

@@ -5,13 +5,9 @@ const INDEX_SKILL = "masseater-ecosystem";
 
 const MASSEATER_DOCS: DocsPresetOptions = {
   agents: {
-    sections: [
-      ["Tech stack", "テックスタック"],
-      ["Commands", "コマンド"],
-      ["Rules", "ルール"],
-    ],
-    commands: ["Commands", "コマンド"],
-    stack: ["Tech stack", "テックスタック"],
+    sections: [["Tech stack"], ["Commands"], ["Rules"]],
+    commands: ["Commands"],
+    stack: ["Tech stack"],
     skillNames: { index: INDEX_SKILL },
   },
   skills: { skillNames: { index: INDEX_SKILL } },

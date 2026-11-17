@@ -84,7 +84,8 @@ test("each file kind gets its own rules", () =>
         "# demo\n\nOne. Two. Three.\n\n## Features\n\n[guide](docs/guide.md)\n\n[missing](nothing.md)\n",
       "docs/guide.md": "# Guide\n",
       "AGENTS.md": "Plain text with no title.\n\n## Testing\n\nRun tests.\n",
-      "pkg/AGENTS.md": "# pkg\n\nThe pkg workspace.\n\n## Notes\n\nUse the `other-skill` skill.\n",
+      "pkg/AGENTS.md":
+        "# pkg\n\nThe pkg workspace.\n\n## Notes\n\nUse the `other-skill` skill.\n\nテストを書く。\n",
       "skills/demo/SKILL.md":
         "---\nname: Demo\ndescription: I help you.\n---\n\n# demo\n\n## When to use\n\nAlways.\n",
       "skills/other-skill/SKILL.md":
@@ -104,6 +105,7 @@ test("each file kind gets its own rules", () =>
       "README.md docs/link-target-exists",
       "pkg/AGENTS.md docs/agents-workspace-shape",
       "pkg/AGENTS.md docs/agents-no-skill-names",
+      "pkg/AGENTS.md docs/agents-english",
       "skills/demo/SKILL.md docs/skill-title",
       "skills/demo/SKILL.md docs/skill-purpose-first",
       "skills/demo/SKILL.md docs/skill-description-person",

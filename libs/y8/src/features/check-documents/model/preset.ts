@@ -10,6 +10,7 @@ import {
   agentsNoStructure,
   agentsOpening,
   agentsSections,
+  agentsEnglish,
   agentsSkillOwned,
   agentsStackSentence,
   agentsTitle,
@@ -77,6 +78,7 @@ const README: Readonly<Record<string, Rule>> = {
 
 const AGENTS: Readonly<Record<string, Rule>> = {
   "agents-title": agentsTitle,
+  "agents-english": agentsEnglish,
   "agents-opening": agentsOpening,
   "agents-skill-owned": agentsSkillOwned,
   "agents-no-structure": agentsNoStructure,

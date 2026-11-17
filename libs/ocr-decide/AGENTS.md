@@ -1,3 +1,3 @@
 # @r_masseater/ocr-decide
 
-このワークスペースは `ocr-decide` である。OCR で請求書や領収書を読み取り、各項目がどの行にあるかを decision モデルに選ばせる。
+This workspace is `ocr-decide`. It reads invoices and receipts with OCR and has a decision model choose which line each field is on.

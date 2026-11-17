@@ -1,3 +1,3 @@
 # @masseater.dev/xtask
 
-このワークスペースは、リリース用に Rust のオーディオプラグインをバンドルする。
+This workspace bundles the Rust audio plugin for release.
