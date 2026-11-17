@@ -633,8 +633,8 @@ catalogs:
       specifier: 23.4.4
       version: 23.4.4
     empathic:
-      specifier: 1.1.0
-      version: 1.1.0
+      specifier: 2.1.0
+      version: 2.1.0
     entities:
       specifier: 9.0.0
       version: 9.0.0
@@ -4436,7 +4436,7 @@ importers:
         version: 23.4.4
       empathic:
         specifier: 'catalog:'
-        version: 1.1.0
+        version: 2.1.0
       fastest-levenshtein:
         specifier: 'catalog:'
         version: 1.0.16
