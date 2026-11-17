@@ -54,7 +54,7 @@ const created = (source: string): unknown => ({
 const JAPANESE = "エディタは Neovim を使う。";
 
 const translator = {
-  translate: (): Promise<Readonly<{ text: string }>> => Promise.resolve({ text: JAPANESE }),
+  run: (): Promise<unknown> => Promise.resolve({ choices: [{ message: { content: JAPANESE } }] }),
 };
 
 const FIRST_TRAIT = 1;
@@ -213,7 +213,7 @@ it.effect("記録の呼び出しが無ければ失敗し、源を読んだ印を
 const nothingFound = assistant([call({ observations: [] })]);
 
 const refusing = {
-  translate: (): Promise<Readonly<{ text: string }>> => Promise.reject(new Error("down")),
+  run: (): Promise<unknown> => Promise.reject(new Error("down")),
 };
 
 it.effect("作るのに時間を使い切っても、前の回に作った特性を先に訳す", () =>
