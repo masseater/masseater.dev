@@ -1,4 +1,5 @@
-import { Array as Arr, Boolean as Bool, Effect, Match, Option, Order, pipe } from "effect";
+import { callAddon, present, sortByPosition, traceparent } from "@r_masseater/lint-host";
+import { Array as Arr, Effect, Match, Option, pipe } from "effect";
 
 import { BUILTIN, resolve, unknownPlugins } from "#/entities/rule/index.ts";
 import type { Resolved } from "#/entities/rule/index.ts";
@@ -6,7 +7,6 @@ import { runCompatRules } from "#/features/run-compat-rules/index.ts";
 import { runScriptRules } from "#/features/run-rules/index.ts";
 import type { Diagnostic, Y8Config } from "#/shared/config/index.ts";
 import { Y8Error, failedWith } from "#/shared/lib/errors.ts";
-import { present } from "#/shared/lib/present.ts";
 import { native } from "#/shared/native/index.ts";
 import type {
   NativeDiagnostic,
@@ -20,9 +20,6 @@ export interface LintInput {
   readonly files: readonly string[];
   readonly config?: Y8Config;
 }
-
-const SAMPLED = "01";
-const NOT_SAMPLED = "00";
 
 type RangeFields = Partial<{ readonly column: number; readonly length: number }>;
 
@@ -48,19 +45,6 @@ const fromNative =
     ...present(Option.fromNullishOr(diagnostic.context), (context) => ({ context })),
   });
 
-const byPosition = Order.combine(
-  Order.mapInput(Order.String, (diagnostic: Diagnostic) => diagnostic.path),
-  Order.mapInput(Order.Number, (diagnostic: Diagnostic) => diagnostic.line),
-);
-
-const flagsOf = (sampled: boolean): string =>
-  Bool.match(sampled, { onFalse: () => NOT_SAMPLED, onTrue: () => SAMPLED });
-
-const traceparent = Effect.currentSpan.pipe(
-  Effect.map((span) => `00-${span.traceId}-${span.spanId}-${flagsOf(span.sampled)}`),
-  Effect.option,
-);
-
 const needsText = (resolved: Resolved): boolean =>
   Arr.isReadonlyArrayNonEmpty(resolved.scripts) || Arr.isReadonlyArrayNonEmpty(resolved.compat);
 
@@ -74,24 +58,6 @@ const nativeOptions = (resolved: Resolved, config: Y8Config): Effect.Effect<Nati
       ...present(parent, (value) => ({ traceparent: value })),
     })),
   );
-
-const runNative = (
-  input: LintInput,
-  options: NativeOptions,
-): Effect.Effect<readonly NativeResult[], Y8Error> =>
-  native.pipe(
-    Effect.flatMap((addon) =>
-      Effect.try({
-        try: () => addon.lintPaths(input.root, input.files, options),
-        catch: failedWith("y8 could not lint"),
-      }),
-    ),
-    Effect.withSpan("y8.native", { attributes: { "y8.files": input.files.length } }),
-  );
-
-const flushTelemetry: Effect.Effect<void, Y8Error> = native.pipe(
-  Effect.flatMap((addon) => Effect.promise(() => addon.flushTelemetry())),
-);
 
 const sourceOf = (result: NativeResult): Option.Option<SourceFile> =>
   pipe(
@@ -129,7 +95,13 @@ export const lint = Effect.fn("y8.lint")(function* lint(input: LintInput) {
   yield* checkPlugins(config);
   const resolved = resolve(config);
   const options = yield* nativeOptions(resolved, config);
-  const results = yield* runNative(input, options);
+  const results = yield* callAddon({
+    addon: native,
+    name: "y8",
+    files: input.files.length,
+    call: (addon) => addon.lintPaths(input.root, input.files, options),
+    failWith: failedWith,
+  });
   const compat = yield* runCompatRules({
     files: pipe(
       results,
@@ -137,8 +109,7 @@ export const lint = Effect.fn("y8.lint")(function* lint(input: LintInput) {
     ),
     rules: resolved.compat,
   });
-  yield* flushTelemetry;
   const builtin = pipe(results, Arr.flatMap(builtinOf));
   const scripted = pipe(results, Arr.flatMap(scriptedOne(resolved)));
-  return pipe([...builtin, ...scripted, ...compat], Arr.sortBy(byPosition));
+  return sortByPosition<Diagnostic>([...builtin, ...scripted, ...compat]);
 });

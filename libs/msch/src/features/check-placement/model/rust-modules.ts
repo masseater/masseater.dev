@@ -14,23 +14,19 @@ import {
   SOURCE_DIRECTORY,
   crateDirectories,
   crateOf,
-  importMessage,
-  isInsideSource,
   isSliceIndex,
   kindOf,
   modulePathOf,
-  resolvedFrom,
 } from "./rust-layout.ts";
 import type { Kind, RustSource } from "./rust-layout.ts";
 import { readRustFile } from "./rust-syntax.ts";
-import type { RustFile, RustItem, RustPath } from "./rust-syntax.ts";
+import type { RustFile, RustItem } from "./rust-syntax.ts";
 import { isVerbObjectBy } from "./source-names.ts";
 
 const LAYERED_RULE: RuleName = "layered-source";
 const ENTRY_RULE: RuleName = "public-entry";
 const TEST_RULE: RuleName = "colocated-test";
 const SLICE_RULE: RuleName = "feature-slice-name";
-const IMPORT_RULE: RuleName = "layer-import";
 const GRAMMAR = "rust";
 const WORD_SEPARATOR = "_";
 const FEATURES = "features";
@@ -54,9 +50,6 @@ const EXCLUDED: readonly string[] = [
 ];
 const NONE: readonly Problem[] = [];
 
-const OUTSIDE_MESSAGE =
-  "sits outside src/. Put every module of a crate under src/ in an FSD layer; only build.rs and benches/ may stay outside.";
-const LAYER_MESSAGE = `is not an FSD layer. A crate's src/ holds only lib.rs, main.rs, bin/ and the layers ${Arr.join(LAYERS, ", ")}.`;
 const ROOT_MESSAGE =
   "defines code in the crate root. Keep lib.rs and main.rs to mod declarations of layers, use, pub use and fn main, and put the code in a layer.";
 const LAYER_INDEX_MESSAGE =
@@ -76,22 +69,6 @@ interface Read {
   readonly source: RustSource;
   readonly parsed: RustFile;
 }
-
-const placementProblem = (
-  { crate, inner, file }: RustSource,
-  root: string,
-  join: Join,
-): Problem => {
-  if (!isInsideSource(inner)) {
-    return fileProblem({ file, rule: LAYERED_RULE, message: OUTSIDE_MESSAGE });
-  }
-  const top = Option.getOrElse(Arr.head(modulePathOf(inner)), () => "");
-  return fileProblem({
-    file: join(root, crate, SOURCE_DIRECTORY, top),
-    rule: LAYERED_RULE,
-    message: LAYER_MESSAGE,
-  });
-};
 
 const itemProblem =
   (file: string, rule: RuleName, message: string) =>
@@ -122,27 +99,6 @@ const isRootItem =
 const isLayerItem = (item: RustItem): boolean =>
   Arr.contains(LAYER_ITEMS, item.kind) || (item.kind === "mod_item" && !item.inline);
 
-const importProblems = (
-  file: string,
-  modulePath: readonly string[],
-  paths: readonly RustPath[],
-): readonly Problem[] =>
-  pipe(
-    paths,
-    Arr.flatMap((path) =>
-      pipe(
-        resolvedFrom({ segments: path.segments, current: [...modulePath, ...path.scope] }),
-        Option.flatMap((target) => importMessage({ source: modulePath, target })),
-        Option.map((message) => itemProblem(file, IMPORT_RULE, message)(path)),
-        Option.toArray,
-      ),
-    ),
-    Arr.dedupeWith(
-      (left, right) =>
-        left.line === right.line && left.column === right.column && left.message === right.message,
-    ),
-  );
-
 const entryProblems = (
   file: string,
   modulePath: readonly string[],
@@ -158,13 +114,8 @@ const entryProblems = (
   );
 };
 
-const moduleProblems = ({ source, parsed }: Read): readonly Problem[] => {
-  const modulePath = modulePathOf(source.inner);
-  return [
-    ...entryProblems(source.file, modulePath, parsed),
-    ...importProblems(source.file, modulePath, parsed.paths),
-  ];
-};
+const moduleProblems = ({ source, parsed }: Read): readonly Problem[] =>
+  entryProblems(source.file, modulePathOf(source.inner), parsed);
 
 const testProblems = ({ source, parsed }: Read): readonly Problem[] => {
   if (parsed.replacesAllocator) {
@@ -223,18 +174,6 @@ const sliceNameProblems = (
     Arr.map((file) => fileProblem({ file, rule: SLICE_RULE, message: SLICE_MESSAGE })),
   );
 
-const misplacedProblems = (
-  root: string,
-  join: Join,
-  sources: readonly RustSource[],
-): readonly Problem[] =>
-  pipe(
-    sources,
-    Arr.filter(({ inner }) => kindOf(inner) === "misplaced"),
-    Arr.map((source) => placementProblem(source, root, join)),
-    Arr.dedupeWith((left, right) => left.file === right.file),
-  );
-
 const parsedWith =
   (language: Language) =>
   (source: RustSource, text: string): Option.Option<Read> =>
@@ -281,7 +220,6 @@ export const checkRustModules = Effect.fn("checkRustModules")(function* checkRus
     { concurrency: READ_CONCURRENCY },
   );
   return [
-    ...misplacedProblems(root, files.join, sources),
     ...sliceNameProblems(root, files.join, sources),
     ...Arr.flatMap(Arr.getSomes(read), problemsOf),
   ];
