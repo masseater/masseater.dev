@@ -24,7 +24,7 @@ const FAILED = 1;
 const encodeJson = Schema.encodeEffect(Schema.fromJsonString(Schema.Unknown));
 
 const fixtureFiles = Effect.gen(function* fixtureFiles() {
-  const manifest = yield* encodeJson({ name: "fixture" });
+  const manifest = yield* encodeJson({ name: "fixture", private: true });
   const tsconfig = yield* encodeJson({
     compilerOptions: {
       strict: true,
