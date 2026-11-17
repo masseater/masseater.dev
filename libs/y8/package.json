@@ -1,7 +1,7 @@
 {
   "name": "@r_masseater/y8",
   "version": "0.1.0",
-  "description": "A Markdown linter written in Rust that matches markdownlint's built-in rules, configured from vite.config.ts, with TypeScript rules and markdownlint custom-rule support.",
+  "description": "A Markdown linter written in Rust that matches markdownlint's built-in rules, configured from vite.config.ts, with TypeScript rules, markdownlint custom-rule support and a Japanese tokenizer.",
   "keywords": [
     "lint",
     "markdown",
@@ -33,6 +33,7 @@
   },
   "exports": {
     ".": "./src/app/index.ts",
+    "./kuromojin": "./src/app/kuromojin.ts",
     "./vite": {
       "types": "./src/app/vite.ts"
     },
@@ -47,6 +48,10 @@
       ".": {
         "types": "./dist/index.d.mts",
         "default": "./dist/index.mjs"
+      },
+      "./kuromojin": {
+        "types": "./dist/kuromojin.d.mts",
+        "default": "./dist/kuromojin.mjs"
       },
       "./vite": {
         "types": "./dist/vite.d.mts",
@@ -79,6 +84,12 @@
   },
   "peerDependenciesMeta": {
     "markdownlint": {
+      "optional": true
+    },
+    "vite": {
+      "optional": true
+    },
+    "vite-plus": {
       "optional": true
     }
   },

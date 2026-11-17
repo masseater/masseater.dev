@@ -1,3 +1,4 @@
+import "./kuromojin.config.ts";
 import { createRequire } from "node:module";
 
 import presetJa from "@r_masseater/textlint-rule-preset-ja";

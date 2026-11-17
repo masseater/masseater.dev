@@ -4214,9 +4214,9 @@ importers:
 
   libs/textlint-rule-preset-ja:
     dependencies:
-      kuromojin:
-        specifier: 3.0.1
-        version: 3.0.1
+      '@r_masseater/y8':
+        specifier: workspace:*
+        version: link:../y8
       sentence-splitter:
         specifier: 5.0.3
         version: 5.0.3

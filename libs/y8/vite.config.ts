@@ -32,7 +32,12 @@ export default defineConfig({
     },
   },
   pack: {
-    entry: { index: "src/app/index.ts", cli: "bin/y8.ts", vite: "src/app/vite.ts" },
+    entry: {
+      index: "src/app/index.ts",
+      cli: "bin/y8.ts",
+      vite: "src/app/vite.ts",
+      kuromojin: "src/app/kuromojin.ts",
+    },
     platform: "node",
     sourcemap: true,
     dts: { generator: "tsgo" },

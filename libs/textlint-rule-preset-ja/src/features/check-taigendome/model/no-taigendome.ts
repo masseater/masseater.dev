@@ -1,8 +1,8 @@
+import { tokenizeSync } from "@r_masseater/y8";
+import type { Morpheme } from "@r_masseater/y8";
 import type { TxtNode } from "@textlint/ast-node-types";
 import type { TextlintRuleModule } from "@textlint/types";
 import { Array as Arr, Effect, Option, String as Str, pipe } from "effect";
-import { tokenize } from "kuromojin";
-import type { KuromojiToken } from "kuromojin";
 import { SentenceSplitterSyntax, split } from "sentence-splitter";
 
 const COMMA = /[、，]/u;
@@ -24,14 +24,14 @@ const TAIGENDOME_MESSAGE =
 const TOPIC_MESSAGE =
   "短い主題の直後で読点を打つ変な区切りです。読点を外してください。たとえば「人は、」「OSSでは、」がこれに当たります。";
 
-type Token = KuromojiToken;
+type Token = Morpheme;
 type Range = readonly [number, number];
 type Finding = Readonly<{ message: string; range: Range }>;
 type Check = Readonly<{ message: string; test: (sentence: string) => Effect.Effect<boolean> }>;
 
 const contentTokens = (text: string): Effect.Effect<readonly Token[]> =>
   pipe(
-    Effect.promise(() => tokenize(text)),
+    Effect.sync(() => tokenizeSync(text)),
     Effect.map(Arr.filter((token) => token.pos !== "記号")),
   );
 
