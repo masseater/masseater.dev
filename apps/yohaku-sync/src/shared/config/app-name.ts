@@ -1,4 +1,4 @@
-import { appNamed } from "@masseater.dev/alchemy-app-name";
+import { appNamed } from "@masseater.dev/cloudflare-account/app-name";
 
 export const APP_NAME = "masseater-dev-yohaku-sync";
 
