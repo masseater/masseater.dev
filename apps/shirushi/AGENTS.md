@@ -5,5 +5,3 @@
 他人の曲や動画、それから作ったステムや静止画は、このリポジトリやインストーラーへ入れないこと。
 
 画面は `tauri://localhost` ではなく、tauri-plugin-localhost が `http://127.0.0.1` の空きポートから配る。カスタムスキームの画面からは Referer が送られず、YouTube の埋め込みが Error 153 で止まるからである。このため、コマンドを足したら `src-tauri/build.rs` と `capabilities/default.json` にも足す。
-
-PC 上の動画ファイルに付けたしるしには、範囲の真ん中の静止画を JPEG で添え、MCP の `view_still` で AI に見せる。
