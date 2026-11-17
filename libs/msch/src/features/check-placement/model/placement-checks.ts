@@ -6,6 +6,7 @@ import { checkDocPlacement } from "./doc-placement.ts";
 import { checkDocsMirror } from "./docs-mirror.ts";
 import { checkIgnoredSources } from "./ignored-sources.ts";
 import { checkLayeredSource } from "./layered-source.ts";
+import { checkRustModules } from "./rust-modules.ts";
 import { checkSourceAliases } from "./source-aliases.ts";
 import { checkSourceNames } from "./source-names.ts";
 
@@ -16,6 +17,7 @@ export const checkPlacement = Effect.fn("checkPlacement")(function* checkPlaceme
       checkDocPlacement(root),
       checkColocatedTests(root),
       checkLayeredSource(root),
+      checkRustModules(root),
       checkSourceAliases(root),
       checkSourceNames(root),
       checkColocatedGitPatterns(root),
