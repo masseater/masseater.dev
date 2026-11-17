@@ -41,10 +41,7 @@ export default defineConfig(({ mode }) => ({
   run: {
     tasks: {
       ...alchemyTasks,
-      "deploy:production": {
-        ...deployTo("prod"),
-        dependsOn: ["plamo-translate#deploy:production"],
-      },
+      "deploy:production": deployTo("prod"),
       verify: { command: [], dependsOn: ["auth:check"] },
       ...d1Tasks,
       "auth:generate":
