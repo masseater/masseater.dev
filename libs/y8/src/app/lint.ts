@@ -9,12 +9,13 @@ import { runCompatRules } from "#/features/run-compat-rules/index.ts";
 import { runScriptRules } from "#/features/run-rules/index.ts";
 import type { Diagnostic, Project, Y8Config } from "#/shared/config/index.ts";
 import { Y8Error, failedWith } from "#/shared/lib/errors.ts";
-import { native } from "#/shared/native/index.ts";
+import { native, sourceView } from "#/shared/native/index.ts";
 import type {
   NativeDiagnostic,
   NativeOptions,
   NativeResult,
   SourceFile,
+  SourceView,
 } from "#/shared/native/index.ts";
 
 export interface LintInput {
@@ -61,28 +62,30 @@ const nativeOptions = (
       config: resolved.core,
       inlineConfig: config.inlineConfig ?? true,
       keepTree: Arr.isReadonlyArrayNonEmpty(resolved.scripts),
-      keepText: needsText(resolved),
+      keepSource: needsText(resolved),
       ...present(parent, (value) => ({ traceparent: value })),
       ...present(resolved.agent, ({ disabled }) => ({ agnix: { root, disabled } })),
     })),
   );
 
+const viewOf = (result: NativeResult): Option.Option<SourceView> =>
+  pipe(Option.fromNullishOr(result.source), Option.map(sourceView));
+
 const sourceOf = (result: NativeResult): Option.Option<SourceFile> =>
   pipe(
-    Option.fromNullishOr(result.text),
-    Option.map((text): SourceFile => ({ path: result.path, text })),
+    viewOf(result),
+    Option.map((view): SourceFile => ({ path: result.path, text: view.text() })),
   );
 
 const scriptedOne =
   (resolved: Resolved, project: Project) =>
   (result: NativeResult): readonly Diagnostic[] =>
     pipe(
-      Option.all({ tree: Option.fromNullishOr(result.tree), source: sourceOf(result) }),
-      Option.map(({ tree, source }) =>
+      viewOf(result),
+      Option.map((source) =>
         runScriptRules({
-          path: source.path,
-          text: source.text,
-          tree,
+          path: result.path,
+          source,
           rules: resolved.scripts,
           project,
         }),
@@ -126,7 +129,13 @@ const lintGroup = (
       rules: resolved.compat,
     });
     const builtin = pipe(results, Arr.flatMap(builtinOf));
-    const scripted = pipe(results, Arr.flatMap(scriptedOne(resolved, project)));
+    const scripted = yield* Effect.sync(() =>
+      pipe(results, Arr.flatMap(scriptedOne(resolved, project))),
+    ).pipe(
+      Effect.withSpan("y8.script_rules", {
+        attributes: { "y8.files": results.length, "y8.rules": resolved.scripts.length },
+      }),
+    );
     const agent = Option.match(resolved.agent, {
       onNone: (): readonly Diagnostic[] => [],
       onSome: (rules) => pipe(results, Arr.flatMap(agentDiagnosticsOf(rules))),
