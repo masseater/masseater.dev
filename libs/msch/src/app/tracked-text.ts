@@ -3,7 +3,7 @@ import { Array as Arr, Effect } from "effect";
 import { checkComments } from "#/features/ban-comments/index.ts";
 import { checkDocker, checkPython } from "#/features/ban-tools/index.ts";
 import { checkCatalogEntries } from "#/features/check-catalog-entries/index.ts";
-import { checkGitSubpath } from "#/features/check-overrides/index.ts";
+import { checkGitSubpath, checkPackageRegistry } from "#/features/check-overrides/index.ts";
 import { checkNodeVersion } from "#/features/check-runtime-version/index.ts";
 import {
   checkPublishedSkills,
@@ -44,6 +44,7 @@ export const checkTrackedText = Effect.fn("checkTrackedText")(function* checkTra
       checkDowngrades(root),
       checkRenovateSettings(root),
       checkCatalogEntries(root),
+      checkPackageRegistry(root),
     ],
     { concurrency: "unbounded" },
   );
