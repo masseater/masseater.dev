@@ -13,7 +13,14 @@ import type { PlatformError } from "effect/PlatformError";
 import { afterAll, expect, test } from "vite-plus/test";
 
 import { definePlugin, defineRule, lint, rustCrate, skill, workspace } from "./index.ts";
-import type { Diagnostic, WismConfig, WismError } from "./index.ts";
+import type {
+  Diagnostic,
+  GraphEdge,
+  GraphNode,
+  RuleContext,
+  WismConfig,
+  WismError,
+} from "./index.ts";
 
 const services = ManagedRuntime.make(NodeServices.layer);
 afterAll(() => services.dispose());
@@ -45,7 +52,11 @@ const lintTree = (
         }),
       { concurrency: 1 },
     );
-    return yield* lint({ root, files: Rec.keys(tree), config });
+    const files = pipe(
+      Rec.keys(tree),
+      Arr.filter((name) => !Str.includes("node_modules/")(name)),
+    );
+    return yield* lint({ root, files, config });
   }).pipe(Effect.scoped);
 
 const found = (diagnostics: readonly Diagnostic[]): readonly string[] =>
@@ -141,4 +152,136 @@ test("runs plugin rules on the graph and follows rule severities", () =>
         Arr.map(({ rule, severity }) => `${severity} ${rule}`),
       ),
     ).toStrictEqual(["warn placement", "error local/no-job"]);
+  }).pipe(services.runPromise));
+
+test("follows what the presets allow and forbid", () =>
+  Effect.gen(function* presets() {
+    const diagnostics = yield* lintTree({
+      "libs/kit/package.json": `{ "name": "kit", "imports": { "#/*": "./src/*" } }`,
+      "libs/kit/alchemy.run.ts": MODULE,
+      "libs/kit/env.d.ts": MODULE,
+      "libs/kit/scripts/build.ts": MODULE,
+      "libs/kit/src/app/index.ts": `import { login } from "#/features/auth/login/index.js";\nimport pkg from "pkg";\nimport fs from "node:fs";\nexport const app = [login, pkg, fs];\n`,
+      "libs/kit/src/features/auth/login/index.ts": `export { login } from "./model/login.ts";\n`,
+      "libs/kit/src/features/auth/login/model/login.ts": `import { button } from "../../../../shared/ui/button.ts";\nimport { types } from "../../../../shared/config/types.ts";\nexport const login = [button, types];\n`,
+      "libs/kit/src/entities/user/index.ts": `import { job } from "../job/@x/user.ts";\nexport const user = job;\n`,
+      "libs/kit/src/entities/job/index.ts": MODULE,
+      "libs/kit/src/entities/job/@x/user.ts": `export const job = 1;\n`,
+      "libs/kit/src/shared/ui/button.ts": `export const button = 1;\n`,
+      "libs/kit/src/shared/config/index.ts": MODULE,
+      "libs/kit/src/shared/config/types.ts": `export const types = 1;\n`,
+      "libs/kit/node_modules/pkg/package.json": `{ "name": "pkg", "main": "index.js" }`,
+      "libs/kit/node_modules/pkg/index.js": MODULE,
+      "libs/core/Cargo.toml": `[package]\nname = "core"\n`,
+      "libs/core/src/main.rs": "fn main() {}\n",
+      "libs/core/tests/run.rs": "#[test]\nfn run() {}\n",
+      "libs/core/benches/speed.rs": "fn main() {}\n",
+      "libs/core/examples/demo.rs": "fn main() {}\n",
+      "skills/write/SKILL.md": "# write\n",
+      "skills/write/usecases/draft.md": "# draft\n",
+      "skills/write/scripts/check.ts": MODULE,
+      "skills/write/assets/logo.svg": "<svg/>\n",
+    });
+    expect(found(diagnostics)).toStrictEqual([
+      "placement libs/core/examples/demo.rs:1",
+      "placement libs/kit/scripts/build.ts:1",
+      "public-api libs/kit/src/features/auth/login/model/login.ts:2",
+    ]);
+  }).pipe(services.runPromise));
+
+const GRAPH_TREE: Readonly<Record<string, string>> = {
+  "libs/kit/package.json": `{ "name": "kit" }`,
+  "libs/kit/src/app/index.ts": `export * from "../entities/job/index.ts";\n`,
+  "libs/kit/src/entities/job/index.ts": MODULE,
+  "libs/core/Cargo.toml": `[package]\nname = "core"\n`,
+  "libs/core/src/features/sync.rs": "use crate::entities::note::Note;\n",
+};
+
+const GRAPH_EDGES: readonly GraphEdge[] = [
+  {
+    from: "libs/kit/src/app/index.ts",
+    specifier: "../entities/job/index.ts",
+    target: { type: "file", value: "libs/kit/src/entities/job/index.ts" },
+    line: 1,
+    column: 15,
+    wildcard: true,
+  },
+  {
+    from: "libs/core/src/features/sync.rs",
+    specifier: "crate::entities::note::Note",
+    target: { type: "module", value: ["entities", "note", "Note"] },
+    line: 1,
+    column: 5,
+    wildcard: false,
+  },
+];
+
+const JOB_NODE: GraphNode = {
+  path: "libs/kit/src/entities/job/index.ts",
+  kind: "workspace",
+  dir: "libs/kit",
+  layer: "entities",
+  slice: "job",
+};
+
+const keeping = (keep: (context: RuleContext) => void): WismConfig => ({
+  kinds: KINDS,
+  plugins: {
+    local: definePlugin({
+      rules: {
+        see: defineRule({
+          meta: { description: "Keeps the context" },
+          check: keep,
+        }),
+      },
+    }),
+  },
+  rules: { "local/see": ["warn", { depth: 1 }] },
+});
+
+test("hands plugin rules the files, nodes and edges", () =>
+  Effect.gen(function* graph() {
+    const seen: RuleContext[] = [];
+    yield* lintTree(
+      GRAPH_TREE,
+      keeping((context) => {
+        seen.push(context);
+      }),
+    );
+    expect(
+      pipe(
+        seen,
+        Arr.map(({ files, options }) => ({ files: files.length, options })),
+      ),
+    ).toStrictEqual([{ files: Rec.size(GRAPH_TREE), options: { depth: 1 } }]);
+    expect(
+      pipe(
+        seen,
+        Arr.flatMap(({ nodes }) => nodes),
+      ),
+    ).toContainEqual(JOB_NODE);
+    expect(
+      pipe(
+        seen,
+        Arr.flatMap(({ edges }) => edges),
+      ),
+    ).toStrictEqual(GRAPH_EDGES);
+  }).pipe(services.runPromise));
+
+test("fails when rules name a plugin that is not configured", () =>
+  Effect.gen(function* unknown() {
+    const failure = yield* Effect.flip(
+      lintTree(
+        { "libs/kit/package.json": "{}" },
+        { kinds: KINDS, rules: { "gone/rule": "error" } },
+      ),
+    );
+    expect(failure.message).toContain("gone");
+  }).pipe(services.runPromise));
+
+test("finds nothing without kinds or files", () =>
+  Effect.gen(function* empty() {
+    const withoutKinds = yield* lintTree({ "libs/kit/kit.ts": MODULE }, {});
+    const withoutFiles = yield* lintTree({});
+    expect([withoutKinds, withoutFiles]).toStrictEqual([[], []]);
   }).pipe(services.runPromise));

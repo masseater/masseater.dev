@@ -1,4 +1,4 @@
-import { callAddon, present, sortByPosition, traceparent } from "@r_masseater/lint-host";
+import { callAddon, present, sortByPosition, traceparent } from "@masseater.dev/lint-host";
 import { Array as Arr, Effect, Match, Option, pipe } from "effect";
 
 import { BUILTIN, groupByOverrides, resolve, unknownPlugins } from "#/entities/rule/index.ts";
