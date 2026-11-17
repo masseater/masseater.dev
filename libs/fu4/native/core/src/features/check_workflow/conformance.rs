@@ -304,7 +304,10 @@ fn workflow_files(dir: &Path, prefix: &str, out: &mut Vec<(String, PathBuf)>) {
             .to_owned();
         if path.is_dir() {
             workflow_files(&path, &format!("{prefix}{name}/"), out);
-        } else if name.ends_with(".yaml") || name.ends_with(".yml") {
+        } else if matches!(
+            path.extension().and_then(|e| e.to_str()),
+            Some("yaml" | "yml")
+        ) {
             out.push((format!("{prefix}{name}"), path));
         }
     }

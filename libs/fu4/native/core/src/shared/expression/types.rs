@@ -179,7 +179,6 @@ impl ExprType {
     #[must_use]
     pub fn merge(&self, other: &ExprType) -> ExprType {
         match (self, other) {
-            (ExprType::Any, _) => ExprType::Any,
             (ExprType::Null, ExprType::Null) => ExprType::Null,
             (ExprType::Number, ExprType::Number) => ExprType::Number,
             (ExprType::Number | ExprType::Bool, ExprType::String) => ExprType::String,

@@ -89,7 +89,7 @@ pub fn ordinal(value: usize) -> String {
 
 #[must_use]
 pub fn go_float(value: f64) -> String {
-    if value.is_finite() && value == value.trunc() && value.abs() < 1e21 {
+    if value.is_finite() && value.fract() == 0.0 && value.abs() < 1e21 {
         return format!("{value:.0}");
     }
     let text = format!("{value}");

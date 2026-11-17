@@ -5,7 +5,7 @@ mod resolve;
 use std::rc::Rc;
 
 pub use decode::Decoder;
-pub use load::{LoadError, Loaded, load};
+pub use load::load;
 pub use resolve::parse_go_float;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Default, serde::Serialize)]
@@ -81,11 +81,12 @@ impl Node {
         self.kind == Kind::Scalar && self.tag == "!!null"
     }
 
-    #[must_use]
     pub fn pairs(&self) -> impl Iterator<Item = (&Rc<Node>, &Rc<Node>)> {
         self.content
-            .chunks_exact(2)
-            .map(|pair| (&pair[0], &pair[1]))
+            .as_chunks::<2>()
+            .0
+            .iter()
+            .map(|[key, value]| (key, value))
     }
 
     #[must_use]

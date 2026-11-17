@@ -118,18 +118,17 @@ impl Rule for JobNeeds {
         for &node in &order {
             let mut resolved = Vec::new();
             for dep in self.nodes[node].needs.clone() {
-                match self.index.get(&dep) {
-                    Some(&target) => resolved.push(target),
-                    None => {
-                        let message = format!(
-                            "job {} needs job {} which does not exist in this workflow",
-                            quote(&self.nodes[node].id),
-                            quote(&dep)
-                        );
-                        let pos = self.nodes[node].pos;
-                        self.error(pos, message);
-                        valid = false;
-                    }
+                if let Some(&target) = self.index.get(&dep) {
+                    resolved.push(target);
+                } else {
+                    let message = format!(
+                        "job {} needs job {} which does not exist in this workflow",
+                        quote(&self.nodes[node].id),
+                        quote(&dep)
+                    );
+                    let pos = self.nodes[node].pos;
+                    self.error(pos, message);
+                    valid = false;
                 }
             }
             self.nodes[node].resolved = resolved;
@@ -162,11 +161,11 @@ impl Rule for JobNeeds {
             "cyclic dependencies in \"needs\" job configurations are detected. detected cycle is {}",
             quote(&self.nodes[start].id)
         );
-        let (mut current, mut next) = (start, edges[&start]);
+        let mut next = edges[&start];
         loop {
             message.push_str(" -> ");
             message.push_str(&quote(&self.nodes[next].id));
-            current = next;
+            let current = next;
             next = edges[&current];
             if current == start {
                 break;

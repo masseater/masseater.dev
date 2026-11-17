@@ -29,7 +29,7 @@ pub struct ReusableMetadata {
 }
 
 #[must_use]
-pub fn input_type(kind: &CallInputType) -> ExprType {
+pub fn input_type(kind: CallInputType) -> ExprType {
     match kind {
         CallInputType::Boolean => ExprType::Bool,
         CallInputType::Number => ExprType::Number,
@@ -50,7 +50,7 @@ impl ReusableMetadata {
                     CallInput {
                         name: input.name.value.clone(),
                         required: input.is_required() && input.default.is_none(),
-                        ty: input_type(&input.kind),
+                        ty: input_type(input.kind),
                     },
                 )
             })

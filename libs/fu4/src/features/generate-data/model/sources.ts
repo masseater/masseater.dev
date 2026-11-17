@@ -27,3 +27,6 @@ export const rawFile = (path: string): string => `https://raw.githubusercontent.
 
 export const WORKFLOW_PARSER_SCHEMA =
   "https://raw.githubusercontent.com/actions/languageservices/main/workflow-parser/src/workflow-v1.0.json";
+
+export const RUNNER_GITHUB_CONTEXT =
+  "https://raw.githubusercontent.com/actions/runner/main/src/Runner.Worker/GitHubContext.cs";

@@ -14,6 +14,28 @@ use crate::shared::text::{quote, sorted_quotes};
 use crate::shared::yaml::{Kind, Node, Pos, load, parse_go_float};
 
 const KIND: &str = "syntax-check";
+const JOB_KEYS: &[&str] = &[
+    "name",
+    "needs",
+    "runs-on",
+    "permissions",
+    "environment",
+    "concurrency",
+    "outputs",
+    "env",
+    "defaults",
+    "if",
+    "steps",
+    "timeout-minutes",
+    "strategy",
+    "continue-on-error",
+    "container",
+    "services",
+    "uses",
+    "with",
+    "secrets",
+    "snapshot",
+];
 
 struct Entry {
     id: String,
@@ -452,7 +474,7 @@ impl Parser {
                     };
                 }
                 "options" => {
-                    input.options = self.parse_string_sequence("options", &entry.val, false, false)
+                    input.options = self.parse_string_sequence("options", &entry.val, false, false);
                 }
                 _ => self.unexpected_key(
                     &entry.key,
@@ -497,7 +519,7 @@ impl Parser {
         EventFilter { name, values }
     }
 
-    fn parse_webhook(&mut self, name: Text, node: &Node) -> Event {
+    fn parse_webhook(&mut self, name: &Text, node: &Node) -> Event {
         let mut hook = WebhookEvent {
             pos: name.pos,
             hook: name.clone(),
@@ -514,17 +536,17 @@ impl Parser {
             match entry.id.as_str() {
                 "types" => {
                     hook.types =
-                        self.parse_string_or_sequence(&entry.key.value, &entry.val, false, false)
+                        self.parse_string_or_sequence(&entry.key.value, &entry.val, false, false);
                 }
                 "branches" => hook.branches = Some(self.parse_filter(entry.key, &entry.val)),
                 "branches-ignore" => {
-                    hook.branches_ignore = Some(self.parse_filter(entry.key, &entry.val))
+                    hook.branches_ignore = Some(self.parse_filter(entry.key, &entry.val));
                 }
                 "tags" => hook.tags = Some(self.parse_filter(entry.key, &entry.val)),
                 "tags-ignore" => hook.tags_ignore = Some(self.parse_filter(entry.key, &entry.val)),
                 "paths" => hook.paths = Some(self.parse_filter(entry.key, &entry.val)),
                 "paths-ignore" => {
-                    hook.paths_ignore = Some(self.parse_filter(entry.key, &entry.val))
+                    hook.paths_ignore = Some(self.parse_filter(entry.key, &entry.val));
                 }
                 "workflows" => {
                     hook.workflows =
@@ -546,7 +568,7 @@ impl Parser {
                 ),
             }
         }
-        Event::Webhook(hook)
+        Event::Webhook(Box::new(hook))
     }
 
     fn parse_call_input(&mut self, id: String, name: Text, node: &Node) -> CallEventInput {
@@ -688,7 +710,7 @@ impl Parser {
             match entry.id.as_str() {
                 "names" => names = self.parse_string_sequence("names", &entry.val, false, false),
                 "versions" => {
-                    versions = self.parse_string_sequence("versions", &entry.val, false, false)
+                    versions = self.parse_string_sequence("versions", &entry.val, false, false);
                 }
                 _ => self.unexpected_key(&entry.key, "image_version", &["names", "versions"]),
             }
@@ -729,7 +751,7 @@ impl Parser {
                 versions: Vec::new(),
                 pos,
             }),
-            _ => Some(Event::Webhook(WebhookEvent {
+            _ => Some(Event::Webhook(Box::new(WebhookEvent {
                 hook: name,
                 types: Vec::new(),
                 branches: None,
@@ -740,7 +762,7 @@ impl Parser {
                 paths_ignore: None,
                 workflows: Vec::new(),
                 pos,
-            })),
+            }))),
         }
     }
 
@@ -754,14 +776,14 @@ impl Parser {
                     match entry.id.as_str() {
                         "schedule" => events.extend(self.parse_schedule(pos, &entry.val)),
                         "workflow_dispatch" => {
-                            events.push(self.parse_workflow_dispatch(pos, &entry.val))
+                            events.push(self.parse_workflow_dispatch(pos, &entry.val));
                         }
                         "repository_dispatch" => {
-                            events.push(self.parse_repository_dispatch(pos, &entry.val))
+                            events.push(self.parse_repository_dispatch(pos, &entry.val));
                         }
                         "workflow_call" => events.push(self.parse_workflow_call(pos, &entry.val)),
                         "image_version" => events.push(self.parse_image_version(pos, &entry.val)),
-                        _ => events.push(self.parse_webhook(entry.key, &entry.val)),
+                        _ => events.push(self.parse_webhook(&entry.key, &entry.val)),
                     }
                 }
                 Some(events)
@@ -854,7 +876,7 @@ impl Parser {
                 match item.id.as_str() {
                     "shell" => run.shell = Some(self.parse_string(&item.val, false)),
                     "working-directory" => {
-                        run.working_directory = Some(self.parse_string(&item.val, false))
+                        run.working_directory = Some(self.parse_string(&item.val, false));
                     }
                     _ => self.unexpected_key(&item.key, "run", &["shell", "working-directory"]),
                 }
@@ -884,10 +906,14 @@ impl Parser {
             match entry.id.as_str() {
                 "group" => concurrency.group = Some(self.parse_string(&entry.val, false)),
                 "cancel-in-progress" => {
-                    concurrency.cancel_in_progress = self.parse_bool(&entry.val)
+                    concurrency.cancel_in_progress = self.parse_bool(&entry.val);
                 }
                 _ => {
-                    self.unexpected_key(&entry.key, "concurrency", &["group", "cancel-in-progress"])
+                    self.unexpected_key(
+                        &entry.key,
+                        "concurrency",
+                        &["group", "cancel-in-progress"],
+                    );
                 }
             }
         }
@@ -1177,15 +1203,15 @@ impl Parser {
             match entry.id.as_str() {
                 "image" => container.image = Some(self.parse_string(&entry.val, false)),
                 "credentials" => {
-                    container.credentials = self.parse_credentials(entry.key.pos, &entry.val)
+                    container.credentials = self.parse_credentials(entry.key.pos, &entry.val);
                 }
                 "env" => container.env = Some(self.parse_env(&entry.val)),
                 "ports" => {
-                    container.ports = self.parse_string_sequence("ports", &entry.val, true, false)
+                    container.ports = self.parse_string_sequence("ports", &entry.val, true, false);
                 }
                 "volumes" => {
                     container.volumes =
-                        self.parse_string_sequence("volumes", &entry.val, true, false)
+                        self.parse_string_sequence("volumes", &entry.val, true, false);
                 }
                 "options" => container.options = Some(self.parse_string(&entry.val, true)),
                 _ => self.unexpected_key(
@@ -1257,10 +1283,10 @@ impl Parser {
                     for item in self.parse_section("with", &entry.val, false, false) {
                         match item.id.as_str() {
                             "entrypoint" if is_docker => {
-                                action.entrypoint = Some(self.parse_string(&item.val, false))
+                                action.entrypoint = Some(self.parse_string(&item.val, false));
                             }
                             "args" if is_docker => {
-                                action.args = Some(self.parse_string(&item.val, true))
+                                action.args = Some(self.parse_string(&item.val, true));
                             }
                             _ => {
                                 let value = self.parse_string(&item.val, true);
@@ -1311,7 +1337,7 @@ impl Parser {
                 }
                 "shell" => run.shell = Some(self.parse_string(&entry.val, false)),
                 "working-directory" => {
-                    run.working_directory = Some(self.parse_string(&entry.val, false))
+                    run.working_directory = Some(self.parse_string(&entry.val, false));
                 }
                 "id" | "if" | "name" | "env" | "continue-on-error" | "timeout-minutes" => {}
                 _ => self.unexpected_key(
@@ -1335,6 +1361,13 @@ impl Parser {
     }
 
     fn parse_step(&mut self, node: &Node) -> Step {
+        #[derive(PartialEq)]
+        enum Shape {
+            Unknown,
+            Action,
+            Docker,
+            Run,
+        }
         let mut step = Step {
             id: None,
             condition: None,
@@ -1345,13 +1378,6 @@ impl Parser {
             timeout_minutes: None,
             pos: node.pos,
         };
-        #[derive(PartialEq)]
-        enum Shape {
-            Unknown,
-            Action,
-            Docker,
-            Run,
-        }
         let mut shape = Shape::Unknown;
         let entries = self.parse_mapping("element of \"steps\" section", node, false, true);
         for entry in &entries {
@@ -1445,7 +1471,7 @@ impl Parser {
                 for entry in self.parse_section("on", node, false, true) {
                     match entry.id.as_str() {
                         "image-name" => {
-                            snapshot.image_name = Some(self.parse_string(&entry.val, false))
+                            snapshot.image_name = Some(self.parse_string(&entry.val, false));
                         }
                         "version" => snapshot.version = Some(self.parse_string(&entry.val, false)),
                         "if" => snapshot.condition = Some(self.parse_string(&entry.val, false)),
@@ -1492,7 +1518,7 @@ impl Parser {
         values
     }
 
-    fn parse_job(&mut self, id: Text, node: &Node) -> Job {
+    fn parse_job(&mut self, id: &Text, node: &Node) -> Job {
         let mut job = Job {
             pos: id.pos,
             id: id.clone(),
@@ -1579,52 +1605,40 @@ impl Parser {
                     call_only = Some(key);
                 }
                 "secrets" => {
-                    if value.kind == Kind::Scalar {
-                        if value.value == "inherit" {
-                            call.inherit_secrets = true;
-                        } else {
-                            self.error(
-                                &value,
-                                format!(
-                                    "expected mapping node for secrets or \"inherit\" string node but found {} node",
-                                    quote(&value.value)
-                                ),
-                            );
-                        }
-                    } else {
-                        call.secrets = self.parse_call_values("secrets", &value);
-                    }
+                    self.parse_call_secrets(&mut call, &value);
                     call_only = Some(key);
                 }
                 "snapshot" => job.snapshot = self.parse_snapshot(key.pos, &value),
-                _ => self.unexpected_key(
-                    &key,
-                    "job",
-                    &[
-                        "name",
-                        "needs",
-                        "runs-on",
-                        "permissions",
-                        "environment",
-                        "concurrency",
-                        "outputs",
-                        "env",
-                        "defaults",
-                        "if",
-                        "steps",
-                        "timeout-minutes",
-                        "strategy",
-                        "continue-on-error",
-                        "container",
-                        "services",
-                        "uses",
-                        "with",
-                        "secrets",
-                        "snapshot",
-                    ],
-                ),
+                _ => self.unexpected_key(&key, "job", JOB_KEYS),
             }
         }
+        self.finish_job(id, job, call, steps_only, call_only)
+    }
+
+    fn parse_call_secrets(&mut self, call: &mut WorkflowCall, value: &Node) {
+        if value.kind != Kind::Scalar {
+            call.secrets = self.parse_call_values("secrets", value);
+        } else if value.value == "inherit" {
+            call.inherit_secrets = true;
+        } else {
+            self.error(
+                value,
+                format!(
+                    "expected mapping node for secrets or \"inherit\" string node but found {} node",
+                    quote(&value.value)
+                ),
+            );
+        }
+    }
+
+    fn finish_job(
+        &mut self,
+        id: &Text,
+        mut job: Job,
+        call: WorkflowCall,
+        steps_only: Option<Text>,
+        call_only: Option<Text>,
+    ) -> Job {
         if call.uses.is_some() {
             if let Some(key) = steps_only {
                 let message = format!(
@@ -1669,17 +1683,17 @@ impl Parser {
                 "name" => workflow.name = Some(self.parse_string(&value, true)),
                 "on" => workflow.on = self.parse_events(&value),
                 "permissions" => {
-                    workflow.permissions = Some(self.parse_permissions(key.pos, &value))
+                    workflow.permissions = Some(self.parse_permissions(key.pos, &value));
                 }
                 "env" => workflow.env = Some(self.parse_env(&value)),
                 "defaults" => workflow.defaults = Some(self.parse_defaults(key.pos, &value)),
                 "concurrency" => {
-                    workflow.concurrency = Some(self.parse_concurrency(key.pos, &value))
+                    workflow.concurrency = Some(self.parse_concurrency(key.pos, &value));
                 }
                 "jobs" => {
                     let mut jobs = BTreeMap::new();
                     for job in self.parse_section("jobs", &value, false, false) {
-                        let parsed = self.parse_job(job.key, &job.val);
+                        let parsed = self.parse_job(&job.key, &job.val);
                         jobs.insert(job.id, parsed);
                     }
                     workflow.jobs = Some(jobs);

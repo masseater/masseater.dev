@@ -71,7 +71,7 @@ fn must_parse_int(expr: &str) -> Result<u32, String> {
 fn parse_int_or_name(expr: &str, bounds: &Bounds) -> Result<u32, String> {
     let lower = expr.to_lowercase();
     if let Some(index) = bounds.names.iter().position(|name| *name == lower) {
-        let offset = if bounds.min == 1 { 1 } else { 0 };
+        let offset = u32::from(bounds.min == 1);
         return Ok(u32::try_from(index).unwrap_or(0) + offset);
     }
     must_parse_int(expr)

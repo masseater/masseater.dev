@@ -226,10 +226,8 @@ impl<'a> Lexer<'a> {
     fn lex_string(&mut self) -> Token {
         loop {
             match self.eat() {
-                Some('\'') => {
-                    if self.eat() != Some('\'') {
-                        return self.token(TokenKind::String);
-                    }
+                Some('\'') if self.eat() != Some('\'') => {
+                    return self.token(TokenKind::String);
                 }
                 None => return self.unexpected(None, "end of string literal", "'''"),
                 _ => {}

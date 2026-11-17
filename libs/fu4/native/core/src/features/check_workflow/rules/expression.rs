@@ -23,9 +23,9 @@ struct Typed {
     pos: Pos,
 }
 
-struct JobInfo {
-    outputs: Vec<String>,
-    call: Option<Option<Text>>,
+enum JobInfo {
+    Steps { outputs: Vec<String> },
+    Call { uses: Option<Text> },
 }
 
 pub struct Expression {
@@ -542,9 +542,11 @@ impl Expression {
             let Some(info) = self.workflow_jobs.get(&id) else {
                 continue;
             };
-            let outputs = match &info.call {
-                None => strict(info.outputs.iter().map(|o| (o.clone(), ExprType::String))),
-                Some(uses) => {
+            let outputs = match info {
+                JobInfo::Steps { outputs } => {
+                    strict(outputs.iter().map(|o| (o.clone(), ExprType::String)))
+                }
+                JobInfo::Call { uses } => {
                     let uses = uses.clone();
                     self.reusable_outputs(uses.as_ref())
                 }
@@ -780,7 +782,7 @@ impl Expression {
                             (expected, typed.as_slice(), &input.default)
                             && default.is_expression_assigned()
                             && one.ty != ExprType::Any
-                            && one.ty != input_type(&input.kind)
+                            && one.ty != input_type(input.kind)
                         {
                             self.error(
                                 default.pos,
@@ -794,7 +796,7 @@ impl Expression {
                         if let Some(inputs) = &mut self.inputs {
                             inputs
                                 .props
-                                .insert(input.id.clone(), input_type(&input.kind));
+                                .insert(input.id.clone(), input_type(input.kind));
                         }
                     }
                     if let Some(declared) = &call.secrets {
@@ -843,10 +845,14 @@ impl Rule for Expression {
             .map(|(id, job)| {
                 (
                     id.clone(),
-                    JobInfo {
-                        outputs: job.outputs.keys().cloned().collect(),
-                        call: job.workflow_call.as_ref().map(|c| c.uses.clone()),
-                    },
+                    job.workflow_call.as_ref().map_or_else(
+                        || JobInfo::Steps {
+                            outputs: job.outputs.keys().cloned().collect(),
+                        },
+                        |call| JobInfo::Call {
+                            uses: call.uses.clone(),
+                        },
+                    ),
                 )
             })
             .collect();
@@ -967,7 +973,7 @@ impl Rule for Expression {
                 }
                 self.check_string(action.entrypoint.as_ref(), "jobs.<job_id>.steps.with");
                 self.check_string(action.args.as_ref(), "jobs.<job_id>.steps.with");
-                uses = action.uses.clone();
+                uses.clone_from(&action.uses);
             }
             None => {}
         }

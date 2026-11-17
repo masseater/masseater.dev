@@ -36,7 +36,7 @@ impl Decoder {
         ));
     }
 
-    pub fn custom(&mut self, node: &Node, message: String) {
+    pub fn custom(&mut self, node: &Node, message: &str) {
         self.errors
             .push(format!("line {}: {message}", node.pos.line));
     }
@@ -89,7 +89,7 @@ impl Decoder {
         }
         self.custom(
             node,
-            format!(
+            &format!(
                 "yaml: {where_} must be mapping node but {} node was found at line:{}, col:{}",
                 node.kind.name(),
                 node.pos.line,

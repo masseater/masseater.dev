@@ -127,7 +127,7 @@ impl Checker<'_> {
                     self.at += 1;
                     match self.peek() {
                         Some(b'b' | b'f' | b'n' | b'r' | b't' | b'\\' | b'/' | b'"') => {
-                            self.at += 1
+                            self.at += 1;
                         }
                         Some(b'u') => {
                             self.at += 1;

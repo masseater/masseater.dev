@@ -66,7 +66,7 @@ impl Matrix {
             || matrix
                 .include
                 .as_ref()
-                .is_some_and(|i| i.contains_expression())
+                .is_some_and(crate::entities::workflow::MatrixCombinations::contains_expression)
         {
             return;
         }

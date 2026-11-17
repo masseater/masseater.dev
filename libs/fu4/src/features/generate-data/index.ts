@@ -2,6 +2,7 @@ import { Array as Arr, Effect, FileSystem, Path, Record as Rec, Schema, pipe } f
 
 import { actionVocabulary } from "./model/action-schema.ts";
 import { availability } from "./model/availability.ts";
+import { contexts } from "./model/contexts.ts";
 import { permissions } from "./model/permissions.ts";
 import { popularActions } from "./model/popular.ts";
 import { runners } from "./model/runners.ts";
@@ -19,6 +20,7 @@ export const generateData = Effect.fn("fu4.generate-data")(function* generateDat
   const data = yield* Effect.all(
     {
       "availability.json": availability,
+      "contexts.json": contexts,
       "webhooks.json": webhooks,
       "popular-actions.json": popularActions,
       "permissions.json": permissions,

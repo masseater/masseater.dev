@@ -116,7 +116,7 @@ fn metadata(d: &mut Decoder, node: &Node) -> ReusableMetadata {
     metadata
 }
 
-fn finish(d: Decoder, metadata: ReusableMetadata) -> Result<ReusableMetadata, String> {
+fn finish(d: &Decoder, metadata: ReusableMetadata) -> Result<ReusableMetadata, String> {
     if d.errors.is_empty() {
         return Ok(metadata);
     }
@@ -143,7 +143,7 @@ pub fn decode(source: &str) -> Result<ReusableMetadata, String> {
             if let Some((_, value)) = on.pairs().find(|(key, _)| is_call(key)) {
                 let mut d = Decoder::default();
                 let metadata = metadata(&mut d, value);
-                return finish(d, metadata);
+                return finish(&d, metadata);
             }
         }
         Kind::Scalar if is_call(on) => return Ok(ReusableMetadata::default()),

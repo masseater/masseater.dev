@@ -151,7 +151,7 @@ pub struct WorkflowCallEvent {
 
 #[derive(Debug, Clone)]
 pub enum Event {
-    Webhook(WebhookEvent),
+    Webhook(Box<WebhookEvent>),
     Schedule {
         schedules: Vec<ScheduleEntry>,
         pos: Pos,

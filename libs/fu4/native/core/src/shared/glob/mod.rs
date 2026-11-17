@@ -120,7 +120,7 @@ impl Validator {
                         continue;
                     }
                     chars += 2;
-                    c = self.next();
+                    self.next();
                     match self.scan.peek() {
                         Some(']') => {
                             c = self.next();
@@ -212,10 +212,8 @@ impl Validator {
                 self.unexpected(c, "", "newline cannot be contained");
             }
             Some('\n') => self.unexpected(Some('\n'), "", "newline cannot be contained"),
-            Some(' ' | '\t' | '~' | '^' | ':') => {
-                if self.is_ref {
-                    self.invalid_ref_char(c, RANGE_REASON);
-                }
+            Some(' ' | '\t' | '~' | '^' | ':') if self.is_ref => {
+                self.invalid_ref_char(c, RANGE_REASON);
             }
             _ => {}
         }
@@ -382,8 +380,8 @@ mod tests {
         let errors = validate_ref("foo bar");
         assert_eq!(errors.len(), 1);
         assert_eq!(errors[0].column, 4);
-        assert!(validate_ref("release/**").is_empty());
-        assert!(validate_path("src/**/*.ts").is_empty());
+        assert_eq!(validate_ref("release/**"), Vec::<InvalidGlob>::new());
+        assert_eq!(validate_path("src/**/*.ts"), Vec::<InvalidGlob>::new());
         assert_eq!(validate_path("./src").len(), 1);
         assert!(path_match("linux-*", "linux-arm"));
         assert!(path_match("gpu-[0-9]", "gpu-3"));

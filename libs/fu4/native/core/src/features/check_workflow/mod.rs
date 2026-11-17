@@ -12,8 +12,9 @@ use crate::entities::action::LocalActions;
 use crate::entities::reusable_workflow::LocalWorkflows;
 use crate::entities::workflow::{Workflow, parse};
 use crate::shared::diagnostic::Diagnostic;
+use tracing::info_span;
 
-pub use config::{CONFIG_NAME, Compiled, Config, PathConfig, SelfHostedRunner};
+pub use config::{CONFIG_NAME, Compiled, Config};
 pub use rule::{Report, Rule};
 
 pub struct Project {
@@ -24,7 +25,6 @@ pub struct Project {
 }
 
 impl Project {
-    #[must_use]
     pub fn new(root: PathBuf, config: &Config) -> Result<Arc<Self>, String> {
         Ok(Arc::new(Self {
             root,
@@ -64,9 +64,10 @@ fn visit(workflow: &Workflow, rules: &mut [Box<dyn Rule>]) {
 
 #[must_use]
 pub fn check(context: &Context, source: &str) -> Vec<Diagnostic> {
-    let parsed = parse(source);
+    let parsed = info_span!("fu4.parse").in_scope(|| parse(source));
     let mut all = parsed.errors;
     if let Some(workflow) = parsed.workflow {
+        let _rules = info_span!("fu4.rules").entered();
         let mut rules = rules::all(context);
         visit(&workflow, &mut rules);
         for rule in &mut rules {

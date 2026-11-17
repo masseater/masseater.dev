@@ -3,6 +3,7 @@ use std::sync::OnceLock;
 
 use super::ast::{CompareOp, Expr, ExprError, LogicalOp};
 use super::availability::table;
+use super::contexts::documented;
 use super::json;
 use super::types::{ArrayType, ExprType, ObjectType};
 use super::untrusted::Untrusted;
@@ -120,123 +121,24 @@ pub fn functions() -> &'static BTreeMap<&'static str, Vec<Signature>> {
     })
 }
 
-fn strict(props: &[(&str, ExprType)]) -> ExprType {
-    ExprType::Object(ObjectType::strict_with(
-        props
-            .iter()
-            .map(|(k, v)| ((*k).to_owned(), v.clone()))
-            .collect(),
-    ))
-}
-
 fn globals() -> &'static BTreeMap<String, ExprType> {
     static GLOBALS: OnceLock<BTreeMap<String, ExprType>> = OnceLock::new();
     GLOBALS.get_or_init(|| {
-        use ExprType::{Bool, Number, String as Str};
-        let github_strings = [
-            "action",
-            "action_path",
-            "action_ref",
-            "action_repository",
-            "action_status",
-            "actor",
-            "actor_id",
-            "api_url",
-            "base_ref",
-            "env",
-            "event_name",
-            "event_path",
-            "graphql_url",
-            "head_ref",
-            "job",
-            "output",
-            "path",
-            "ref",
-            "ref_name",
-            "ref_type",
-            "repository",
-            "repository_id",
-            "repository_owner",
-            "repository_owner_id",
-            "repository_visibility",
-            "repositoryurl",
-            "run_attempt",
-            "run_id",
-            "run_number",
-            "secret_source",
-            "server_url",
-            "sha",
-            "state",
-            "step_summary",
-            "token",
-            "triggering_actor",
-            "workflow",
-            "workflow_ref",
-            "workflow_sha",
-            "workspace",
-        ];
-        let mut github: BTreeMap<String, ExprType> = github_strings
-            .iter()
-            .map(|k| ((*k).to_owned(), Str))
+        let map_of_strings = || ExprType::Object(ObjectType::map_of(ExprType::String));
+        let mut globals: BTreeMap<String, ExprType> = ["github", "job", "runner", "strategy"]
+            .into_iter()
+            .map(|name| (name.to_owned(), documented(name)))
             .collect();
-        github.insert("artifact_cache_size_limit".to_owned(), Number);
-        github.insert("event".to_owned(), ExprType::Object(ObjectType::loose()));
-        github.insert("ref_protected".to_owned(), Bool);
-        github.insert("retention_days".to_owned(), Number);
-        let runner = [
-            "name",
-            "os",
-            "arch",
-            "temp",
-            "tool_cache",
-            "debug",
-            "environment",
-        ];
-        BTreeMap::from([
-            (
-                "github".to_owned(),
-                ExprType::Object(ObjectType::strict_with(github)),
-            ),
-            ("env".to_owned(), ExprType::Object(ObjectType::map_of(Str))),
-            (
-                "job".to_owned(),
-                strict(&[
-                    ("check_run_id", Number),
-                    ("container", strict(&[("id", Str), ("network", Str)])),
-                    (
-                        "services",
-                        ExprType::Object(ObjectType::map_of(strict(&[
-                            ("id", Str),
-                            ("network", Str),
-                            ("ports", ExprType::Object(ObjectType::map_of(Str))),
-                        ]))),
-                    ),
-                    ("status", Str),
-                ]),
-            ),
+        globals.extend([
+            ("env".to_owned(), map_of_strings()),
+            ("secrets".to_owned(), map_of_strings()),
+            ("vars".to_owned(), map_of_strings()),
             ("steps".to_owned(), ExprType::Object(ObjectType::strict())),
-            (
-                "runner".to_owned(),
-                strict(&runner.iter().map(|k| (*k, Str)).collect::<Vec<_>>()),
-            ),
-            (
-                "secrets".to_owned(),
-                ExprType::Object(ObjectType::map_of(Str)),
-            ),
-            (
-                "strategy".to_owned(),
-                ExprType::Object(ObjectType::loose_with(BTreeMap::from([
-                    ("fail-fast".to_owned(), Bool),
-                    ("job-index".to_owned(), Number),
-                    ("job-total".to_owned(), Number),
-                    ("max-parallel".to_owned(), Number),
-                ]))),
-            ),
             ("matrix".to_owned(), ExprType::Object(ObjectType::strict())),
             ("needs".to_owned(), ExprType::Object(ObjectType::strict())),
             ("inputs".to_owned(), ExprType::Object(ObjectType::strict())),
-            ("vars".to_owned(), ExprType::Object(ObjectType::map_of(Str))),
-        ])
+        ]);
+        globals
     })
 }
 
@@ -355,15 +257,12 @@ impl Checker {
     }
 
     pub fn set_workflow_key(&mut self, key: &str) {
-        match super::availability::workflow_key(key) {
-            Some(availability) => {
-                self.contexts = Some(availability.contexts.clone());
-                self.special = availability.functions.clone();
-            }
-            None => {
-                self.contexts = Some(Vec::new());
-                self.special = Vec::new();
-            }
+        if let Some(availability) = super::availability::workflow_key(key) {
+            self.contexts = Some(availability.contexts.clone());
+            self.special.clone_from(&availability.functions);
+        } else {
+            self.contexts = Some(Vec::new());
+            self.special = Vec::new();
         }
     }
 
@@ -374,7 +273,7 @@ impl Checker {
     fn check_context(&mut self, expr: &Expr, name: &str) {
         let contexts = self.contexts.as_deref().unwrap_or_default();
         let lower = name.to_lowercase();
-        if contexts.iter().any(|c| *c == lower) {
+        if contexts.contains(&lower) {
             return;
         }
         let notes = match contexts.len() {
@@ -788,16 +687,14 @@ impl Checker {
                     }
                 }
             }
-            "case" => {
-                if args.len() % 2 == 0 {
-                    self.error(
-                        expr,
-                        format!(
-                            "case() requires an odd number of arguments (pred/value pairs + default) but got {}",
-                            args.len()
-                        ),
-                    );
-                }
+            "case" if args.len().is_multiple_of(2) => {
+                self.error(
+                    expr,
+                    format!(
+                        "case() requires an odd number of arguments (pred/value pairs + default) but got {}",
+                        args.len()
+                    ),
+                );
             }
             _ => {}
         }

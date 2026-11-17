@@ -112,7 +112,7 @@ impl LocalActions {
         match decode::decode(&source) {
             Ok(mut metadata) => {
                 metadata.dir = dir;
-                metadata.file = file.to_owned();
+                file.clone_into(&mut metadata.file);
                 let metadata = Arc::new(metadata);
                 self.store(spec, Some(Arc::clone(&metadata)));
                 Ok(Some(Found {

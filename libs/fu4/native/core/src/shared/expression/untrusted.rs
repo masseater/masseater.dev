@@ -306,7 +306,7 @@ mod tests {
     fn detects_array_and_filter_access() {
         assert_eq!(errors_of("github.event.commits[0].message }}").len(), 1);
         let filtered = errors_of("github.event.commits.*.author }}");
-        assert!(filtered.is_empty());
+        assert_eq!(filtered, Vec::<String>::new());
         let many = errors_of("github.event.commits.*.author.* }}");
         assert_eq!(many.len(), 1);
         assert!(many[0].contains(
@@ -316,7 +316,13 @@ mod tests {
 
     #[test]
     fn ignores_safe_calls() {
-        assert!(errors_of("contains(github.event.issue.title, 'x') }}").is_empty());
-        assert!(errors_of("github.event.issue.number }}").is_empty());
+        assert_eq!(
+            errors_of("contains(github.event.issue.title, 'x') }}"),
+            Vec::<String>::new()
+        );
+        assert_eq!(
+            errors_of("github.event.issue.number }}"),
+            Vec::<String>::new()
+        );
     }
 }

@@ -47,7 +47,7 @@ fn inputs(d: &mut Decoder, node: &Node) -> BTreeMap<String, ActionInput> {
         };
         let id = key.value.to_lowercase();
         if inputs.contains_key(&id) {
-            d.custom(node, format!("input {} is duplicated", quote(&key.value)));
+            d.custom(node, &format!("input {} is duplicated", quote(&key.value)));
             return inputs;
         }
         let mut deprecated = false;
@@ -77,7 +77,7 @@ fn inputs(d: &mut Decoder, node: &Node) -> BTreeMap<String, ActionInput> {
         );
     }
     if let Some(message) = unexpected {
-        d.custom(node, message);
+        d.custom(node, &message);
     }
     inputs
 }
@@ -90,7 +90,7 @@ fn outputs(d: &mut Decoder, node: &Node) -> BTreeMap<String, String> {
     for (key, _) in node.pairs() {
         let id = key.value.to_lowercase();
         if outputs.contains_key(&id) {
-            d.custom(node, format!("output {} is duplicated", quote(&key.value)));
+            d.custom(node, &format!("output {} is duplicated", quote(&key.value)));
             return outputs;
         }
         outputs.insert(id, key.value.clone());

@@ -1,5 +1,6 @@
 pub mod ast;
 pub mod availability;
+pub mod contexts;
 pub mod json;
 pub mod lexer;
 pub mod parser;
