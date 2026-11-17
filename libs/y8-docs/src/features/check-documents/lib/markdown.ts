@@ -1,6 +1,5 @@
+import type { MarkdownNode, RuleContext } from "@r_masseater/y8";
 import { Array as Arr, Option, Predicate, String as Str, pipe } from "effect";
-
-import type { MarkdownNode, RuleContext } from "#/shared/config/index.ts";
 
 const SEPARATOR = "/";
 const PARENT = "..";

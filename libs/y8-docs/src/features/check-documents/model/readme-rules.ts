@@ -1,7 +1,8 @@
+import { defineRule } from "@r_masseater/y8";
+import type { MarkdownNode, PackageManifest, Rule, RuleContext } from "@r_masseater/y8";
 import { Array as Arr, Option, Predicate, String as Str, pipe } from "effect";
 import { minimatch } from "minimatch";
 
-import { defineRule } from "#/entities/rule/index.ts";
 import {
   descendants,
   destinationOf,
@@ -21,7 +22,6 @@ import {
 import type { Section } from "#/features/check-documents/lib/markdown.ts";
 import { numberOption } from "#/features/check-documents/lib/options.ts";
 import { bannedHeading, maxLines, titleRule } from "#/features/check-documents/lib/shapes.ts";
-import type { MarkdownNode, PackageManifest, Rule, RuleContext } from "#/shared/config/index.ts";
 
 const SUMMARY_SENTENCES = 2;
 const README_LINES = 150;

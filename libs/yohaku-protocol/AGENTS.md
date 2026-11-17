@@ -1,3 +1,3 @@
 # @masseater.dev/yohaku-protocol
 
-このワークスペースには、余白アプリとその同期サービスで共有している型が格納されている。
+This workspace holds the types shared by the Yohaku app and its sync service.

@@ -1,7 +1,6 @@
+import { defineRule } from "@r_masseater/y8";
+import type { MarkdownNode, Report, Rule, RuleContext } from "@r_masseater/y8";
 import { Array as Arr, Option, Predicate, String as Str, pipe } from "effect";
-
-import { defineRule } from "#/entities/rule/index.ts";
-import type { MarkdownNode, Report, Rule, RuleContext } from "#/shared/config/index.ts";
 
 import { descendants, proseNodes, skillNamesIn } from "./markdown.ts";
 import { stringOption, stringsOption } from "./options.ts";

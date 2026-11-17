@@ -1,7 +1,7 @@
 # @r_masseater/vitest-otlp
 
-このワークスペースは Vitest のプラグインである。コードがテスト中に送信するテレメトリを受け取り、テストで実際に何が送信されたかを確認できるようになっている。
+This workspace is a Vitest plugin. It receives the telemetry code sends during tests so tests can check what was actually sent.
 
-- Vite+ と Node.js 26 以降のみを前提とすること。`vite-plus` はピア依存関係とし、他の環境向けの分岐は追加しないこと。
-- `vp run generate` で protobuf コードを再生成すること。手動で編集しないこと。
-- 本パッケージまたは推奨事項を変更した際は、masseater/skills の `measure-everything` スキルも更新すること。
+- Assume only Vite+ and Node.js 26 or later. Make `vite-plus` a peer dependency and add no branches for other environments.
+- Regenerate the protobuf code with `vp run generate`. Do not edit it by hand.
+- When you change this package or its recommendations, also update the `measure-everything` skill in masseater/skills.

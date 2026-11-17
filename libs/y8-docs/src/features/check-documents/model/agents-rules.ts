@@ -1,12 +1,14 @@
+import { defineRule } from "@r_masseater/y8";
+import type { MarkdownNode, Rule, RuleContext } from "@r_masseater/y8";
 import { Array as Arr, Option, Predicate, pipe } from "effect";
 
-import { defineRule } from "#/entities/rule/index.ts";
 import {
   afterTitle,
   descendants,
   directoryOf,
   matchesAny,
   plainText,
+  proseNodes,
   sectionLevel,
   sectionsOf,
   sentenceCount,
@@ -20,7 +22,6 @@ import {
   stringsOption,
 } from "#/features/check-documents/lib/options.ts";
 import { bannedHeading, titleRule } from "#/features/check-documents/lib/shapes.ts";
-import type { Rule, RuleContext } from "#/shared/config/index.ts";
 
 const ONE = 1;
 const TREE = /[├└]──/u;
@@ -204,6 +205,29 @@ export const agentsStackSentence: Rule = defineRule({
           node: section.heading.node,
           message: "State only the base stack in one sentence; lint rules and skills hold the rest",
         });
+      }
+    },
+  }),
+});
+
+const JAPANESE = /[\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Han}]/u;
+
+const lineOf =
+  (context: RuleContext) =>
+  (node: MarkdownNode): number =>
+    context.positionOf(node.start).line;
+
+export const agentsEnglish: Rule = defineRule({
+  meta: { description: "AGENTS.md is written in English, which costs agents fewer tokens" },
+  create: (context) => ({
+    document: (): void => {
+      const found = pipe(
+        proseNodes(context),
+        Arr.filter((node) => JAPANESE.test(context.textOf(node))),
+        Arr.dedupeWith((left, right) => lineOf(context)(left) === lineOf(context)(right)),
+      );
+      for (const node of found) {
+        context.report({ node, message: "Write AGENTS.md in English" });
       }
     },
   }),

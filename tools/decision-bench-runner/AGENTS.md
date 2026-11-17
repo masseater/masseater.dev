@@ -1,5 +1,5 @@
 # decision-bench-runner
 
-このワークスペースでは、日本語の decision モデルベンチマークを実行し、結果を出力している。
+This workspace runs the Japanese decision model benchmark and writes the results.
 
-結果は `results/<model>.json` にコミットし、再実行ではそこで既に答えの出た質問を問い直さない。質問の文言や回答の読み取り方法を変更した際は、そのモデルのファイルを削除して再度計測すること。
+Commit results to `results/<model>.json`; a rerun does not ask again the questions already answered there. When you change a question's wording or how answers are read, delete that model's file and measure again.

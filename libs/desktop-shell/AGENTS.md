@@ -1,5 +1,5 @@
 # @masseater.dev/desktop-shell
 
-このワークスペースには、Tauri のデスクトップアプリが共有するウィンドウとアプリの振る舞いを置く。
+This workspace holds the window and app behavior shared by the Tauri desktop apps.
 
-また、デスクトップアプリがユーザー自身のPCでMCPを提供するために共有するアクセストークンと、ベアラートークンの背後にあるローカルMCPサーバーも保持している。
+It also holds the access token the desktop apps share to serve MCP on the user's own PC, and the local MCP server behind a bearer token.

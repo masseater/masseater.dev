@@ -1,3 +1,3 @@
 # cloudflare-logs
 
-このワークスペースは、Cloudflare の Worker の実行ログを読む。
+This workspace reads the run logs of Cloudflare Workers.

@@ -1,3 +1,3 @@
 # @masseater.dev/ui
 
-このワークスペースでは、ヘッダーや背景など、masseater.dev の共通の外観が提供される。
+This workspace provides the shared look of masseater.dev, such as the header and background.

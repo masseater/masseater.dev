@@ -1,5 +1,5 @@
 # aredoko-search-eval
 
-このワークスペースは、aredoko が正しいアセットをどれだけ見つけられるかを測定する。検索ワードのペアと、見つけ出すべきアセットを用いている。
+This workspace measures how well aredoko finds the right assets, using pairs of search words and the assets they should find.
 
-ランキングやモデルを変更する際は、変更前後の結果を比較すること。主に日本語の検索ワードを使用すること。
+When changing ranking or models, compare the results before and after. Use mainly Japanese search words.
