@@ -9,7 +9,9 @@ const HYPHEN = "-";
 const SPECIAL = /[.*+?^${}()|[\]\\]/gu;
 const BACKTICKS = /`/gu;
 
-const patternOf = (name: string): RegExp => {
+const patterns = new Map<string, RegExp>();
+
+const compile = (name: string): RegExp => {
   const escaped = Str.replaceAll(SPECIAL, String.raw`\$&`)(name);
   return pipe(
     Option.liftPredicate(name, Str.includes(HYPHEN)),
@@ -19,6 +21,16 @@ const patternOf = (name: string): RegExp => {
     }),
   );
 };
+
+const patternOf = (name: string): RegExp =>
+  pipe(
+    Option.fromNullishOr(patterns.get(name)),
+    Option.getOrElse(() => {
+      const pattern = compile(name);
+      patterns.set(name, pattern);
+      return pattern;
+    }),
+  );
 
 const ownName = (context: RuleContext): readonly string[] =>
   pipe(
