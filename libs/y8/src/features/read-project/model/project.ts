@@ -8,14 +8,14 @@ const MANIFEST = "package.json";
 const SEPARATOR = "/";
 const ONE = 1;
 
-export const ancestorsOf = (file: string): readonly string[] => {
+const ancestorsOf = (file: string): readonly string[] => {
   const parts = Str.split(file, SEPARATOR);
   return Arr.makeBy(parts.length, (index) =>
     pipe(parts, Arr.take(parts.length - ONE - index), Arr.join(SEPARATOR)),
   );
 };
 
-export const manifestFileOf = (directory: string): string =>
+const manifestFileOf = (directory: string): string =>
   pipe([directory, MANIFEST], Arr.filter(Str.isNonEmpty), Arr.join(SEPARATOR));
 
 const decodeJson = Schema.decodeUnknownOption(Schema.fromJsonString(Schema.Unknown));

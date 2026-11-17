@@ -72,7 +72,6 @@ export const subHeadingsOf = (context: RuleContext): readonly Heading[] =>
     Arr.filter(({ level }) => level >= SECTION_LEVEL),
   );
 
-export const titleLevel = TITLE_LEVEL;
 export const sectionLevel = SECTION_LEVEL;
 
 const isHeadingAtMost =
