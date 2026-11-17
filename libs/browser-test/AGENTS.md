@@ -1,3 +1,3 @@
 # @masseater.dev/browser-test
 
-このワークスペースには、実際のブラウザで実行してスクリーンショットを比較するテストで共有される Vite の設定が保持されている。
+This workspace holds the Vite settings shared by tests that run in a real browser and compare screenshots.

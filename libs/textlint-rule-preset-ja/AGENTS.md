@@ -1,3 +1,3 @@
 # @r_masseater/textlint-rule-preset-ja
 
-このワークスペースは、持ち主の日本語の書き方を検査する textlint のプリセットである。yomiyasu から移植した `yomiyasu` は読みにくい日本語を指摘し、`no-taigendome` は読点を入れて名詞で終わる文を禁止する。
+This workspace is a textlint preset that checks the owner's way of writing Japanese. `yomiyasu`, ported from yomiyasu, points out hard-to-read Japanese, and `no-taigendome` bans sentences that end in a noun after a comma.

@@ -1,3 +1,3 @@
 # mosaic
 
-このワークスペースは `masseater.dev/mosaic` にあるサイトである。各キャラクターの動画サムネイルから作られたモザイクアートが表示されている。
+This workspace is the site at `masseater.dev/mosaic`. It shows mosaic art made from the video thumbnails of each character.

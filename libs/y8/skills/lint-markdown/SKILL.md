@@ -45,14 +45,13 @@ Every built-in rule is on as an error unless `rules` says otherwise. A rule entr
 Run `y8` in the repository root. It lints the Markdown files git tracks and prints
 `path:line:column severity rule message`. It exits with 1 when any error is reported.
 
-## Per-file rules and presets
+## Per-file rules
 
 `overrides` takes `{ files, rules }` entries, as oxlint does. Globs starting with `!` exclude files,
 and later entries win.
 
-`docsPreset(options)` returns a config with rules for README.md, AGENTS.md and SKILL.md, general link and
-privacy rules, and the `agnix` plugin. `agnix` runs the agnix rules for agent files; turn one off with
-`"agnix/<ID>": "off"`.
+Rule packages export presets that return a whole config.
+The `agnix` plugin runs the agnix rules for agent files: register it as `plugins: { agnix }` and turn one off with `"agnix/<ID>": "off"`.
 
 ## Rules in TypeScript
 

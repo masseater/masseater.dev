@@ -1,10 +1,10 @@
 # aredoko-server
 
-このワークスペースは、Unity と同じ PC 上で動作する aredoko サーバーである。ユーザーのアセットをインデックス化し、検索ワードに一致するアセットを探し、その結果を Unity エディタ拡張機能に渡す。
+This workspace is the aredoko server, which runs on the same PC as Unity. It indexes the user's assets, finds the assets that match a search, and hands the results to the Unity editor extension.
 
-Unity内で推論しないこと。
-3Dモデルは複数の方向からレンダリングした画像を埋め込むこと。キャプションを生成して埋め込まないこと。
-アセットや検索ワードをPC外に持ち出さないこと。外部へのリクエストは、BOOTH商品ページの公開JSONのみとする。BOOTHのログイン状態、Cookie、購入履歴を読み取らないこと。
-Unity Asset StoreおよびBOOTH Library Managerのデータは読み取るが、決して変更しないこと。ドロップしたパッケージは、インデックス作成前にデータフォルダ内の`library`にコピーすること。
-開発とテストは、クラウド上のLinuxで実行可能な状態に保つこと。Windowsでしか確認できない処理を追加しないこと。
-エディタ拡張機能は、C# 9とVRChat SDKが使用するUnity 2022.3.22f1のAPIのみを用いて記述すること。
+Do not run inference inside Unity.
+Embed 3D models as images rendered from several directions. Do not generate and embed captions.
+Never send assets or search words off the PC. The only outside requests are to the public JSON of BOOTH product pages. Do not read the BOOTH login state, cookies or purchase history.
+Read the Unity Asset Store and BOOTH Library Manager data, but never change it. Copy a dropped package into `library` in the data folder before indexing it.
+Keep development and tests runnable on Linux in the cloud. Do not add work that can only be checked on Windows.
+Write the editor extension using only C# 9 and the APIs of Unity 2022.3.22f1, which the VRChat SDK uses.

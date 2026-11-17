@@ -1,5 +1,5 @@
 # labs
 
-このワークスペースには、Pod Rattle など、React を使用していない masseater.dev 上の小規模な実験用ページが格納されている。
+This workspace holds small experimental pages on masseater.dev that do not use React, such as Pod Rattle.
 
-ページを追加する際は、`src/shared/config/pages.ts` の `PAGES` に追加する。
+To add a page, add it to `PAGES` in `src/shared/config/pages.ts`.

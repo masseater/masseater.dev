@@ -1,15 +1,16 @@
+import { definePlugin } from "@r_masseater/y8";
+import type { Override, Plugin, Rule, RuleEntry, Y8Config } from "@r_masseater/y8";
 import { Array as Arr, Option, Record as Rec, pipe } from "effect";
 
-import { agnix, definePlugin } from "#/entities/rule/index.ts";
 import { noShouting } from "#/features/check-documents/lib/shapes.ts";
 import { noSkillNames } from "#/features/check-documents/lib/skill-names.ts";
-import type { Override, Plugin, Rule, RuleEntry, Y8Config } from "#/shared/config/index.ts";
 
 import {
   agentsCommands,
   agentsNoStructure,
   agentsOpening,
   agentsSections,
+  agentsEnglish,
   agentsSkillOwned,
   agentsStackSentence,
   agentsTitle,
@@ -47,7 +48,6 @@ import {
 } from "./skill-rules.ts";
 
 const PLUGIN = "docs";
-const AGNIX = "agnix";
 const SEPARATOR = "/";
 const ROOT_AGENTS_LINES = 100;
 const WORKSPACE_AGENTS_LINES = 20;
@@ -77,6 +77,7 @@ const README: Readonly<Record<string, Rule>> = {
 
 const AGENTS: Readonly<Record<string, Rule>> = {
   "agents-title": agentsTitle,
+  "agents-english": agentsEnglish,
   "agents-opening": agentsOpening,
   "agents-skill-owned": agentsSkillOwned,
   "agents-no-structure": agentsNoStructure,
@@ -138,7 +139,6 @@ export interface DocsPresetOptions {
     readonly skillNames?: SkillNameOptions;
   };
   readonly emails?: readonly string[];
-  readonly agnix?: Readonly<Record<string, RuleEntry>>;
 }
 
 type Rules = Readonly<Record<string, RuleEntry>>;
@@ -212,14 +212,12 @@ export const docsPreset = (options: DocsPresetOptions = {}): Y8Config => {
     },
   ];
   return {
-    plugins: { [PLUGIN]: docsPlugin, [AGNIX]: agnix },
+    plugins: { [PLUGIN]: docsPlugin },
     rules: {
       ...recommendedMarkdownRules,
       ...turned({ ...README, ...AGENTS, ...ROOT_AGENTS, ...WORKSPACE_AGENTS, ...SKILL }, "off"),
       ...turned(GENERAL, "error"),
       ...whenGiven(options.emails, (allow) => withOptions("no-email", { allow })),
-      [`${AGNIX}${SEPARATOR}XP-001`]: "off",
-      ...options.agnix,
     },
     overrides,
   };
