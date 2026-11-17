@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
+    "@masseater.dev/github-workflow": "workspace:*",
     "@masseater.dev/node-main": "workspace:*",
     "effect": "catalog:stack"
   },

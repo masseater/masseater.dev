@@ -10,13 +10,16 @@ export const VERIFY_TASK = ["tasks", "verify"] as const;
 
 export const TEST_TASK = ["tasks", "test"] as const;
 
+const NATIVE_TASK = ["tasks", "native"] as const;
+
 export const RUN_TASKS = ["run", "tasks"] as const;
 
 export interface WorkspaceTasks {
   readonly verify: readonly string[];
+  readonly native: readonly string[];
 }
 
-export const NO_TASKS: WorkspaceTasks = { verify: [] };
+export const NO_TASKS: WorkspaceTasks = { verify: [], native: [] };
 
 const Tasks = Schema.Struct({ verify: Schema.Unknown });
 const isVerified = Schema.is(Schema.Struct({ run: Schema.Struct({ tasks: Tasks }) }));
@@ -47,6 +50,7 @@ export const tasksOf =
             Option.liftPredicate(`${name}#verify`, () => definesTask(VERIFY_TASK)(program)),
             Option.liftPredicate(`${name}#test`, () => definesTask(TEST_TASK)(program)),
           ]),
+          native: Arr.filter([`${name}#native`], () => definesTask(NATIVE_TASK)(program)),
         }),
       }),
     );

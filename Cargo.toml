@@ -14,8 +14,8 @@ members = [
   "libs/local-mcp",
   "libs/desktop-shell",
   "libs/media-notes",
-  "libs/mdlint/native/core",
-  "libs/mdlint/native/node",
+  "libs/y8/native/core",
+  "libs/y8/native/node",
   "apps/shirushi/src-tauri",
 ]
 
