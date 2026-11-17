@@ -17,6 +17,7 @@ const BYPASS_RULESET = "--admin";
 const FILTER = /^(?:--filter(?:=.*)?|-F)$/u;
 const TASK_KINDS: readonly CommandKind[] = ["script", "task"];
 const SECOND = 1;
+const DOC_KIND: CommandKind = "doc";
 
 interface CommandRule {
   readonly rule: RuleName;
@@ -31,7 +32,9 @@ const subcommandOf = (words: CommandWords): Option.Option<string> => Arr.get(wor
 const RULES: readonly CommandRule[] = [
   {
     rule: "package-manager-command",
-    applies: (_source, words) => Arr.contains(PACKAGE_MANAGERS, programOf(words)),
+    applies: (source, words) =>
+      Arr.contains(PACKAGE_MANAGERS, programOf(words)) &&
+      (source.kind !== DOC_KIND || words.length > SECOND),
     message: (command) =>
       `\`${command}\` calls the package manager directly. Run it through vp (vp install, vp add, vp exec, vp dlx, vp run), so that hooks, CI and sessions all use the toolchain Vite+ pins.`,
   },
