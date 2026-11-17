@@ -1,3 +1,3 @@
 # ocr-decide
 
-[デモ](https://masseater.dev/ocr-decide/)で請求書やレシートの画像を開くと、発行者、発行日、合計金額、消費税額、登録番号を読み取る。画像をそのまま画像対応のモデルに渡す方法と、OCR してから decision モデルに選ばせる方法を並べて試せる。同じページで、20 枚の画像で比べた正解率、時間、費用も見られる。
+Open an image of an invoice or a receipt in the [demo](https://masseater.dev/ocr-decide/), and it reads the issuer, issue date, total amount, consumption tax amount and registration number. The page runs two methods side by side: passing the image directly to a vision model, and running OCR first and letting a decision model choose. The same page shows the accuracy, time and cost of both methods on 20 images.
