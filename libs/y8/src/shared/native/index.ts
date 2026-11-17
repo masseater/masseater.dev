@@ -55,6 +55,8 @@ export interface NativeTree {
   readonly nodes: readonly NativeNode[];
 }
 
+export type Level = "error" | "warning" | "info";
+
 export interface NativeDiagnostic {
   readonly line: number;
   readonly ruleNames: readonly string[];
@@ -62,7 +64,7 @@ export interface NativeDiagnostic {
   readonly detail: string | null;
   readonly context: string | null;
   readonly range: readonly [number, number] | null;
-  readonly severity: "error" | "warning";
+  readonly severity: Exclude<Level, "info">;
 }
 
 export interface AgentDiagnostic {
@@ -71,7 +73,7 @@ export interface AgentDiagnostic {
   readonly rule: string;
   readonly message: string;
   readonly suggestion: string | null;
-  readonly level: "error" | "warning" | "info";
+  readonly level: Level;
 }
 
 export interface AgnixOptions {
@@ -109,6 +111,7 @@ export interface Native {
     options: NativeOptions,
   ) => readonly NativeResult[];
   readonly flushTelemetry: () => Promise<void>;
+  readonly readTexts: (root: string, paths: readonly string[]) => readonly (string | null)[];
 }
 
 const isNative = (value: unknown): value is Native =>
@@ -117,7 +120,9 @@ const isNative = (value: unknown): value is Native =>
   Predicate.hasProperty(value, "lintPaths") &&
   Predicate.isFunction(value.lintPaths) &&
   Predicate.hasProperty(value, "flushTelemetry") &&
-  Predicate.isFunction(value.flushTelemetry);
+  Predicate.isFunction(value.flushTelemetry) &&
+  Predicate.hasProperty(value, "readTexts") &&
+  Predicate.isFunction(value.readTexts);
 
 const requireFrom = createRequire(import.meta.url);
 

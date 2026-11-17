@@ -2,8 +2,8 @@ use napi::bindgen_prelude::Result;
 use napi_derive::napi;
 use rayon::prelude::*;
 use serde_json::{Map, Value, json};
-use tracing::info_span;
 use std::path::PathBuf;
+use tracing::info_span;
 
 use y8_core::{AgentChecker, Input, Linter, builtin_rules};
 

@@ -47,16 +47,11 @@ const configOf = Effect.fn("y8.config")(function* configOf(root: string) {
   });
 });
 
-const markdownFiles = Effect.fn("y8.files")(function* markdownFiles(
+const gitFiles = Effect.fn("y8.files")(function* gitFiles(
   root: string,
-  config: Y8Config,
+  pathspecs: readonly string[],
 ) {
   const spawner = yield* ChildProcessSpawner.ChildProcessSpawner;
-  const requested = process.argv.slice(ARGUMENTS_START);
-  const pathspecs = Arr.match(requested, {
-    onEmpty: () => markdownPathspecs({ config }),
-    onNonEmpty: (patterns) => markdownPathspecs({ config, patterns }),
-  });
   const output = yield* spawner.string(
     ChildProcess.make("git", ["ls-files", "-co", "--exclude-standard", "-z", "--", ...pathspecs], {
       cwd: root,
@@ -65,11 +60,21 @@ const markdownFiles = Effect.fn("y8.files")(function* markdownFiles(
   return pipe(Str.split(output, "\0"), Arr.filter(Str.isNonEmpty));
 });
 
+const markdownFiles = (root: string, config: Y8Config): ReturnType<typeof gitFiles> =>
+  gitFiles(
+    root,
+    Arr.match(process.argv.slice(ARGUMENTS_START), {
+      onEmpty: () => markdownPathspecs({ config }),
+      onNonEmpty: (patterns) => markdownPathspecs({ config, patterns }),
+    }),
+  );
+
 const main = Effect.gen(function* main() {
   const root = process.cwd();
   const config = yield* configOf(root);
   const files = yield* markdownFiles(root, config);
-  const diagnostics = yield* lint({ root, files, config });
+  const projectFiles = yield* gitFiles(root, []);
+  const diagnostics = yield* lint({ root, files, projectFiles, config });
   yield* Arr.match(diagnostics, {
     onEmpty: () => Effect.void,
     onNonEmpty: (found) => Console.log(pipe(found, Arr.map(format), Arr.join("\n"))),

@@ -2,6 +2,11 @@
 
 msch packages the check policy shared across masseater's repositories. It requires Vite+ and Node.js 26 or later.
 
+```sh
+vp add -D @r_masseater/msch
+vp exec msch
+```
+
 Guidance for agents ships in the package as TanStack Intent skills. Load one with `vp exec intent load @r_masseater/msch#<skill>`.
 
 | Skill                | When to use                                 |

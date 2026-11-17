@@ -3,9 +3,10 @@ import { Array as Arr, Boolean as Bool, Effect, Match, Option, Order, pipe } fro
 import { BUILTIN, groupByOverrides, resolve, unknownPlugins } from "#/entities/rule/index.ts";
 import type { FileGroup, Resolved } from "#/entities/rule/index.ts";
 import { agentDiagnosticsOf } from "#/features/map-agent-diagnostics/index.ts";
+import { readProject } from "#/features/read-project/index.ts";
 import { runCompatRules } from "#/features/run-compat-rules/index.ts";
 import { runScriptRules } from "#/features/run-rules/index.ts";
-import type { Diagnostic, Y8Config } from "#/shared/config/index.ts";
+import type { Diagnostic, Project, Y8Config } from "#/shared/config/index.ts";
 import { Y8Error, failedWith } from "#/shared/lib/errors.ts";
 import { present } from "#/shared/lib/present.ts";
 import { native } from "#/shared/native/index.ts";
@@ -19,6 +20,7 @@ import type {
 export interface LintInput {
   readonly root: string;
   readonly files: readonly string[];
+  readonly projectFiles?: readonly string[];
   readonly config?: Y8Config;
 }
 
@@ -106,12 +108,18 @@ const sourceOf = (result: NativeResult): Option.Option<SourceFile> =>
   );
 
 const scriptedOne =
-  (resolved: Resolved) =>
+  (resolved: Resolved, project: Project) =>
   (result: NativeResult): readonly Diagnostic[] =>
     pipe(
       Option.all({ tree: Option.fromNullishOr(result.tree), source: sourceOf(result) }),
       Option.map(({ tree, source }) =>
-        runScriptRules({ path: source.path, text: source.text, tree, rules: resolved.scripts }),
+        runScriptRules({
+          path: source.path,
+          text: source.text,
+          tree,
+          rules: resolved.scripts,
+          project,
+        }),
       ),
       Option.getOrElse((): readonly Diagnostic[] => []),
     );
@@ -137,6 +145,7 @@ interface FileInput {
 
 const lintGroup = (
   root: string,
+  project: Project,
 ): ((group: FileGroup) => Effect.Effect<readonly Diagnostic[], Y8Error>) =>
   Effect.fn("y8.lint.group")(function* group(input: FileGroup) {
     const resolved = resolve(input.config);
@@ -150,7 +159,7 @@ const lintGroup = (
       rules: resolved.compat,
     });
     const builtin = pipe(results, Arr.flatMap(builtinOf));
-    const scripted = pipe(results, Arr.flatMap(scriptedOne(resolved)));
+    const scripted = pipe(results, Arr.flatMap(scriptedOne(resolved, project)));
     const agent = Option.match(resolved.agent, {
       onNone: (): readonly Diagnostic[] => [],
       onSome: (rules) => pipe(results, Arr.flatMap(agentDiagnosticsOf(rules))),
@@ -161,9 +170,14 @@ const lintGroup = (
 export const lint = Effect.fn("y8.lint")(function* lint(input: LintInput) {
   const config = input.config ?? {};
   yield* checkPlugins(config);
+  const project = yield* readProject({
+    root: input.root,
+    files: input.files,
+    projectFiles: input.projectFiles ?? [],
+  });
   const found = yield* Effect.forEach(
     groupByOverrides(config, input.files),
-    lintGroup(input.root),
+    lintGroup(input.root, project),
     {
       concurrency: 1,
     },

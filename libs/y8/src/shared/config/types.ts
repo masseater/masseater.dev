@@ -32,9 +32,23 @@ export interface Report {
 
 export type Frontmatter = Readonly<Record<string, unknown>>;
 
+export interface PackageManifest {
+  readonly directory: string;
+  readonly data: Readonly<Record<string, unknown>>;
+}
+
+export interface Project {
+  readonly exists: (path: string) => boolean;
+  readonly under: (directory: string) => readonly string[];
+  readonly manifestOf: (file: string) => PackageManifest | undefined;
+}
+
 export interface RuleContext {
   readonly filename: string;
   readonly frontmatter: Frontmatter | undefined;
+  readonly exists: (path: string) => boolean;
+  readonly filesUnder: (directory: string) => readonly string[];
+  readonly manifest: PackageManifest | undefined;
   readonly text: string;
   readonly lines: readonly string[];
   readonly options: RuleOptions;

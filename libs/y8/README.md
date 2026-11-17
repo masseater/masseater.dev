@@ -35,3 +35,7 @@ export default defineConfig({
 ```
 
 Run `y8` to lint the Markdown files git tracks, or call `lint` from code.
+
+## Agent skills
+
+The package ships TanStack Intent skills for coding agents. Load one with `vp exec intent load @r_masseater/y8#<skill>`.

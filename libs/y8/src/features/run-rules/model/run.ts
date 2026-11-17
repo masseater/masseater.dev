@@ -2,7 +2,7 @@ import { Array as Arr, Option, String as Str, pipe } from "effect";
 
 import { reportedSeverity } from "#/entities/rule/index.ts";
 import type { ScriptRule } from "#/entities/rule/index.ts";
-import type { Diagnostic, MarkdownNode, Report, Visitors } from "#/shared/config/index.ts";
+import type { Diagnostic, MarkdownNode, Project, Report, Visitors } from "#/shared/config/index.ts";
 import { present } from "#/shared/lib/present.ts";
 import type { NativeTree } from "#/shared/native/index.ts";
 
@@ -19,6 +19,7 @@ export interface ScriptInput {
   readonly text: string;
   readonly tree: NativeTree;
   readonly rules: readonly ScriptRule[];
+  readonly project: Project;
 }
 
 type Handler = (node: MarkdownNode) => void;
@@ -103,6 +104,9 @@ const runOn = (input: ScriptInput, document: Document): readonly Diagnostic[] =>
       return rule.rule.create({
         filename: input.path,
         frontmatter,
+        exists: input.project.exists,
+        filesUnder: input.project.under,
+        manifest: input.project.manifestOf(input.path),
         text: input.text,
         lines,
         options: rule.setting.options,

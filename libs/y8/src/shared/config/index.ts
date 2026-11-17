@@ -2,6 +2,8 @@ export type {
   Diagnostic,
   Frontmatter,
   Override,
+  PackageManifest,
+  Project,
   MarkdownNode,
   MarkdownlintRule,
   Y8Config,

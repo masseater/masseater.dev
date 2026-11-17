@@ -52,8 +52,11 @@ export const checkMarkdown = Effect.fn("checkMarkdown")(function* checkMarkdown(
     return [];
   }
   const config = section.value;
-  const listed = yield* files.matchingFiles(root, markdownPathspecs({ config }));
-  return yield* lint({ root, files: listed, config }).pipe(
+  const [listed, projectFiles] = yield* Effect.all(
+    [files.matchingFiles(root, markdownPathspecs({ config })), files.listedFiles(root)],
+    { concurrency: "unbounded" },
+  );
+  return yield* lint({ root, files: listed, projectFiles, config }).pipe(
     Effect.map((diagnostics) =>
       pipe(
         diagnostics,
