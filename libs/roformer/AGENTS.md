@@ -1,5 +1,5 @@
-# roformer
+# @masseater.dev/roformer
 
-このワークスペースは、音源分離の BS-RoFormer 系モデルを Rust で動かすライブラリである。コミュニティが公開した PyTorch のチェックポイントを変換せずに直接読み込む。
+This workspace is a Rust library that runs BS-RoFormer source separation models. It reads the PyTorch checkpoints published by the community directly, without converting them.
 
-テストは Hugging Face からリビジョンを固定した重みと PyTorch の出力を取得し、出力が一致するかを確かめる。
+Tests download weights and PyTorch outputs pinned to a Hugging Face revision, and check that the outputs match.

@@ -1,9 +1,9 @@
 # yogoto
 
-このワークスペースはデスクトップアプリのよごとである。オーナーが曲のリンクやファイルを投げると、元の音声をそのまま保管し、BS-RoFormer 系のモデルで stem に分離してライブラリに置く。曲や素材を使う AI は、アプリが `127.0.0.1` で提供する MCP で取り込みと分離を頼み、結果のファイルを読む。
+This workspace is the desktop app yogoto. The owner drops links or files of songs into it. The app keeps the original audio as it is, separates it into stems with BS-RoFormer models, and stores them in a library. AIs that work with songs or samples ask for imports and separations through the MCP the app serves on `127.0.0.1`, and read the resulting files.
 
-曲フォルダはアプリのローカルデータの `library/songs/<id>/` にあり、`song.json`、元の音声の `sources/`、分離結果の `stems/<分離の id>/<stem>.flac` を持つ。stem は元の音声と同じサンプルレート、同じ長さにそろえる。`song.json` の形は `libs/yogoto-protocol` の Effect Schema で決める。
+Each song folder is `library/songs/<id>/` in the app's local data. It holds `song.json`, the original audio in `sources/`, and the stems in `stems/<separation id>/<stem>.flac`. Stems have the same sample rate and length as the original audio. The shape of `song.json` is defined by the Effect Schema in `libs/yogoto-protocol`.
 
-他人の曲や、そこから作った stem は、このリポジトリやインストーラーへ入れないこと。
+Do not put other people's songs, or stems made from them, in this repository or the installer.
 
-画面は tauri-plugin-localhost が `http://127.0.0.1` の空きポートから配る。コマンドを足したら `src-tauri/build.rs` と `capabilities/default.json` にも足す。NVIDIA の GPU で分離するときは `cuda` の feature を付けてビルドする。
+The screens are served by tauri-plugin-localhost from a free port on `http://127.0.0.1`. When you add a command, also add it to `src-tauri/build.rs` and `capabilities/default.json`. To separate on an NVIDIA GPU, build with the `cuda` feature.

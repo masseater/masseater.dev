@@ -1,3 +1,3 @@
 # @masseater.dev/yogoto-protocol
 
-このワークスペースには、よごとの画面と Tauri 側でやり取りする型と、曲フォルダの `song.json` の形を格納している。Rust 側の型は `tools/protocol-codegen` がここから生成する。
+This workspace holds the types exchanged between the yogoto screens and its Tauri side, and the shape of `song.json` in each song folder. `tools/protocol-codegen` generates the Rust types from here.

@@ -1,7 +1,7 @@
-# audio-fetch
+# @masseater.dev/audio-fetch
 
-このワークスペースは、YouTube・ニコニコ・SoundCloud から音声だけを取得する Rust のライブラリである。各サイトの API を直接呼び、再エンコードせずに元の音声をそのまま保存する。
+This workspace is a Rust library that downloads only the audio from YouTube, Niconico and SoundCloud. It calls each site's API directly and saves the original audio without re-encoding it.
 
-自前の取得が失敗したときは、版とハッシュを固定した yt-dlp の公式ビルドを取得して代わりに使う。サイトの仕様が変わって自前の取得が壊れたら、yt-dlp の対応を参考に直す。失敗は tracing のスパンに理由を残す。
+When the built-in download fails, it downloads the official yt-dlp build pinned by version and hash, and uses that instead. When a site change breaks the built-in download, fix it by following how yt-dlp handles the site. Failures leave their reason on a tracing span.
 
-テストはネットワークに出ない。サイトの応答の解釈は、手で書いた応答の断片で確かめる。
+Tests do not touch the network. They check how site responses are read with hand-written response fragments.
