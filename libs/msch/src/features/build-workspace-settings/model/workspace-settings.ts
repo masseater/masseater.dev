@@ -12,6 +12,7 @@ import {
   workspaceDirectories,
   prefixed,
   NO_TASKS,
+  TEST_TASK,
   definesTask,
   tasksOf,
 } from "#/entities/workspace/index.ts";
@@ -32,7 +33,6 @@ const SHADCN_FILE = "components.json";
 const READ_CONCURRENCY = 16;
 const MSCH_LINT = ["msch", "lint"] as const;
 const MSCH_DEV_DEPENDENCIES = ["msch", "devDependencies"] as const;
-const TEST_TASK = ["tasks", "test"] as const;
 
 type SeverityName = Extract<AllowWarnDeny, string>;
 

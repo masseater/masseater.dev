@@ -69,7 +69,7 @@ const readsLiteralSettings = Effect.gen(function* readsLiteralSettings() {
       deployEntries: [],
     },
     testProjects: ["apps/web"],
-    tasks: { verify: [], native: [] },
+    tasks: { verify: ["own#test"], native: [] },
     devDependencies: {
       "apps/web: spans are sent from the SDK in tests": {
         workspaces: ["apps/web"],
