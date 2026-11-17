@@ -1,24 +1,46 @@
 import { mustSucceed, succeeds, writeOutputs } from "@masseater.dev/github-workflow";
-import { Array as Arr, Config, Effect, FileSystem, Order, Path, pipe } from "effect";
+import { Array as Arr, Config, Effect, FileSystem, Option, Order, Path, pipe } from "effect";
 
-import { isRoot, isVersioned, manifestIn, releaseName, tagOf } from "./manifest.ts";
+import { brokerCredential } from "./broker.ts";
+import { goesToNpm, isRoot, isVersioned, manifestIn, releaseName, tagOf } from "./manifest.ts";
 import type { Manifest } from "./manifest.ts";
-import { releasedWithAssets } from "./plan.ts";
+import { releasedWithAssets, tagged } from "./plan.ts";
+import { provenanceCommit } from "./provenance.ts";
 
 const ASSETS = "release-assets";
 
-const tagRevision = Effect.fn("publish.tag")(function* tagRevision(tag: string) {
+const revisionOf = Effect.fn("publish.revision")(function* revisionOf(manifest: Manifest) {
+  const head = yield* Config.String("GITHUB_SHA");
+  if (!goesToNpm(manifest)) {
+    return head;
+  }
+  const published = yield* provenanceCommit(manifest);
+  return Option.getOrElse(published, () => head);
+});
+
+const tokenEnv = brokerCredential({ kind: "github", field: "githubToken" }).pipe(
+  Effect.map(
+    Option.match({
+      onNone: (): Readonly<Record<string, string>> => ({}),
+      onSome: (value): Readonly<Record<string, string>> => ({ GH_TOKEN: value }),
+    }),
+  ),
+);
+
+const tagRevision = Effect.fn("publish.tag")(function* tagRevision(
+  tag: string,
+  manifest: Manifest,
+) {
   const repository = yield* Config.String("GITHUB_REPOSITORY");
-  const sha = yield* Config.String("GITHUB_SHA");
-  const exists = yield* succeeds({
-    command: "gh",
-    args: ["api", `repos/${repository}/git/ref/tags/${tag}`],
-  });
-  if (exists) {
+  if (yield* tagged(tag)) {
     return;
   }
+  const sha = yield* revisionOf(manifest);
+  const env = yield* tokenEnv;
+  yield* Effect.logInfo(`tagging ${tag} at ${sha}`);
   yield* mustSucceed({
     command: "gh",
+    env,
     args: [
       "api",
       "-X",
@@ -126,7 +148,7 @@ export const publishRelease = Effect.fn("publish.release")(function* publishRele
     return;
   }
   const tag = tagOf({ directory, ...manifest });
-  yield* tagRevision(tag);
+  yield* tagRevision(tag, manifest);
   yield* writeOutputs({ tag });
   if (isRoot(directory)) {
     yield* createRelease({ directory, manifest });

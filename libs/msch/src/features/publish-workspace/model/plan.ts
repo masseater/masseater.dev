@@ -49,6 +49,7 @@ const PlanSchema = Schema.Struct({
   builds: Schema.Array(Runner),
   checks: Schema.Array(Runner),
   release: Schema.Boolean,
+  tagged: Schema.Boolean,
   hook: Schema.Boolean,
 });
 
@@ -75,6 +76,25 @@ const workspacesOf = (tasks: readonly (typeof Task.Type)[]): readonly string[] =
     Arr.map((task) => task.package),
     Arr.dedupe,
   );
+
+/** @internal */
+export const tagged = Effect.fn("publish.tagged")(function* tagged(tag: string) {
+  const repository = yield* Config.String("GITHUB_REPOSITORY");
+  return yield* succeeds({
+    command: "gh",
+    args: ["api", `repos/${repository}/git/ref/tags/${tag}`],
+  });
+});
+
+const taggedOrUnversioned = (manifest: Manifest, tag: string): ReturnType<typeof tagged> => {
+  if (!isVersioned(manifest)) {
+    return Effect.succeed(true);
+  }
+  return tagged(tag);
+};
+
+const workspaceOf = (directory: string): Effect.Effect<string, never, Path.Path> =>
+  Path.Path.pipe(Effect.map((path) => Str.replace(TRAILING_SLASH, "")(path.normalize(directory))));
 
 /** @internal */
 export const released = Effect.fn("publish.released")(function* released(tag: string) {
@@ -150,19 +170,20 @@ const nativeOf = (manifest: Manifest): readonly (typeof NativeTarget.Type)[] =>
 
 /** @internal */
 export const planOf = Effect.fn("publish.plan")(function* planOf(directory: string) {
-  const path = yield* Path.Path;
-  const workspace = Str.replace(TRAILING_SLASH, "")(path.normalize(directory));
+  const workspace = yield* workspaceOf(directory);
   const manifest = yield* manifestIn(workspace);
   const graph = yield* graphTasks;
   const tasks = tasksIn(graph, workspace);
   const npm = yield* needsNpm(workspace, manifest, workspacesOf(graph));
   const release = yield* needsRelease(workspace, manifest, buildsOf(tasks));
   const built = keepWhen(release || !isVersioned(manifest));
+  const tag = tagOf({ directory: workspace, ...manifest });
   return {
     directory: workspace,
     name: releaseName(manifest),
     version: manifest.version,
-    tag: tagOf({ directory: workspace, ...manifest }),
+    tag,
+    tagged: yield* taggedOrUnversioned(manifest, tag),
     environment: environmentOf(manifest),
     npm,
     native: keepWhen(npm)(nativeOf(manifest)),
