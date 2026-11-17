@@ -26,6 +26,7 @@ export interface Linted {
 export interface LintRequest<Config> {
   readonly root: string;
   readonly files: readonly string[];
+  readonly projectFiles: readonly string[];
   readonly config: Config;
 }
 
@@ -76,8 +77,13 @@ export const checkSection =
         return [];
       }
       const config = section.value;
-      const listed = yield* files.matchingFiles(root, check.pathspecs(config));
-      const linted = yield* Effect.result(check.lint({ root, files: listed, config }));
+      const [listed, projectFiles] = yield* Effect.all(
+        [files.matchingFiles(root, check.pathspecs(config)), files.listedFiles(root)],
+        { concurrency: "unbounded" },
+      );
+      const linted = yield* Effect.result(
+        check.lint({ root, files: listed, projectFiles, config }),
+      );
       return Result.match(linted, {
         onFailure: (failure) => failureAt(configFile, check.rule, failure.message),
         onSuccess: (found) =>

@@ -1,3 +1,4 @@
+import { cargoInputs } from "@r_masseater/msch/cargo-inputs";
 import { defineConfig } from "vite-plus";
 
 export default defineConfig({
@@ -22,14 +23,7 @@ export default defineConfig({
         dependsOn: ["render", "@masseater.dev/cargo-tools#build"],
         cache: {
           input: [
-            "Cargo.toml",
-            "src/**",
-            "tests/**",
-            "benches/**",
-            { pattern: "Cargo.lock", base: "workspace" },
-            { pattern: "Cargo.toml", base: "workspace" },
-            { pattern: "rust-toolchain.toml", base: "workspace" },
-            "reference/**",
+            ...(await cargoInputs({ directory: import.meta.dirname, extras: ["reference/**"] })),
           ],
           output: [],
         },

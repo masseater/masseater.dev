@@ -1,7 +1,7 @@
-diff --git a/dist/tsdown/dist-BImdOfKl.js b/dist/tsdown/dist-BImdOfKl.js
-index b7216952e4ebb0bb57b712bfde929acaa20a5d0d..b25d74c4ae3258c17897e9dd74020cf0922379a0 100644
---- a/dist/tsdown/dist-BImdOfKl.js
-+++ b/dist/tsdown/dist-BImdOfKl.js
+diff --git a/dist/tsdown/dist-Bgp1Qexk.js b/dist/tsdown/dist-Bgp1Qexk.js
+index 9dd16ed..0ceee9b 100644
+--- a/dist/tsdown/dist-Bgp1Qexk.js
++++ b/dist/tsdown/dist-Bgp1Qexk.js
 @@ -55,7 +55,7 @@ function tryResolve(id) {
  }
  let _ts;

@@ -75,6 +75,7 @@ export const repositoryConfig = (options: RepositoryOptions): UserConfig => {
     }),
     textlint: textlintOf(textlint),
     y8: markdownOf(markdown),
+    fu4: {},
     test: { projects: [...workspace.testProjects], passWithNoTests: true },
     staged: { "*": "vp fmt --no-error-on-unmatched-pattern" },
     fmt: {

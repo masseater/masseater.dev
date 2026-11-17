@@ -1,3 +1,3 @@
-# component-release
+# @masseater.dev/component-release
 
-このワークスペースは、release-please で版を出すアプリ（yakusu・Pod Rattle・余白）のタグとリリースを GitHub Actions から作る。
+This workspace creates, from GitHub Actions, the tags and releases of the apps that release-please versions (yakusu, Pod Rattle, Yohaku).

@@ -1,3 +1,3 @@
 # protocol-codegen
 
-このワークスペースは、Effect Schema で書いた型から aredoko と sts2 の C# と Rust の型を作る。
+This workspace generates the C# and Rust types of aredoko and sts2 from types written in Effect Schema.

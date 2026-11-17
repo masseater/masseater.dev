@@ -1,1 +1,1 @@
-export { actionlintCheck, zizmorCheck } from "./model/workflow-checks.ts";
+export { zizmorCheck } from "./model/workflow-checks.ts";

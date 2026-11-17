@@ -1,4 +1,4 @@
-import { patch, post, postJson } from "@masseater.dev/github-workflow";
+import { patch, postJson } from "@masseater.dev/github-workflow";
 import { runMain } from "@masseater.dev/node-main";
 import {
   Array as Arr,
@@ -9,6 +9,7 @@ import {
   Option,
   Path,
   Record as Rec,
+  Ref,
   Schedule,
   Schema,
   Stream,
@@ -24,6 +25,7 @@ const ENVIRONMENT = "npm";
 const REPOSITORY = "masseater/masseater.dev";
 const PLACEHOLDER_VERSION = "0.0.0";
 const SUCCESS = 0;
+const TTY_SECONDS = 3600;
 const ATTEMPTS = 6;
 const VISIBLE_ATTEMPTS = 20;
 const VISIBLE_SECONDS = 15;
@@ -56,6 +58,7 @@ interface Candidate {
 interface Session {
   readonly directory: string;
   readonly issue: number;
+  readonly lines: Ref.Ref<readonly string[]>;
 }
 
 const candidatesOf = Effect.fn("candidatesOf")(function* candidatesOf(text: string) {
@@ -128,8 +131,13 @@ const openIssue = Effect.fn("openIssue")(function* openIssue(names: readonly str
   return issue.number;
 });
 
-const comment = Effect.fn("comment")(function* comment(issue: number, text: string) {
-  yield* post({ path: `issues/${String(issue)}/comments`, body: { body: text } });
+const note = Effect.fn("note")(function* note(session: Session, text: string) {
+  yield* Console.log(text);
+  const lines = yield* Ref.updateAndGet(session.lines, Arr.append(`- ${text}`));
+  yield* patch({
+    path: `issues/${String(session.issue)}`,
+    body: { body: Arr.join(lines, "\n") },
+  }).pipe(Effect.catch((error) => Console.error(`could not update the issue: ${String(error)}`)));
 });
 
 const announce = Effect.fn("announce")(function* announce(
@@ -140,7 +148,7 @@ const announce = Effect.fn("announce")(function* announce(
   yield* Console.log(line);
   const url = pipe(Option.fromNullishOr(AUTH_URL.exec(line)), Option.flatMap(Arr.head));
   if (Option.isSome(url)) {
-    yield* comment(session.issue, `${label}: ${url.value}`);
+    yield* note(session, `${label}: ${url.value}`);
   }
 });
 
@@ -156,7 +164,8 @@ const runApproved = Effect.fn("runApproved")(function* runApproved(
   label: string,
   args: readonly string[],
 ) {
-  const handle = yield* ChildProcess.make("script", ["-qfec", `npm ${quoted(args)}`, "/dev/null"], {
+  const command = `script -qfec "npm ${quoted(args)}" /dev/null < <(sleep ${String(TTY_SECONDS)})`;
+  const handle = yield* ChildProcess.make("bash", ["-c", command], {
     cwd: session.directory,
     env: { NPM_CONFIG_USERCONFIG: `${session.directory}/.npmrc` },
     extendEnv: true,
@@ -244,7 +253,7 @@ const claim = Effect.fn("claim")(function* claim(session: Session, candidate: Ca
     "--registry",
     REGISTRY,
   ]);
-  yield* comment(session.issue, `claimed ${candidate.name}`);
+  yield* note(session, `claimed ${candidate.name}`);
 });
 
 const claimMissing = Effect.fn("claimMissing")(function* claimMissing(
@@ -258,7 +267,13 @@ const claimMissing = Effect.fn("claimMissing")(function* claimMissing(
   yield* Console.log(`claiming ${Arr.join(names, ", ")}`);
   const directory = yield* fileSystem.makeTempDirectoryScoped();
   const issue = yield* openIssue(names);
-  const session: Session = { directory, issue };
+  const lines = yield* Ref.make<readonly string[]>(
+    pipe(
+      names,
+      Arr.map((name) => `- ${name}`),
+    ),
+  );
+  const session: Session = { directory, issue, lines };
   yield* approved(session, "login", ["login", "--auth-type=web", "--registry", REGISTRY]);
   yield* Effect.forEach(missing, (candidate) => claim(session, candidate), {
     concurrency: 1,

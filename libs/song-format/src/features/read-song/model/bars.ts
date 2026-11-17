@@ -2,13 +2,20 @@ import { Array as Arr, Match, Option, pipe } from "effect";
 
 import type { Bar, Meter, Song, Tempo } from "#/entities/song/index.ts";
 import { TICKS_PER_WHOLE, fractionOf } from "#/shared/lib/ticks.ts";
-import { isAutomation, isVoiceLine } from "#generated/langium/ast.ts";
+import { isVoiceLine } from "#generated/langium/ast.ts";
 import type { Bar as BarNode, VoiceLine } from "#generated/langium/ast.ts";
 
-import { automationOf } from "./automation.ts";
+import {
+  barAutomationsOf,
+  barControlsOf,
+  barTempoStepsOf,
+  lineTempoOf,
+  tempoAfterBar,
+  tempoLineProblemsOf,
+} from "./bar-lines.ts";
 import type { Item } from "./items.ts";
 import { STRAIGHT, lineOf } from "./line.ts";
-import { meterOf, tempoAfter, tempoOf } from "./meter.ts";
+import { meterOf, tempoOf } from "./meter.ts";
 import { problemAt, problemsOf } from "./problem.ts";
 import type { Compiled, From, Problem } from "./problem.ts";
 import { voiceOf } from "./voices.ts";
@@ -28,6 +35,7 @@ export interface BarResult {
   readonly bar: Bar;
   readonly items: readonly PlacedItem[];
   readonly automations: Song["automations"];
+  readonly controls: Song["controls"];
 }
 
 interface Carry {
@@ -110,6 +118,7 @@ const settingsOf =
     const tempo = pipe(
       Option.fromNullishOr(node.tempo),
       Option.map(tempoOf),
+      Option.orElse(() => lineTempoOf(node)),
       Option.orElse(() => carry.tempo),
     );
     const missing = (property: string, value: Option.Option<unknown>): readonly Problem[] =>
@@ -119,7 +128,12 @@ const settingsOf =
       });
     return {
       value: Option.all({ meter: meter.value, tempo }),
-      problems: [...meter.problems, ...missing("meter", meter.value), ...missing("tempo", tempo)],
+      problems: [
+        ...meter.problems,
+        ...missing("meter", meter.value),
+        ...missing("tempo", tempo),
+        ...tempoLineProblemsOf(node),
+      ],
     };
   };
 
@@ -132,6 +146,8 @@ const contentOf =
       Arr.filter(isVoiceLine),
       Arr.map((line, index) => placedOf({ ...where, length, line: index })(line)),
     );
+    const tempoSteps = barTempoStepsOf(length)(node);
+    const controls = barControlsOf({ bar: where.bar, start: where.start, length })(node);
     return {
       value: {
         bar: {
@@ -139,6 +155,7 @@ const contentOf =
           start: where.start,
           length,
           ...settings,
+          tempoSteps: tempoSteps.value,
           section: Option.fromNullishOr(node.section),
           mark: Option.fromNullishOr(node.mark),
         },
@@ -146,13 +163,10 @@ const contentOf =
           lines,
           Arr.flatMap((line) => line.value),
         ),
-        automations: pipe(
-          node.lines,
-          Arr.filter(isAutomation),
-          Arr.map(automationOf({ bar: where.bar, start: where.start })),
-        ),
+        automations: barAutomationsOf({ bar: where.bar, start: where.start })(node),
+        controls: controls.value,
       },
-      problems: problemsOf(lines),
+      problems: [...problemsOf(lines), ...tempoSteps.problems, ...controls.problems],
     };
   };
 
@@ -183,7 +197,7 @@ const stepOf =
         return {
           carry: {
             meter: Option.some(bar.meter),
-            tempo: Option.some(tempoAfter(bar.tempo)),
+            tempo: Option.some(tempoAfterBar(bar)),
             start: bar.start + bar.length,
           },
           bars: [...state.bars, content.value],

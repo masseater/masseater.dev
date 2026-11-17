@@ -1,3 +1,3 @@
 # claude-harness
 
-このワークスペースには、このリポジトリの Claude Code の設定とフックが格納されている。
+This workspace holds the Claude Code settings and hooks for this repository.

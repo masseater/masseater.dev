@@ -21,6 +21,7 @@ members = [
   "libs/wism/native/node",
   "apps/shirushi/src-tauri",
 ]
+exclude = ["patches/crates/proc-macro-crate"]
 
 [workspace.package]
 version = "0.0.0"
@@ -44,6 +45,10 @@ similar_names = "allow"
 many_single_char_names = "allow"
 needless_range_loop = "allow"
 
+[profile.dev]
+debug = 0
+incremental = false
+
 [profile.release]
 lto = "thin"
 strip = "symbols"
@@ -55,3 +60,6 @@ strip = "none"
 inherits = "release"
 debug = true
 strip = "none"
+
+[patch.crates-io]
+proc-macro-crate = { path = "patches/crates/proc-macro-crate" }

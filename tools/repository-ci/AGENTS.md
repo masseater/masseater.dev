@@ -1,3 +1,3 @@
 # @masseater.dev/repository-ci
 
-main の verify のジョブが、このリポの Actions のキャッシュ・デプロイの失敗の Issue・デプロイするスタックの組・zenn ブランチを扱う Vite+ のタスクである。
+Vite+ tasks that main's verify job uses to handle this repository's Actions caches, Issues for failed deploys, the set of stacks to deploy, and the zenn branch.

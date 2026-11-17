@@ -1,7 +1,7 @@
 # @masseater.dev/cloudflare-account
 
-このワークスペースには、WAF ルール、ログストレージ、読み取り専用トークンなど、ゾーンやアカウント全体に適用される Cloudflare の設定が保持されている。
+This workspace holds the Cloudflare settings that apply to a whole zone or account, such as WAF rules, log storage and read-only tokens.
 
-このリポジトリは masseater.dev ゾーンを所有している。Logpush 設定はアカウント内のすべての Worker に適用される。
+This repository owns the masseater.dev zone. The Logpush settings apply to every Worker in the account.
 
-また、すべてのアプリのスタックが各Cloudflareリソースの先頭にアプリ名が来ているかを確認するために使用する `./app-name` も保持している。
+It also holds `./app-name`, which every app's stack uses to check that each Cloudflare resource starts with the app name.

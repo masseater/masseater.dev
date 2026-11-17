@@ -13,10 +13,13 @@ import {
   everyOf,
   fadeOf,
   misplacedOnEdit,
+  misplacedOnHit,
   misplacedOnNote,
   misplacedOnSound,
   noteFieldsOf,
   paramsOf,
+  releaseVelocityOf,
+  tieOf,
   velocityOf,
 } from "./attributes.ts";
 import type { Item, LineKind, NoteItem, Placed } from "./items.ts";
@@ -84,10 +87,12 @@ const hitOf =
           kind: "hit",
           voice: hit.voice,
           velocity: velocityOf(attributes),
+          releaseVelocity: releaseVelocityOf(attributes),
+          tie: tieOf(attributes),
           params: paramsOf(attributes),
         },
       ],
-      problems: misplacedOnSound(attributes),
+      problems: misplacedOnHit(attributes),
     };
   };
 

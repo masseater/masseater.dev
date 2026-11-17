@@ -1,9 +1,9 @@
 # sts2-mods
 
-このワークスペースには『Slay the Spire 2』の MOD が入っている。
+This workspace holds mods for Slay the Spire 2.
 
-これはSlay the Spire 2 (MegaDot 4.5.1 および C# net9.0) である。オリジナルのSlay the Spire (JavaおよびModTheSpire) で知っていることは使用しないこと。
+This is Slay the Spire 2 (MegaDot 4.5.1 and C# net9.0). Do not use what you know about the original Slay the Spire (Java and ModTheSpire).
 
-- 警告はエラーである。ビルドをパスさせるためにルールを緩めないこと。
-- ゲーム内で確認しない限り、動作すると言ってはいけない。`tools/sts2-mcp` の MCP を使用して、VM `sts2-dev` でゲームを実行すること。
-- .NET SDK のバージョンは、`global.json` と同じものをルートの `mise.toml` に保持すること。
+- Warnings are errors. Do not loosen rules to make the build pass.
+- Do not say something works unless you checked it in the game. Run the game in the VM `sts2-dev` with the MCP in `tools/sts2-mcp`.
+- Keep the .NET SDK version in the root `mise.toml` the same as in `global.json`.

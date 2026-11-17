@@ -1,7 +1,9 @@
 # @r_masseater/workers-tracing
 
 Cloudflare Workers already traces each request on its own. It records a span for
-every call to D1, KV, R2, Durable Objects and `fetch`. What it cannot see is
+every call to D1, KV, R2, Durable Objects and `fetch`.
+
+What it cannot see is
 your code. It does not know which route ran or which server function was called,
 nor which step of an Effect program took the time. This package puts those steps
 into the same trace, nested above the platform's spans.
@@ -14,18 +16,13 @@ GET (736 ms)                         ← Cloudflare: the request
         d1_all (361 ms)              ← Cloudflare: the D1 query
 ```
 
-## Requirements
+## Setup
 
-- A Workers Paid plan, because traces are only kept there
-- [Effect](https://effect.website) 4
-- [Alchemy](https://alchemy.run) 2, [TanStack Start](https://tanstack.com/start) 1 or [Elysia](https://elysiajs.com) 1, for the parts you use
-- Node.js 26 or later
+Traces are only kept on a Workers Paid plan.
 
 ```sh
 vp add @r_masseater/workers-tracing
 ```
-
-## Setup
 
 Turn on logs, traces and Workers Issues for every Worker of an Alchemy stack.
 
@@ -73,6 +70,10 @@ export default Stack("trace-sink", { providers: providers(), state: state() }, t
 ```ts
 withWorkersTracing({ destinations: ["workers-tracing"] })(providers());
 ```
+
+## Agent skills
+
+The package ships TanStack Intent skills for coding agents. Load one with `vp exec intent load @r_masseater/workers-tracing#<skill>`.
 
 ## License
 

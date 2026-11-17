@@ -1,9 +1,12 @@
 import { loadAddon } from "@masseater.dev/lint-host";
-import { Predicate } from "effect";
+import { Array as Arr, Predicate, pipe } from "effect";
 import type { Effect } from "effect";
 
 import { failedWith } from "#/shared/lib/errors.ts";
 import type { Y8Error } from "#/shared/lib/errors.ts";
+
+export { FIELD, NODE_WORDS, TAGS, sourceView } from "./source.ts";
+export type { SourceView } from "./source.ts";
 
 export type NodeType =
   | "document"
@@ -37,22 +40,7 @@ export type NodeType =
   | "taskListMarker"
   | "other";
 
-export interface NodeKind {
-  readonly type: NodeType;
-  readonly [field: string]: unknown;
-}
-
-export interface NativeNode {
-  readonly kind: NodeKind;
-  readonly start: number;
-  readonly end: number;
-  readonly parent: number | null;
-  readonly children: readonly number[];
-}
-
-export interface NativeTree {
-  readonly nodes: readonly NativeNode[];
-}
+export type Level = "error" | "warning" | "info";
 
 export interface NativeDiagnostic {
   readonly line: number;
@@ -61,22 +49,37 @@ export interface NativeDiagnostic {
   readonly detail: string | null;
   readonly context: string | null;
   readonly range: readonly [number, number] | null;
-  readonly severity: "error" | "warning";
+  readonly severity: Exclude<Level, "info">;
+}
+
+export interface AgentDiagnostic {
+  readonly line: number;
+  readonly column: number;
+  readonly rule: string;
+  readonly message: string;
+  readonly suggestion: string | null;
+  readonly level: Level;
+}
+
+export interface AgnixOptions {
+  readonly root: string;
+  readonly disabled: readonly string[];
 }
 
 export interface NativeResult {
   readonly path: string;
   readonly diagnostics: readonly NativeDiagnostic[];
-  readonly tree?: NativeTree;
-  readonly text?: string;
+  readonly agentDiagnostics?: readonly AgentDiagnostic[] | null;
+  readonly source?: Uint8Array | null;
 }
 
 export interface NativeOptions {
   readonly config?: Readonly<Record<string, unknown>>;
   readonly inlineConfig?: boolean;
   readonly keepTree?: boolean;
-  readonly keepText?: boolean;
+  readonly keepSource?: boolean;
   readonly traceparent?: string;
+  readonly agnix?: AgnixOptions;
 }
 
 export interface SourceFile {
@@ -108,18 +111,19 @@ export interface Native {
     options: NativeOptions,
   ) => readonly NativeResult[];
   readonly flushTelemetry: () => Promise<void>;
+  readonly readTexts: (root: string, paths: readonly string[]) => readonly (string | null)[];
   readonly tokenize: (text: string) => string;
 }
 
+const NATIVE_FUNCTIONS = ["lint", "lintPaths", "flushTelemetry", "readTexts", "tokenize"] as const;
+
+const hasFunction =
+  (value: unknown) =>
+  (name: string): boolean =>
+    Predicate.hasProperty(value, name) && Predicate.isFunction(value[name]);
+
 const isNative = (value: unknown): value is Native =>
-  Predicate.hasProperty(value, "lint") &&
-  Predicate.isFunction(value.lint) &&
-  Predicate.hasProperty(value, "lintPaths") &&
-  Predicate.isFunction(value.lintPaths) &&
-  Predicate.hasProperty(value, "flushTelemetry") &&
-  Predicate.isFunction(value.flushTelemetry) &&
-  Predicate.hasProperty(value, "tokenize") &&
-  Predicate.isFunction(value.tokenize);
+  pipe(NATIVE_FUNCTIONS, Arr.every(hasFunction(value)));
 
 export const native: Effect.Effect<Native, Y8Error> = loadAddon({
   packageName: "@r_masseater/y8",

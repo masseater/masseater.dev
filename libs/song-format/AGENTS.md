@@ -1,7 +1,9 @@
 # @masseater.dev/song-format
 
-このワークスペースは、楽曲ファイル形式 `.fumx` を定義する。`.fumx` は型付きの汎用言語で、将来の DAW の保存形式にもなる。TypeScript からは `import { song } from "./song.fumx"` で、コンパイル済みの楽曲を値として読める。
+This workspace defines the song file format `.fumx`. `.fumx` is a typed general-purpose language and will also be the save format of a future DAW. TypeScript reads a compiled song as a value with `import { song } from "./song.fumx"`.
 
-文法は `src/features/read-song/model/fumx.langium` にある。変更したら `vp run grammar` を実行して `generated/langium` のパーサーを生成し直す。
+The grammar is in `src/features/read-song/model/fumx.langium`. After changing it, run `vp run grammar` to regenerate the parser in `generated/langium`.
 
-`song-report <file>` は、楽曲ファイルから導いたキー、コード、繰り返しの小節を JSON 形式で出力する。楽曲を聴けない AI は、この出力を読んで自分が書いたものを確かめる。
+`song-report <file>` prints, as JSON, the keys, chords and repeated bars derived from a song file. An AI that cannot listen to the song reads this output to check what it wrote.
+
+`midi-to-fumx <file>` converts a Standard MIDI File to `.fumx`. It reads the written `.fumx` back, compares it with the events of the original MIDI, and fails if even one differs.

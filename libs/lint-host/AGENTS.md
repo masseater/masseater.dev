@@ -1,5 +1,5 @@
 # @masseater.dev/lint-host
 
-このワークスペースは、Rust で書いたリンター（y8 と wism）を Node.js から動かす部品をまとめている。napi アドオンのビルドと読み込み、vite.config.ts の設定と git の追跡ファイルを読む CLI、ルールの設定の解釈、トレースの受け渡しを持つ。
+This workspace holds the parts that run linters written in Rust (y8 and wism) from Node.js: building and loading the napi addon, the CLI that reads the vite.config.ts settings and the files git tracks, parsing rule settings, and passing traces along.
 
-- リンターごとに違う処理（ルール、診断の形、設定の中身）は置かず、各リンターに残すこと。
+- Do not put anything that differs per linter here (rules, diagnostic shapes, settings contents). Keep it in each linter.

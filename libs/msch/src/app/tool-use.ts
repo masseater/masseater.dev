@@ -10,6 +10,7 @@ import {
   checkFullHistoryCheckout,
   checkReleasePrAutoMerge,
   checkWorkflowCommits,
+  checkWorkflowLint,
   checkWorkflowQueues,
 } from "#/features/check-workflows/index.ts";
 
@@ -27,6 +28,7 @@ export const checkToolUse = Effect.fn("checkToolUse")(function* checkToolUse(roo
       checkRestrictedRules(root),
       checkMarkdown(root),
       checkStructure(root),
+      checkWorkflowLint(root),
     ],
     { concurrency: "unbounded" },
   );

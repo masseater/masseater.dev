@@ -1,5 +1,5 @@
-# media-notes
+# @masseater.dev/media-notes
 
-このワークスペースには、メディアの範囲に印やコメントを付けるデスクトップアプリが共有する Rust 側を置く。
+This workspace holds the Rust side shared by desktop apps for marking and commenting on ranges of media.
 
-型は `libs/media-notes-protocol` から `tools/protocol-codegen` で生成する。
+Its types are generated from `libs/media-notes-protocol` with `tools/protocol-codegen`.

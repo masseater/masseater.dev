@@ -1,4 +1,5 @@
 import { tauriAppConfig, tauriAppTasks } from "@masseater.dev/tauri-app/vite";
+import { cargoInputs } from "@r_masseater/msch/cargo-inputs";
 import { Option } from "effect";
 import { defineConfig } from "vite-plus";
 
@@ -6,7 +7,10 @@ export default defineConfig({
   ...tauriAppConfig({ devPort: 1430, viewport: Option.some({ width: 1180, height: 760 }) }),
   run: {
     tasks: {
-      ...tauriAppTasks({ crate: "yakusu", workspaceInputs: [] }),
+      ...tauriAppTasks({
+        crate: "yakusu",
+        input: await cargoInputs({ directory: import.meta.dirname }),
+      }),
       verify: { command: [], dependsOn: ["cargo"] },
       "release:linux": {
         command:
