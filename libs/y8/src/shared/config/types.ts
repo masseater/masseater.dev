@@ -1,10 +1,8 @@
+import type { RuleEntry, RuleOptions, Severity } from "@r_masseater/lint-host";
+
 import type { NodeType } from "#/shared/native/index.ts";
 
-export type Severity = "off" | "warn" | "error";
-
-export type RuleOptions = Readonly<Record<string, unknown>>;
-
-export type RuleEntry = Severity | readonly [Severity] | readonly [Severity, RuleOptions];
+export type { RuleEntry, RuleOptions, Severity } from "@r_masseater/lint-host";
 
 export interface Position {
   readonly line: number;

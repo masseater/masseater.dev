@@ -1,3 +1,4 @@
+import { addonTasks } from "@r_masseater/lint-host/vite";
 import { otlp } from "@r_masseater/vitest-otlp";
 import { defineConfig } from "vite-plus";
 
@@ -25,16 +26,11 @@ export default defineConfig({
           "cargo fmt -p y8-core -p y8-node --check && cargo clippy -p y8-core -p y8-node --all-targets --locked -- -D warnings && cargo test -p y8-core --release --locked",
         cache: { input: [...CARGO_INPUTS], output: [], untrackedEnv: DOWNLOAD_ENV },
       },
-      native: {
+      ...addonTasks({
         command: "node bin/build-native.ts",
-        cache: {
-          input: [...CARGO_INPUTS, "package.json"],
-          output: ["native/*.node"],
-          untrackedEnv: DOWNLOAD_ENV,
-        },
-      },
-      build: { command: "vp pack", dependsOn: ["native"] },
-      test: { command: "vp test run", dependsOn: ["native"] },
+        inputs: CARGO_INPUTS,
+        untrackedEnv: DOWNLOAD_ENV,
+      }),
     },
   },
   pack: {

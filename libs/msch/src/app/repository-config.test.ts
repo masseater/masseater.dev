@@ -12,7 +12,7 @@ const WORKSPACE: WorkspaceSettings = {
     publicEntries: ["libs/kit/src/index.ts"],
     deployEntries: ["apps/web/src/app/worker.ts"],
   },
-  sourceDirectories: ["apps/web/src", "libs/kit/src"],
+  members: ["apps/web", "libs/kit"],
   ignoredDirectories: [{ pattern: "!**/dist", base: "workspace" }],
   testProjects: ["apps/web"],
   tasks: { verify: ["web#verify"], native: [] },
@@ -43,8 +43,8 @@ describe("repositoryConfig", () => {
     });
   });
 
-  it("checks the source of every workspace with steiger", () => {
-    expect(config).toMatchObject({ steiger: { paths: ["apps/web/src", "libs/kit/src"] } });
+  it("lays out every member workspace with wism", () => {
+    expect(config).toHaveProperty(["wism", "kinds", "0", "paths"], ["apps/web", "libs/kit"]);
   });
 
   it("adds repository words to the shared text rules", () => {

@@ -1,0 +1,90 @@
+{
+  "name": "@r_masseater/wism",
+  "version": "0.1.0",
+  "description": "A structure and dependency linter for TypeScript, Rust and Markdown, written in Rust and configured from vite.config.ts: directory kinds chosen by marker files, allowed layouts, FSD layers and import rules.",
+  "keywords": [
+    "architecture",
+    "feature-sliced-design",
+    "lint",
+    "structure",
+    "tanstack-intent",
+    "vite-plus"
+  ],
+  "homepage": "https://github.com/masseater/masseater.dev/tree/main/libs/wism#readme",
+  "bugs": {
+    "url": "https://github.com/masseater/masseater.dev/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/masseater/masseater.dev.git",
+    "directory": "libs/wism"
+  },
+  "bin": {
+    "wism": "./bin/wism.ts"
+  },
+  "files": [
+    "LICENSE",
+    "dist",
+    "skills/lint-structure"
+  ],
+  "type": "module",
+  "imports": {
+    "#/*": "./src/*"
+  },
+  "exports": {
+    ".": "./src/app/index.ts",
+    "./vite": {
+      "types": "./src/app/vite.ts"
+    },
+    "./native/*": "./native/*",
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "bin": {
+      "wism": "./dist/cli.mjs"
+    },
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "./vite": {
+        "types": "./dist/vite.d.mts",
+        "default": "./dist/vite.mjs"
+      },
+      "./package.json": "./package.json"
+    },
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "prepublishOnly": "vp run build"
+  },
+  "dependencies": {
+    "@effect/platform-node": "catalog:",
+    "@r_masseater/lint-host": "workspace:*"
+  },
+  "devDependencies": {
+    "@r_masseater/vitest-otlp": "workspace:*",
+    "@types/node": "catalog:",
+    "effect": "catalog:stack",
+    "vite": "catalog:",
+    "vite-plus": "catalog:stack"
+  },
+  "peerDependencies": {
+    "effect": "^4.1.2",
+    "vite": "*",
+    "vite-plus": ">=1.5.0"
+  },
+  "engines": {
+    "node": ">=26"
+  },
+  "native": {
+    "binary": "wism",
+    "targets": [
+      "linux-x64-gnu",
+      "win32-x64-msvc"
+    ]
+  }
+}
