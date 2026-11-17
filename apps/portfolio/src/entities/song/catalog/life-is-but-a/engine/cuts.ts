@@ -8,26 +8,30 @@ import { scoreOf } from "#/entities/song/lib/studio/score.ts";
 import type { Studio } from "#/entities/song/lib/studio/studio.ts";
 import type { Grid } from "#/entities/song/lib/studio/timing.ts";
 
-const { Finite } = Schema;
-const Place = Schema.Struct({ bar: Finite, step: Finite });
+const Place = Schema.Struct({ bar: Schema.Finite, step: Schema.Finite });
 
 const CutSchema = Schema.Union([
-  Schema.Struct({ edit: Schema.Literal("mute"), from: Place, to: Place, fade: Finite }),
-  Schema.Struct({ edit: Schema.Literal("tapeStop"), from: Place, to: Place, endRate: Finite }),
+  Schema.Struct({ edit: Schema.Literal("mute"), from: Place, to: Place, fade: Schema.Finite }),
+  Schema.Struct({
+    edit: Schema.Literal("tapeStop"),
+    from: Place,
+    to: Place,
+    endRate: Schema.Finite,
+  }),
   Schema.Struct({
     edit: Schema.Literal("repeat"),
     at: Place,
-    sixteenths: Finite,
-    count: Finite,
-    pitch: Schema.optionalKey(Finite),
+    sixteenths: Schema.Finite,
+    count: Schema.Finite,
+    pitch: Schema.optionalKey(Schema.Finite),
   }),
-  Schema.Struct({ edit: Schema.Literal("reverse"), at: Place, sixteenths: Finite }),
+  Schema.Struct({ edit: Schema.Literal("reverse"), at: Place, sixteenths: Schema.Finite }),
   Schema.Struct({
     edit: Schema.Literal("tail"),
     at: Place,
-    after: Finite,
-    seconds: Finite,
-    fade: Finite,
+    after: Schema.Finite,
+    seconds: Schema.Finite,
+    fade: Schema.Finite,
   }),
 ]);
 

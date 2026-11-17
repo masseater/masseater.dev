@@ -3,65 +3,63 @@ import { Schema } from "effect";
 import mastering from "#/entities/song/catalog/kuraku-narikake/score/mastering.json";
 import { scoreOf } from "#/entities/song/lib/studio/score.ts";
 
-const { Finite } = Schema;
-
-const KneeSchema = Schema.Struct({ threshold: Finite, knee: Finite });
+const KneeSchema = Schema.Struct({ threshold: Schema.Finite, knee: Schema.Finite });
 
 const BandSchema = Schema.Struct({
-  threshold: Finite,
-  ratio: Finite,
-  attack: Finite,
-  release: Finite,
-  knee: Finite,
-  makeup: Finite,
+  threshold: Schema.Finite,
+  ratio: Schema.Finite,
+  attack: Schema.Finite,
+  release: Schema.Finite,
+  knee: Schema.Finite,
+  makeup: Schema.Finite,
   clip: KneeSchema,
 });
 
 const DrumSchema = Schema.Struct({
-  threshold: Finite,
-  ratio: Finite,
-  attack: Finite,
-  release: Finite,
-  makeup: Finite,
-  sidechainHighPass: Finite,
-  pre: Finite,
-  post: Finite,
+  threshold: Schema.Finite,
+  ratio: Schema.Finite,
+  attack: Schema.Finite,
+  release: Schema.Finite,
+  makeup: Schema.Finite,
+  sidechainHighPass: Schema.Finite,
+  pre: Schema.Finite,
+  post: Schema.Finite,
   clip: KneeSchema,
-  out: Finite,
+  out: Schema.Finite,
 });
 
 const EqSchema = Schema.Struct({
   kind: Schema.Literals(["peak", "high"]),
-  hertz: Finite,
-  resonance: Finite,
-  gain: Finite,
+  hertz: Schema.Finite,
+  resonance: Schema.Finite,
+  gain: Schema.Finite,
 });
 
 const LimitSchema = Schema.Struct({
-  ceiling: Finite,
-  lookahead: Finite,
-  release: Finite,
-  every: Finite,
+  ceiling: Schema.Finite,
+  lookahead: Schema.Finite,
+  release: Schema.Finite,
+  every: Schema.Finite,
   truePeak: Schema.Boolean,
 });
 
 const MasteringSchema = Schema.Struct({
   drum: DrumSchema,
-  butterworth: Finite,
-  highPass: Finite,
+  butterworth: Schema.Finite,
+  highPass: Schema.Finite,
   eq: Schema.Array(EqSchema),
-  monoBelow: Finite,
-  width: Finite,
-  crossover: Schema.Struct({ low: Finite, high: Finite }),
+  monoBelow: Schema.Finite,
+  width: Schema.Finite,
+  crossover: Schema.Struct({ low: Schema.Finite, high: Schema.Finite }),
   bands: Schema.Tuple([BandSchema, BandSchema, BandSchema]),
-  gain: Finite,
+  gain: Schema.Finite,
   clip: KneeSchema,
   limit: LimitSchema,
-  every: Finite,
-  block: Finite,
-  slew: Finite,
-  fade: Schema.Struct({ before: Finite, length: Finite }),
-  ceiling: Finite,
+  every: Schema.Finite,
+  block: Schema.Finite,
+  slew: Schema.Finite,
+  fade: Schema.Struct({ before: Schema.Finite, length: Schema.Finite }),
+  ceiling: Schema.Finite,
 });
 
 export const MASTER = scoreOf(MasteringSchema)("mastering", mastering);
