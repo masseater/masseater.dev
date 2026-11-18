@@ -22,7 +22,9 @@ export type { RunTask, RunTasks } from "./model/run-tasks.ts";
 export { workspaceManifest } from "./model/workspace-manifest.ts";
 export { publishedProjects, workspaceDirectories } from "./model/workspace-projects.ts";
 export type { WorkspaceProject } from "./model/workspace-projects.ts";
-export { prefixed, withoutRelative } from "./model/workspace-patterns.ts";
+export { prefixed } from "./model/workspace-patterns.ts";
+export { shadcnUiIn, shadcnUiOf } from "./model/shadcn-ui.ts";
+export type { ShadcnUi } from "./model/shadcn-ui.ts";
 export {
   NO_TASKS,
   RUN_TASKS,
