@@ -14,7 +14,7 @@ export {
 } from "#/features/check-progressions/index.ts";
 export type { Progression } from "#/features/check-progressions/index.ts";
 export { bach, bachPlugin, stylePluginOf } from "#/features/check-style/index.ts";
-export type { StyleTable, Transitions } from "#/features/check-style/index.ts";
+export type { StyleTable, Transitions } from "#/shared/lib/style-table.ts";
 export { voicing, voicingPlugin } from "#/features/check-voicing/index.ts";
 
 export const recommended = (options: PopOptions = {}): I68Config => ({

@@ -5,8 +5,8 @@ import { Array as Arr, Effect, Order, Record as Rec, Schema, String as Str, pipe
 import { VerovioToolkit } from "verovio/esm";
 import createVerovioModule from "verovio/wasm-hum";
 
-import type { StyleTable, Transitions } from "#/features/check-style/index.ts";
 import { progressionOf } from "#/shared/lib/degrees.ts";
+import type { StyleTable, Transitions } from "#/shared/lib/style-table.ts";
 
 import { BACH_SOURCE, bachChorales } from "./corpus.ts";
 import type { Score } from "./corpus.ts";

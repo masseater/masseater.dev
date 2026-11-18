@@ -5,10 +5,9 @@ import { Array as Arr, Number as Num, Option, Record as Rec, pipe } from "effect
 import { progressionOf } from "#/shared/lib/degrees.ts";
 import type { Step } from "#/shared/lib/degrees.ts";
 import { numberOption } from "#/shared/lib/options.ts";
+import type { StyleTable } from "#/shared/lib/style-table.ts";
 import { reporterOf } from "#/shared/lib/voices.ts";
 import type { Reporter } from "#/shared/lib/voices.ts";
-
-import type { StyleTable } from "./table.ts";
 
 const DEFAULT_SHARE = 0.03;
 const DEFAULT_SEEN = 8;

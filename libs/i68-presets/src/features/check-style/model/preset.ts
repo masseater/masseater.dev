@@ -2,9 +2,9 @@ import { definePlugin } from "@r_masseater/i68";
 import type { I68Config, Plugin } from "@r_masseater/i68";
 
 import BACH_CHORALES from "#/features/check-style/data/bach-chorales.json" with { type: "json" };
+import type { StyleTable } from "#/shared/lib/style-table.ts";
 
 import { rareTransitionOf } from "./rare-transition.ts";
-import type { StyleTable } from "./table.ts";
 
 export const bachPlugin: Plugin = definePlugin({
   rules: { "rare-transition": rareTransitionOf(BACH_CHORALES) },

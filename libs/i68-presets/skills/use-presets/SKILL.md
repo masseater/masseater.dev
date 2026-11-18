@@ -35,19 +35,23 @@ export default defineConfig({
 
 ## Presets
 
-- `pop({ ranges, maxLeap, breathSeconds })`: key, part range, melody leaps and breath. `ranges` maps a track name or role to `[low, high]` pitch names.
-- `voicing()`: semitone clashes, low interval limits, crowded low mids (A2-B3), harmony above the melody and chord voices that leap.
-- `classical()`: parallel fifths and octaves between melody and bass, and dissonances on strong beats that do not step down.
-- `progressions()`: names famous progressions (丸サ, 王道, 小室, Canon, ii–V–I, Andalusian) where they start. `PROGRESSIONS` lists them.
-- `bach()`: warns on chord changes Bach rarely makes in his chorales and names the chords he usually picks. `stylePluginOf(table)` turns any `StyleTable` of chord transition counts into the same rule for another style.
-- `recommended(popOptions)`: `pop` and `voicing`.
+| Preset                                    | What it checks                                                                                                                         |
+| ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `pop({ ranges, maxLeap, breathSeconds })` | Key, part range, melody leaps and breath. `ranges` maps a track name or role to `[low, high]` pitch names.                             |
+| `voicing()`                               | Semitone clashes, low interval limits and crowded low mids (A2-B3). It also flags harmony above the melody and chord voices that leap. |
+| `classical()`                             | Parallel fifths and octaves between melody and bass. It also flags dissonances on strong beats that do not step down.                  |
+| `progressions()`                          | Names famous progressions where they start. `PROGRESSIONS` lists them.                                                                 |
+| `bach()`                                  | Warns on chord changes Bach rarely makes in his chorales. The detail names the chords he usually picks.                                |
+| `recommended(popOptions)`                 | `pop` and `voicing`.                                                                                                                   |
 
-Rules read the track `role`. A track without a role is only checked by rules that look at every pitched part (`out-of-key`, `semitone-clash`, `low-interval-limit`, `crowded-low-mids`).
+`stylePluginOf(table)` turns any `StyleTable` of chord transition counts into the same rule as `bach()` for another style.
+
+Rules read the track `role`. A track without a role is only checked by rules that look at every pitched part. Those are `out-of-key`, `semitone-clash`, `low-interval-limit` and `crowded-low-mids`.
 
 ## Explain a finding
 
-Every report has a `detail` with the fix. When the person does not know music theory, say what they would hear (a rumble, a wrong-sounding note, a line that cannot be sung in one breath) before the theory name.
+Every report has a `detail` with the fix. When the person does not know music theory, start with what they would hear. Examples are a rumble, a wrong-sounding note, or a line that cannot be sung in one breath. Give the theory name after that.
 
 ## Add a style
 
-Put a new style in `src/features/check-<style>/` with its own plugin and preset function, and export both from `src/app/index.ts`. Do not add options to an existing preset to change its style.
+Put a new style in `src/features/check-<style>/` with its own plugin and preset function. Export both from `src/app/index.ts`. Do not add options to an existing preset to change its style.
