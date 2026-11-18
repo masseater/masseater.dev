@@ -15,32 +15,33 @@ const SUCCESS = 0;
 export interface WithCuda {
   readonly version: string;
   readonly computeCap: string;
+  readonly msvc: Option.Option<string>;
   readonly runtime: Option.Option<string>;
   readonly command: readonly string[];
 }
 
 const prepared = Effect.fn("cuda.prepare")(function* prepared(
   platform: Platform,
-  { version, computeCap, runtime }: WithCuda,
+  { version, computeCap, msvc, runtime }: WithCuda,
 ) {
   const path = yield* Path.Path;
   const root = yield* repositoryRoot;
   const directory = path.join(root, "target", "cuda", version);
   const toolkit = yield* toolkitOf({ platform, directory }, version);
   yield* copyRuntime(platform, toolkit, runtime);
-  return yield* environmentOf({ platform, toolkit, computeCap });
+  return yield* environmentOf({ platform, toolkit, computeCap, msvc });
 });
 
 /** @internal */
 export const withCuda = Effect.fn("cuda.with")(function* withCuda(request: WithCuda) {
   const spawner = yield* ChildProcessSpawner.ChildProcessSpawner;
   const platform = yield* platformOf(process.platform);
-  const env = yield* prepared(platform, request);
+  const { env, complete } = yield* prepared(platform, request);
   const line = Arr.join(request.command, " ");
   const exitCode = yield* spawner.exitCode(
     ChildProcess.make(line, [], {
       env,
-      extendEnv: true,
+      extendEnv: !complete,
       shell: true,
       stdin: "ignore",
       stdout: "inherit",
