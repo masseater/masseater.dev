@@ -472,4 +472,17 @@ mod tests {
             json!({ "rules": [{ "id": "a", "regex": "a", "components": [{ "id": "b" }] }] });
         assert!(Detector::new(&dangling, []).is_err());
     }
+
+    #[test]
+    fn a_filter_reads_named_captures_and_entropy() {
+        let config = json!({ "rules": [{
+            "id": "named",
+            "regex": "(?P<kind>live|test)_(?P<value>[a-z0-9]{12})",
+            "keywords": ["live_", "test_"],
+            "filter": "finding[\"captures\"][\"kind\"] == \"test\" || finding[\"entropy\"] == \"0\""
+        }] });
+        let detector = detector(&config);
+        assert_eq!(rules(&detector, "live_a1b2c3d4e5f6\n"), ["named"]);
+        assert_eq!(rules(&detector, "test_a1b2c3d4e5f6\n"), NONE);
+    }
 }

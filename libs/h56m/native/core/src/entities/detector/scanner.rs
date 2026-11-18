@@ -557,6 +557,11 @@ impl Scanner {
             map.insert("fragment_raw".to_owned(), Value::string(current));
             map.insert("match_start_idx".to_owned(), Value::Int(ws as i64));
             map.insert("match_end_idx".to_owned(), Value::Int(we as i64));
+            map.insert("captures".to_owned(), captures_of(rule, caps));
+            map.insert(
+                "entropy".to_owned(),
+                Value::string(&text::entropy(&hit.secret).to_string()),
+            );
             let line_start = current[..ws].rfind(['\r', '\n']).map_or(0, |n| n + 1);
             let line_end = current[we..]
                 .find(['\r', '\n'])
@@ -606,6 +611,23 @@ impl Scanner {
             })
             .collect())
     }
+}
+
+fn captures_of(rule: &Rule, caps: &Captures<'_>) -> Value {
+    let names = rule
+        .regex
+        .as_ref()
+        .and_then(|pattern| pattern.get().ok())
+        .map_or_default(|regex| regex.capture_names().collect::<Vec<_>>());
+    let found = names
+        .iter()
+        .enumerate()
+        .filter_map(|(i, name)| {
+            let value = caps.get(i).filter(|m| !m.as_str().is_empty())?;
+            Some(((*name)?.to_owned(), Value::string(value.as_str())))
+        })
+        .collect();
+    Value::Map(Arc::new(found))
 }
 
 fn within(len: usize, primary: &Hit, component: &Hit, window: Window) -> bool {
