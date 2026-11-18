@@ -1,6 +1,6 @@
 import { Option, pipe, String as Str } from "effect";
 
-const UNKNOWN_URL = "urn:medley-manager:unknown";
+const UNKNOWN_URL = "urn:med-db:unknown";
 const NICONICO_ID = /^(?:sm|nm|so)\d+$/u;
 const YOUTUBE_ID = /^[\w-]{11}$/u;
 const SECONDS_PER_MINUTE = 60;
