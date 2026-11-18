@@ -46,13 +46,15 @@ export const partsOf =
       roll: rollPanel(),
     };
     root.classList.add(...ROOT);
-    root.append(
+    for (const node of [
       parts.header.node,
       parts.deck.node,
       parts.tracks.node,
       parts.roll.node,
       creditsOf(content.credits),
-    );
+    ]) {
+      root.append(node);
+    }
     return parts;
   };
 
