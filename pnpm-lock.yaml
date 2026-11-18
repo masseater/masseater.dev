@@ -932,6 +932,9 @@ catalogs:
     validate-npm-package-name:
       specifier: 8.0.0
       version: 8.0.0
+    verovio:
+      specifier: 6.4.1
+      version: 6.4.1
     vfile:
       specifier: 6.0.3
       version: 6.0.3
@@ -3784,6 +3787,9 @@ importers:
       '@r_masseater/fumx-parser':
         specifier: workspace:*
         version: link:../fumx-parser
+      tonal:
+        specifier: 'catalog:'
+        version: 6.5.1
     devDependencies:
       '@effect/platform-node':
         specifier: 'catalog:'
@@ -3791,6 +3797,9 @@ importers:
       '@effect/vitest':
         specifier: 'catalog:'
         version: 4.1.4(effect@4.1.4)(vitest@5.1.0)
+      '@masseater.dev/song-format':
+        specifier: workspace:*
+        version: link:../song-format
       '@r_masseater/i68':
         specifier: workspace:*
         version: link:../i68
@@ -3800,6 +3809,9 @@ importers:
       effect:
         specifier: catalog:stack
         version: 4.1.4
+      verovio:
+        specifier: 'catalog:'
+        version: 6.4.1
       vite-plus:
         specifier: catalog:stack
         version: 1.7.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(oxlint-tsgolint@7.0.2007)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
@@ -17512,6 +17524,10 @@ packages:
     resolution: {integrity: sha512-u4J1hr6Y+C/hit34GwL3eIcUf3wngT8TlYUjK7tk0jxydKLAq3sYvifjdTDA6U3KCKRcQCQDGf/srjxfZF3l7g==}
     engines: {node: '>=18.12.0'}
 
+  verovio@6.4.1:
+    resolution: {integrity: sha512-+5exuA63AC0FHFo0L/4BlcF6EpEOWIp81pwz/afMupxss/tsrdVLxX8Pqh9QFzUOXcB4mP9Box4xc+hrkKN+LA==}
+    engines: {node: '>= 14.18.0'}
+
   vfile-location@5.0.4:
     resolution: {integrity: sha512-vEvxatYZCIpNvzGk2UD+u4I/sZkSKoOsdRCbkOIsN73QpJbriJ1qvvBAL1PeI0y55Leoqf7pORbaSPpG/smmOg==}
 
@@ -30709,6 +30725,8 @@ snapshots:
   vary@1.1.2: {}
 
   verkit@0.5.0: {}
+
+  verovio@6.4.1: {}
 
   vfile-location@5.0.4:
     dependencies:

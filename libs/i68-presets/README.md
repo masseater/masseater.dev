@@ -50,6 +50,28 @@ Common-practice part writing, off unless you add it. `classical()`.
 | `classical/parallel-perfects`     | Melody and bass moving in parallel fifths or octaves             | Move one of them the other way |
 | `classical/unresolved-dissonance` | A dissonant melody note on a strong beat that does not step down | Move the next note down a step |
 
+## progressions
+
+Points out well-known chord progressions so you can see where a song leans on one. `progressions()`.
+
+| Rule                 | What it catches                                                                                       | How to fix it                                                      |
+| -------------------- | ----------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| `progressions/named` | 丸サ (IVM7 III7 VIm7), 王道 (IV V IIIm VIm), 小室 (VIm IV V I), Canon, ii–V–I and Andalusian cadences | Nothing to fix; change a chord if you do not want that progression |
+
+Matching ignores sevenths, so IV V IIIm VIm and IVM7 V7 IIIm7 VIm7 are both 王道. `PROGRESSIONS` lists them.
+
+## bach
+
+Compares each chord change with what Bach did in his 370 four-part chorales. `bach()`.
+
+| Rule                   | What it catches                                                                   | How to fix it                                            |
+| ---------------------- | --------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| `bach/rare-transition` | A chord change that Bach makes less than 3% of the time after the same 1-3 chords | Use one of the chords the detail says Bach usually picks |
+
+Chords are read as degrees of the key each section implies (minor keys as their relative major), so the table works in any key. The rule looks at the longest context of up to 3 chords that the table has seen at least 8 times. Set `["warn", { share, seen }]` to change both numbers.
+
+The table in `src/features/check-style/data/bach-chorales.json` holds only counts of chord transitions. It is built from the Humdrum kern files of [craigsapp/bach-370-chorales](https://github.com/craigsapp/bach-370-chorales) by `vp run build-style-tables`, and the scores themselves are not in this package. To make a preset for another composer, build a `StyleTable` the same way and pass it to `stylePluginOf(table)`.
+
 Rules find parts by the `role` of their track (`melody`, `countermelody`, `harmony`, `bass`, `drums`), so give each track a role.
 
 ## Agent skills
