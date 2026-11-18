@@ -19,11 +19,9 @@ const Plugin = Schema.Struct({
   name: Schema.optional(Schema.String),
   diagnostics: Schema.optional(Schema.Unknown),
 });
-const Config = Schema.Struct({
-  compilerOptions: Schema.optional(
-    Schema.Struct({ plugins: Schema.optional(Schema.Array(Plugin)) }),
-  ),
-});
+const Plugins = Schema.Array(Plugin);
+const CompilerOptions = Schema.Struct({ plugins: Schema.optional(Plugins) });
+const Config = Schema.Struct({ compilerOptions: Schema.optional(CompilerOptions) });
 const decodeConfig = Schema.decodeUnknownOption(Schema.fromJsonString(Config));
 
 const MESSAGE = `The \`${PLUGIN}\` plugin reports the Effect diagnostics during the type check, and the \`effecttsgo\` lint rules that msch enables report the same ones again. Set \`"diagnostics": false\` on the plugin so that each finding is reported once, by the lint rules, with the severity msch sets.`;
@@ -34,7 +32,8 @@ const reportsDiagnostics = (plugin: typeof Plugin.Type): boolean =>
 const problemsIn = (entry: Listed, source: string): readonly Problem[] =>
   pipe(
     decodeConfig(source),
-    Option.flatMap(({ compilerOptions }) => Option.fromUndefinedOr(compilerOptions?.plugins)),
+    Option.flatMap(({ compilerOptions }) => Option.fromUndefinedOr(compilerOptions)),
+    Option.flatMap(({ plugins }) => Option.fromUndefinedOr(plugins)),
     Option.filter(Arr.some(reportsDiagnostics)),
     Option.map((): Problem => ({
       file: entry.file,
