@@ -9,6 +9,7 @@ import { headItemsOf } from "./heads.ts";
 import type { Item, LineKind } from "./items.ts";
 import { problemAt } from "./problem.ts";
 import type { Combine, Compiled, From } from "./problem.ts";
+import { sourceOf } from "./source.ts";
 
 const NONE = 0;
 const FULL = 1;
@@ -84,6 +85,7 @@ const soundingOf =
         offset: NONE,
         length: length.value,
         nudgeMilliseconds: nudgeOf(sounding.attributes),
+        ...sourceOf(sounding),
       },
     })(sounding);
     return {

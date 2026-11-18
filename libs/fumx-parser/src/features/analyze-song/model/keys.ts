@@ -1,5 +1,6 @@
-import type { Song } from "@r_masseater/fumx-parser";
 import { Array as Arr, Option, Order, Record, Schema, pipe } from "effect";
+
+import type { Song } from "#/entities/song/index.ts";
 
 import { overlapOf, soundingsOf } from "./sounding.ts";
 import type { Sounding, Span } from "./sounding.ts";
@@ -57,6 +58,7 @@ export type BarRange = typeof BarRangeSchema.Type;
 export const KeySpanSchema = Schema.Struct({
   ...barRangeFields,
   tonic: Schema.String,
+  pitchClass: Schema.Int,
   mode: ModeSchema,
   correlation: Schema.Finite,
 });
@@ -65,6 +67,7 @@ export type KeySpan = typeof KeySpanSchema.Type;
 
 interface Candidate {
   readonly tonic: string;
+  readonly pitchClass: number;
   readonly mode: Mode;
   readonly correlation: number;
 }
@@ -141,11 +144,13 @@ const candidatesAt =
   (tonic: number): readonly Candidate[] => [
     {
       tonic: MAJOR_TONICS[tonic] ?? UNKNOWN,
+      pitchClass: tonic,
       mode: "major",
       correlation: correlationOf(rotated(tonic)(MAJOR_PROFILE))(histogram),
     },
     {
       tonic: MINOR_TONICS[tonic] ?? UNKNOWN,
+      pitchClass: tonic,
       mode: "minor",
       correlation: correlationOf(rotated(tonic)(MINOR_PROFILE))(histogram),
     },
@@ -190,6 +195,7 @@ export const keyIn =
         fromBar: range.fromBar,
         toBar: range.toBar,
         tonic: best.tonic,
+        pitchClass: best.pitchClass,
         mode: best.mode,
         correlation: Math.round(best.correlation * ROUND) / ROUND,
       })),
