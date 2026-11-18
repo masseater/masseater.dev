@@ -38,6 +38,7 @@ export default defineConfig(({ mode }) => ({
       ],
     },
     devDependencies: { "spans are sent from the SDK in tests": { use: ["telemetry"], dependencies: ["miniflare"] } },
+    dependencies: { "the screen is traced by the browser SDK": { use: ["telemetry"] } },
   },
   mode,
 }));
@@ -78,6 +79,12 @@ const readsLiteralSettings = Effect.gen(function* readsLiteralSettings() {
       "apps/web: spans are sent from the SDK in tests": {
         workspaces: ["apps/web"],
         dependencies: ["@opentelemetry/sdk-trace-base", "miniflare"],
+      },
+    },
+    dependencies: {
+      "apps/web: the screen is traced by the browser SDK": {
+        workspaces: ["apps/web"],
+        dependencies: ["@opentelemetry/sdk-trace-base"],
       },
     },
   });

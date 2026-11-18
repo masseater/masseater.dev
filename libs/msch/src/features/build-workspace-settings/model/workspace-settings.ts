@@ -34,6 +34,7 @@ const READ_CONCURRENCY = 16;
 const ROOT_WORKSPACE = ".";
 const MSCH_LINT = ["msch", "lint"] as const;
 const MSCH_DEV_DEPENDENCIES = ["msch", "devDependencies"] as const;
+const MSCH_DEPENDENCIES = ["msch", "dependencies"] as const;
 
 type SeverityName = Extract<AllowWarnDeny, string>;
 
@@ -62,10 +63,10 @@ const WorkspaceLintSettings = Schema.Struct({
   ignorePatterns: Names,
   overrides: Schema.optional(Schema.Array(WorkspaceOverride)),
 });
-const DevDependencySettings = Schema.Struct({ use: Names, dependencies: Names });
-const WorkspaceDevDependencies = Schema.Record(Schema.String, DevDependencySettings);
+const DependencySettings = Schema.Struct({ use: Names, dependencies: Names });
+const WorkspaceDependencyAllowances = Schema.Record(Schema.String, DependencySettings);
 
-export interface DevDependencyAllowance {
+export interface DependencyAllowance {
   readonly workspaces: readonly string[];
   readonly dependencies: readonly string[];
 }
@@ -84,7 +85,8 @@ export interface WorkspaceSettings {
   readonly ignoredDirectories: readonly IgnoredDirectory[];
   readonly testProjects: readonly string[];
   readonly tasks: WorkspaceTasks;
-  readonly devDependencies: Readonly<Record<string, DevDependencyAllowance>>;
+  readonly devDependencies: Readonly<Record<string, DependencyAllowance>>;
+  readonly dependencies: Readonly<Record<string, DependencyAllowance>>;
 }
 
 export interface SettingsOptions {
@@ -97,7 +99,8 @@ interface Workspace {
   readonly directory: string;
   readonly ignorePatterns: readonly string[];
   readonly overrides: readonly OxlintOverride[];
-  readonly devDependencies: Readonly<Record<string, DevDependencyAllowance>>;
+  readonly devDependencies: Readonly<Record<string, DependencyAllowance>>;
+  readonly dependencies: Readonly<Record<string, DependencyAllowance>>;
   readonly ownTests: boolean;
   readonly tasks: WorkspaceTasks;
   readonly publicEntries: readonly string[];
@@ -146,7 +149,7 @@ const lintOf = Effect.fn("lintOf")(function* lintOf(source: WorkspaceSource, rul
 const allowanceOf = Effect.fn("allowanceOf")(function* allowanceOf(
   source: WorkspaceSource,
   dependencySets: DependencySets,
-  [reason, allowance]: readonly [string, typeof DevDependencySettings.Type],
+  [reason, allowance]: readonly [string, typeof DependencySettings.Type],
 ) {
   const sets = yield* usedFrom(source.file, dependencySets, allowance.use ?? []);
   const dependencies = [...Arr.flatten(sets), ...(allowance.dependencies ?? [])];
@@ -156,14 +159,15 @@ const allowanceOf = Effect.fn("allowanceOf")(function* allowanceOf(
   ] as const;
 });
 
-const devDependenciesOf = Effect.fn("devDependenciesOf")(function* devDependenciesOf(
+const allowancesOf = Effect.fn("allowancesOf")(function* allowancesOf(
   source: WorkspaceSource,
   dependencySets: DependencySets,
+  path: typeof MSCH_DEV_DEPENDENCIES | typeof MSCH_DEPENDENCIES,
 ) {
   const settings = yield* literalSettings({
     source,
-    path: MSCH_DEV_DEPENDENCIES,
-    decode: Schema.decodeUnknownEffect(WorkspaceDevDependencies),
+    path,
+    decode: Schema.decodeUnknownEffect(WorkspaceDependencyAllowances),
   });
   const allowed = Rec.toEntries(Option.getOrElse(settings, () => ({})));
   const entries = yield* Effect.forEach(
@@ -181,12 +185,17 @@ const settingsOf = Effect.fn("settingsOf")(function* settingsOf(
   options: SettingsOptions,
 ) {
   const lint = yield* lintOf(source, options.ruleSets);
-  const devDependencies = yield* devDependenciesOf(source, options.dependencySets);
+  const devDependencies = yield* allowancesOf(
+    source,
+    options.dependencySets,
+    MSCH_DEV_DEPENDENCIES,
+  );
+  const dependencies = yield* allowancesOf(source, options.dependencySets, MSCH_DEPENDENCIES);
   const ownTests = definesTask(TEST_TASK)(source.program);
   const files = yield* RepositoryFiles;
   const manifest = yield* readManifest(files.dirname(source.file));
   const tasks = tasksOf(manifest)(source.program);
-  return { directory: source.directory, ...lint, devDependencies, ownTests, tasks };
+  return { directory: source.directory, ...lint, devDependencies, dependencies, ownTests, tasks };
 });
 
 const workspaceIn = Effect.fn("workspaceIn")(function* workspaceIn(
@@ -203,6 +212,7 @@ const workspaceIn = Effect.fn("workspaceIn")(function* workspaceIn(
       ignorePatterns: [],
       overrides: [],
       devDependencies: {},
+      dependencies: {},
       ownTests: false,
       tasks: NO_TASKS,
       publicEntries,
@@ -271,6 +281,12 @@ const collectWorkspaceSettings = Effect.fn("collectWorkspaceSettings")(
         pipe(
           found,
           Arr.map(({ devDependencies }) => devDependencies),
+        ),
+      ),
+      dependencies: merged(
+        pipe(
+          found,
+          Arr.map(({ dependencies }) => dependencies),
         ),
       ),
     };

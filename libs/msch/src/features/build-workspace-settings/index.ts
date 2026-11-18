@@ -5,7 +5,7 @@ export type {
   RuleSet,
   RuleSets,
   DependencySets,
-  DevDependencyAllowance,
+  DependencyAllowance,
   WorkspaceLint,
   WorkspaceSettings,
   SettingsOptions,

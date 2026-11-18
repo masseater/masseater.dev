@@ -19,6 +19,7 @@ const WORKSPACE: WorkspaceSettings = {
   testProjects: ["apps/web"],
   tasks: { verify: ["web#verify"], native: [] },
   devDependencies: {},
+  dependencies: {},
 };
 
 const OWNER = String.raw`\bOWNER = "[0-9]+"`;
@@ -139,6 +140,21 @@ describe("repositoryConfig", () => {
           },
         },
       },
+    });
+  });
+
+  it("allows a banned package only in the manifest field its reason names", () => {
+    const allowance = { workspaces: ["apps/web"], dependencies: ["x"] };
+    const allowed = repositoryConfig({
+      workspace: {
+        ...WORKSPACE,
+        devDependencies: { "apps/web: tests": allowance },
+        dependencies: { "apps/web: screen": allowance },
+      },
+    }).dependencyRules?.allowed;
+    expect(allowed).toStrictEqual({
+      "apps/web: tests": { ...allowance, fields: ["devDependencies"] },
+      "apps/web: screen": { ...allowance, fields: ["dependencies"] },
     });
   });
 
