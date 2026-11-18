@@ -57,6 +57,7 @@ export default defineConfig({
       "technique-examples": { command: "vpx bin/technique-examples.ts", cache: false },
     },
   },
+  preview: { host: "127.0.0.1" },
   test: { include: ["src/**/*.test.{ts,tsx}"] },
   plugins: portfolioPlugins(),
 });
