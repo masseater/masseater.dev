@@ -7,6 +7,7 @@ import {
   Option,
   Path,
   Record as Rec,
+  Schema,
   String as Str,
   pipe,
 } from "effect";
@@ -16,6 +17,10 @@ import { repositoryRoot } from "#/shared/lib/command.ts";
 
 const ASSETS = "release-assets";
 const AT_LEAST_ONE = 1;
+
+const SEPARATOR = "_";
+
+const Manifest = Schema.Struct({ name: Schema.String });
 
 const EXTENSIONS: Readonly<Record<string, string>> = {
   appimage: ".AppImage",
@@ -45,7 +50,27 @@ const bundled = Effect.fn("collect.bundled")(function* bundled(from: string, ext
   return files;
 });
 
-const collectKind = Effect.fn("collect.kind")(function* collectKind(bundle: string, kind: string) {
+const packageName = Effect.fn("collect.package")(function* packageName() {
+  const fileSystem = yield* FileSystem.FileSystem;
+  const text = yield* fileSystem.readFileString("package.json");
+  const manifest = yield* Schema.decodeEffect(Schema.fromJsonString(Manifest))(text);
+  return manifest.name;
+});
+
+const assetName = (name: string, file: string): string =>
+  pipe(
+    Str.indexOf(SEPARATOR)(file),
+    Option.match({
+      onNone: () => file,
+      onSome: (index) => `${name}${Str.slice(index)(file)}`,
+    }),
+  );
+
+const collectKind = Effect.fn("collect.kind")(function* collectKind(
+  bundle: string,
+  kind: string,
+  name: string,
+) {
   const fileSystem = yield* FileSystem.FileSystem;
   const path = yield* Path.Path;
   const extension = yield* extensionOf(kind);
@@ -55,7 +80,7 @@ const collectKind = Effect.fn("collect.kind")(function* collectKind(bundle: stri
   yield* fileSystem.makeDirectory(to, { recursive: true });
   yield* Effect.forEach(
     files,
-    (name) => fileSystem.copyFile(path.join(from, name), path.join(to, name)),
+    (file) => fileSystem.copyFile(path.join(from, file), path.join(to, assetName(name, file))),
     { concurrency: 1, discard: true },
   );
 });
@@ -68,7 +93,8 @@ const command = Command.make(
       const path = yield* Path.Path;
       const root = yield* repositoryRoot;
       const bundle = path.join(root, "target", "release", "bundle");
-      yield* Effect.forEach(kinds, (kind) => collectKind(bundle, kind), {
+      const name = yield* packageName();
+      yield* Effect.forEach(kinds, (kind) => collectKind(bundle, kind, name), {
         concurrency: 1,
         discard: true,
       });
