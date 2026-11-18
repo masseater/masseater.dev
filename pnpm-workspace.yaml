@@ -275,6 +275,7 @@ catalog:
   hast-util-select: 6.0.4
   hast-util-to-string: 3.0.1
   unist-util-visit: 5.2.0
+  verovio: 6.4.1
 catalogs:
   stack:
     "@distilled.cloud/cloudflare": 1.0.0-rc.20
