@@ -6,7 +6,7 @@ export const ModelInfoSchema = Schema.Struct({
   stems: Schema.Array(Schema.String),
 }).annotate({ identifier: "ModelInfo" });
 
-export const JobKindSchema = Schema.Literals(["import", "separate"]).annotate({
+export const JobKindSchema = Schema.Literals(["import", "separate", "analyze"]).annotate({
   identifier: "JobKind",
 });
 
@@ -30,6 +30,10 @@ export const ImportRequestSchema = Schema.Struct({
   models: Schema.Array(Schema.String),
 }).annotate({ identifier: "ImportRequest" });
 
+export const AnalyzeRequestSchema = Schema.Struct({
+  songId: Schema.String,
+}).annotate({ identifier: "AnalyzeRequest" });
+
 export const SeparateRequestSchema = Schema.Struct({
   songId: Schema.String,
   model: Schema.String,
@@ -44,5 +48,7 @@ export type JobState = typeof JobStateSchema.Type;
 export type Job = typeof JobSchema.Type;
 
 export type ImportRequest = typeof ImportRequestSchema.Type;
+
+export type AnalyzeRequest = typeof AnalyzeRequestSchema.Type;
 
 export type SeparateRequest = typeof SeparateRequestSchema.Type;
