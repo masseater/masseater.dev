@@ -8,6 +8,7 @@ export interface Platform {
   readonly extension: string;
   readonly delimiter: string;
   readonly windows: boolean;
+  readonly compiler: Readonly<Record<string, string>>;
 }
 
 const LINUX: Platform = {
@@ -17,6 +18,7 @@ const LINUX: Platform = {
   extension: ".so",
   delimiter: ":",
   windows: false,
+  compiler: {},
 };
 
 const windows = Effect.gen(function* windowsPlatform() {
@@ -30,6 +32,7 @@ const windows = Effect.gen(function* windowsPlatform() {
     extension: ".dll",
     delimiter: ";",
     windows: true,
+    compiler: { NVCC_APPEND_FLAGS: "-Xcompiler /Zc:preprocessor" },
   } satisfies Platform;
 });
 
