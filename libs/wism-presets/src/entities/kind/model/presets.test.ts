@@ -1,7 +1,7 @@
 import { Array as Arr, pipe } from "effect";
 import { expect, test } from "vite-plus/test";
 
-import { FSD_LAYERS, fsd, rustCrate, skill, workspace } from "./presets.ts";
+import { FSD_LAYERS, rustCrate, skill, workspace } from "./presets.ts";
 
 test("adds paths only when they are given", () => {
   expect(workspace()).not.toHaveProperty("paths");
@@ -28,8 +28,5 @@ test("lays out workspaces and crates in the FSD layers", () => {
   expect(workspace()).toHaveProperty("layers.order", FSD_LAYERS);
   expect(rustCrate()).toHaveProperty("layers.moduleFiles", true);
   expect(skill()).not.toHaveProperty("layers");
-  expect(fsd({ paths: ["libs/*"] })).toStrictEqual([
-    workspace({ paths: ["libs/*"] }),
-    rustCrate({ paths: ["libs/*"] }),
-  ]);
+  expect(workspace({ paths: ["libs/*"] })).toHaveProperty("paths", ["libs/*"]);
 });
