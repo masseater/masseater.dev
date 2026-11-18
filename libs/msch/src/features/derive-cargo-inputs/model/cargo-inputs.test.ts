@@ -13,15 +13,18 @@ const NOTES = `path+file://${ROOT}/libs/notes#notes@0.0.0`;
 const APP = `path+file://${ROOT}/apps/app/src-tauri#app@0.0.0`;
 const SERDE = `${REGISTRY}#serde@1.0.0`;
 const TAURI = `${REGISTRY}#tauri@2.0.0`;
+const MANIFEST = `{"workspace":{"resolver":"3","members":["libs/shell"],"exclude":["patches"]},"profile":{"dev":{"debug":0,"package":{"serde":{"opt-level":3},"tauri@2.0.0":{"opt-level":3},"*":{"debug":1}}}}}`;
+const NOTES_MANIFEST = `{"workspace":{"resolver":"3"},"profile":{"dev":{"debug":0,"package":{"serde":{"opt-level":3},"*":{"debug":1}}}}}`;
+const EMPTY_MANIFEST = "{}";
 
 const FIXTURE = `{
   "metadata": {
     "packages": [
-      { "id": "${SHELL}", "manifest_path": "${ROOT}/libs/shell/Cargo.toml", "source": null },
-      { "id": "${NOTES}", "manifest_path": "${ROOT}/libs/notes/Cargo.toml", "source": null },
-      { "id": "${APP}", "manifest_path": "${ROOT}/apps/app/src-tauri/Cargo.toml", "source": null },
-      { "id": "${SERDE}", "manifest_path": "${ROOT}/.pnpm/crates/serde-1.0.0/Cargo.toml", "source": "${REGISTRY}" },
-      { "id": "${TAURI}", "manifest_path": "${ROOT}/.pnpm/crates/tauri-2.0.0/Cargo.toml", "source": "${REGISTRY}" }
+      { "id": "${SHELL}", "name": "shell", "manifest_path": "${ROOT}/libs/shell/Cargo.toml", "source": null },
+      { "id": "${NOTES}", "name": "notes", "manifest_path": "${ROOT}/libs/notes/Cargo.toml", "source": null },
+      { "id": "${APP}", "name": "app", "manifest_path": "${ROOT}/apps/app/src-tauri/Cargo.toml", "source": null },
+      { "id": "${SERDE}", "name": "serde", "manifest_path": "${ROOT}/.pnpm/crates/serde-1.0.0/Cargo.toml", "source": "${REGISTRY}" },
+      { "id": "${TAURI}", "name": "tauri", "manifest_path": "${ROOT}/.pnpm/crates/tauri-2.0.0/Cargo.toml", "source": "${REGISTRY}" }
     ],
     "resolve": {
       "nodes": [
@@ -35,6 +38,7 @@ const FIXTURE = `{
     "workspace_members": ["${SHELL}", "${NOTES}", "${APP}"],
     "workspace_root": "${ROOT}"
   },
+  "manifest": "{}",
   "ignored": [
     { "pattern": "!.pnpm", "base": "workspace" },
     { "pattern": "!**/.cache", "base": "workspace" },
@@ -66,7 +70,6 @@ it.effect("keys a crate on its own path dependencies and the ids of its registry
       "libs/notes/**",
       "libs/shell/**",
       "node_modules/.cache/msch/cargo-inputs/libs__notes.lock",
-      "Cargo.toml",
       "rust-toolchain.toml",
       ".cargo/**",
       "!**/.cache",
@@ -76,7 +79,7 @@ it.effect("keys a crate on its own path dependencies and the ids of its registry
       "!libs/shell/**/node_modules/**",
       "!libs/shell/**/dist/**",
     ]);
-    expect(derived.closure).toBe(SERDE);
+    expect(derived.closure).toBe(`${SERDE}\n${EMPTY_MANIFEST}`);
   }),
 );
 
@@ -84,7 +87,7 @@ it.effect("leaves out crates that only other crates depend on", () =>
   Effect.gen(function* leavesOutDependents() {
     const derived = yield* derive("libs/shell", []);
     expect(patternsOf(derived.inputs)).not.toContain("libs/notes/**");
-    expect(derived.closure).toBe(SERDE);
+    expect(derived.closure).toBe(`${SERDE}\n${EMPTY_MANIFEST}`);
   }),
 );
 
@@ -97,7 +100,7 @@ it.effect("covers the crates under an app directory and only the ignored directo
     expect(patterns).toContain("!apps/app/src-tauri/permissions/**");
     expect(patterns).not.toContain("!apps/other/out");
     expect(patterns).not.toContain("!.pnpm");
-    expect(derived.closure).toBe(`${SERDE}\n${TAURI}`);
+    expect(derived.closure).toBe(`${SERDE}\n${TAURI}\n${EMPTY_MANIFEST}`);
   }),
 );
 
@@ -108,4 +111,19 @@ it.effect("keeps an ignored directory that an extra input asks for", () =>
     expect(patterns).toContain("libs/notes/reference/**");
     expect(patterns).not.toContain("!libs/notes/reference");
   }),
+);
+
+it.effect(
+  "keys a crate on the root manifest without the member lists and other crates' profiles",
+  () =>
+    Effect.gen(function* keysOnManifest() {
+      const workspace = yield* decodeWorkspace(FIXTURE);
+      const derived = cargoInputsOf({
+        workspace: { ...workspace, manifest: MANIFEST },
+        directory: `${ROOT}/libs/notes`,
+        extras: [],
+      });
+      expect(patternsOf(derived.inputs)).not.toContain("Cargo.toml");
+      expect(derived.closure).toBe(`${SERDE}\n${NOTES_MANIFEST}`);
+    }),
 );

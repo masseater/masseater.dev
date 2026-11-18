@@ -3,6 +3,8 @@ import { fileURLToPath } from "node:url";
 import treeSitter from "@vscode/tree-sitter-wasm";
 import { Effect, Option, Schema } from "effect";
 
+import { startedOnce } from "./started-once.ts";
+
 export type Language = treeSitter.Language;
 
 export type SyntaxNode = treeSitter.Node;
@@ -22,19 +24,9 @@ export class GrammarUnreadable extends taggedError<
 
 const PARSER_KEY = "parser";
 
-const cache = <Value>(): ((key: string, start: () => Promise<Value>) => Promise<Value>) => {
-  const started = new Map<string, Promise<Value>>();
-  return (key, start) =>
-    Option.getOrElse(Option.fromNullishOr(started.get(key)), () => {
-      const promise = start();
-      started.set(key, promise);
-      return promise;
-    });
-};
+const initParser = startedOnce<unknown>();
 
-const initParser = cache<unknown>();
-
-const loadOnce = cache<Language>();
+const loadOnce = startedOnce<Language>();
 
 const grammarFile = (grammar: string): string =>
   fileURLToPath(import.meta.resolve(`@vscode/tree-sitter-wasm/wasm/tree-sitter-${grammar}.wasm`));
