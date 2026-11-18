@@ -77,6 +77,7 @@ export const tasksOf = ({
   };
   return {
     ...checks,
+    daily: { command: "msch-exits", cache: false },
     verify: { command: [], dependsOn: [...workspace.tasks.verify, ...Rec.keys(checks)] },
   };
 };
