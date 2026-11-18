@@ -1,15 +1,15 @@
 ---
-title: "vitest-otlp: testing the telemetry that code really exports"
-description: "vitest-otlp is a Vitest plugin that runs an OTLP receiver during tests. A test waits for the spans, logs and metrics that left the process and asserts on them, and OpenTelemetry Weaver can check them against the semantic conventions."
+title: "vitest-otlp: コードが実際にエクスポートするテレメトリのテスト"
+description: "vitest-otlpは、テスト中にOTLPレシーバーを実行するVitestプラグインである。テストは、プロセスを離脱したスパン、ログ、メトリクス、およびそれらに対するアサーションを待機しており、OpenTelemetry Weaverはこれらをセマンティック規約に照らして検証できる。"
 tags: ["OpenTelemetry", "Vitest", "Vite+"]
 published: true
 ---
 
-[@r_masseater/vitest-otlp](https://github.com/masseater/masseater.dev/tree/main/libs/vitest-otlp) is a Vitest plugin that I wrote. It runs an OTLP receiver in every Vitest worker. A test then asserts on the spans, logs and metrics that the code under test actually sent over the network. A mocked exporter proves only that the code called the exporter. This plugin also checks the `OTEL_*` settings, auto-instrumentation and the exporter itself.
+[@r_masseater/vitest-otlp](https://github.com/masseater/masseater.dev/tree/main/libs/vitest-otlp)は、私が書いたVitestプラグインだ。すべてのVitestワーカーでOTLPレシーバーを実行する。次に、テストでは、テスト対象のコードが実際にネットワーク経由で送信したスパン、ログ、およびメトリクスについてアサーションを行う。モック化したエクスポーターは、単にエクスポーターと呼ばれるコードであることを証明するものである。このプラグインは、`OTEL_*` 設定、自動インストルメンテーション、およびエクスポーター自体のチェックも行う。
 
-## How it works
+## 仕組み
 
-`otlp()` adds a setup file to the Vitest configuration.
+`otlp()` は Vitest の設定にセットアップファイルを追加する。
 
 ```ts
 import { otlp } from "@r_masseater/vitest-otlp";
@@ -20,23 +20,23 @@ export default defineConfig({
 });
 ```
 
-The setup file starts a receiver that accepts OTLP over both HTTP and gRPC. It then points the standard OpenTelemetry environment variables at that receiver.
+セットアップファイルは、HTTPとgRPCの両方でOTLPを受け付けるレシーバーを起動する。次に、そのレシーバーにおける標準的なOpenTelemetry環境変数を指定する。
 
-| Variable                                                    | Value                                                                                      |
-| ----------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| `OTEL_EXPORTER_OTLP_ENDPOINT`                               | The receiver's HTTP endpoint, or its gRPC endpoint when `OTEL_EXPORTER_OTLP_PROTOCOL=grpc` |
-| `OTEL_EXPORTER_OTLP_{TRACES,METRICS,LOGS}_ENDPOINT`         | Emptied, so that the shared endpoint wins                                                  |
-| `OTEL_{TRACES,METRICS,LOGS}_EXPORTER`                       | `otlp`                                                                                     |
-| `OTEL_BSP_SCHEDULE_DELAY`, `OTEL_BLRP_SCHEDULE_DELAY`       | `50`, unless already set                                                                   |
-| `OTEL_METRIC_EXPORT_INTERVAL`, `OTEL_METRIC_EXPORT_TIMEOUT` | `100`, unless already set                                                                  |
+| 変数                                                        | 値                                                                                                 |
+| ----------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `OTEL_EXPORTER_OTLP_ENDPOINT`                               | レシーバのHTTPエンドポイント、または `OTEL_EXPORTER_OTLP_PROTOCOL=grpc` の場合のgRPCエンドポイント |
+| `OTEL_EXPORTER_OTLP_{TRACES,METRICS,LOGS}_ENDPOINT`         | 共有エンドポイントが勝つように、Emptied                                                            |
+| `OTEL_{TRACES,METRICS,LOGS}_EXPORTER`                       | `otlp`                                                                                             |
+| `OTEL_BSP_SCHEDULE_DELAY`, `OTEL_BLRP_SCHEDULE_DELAY`       | `50`（既に設定されていない限り）                                                                   |
+| `OTEL_METRIC_EXPORT_INTERVAL`, `OTEL_METRIC_EXPORT_TIMEOUT` | `100`（既に設定されていない限り）                                                                  |
 
-The code under test needs no special exporter. An SDK that reads its configuration from the environment sends everything to the receiver. The short batch delays make the data arrive within the test.
+テスト対象のコードに特別なエクスポーターは不要である。環境から設定を読み込むSDKは、すべてを受信側に送信する。短時間のバッチ遅延により、データがテスト内に収まる。
 
-## Waiting for telemetry
+## テレメトリ待ち
 
-`waitForSpans`, `waitForLogs` and `waitForMetrics` poll the receiver until enough matching items have arrived. By default they wait for one item, check every 20 ms and give up after 5 seconds.
+`waitForSpans`、`waitForLogs`、`waitForMetrics`は、一致する項目が十分に届くまでレシーバーをポーリングする。デフォルトでは1つの項目を待機し、20ミリ秒ごとにチェックを行い、5秒後に終了する。
 
-The test below starts the Node.js SDK with no options except a service name. It ends a span named `checkout` but waits for a span named `charge`.
+以下のテストでは、サービス名以外のオプションなしでNode.js SDKを起動する。`checkout` という名前のスパンで終了し、`charge` という名前のスパンを待機する。
 
 ```ts
 import { trace } from "@opentelemetry/api";
@@ -59,30 +59,30 @@ test("checkout is traced", () =>
   }).pipe(Effect.runPromise));
 ```
 
-The test fails after 5 seconds. The message says that one span arrived and none of them matched.
+テストは5秒後に失敗する。メッセージには、1つのスパンが到着したが、いずれも一致しなかったと記載されている。
 
 ```text
 TelemetryNotReceived: Expected 1 spans within 5s, received 0 matching of 1.
 ```
 
-With `span.name === "checkout"`, the same test passes. The received span also carries the resource and the instrumentation scope, so the passing test also checked `resource: { "service.name": "shop" }`.
+`span.name === "checkout"` とすると、同じテストがパスする。受信したスパンにはリソースとインストルメンテーションスコープも含まれているため、パステストでは `resource: { "service.name": "shop" }` もチェックした。
 
-## Semantic conventions
+## 意味論的規約
 
-`otlp({ semconv: true })` also runs [OpenTelemetry Weaver](https://github.com/open-telemetry/weaver). A global setup starts `weaver registry live-check` against the semantic conventions v1.45.0, and the receiver forwards everything it gets to Weaver. When the test run ends, the plugin stops Weaver and reads its report. Any finding at or above `failOn`, which is `violation` by default, fails the run.
+`otlp({ semconv: true })` は [OpenTelemetry Weaver](https://github.com/open-telemetry/weaver) も実行する。グローバルセットアップがセマンティック規約 v1.45.0 に準拠した `weaver registry live-check` を開始し、レシーバーは受け取ったすべてを Weaver に転送する。テスト実行が終了すると、プラグインはWeaverを停止し、そのレポートを読み込む。`failOn`（デフォルトは`violation`）以上の値が見つかった場合、実行は失敗する。
 
-The test fixture of the package exports one span whose `http.response.status_code` is the string `"200"`. Weaver 0.28.0 rejects it.
+パッケージのテストフィクスチャは、`http.response.status_code` が文字列 `"200"` であるスパンを1つエクスポートする。Weaver 0.28.0 では拒否される。
 
 ```text
 SemconvCheckFailed: Telemetry does not follow the semantic conventions:
   violation type_mismatch: Attribute 'http.response.status_code' has type 'string'. Type should be 'int'. (work)
 ```
 
-Weaver is a separate binary. It has to be on `PATH`, or the `weaver` option has to name it.
+Weaverは独立したバイナリである。`PATH` に記述するか、`weaver` オプションで名前を指定する必要がある。
 
 ## Cloudflare Workers
 
-A Worker running under Miniflare does not read `OTEL_*` variables. `tailWorker()` from `@r_masseater/vitest-otlp/workers` bundles a tail worker that turns the traces and logs of a Worker into OTLP and sends them to the receiver. The test adds the tail worker to Miniflare's `workers` and lists its name in `streamingTails` of the traced Worker.
+Miniflare で動作する Worker は、`OTEL_*` 変数を読み取らない。`@r_masseater/vitest-otlp/workers` の `tailWorker()` は、Worker のトレースとログを OTLP に変換して受信側に送信するテールワーカーをバンドルする。このテストでは、ミニフレアの `workers` にテールワーカーを追加し、トレース対象のワーカーの `streamingTails` にその名前を列挙している。
 
 ```ts
 const tail = yield * tailWorker({ serviceName: "app" });
@@ -96,4 +96,4 @@ yield * Effect.promise(() => miniflare.dispatchFetch("http://localhost/"));
 yield * waitForSpans({ where: (span) => span.name === "kv_put" });
 ```
 
-The Workers runtime creates spans such as `kv_put` by itself. The test asserts on these spans without any instrumentation code in the Worker.
+Workersランタイムは、`kv_put`などのスパンを単独で生成する。このテストは、Workerにインストルメンテーションコードを一切記述せずに、これらのスパンに対してアサーションを行う。
