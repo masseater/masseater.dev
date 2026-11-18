@@ -28,23 +28,19 @@ export const generateData = Effect.fn("fu4.generate-data")(function* generateDat
       "shells.json": shells,
       "runners.json": runners,
       "action.json": actionVocabulary,
+      zizmor: zizmorData,
     },
     { concurrency: "unbounded" },
   );
-  const copied = yield* zizmorData;
+  const { zizmor, ...shared } = data;
   yield* fileSystem.makeDirectory(path.join(output, "zizmor"), { recursive: true });
   yield* pipe(
-    Rec.toEntries(data),
+    [...Rec.toEntries(shared), ...Rec.toEntries(zizmor)],
     Arr.map(([name, value]) =>
       encodeJson(value).pipe(
         Effect.flatMap((json) => fileSystem.writeFileString(path.join(output, name), `${json}\n`)),
       ),
     ),
-    Effect.all,
-  );
-  yield* pipe(
-    copied,
-    Arr.map(([name, text]) => fileSystem.writeFileString(path.join(output, name), text)),
     Effect.all,
   );
 });
