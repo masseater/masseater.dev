@@ -1,6 +1,7 @@
 {
   "name": "@r_masseater/ocr-decide",
   "version": "0.1.0",
+  "private": true,
   "description": "Read invoices and receipts with plain OCR and let fast, cheap decision models pick which line holds each field.",
   "keywords": [
     "decision-model",
@@ -33,17 +34,6 @@
   "exports": {
     ".": "./src/app/index.ts",
     "./package.json": "./package.json"
-  },
-  "publishConfig": {
-    "exports": {
-      ".": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.js"
-      },
-      "./package.json": "./package.json"
-    },
-    "access": "public",
-    "provenance": true
   },
   "scripts": {
     "prepublishOnly": "vp run build"
