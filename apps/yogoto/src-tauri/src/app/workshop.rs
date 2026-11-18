@@ -5,17 +5,31 @@ use candle_core::Device;
 use media_notes::{Failure, Outcome};
 use roformer::features::separate_stems::Separator;
 
+use crate::entities::analyzer::Analyzer;
 use crate::entities::job::Jobs;
 use crate::entities::model::{DEFAULT_MODELS, Model, load_separator, model};
 use crate::entities::song::Library;
+use crate::features::analyze_song::analyze_song;
 use crate::features::import_song::import_song;
 use crate::features::separate_song::separate_song;
 use crate::shared::protocol::{JobKind, Song};
 
+enum Task {
+    Separate(&'static Model),
+    Analyze,
+}
+
 struct Work {
     job: String,
     song: String,
-    model: &'static Model,
+    task: Task,
+}
+
+struct Worker {
+    library: Library,
+    jobs: Jobs,
+    client: reqwest::Client,
+    cache: PathBuf,
 }
 
 #[derive(Clone)]
@@ -31,28 +45,47 @@ fn device() -> Device {
     Device::cuda_if_available(0).unwrap_or(Device::Cpu)
 }
 
-fn separate_all(library: &Library, jobs: &Jobs, works: &Receiver<Work>) {
+fn work_all(worker: &Worker, works: &Receiver<Work>) {
     let device = device();
     let mut loaded: Option<(&'static str, Separator)> = None;
+    let mut analyzer: Option<Analyzer> = None;
     for work in works {
-        let progress = |ratio: f64, stage: &str| jobs.progress(&work.job, ratio, stage);
+        let progress = |ratio: f64, stage: &str| worker.jobs.progress(&work.job, ratio, stage);
         let outcome = (|| -> Outcome<Song> {
-            let song = library
+            let song = worker
+                .library
                 .get(&work.song)?
                 .ok_or_else(|| Failure::new("song was removed"))?;
-            if loaded.as_ref().is_none_or(|(id, _)| *id != work.model.id) {
-                progress(0.0, "loading model");
-                loaded = None;
-                loaded = Some((work.model.id, load_separator(work.model, &device)?));
+            match work.task {
+                Task::Separate(model) => {
+                    if loaded.as_ref().is_none_or(|(id, _)| *id != model.id) {
+                        progress(0.0, "loading model");
+                        loaded = None;
+                        loaded = Some((model.id, load_separator(model, &device)?));
+                    }
+                    let (_, separator) = loaded
+                        .as_ref()
+                        .ok_or_else(|| Failure::new("model not loaded"))?;
+                    separate_song(&worker.library, &song, model, separator, &progress)
+                }
+                Task::Analyze => {
+                    if analyzer.is_none() {
+                        progress(0.0, "loading model");
+                        analyzer = Some(tauri::async_runtime::block_on(Analyzer::load(
+                            &worker.client,
+                            &worker.cache,
+                        ))?);
+                    }
+                    let analyzer = analyzer
+                        .as_mut()
+                        .ok_or_else(|| Failure::new("analyzer not loaded"))?;
+                    analyze_song(&worker.library, &song, analyzer, &progress)
+                }
             }
-            let (_, separator) = loaded
-                .as_ref()
-                .ok_or_else(|| Failure::new("model not loaded"))?;
-            separate_song(library, &song, work.model, separator, &progress)
         })();
         match outcome {
-            Ok(song) => jobs.finish(&work.job, &song.id),
-            Err(failure) => jobs.fail(&work.job, &failure.message),
+            Ok(song) => worker.jobs.finish(&work.job, &song.id),
+            Err(failure) => worker.jobs.fail(&work.job, &failure.message),
         }
     }
 }
@@ -73,9 +106,13 @@ impl Workshop {
     #[must_use]
     pub fn start(library: Library, client: reqwest::Client, cache: PathBuf, jobs: Jobs) -> Self {
         let (queue, works) = channel();
-        let worker_library = library.clone();
-        let worker_jobs = jobs.clone();
-        std::thread::spawn(move || separate_all(&worker_library, &worker_jobs, &works));
+        let worker = Worker {
+            library: library.clone(),
+            jobs: jobs.clone(),
+            client: client.clone(),
+            cache: cache.clone(),
+        };
+        std::thread::spawn(move || work_all(&worker, &works));
         Self {
             library,
             jobs,
@@ -93,14 +130,30 @@ impl Workshop {
             &format!("{} / {}", song.title, model.label),
             Some(&song.id),
         );
-        self.queue
-            .send(Work {
-                job: job.clone(),
-                song: song.id.clone(),
-                model,
-            })
-            .map_err(|_| Failure::new("separation worker stopped"))?;
+        self.send(Work {
+            job: job.clone(),
+            song: song.id.clone(),
+            task: Task::Separate(model),
+        })?;
         Ok(job)
+    }
+
+    pub fn analyze(&self, song: &Song) -> Outcome<String> {
+        let job = self
+            .jobs
+            .queue(JobKind::Analyze, &song.title, Some(&song.id));
+        self.send(Work {
+            job: job.clone(),
+            song: song.id.clone(),
+            task: Task::Analyze,
+        })?;
+        Ok(job)
+    }
+
+    fn send(&self, work: Work) -> Outcome<()> {
+        self.queue
+            .send(work)
+            .map_err(|_| Failure::new("worker stopped"))
     }
 
     pub fn import(&self, location: &str, model_ids: &[String]) -> Outcome<String> {
@@ -129,6 +182,11 @@ impl Workshop {
                         if !done && let Err(failure) = workshop.separate(&imported.song, model.id) {
                             workshop.jobs.fail(&running, &failure.message);
                         }
+                    }
+                    if imported.song.analysis.is_none()
+                        && let Err(failure) = workshop.analyze(&imported.song)
+                    {
+                        workshop.jobs.fail(&running, &failure.message);
                     }
                 }
                 Err(failure) => workshop.jobs.fail(&running, &failure.message),

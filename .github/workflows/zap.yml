@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: [https://masseater.dev, https://medley-manager.masseater.dev]
+        target: [https://masseater.dev, https://med-db.masseater.dev]
     runs-on: ubuntu-latest
     permissions:
       contents: read

@@ -20,6 +20,9 @@ export const LABELS = {
   muteOf: "ミュート",
   seek: "再生位置",
   separator: " / ",
+  analyze: "再解析",
+  bpm: "BPM",
+  key: "Key",
 } as const;
 
 export const JOB_STATES: Readonly<Record<JobState, string>> = {
@@ -35,4 +38,6 @@ export const JOB_STAGES: Readonly<Record<string, string>> = {
   decoding: "読み込み中",
   separating: "分離中",
   "writing stems": "書き出し中",
+  beats: "拍を解析中",
+  key: "キーを解析中",
 };
