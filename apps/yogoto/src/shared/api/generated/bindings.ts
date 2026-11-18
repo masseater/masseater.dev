@@ -6,18 +6,52 @@ import type { InvokeOptions } from "@tauri-apps/api/core";
 
 /** Commands */
 export const commands = {
-	listSongs: (options?: InvokeOptions) => typedError<Song[], Failure>(__TAURI_INVOKE("list_songs", undefined, options)),
+	listSongs: (options?: InvokeOptions) => typedError<Song_Serialize[], Failure>(__TAURI_INVOKE("list_songs", undefined, options)),
 	songFolder: (id: string, options?: InvokeOptions) => typedError<string, Failure>(__TAURI_INVOKE("song_folder", { id }, options)),
 	removeSong: (id: string, options?: InvokeOptions) => typedError<boolean, Failure>(__TAURI_INVOKE("remove_song", { id }, options)),
 	listModels: (options?: InvokeOptions) => typedError<ModelInfo[], Failure>(__TAURI_INVOKE("list_models", undefined, options)),
 	listJobs: (options?: InvokeOptions) => typedError<Job_Serialize[], Failure>(__TAURI_INVOKE("list_jobs", undefined, options)),
 	importSong: (request: ImportRequest, options?: InvokeOptions) => typedError<string, Failure>(__TAURI_INVOKE("import_song", { request }, options)),
 	separateSong: (request: SeparateRequest, options?: InvokeOptions) => typedError<string, Failure>(__TAURI_INVOKE("separate_song", { request }, options)),
+	analyzeSong: (request: AnalyzeRequest, options?: InvokeOptions) => typedError<string, Failure>(__TAURI_INVOKE("analyze_song", { request }, options)),
 	chooseAudioFiles: (options?: InvokeOptions) => typedError<string[], Failure>(__TAURI_INVOKE("choose_audio_files", undefined, options)),
 	mcpAccess: (options?: InvokeOptions) => typedError<McpAccess, Failure>(__TAURI_INVOKE("mcp_access", undefined, options)),
 };
 
 /* Types */
+export type Analysis = Analysis_Serialize | Analysis_Deserialize;
+
+export type Analysis_Deserialize = {
+	source: string,
+	separation?: string | null,
+	beatModel: string,
+	keyModel: string,
+	beats: (number | null)[],
+	bars: Bar[],
+	keys: KeySpan[],
+	createdAt: number,
+};
+
+export type Analysis_Serialize = {
+	source: string,
+	separation: string | null,
+	beatModel: string,
+	keyModel: string,
+	beats: (number | null)[],
+	bars: Bar[],
+	keys: KeySpan[],
+	createdAt: number,
+};
+
+export type AnalyzeRequest = {
+	songId: string,
+};
+
+export type Bar = {
+	beat: number,
+	beats: number,
+};
+
 export type Failure = {
 	message: string,
 };
@@ -29,7 +63,7 @@ export type ImportRequest = {
 
 export type Job = Job_Serialize | Job_Deserialize;
 
-export type JobKind = "import" | "separate";
+export type JobKind = "import" | "separate" | "analyze";
 
 export type JobState = "queued" | "running" | "done" | "failed";
 
@@ -53,6 +87,12 @@ export type Job_Serialize = {
 	progress: number | null,
 	message: string,
 	startedAt: number,
+};
+
+export type KeySpan = {
+	bar: number,
+	bars: number,
+	key: string,
 };
 
 export type McpAccess = {
@@ -84,15 +124,7 @@ export type Separation = {
 	createdAt: number,
 };
 
-export type Song = {
-	id: string,
-	title: string,
-	artist: string,
-	addedAt: number,
-	primary: string,
-	sources: SongSource[],
-	separations: Separation[],
-};
+export type Song = Song_Serialize | Song_Deserialize;
 
 export type SongSource = {
 	id: string,
@@ -102,6 +134,28 @@ export type SongSource = {
 	sampleRate: number,
 	frames: number,
 	addedAt: number,
+};
+
+export type Song_Deserialize = {
+	id: string,
+	title: string,
+	artist: string,
+	addedAt: number,
+	primary: string,
+	sources: SongSource[],
+	separations: Separation[],
+	analysis?: Analysis_Deserialize | null,
+};
+
+export type Song_Serialize = {
+	id: string,
+	title: string,
+	artist: string,
+	addedAt: number,
+	primary: string,
+	sources: SongSource[],
+	separations: Separation[],
+	analysis: Analysis_Serialize | null,
 };
 
 export type StemFile = {
