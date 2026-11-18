@@ -15,7 +15,7 @@ describe("planOf", () => {
   it.each(cases)(
     "fits up to ten runs into the budget, with a warmup when two probes fit ($probeMillis ms)",
     ({ probeMillis, runs, warmup }) => {
-      expect(planOf({ probeMillis, budgetMillis: BUDGET })).toEqual({ runs, warmup });
+      expect(planOf({ probeMillis, budgetMillis: BUDGET })).toStrictEqual({ runs, warmup });
     },
   );
 });
