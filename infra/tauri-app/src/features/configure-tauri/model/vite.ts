@@ -22,16 +22,8 @@ export const tauriAppTasks = ({
 const WINDOWS_INSTALLER =
   "tauri build --config src-tauri/tauri.release.conf.json --bundles nsis && bundle-collect nsis";
 
-export const tauriReleaseTasks = (
-  component: string,
-): NonNullable<NonNullable<UserConfig["run"]>["tasks"]> => ({
+export const tauriReleaseTasks = (): NonNullable<NonNullable<UserConfig["run"]>["tasks"]> => ({
   "release:windows": { command: WINDOWS_INSTALLER, cache: false },
-  "release:tag": { command: `component-tag ${component}`, cache: false },
-  "release:publish": {
-    command: `component-release ${component} ${component} release-assets`,
-    cache: false,
-  },
-  "release:token": { command: `release-please-token ${component}`, cache: false },
 });
 
 export const tauriAppConfig = ({
