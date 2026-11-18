@@ -9,7 +9,9 @@ import {
   pipe,
 } from "effect";
 import { constVoid } from "effect/Function";
-import { vi } from "vite-plus/test";
+import type { DefaultBodyType, StrictRequest } from "msw";
+import { http } from "msw/http";
+import { setupServer } from "msw/node";
 
 export type Answer = Readonly<{ status: number; body: unknown }>;
 
@@ -178,10 +180,9 @@ const answerFor = (method: string, path: string, body: unknown): Answer =>
     Option.getOrElse(() => missing),
   );
 
-const fakeGithub: typeof fetch = (input, init) =>
+const fakeGithub = (request: Request): Promise<Response> =>
   Effect.runPromise(
     Effect.gen(function* answerGithub() {
-      const request = new Request(input, init);
       const path = decodeURIComponent(new URL(request.url).pathname);
       const body = yield* bodyOf(request);
       MutableRef.update(sent, Arr.append({ method: request.method, path, body }));
@@ -190,9 +191,26 @@ const fakeGithub: typeof fetch = (input, init) =>
     }),
   );
 
-export const stubGithub = (): void => {
-  vi.stubGlobal("fetch", fakeGithub);
-};
+const EMPTY = 0;
+
+const workerRequestOf = (request: StrictRequest<DefaultBodyType>, body: ArrayBuffer): Request =>
+  new Request(request.url, {
+    method: request.method,
+    headers: [...request.headers],
+    body: Option.getOrNull(Option.liftPredicate(body, (bytes) => bytes.byteLength > EMPTY)),
+  });
+
+const answering =
+  (answer: (request: Request) => Promise<Response>) =>
+  ({ request }: Readonly<{ request: StrictRequest<DefaultBodyType> }>): Promise<Response> =>
+    Effect.runPromise(
+      Effect.promise(() => request.arrayBuffer()).pipe(
+        Effect.map((body) => workerRequestOf(request, body)),
+        Effect.flatMap((worker) => Effect.promise(() => answer(worker))),
+      ),
+    );
+
+export const github = setupServer(http.all("*", answering(fakeGithub)));
 
 export const setScene = (overrides: Partial<Scene>): void => {
   MutableRef.set(scene, { ...DEFAULT_SCENE, ...overrides });

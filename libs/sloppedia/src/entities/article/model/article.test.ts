@@ -1,4 +1,4 @@
-import { Effect } from "effect";
+import { Effect, Schema } from "effect";
 import { describe, expect, test } from "vite-plus/test";
 
 import { articlesOf } from "./article.ts";
@@ -42,6 +42,8 @@ describe("articlesOf", () => {
       },
     ]));
 
-  test("日付の形が違う frontmatter は失敗にする", () =>
-    expect(Effect.runPromise(articlesOf(malformed))).rejects.toThrow());
+  test("日付の形が違う frontmatter は失敗にする", () => {
+    const failure = Effect.runPromise(Effect.flip(articlesOf(malformed)));
+    return expect(failure).resolves.toBeInstanceOf(Schema.SchemaError);
+  });
 });

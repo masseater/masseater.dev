@@ -17,20 +17,21 @@ const pagesOf = (count: number): readonly PageHeaders[] =>
     })),
   );
 
+const FITTING_PAGES = 98;
+const EXCEEDING_PAGES = 99;
+
 test("a page rule replaces the document CSP with its own", () => {
   expect(
     assetHeaders({ documentHeaders: { [CSP]: "default-src 'self'" }, pages: pagesOf(FIRST_PAGE) }),
   ).toContain(`/app/1/\n  ! ${CSP}\n  ${CSP}: script-src 'sha256-1'\n`);
 });
 
-test.each([
-  { count: 98, throws: false },
-  { count: 99, throws: true },
-])("$count pages exceed the 100-rule limit: $throws", ({ count, throws }) => {
-  const write = (): string => assetHeaders({ documentHeaders: {}, pages: pagesOf(count) });
-  if (throws) {
-    expect(write).toThrow(RangeError);
-  } else {
-    expect(write).not.toThrow();
-  }
+test("98 pages fit within the 100-rule limit", () => {
+  expect(() => assetHeaders({ documentHeaders: {}, pages: pagesOf(FITTING_PAGES) })).not.toThrow();
+});
+
+test("99 pages exceed the 100-rule limit", () => {
+  expect(() => assetHeaders({ documentHeaders: {}, pages: pagesOf(EXCEEDING_PAGES) })).toThrow(
+    RangeError,
+  );
 });

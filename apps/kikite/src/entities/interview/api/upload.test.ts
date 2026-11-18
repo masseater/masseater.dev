@@ -63,9 +63,9 @@ layer(Layer.merge(AtomRegistry.layer, Layer.succeed(HttpClient.HttpClient, fakeS
         yield* write(recordingAtom, { id: ID, startedAt: STARTED });
         yield* Effect.forkScoped(autosaving);
         const beforeSpeech = yield* uploadsAfter(Effect.void);
-        expect(beforeSpeech).toEqual([]);
+        expect(beforeSpeech).toStrictEqual([]);
         const afterSpeech = yield* uploadsAfter(write(entriesAtom, [FIRST_SPEECH]));
-        expect(afterSpeech).toEqual([UPLOAD]);
+        expect(afterSpeech).toStrictEqual([UPLOAD]);
         const afterMore = yield* uploadsAfter(modify(entriesAtom, Arr.append(SECOND_SPEECH)));
         expect(afterMore).toHaveLength(TWO_UPLOADS);
         vi.unstubAllGlobals();

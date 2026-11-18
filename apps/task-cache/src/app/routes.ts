@@ -6,7 +6,7 @@ import { spendObjectReads, spendUpload } from "#/entities/spending/index.ts";
 import { admitsWriter } from "#/features/admit-caller/index.ts";
 import type { Target } from "#/features/admit-caller/index.ts";
 import { fetchEntries, readBlob, storeEntry } from "#/features/serve-entries/index.ts";
-import { LIMITS } from "#/shared/config/index.ts";
+import { Limits } from "#/shared/config/index.ts";
 import type { Malformed } from "#/shared/lib/malformed.ts";
 import { STATUS, status } from "#/shared/lib/responses.ts";
 import type { StoreFailed } from "#/shared/lib/store-failed.ts";
@@ -48,14 +48,15 @@ const routeOf = (request: Request): Option.Option<Routed> => {
 };
 
 const bodyOf = Effect.fn("routes.bodyOf")(function* bodyOf(request: Request) {
+  const limits = yield* Limits;
   const declared = Number(request.headers.get("content-length") ?? NO_LENGTH);
-  if (declared > LIMITS.requestBytes) {
+  if (declared > limits.requestBytes) {
     return Option.none<Uint8Array>();
   }
   const buffer = yield* Effect.promise(() => request.arrayBuffer());
   return Option.liftPredicate(
     new Uint8Array(buffer),
-    (bytes) => bytes.length <= LIMITS.requestBytes,
+    (bytes) => bytes.length <= limits.requestBytes,
   );
 });
 
