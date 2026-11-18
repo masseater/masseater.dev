@@ -76,8 +76,10 @@ mod tests {
         write(&mut buffer, &tree_sitter_yaml::LANGUAGE.into(), text);
         let bytes = buffer.finish();
         let words: Vec<u32> = bytes
-            .chunks_exact(4)
-            .map(|chunk| u32::from_le_bytes([chunk[0], chunk[1], chunk[2], chunk[3]]))
+            .as_chunks::<4>()
+            .0
+            .iter()
+            .map(|chunk| u32::from_le_bytes(*chunk))
             .collect();
         let count = words[3] as usize;
         assert!(count > 3);

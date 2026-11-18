@@ -17,7 +17,7 @@ export interface Native {
   readonly parsePaths: (
     root: string,
     paths: readonly string[],
-    traceparent: string | undefined,
+    options: { readonly traceparent: string | undefined },
   ) => readonly ParsedFile[];
   readonly parseText: (text: string) => Uint8Array;
   readonly parseScript: (language: string, text: string) => Uint8Array;

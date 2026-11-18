@@ -72,7 +72,7 @@ const parsedFiles = Effect.fn("fu4.parse")(function* parsedFiles(
     name: "fu4",
     files: targets.length,
     call: (loaded): readonly ParsedFile[] =>
-      loaded.parsePaths(root, targets, Option.getOrUndefined(parent)),
+      loaded.parsePaths(root, targets, { traceparent: Option.getOrUndefined(parent) }),
     failWith: failedWith,
   });
 });
