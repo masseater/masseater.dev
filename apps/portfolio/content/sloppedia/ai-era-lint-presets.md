@@ -1,36 +1,29 @@
 ---
-title: "Lint presets for the AI era"
-description: "A survey of lint rule presets that ban shortcuts coding agents often take, as of November 18, 2026."
-tags: ["静的解析", "ソフトウェア開発", "大規模言語モデル", "2026年のソフトウェア"]
-published: true
-infobox:
-  - label: "Surveyed on"
-    value: "November 18, 2026"
-  - label: "Main engines"
-    value: "Oxlint, ESLint, Biome, textlint, Vale"
-  - label: "Typical examples"
-    value: "landmines, anti-slop, eslint-plugin-vibe-proof, agnix"
+title: 「AI時代のリントプリセット」 description: 「2026年11月18日時点における、コーディングエージェントが頻繁に利用するショートカットを禁止するリントルールプリセットの調査」 tags: ["静的解析", "ソフトウェア開発", "大規模言語モデル", "2026年のソフトウェア"] published: true infobox:
+  - ラベル: 「調査対象」 値: 「2026年11月18日」
+  - label: "Main engines" value: "Oxlint, ESLint, Biome, textlint, Vale"
+  - label: "Typical examples" value: "landmines, anti-slop, eslint-plugin-vibe-proof, agnix"
 ---
 
-Lint presets for the AI era are lint rule sets that assume coding agents write much of a repository. Human teams never wrote some rules down, because nobody would break them. Agents break them often, because they optimize for passing checks. For example, an agent mocks the code under test. It retries a flaky test until it passes. It adds `eslint-disable` to get a green check. These presets turn such habits into lint errors. This article lists the presets that exist as of November 18, 2026.
+AI時代のリントプリセットとは、コーディングエージェントがリポジトリの大部分を記述していることを前提としたリントルールセットのことである。人間のチームは、誰もルールを破らないため、ルールを書き留めることはない。一方、エージェントはチェックを通過するように最適化するため、ルールを破ることが多い。例えば、エージェントはテスト対象のコードをモックし、パスするまで不安定なテストを再試行する。また、グリーンチェックを得るために `eslint-disable` を追加する。こうしたプリセットは、こうした習慣をリントエラーへと変える。本記事では、2026年11月18日時点で存在するプリセットを列挙する。
 
-Most of these presets do not look for text that "sounds like AI". They look for cheap shortcuts that reviewers used to catch by eye. When agents write most of the code, a rule is the only reviewer that reads every line. landmines says that agents "optimise for green checks"[^landmines]. eslint-plugin-vibe-proof says that agents forget skills after the context is compacted. It argues that a deterministic linter is the feedback loop that remains[^vibe-proof]. agent-slop-lint says that old defaults assume a human who writes about 100 lines a day[^agent-slop-lint].
+こうしたプリセットの多くは、「AIっぽく聞こえる」テキストは探さない。レビュアーが目視で捕捉した安価なショートカットを探す。エージェントがコードの大部分を記述する場合、すべての行を読み込むレビュアーはルールのみとなる。landminesは、エージェントが「グリーンチェック向けに最適化する」[^landmines]と述べている。eslint-plugin-vibe-proofは、コンテキストが圧縮された後にエージェントがスキルを忘れてしまうと指摘する。同プラグインは、決定論的なリンターこそが[^vibe-proof]なまま残るフィードバックループであると主張している。agent-slop-lintは、古いデフォルト設定は1日100行程度を書く人間を前提としているとしている[^agent-slop-lint]。
 
-## Common traits
+## 共通の特徴
 
-The error message tells the agent how to fix the problem. landmines, enforced-architecture and @shadcn/lint all write messages this way[^landmines][^enforced-architecture][^shadcn-lint]. The agent can then fix the problem without reading other files.
+エラーメッセージは、エージェントに問題の解決方法を伝える。landmines、enforced-architecture、@shadcn/lintはいずれもこのような形式でメッセージを記述する[^landmines][^enforced-architecture][^shadcn-lint]。これにより、エージェントは他のファイルを読まずに問題を修正できる。
 
-Many presets allow existing violations but only let their number go down. landmines takes an exact count of allowed violations for each file[^landmines]. It reports a file that has fewer violations than its count, so the list only shrinks. agent-lint keeps a baseline file in the repository, and the `agent-lint ratchet` command only tightens it[^agent-lint].
+多くのプリセットでは既存の違反を許容するが、その数を減少させるのみである。landminesは、ファイルごとに許容される違反数を正確にカウントする[^landmines]。カウント数よりも違反数が少ないファイルを報告するため、リストは縮小されるのみとなる。agent-lintはリポジトリにベースラインファイルを保持し、`agent-lint ratchet`コマンドはそれを厳格化するのみである[^agent-lint]。
 
-The presets also ban the ways around a rule. eslint-plugin-vibe-proof bans `eslint-disable` comments that give no reason[^vibe-proof]. Suppress Ratchet counts the suppression comments that a pull request adds[^suppress-ratchet].
+プリセットでは、ルールをバイパスする方法も禁止されている。eslint-plugin-vibe-proof は、理由のない `eslint-disable` コメントを禁止する[^vibe-proof]。Suppress Ratchet は、プルリクエストによって追加される抑制コメントをカウントする[^suppress-ratchet]。
 
-Some presets are shipped as code to copy instead of as packages. anti-slop has no npm package[^anti-slop]. Users copy its rules into their repository with an agent skill. enforced-architecture is a catalog that an agent reads and adapts to another stack[^enforced-architecture].
+一部のプリセットは、パッケージとしてではなくコピー用のコードとして提供される。anti-slopにはnpmパッケージ[^anti-slop]が存在しない。ユーザーはエージェントスキルを用いて、そのルールをリポジトリにコピーする。enforced-architectureは、エージェントが読み取り、別のスタックに適応させるカタログである[^enforced-architecture]。
 
-Most new presets run on Oxlint. Several of them run without changes on ESLint, Oxlint and rslint[^no-comment-slop][^ai-guard].
+ほとんどの新規プリセットはOxlintで動作する。そのうちのいくつかは、ESLint、Oxlint、rslintでも変更なく動作する[^no-comment-slop][^ai-guard]。
 
-## Code
+## コード
 
-The table below lists the code presets. The star counts were taken on November 18, 2026.
+以下の表にコードプリセットを記載する。星の数は2026年11月18日時点のものである。
 
 | Preset                                                                                     | Engine                      | Rules       | License    | Created    | Stars |
 | ------------------------------------------------------------------------------------------ | --------------------------- | ----------- | ---------- | ---------- | ----- |
@@ -53,39 +46,39 @@ The table below lists the code presets. The star counts were taken on November 1
 | [@shadcn/lint](https://github.com/shadcn-ui/lint)                                          | ESLint, Oxlint              | -           | MIT        | 2026-09-02 | 3,368 |
 | [renderlint](https://github.com/ngocanhnckh/renderlint)                                    | CLI                         | -           | MIT        | 2026-10-25 | 639   |
 
-### Tests
+### テスト
 
-landmines is a set of Oxlint plugins from Interfere[^landmines]. Its testing plugin bans mocks of the code under test with `no-test-doubles`. It also bans fixed sleeps with `no-fixed-sleep`. `no-flake-masking` bans test retries and raised timeouts. `strict-msw` requires MSW to fail on requests that no handler covers. Other plugins ban prose comments and set rules for test file names and their places. It needs Oxlint 1.81 or later. Some users report that `no-test-doubles` also bans fakes of outside services[^landmines-adoption].
+landminesは、Interfere[^landmines]が提供するOxlintプラグイン群である。そのテスト用プラグインは、`no-test-doubles` を指定してテスト対象コードのモックを禁止する。また、`no-fixed-sleep` を指定すると固定スリープが禁止される。`no-flake-masking` は、テストの再試行やタイムアウトの発生を禁止する。`strict-msw` は、ハンドラがカバーしていないリクエストに対してMSWが失敗することを要求する。その他のプラグインは、プロシージャコメントを禁止し、テストファイル名とその配置に関するルールを設定する。Oxlint 1.81以降が必要である。一部のユーザーからは、`no-test-doubles` が外部サービスのフェイクも禁止しているとの報告がある[^landmines-adoption]。
 
-eslint-plugin-ai-guard has 27 ESLint rules in 4 presets[^ai-guard]. Its CLI command `ai-guard integrity` finds changes that weaken checks. Examples are new suppressions, skipped tests and lower coverage settings. It also blocks npm package names that do not exist or that look like typosquats. Its CI checks that all 27 rules give the same results on Oxlint.
+eslint-plugin-ai-guard には、4つのプリセットに27個の ESLint ルールが用意されている[^ai-guard]。その CLI コマンド `ai-guard integrity` は、チェックを弱める変更を検出する。具体例としては、新規抑制、テストのスキップ、カバレッジ設定の引き下げなどが挙げられる。また、存在しない npm パッケージ名や、タイポスクワートと思われるものをブロックする。CI では、27個のルールすべてが Oxlint で同一の結果を示すことが確認されている。
 
-agent-lint runs the linters that a project already uses[^agent-lint]. It compares their findings with a baseline and fails on new ones. It also compares the change with a git base. It reports added suppressions, skipped tests, deleted tests and tests whose assertions were removed. It also reports linter settings that were loosened.
+agent-lint は、プロジェクトですでに使用されているリンターを実行する[^agent-lint]。その結果をベースラインと比較し、新規のベースラインでは失敗する。また、変更内容を git ベースと比較する。追加された抑制、スキップされたテスト、削除されたテスト、およびアサーションが削除されたテストを報告する。さらに、緩和されたリンター設定も報告する。
 
-The Ratchet family is three GitHub Actions without dependencies[^suppress-ratchet]. Type Ratchet blocks new `any` types. Test Ratchet blocks `it.skip` and `.only`. Suppress Ratchet blocks new `eslint-disable` and `biome-ignore` comments.
+Ratchet ファミリーは、依存関係のない 3 つの GitHub Actions である[^suppress-ratchet]。Type Ratchet は新しい `any` 型をブロックする。Test Ratchet は `it.skip` と `.only` をブロックする。Suppress Ratchet は新しい `eslint-disable` と `biome-ignore` コメントをブロックする。
 
-### Types
+### 種類
 
-anti-slop is a set of Oxlint rules by Dillon Mulroy[^anti-slop]. Its rules reject type assertions that have no evidence. They also reject `unknown` and `object` in function contracts. Five more rules apply to Effect code. They require `Match` and tagged constructors instead of manual `_tag` checks. biome-anti-slop ports the same rules to Biome plugins[^biome-anti-slop]. Its author warns that the Biome plugin API can change in patch releases. oxlint-anti-slop is a separate set of 11 Oxlint rules with similar goals[^oxlint-anti-slop].
+anti-slopは、Dillon Mulroy[^anti-slop]によるOxlintルールのセットである。このルールは、根拠のない型アサーションを却下する。また、関数コントラクトにおける`unknown`および`object`も却下する。Effectコードにはさらに5つのルールが適用される。これらでは、手動での`_tag`チェックではなく、`Match`およびタグ付きコンストラクタが必要となる。biome-anti-slopは、同様のルールをBiomeプラグイン[^biome-anti-slop]にも適用している。その作者は、パッチリリースによってBiomeプラグインAPIが変更される可能性があると警告している。oxlint-anti-slopは、同様の目的を持つ11個のOxlintルールからなる別のセットである[^oxlint-anti-slop]。
 
-oxc-config-ai-guardrails adds no rules of its own[^ai-guardrails]. It sets strict limits with the rules that Oxlint already has. A file may have 200 lines, and a function may have 50 lines. A function may take 3 parameters, and blocks may nest only 1 level deep.
+oxc-config-ai-guardrails は独自のルールを追加しない[^ai-guardrails]。Oxlint が既に備えているルールに基づき、厳格な制限を設ける。ファイルは 200 行まで、関数は 50 行まで記述できる。関数は 3 つのパラメータを指定でき、ブロックは 1 階層までしかネストできない。
 
-### Idioms and comments
+### 慣用句とコメント
 
-eslint-plugin-vibe-proof targets slow or long idioms that agents repeat[^vibe-proof]. One example is a `.filter()` call followed by `.map()`. Another is a regular expression that is created on every call. Its 4 presets do not overlap, so users can combine them. eslint-plugin-llm-core adds an MCP server that gives rule guidance to agents[^llm-core].
+eslint-plugin-vibe-proof は、エージェントが繰り返す低速または長いイディオムを対象とする[^vibe-proof]。一例として、`.filter()` の呼び出しに続いて `.map()` を呼び出すケースが挙げられる。別の例としては、呼び出しのたびに生成される正規表現がある。4つのプリセットは重複しないため、ユーザーはこれらを組み合わせることができる。eslint-plugin-llm-core は、エージェントにルールのガイダンスを提供するMCPサーバーを追加する[^llm-core]。
 
-eslint-plugin-no-comment-slop has 12 rules for comments[^no-comment-slop]. `no-jargon` flags words such as "robust" and "seamlessly". `no-banner-comment` flags decorative dividers. windbag is a pre-commit linter written in Rust[^windbag]. It flags comments that narrate a change instead of the current code. Its rules find ticket numbers, past behavior and hedging words.
+eslint-plugin-no-comment-slop には、コメントに関する12のルールがある[^no-comment-slop]。「no-jargon」は「robust」や「seamlessly」といった単語をフラグ付けする。「no-banner-comment」は装飾的な区切り線をフラグ付けする。windbag は Rust で書かれたプリコミット リンターである[^windbag]。現在のコードではなく、変更内容を記述するコメントをフラグ付けする。そのルールには、チケット番号、過去の挙動、およびヘッジワードが含まれる。
 
-### Structure
+### 構造
 
-enforced-architecture is a catalog of rules in 11 categories[^enforced-architecture]. The largest categories are boundaries, types and placement. It targets TanStack Start, Drizzle and Oxlint. Its README asks agents to rewrite the rules for other stacks.
+enforced-architectureは、11のカテゴリ[^enforced-architecture]からなるルールのカタログである。主要なカテゴリは、境界、タイプ、配置である。TanStack Start、Drizzle、Oxlintを対象としている。そのREADMEでは、エージェントに他のスタック向けのルールを書き直すよう求めている。
 
-agent-slop-lint checks code in many languages with 25 rules[^agent-slop-lint]. The rules measure complexity, duplication and magic numbers. Others find names that repeat the name of their class. KarpeSlop gives TypeScript code a score on three axes, noise, lies and soul[^karpeslop]. It checks imports against the npm registry to find packages that do not exist. oxlint-plugin-complexity adds cyclomatic and cognitive complexity to Oxlint[^complexity].
+agent-slop-lintは、25種類のルール[^agent-slop-lint]を用いて多くの言語のコードをチェックする。これらのルールは、複雑度、重複、およびマジックナンバーを測定する。また、クラス名と重複する名前を検出するものもある。KarpeSlopは、TypeScriptコードにノイズ、嘘、魂という3つの軸でスコアを付与する[^karpeslop]。npmレジストリとインポートを照合し、存在しないパッケージを検出する。oxlint-plugin-complexityは、Oxlintにサイクロマティック複雑度と認知的複雑度を追加する[^complexity]。
 
-### User interfaces
+### ユーザーインターフェース
 
-@shadcn/lint checks how components in a Tailwind design system are styled[^shadcn-lint]. Users declare which classes each component accepts. The error message then suggests a size or variant from their own components. renderlint opens each page in a browser at several widths[^renderlint]. It reports clipped text, low contrast and overlapping elements.
+@shadcn/lint は、Tailwind のデザインシステムにおけるコンポーネントのスタイルを確認する[^shadcn-lint]。ユーザーは、各コンポーネントがどのクラスを受け付けるかを指定する。すると、エラーメッセージが各コンポーネントのサイズやバリアントを提案する。renderlint は、ブラウザで各ページを複数の幅で開く[^renderlint]。切り詰められたテキスト、低コントラスト、および要素の重なりを報告する。
 
-## Prose and Markdown
+## プレーンテキストとMarkdown
 
 | Preset                                                                                            | Engine   | Language | License | Created    | Stars |
 | ------------------------------------------------------------------------------------------------- | -------- | -------- | ------- | ---------- | ----- |
@@ -95,13 +88,13 @@ agent-slop-lint checks code in many languages with 25 rules[^agent-slop-lint]. T
 | [vale-llm-slop](https://github.com/Syntaf/vale-llm-slop)                                          | Vale     | en       | -       | 2026-07-31 | 31    |
 | [seiso](https://github.com/scarletkc/seiso)                                                       | CLI      | -        | MIT     | 2026-09-27 | 196   |
 
-textlint-rule-preset-ai-writing finds structures that are common in Japanese text written by AI[^ai-writing]. Examples are bold list headings and colons. Its rule is to limit structure, not wording. textlint-rule-preset-ai-words-ja finds words that are common in such text with morphological analysis[^ai-words-ja]. Many of them are verbs translated word for word from English.
+textlint-rule-preset-ai-writingは、AI[^ai-writing]が生成した日本語テキストに共通する構造を検出する。例として、太字のリスト見出しやコロンなどが挙げられる。そのルールは、文言ではなく構造を制限することにある。textlint-rule-preset-ai-words-jaは、こうしたテキストに共通する単語を形態素解析[^ai-words-ja]によって検出する。その多くは、英語から単語単位で翻訳された動詞である。
 
-slopless checks English Markdown[^slopless]. Its rules find phrases such as "let me be honest" and "at the end of the day". vale-llm-slop has two Vale styles[^vale-llm-slop]. `Slop` flags buzzwords and empty praise. `STE` applies rules based on the ASD-STE100 standard for simple technical English.
+sloplessは英語のMarkdown[^slopless]である。そのルールには「let me be honest」や「at the end of the day」といった表現が含まれる。vale-llm-slopには2種類のValeスタイル[^vale-llm-slop]がある。`Slop`はバズワードや空虚な賛辞を阻止する。`STE`は、シンプルな技術英語向けのASD-STE100規格に基づいたルールを適用する。
 
-seiso sets one convention for Markdown documents in a repository[^seiso]. Each document declares one kind, such as a how-to or a reference. Each fact has one home. A page that lives long must not record values that change often, such as versions.
+seisoは、リポジトリ内のMarkdownドキュメントに関する一つの規約を定めている[^seiso]。各ドキュメントは、ハウツーやリファレンスなど、一つの種類を宣言する。各ファクトには一つのホームがある。長期にわたって存在するページでは、バージョンのように頻繁に変更される値を記録してはならない。
 
-## Agent configuration
+## エージェントの設定
 
 | Preset                                                     | Targets                                    | License         | Created    | Stars |
 | ---------------------------------------------------------- | ------------------------------------------ | --------------- | ---------- | ----- |
@@ -112,97 +105,33 @@ seiso sets one convention for Markdown documents in a repository[^seiso]. Each d
 | [skill-check](https://github.com/thedaviddias/skill-check) | SKILL.md                                   | MIT             | 2026-02-20 | 194   |
 | [LintLang](https://github.com/hermes-labs-ai/lintlang)     | MCP                                        | Apache-2.0      | 2026-02-28 | 147   |
 
-agnix is a linter and language server for agent configuration[^agnix]. ctxlint, driftlint and agents-lint check context files against the code[^ctxlint][^driftlint][^agents-lint]. They report paths that no longer exist and commands that no longer work. ctxlint also counts the tokens that the files use. skill-check gives each `SKILL.md` file a score from 0 to 100[^skill-check]. LintLang checks tool descriptions and system prompts[^lintlang]. For example, it reports two tools whose descriptions do not tell a model which one to use.
+agnixは、エージェント設定用のリンターおよび言語サーバーである[^agnix]。ctxlint、driftlint、agents-lintは、コードと照合してコンテキストファイルをチェックする[^ctxlint][^driftlint][^agents-lint]。これらは、既に存在しないパスや動作しなくなったコマンドを報告する。また、ctxlintはファイルが使用するトークン数もカウントする。skill-checkは、各`SKILL.md`ファイルに0から100までのスコアを付与する[^skill-check]。LintLangは、ツールの説明やシステムプロンプトをチェックする[^lintlang]。例えば、説明がモデルにどちらを使用すべきか指示していない2つのツールを報告する。
 
-## Related projects that are not lint rules
+## リントルールに該当しない関連プロジェクト
 
-Some well-known projects against "AI slop" are agent skills or prompts. stop-ai-slop is a skill that asks an agent to remove slop from code and documents[^stop-ai-slop]. It calls itself a partner to linters. stop-slop and no-ai-slop are skills for prose, with 19,031 and 13,601 stars. These skills run inside a model, so their results can differ from run to run.
+「AI slop」に対抗する代表的なプロジェクトに、エージェントスキルやプロンプトがある。stop-ai-slopは、エージェントにコードやドキュメントからスロップを除去させるスキルである[^stop-ai-slop]。同スキルはリンターのパートナーを自称している。stop-slopとno-ai-slopは散文向けのスキルで、スター数はそれぞれ19,031件と13,601件である。これらのスキルはモデル内で動作するため、実行ごとに結果が異なる場合がある。
 
-alint looks like ESLint, but a language model runs its rules[^alint]. Ultracite is a preset for Oxlint, Biome and ESLint that needs no configuration[^ultracite]. It presents itself as a linter for agentic development.
+alintはESLintに似ているが、言語モデルがルールを実行する[^alint]。UltraciteはOxlint、Biome、ESLint向けのプリセットで、設定不要である[^ultracite]。エージェント開発用のリンターとして位置づけられている。
 
-## Trends in 2026
+## 2026年の動向
 
-Most of these projects are new. More than a third of the projects above were created in or after August 2026. landmines, renderlint, agent-lint and biome-anti-slop appeared in October and November. JS plugins for Oxlint made it cheap to publish rules without Rust.
+これらのプロジェクトの多くは新規である。上記のプロジェクトの3分の1以上は、2026年8月以降に作成された。landmines、renderlint、agent-lint、biome-anti-slopは10月と11月に登場した。Oxlint用のJSプラグインにより、Rustなしでルールを安価に公開できるようになった。
 
-The rules now check evidence as well as wording. Prose rules still list words such as "delve". Code rules check whether a test runs the real code. They check whether a type assertion has a reason. Configuration rules check whether a context file matches the code. None of these checks needs a model, so they can run on every edit.
+ルールは現在、文言だけでなくエビデンスもチェックする。プロシージャルールには、依然として「delve」などの単語が記載されている。コードルールは、テストが実際のコードを実行するかどうかを確認する。型アサーションに理由があるかどうかを確認する。設定ルールは、コンテキストファイルがコードと一致するかどうかを確認する。これらのチェックはいずれもモデルを必要としないため、あらゆる編集時に実行できる。
 
-## Use in masseater.dev
+## masseater.devで使用する
 
-masseater.dev runs its checks through msch. Its own linters are y8 for Markdown, wism for structure, fu4 for GitHub Actions and h56m for secrets. Some ideas above are already covered. msch bans code comments, and y8 runs agnix as a built-in plugin.
+masseater.dev は msch を通じてチェックを行う。独自のリンターには、Markdown 用の y8、構造化用の wism、GitHub Actions 用の fu4、シークレット用の h56m がある。上記のアイデアの一部はすでに網羅されている。msch はコードコメントを禁止しており、y8 は agnix を組み込みプラグインとして動作させている。
 
-msch could take the testing rules of landmines and the type rules of anti-slop. It could also ban suppression comments without a reason, as eslint-plugin-vibe-proof does. A check that a pull request does not loosen lint or test settings would also fit msch. ai-guard and agent-lint have such checks.
+mschは、地雷のテストルールやアンチスロップの型ルールを採用できる。また、eslint-plugin-vibe-proofがそうしているように、理由なく抑制コメントを禁止することも可能だ。プルリクエストがリントやテスト設定を緩めていないかを確認するチェックもmschに適している。ai-guardやagent-lintにはそのようなチェック機能が備わっている。
 
-wism-presets could take the landmines rules for the names and places of test files. y8-presets could check that paths and commands in `AGENTS.md` exist, as ctxlint and driftlint do. It could also take the seiso rule that each fact has one home. The own Japanese textlint preset could take the structure rules of textlint-rule-preset-ai-writing. fu4-presets could check that a workflow change does not remove a lint or test step.
+wism-presetsは、テストファイルの名前や場所に関するランドマインルールを取り込むことができる。y8-presetsは、ctxlintやdriftlintと同様に、`AGENTS.md`内のパスやコマンドが存在するかを確認できる。また、各ファクトに1つのホームが存在するというseisoルールを取り込むことも可能だ。独自のJapanese textlintプリセットでは、textlint-rule-preset-ai-writingの構造ルールを取り込むことができる。fu4-presetsは、ワークフローの変更によってリントやテストステップが削除されないかを確認できる。
 
-## Related articles
+## 関連記事
 
 - [Oxlint](/sloppedia/oxlint)
 - [fallow](/sloppedia/fallow)
-- [Module boundary tools](/sloppedia/module-boundary-tools)
-- [AI slop](/sloppedia/ai-slop)
+- [モジュール境界ツール](/sloppedia/module-boundary-tools)
+- [AIスロップ](/sloppedia/ai-slop)
 
-[^landmines]: interfere-inc, "[landmines](https://github.com/interfere-inc/landmines)". Accessed November 18, 2026.
-
-[^landmines-adoption]: K-Mistele, "[feat: enable four @interfere/landmines testing rules](https://github.com/K-Mistele/anti-slop/pull/9)". Accessed November 18, 2026.
-
-[^vibe-proof]: SukkaW, "[eslint-plugin-vibe-proof](https://github.com/SukkaW/eslint-plugin-vibe-proof)". Accessed November 18, 2026.
-
-[^agent-slop-lint]: JordanGunn, "[agent-slop-lint](https://github.com/JordanGunn/agent-slop-lint)". Accessed November 18, 2026.
-
-[^enforced-architecture]: GLips, "[enforced-architecture](https://github.com/GLips/enforced-architecture)". Accessed November 18, 2026.
-
-[^shadcn-lint]: shadcn-ui, "[@shadcn/lint](https://github.com/shadcn-ui/lint)". Accessed November 18, 2026.
-
-[^agent-lint]: MartinCastroAlvarez, "[agent-lint](https://github.com/MartinCastroAlvarez/agent-lint)". Accessed November 18, 2026.
-
-[^suppress-ratchet]: motchalini-llc, "[Suppress Ratchet](https://github.com/motchalini-llc/suppress-ratchet)". Accessed November 18, 2026.
-
-[^anti-slop]: dmmulroy, "[anti-slop](https://github.com/dmmulroy/anti-slop)". Accessed November 18, 2026.
-
-[^no-comment-slop]: jantimon, "[eslint-plugin-no-comment-slop](https://github.com/jantimon/eslint-plugin-no-comment-slop)". Accessed November 18, 2026.
-
-[^ai-guard]: ai-guard-dev, "[eslint-plugin-ai-guard](https://github.com/ai-guard-dev/eslint-plugin-ai-guard)". Accessed November 18, 2026.
-
-[^biome-anti-slop]: arberbr, "[biome-anti-slop](https://github.com/arberbr/biome-anti-slop)". Accessed November 18, 2026.
-
-[^oxlint-anti-slop]: emilioSp, "[oxlint-anti-slop](https://github.com/emilioSp/oxlint-anti-slop)". Accessed November 18, 2026.
-
-[^ai-guardrails]: matteoantoci, "[oxc-config-ai-guardrails](https://github.com/matteoantoci/oxc-config-ai-guardrails)". Accessed November 18, 2026.
-
-[^llm-core]: pertrai1, "[eslint-plugin-llm-core](https://github.com/pertrai1/eslint-plugin-llm-core)". Accessed November 18, 2026.
-
-[^windbag]: scale-venture-partners, "[windbag](https://github.com/scale-venture-partners/windbag)". Accessed November 18, 2026.
-
-[^karpeslop]: CodeDeficient, "[KarpeSlop](https://github.com/CodeDeficient/KarpeSlop)". Accessed November 18, 2026.
-
-[^complexity]: itaymendel, "[oxlint-plugin-complexity](https://github.com/itaymendel/oxlint-plugin-complexity)". Accessed November 18, 2026.
-
-[^renderlint]: ngocanhnckh, "[renderlint](https://github.com/ngocanhnckh/renderlint)". Accessed November 18, 2026.
-
-[^ai-writing]: textlint-ja, "[textlint-rule-preset-ai-writing](https://github.com/textlint-ja/textlint-rule-preset-ai-writing)". Accessed November 18, 2026.
-
-[^ai-words-ja]: p1ass, "[textlint-rule-preset-ai-words-ja](https://github.com/p1ass/textlint-rule-preset-ai-words-ja)". Accessed November 18, 2026.
-
-[^slopless]: berelevant-ai, "[slopless](https://github.com/berelevant-ai/slopless)". Accessed November 18, 2026.
-
-[^vale-llm-slop]: Syntaf, "[vale-llm-slop](https://github.com/Syntaf/vale-llm-slop)". Accessed November 18, 2026.
-
-[^seiso]: scarletkc, "[seiso](https://github.com/scarletkc/seiso)". Accessed November 18, 2026.
-
-[^agnix]: agent-sh, "[agnix](https://github.com/agent-sh/agnix)". Accessed November 18, 2026.
-
-[^ctxlint]: YawLabs, "[ctxlint](https://github.com/YawLabs/ctxlint)". Accessed November 18, 2026.
-
-[^driftlint]: alifurkangokce, "[driftlint](https://github.com/alifurkangokce/driftlint)". Accessed November 18, 2026.
-
-[^agents-lint]: giacomo, "[agents-lint](https://github.com/giacomo/agents-lint)". Accessed November 18, 2026.
-
-[^skill-check]: thedaviddias, "[skill-check](https://github.com/thedaviddias/skill-check)". Accessed November 18, 2026.
-
-[^lintlang]: hermes-labs-ai, "[LintLang](https://github.com/hermes-labs-ai/lintlang)". Accessed November 18, 2026.
-
-[^stop-ai-slop]: kirankunapuli, "[stop-ai-slop](https://github.com/kirankunapuli/stop-ai-slop)". Accessed November 18, 2026.
-
-[^alint]: alint-dev, "[alint](https://github.com/alint-dev/alint)". Accessed November 18, 2026.
-
-[^ultracite]: Ultracite, "[Ultracite](https://www.ultracite.ai/)". Accessed November 18, 2026.
+[^landmines]: interfere-inc, "[landmines](https://github.com/interfere-inc/landmines)". 2026年11月18日閲覧。[^landmines-adoption]: K-Mistele, "[feat: enable four @interfere/landmines testing rules](https://github.com/K-Mistele/anti-slop/pull/9)". 2026年11月18日閲覧。[^vibe-proof]: SukkaW, "[eslint-plugin-vibe-proof](https://github.com/SukkaW/eslint-plugin-vibe-proof)". 2026年11月18日閲覧。[^agent-slop-lint]: JordanGunn, "[agent-slop-lint](https://github.com/JordanGunn/agent-slop-lint)". 2026年11月18日閲覧。[^enforced-architecture]: GLips, "[enforced-architecture](https://github.com/GLips/enforced-architecture)". 2026年11月18日閲覧。[^shadcn-lint]: shadcn-ui, "[@shadcn/lint](https://github.com/shadcn-ui/lint)". 2026年11月18日閲覧。[^agent-lint]: MartinCastroAlvarez, "[agent-lint](https://github.com/MartinCastroAlvarez/agent-lint)". 2026年11月18日閲覧。[^suppress-ratchet]: motchalini-llc, "[Suppress Ratchet](https://github.com/motchalini-llc/suppress-ratchet)". 2026年11月18日閲覧。[^anti-slop]: dmmulroy, "[anti-slop](https://github.com/dmmulroy/anti-slop)". 2026年11月18日閲覧。[^no-comment-slop]: jantimon, "[eslint-plugin-no-comment-slop](https://github.com/jantimon/eslint-plugin-no-comment-slop)". 2026年11月18日閲覧。[^ai-guard]: ai-guard-dev, "[eslint-plugin-ai-guard](https://github.com/ai-guard-dev/eslint-plugin-ai-guard)". 2026年11月18日閲覧。[^biome-anti-slop]: arberbr, "[biome-anti-slop](https://github.com/arberbr/biome-anti-slop)". 2026年11月18日閲覧。[^oxlint-anti-slop]: emilioSp, "[oxlint-anti-slop](https://github.com/emilioSp/oxlint-anti-slop)". 2026年11月18日閲覧。[^ai-guardrails]: matteoantoci, "[oxc-config-ai-guardrails](https://github.com/matteoantoci/oxc-config-ai-guardrails)". 2026年11月18日閲覧。[^llm-core]: pertrai1, "[eslint-plugin-llm-core](https://github.com/pertrai1/eslint-plugin-llm-core)". 2026年11月18日閲覧。[^windbag]: scale-venture-partners, "[windbag](https://github.com/scale-venture-partners/windbag)". 2026年11月18日閲覧。[^karpeslop]: CodeDeficient, "[KarpeSlop](https://github.com/CodeDeficient/KarpeSlop)". 2026年11月18日閲覧。[^complexity]: itaymendel, "[oxlint-plugin-complexity](https://github.com/itaymendel/oxlint-plugin-complexity)". 2026年11月18日閲覧。[^renderlint]: ngocanhnckh, "[renderlint](https://github.com/ngocanhnckh/renderlint)". 2026年11月18日閲覧。[^ai-writing]: textlint-ja, "[textlint-rule-preset-ai-writing](https://github.com/textlint-ja/textlint-rule-preset-ai-writing)". 2026年11月18日閲覧。[^ai-words-ja]: p1ass, "[textlint-rule-preset-ai-words-ja](https://github.com/p1ass/textlint-rule-preset-ai-words-ja)". 2026年11月18日閲覧。[^slopless]: berelevant-ai, "[slopless](https://github.com/berelevant-ai/slopless)". 2026年11月18日閲覧。[^vale-llm-slop]: Syntaf, "[vale-llm-slop](https://github.com/Syntaf/vale-llm-slop)". 2026年11月18日閲覧。[^seiso]: scarletkc, "[seiso](https://github.com/scarletkc/seiso)". 2026年11月18日閲覧。[^agnix]: agent-sh, "[agnix](https://github.com/agent-sh/agnix)". 2026年11月18日閲覧。[^ctxlint]: YawLabs, "[ctxlint](https://github.com/YawLabs/ctxlint)". 2026年11月18日閲覧。[^driftlint]: alifurkangokce, "[driftlint](https://github.com/alifurkangokce/driftlint)". 2026年11月18日閲覧。[^agents-lint]: giacomo, "[agents-lint](https://github.com/giacomo/agents-lint)". 2026年11月18日閲覧。[^skill-check]: thedaviddias, "[skill-check](https://github.com/thedaviddias/skill-check)". 2026年11月18日閲覧。[^lintlang]: hermes-labs-ai, "[LintLang](https://github.com/hermes-labs-ai/lintlang)". 2026年11月18日閲覧。[^stop-ai-slop]: kirankunapuli, "[stop-ai-slop](https://github.com/kirankunapuli/stop-ai-slop)". 2026年11月18日閲覧。[^alint]: alint-dev, "[alint](https://github.com/alint-dev/alint)". 2026年11月18日閲覧。[^ultracite]: Ultracite, "[Ultracite](https://www.ultracite.ai/)". 2026年11月18日閲覧。
