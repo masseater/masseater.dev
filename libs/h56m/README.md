@@ -2,8 +2,9 @@
 
 A secret scanner written in Rust and configured from `vite.config.ts`.
 
-It matches with the engine of [Kingfisher](https://github.com/mongodb/kingfisher)
-and reads settings in the Betterleaks format. It has no rules of its own: extend
+Its matching engine follows [Betterleaks](https://github.com/betterleaks/betterleaks)
+and reads settings in the Betterleaks format, including filters, components and
+decoding of base64, hex, percent and unicode text. It has no rules of its own: extend
 a preset from [@r_masseater/h56m-presets](https://www.npmjs.com/package/@r_masseater/h56m-presets)
 or a TOML file of your own. It scans the commits a branch adds, the staged changes, a
 tree, or any text. It does not call the services the secrets belong to.
@@ -25,7 +26,7 @@ export default defineConfig({
 Run `h56m` to scan the commits since the default branch, or `h56m --staged`
 to scan the index. Call `makeDetector` to scan text from code.
 
-Kingfisher is under MIT and Apache-2.0, and its word list is under CC-BY-SA-4.0. `THIRD-PARTY-NOTICES.txt` holds their notices.
+The engine ports code from Betterleaks, which is under MIT, and embeds its word list, which is under CC-BY-SA-4.0. `THIRD-PARTY-NOTICES.txt` holds their notices.
 
 ## Agent skills
 

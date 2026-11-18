@@ -170,13 +170,13 @@ catalog:
   refractor: 5.0.0
   fflate: 0.8.3
   postal-mime: 4.2.1
-  unpdf: 2.2.0
+  unpdf: 2.2.1
   fast-png: 8.0.0
   tesseract.js: 7.0.0
   "@tesseract.js-data/eng": 1.0.0
   playwright-core: 1.65.1
   "@kenjiuno/msgreader": 1.29.0
-  officeparser: 8.7.1
+  officeparser: 8.8.0
   file-type: 22.3.0
   xlsx: https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz
   cfb: 1.2.2
