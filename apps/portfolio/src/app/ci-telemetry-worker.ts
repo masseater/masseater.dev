@@ -51,7 +51,7 @@ const runRecord = runner(Logger.layer([Logger.withLeveledConsole(Logger.formatSt
 const bearer = (request: Request): string =>
   Str.replace(/^Bearer /u, "")(request.headers.get("authorization") ?? "");
 
-interface Trust {
+export interface Trust {
   readonly keys: JWTVerifyGetKey;
   readonly audience: string;
 }
