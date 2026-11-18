@@ -5,7 +5,7 @@ import { Array as Arr, Effect, Option, pipe } from "effect";
 import { Base64 } from "effect/encoding";
 
 import { entries } from "#/entities/entry/model/entries.table.ts";
-import { LIMITS } from "#/shared/config/index.ts";
+import { Limits } from "#/shared/config/index.ts";
 import { byteLength, fromBase64, joined } from "#/shared/lib/bytes.ts";
 import { StoreFailed, storeFailed } from "#/shared/lib/store-failed.ts";
 
@@ -61,13 +61,14 @@ const queried = <Found>(query: () => Promise<Found>): Effect.Effect<Found, Store
   Effect.tryPromise({ try: query, catch: storeFailed });
 
 export const newest = Effect.fn("entries.newest")(function* newest(namespace: string, key: string) {
+  const { entriesPerKey } = yield* Limits;
   return yield* queried(() =>
     db
       .select()
       .from(entries)
       .where(and(eq(entries.namespace, namespace), eq(entries.key, key)))
       .orderBy(desc(entries.id))
-      .limit(LIMITS.entriesPerKey),
+      .limit(entriesPerKey),
   );
 });
 
@@ -176,7 +177,8 @@ const insert = Effect.fn("entries.insert")(function* insert(incoming: Incoming, 
 });
 
 export const save = Effect.fn("entries.save")(function* save(incoming: Incoming) {
-  const inline = incoming.value.length <= LIMITS.inlineValueBytes;
+  const { inlineValueBytes } = yield* Limits;
+  const inline = incoming.value.length <= inlineValueBytes;
   const saved = yield* insert(incoming, inline);
   const content = objectFor(incoming, inline);
   if (Option.isSome(content)) {
@@ -191,6 +193,7 @@ export const dropOverflow = Effect.fn("entries.dropOverflow")(function* dropOver
   namespace: string,
   key: string,
 ) {
+  const { entriesPerKey } = yield* Limits;
   const overflow = yield* queried(() =>
     db
       .select(sized)
@@ -198,7 +201,7 @@ export const dropOverflow = Effect.fn("entries.dropOverflow")(function* dropOver
       .where(and(eq(entries.namespace, namespace), eq(entries.key, key)))
       .orderBy(desc(entries.id))
       .limit(REMOVAL_BATCH)
-      .offset(LIMITS.entriesPerKey),
+      .offset(entriesPerKey),
   );
   yield* remove(overflow);
 });

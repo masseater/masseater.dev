@@ -77,7 +77,7 @@ describe("sessions", () => {
         stored.entries,
         Arr.map(({ id }) => id),
       );
-      expect(ids).toEqual([FIRST, SECOND]);
+      expect(ids).toStrictEqual([FIRST, SECOND]);
       const listed = yield* call("/api/sessions").pipe(
         Effect.flatMap(textOf),
         Effect.flatMap(decodeListing),
@@ -86,7 +86,7 @@ describe("sessions", () => {
         listed,
         Arr.map(({ id, theme, entries }) => ({ id, theme, entries })),
       );
-      expect(rows).toEqual([{ id: ID, theme: "聞き手", entries: TWO_ENTRIES }]);
+      expect(rows).toStrictEqual([{ id: ID, theme: "聞き手", entries: TWO_ENTRIES }]);
     }),
   );
 

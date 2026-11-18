@@ -36,7 +36,10 @@ test("releases the device when the page is kept in the back-forward cache", () =
   const page = new EventTarget();
   const controller = new AbortController();
   const destroy = vi.fn<() => undefined>();
-  releaseOnUnmount(controller.signal)({ device: { destroy }, context: { unconfigure: vi.fn() } });
+  releaseOnUnmount(controller.signal)({
+    device: { destroy },
+    context: { unconfigure: vi.fn<() => undefined>() },
+  });
   onCached(page)(() => {
     controller.abort();
   });

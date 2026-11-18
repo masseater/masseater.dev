@@ -41,14 +41,18 @@ const toFeed = (entries: readonly Entry[]): string => {
   return feed.rss2();
 };
 
-export const feedResponse = (): Promise<Response> =>
+export const feedResponseOf = <Failure>(
+  entries: Effect.Effect<readonly Entry[], Failure>,
+): Promise<Response> =>
   run(
-    allEntries.pipe(
+    entries.pipe(
       Effect.map(
-        (entries) =>
-          new Response(toFeed(entries), {
+        (found) =>
+          new Response(toFeed(found), {
             headers: { "content-type": "application/rss+xml; charset=utf-8" },
           }),
       ),
     ),
   );
+
+export const feedResponse = (): Promise<Response> => feedResponseOf(allEntries);
