@@ -4,7 +4,7 @@ import { runMain } from "@masseater.dev/node-main";
 import { Array as Arr, Console, Effect, Schema, String as Str, pipe } from "effect";
 
 const MAIN = "refs/heads/main";
-const PREFIXES = ["vite-plus-", "vite-task-", "msch-"];
+const PREFIXES = ["vite-plus-", "vite-task-", "msch-", "pnpm-metadata-"];
 const NEWEST = 1;
 const BYTES_PER_MEGABYTE = 1_048_576;
 
