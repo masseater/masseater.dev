@@ -51,15 +51,7 @@ const lazy = <Value>(make: () => Value): (() => Value) => {
 
 const memo = <Node>(make: (id: number) => Node): ((id: number) => Node) => {
   const made = new Map<number, Node>();
-  return (id) =>
-    pipe(
-      Option.fromNullishOr(made.get(id)),
-      Option.getOrElse(() => {
-        const node = make(id);
-        made.set(id, node);
-        return node;
-      }),
-    );
+  return (id) => made.getOrInsertComputed(id, () => make(id));
 };
 
 const times = <Value>(count: number, make: (index: number) => Value): readonly Value[] =>

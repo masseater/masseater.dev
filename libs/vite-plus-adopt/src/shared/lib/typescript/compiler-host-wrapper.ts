@@ -88,8 +88,7 @@ const createResolvedModuleTable = (): ResolvedModuleTable => {
   return {
     record: (fileName, entries) => {
       const path = toPath(fileName);
-      const own = byFile.get(path) ?? new Map<string, TsResolution>();
-      byFile.set(path, own);
+      const own = byFile.getOrInsertComputed(path, () => new Map<string, TsResolution>());
       for (const entry of entries) {
         own.set(modeKey(entry.moduleName, entry.mode), toTsResolution(entry.resolution));
       }

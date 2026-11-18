@@ -1640,6 +1640,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "const-hex"
+version = "1.19.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0e59eef12462b0f9b0a3620219be5d639afd79fe39dff0a42c3997061f9298b4"
+dependencies = [
+ "cfg-if",
+ "cpufeatures 0.2.17",
+ "proptest",
+ "serde_core",
+]
+
+[[package]]
 name = "const-oid"
 version = "0.10.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2390,15 +2402,23 @@ dependencies = [
  "axum",
  "constant_time_eq 0.6.1",
  "getrandom 0.4.3",
+ "opentelemetry",
+ "opentelemetry_sdk",
+ "otlp-file-exporter",
  "rmcp",
+ "serde_json",
  "tauri",
  "tauri-plugin-dialog",
  "tauri-plugin-localhost",
+ "tauri-plugin-log",
  "tauri-plugin-prevent-default",
  "tauri-plugin-single-instance",
  "tauri-plugin-window-state",
  "tempfile",
  "tokio",
+ "tracing",
+ "tracing-opentelemetry",
+ "tracing-subscriber",
  "url",
 ]
 
@@ -7709,9 +7729,12 @@ version = "0.33.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d576f5dddc3299341bcd85a04be17b2564844c0c9563214f02d85f2524d1afae"
 dependencies = [
+ "base64 0.22.1",
+ "const-hex",
  "opentelemetry",
  "opentelemetry_sdk",
  "prost",
+ "serde",
  "tonic",
  "tonic-prost",
 ]
@@ -7817,6 +7840,18 @@ dependencies = [
  "serde",
  "serde_json",
  "thiserror 2.0.21",
+]
+
+[[package]]
+name = "otlp-file-exporter"
+version = "0.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ac8c3fe804ef83e8f2a590007fe76f9a01a87bf15ebc4ab35cf09cbf39f8bfbe"
+dependencies = [
+ "futures",
+ "opentelemetry-proto",
+ "opentelemetry_sdk",
+ "serde_json",
 ]
 
 [[package]]
@@ -8609,6 +8644,22 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3d595e54a326bc53c1c197b32d295e14b169e3cfeaa8dc82b529f947fba6bcf5"
 
 [[package]]
+name = "proptest"
+version = "1.12.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b8530004ccb15eae51c7e40009fbe317f341f804db54dc033eec1c50be28cfa0"
+dependencies = [
+ "bitflags 2.13.2",
+ "chacha20",
+ "core_detect",
+ "num-traits",
+ "rand 0.10.3",
+ "rand_xorshift",
+ "regex-syntax",
+ "unarray",
+]
+
+[[package]]
 name = "prost"
 version = "0.14.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -8941,6 +8992,15 @@ name = "rand_pcg"
 version = "0.10.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "caa0f4137e1c0a72f4c651489402276c8e8e1cf081f3b0ba156d2cbeef09e86a"
+dependencies = [
+ "rand_core 0.10.1",
+]
+
+[[package]]
+name = "rand_xorshift"
+version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "60aa6af80be32871323012e02e6e65f8a7cc7890931ae421d217ad8fe0df2ccf"
 dependencies = [
  "rand_core 0.10.1",
 ]
@@ -11257,6 +11317,7 @@ dependencies = [
  "tauri-utils",
  "thiserror 2.0.21",
  "tokio",
+ "tracing",
  "tray-icon",
  "url",
  "webkit2gtk",
@@ -11318,8 +11379,6 @@ dependencies = [
 [[package]]
 name = "tauri-macros"
 version = "2.7.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0cc38db58854c10fb5f91a887ed8bf82d3239bb92b5d8db86eda09e96d9963d1"
 dependencies = [
  "heck 0.5.0",
  "proc-macro2",
@@ -11581,6 +11640,7 @@ dependencies = [
  "tao",
  "tauri-runtime",
  "tauri-utils",
+ "tracing",
  "url",
  "webkit2gtk",
  "webview2-com",
@@ -12471,6 +12531,12 @@ checksum = "7c8a2469e56e6e5095c82ccd3afb98dad95f7af7929aab6d8ba8d6e0f73657da"
 dependencies = [
  "arrayvec",
 ]
+
+[[package]]
+name = "unarray"
+version = "0.1.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "eaea85b334db583fe3274d12b4cd1880032beab409c0d774be044d4480ab9a94"
 
 [[package]]
 name = "unicase"
@@ -13816,6 +13882,7 @@ dependencies = [
  "soup3",
  "tao-macros",
  "thiserror 2.0.21",
+ "tracing",
  "url",
  "webkit2gtk",
  "webkit2gtk-sys",
@@ -14139,6 +14206,8 @@ dependencies = [
  "flac-codec",
  "media-notes",
  "num-traits",
+ "opentelemetry",
+ "opentelemetry_sdk",
  "opus-rs",
  "reqwest",
  "rmcp",
@@ -14160,6 +14229,9 @@ dependencies = [
  "tempfile",
  "tokio",
  "tracing",
+ "tracing-opentelemetry",
+ "tracing-subscriber",
+ "zip",
 ]
 
 [[package]]
@@ -14184,7 +14256,6 @@ dependencies = [
  "tauri",
  "tauri-build",
  "tauri-plugin-dialog",
- "tauri-plugin-log",
  "tauri-plugin-opener",
  "tauri-plugin-single-instance",
  "tauri-plugin-updater",

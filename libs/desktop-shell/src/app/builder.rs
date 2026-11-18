@@ -1,7 +1,8 @@
 use tauri::{Builder, Wry};
 
+use crate::features::record_traces::telemetry_plugin;
 use crate::features::serve_screen::served;
-use crate::shared::ui::{browser_keys_plugin, japanese_menu, show, state_plugin};
+use crate::shared::ui::{browser_keys_plugin, japanese_menu, log_plugin, show, state_plugin};
 
 pub struct Shell {
     pub name: &'static str,
@@ -25,6 +26,8 @@ pub fn builder(shell: &Shell) -> Builder<Wry> {
                 show(handle, window);
             },
         ))
+        .plugin(telemetry_plugin())
+        .plugin(log_plugin())
         .plugin(tauri_plugin_dialog::init())
         .plugin(state_plugin())
         .plugin(browser_keys_plugin()),
