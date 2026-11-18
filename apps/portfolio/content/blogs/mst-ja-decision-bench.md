@@ -1,76 +1,76 @@
 ---
-title: "日本語で decision model を測るベンチ mst-ja-decision-bench"
-description: "decision model が日本語では英語ほど当たらないのが気になって、JNLI と架空の社内規程の判定で 16 モデルを測ったベンチマーク mst-ja-decision-bench の中身と結果。"
+title: "mst-ja-decision-bench, a benchmark that measures decision models in Japanese"
+description: "Bothered that decision models are not as accurate in Japanese as in English, I built mst-ja-decision-bench, a benchmark that measured 16 models on JNLI and on judgments against fictional company rules. Here is what is in it and what it found."
 tags: ["decision-model", "ベンチマーク", "OpenRouter"]
 published: true
 ---
 
-decision model は、文章を生成せず、選択肢・はい／いいえ・スコアのどれかを確率つきで返すだけのモデルである。[OpenRouter](https://openrouter.ai/) から 1 回 0.0001 USD に満たない費用と 200ms 前後の時間で呼べる。この費用と速さなら、これまで人か大きな LLM に任せていた「この関数は個人情報をログに出しているか」のような判断を、lint やワークフローの部品として毎回走らせられる。この可能性をかなり強く感じていて、自然文のルールを decision model に判定させる [oxlint-plugin-decision](https://github.com/masseater/lint-kit/tree/main/libs/oxlint-plugin-decision) などを作ってきた。
+A decision model is a model that does not generate text, and only returns a choice, a yes or no, or a score, with probabilities. It can be called from [OpenRouter](https://openrouter.ai/) for less than 0.0001 USD per call and in around 200 ms. At this cost and speed, judgments that used to be left to people or large LLMs, such as "does this function write personal information to the logs," can be run every time as parts of lint and workflows. I feel this potential quite strongly, and have built things such as [oxlint-plugin-decision](https://github.com/masseater/lint-kit/tree/main/libs/oxlint-plugin-decision), which has decision models judge rules written in natural language.
 
-ところが、ルールの問いや判定する文章が日本語になると、明らかに性能が低かった。英語の評価では 9 割以上当てるモデルが日本語ではどれくらい当たるのか、どのモデルなら日本語で使えるのかが気になって、自分で測ることにした。それが [mst-ja-decision-bench](https://github.com/masseater/mst-ja-decision-bench) で、結果は[リーダーボード](https://masseater.dev/decision-bench/)で公開している。
+However, when the questions of the rules or the texts being judged were in Japanese, performance was clearly lower. I wanted to know how accurate models that score over 90% in English evaluations are in Japanese, and which models can be used in Japanese, so I decided to measure it myself. That is [mst-ja-decision-bench](https://github.com/masseater/mst-ja-decision-bench), and the results are published on a [leaderboard](https://masseater.dev/decision-bench/).
 
-## 英語との差
+## The gap with English
 
-英語の公開ベンチ [DecideBench](https://github.com/choyiny/decidebench) にも載っている 6 モデルについて、英語の正解率と、このベンチの業務ルール判定の正解率を並べた。どちらも 1 か所だけ違う事例を対にしていて、対の正解率は対の両方に正解した割合である。
+For the 6 models that are also on the English public benchmark [DecideBench](https://github.com/choyiny/decidebench), I lined up the accuracy in English and the accuracy on this benchmark's business rule judgments. Both pair up cases that differ in only one place, and the pair accuracy is the share of pairs where both cases were answered correctly.
 
-| モデル               | 英語の正解率 | 日本語の正解率 | 英語の対の正解率 | 日本語の対の正解率 |
-| -------------------- | -----------: | -------------: | ---------------: | -----------------: |
-| Jev 1.13             |         98.0 |           77.5 |             96.0 |               55.5 |
-| GPT-6 Luna Decisions |         97.3 |           75.9 |             94.5 |               52.2 |
-| Clef                 |         94.0 |           75.3 |             88.0 |               51.0 |
-| Drex v1.5            |         90.0 |           68.8 |             80.5 |               37.2 |
-| Clef Flash           |         85.3 |           64.6 |             72.0 |               32.0 |
-| Kev 4B               |         78.3 |           59.0 |             65.5 |               19.0 |
+| Model                | English accuracy | Japanese accuracy | English pair accuracy | Japanese pair accuracy |
+| -------------------- | ---------------: | ----------------: | --------------------: | ---------------------: |
+| Jev 1.13             |             98.0 |              77.5 |                  96.0 |                   55.5 |
+| GPT-6 Luna Decisions |             97.3 |              75.9 |                  94.5 |                   52.2 |
+| Clef                 |             94.0 |              75.3 |                  88.0 |                   51.0 |
+| Drex v1.5            |             90.0 |              68.8 |                  80.5 |                   37.2 |
+| Clef Flash           |             85.3 |              64.6 |                  72.0 |                   32.0 |
+| Kev 4B               |             78.3 |              59.0 |                  65.5 |                   19.0 |
 
-どのモデルも正解率で 20 ポイント前後、対の正解率では 40 ポイント前後落ちている。英語は Choice の 400 問、日本語は「はい／いいえ」で答える 500 問である。問題の中身と形式が違うため、差のすべてを言語のせいにはできない。モデルの順位は英語と変わらないが、英語で 9 割を超えるモデルでも、日本語の対の正解率は 5 割台にとどまる。
+Every model drops about 20 points in accuracy and about 40 points in pair accuracy. The English set is 400 Choice questions, and the Japanese set is 500 questions answered with yes or no. Because the content and format of the questions differ, not all of the gap can be blamed on the language. The ranking of the models is the same as in English, but even models that exceed 90% in English stay in the 50% range for pair accuracy in Japanese.
 
-## 2 つのタスク
+## Two tasks
 
-1 つめは [JGLUE](https://github.com/yahoojapan/JGLUE) の JNLI で、2 つの文の関係を含意・矛盾・中立から選ばせる。人の付けた正解がある既存のデータセットなので、採点に私の判断が入らない。
+The first is JNLI from [JGLUE](https://github.com/yahoojapan/JGLUE), which asks the model to choose whether the relation between two sentences is entailment, contradiction or neutral. It is an existing dataset with answers given by people, so my judgment does not enter the scoring.
 
-2 つめの業務ルール判定は、Claude Opus 5.5 に作らせた架空の会社の社内規程と、その規程に適合するかを問う事例 500 件でできている。lint のルールと同じく、決まりごとを読んで目の前の事例が当てはまるかを判定する問題である。次の 2 件は経費精算規程の事例で、会食の出席者の人数だけが違い、答えが逆になる。
+The second, business rule judgment, consists of the internal rules of a fictional company that I had Claude Opus 5.5 make, and 500 cases asking whether they comply with those rules. Like lint rules, it is a problem of reading the rules and judging whether the case in front of you applies. The following two cases are from the expense reimbursement rules; only the number of attendees at the business dinner differs, and the answers are opposite.
 
 > 営業課の一般職の社員が取引先との会食費3万円を立て替えた。出席者は取引先2名と自社2名の計4名だった。社員は会食の翌週、領収書の写しを添付して経費精算システムで申請した。事前に部長の承認は得ておらず、所属長の営業課長が精算を承認し、経理部が確認して支払った。
 
-もう一方の事例は「取引先1名と自社1名の計2名」で、問いはどちらも「この取引先との会食費の精算は、承認の手続きを含めて規程に適合しているか」である。規程には、取引先との飲食は 1 人あたり 1 万円までで、超えるときは事前に部長の承認が要るという条がある。4 名なら 1 人 7,500 円で適合し、2 名なら 1 人 15,000 円で適合しない。どの事例も、このように規程の 2 つ以上の条を組み合わせないと判断できない。
+The other case is 「取引先1名と自社1名の計2名」, and the question for both is 「この取引先との会食費の精算は、承認の手続きを含めて規程に適合しているか」. The rules have a clause saying that food and drink with business partners is limited to 10,000 yen per person, and that going over requires a department manager's approval in advance. With 4 people it is 7,500 yen per person and complies, and with 2 people it is 15,000 yen per person and does not. Every case, like this one, cannot be judged without combining two or more clauses of the rules.
 
-業務ルール判定の正解ラベルは Opus 5.5 が付けたもので、スコアは本当の正しさではなく Opus 5.5 のラベルとの一致率になる。Opus 5.5 には JNLI の 200 件にもラベルを付けさせ、人の正解と 91.5% 一致した。この数字を、Opus 5.5 のラベルがどれくらい間違うかの目安にしている。
+The answer labels for business rule judgment were given by Opus 5.5, so the score is not true correctness but the rate of agreement with Opus 5.5's labels. I also had Opus 5.5 label 200 JNLI items, and it agreed with the human answers 91.5% of the time. I use this number as a rough guide to how often Opus 5.5's labels are wrong.
 
-## 採点
+## Scoring
 
-採点のルールは [Jev Decision Index](https://huggingface.co/spaces/multimodalart/jev-decision-index) に合わせ、問題文は全モデルで同じにして、棄権やエラーは不正解として数えた。表の skill は、ランダムに答えたときを 0、全問正解を 100 にした値である。業務ルール判定は「はい」と「いいえ」が半々なので、適当に答えても正解率は 50% 前後になり、正解率のままではモデルの差が見えにくい。skill ならランダムと区別できないモデルは 0 に近くなる。
+The scoring rules follow the [Jev Decision Index](https://huggingface.co/spaces/multimodalart/jev-decision-index): the question text is the same for all models, and abstentions and errors are counted as wrong. The skill in the tables is a value where answering at random is 0 and getting every question right is 100. In business rule judgment, yes and no are half and half, so even answering arbitrarily gives an accuracy of around 50%, and differences between models are hard to see in raw accuracy. With skill, models that cannot be told apart from random come close to 0.
 
-## 結果
+## Results
 
-2026年10月11日に 16 モデルを全件測った結果を、2 つのタスクの skill の平均（指数）の順に並べた。
+Here are the results of measuring all items for 16 models on October 11, 2026, ordered by the average of the skill on the two tasks (the index).
 
-| モデル               | 指数 | JNLI の skill | 業務ルール判定の skill | 業務ルール判定の対の正解率 | 全タスクの費用 (USD) |
-| -------------------- | ---: | ------------: | ---------------------: | -------------------------: | -------------------: |
-| Decider V1.1 27B     | 80.7 |          85.4 |                   75.9 |                       76.1 |               0.0178 |
-| Mercury Decide       | 75.3 |          84.5 |                   66.2 |                       69.2 |               0.0167 |
-| Liquid d1            | 67.3 |          83.2 |                   51.3 |                       52.2 |               0.0312 |
-| Solar Decide         | 65.4 |          58.2 |                   72.7 |                       73.3 |               0.0843 |
-| Jev 1.13             | 64.0 |          73.1 |                   55.0 |                       55.5 |               0.0826 |
-| Clef                 | 61.3 |          72.0 |                   50.5 |                       51.0 |               0.2482 |
-| Microsoft-Decision-1 | 55.0 |          70.8 |                   39.3 |                       40.9 |               0.0308 |
-| Drex v1.5            | 53.4 |          69.2 |                   37.6 |                       37.2 |               0.0281 |
-| GPT-6 Luna Decisions | 53.4 |          55.1 |                   51.6 |                       52.2 |               0.1193 |
-| Clef Omni            | 44.2 |          61.6 |                   26.8 |                       29.6 |               0.1746 |
-| Clef Flash           | 42.4 |          55.6 |                   29.2 |                       32.0 |               0.0393 |
-| Tev1 4B Experimental | 42.0 |          68.4 |                   15.5 |                       18.6 |               0.0386 |
-| Kev 4B               | 40.1 |          62.3 |                   17.9 |                       19.0 |               0.0295 |
-| Solar Decide Flash   | 32.1 |          47.5 |                   16.7 |                       18.6 |               0.0843 |
-| span-01              | 11.6 |          10.9 |                   12.2 |                       13.8 |               0.0182 |
-| span-01 lite         | 11.6 |          10.9 |                   12.2 |                       13.8 |               0.0000 |
+| Model                | Index | JNLI skill | Business rule skill | Business rule pair accuracy | Cost for all tasks (USD) |
+| -------------------- | ----: | ---------: | ------------------: | --------------------------: | -----------------------: |
+| Decider V1.1 27B     |  80.7 |       85.4 |                75.9 |                        76.1 |                   0.0178 |
+| Mercury Decide       |  75.3 |       84.5 |                66.2 |                        69.2 |                   0.0167 |
+| Liquid d1            |  67.3 |       83.2 |                51.3 |                        52.2 |                   0.0312 |
+| Solar Decide         |  65.4 |       58.2 |                72.7 |                        73.3 |                   0.0843 |
+| Jev 1.13             |  64.0 |       73.1 |                55.0 |                        55.5 |                   0.0826 |
+| Clef                 |  61.3 |       72.0 |                50.5 |                        51.0 |                   0.2482 |
+| Microsoft-Decision-1 |  55.0 |       70.8 |                39.3 |                        40.9 |                   0.0308 |
+| Drex v1.5            |  53.4 |       69.2 |                37.6 |                        37.2 |                   0.0281 |
+| GPT-6 Luna Decisions |  53.4 |       55.1 |                51.6 |                        52.2 |                   0.1193 |
+| Clef Omni            |  44.2 |       61.6 |                26.8 |                        29.6 |                   0.1746 |
+| Clef Flash           |  42.4 |       55.6 |                29.2 |                        32.0 |                   0.0393 |
+| Tev1 4B Experimental |  42.0 |       68.4 |                15.5 |                        18.6 |                   0.0386 |
+| Kev 4B               |  40.1 |       62.3 |                17.9 |                        19.0 |                   0.0295 |
+| Solar Decide Flash   |  32.1 |       47.5 |                16.7 |                        18.6 |                   0.0843 |
+| span-01              |  11.6 |       10.9 |                12.2 |                        13.8 |                   0.0182 |
+| span-01 lite         |  11.6 |       10.9 |                12.2 |                        13.8 |                   0.0000 |
 
-日本語で最もよく当てたのは Perplexity の Decider V1.1 27B だった。ただし 2026年10月27日の時点で、このモデルは OpenRouter に提供元が 1 つも無く、呼び出せない。いま呼べるモデルでは Inception の Mercury Decide が両方のタスクで上位にいて、費用も有料のモデルで最も安い。Upstage の Solar Decide は業務ルール判定の skill が 72.7 と高いが、そのタスクでの応答の中央値が 18.7 秒で、200ms 前後で返すほかのモデルより桁違いに遅い。
+The model that did best in Japanese was Perplexity's Decider V1.1 27B. However, as of October 27, 2026, this model has no provider at all on OpenRouter and cannot be called. Among the models that can be called now, Inception's Mercury Decide is near the top on both tasks, and it is also the cheapest of the paid models. Upstage's Solar Decide has a high business rule skill of 72.7, but its median response time on that task is 18.7 seconds, orders of magnitude slower than the other models, which answer in around 200 ms.
 
-span-01 と span-01 lite は skill が 11 前後で、ランダムに答えたのとほとんど変わらない。span-01 lite は無料で、oxlint-plugin-decision 自身の lint にも使っているモデルなので、日本語の問いを判定させるのには向かないことがこの結果で分かった。この 2 つは「はい／いいえ」しか受け付けないため、JNLI は選択肢ごとの「はい／いいえ」に分けて聞き、「はい」の確率が最も高い選択肢を答えにしている。
+span-01 and span-01 lite have a skill of around 11, hardly different from answering at random. span-01 lite is free and is also the model used for oxlint-plugin-decision's own lint, so this result showed that it is not suited to judging questions in Japanese. These two accept only yes or no, so for JNLI the question is split into a yes or no question for each choice, and the choice with the highest probability of yes is taken as the answer.
 
-JNLI と業務ルール判定で順位が大きく入れ替わるモデルもある。Tev1 4B Experimental と Kev 4B は JNLI の skill が 60 を超えるのに、業務ルール判定では 20 に届かない。2 文の関係を見るだけの問題は解けても、長い規程を読んで条を組み合わせる問題になると崩れる。
+Some models swap places greatly between JNLI and business rule judgment. Tev1 4B Experimental and Kev 4B have a JNLI skill above 60, but do not reach 20 in business rule judgment. They can solve problems that only look at the relation between two sentences, but fall apart on problems that require reading long rules and combining clauses.
 
-## 費用
+## Costs
 
-16 モデルが 2 つのタスクの全問に答えた費用は、合わせて 1.04 USD だった。正解ラベルを付ける費用のほうがずっと大きく、Opus 5.5 に 1 問を 3 回ずつ聞いたラベル付けは、API の料金に換算すると 37.88 USD になる。3 回の答えが割れた問題は hard として、表の数字とは別に数えた。
+The cost of having the 16 models answer every question of both tasks was 1.04 USD in total. Giving the answer labels cost far more: labeling by asking Opus 5.5 each question three times comes to 37.88 USD at API prices. Questions where the three answers split were counted as hard, separately from the numbers in the tables.
 
-モデルの応答と正解ラベルはリポジトリにコミットしてあるので、測り直すときに Opus 5.5 は要らず、OpenRouter に問い合わせるのも新しく足したモデルの分だけで済む。
+The models' responses and the answer labels are committed to the repository, so measuring again does not need Opus 5.5, and queries to OpenRouter are needed only for newly added models.

@@ -1,65 +1,65 @@
 ---
-title: "AIにコードを書かせるならEffectを全面採用する"
-description: "Effectは失敗と依存を型に載せ、effect-tsgoがその正しい使い方を型チェックで強制する。AIエージェントに書かせるなら、CLIや小さなスクリプトも例外にせず全面採用する。"
+title: "If you have AI write your code, adopt Effect everywhere"
+description: "Effect puts failures and dependencies into types, and effect-tsgo enforces using them correctly through type checking. If you have AI agents write your code, adopt it everywhere, with no exceptions for CLIs or small scripts."
 tags: ["Effect", "effect-tsgo", "TypeScript"]
 published: true
 ---
 
-## AIが書くコードに繰り返し出る欠陥
+## Defects that keep appearing in code written by AI
 
-AIエージェントが書いたTypeScriptには、次の欠陥が繰り返し出てくる。
+The following defects keep appearing in TypeScript written by AI agents.
 
-| 欠陥                   | コード                             |
-| ---------------------- | ---------------------------------- |
-| timeout がない         | `fetch` を時間制限なしで呼ぶ       |
-| 並列数が無制限         | `Promise.all` に数千件の配列を渡す |
-| エラーを握りつぶす     | `catch (e) {}`                     |
-| キャンセルが伝わらない | AbortSignal を途中で渡し忘れる     |
-| retry が壊れている     | 手書きの retry ループが止まらない  |
+| Defect                          | Code                                                    |
+| ------------------------------- | ------------------------------------------------------- |
+| No timeout                      | Calling `fetch` with no time limit                      |
+| Unlimited concurrency           | Passing an array of thousands of items to `Promise.all` |
+| Swallowing errors               | `catch (e) {}`                                          |
+| Cancellation does not propagate | Forgetting to pass the AbortSignal along the way        |
+| Broken retries                  | A hand-written retry loop that never stops              |
 
-どれも、関数が何で失敗するか、何に依存するか、リソースをいつ解放するかが型に現れないため、型チェックを通ってしまう。
+All of these pass type checking, because what a function can fail with, what it depends on and when it releases resources do not appear in its type.
 
-## Effectは失敗と依存を型に載せる
+## Effect puts failures and dependencies into types
 
-Effect（effect-ts）の `Effect<A, E, R>` は3つの型引数を持つ。
+The `Effect<A, E, R>` of Effect (effect-ts) has three type parameters.
 
-| 型引数 | 表すもの         |
-| ------ | ---------------- |
-| `A`    | 成功時の値       |
-| `E`    | 起こりうるエラー |
-| `R`    | 実行に必要な依存 |
+| Type parameter | What it represents             |
+| -------------- | ------------------------------ |
+| `A`            | The value on success           |
+| `E`            | The errors that can occur      |
+| `R`            | The dependencies needed to run |
 
-2026年10月時点の既定はv4で、HTTP、SQL、CLI、AI、Schema、Config、Stream が同じコアの上にあり、依存は単一パッケージになった[^effect-docs]。
+As of October 2026 the default is v4, where HTTP, SQL, CLI, AI, Schema, Config and Stream sit on the same core, and the dependency has become a single package[^effect-docs].
 
-## Result型ライブラリとの違い
+## How it differs from Result type libraries
 
-エラーを型に載せるだけなら、neverthrow や ts-results などのResult型ライブラリでもできる。違いは2つある。
+If all you want is to put errors into types, Result type libraries such as neverthrow and ts-results can do that too. There are two differences.
 
-### 遅延評価とruntime
+### Lazy evaluation and the runtime
 
-Result型は実行済みの結果を表す。Effectは遅延評価されるプログラムの記述で、runtime が実行する。そのため実行の仕方をコンビネータとして合成できる。
+A Result type represents the result of something that has already run. Effect is a description of a lazily evaluated program, and the runtime runs it. Because of this, how it runs can be composed with combinators.
 
-| 欠陥                   | Effectでの書き方                      |
-| ---------------------- | ------------------------------------- |
-| timeout がない         | `Effect.timeout`                      |
-| 並列数が無制限         | `{ concurrency: 5 }`                  |
-| retry が壊れている     | `Effect.retry` に `Schedule` を渡す   |
-| 失敗時にリソースが残る | `Effect.acquireRelease`               |
-| キャンセルが伝わらない | Fiber への interrupt が自動で伝搬する |
+| Defect                           | How to write it in Effect                     |
+| -------------------------------- | --------------------------------------------- |
+| No timeout                       | `Effect.timeout`                              |
+| Unlimited concurrency            | `{ concurrency: 5 }`                          |
+| Broken retries                   | Passing a `Schedule` to `Effect.retry`        |
+| Resources left behind on failure | `Effect.acquireRelease`                       |
+| Cancellation does not propagate  | Interrupts to a Fiber propagate automatically |
 
-冒頭の欠陥は、どれもこれらで書ける処理を手書きして壊したものだ。
+Every defect at the top of this post is a hand-written, broken version of something these can express.
 
-### 依存を表す `R`
+### `R`, which represents dependencies
 
-Result型には依存を表す場所がない。Effectでは、データベースやHTTPクライアントが必要な処理はそれが `R` に現れ、Layer を提供し忘れると型エラーになる。テストでは Layer を差し替える。
+A Result type has no place to represent dependencies. In Effect, when a piece of processing needs a database or an HTTP client, that shows up in `R`, and forgetting to provide the Layer is a type error. In tests, you swap the Layer.
 
-## AIにとっての利点
+## The advantage for AI
 
-エージェントは、失敗と依存を、実装を読まずにシグネチャから知れる。エラーの種類を追加すれば、処理漏れの箇所が型エラーとしてすべて出る。型エラーはテストや実行時例外と違って決定的ですぐ返るので、修正ループが確実に回る。公式ドキュメントもこの点を強みに挙げている[^effect-docs]。
+An agent can learn the failures and dependencies from the signature without reading the implementation. If you add a kind of error, every place that fails to handle it shows up as a type error. Unlike tests and runtime exceptions, type errors are deterministic and come back immediately, so the fix loop runs reliably. The official documentation also lists this as a strength[^effect-docs].
 
-## 遅延評価の落とし穴
+## The pitfall of lazy evaluation
 
-yield せず代入もしていない Effect は実行されない。
+An Effect that is neither yielded nor assigned is not run.
 
 ```ts
 const program = Effect.gen(function* () {
@@ -68,44 +68,44 @@ const program = Effect.gen(function* () {
 });
 ```
 
-これは型エラーにならない。Promise の await 忘れと違い、処理自体が起きない。
+This is not a type error. Unlike forgetting to await a Promise, the processing itself does not happen.
 
-## effect-tsgoが正しい使い方を強制する
+## effect-tsgo enforces correct use
 
-### 正体
+### What it is
 
-パッケージ名は `@effect/tsgo` で、Go製のTypeScriptコンパイラ TypeScript-Go に Effect Language Service を組み込んだビルドである[^effect-tsgo]。
+The package name is `@effect/tsgo`, and it is a build of TypeScript-Go, the TypeScript compiler written in Go, with the Effect Language Service built in[^effect-tsgo].
 
-| 機能     | 内容                                                                          |
-| -------- | ----------------------------------------------------------------------------- |
-| 診断     | floating Effect、処理されていないエラー型、満たされていない依存など50種類以上 |
-| refactor | async/await から Effect への変換、`Effect.gen` と `Effect.fn` の相互変換など  |
+| Feature     | What it does                                                                                       |
+| ----------- | -------------------------------------------------------------------------------------------------- |
+| Diagnostics | More than 50 kinds, including floating Effects, unhandled error types and unsatisfied dependencies |
+| Refactors   | Converting from async/await to Effect, converting between `Effect.gen` and `Effect.fn`, and more   |
 
-### lintとの違い
+### How it differs from lint
 
-診断は通常のTypeScriptの診断として出力される[^effect-devtools]。
+The diagnostics are output as ordinary TypeScript diagnostics[^effect-devtools].
 
-|                            | 実行される工程        | 回避できるか                       |
-| -------------------------- | --------------------- | ---------------------------------- |
-| `eslint-plugin-neverthrow` | 型チェックと別の lint | 設定から外せるし、実行し忘れもある |
-| effect-tsgo                | 型チェックそのもの    | 型チェックを通す限り避けられない   |
+|                            | The step where it runs             | Can it be avoided                                                |
+| -------------------------- | ---------------------------------- | ---------------------------------------------------------------- |
+| `eslint-plugin-neverthrow` | A lint separate from type checking | It can be removed from the settings, and people forget to run it |
+| effect-tsgo                | Type checking itself               | It cannot be avoided as long as type checking has to pass        |
 
-エディタ、CI、エージェントの実行のどこでも同じ診断が出る。ライブラリは使われなければ意味がないが、Effectは正しく使わせる手段を公式が提供している。
+The same diagnostics appear in the editor, in CI and in agent runs alike. A library means nothing if it is not used, but for Effect, the official project provides the means to make people use it correctly.
 
-## 例外を作らない
+## Make no exceptions
 
-CLIや小さなスクリプトだけResult型とlintにすると、エラー処理の書き方が2つになる。エージェントはどちらで書くかを毎回判断して誤る。両者の境界では型が途切れ、そこは effect-tsgo の診断の外になる。
+If only CLIs and small scripts use a Result type and lint, there are two ways of writing error handling. The agent decides which one to use every time and gets it wrong. Types are cut off at the boundary between the two, and that boundary falls outside effect-tsgo's diagnostics.
 
-全面採用は維持しやすい。Effectを返す関数を呼ぶ側は、Effectで受けないと値を取り出せない。`R` を満たすには Layer を書く必要がある。既存の async/await は effect-tsgo の refactor で移行できる。
+Adopting it everywhere is easy to maintain. The caller of a function that returns an Effect cannot get the value out without receiving it in Effect. To satisfy `R`, you have to write a Layer. Existing async/await code can be migrated with effect-tsgo's refactors.
 
-## コスト
+## Costs
 
-| 項目     | 内容                                                                                                            |
-| -------- | --------------------------------------------------------------------------------------------------------------- |
-| API      | 大きく、v3からv4でも変わっている。LLMの学習データの大半はv3以前なので、存在しないAPIや古い書き方が出やすい      |
-| 型エラー | 長く、コンテキストを消費する                                                                                    |
-| 成熟度   | effect-tsgo はまだAlphaで、リリース間の破壊的変更が想定されている                                               |
-| 導入条件 | `typescript` 7以上のネイティブ版が必要で、素の tsgo と language server を併用すると診断が重複する[^effect-tsgo] |
+| Item         | Details                                                                                                                                                          |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| API          | It is large and has changed from v3 to v4. Most of the training data of LLMs is from v3 or earlier, so APIs that do not exist and outdated styles tend to appear |
+| Type errors  | They are long and consume context                                                                                                                                |
+| Maturity     | effect-tsgo is still alpha, and breaking changes between releases are expected                                                                                   |
+| Requirements | It needs the native version of `typescript` 7 or later, and using it together with plain tsgo and its language server duplicates diagnostics[^effect-tsgo]       |
 
 [^effect-docs]: [Effect v4 docs](https://effect.website/docs/v4/)
 
