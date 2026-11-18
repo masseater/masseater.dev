@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { layer } from "@effect/vitest";
 import { deepStrictEqual } from "@effect/vitest/utils";
 import { Config, Effect, FileSystem, Redacted, Array as Arr, pipe, Order } from "effect";
@@ -88,18 +88,15 @@ const claimsLive = (
     }),
   );
 
-layer(NodeServices.layer, { excludeTestServices: true })(
-  "the claim rules on Span-01 Lite",
-  (it) => {
-    it.effect(
-      "strict reports the broken promises in the example",
-      () => claimsLive("strict"),
-      TIMEOUT,
-    );
-    it.effect(
-      "review-only reports the descriptions that misdescribe the example",
-      () => claimsLive("review-only"),
-      TIMEOUT,
-    );
-  },
-);
+layer(nodeServices, { excludeTestServices: true })("the claim rules on Span-01 Lite", (it) => {
+  it.effect(
+    "strict reports the broken promises in the example",
+    () => claimsLive("strict"),
+    TIMEOUT,
+  );
+  it.effect(
+    "review-only reports the descriptions that misdescribe the example",
+    () => claimsLive("review-only"),
+    TIMEOUT,
+  );
+});

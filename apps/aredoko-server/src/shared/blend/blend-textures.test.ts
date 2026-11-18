@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { expect, layer } from "@effect/vitest";
 import { Array, Effect, FileSystem, HashMap, Option, Path, Result, Schema, pipe } from "effect";
 import { Base64 } from "effect/encoding";
@@ -69,7 +69,7 @@ const blendBesideTexture = Effect.gen(function* blendBesideTexture() {
   return path.join(folder, "model.blend");
 });
 
-layer(NodeServices.layer)("texturesOf", (it) => {
+layer(nodeServices)("texturesOf", (it) => {
   it.effect("finds textures next to the .blend and puts them into the glTF", () =>
     Effect.gen(function* test() {
       const blend = yield* blendBesideTexture;

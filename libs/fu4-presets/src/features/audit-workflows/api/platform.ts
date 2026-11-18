@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { Effect, FileSystem, Layer, ManagedRuntime, Option, Path } from "effect";
 import type { Redacted } from "effect";
 import { FetchHttpClient, HttpClient, HttpClientRequest } from "effect/http";
@@ -15,7 +15,7 @@ import type { Exchange, Reply, Transport } from "./transport.ts";
 
 const RETRIES = 3;
 
-const platform = ManagedRuntime.make(Layer.mergeAll(FetchHttpClient.layer, NodeServices.layer));
+const platform = ManagedRuntime.make(Layer.mergeAll(FetchHttpClient.layer, nodeServices));
 
 const failure = (cause: { readonly message: string }): GitHubError =>
   GitHubError.make({ message: cause.message });

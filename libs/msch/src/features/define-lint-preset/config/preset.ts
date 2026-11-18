@@ -101,6 +101,18 @@ const rules = {
     { ignoreInferredTypes: true, allow: readonlyParameterAllow },
   ],
   "eslint/no-duplicate-imports": ["error", { allowSeparateTypeImports: true }],
+  "eslint/no-restricted-imports": [
+    "error",
+    {
+      paths: [
+        {
+          name: "@effect/platform-node",
+          message:
+            'Import names from a module path, such as import { layer } from "@effect/platform-node/NodeServices". The package root loads every module, the Redis client included, and adds about 250 ms to each start.',
+        },
+      ],
+    },
+  ],
   "react/function-component-definition": [
     "error",
     { namedComponents: "arrow-function", unnamedComponents: "arrow-function" },
@@ -119,6 +131,10 @@ const overrides = [
     rules: { "import/no-default-export": "off" },
   },
   commandsOverride,
+  {
+    files: ["**/bin/**"],
+    rules: { "baseline-js/use-baseline": "off" },
+  },
   {
     files: ["**/vite.config.ts"],
     rules: {

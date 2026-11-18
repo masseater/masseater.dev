@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { lint } from "@r_masseater/y8";
 import type { Diagnostic, Y8Config, Y8Error } from "@r_masseater/y8";
 import {
@@ -16,7 +16,7 @@ import { afterAll, expect, test } from "vite-plus/test";
 
 import { readme, recommended } from "./index.ts";
 
-const services = ManagedRuntime.make(NodeServices.layer);
+const services = ManagedRuntime.make(nodeServices);
 afterAll(() => services.dispose());
 
 const RECOMMENDED: Y8Config = recommended({

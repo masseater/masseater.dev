@@ -1,4 +1,4 @@
-import { NodeHttpServer } from "@effect/platform-node";
+import { layerTest } from "@effect/platform-node/NodeHttpServer";
 import { Effect, Layer, Option, Record as Rec, Schema, pipe } from "effect";
 import type { Scope } from "effect";
 import { HttpRouter, HttpServer, HttpServerRequest, HttpServerResponse } from "effect/http";
@@ -50,7 +50,7 @@ export const fakeTypesafeEnv = (
     const server = HttpRouter.serve(HttpRouter.add("POST", "/v1/systemone", reply(answer)), {
       disableLogger: true,
       disableListenLog: true,
-    }).pipe(Layer.provideMerge(NodeHttpServer.layerTest));
+    }).pipe(Layer.provideMerge(layerTest));
     const context = yield* Layer.build(server);
     const baseURL = yield* HttpServer.addressFormattedWith((address) =>
       Effect.succeed(address),

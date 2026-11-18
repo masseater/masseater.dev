@@ -46,6 +46,14 @@
   ],
   "workspaces": {
     "settings": {
+      "tools/lint-bench": {
+        "ignoreDependencies": [
+          "@r_masseater/fu4",
+          "@r_masseater/fu4-presets",
+          "@r_masseater/wism",
+          "@r_masseater/y8",
+        ],
+      },
       "libs/h56m-presets": {
         "ignoreDependencies": ["betterleaks"],
       },

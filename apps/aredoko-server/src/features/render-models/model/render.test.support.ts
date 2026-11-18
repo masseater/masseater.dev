@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { Array, Effect, FileSystem, Layer, Option, Path, Result, Schema } from "effect";
 import { Base64 } from "effect/encoding";
 import { SqlClient } from "effect/sql";
@@ -37,7 +37,7 @@ export const dataInTemporaryFolder = Layer.unwrap(
     });
     return databaseLayer.pipe(Layer.provideMerge(settings));
   }),
-).pipe(Layer.provideMerge(NodeServices.layer));
+).pipe(Layer.provideMerge(nodeServices));
 
 /** @internal */
 export const stateOf = Effect.fn("stateOf")(function* stateOf(assetId: number) {

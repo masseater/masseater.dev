@@ -1,10 +1,10 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import type { PlatformError, Scope } from "effect";
 import { Effect, ManagedRuntime, Stream } from "effect";
 import { ChildProcess, ChildProcessSpawner } from "effect/process";
 import { afterAll, expect, test } from "vite-plus/test";
 
-const services = ManagedRuntime.make(NodeServices.layer);
+const services = ManagedRuntime.make(nodeServices);
 afterAll(() => services.dispose());
 
 const SUCCESS = 0;

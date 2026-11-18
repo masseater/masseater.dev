@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-import { NodeRuntime, NodeServices } from "@effect/platform-node";
+import { runMain } from "@effect/platform-node/NodeRuntime";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import {
   Config,
   Console,
@@ -38,7 +39,7 @@ const tracing = OtlpTracer.layerFromConfig({
 
 const services = Layer.mergeAll(openRouter, tracing).pipe(
   Layer.provide(FetchHttpClient.layer),
-  Layer.provideMerge(NodeServices.layer),
+  Layer.provideMerge(nodeServices),
 );
 
 const encodeJson = Schema.encodeUnknownEffect(Schema.fromJsonString(Schema.Unknown));
@@ -118,7 +119,7 @@ const command = Command.make(
 
 const program = Command.run(command, { version: pkg.version });
 
-NodeRuntime.runMain(
+runMain(
   Layer.build(services).pipe(
     Effect.flatMap((context) => Effect.provideContext(program, context)),
     Effect.scoped,

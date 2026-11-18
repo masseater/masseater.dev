@@ -1,4 +1,4 @@
-import { NodeWorkerRunner } from "@effect/platform-node";
+import { layer as nodeWorkerRunner } from "@effect/platform-node/NodeWorkerRunner";
 import { runMain } from "@masseater.dev/node-main";
 import { Effect, Layer } from "effect";
 import { RpcServer, RpcWorker } from "effect/rpc";
@@ -33,7 +33,7 @@ const workerLayer = RpcServer.layer(EmbedderRpcs).pipe(
   Layer.provide(handlersLayer),
   Layer.provide(embedderLayer),
   Layer.provide(RpcServer.layerProtocolWorkerRunner),
-  Layer.provide(NodeWorkerRunner.layer),
+  Layer.provide(nodeWorkerRunner),
 );
 
 runMain("aredoko-embedder")(Layer.launch(workerLayer));

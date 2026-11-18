@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { expect, layer } from "@effect/vitest";
 import { Effect, Fiber, FileSystem, Option, Path, Stream, pipe } from "effect";
 
@@ -18,7 +18,7 @@ const firstChange = Effect.fn("firstChange")(function* firstChange(root: string)
   );
 });
 
-layer(NodeServices.layer, { excludeTestServices: true })("packageChanges", (it) => {
+layer(nodeServices, { excludeTestServices: true })("packageChanges", (it) => {
   it.effect("emits once a unitypackage lands in a watched folder", () =>
     Effect.gen(function* emitsOnPackage() {
       const fileSystem = yield* FileSystem.FileSystem;

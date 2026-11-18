@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { SqliteClient } from "@effect/sql-sqlite-node";
 import { expect, layer } from "@effect/vitest";
 import { Array, ConfigProvider, Effect, FileSystem, Layer, Option, Path, pipe } from "effect";
@@ -51,7 +51,7 @@ const blmInTemporaryFolder = Layer.unwrap(
     const environment = ConfigProvider.layer(ConfigProvider.fromUnknown({ APPDATA: roaming }));
     return blmLayer.pipe(Layer.provide(environment), Layer.provide(written));
   }),
-).pipe(Layer.provideMerge(NodeServices.layer));
+).pipe(Layer.provideMerge(nodeServices));
 
 layer(blmInTemporaryFolder, { excludeTestServices: true })("Blm", (it) => {
   it.effect("reads the item folder and the BOOTH items registered in it", () =>

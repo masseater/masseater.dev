@@ -1,0 +1,28 @@
+{
+  "name": "lint-bench",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Measures the time, memory and findings of y8, wism, fu4 and h56m against the linters they replace and the tools that do the same job.",
+  "bin": {
+    "lint-bench": "./bin/lint-bench.ts"
+  },
+  "type": "module",
+  "imports": {
+    "#/*": "./src/*",
+    "#package.json": "./package.json"
+  },
+  "dependencies": {
+    "@masseater.dev/node-main": "workspace:*",
+    "@r_masseater/fu4": "workspace:*",
+    "@r_masseater/fu4-presets": "workspace:*",
+    "@r_masseater/h56m": "workspace:*",
+    "@r_masseater/h56m-presets": "workspace:*",
+    "@r_masseater/wism": "workspace:*",
+    "@r_masseater/y8": "workspace:*",
+    "effect": "catalog:stack"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "vite-plus": "catalog:stack"
+  }
+}

@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { expect, layer } from "@effect/vitest";
 import { Array, Effect, FileSystem, Order, Path, pipe } from "effect";
 
@@ -8,7 +8,7 @@ const SOURCE_ID = 1;
 const SWORD_BYTES = 3;
 const COVER_BYTES = 4;
 
-layer(NodeServices.layer, { excludeTestServices: true })("bundlesIn", (it) => {
+layer(nodeServices, { excludeTestServices: true })("bundlesIn", (it) => {
   it.effect("groups loose assets by their top folder and keeps root files on their own", () =>
     Effect.gen(function* groups() {
       const fileSystem = yield* FileSystem.FileSystem;

@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { layer } from "@effect/vitest";
 import { assertInclude, deepStrictEqual, strictEqual } from "@effect/vitest/utils";
 import {
@@ -204,33 +204,30 @@ const retriesCorruptCache = Effect.scoped(
   }),
 );
 
-layer(NodeServices.layer, { excludeTestServices: true })(
-  "refining a large file's location",
-  (it) => {
-    it.effect(
-      "narrows a range with full context and caches both requests",
-      () => withMock(refines),
-      TIMEOUT,
-    );
-    it.effect(
-      "keeps later findings when a refinement fails, without more requests",
-      () => withMock(keepsLaterFindings),
-      TIMEOUT,
-    );
-    it.effect.each(failedRefinements)(
-      "keeps the finding when refinement fails (%o)",
-      (failure) => withMock(preservesFinding(failure)),
-      TIMEOUT,
-    );
-    it.effect.each(missingOnce)(
-      "retries a malformed location answer on the next run (%o)",
-      (missing) => withMock(retriesMalformed(missing)),
-      TIMEOUT,
-    );
-    it.effect(
-      "retries malformed refinement answers already on disk",
-      () => withMock(retriesCorruptCache),
-      TIMEOUT,
-    );
-  },
-);
+layer(nodeServices, { excludeTestServices: true })("refining a large file's location", (it) => {
+  it.effect(
+    "narrows a range with full context and caches both requests",
+    () => withMock(refines),
+    TIMEOUT,
+  );
+  it.effect(
+    "keeps later findings when a refinement fails, without more requests",
+    () => withMock(keepsLaterFindings),
+    TIMEOUT,
+  );
+  it.effect.each(failedRefinements)(
+    "keeps the finding when refinement fails (%o)",
+    (failure) => withMock(preservesFinding(failure)),
+    TIMEOUT,
+  );
+  it.effect.each(missingOnce)(
+    "retries a malformed location answer on the next run (%o)",
+    (missing) => withMock(retriesMalformed(missing)),
+    TIMEOUT,
+  );
+  it.effect(
+    "retries malformed refinement answers already on disk",
+    () => withMock(retriesCorruptCache),
+    TIMEOUT,
+  );
+});
