@@ -30,12 +30,11 @@ export const nodeServicesLayer = Layer.provideMerge(
 const MISSING_SIZE = 0;
 const GENERATED_PATHSPEC = ":(attr:linguist-generated)";
 const OWNED_PATHSPECS = [":(exclude,attr:linguist-vendored)", ":(exclude,attr:linguist-generated)"];
-const LISTED_ARGS = ["--cached", "--others", "--exclude-standard"];
+export const NODE_MODULES = "node_modules";
+const LISTED_ARGS = ["--cached", "--others", "--exclude-standard", `--exclude=${NODE_MODULES}/`];
 const IGNORED_ARGS = ["--others", "--ignored", "--exclude-standard"];
 const STAGED_ARGS = ["--stage"];
 const LINK_ENTRY = /^120000 \S+ \d+\t(?<name>.+)$/u;
-
-export const NODE_MODULES = "node_modules";
 
 export class RepositoryFiles extends Context.Service<
   RepositoryFiles,
