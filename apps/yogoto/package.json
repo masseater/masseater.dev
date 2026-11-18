@@ -1,0 +1,37 @@
+{
+  "name": "yogoto",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "imports": {
+    "#/*": "./src/*"
+  },
+  "dependencies": {
+    "@effect/atom-react": "catalog:stack",
+    "@masseater.dev/media-notes-protocol": "workspace:*",
+    "@masseater.dev/media-notes-ui": "workspace:*",
+    "@masseater.dev/ui": "workspace:*",
+    "@masseater.dev/yogoto-protocol": "workspace:*",
+    "@tauri-apps/api": "catalog:",
+    "effect": "catalog:stack",
+    "lucide-react": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "scheduler": "catalog:",
+    "tailwindcss": "catalog:stack",
+    "tw-animate-css": "catalog:"
+  },
+  "devDependencies": {
+    "@effect/tsgo": "catalog:stack",
+    "@masseater.dev/component-release": "workspace:*",
+    "@masseater.dev/tauri-app": "workspace:*",
+    "@r_masseater/msch": "workspace:*",
+    "@tauri-apps/cli": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@types/youtube": "catalog:",
+    "typescript": "catalog:stack",
+    "vite": "catalog:",
+    "vite-plus": "catalog:stack"
+  }
+}
