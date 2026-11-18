@@ -1,24 +1,24 @@
 ---
-title: "What are you trying to achieve with small releases?"
-description: "What do you want to achieve with small releases? Can it only be achieved by making things small? Are you really achieving it by making things small? Not only small releases, but existing software development flows in general should be doubted again with these questions."
+title: "小規模なリリースで何を実現しようとしているんだ？"
+description: "小規模なリリースで何を達成したいのか？小さくすることでしか実現できないのだろうか？本当に小さくすることで実現してるの？小規模なリリースに限らず、既存のソフトウェア開発フロー全般について、こうした問いを立てる際には改めて疑問を持つべきである。"
 tags: ["AI", "開発", "ポエム"]
 published: true
 ---
 
-When I was running several repositories in parallel in Claude threads, the Claude acting as coordinator told each thread, "to avoid colliding with the other threads, split the template changes small and merge them first." I replied like this.
+Claudeのスレッドで複数のリポジトリを並列に動かしていたとき、コーディネーター役のClaudeが各スレッドに「他のスレッドと衝突しないよう、テンプレートの変更は小さく分割して先にマージしろ」と指示した。このように返信した。
 
 > 小さく先にマージすることに意味はないっす
 >
 > 根本をちゃんと解決してね
 
-Everyone knows small releases as a good habit of software development. Claude knows it too, and tries to split things small without being asked. That is exactly what I want it to doubt. What are you trying to do in the first place, can it only be achieved by making things small, and are you really achieving it by making things small?
+ソフトウェア開発における良い習慣として、小規模リリースがあることは誰もが知っている。Claudeもそれを分かっていて、頼まれなくても細かく分割しようとする。まさにそれを疑わせたいんだ。そもそも何をしようとしてるの、小さくすることでしか実現できないの、本当に小さくすることで実現してるの？
 
-If you ask why people want to make things small, the answers should be things like wanting to narrow the damage when something breaks, or wanting to see reactions early. Some people want an amount that can be read fully in review, and some want to deliver what is done as soon as possible. Nobody wants small releases for their own sake.
+なぜ小さくしたいのかと問われれば、壊れた時に被害を限定したいとか、反応を早く見たいといった答えになるはずだ。レビューで最後まで読める量を求める人もいれば、完了したものをできるだけ早く納品したい人もいる。自分の利益のために小規模なリリースをしたい人なんていない。
 
-All of these can be achieved without making things small. If you want to narrow the damage, set up a mechanism that can roll back right away when something breaks, and checks that run before merging. Wanting an amount that can be read fully in review is no longer a reason for me, since I [stopped reviewing PRs](/blogs/stop-pr-review). If you want to see reactions, you should think about the mechanism by which someone looks at what you release.
+これらはすべて、事を小さくすることなく実現できる。被害を抑えたいなら、何かが壊れたときにすぐにロールバックできる仕組みと、マージ前に実行されるチェック機能を実装してほしい。レビューで最後まで読める量を求めることは、もう自分にとって理由にならない。[PRのレビューをやめた](/blogs/stop-pr-review)からだ。リアクションを見たいなら、自分がリリースしたものを誰かがどう見るかという仕組みについて考えるべきだ。
 
-Whether making things small really achieves anything is also doubtful. Putting a fragment that nobody looks at into main first brings no reactions back. One fragment at a time keeps the damage small, but the problem stays unsolved. The coordinator Claude's instruction, too, may have achieved threads not colliding with each other, but it did not bring us closer to the problem I wanted to solve with the template changes.
+小さくすることが本当に何かの役に立つのかも怪しい。誰も見ない断片をメインに配置しても、反応は返ってこない。断片ごとに対応することで被害は小さく抑えられているが、問題は未解決のままだ。コーディネーターのClaudeによる指示も、スレッド同士が衝突せずに済んだのかもしれないが、テンプレートの変更で解決したかった問題に近づくまでには至らなかった。
 
-Small releases are only one example. PR review, sprints and how branches are cut are also means made to fit the speed at which people write and people read, and they continue without anyone asking again what they are meant to achieve. Doubt the existing software development flows, all of humanity.
+小規模なリリースはその一例に過ぎない。PRレビューやスプリント、そしてブランチの切り方も、人々が執筆し読むスピードに合わせて作られた手段であり、誰も改めて何を達成しようとしているのかを問うことなく続いていく。既存のソフトウェア開発フローに疑問を抱け、全人類よ。
 
-If solving it needs a big change, just merge it as one big change.
+解決に大幅な変更が必要なら、一括して一つの大きな変更としてマージすればいい。

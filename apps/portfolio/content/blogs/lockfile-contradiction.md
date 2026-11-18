@@ -1,14 +1,14 @@
 ---
-title: "Regenerating a lockfile is a version upgrade"
-description: "Teams are afraid to auto-merge Renovate's update PRs, yet they commit the diff from deleting the lockfile and running npm install again without anyone reading it."
+title: "ロックファイルの再生成はバージョンアップグレードである"
+description: "チームはRenovateのアップデートPRを自動マージすることをためらっているが、ロックファイルを削除してnpm installを再実行した差分を、誰にも読まれないままコミットしている。"
 tags: ["開発", "ポエム"]
 published: true
 ---
 
-I do not see many teams that merge dependency upgrades automatically. Even with Renovate installed, the rule is that a person reads each PR before merging, and not only major versions but even patches pile up because "we don't know what will break." The same teams, when the lockfile has a conflict, delete it, run `npm install` again, and commit the resulting diff as it is.
+依存関係のアップグレードを自動的にマージするチームはあまり見かけない。Renovateを入れていても、マージする前に人が各PRを読むのがルールで、メジャーバージョンだけでなくパッチまで「何が壊れるか分からない」から山積みになる。同じチームで、lockfileに競合がある場合は、それを削除し、再度 `npm install` を実行して、得られた差分をそのままコミットする。
 
-Regenerating the lockfile puts in the latest versions that fit the `^` and `~` ranges in package.json, for every dependency including transitive ones. This is the same as taking all the PRs Renovate sends one by one, bundling them together, and merging them without reading the changelogs.
+ロックファイルを再生成すると、package.json の `^` および `~` 範囲に適合する最新バージョンが、推移的な依存関係を含むすべての依存関係に対して適用される。これは、Renovateが送ってくるPRをすべて一つずつ受け取り、まとめて、変更履歴を読まずにマージするのと同じことだ。
 
-`npm install` does not rewrite the lockfile on its own. The [documentation](https://docs.npmjs.com/cli/commands/npm-install) says that the current npm installs the versions in the lockfile as they are, as long as they fit the ranges in package.json. It gets rewritten when you change package.json, when you add a new package and transitive dependencies are resolved again, and when you delete the lockfile. All of these are things we do every day, and each time, upgrades within the ranges happen.
+`npm install` はロックファイルを単独で書き換えない。[ドキュメント](https://docs.npmjs.com/cli/commands/npm-install)によると、現在のnpmは、package.jsonの範囲に収まっている限り、ロックファイル内のバージョンをそのままインストールする。package.json を変更したり、新しいパッケージを追加して推移的依存関係を再解決したり、ロックファイルを削除したりすると、書き換えられる。これらはすべて私たちが日々行っていることであり、その都度、範囲内でのアップグレードが行われる。
 
-Then Renovate's PRs should be treated the same way. Writing `^` already declares that updates within the range are accepted. What we are afraid of is only the changes that carry the name "version upgrade," while we accept the changes without that name every day.
+それならRenovateのPRも同様に扱うべきだ。`^` と記述することで、範囲内の更新が受理されることがあらかじめ宣言されている。私たちが恐れているのは、「バージョンアップグレード」という名を冠した変更だけであり、その名を冠さない変更については日々受け入れている。

@@ -1,30 +1,30 @@
 ---
-title: "Why building h56m's detector took 3 seconds"
-description: "A record of measuring that Kingfisher's kingfisher-rules compiled the Vectorscan databases for the Betterleaks filters every time, and of bringing watashi's tests from 214 seconds down to 5 seconds with an in-process cache."
+title: "h56mの検出器の構築に3秒かかった理由"
+description: "あのカワセミのカワセミルールズが、Betterleaksフィルター用のVectorscanデータベースを毎回コンパイルし、インプロセスキャッシュによってwatashiのテストを214秒から5秒に短縮した記録。"
 tags: ["Rust", "Kingfisher", "Vectorscan", "シークレット検出"]
 published: true
 ---
 
-h56m is a secret detector written in Rust on top of kingfisher-rules and kingfisher-scanner from [Kingfisher](https://github.com/mongodb/kingfisher). It loads 474 rules from the Betterleaks preset from TOML. watashi, which sends Claude Code conversations to watashi-mcp, masks secrets with h56m before sending them.
+h56mは、[Kingfisher](https://github.com/mongodb/kingfisher)のkingfisher-rulesとkingfisher-scannerをベースにRustで書かれたシークレット検出器である。TOMLのBetterleaksプリセットから474個のルールを読み込む。Claude Codeの会話をwatashi-mcpに送信するwatashiは、送信前にh56mでシークレットをマスクする。
 
-## The breakdown of the 3 seconds
+## 3秒の内訳
 
-When I switched watashi to h56m, watashi's tests started timing out. The whole test file took 214 seconds. The tests built a new detector for each test, so I measured the time it takes to build one detector, stage by stage.
+watashiをh56mに切り替えたら、watashiのテストがタイムアウトするようになった。テストファイル全体にかかった時間は214秒だった。テストではテストごとに新しい検出器が構築されたため、検出器1つを構築するのにかかる時間を段階的に計測した。
 
-| Stage                                                                                                 | Time taken      |
-| ----------------------------------------------------------------------------------------------------- | --------------- |
-| Loading the main Vectorscan database from the disk cache and compiling the rules' regular expressions | 60 ms           |
-| Compiling the Vectorscan databases for Betterleaks' `matchesAny` and `findMatch` filters              | About 3 seconds |
+| ステージ                                                                                         | 所要時間 |
+| ------------------------------------------------------------------------------------------------ | -------- |
+| ディスクキャッシュからメインのVectorscanデータベースを読み込み、ルールの正規表現をコンパイルする | 60 ms    |
+| Betterleaksの`matchesAny`および`findMatch`フィルタ向けのVectorscanデータベースのコンパイル       | 約3秒    |
 
-kingfisher-rules 3.2.1 saves the main Vectorscan database to `~/.cache/kingfisher/rule-cache` and reuses it on the next start[^kingfisher-rules-database]. The filter databases do not go into this cache, and `BetterleaksFilterEngine::compile_for_rules` compiles them again every time a detector is built[^kingfisher-betterleaks-filter]. Most of the 3 seconds was this compilation.
+kingfisher-rules 3.2.1 は、メインの Vectorscan データベースを `~/.cache/kingfisher/rule-cache` に保存し、次の start[^kingfisher-rules-database] で再利用する。フィルタデータベースはこのキャッシュに格納されず、`BetterleaksFilterEngine::compile_for_rules` は検出器がビルドされるたびにそれらを再コンパイルする[^kingfisher-betterleaks-filter]。3秒の大半はこのコンパイルだった。
 
-## Build it only once within the process
+## プロセス内で一度だけビルドする
 
-I made h56m keep the compiled rule databases in an in-process table. The key of the table is the rule settings. When a second detector is built with the same settings, it reuses the first one's databases. With this change, watashi's tests went from 214 seconds to 5 seconds ([#1319](https://github.com/masseater/masseater.dev/pull/1319)).
+h56m で、コンパイル済みルールのデータベースをプロセス内テーブルに保持するようにした。表のキーはルール設定だ。同じ設定で2つ目の検出器をビルドすると、1つ目の検出器のデータベースが再利用される。この変更で、watashiのテストは214秒から5秒になった([#1319](https://github.com/masseater/masseater.dev/pull/1319))。
 
-## The remaining 3 seconds
+## 残りの3秒
 
-This cache disappears when the process ends. watashi runs as a Claude Code hook, and a hook starts a new process every time it is called, so each call pays the 3 seconds once. The filter databases are built inside kingfisher-rules, so h56m cannot remove this on its side. I wrote a request to Kingfisher to save the two filter databases in the same cache as the main one. If that goes in, even short-lived processes can start in about 60 ms, the same as with the main cache.
+このキャッシュはプロセス終了時に消える。watashiはClaude Codeのフックとして動作しており、フックが呼び出されるたびに新しいプロセスが起動するため、呼び出しごとに3秒分のコストが一度発生する。フィルターデータベースは kingfisher-rules 内に構築されているため、h56m はこれを横方向から削除できない。Kingfisherに、2つのフィルタデータベースをメインのものと同じキャッシュに保存するようリクエストを書いた。それが入れば、短時間のプロセスであっても、メインキャッシュと同じ約60msで起動できる。
 
 [^kingfisher-rules-database]: [kingfisher-rules 3.2.1 の src/rules_database.rs](https://docs.rs/crate/kingfisher-rules/3.2.1/source/src/rules_database.rs)
 

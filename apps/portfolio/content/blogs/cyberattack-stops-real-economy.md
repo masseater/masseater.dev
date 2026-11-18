@@ -38,7 +38,7 @@ published: true
 
 [^denfaminico-allnet]: [セガ フェイブが「ALL.Net」「Aime」サーバーへの不正アクセスを確認](https://news.denfaminicogamer.jp/news/2611022u)（電ファミニコゲーマー）
 
-[^exvs-offline]: [【11月2日時点】イニブのオンラインが停止中・オフラインも順次停止へ](https://gundam-exvs.online/allnet-maintenance-exvs-online/) (a fan information site for the Gundam EXVS series)
+[^exvs-offline]: [【11月2日時点】イニブのオンラインが停止中・オフラインも順次停止へ](https://gundam-exvs.online/allnet-maintenance-exvs-online/) (ガンダムEXVSシリーズのファン情報サイト)
 
 [^erina-note]: [プレイハウスエリナの note](https://note.com/playhouse_erina/n/n7e458e48ef66)（2026年11月）
 
@@ -50,7 +50,7 @@ published: true
 
 [^sakigake-asahi]: [アサヒ障害1カ月復旧めど立たず ビール出荷品目1割に低迷](https://www.sakigake.jp/news/article/20251029CO0099/)（秋田魁新報、2025年10月29日）
 
-[^oanda-kirin]: [キリン業務用出荷正常化へ](https://www.oanda.jp/lab-education/?p=105105), [キリン、歳暮商品全て販売停止へ](https://www.oanda.jp/lab-education/market_news/kn_2025111901001815/) (articles distributed by Kyodo News).サッポロとサントリーも、一部の年末ギフトセットの販売を停止した。
+[^oanda-kirin]: [キリン業務用出荷正常化へ](https://www.oanda.jp/lab-education/?p=105105), [キリン、歳暮商品全て販売停止へ](https://www.oanda.jp/lab-education/market_news/kn_2025111901001815/)（共同通信配信記事）。サッポロとサントリーも、一部の年末ギフトセットの販売を停止した。
 
 [^impress-nichirei]: [ネットショップ担当者フォーラムの記事](https://netshop.impress.co.jp/n/2026/07/22/16439)（2026年7月22日）
 

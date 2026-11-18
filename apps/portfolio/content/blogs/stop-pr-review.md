@@ -1,18 +1,18 @@
 ---
-title: "Let's stop reviewing PRs"
-description: "In this one week, 97 PRs were merged into main of masseater.dev, and I did not read the diff of any of them. Everything PR review guaranteed was only half done, and it got by only because development was slow."
+title: "PRのレビューはやめよう"
+description: "この1週間で、97件のPRがmasseater.devのmainにマージされたが、私はそのどれの差分も読まなかった。PRレビューで保証されていたことはすべて半分しか終わっておらず、開発が遅かったからこそなんとかなっただけだ。"
 tags: ["AI", "開発", "ポエム"]
 published: true
 ---
 
-In this one week, 97 PRs were merged into main of masseater.dev. They were written by Claude or Renovate, and I let them be merged without reading the diffs. The repository's AGENTS.md says 「PR のレビュー、PR ごとの CI・動作検証・デプロイはしない。動作は本番で確かめる」, and Claude merges by itself once the local verify passes. It does not even ask whether it may merge.
+この1週間で、97件のPRがmasseater.devのmainにマージされた。ClaudeかRenovateが書いたもので、差分は読まずにマージさせた。リポジトリの AGENTS.md には「PR のレビュー、PR ごとの CI・動作検証・デプロイはしない。動作は本番で確かめる」とあり、ローカルの検証が通れば Claude が自動でマージする。マージしてもよいかさえ聞いていない。
 
-Before stopping, I thought about what PR review was guaranteeing in the first place. What comes to mind is keeping bugs out of production, people other than the author knowing the code, naming and design not drifting from the rest, and the reassurance that someone looked. All of these were guaranteed only halfway by review. Bugs that pass review are found in production. The reviewer also knows only the diffs they read, and there has never been anyone who always grasps 100% of the whole picture of a product. Inconsistencies are pointed out only by whoever notices, as far as they notice, and reassurance is not quality.
+やめる前に、そもそもPRレビューが何を保証しているのかを考えた。思い浮かぶのは、バグを本番環境に持ち込まないこと、作者以外の人にもコードを周知すること、命名や設計が他から乖離しないようにすること、そして誰かが目を通したという安心感だ。これらはすべて、レビューによって半分しか保証されていなかった。レビューを通過するバグは本番環境で見つかる。レビュアーも読んだ差分しか把握しておらず、プロダクトの全体像を常に100%把握している者など一人もいない。矛盾が指摘されるのは、気づいた人による、気づいた範囲での指摘に過ぎず、安心は品質ではない。
 
-It got by because development was not actually that fast. What we really should have done was have everyone involved take responsibility and check that things work in production, leave the checking to machines, release fast and take the returns. At the speed people write, having people read PRs was enough to keep things going, and we could skip all of that. Review was a form for getting away without doing what we should have done.
+開発が実際にそれほど速くなかったため、なんとかなった。本当にすべきだったのは、関係者全員が責任を持って本番環境で動作することを確認し、チェックはマシンに任せ、迅速にリリースしてフィードバックを得ることだった。人間の書くスピードなら、PRを読んでもらえれば十分回せたし、そんなの全部省けた。レビューは、本来すべきだったことをせずに逃げ出すための手段だった。
 
-Now that Claude writes dozens of PRs a day, we cannot skip it. A change is not merged into main until a person finishes reading it, and however fast Claude writes, things move only as fast as people read. Review reduces the risk of breaking things, and in exchange it throws away the returns you would get from releasing fast. A business must not tolerate a way of working that makes people the bottleneck and throws away returns. Of risk and return, we should properly take the return.
+Claudeが1日に数十件ものPRを書くようになった今、これを無視することはできない。変更内容は、人が読み終えるまでmainにマージされない。そして、Claudeがどれほど速く書いても、物事の進展は人が読む速度に匹敵するものだ。レビューは不具合のリスクを軽減する一方で、迅速なリリースで得られるリターンを台無しにする。企業は、人をボトルネックにし、リターンを台無しにする働き方を容認してはならない。リスクとリターンについては、適切にリターンを取るべきだ。
 
-I also see no meaning in the pretense that "the person who pressed the approve button takes responsibility." When something breaks, everyone involved in the product fixes it, not only the one person who approved it. That does not change now that Claude writes the code.
+「承認ボタンを押した人が責任を負う」という建前にも意味が見いだせない。何かが壊れると、承認した一人だけでなく、プロダクトに関わる全員がそれを修正する。Claudeがコードを書くようになった今も、それは変わらない。
 
-So I stopped the per-PR checks, and check that things work in production after merging into main. What should remain is the intent and constraints of how to build things; I write them in AGENTS.md and lint rules, and Claude reads them before writing. In this one week, I put in 97 PRs and reverted one, a vite-plus update.
+というわけで、PRごとのチェックはやめて、mainにマージした後に本番環境で動作するか確認するようにした。残すべきは物の作り方の意図と制約であり、それらを AGENTS.md やリントルールに書き、Claude はそれらを読んでから書く。この1週間で97件のPRを出し、1件のvite-plusアップデートをリバートした。

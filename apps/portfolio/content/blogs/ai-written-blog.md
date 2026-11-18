@@ -1,16 +1,16 @@
 ---
-title: "A blog written by AI is fine"
-description: "If the claims are consistent and the writer's experience and feelings are in it, text written by AI is fine. When I read someone's personal opinion, I keep reading even if the style is broken, as long as the content is interesting."
+title: "AIが書いたブログで構わない"
+description: "主張に一貫性があり、書き手の経験や感情が盛り込まれているなら、AIが書いた文章でも構わない。誰かの個人的な意見を読むと、たとえ文体が破綻していても、内容が面白ければ読み続ける。"
 tags: ["AI", "ブログ", "ポエム"]
 published: true
 ---
 
-I have Claude write almost every post on this blog.
+このブログの記事は、ほぼすべてClaudeに書かせている。
 
-I think text written by AI is fine, as long as the claims are consistent and the writer's experience and feelings are in it.
+AIが書いた文章でも、主張に一貫性があり、書き手の経験や感情が盛り込まれていれば問題ないと思う。
 
-In a novel, the style is part of the work, but when I read someone's personal opinion, I do not care that much about the style. What I look at is what that person wants to say, and what they have done and felt. If the content is interesting, I read to the end even if the style is broken. When you read a blog, do you care about the style too?
+小説の場合、文体は作品の一部だが、誰かの個人的な意見を読むときは、文体はそれほど気にしない。私が見ているのは、その人が何を言いたいのか、そして何をやり、何を感じたのかだ。内容が面白ければ、文体が破綻していても最後まで読む。ブログを読むとき、文体も気にする？
 
-Text whose claims waver or that has no experience in it is not worth reading, whether AI wrote it or a person did.
+主張が揺れている、あるいは経験のない文章は、AIが書いたか人間が書いたかにかかわらず、読む価値はない。
 
-I admit that AI leaves its own style. Habits remain in where the commas go and how sentence endings line up, even after I have them fixed. Still, if the content is interesting, readers read it, habits included.
+AIには独自のスタイルがあることを認める。カンマの位置や文末の並び方は、修正した後でも癖が残る。それでも、内容が面白ければ、習慣も含めて読者は読んでくれる。
