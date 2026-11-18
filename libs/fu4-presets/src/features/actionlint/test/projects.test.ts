@@ -39,15 +39,18 @@ const readIn = Effect.fn("readIn")(function* readIn(dir: string, name: string) {
 });
 
 const shown =
-  (file: string) =>
-  (diagnostic: Diagnostic): string =>
-    `${file}:${diagnostic.line}:${diagnostic.column}: ${normalize(diagnostic.message)} [${Str.replace(PREFIX, "")(diagnostic.rule)}]`;
+  (file: string, root: string) =>
+  (diagnostic: Diagnostic): string => {
+    const message = Str.replaceAll(root, "testdata/projects")(normalize(diagnostic.message));
+    return `${file}:${diagnostic.line}:${diagnostic.column}: ${message} [${Str.replace(PREFIX, "")(diagnostic.rule)}]`;
+  };
 
 const lintFile = Effect.fn("lintFile")(function* lintFile(
   dir: string,
   project: ProjectConfig,
   file: string,
 ) {
+  const path = yield* Path.Path;
   const text = yield* readIn(dir, file);
   const found = yield* lintText({
     root: dir,
@@ -56,10 +59,11 @@ const lintFile = Effect.fn("lintFile")(function* lintFile(
     text,
     config: project.config,
   });
+  const root = path.dirname(dir);
   return pipe(
     found,
     Arr.filter((diagnostic) => !project.ignored(file, diagnostic.message)),
-    Arr.map(shown(file)),
+    Arr.map(shown(file, root)),
   );
 });
 

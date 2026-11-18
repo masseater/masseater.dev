@@ -120,3 +120,9 @@ export const isMappingOrError =
   };
 
 export const lowerKey = (node: YamlNode): string => Str.toLowerCase(node.value);
+
+export const custom =
+  (sink: Sink) =>
+  (node: YamlNode, message: string): void => {
+    sink(`line ${String(node.line)}: ${message}`);
+  };
