@@ -1,5 +1,7 @@
 import { Array as Arr, Option, Record as Rec, Schema, String as Str, pipe } from "effect";
 
+import { reachable } from "#/shared/lib/reachable.ts";
+
 export const SEPARATOR = "/";
 export const LOCK_FILE = "Cargo.lock";
 export const MANIFEST_FILE = "Cargo.toml";
@@ -58,26 +60,6 @@ export const isWithin =
 
 export const isLocal = (entry: CargoPackage): boolean => entry.source === null;
 
-const reachable = (
-  edges: Readonly<Record<string, readonly string[]>>,
-  seen: readonly string[],
-  frontier: readonly string[],
-): readonly string[] => {
-  const fresh = pipe(
-    frontier,
-    Arr.dedupe,
-    Arr.filter((id) => !Arr.contains(seen, id)),
-  );
-  if (Arr.isReadonlyArrayEmpty(fresh)) {
-    return seen;
-  }
-  const next = pipe(
-    fresh,
-    Arr.flatMap((id) => edges[id] ?? []),
-  );
-  return reachable(edges, [...seen, ...fresh], next);
-};
-
 export const closureOf =
   (metadata: CargoMetadata) =>
   (roots: readonly string[]): readonly CargoPackage[] => {
@@ -96,7 +78,7 @@ export const closureOf =
         ),
       ),
     );
-    const ids = new Set(reachable(edges, [], roots));
+    const ids = new Set(reachable(edges, roots));
     return pipe(
       metadata.packages,
       Arr.filter((entry) => ids.has(entry.id)),

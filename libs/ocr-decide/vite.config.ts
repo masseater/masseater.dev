@@ -1,11 +1,12 @@
+import { LOCKED } from "@r_masseater/msch/locked-inputs";
 import { defineConfig } from "vite-plus";
 
 export default defineConfig({
   msch: { publish: { installSize: "67 MB" } },
   run: {
     tasks: {
-      test: "vp test run",
-      build: "vp pack",
+      test: { command: "vp test run", cache: LOCKED },
+      build: { command: "vp pack", cache: LOCKED },
     },
   },
   pack: {

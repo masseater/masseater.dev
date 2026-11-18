@@ -1,9 +1,10 @@
+import { LOCKED } from "@r_masseater/msch/locked-inputs";
 import { defineConfig } from "vite-plus";
 
 export default defineConfig({
   run: {
     tasks: {
-      test: "vp test run",
+      test: { command: "vp test run", cache: LOCKED },
     },
   },
   test: { environment: "happy-dom" },
