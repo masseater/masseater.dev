@@ -62,7 +62,7 @@ export const projects: readonly Project[] = [
     name: "メドDB",
     tags: ["site"],
     description: "ニコメドや合作動画で使われた曲と動画を逆引きするデータベース",
-    href: "https://medley-manager.masseater.dev",
+    href: "https://med-db.masseater.dev",
     links: [],
     blogs: [],
   },

@@ -1,7 +1,13 @@
 import { callAddon, present, sortByPosition, traceparent } from "@masseater.dev/lint-host";
 import { Array as Arr, Effect, Match, Option, pipe } from "effect";
 
-import { BUILTIN, groupByOverrides, resolve, unknownPlugins } from "#/entities/rule/index.ts";
+import {
+  BUILTIN,
+  flattenConfig,
+  groupByOverrides,
+  resolve,
+  unknownPlugins,
+} from "#/entities/rule/index.ts";
 import type { FileGroup, Resolved } from "#/entities/rule/index.ts";
 import { pluginDiagnosticsOf } from "#/features/map-plugin-diagnostics/index.ts";
 import { readProject } from "#/features/read-project/index.ts";
@@ -142,7 +148,7 @@ const lintGroup = (
   });
 
 export const lint = Effect.fn("y8.lint")(function* lint(input: LintInput) {
-  const config = input.config ?? {};
+  const config = flattenConfig(input.config ?? {});
   yield* checkPlugins(config);
   const project = yield* readProject({
     root: input.root,
