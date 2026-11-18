@@ -62,6 +62,22 @@ const reportedByPlacement = (files: readonly string[]): readonly string[] => {
 };
 
 describe("repositoryConfig", () => {
+  it("caches tasks and scripts without a remote cache unless one is named", () => {
+    expect(config.run?.cache).toBe(true);
+  });
+
+  it("reads the remote task cache the repository names", () => {
+    const shared = repositoryConfig({
+      workspace: WORKSPACE,
+      run: { remoteCache: "https://cache.example/projects/demo" },
+    });
+    expect(shared.run?.cache).toStrictEqual({
+      scripts: true,
+      tasks: true,
+      remote: { url: "https://cache.example/projects/demo" },
+    });
+  });
+
   it("makes verify depend on workspace verifies and every root task", () => {
     expect(config).toMatchObject({
       run: {
