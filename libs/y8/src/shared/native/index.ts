@@ -52,24 +52,25 @@ export interface NativeDiagnostic {
   readonly severity: Exclude<Level, "info">;
 }
 
-export interface AgentDiagnostic {
+export interface PluginDiagnostic {
+  readonly rule: string;
   readonly line: number;
   readonly column: number;
-  readonly rule: string;
   readonly message: string;
-  readonly suggestion: string | null;
-  readonly level: Level;
+  readonly detail: string | null;
+  readonly severity: Exclude<Level, "info">;
 }
 
-export interface AgnixOptions {
-  readonly root: string;
-  readonly disabled: readonly string[];
+export interface PluginOptions {
+  readonly name: string;
+  readonly prefix: string;
+  readonly rules: Readonly<Record<string, string>>;
 }
 
 export interface NativeResult {
   readonly path: string;
   readonly diagnostics: readonly NativeDiagnostic[];
-  readonly agentDiagnostics?: readonly AgentDiagnostic[] | null;
+  readonly pluginDiagnostics?: readonly PluginDiagnostic[] | null;
   readonly source?: Uint8Array | null;
 }
 
@@ -79,7 +80,8 @@ export interface NativeOptions {
   readonly keepTree?: boolean;
   readonly keepSource?: boolean;
   readonly traceparent?: string;
-  readonly agnix?: AgnixOptions;
+  readonly root?: string;
+  readonly plugins?: readonly PluginOptions[];
 }
 
 export interface SourceFile {
