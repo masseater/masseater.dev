@@ -7,11 +7,12 @@ description: >
 metadata:
   type: core
   library: "@r_masseater/fumx-parser"
-  library_version: 0.1.0
+  library_version: 0.2.0
 sources:
   - src/app/**
   - src/entities/song/**
   - src/features/read-song/model/read-song.ts
+  - src/features/analyze-song/**
   - README.md
 ---
 
@@ -64,4 +65,18 @@ const outOfRange = song.notes.filter(
 );
 ```
 
-Report a finding with the note's `bar` and `start`. Keys and chords are not stored; derive them from the notes.
+Report a finding with the note's `sourceLine` and `sourceColumn`, the position of the note in the file. `line` is the index of the voice line inside its bar, not a file line.
+
+## Keys and chords
+
+The file does not write keys or chords. `@r_masseater/fumx-parser/analysis` estimates them from the notes:
+
+```ts
+import { analyze, keyIn, soundingsOf } from "@r_masseater/fumx-parser/analysis";
+
+const report = analyze(song);
+const verseKey = keyIn(song)({ fromBar: 1, toBar: 8 });
+const heard = soundingsOf(song);
+```
+
+`analyze` returns the key of the whole song, the key of every four bars, the chord on each beat and bars that repeat. `soundingsOf` lists the notes of unmuted tracks with their track `role`, source `line` and `column`, and an `end` that the note's `gate` shortens. For ready-made rules, use `@r_masseater/i68` and `@r_masseater/i68-presets`.

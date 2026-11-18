@@ -13,6 +13,8 @@ export interface Placed {
   readonly offset: number;
   readonly length: number;
   readonly nudgeMilliseconds: number;
+  readonly sourceLine: number;
+  readonly sourceColumn: number;
 }
 
 export type NoteFields = Pick<

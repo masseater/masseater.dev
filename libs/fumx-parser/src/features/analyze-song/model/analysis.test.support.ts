@@ -1,7 +1,8 @@
-import type { Note, Bar, Song } from "@r_masseater/fumx-parser";
-import { TICKS_PER_WHOLE } from "@r_masseater/fumx-parser";
 import { Array as Arr, Option, String as Str, pipe } from "effect";
 import { Note as TonalNote } from "tonal";
+
+import type { Bar, Note, Song } from "#/entities/song/index.ts";
+import { TICKS_PER_WHOLE } from "#/shared/lib/ticks.ts";
 
 const FIRST = 1;
 const NONE = 0;
@@ -34,6 +35,8 @@ const notesOf =
       Arr.map((midi) => ({
         track,
         line: NONE,
+        sourceLine: NONE,
+        sourceColumn: NONE,
         bar: bar.index,
         offset: NONE,
         start: bar.start,

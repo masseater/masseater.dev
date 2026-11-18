@@ -42,6 +42,11 @@
       "enabled": false
     },
     {
+      "description": "テストの fixtures は外部ツールの出力と突き合わせる写しで、版を上げると記録した結果と食い違う (#1399, #1401, #1405, #1406)。更新しない。",
+      "matchFileNames": ["**/fixtures/**"],
+      "enabled": false
+    },
+    {
       "matchDepTypes": ["pnpm-workspace.overrides"],
       "matchUpdateTypes": ["major"],
       "enabled": false

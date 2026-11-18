@@ -29,11 +29,12 @@ export interface Reported {
   readonly severity: string;
 }
 
-export interface LintCall<Config> {
+export interface LintCall<Config, Failure> {
   readonly root: string;
   readonly files: readonly string[];
   readonly projectFiles: readonly string[];
   readonly config: Config;
+  readonly read: (file: string) => Effect.Effect<string, Failure>;
 }
 
 export interface PathspecRequest<Config> {
@@ -52,7 +53,7 @@ export interface Cli<Config, Found extends Reported, Failure> extends SectionSou
   Failure
 > {
   readonly pathspecs: (request: PathspecRequest<Config>) => readonly string[];
-  readonly lint: (call: LintCall<Config>) => Effect.Effect<readonly Found[], Failure>;
+  readonly lint: (call: LintCall<Config, Failure>) => Effect.Effect<readonly Found[], Failure>;
   readonly format: (found: Found) => string;
 }
 
@@ -150,6 +151,23 @@ const printAll = <Found>(
     onNonEmpty: (all) => Console.log(pipe(all, Arr.map(format), Arr.join("\n"))),
   });
 
+const readerIn = <Failure>(
+  root: string,
+  failWith: FailWith<Failure>,
+): Effect.Effect<
+  (file: string) => Effect.Effect<string, Failure>,
+  never,
+  FileSystem.FileSystem | Path.Path
+> =>
+  Effect.gen(function* reader() {
+    const fileSystem = yield* FileSystem.FileSystem;
+    const path = yield* Path.Path;
+    return (file: string): Effect.Effect<string, Failure> =>
+      fileSystem
+        .readFileString(path.resolve(root, file))
+        .pipe(Effect.mapError(failWith(`could not read ${file}`)));
+  });
+
 const mainOf = <Config, Found extends Reported, Failure>(
   cli: Cli<Config, Found, Failure>,
 ): Effect.Effect<void, Failure | PlatformError, CliServices> =>
@@ -161,7 +179,8 @@ const mainOf = <Config, Found extends Reported, Failure>(
       Effect.withSpan(`${cli.name}.files`),
     );
     const projectFiles = yield* trackedFiles(root, []).pipe(Effect.withSpan(`${cli.name}.project`));
-    const found = yield* cli.lint({ root, files, projectFiles, config });
+    const read = yield* readerIn(root, cli.failWith);
+    const found = yield* cli.lint({ root, files, projectFiles, config, read });
     yield* printAll(found, cli.format);
     yield* failWhen(hasError(found));
   });
