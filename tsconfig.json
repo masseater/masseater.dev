@@ -27,6 +27,7 @@
     "plugins": [
       {
         "name": "@effect/language-service",
+        "diagnostics": false,
         "allowedUnstableApis": [
           "@effect/ai-openrouter",
           "@effect/atom-react",
