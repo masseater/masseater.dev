@@ -1,10 +1,11 @@
+import { LOCKED } from "@r_masseater/msch/locked-inputs";
 import { defineConfig } from "vite-plus";
 
 export default defineConfig({
   run: {
     tasks: {
-      test: "vp test run",
-      build: "vp pack",
+      test: { command: "vp test run", cache: LOCKED },
+      build: { command: "vp pack", cache: LOCKED },
       grammar: "langium generate",
       "grammar:check": "langium generate && git diff --exit-code -- generated",
       verify: { command: [], dependsOn: ["grammar:check", "test", "build"] },
