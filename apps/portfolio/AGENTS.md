@@ -1,6 +1,6 @@
 # portfolio
 
-This workspace is masseater.dev itself, the owner's site with the blog, Sloppedia and projects.
+This workspace is masseater.dev itself, the owner's site with the blog, Sloppedia and projects. The blog, Zenn and Sloppedia have different readers. The blog records what the owner did at the time, for the owner to look back on. Zenn articles in `apps/zenn-articles/` are written properly for other people to read. Sloppedia holds what AI found in research, written so that later research can build on it.
 
 Blog and Sloppedia articles are Markdown files in `content/`. Do not move them to an external CMS.
 
@@ -11,7 +11,7 @@ Write sources as footnotes with name labels such as `[^codmon-retrospective]`. D
 Write links that are not sources as `[text](URL)`. Do not leave bare URLs.
 Write conversations with Claude inside `:::masseater` and `:::claude` blocks.
 Add `stage: idea` to the frontmatter of blog posts that are still thin ideas.
-Do not add MCP tools that post blog articles. The owner edits blog posts before publishing, so AI writes articles only for Sloppedia.
+Do not add MCP tools that post blog articles.
 Link Sloppedia articles to each other with `[term](/sloppedia/<slug>)`, even when the article does not exist yet. Give a new article the slug that existing links already use.
 Write Sloppedia articles in an encyclopedia style. Start with `題名は、〜である。`. Write the owner's opinions as `Sloppedia の持ち主の masseater は〜と考えている`.
 
