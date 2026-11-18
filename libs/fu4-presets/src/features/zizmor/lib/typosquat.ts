@@ -210,16 +210,27 @@ const CHECKS: readonly (readonly [Kind, (name: string) => readonly string[]])[] 
   ["uses a common typo for", typos],
 ];
 
+const squats = new Map<string, Option.Option<string>>();
+
+const searched = (name: string, owner: string): Option.Option<string> => {
+  if (CORPUS.has(name)) {
+    return Option.none();
+  }
+  return pipe(
+    CHECKS,
+    Arr.findFirst(([kind, candidates]) =>
+      pipe(candidates(name), Arr.findFirst(squatOf(name, owner, kind))),
+    ),
+  );
+};
+
 export const firstSquat =
   (name: string) =>
   (owner: string): Option.Option<string> => {
-    if (CORPUS.has(name)) {
-      return Option.none();
-    }
-    return pipe(
-      CHECKS,
-      Arr.findFirst(([kind, candidates]) =>
-        pipe(candidates(name), Arr.findFirst(squatOf(name, owner, kind))),
-      ),
-    );
+    const key = `${owner}/${name}`;
+    return Option.getOrElse(Option.fromNullishOr(squats.get(key)), () => {
+      const found = searched(name, owner);
+      squats.set(key, found);
+      return found;
+    });
   };

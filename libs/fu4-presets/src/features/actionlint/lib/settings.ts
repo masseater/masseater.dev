@@ -15,8 +15,10 @@ export interface Settings {
 
 const decode = Schema.decodeUnknownOption(ActionlintSettings);
 
-export const settingsOf = (context: RuleContext): Settings => {
-  const found = pipe(Rec.get(context.settings, "actionlint"), Option.flatMap(decode));
+const parsed = new WeakMap<object, Settings>();
+
+const parse = (raw: RuleContext["settings"]): Settings => {
+  const found = pipe(Rec.get(raw, "actionlint"), Option.flatMap(decode));
   return {
     runnerLabels: pipe(
       found,
@@ -30,3 +32,10 @@ export const settingsOf = (context: RuleContext): Settings => {
     ),
   };
 };
+
+export const settingsOf = (context: RuleContext): Settings =>
+  Option.getOrElse(Option.fromNullishOr(parsed.get(context.settings)), () => {
+    const found = parse(context.settings);
+    parsed.set(context.settings, found);
+    return found;
+  });
