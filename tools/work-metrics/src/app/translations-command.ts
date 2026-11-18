@@ -1,13 +1,11 @@
-import { Array as Arr, Clock, Effect, Schema } from "effect";
-import { Command, Flag } from "effect/cli";
+import { Effect, Schema } from "effect";
+import { Command } from "effect/cli";
 
 import { fixesSummary, translationFixes } from "#/features/translation-fixes/index.ts";
-import { repositoryOf } from "#/shared/api/pulls.ts";
-import { sinceDays, writeReport } from "#/shared/lib/output.ts";
+import { writeReport } from "#/shared/lib/output.ts";
 
-import { daysFlag, outFlag } from "./flags.ts";
-
-const MINIMUM_REPOSITORIES = 1;
+import { daysFlag, outFlag, repoFlag } from "./flags.ts";
+import { acrossRepositories } from "./repositories.ts";
 
 const FixesRow = Schema.Struct({
   repository: Schema.String,
@@ -19,33 +17,24 @@ const FixesRow = Schema.Struct({
   percent: Schema.Finite,
 });
 
-const runTranslations = Effect.fn("command.translations")(function* runTranslations({
-  repo,
-  days,
-  out,
-}: Readonly<{ repo: readonly string[]; days: number; out: string }>) {
-  const now = yield* Clock.currentTimeMillis;
-  const since = sinceDays(days)(now);
-  const found = yield* Effect.forEach(repo, (name) => translationFixes(repositoryOf(name), since), {
-    concurrency: 1,
-  });
-  const fixes = Arr.flatten(found);
+const collect = acrossRepositories(translationFixes);
+
+const runTranslations = Effect.fn("command.translations")(function* runTranslations(
+  input: Readonly<{ repo: readonly string[]; days: number; out: string }>,
+) {
+  const fixes = yield* collect(input);
   yield* writeReport({
-    out,
+    out: input.out,
     name: "translations",
     codec: Schema.Array(FixesRow),
     value: fixes,
-    summary: `## Hand fixes after PLaMo, last ${String(days)} days\n\n${fixesSummary(fixes)}\n`,
+    summary: `## Hand fixes after PLaMo, last ${String(input.days)} days\n\n${fixesSummary(fixes)}\n`,
   });
 });
 
 /** @internal */
 export const translationsCommand = Command.make(
   "translations",
-  {
-    repo: Flag.String("repo").pipe(Flag.atLeast(MINIMUM_REPOSITORIES)),
-    days: daysFlag,
-    out: outFlag,
-  },
+  { repo: repoFlag, days: daysFlag, out: outFlag },
   runTranslations,
 );
