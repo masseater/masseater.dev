@@ -14,7 +14,7 @@ interface PopularAction {
 }
 
 const ACTIONS: Readonly<Record<string, PopularAction>> = data.actions;
-const OUTDATED = new Set<string>(data.outdated);
+export const OUTDATED = new Set<string>(data.outdated);
 
 const metadataOf = (action: PopularAction): ActionMetadata => ({
   ...EMPTY_ACTION,
@@ -38,5 +38,3 @@ const metadataOf = (action: PopularAction): ActionMetadata => ({
 
 export const popular = (spec: string): Option.Option<ActionMetadata> =>
   Option.map(Rec.get(ACTIONS, spec), metadataOf);
-
-export const isOutdated = (spec: string): boolean => OUTDATED.has(spec);

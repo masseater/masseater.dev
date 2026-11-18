@@ -9,8 +9,6 @@ const TAIL = 1;
 
 type Comparison = "child" | "match";
 
-export const isPattern = (pattern: string): boolean => PATTERN.test(pattern);
-
 const comparePart = (pattern: string, part: Expr): boolean => {
   if (pattern === "*") {
     return true;
@@ -29,7 +27,7 @@ const comparePart = (pattern: string, part: Expr): boolean => {
 };
 
 const compare = (pattern: string, context: ContextExpr): Option.Option<Comparison> => {
-  if (!isPattern(pattern)) {
+  if (!PATTERN.test(pattern)) {
     return Option.none();
   }
   const patterns = Str.split(".")(pattern);

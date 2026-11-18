@@ -57,6 +57,11 @@ export const readonlyParameterAllow = [
     name: ["DescMessage", "JsonObject", "JsonValue", "Message"],
   },
   { from: "package" as const, package: "lighthouse", name: ["FlowResult", "Step", "UserFlow"] },
+  {
+    from: "package" as const,
+    package: "liquidjs",
+    name: ["Liquid", "Parser", "TagToken", "TopLevelToken"],
+  },
   { from: "package" as const, package: "vitest", name: "TestProject" },
   {
     from: "package" as const,

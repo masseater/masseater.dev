@@ -13,7 +13,9 @@ const isNumeric = (expansion: string): boolean =>
 const isArray = (expansion: string): boolean =>
   expansion === "$@" || Str.endsWith("[@]}")(expansion);
 
-const wordCode = (text: string): Option.Option<"unquotedArray" | "unquotedExpansion"> => {
+const wordCode = (
+  text: string,
+): Option.Option<Extract<ExpansionCode, "unquotedArray" | "unquotedExpansion">> => {
   if (isArray(text)) {
     return Option.some("unquotedArray");
   }

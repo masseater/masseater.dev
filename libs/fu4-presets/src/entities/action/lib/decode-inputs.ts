@@ -10,10 +10,11 @@ import {
   isMappingOrError,
   lowerKey,
   typeError,
-} from "#/shared/yaml/decoder.ts";
-import type { Sink } from "#/shared/yaml/decoder.ts";
-import { isNull, pairsOf, valueAt } from "#/shared/yaml/index.ts";
-import type { Pair } from "#/shared/yaml/index.ts";
+  isNull,
+  pairsOf,
+  valueAt,
+} from "#/shared/yaml/index.ts";
+import type { Sink, Pair } from "#/shared/yaml/index.ts";
 
 export type Inputs = Readonly<Record<string, ActionInput>>;
 

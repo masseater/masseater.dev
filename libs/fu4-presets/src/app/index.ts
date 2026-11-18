@@ -5,4 +5,4 @@ export type {
   Confidence as ZizmorConfidence,
   Persona as ZizmorPersona,
   Severity as ZizmorSeverity,
-} from "#/features/zizmor/index.ts";
+} from "#/features/audit-workflows/index.ts";

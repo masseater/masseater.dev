@@ -1,5 +1,6 @@
 import { fileURLToPath } from "node:url";
 
+import { recommended } from "@r_masseater/fu4-presets";
 import { Option, Record as Rec, pipe } from "effect";
 import type { UserConfig } from "vite-plus";
 import type { OxlintOverride } from "vite-plus/lint";
@@ -94,7 +95,7 @@ export const repositoryConfig = (options: RepositoryOptions): UserConfig => {
     }),
     textlint: textlintOf(textlint),
     y8: markdownOf(markdown),
-    fu4: {},
+    fu4: recommended(),
     test: { projects: [...workspace.testProjects], passWithNoTests: true },
     staged: { "*": "vp fmt --no-error-on-unmatched-pattern" },
     fmt: {

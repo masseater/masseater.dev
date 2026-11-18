@@ -54,7 +54,8 @@ export interface Source {
   readonly positionOf: (offset: number) => Position;
 }
 
-export type InputKind = "workflow" | "action" | "dependabot" | "pre-commit";
+export const INPUT_KINDS = ["workflow", "action", "dependabot", "pre-commit"] as const;
+export type InputKind = (typeof INPUT_KINDS)[number];
 
 export type ScriptLanguage = "bash" | "powershell";
 

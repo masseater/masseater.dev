@@ -3,9 +3,8 @@ import { Array as Arr, Option, Result, String as Str, pipe } from "effect";
 
 import { EMPTY_METADATA } from "#/entities/workflow/model/reusable.ts";
 import type { ReusableMetadata } from "#/entities/workflow/model/reusable.ts";
-import type { Sink } from "#/shared/yaml/decoder.ts";
-import { isPresent } from "#/shared/yaml/decoder.ts";
-import { pairsOf, valueAt } from "#/shared/yaml/index.ts";
+import type { Sink } from "#/shared/yaml/index.ts";
+import { isPresent, pairsOf, valueAt } from "#/shared/yaml/index.ts";
 
 import { inputsOf, outputsOf, secretsOf } from "./reusable-sections.ts";
 

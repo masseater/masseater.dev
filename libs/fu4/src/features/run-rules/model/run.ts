@@ -73,7 +73,7 @@ const runRule =
       ),
       Effect.map(() => pipe(reports, Arr.map(diagnosticOf(input, active)))),
       Effect.withSpan("fu4.rule", {
-        attributes: { "fu4.rule": active.id, "code.file.path": input.path },
+        attributes: { "fu4.rule.id": active.id, "code.file.path": input.path },
       }),
     );
   };

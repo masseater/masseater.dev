@@ -20,7 +20,7 @@ import type { Finding } from "./index.ts";
 const services = ManagedRuntime.make(NodeServices.layer);
 afterAll(() => services.dispose());
 
-const CORPUS = "../../../../fu4/native/core/tests/fixtures/shellcheck";
+const CORPUS = "fixtures/shellcheck";
 const SCRIPT = /\.in$/u;
 const MINIMUM_SCRIPTS = 300;
 const SEQUENTIAL = { concurrency: 1 } as const;

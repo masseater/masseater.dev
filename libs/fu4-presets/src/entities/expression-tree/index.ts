@@ -10,4 +10,4 @@ export {
   dataflowContexts,
   leafExpressions,
 } from "./lib/walk.ts";
-export type * from "./model/types.ts";
+export type { ContextExpr, Evaluation, Expr, Literal, Origin, Spanned } from "./model/types.ts";

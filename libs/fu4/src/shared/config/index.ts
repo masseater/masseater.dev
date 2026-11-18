@@ -20,3 +20,4 @@ export type {
   YamlNode,
   YamlStyle,
 } from "./types.ts";
+export { INPUT_KINDS } from "./types.ts";

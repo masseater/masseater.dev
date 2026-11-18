@@ -53,3 +53,7 @@ Commits found to be reachable are remembered in
 zizmor's auto-fixes are not included.
 
 The rules use only the rule API of fu4, so this package has no per-OS builds.
+
+## Agent skills
+
+The package ships TanStack Intent skills for coding agents. Load one with `vp exec intent load @r_masseater/fu4-presets#<skill>`.

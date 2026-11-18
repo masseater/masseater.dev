@@ -17,3 +17,4 @@ export {
   strict,
 } from "./model/types.ts";
 export type { ExprType, ObjectType } from "./model/types.ts";
+export type { Expr, ExprError } from "./model/ast.ts";
