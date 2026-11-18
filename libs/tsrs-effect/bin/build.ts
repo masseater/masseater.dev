@@ -1,9 +1,9 @@
 import { runMain } from "@masseater.dev/node-main";
 
-import { buildPackage } from "#/features/build-tsrs/index.ts";
+import { buildTsrs } from "#/features/build-tsrs/index.ts";
 
 runMain("tsrs-effect-build")(
-  buildPackage({
+  buildTsrs({
     directory: `${import.meta.dirname}/..`,
     platform: process.platform,
     arch: process.arch,
