@@ -40,11 +40,13 @@ const handlersLayer = (
       const services = yield* Effect.context<FileSystem.FileSystem>();
       const touch = Effect.provideContext(touchWith(touched, endpointFile), services);
       return KoganeRpcs.of({
-        Suggest: ({ directory, prompt }) =>
-          touch.pipe(
-            Effect.andThen(Effect.uninterruptible(index.suggest(directory, prompt))),
+        Suggest: ({ directory, prompt }) => {
+          const suggest = Effect.uninterruptible(index.suggest(directory, prompt));
+          return touch.pipe(
+            Effect.andThen(suggest),
             Effect.orElseSucceed(() => []),
-          ),
+          );
+        },
       });
     }),
   );

@@ -22,7 +22,7 @@ const flagsWorkspacesWithoutDescriptions = Effect.gen(
       pipe(
         problems,
         Arr.map(({ file, rule }) => `${files.relative(root, file)} ${rule}`),
-        Arr.sort(Str.Order),
+        Arr.sortWith((line) => line, Str.Order),
       ),
     ).toStrictEqual([
       "libs/blank/package.json workspace-description",
