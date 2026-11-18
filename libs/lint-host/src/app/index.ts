@@ -1,5 +1,12 @@
-export { settingOf } from "#/entities/rule/index.ts";
-export type { RuleEntry, RuleOptions, Setting, Severity } from "#/entities/rule/index.ts";
+export { flattenLayers, reportedSeverity, settingOf } from "#/entities/rule/index.ts";
+export type {
+  Flattened,
+  LayeredConfig,
+  RuleEntry,
+  RuleOptions,
+  Setting,
+  Severity,
+} from "#/entities/rule/index.ts";
 export { buildAddon } from "#/features/build-addon/index.ts";
 export type { AddonBuild } from "#/features/build-addon/index.ts";
 export { callAddon, loadAddon } from "#/features/load-addon/index.ts";

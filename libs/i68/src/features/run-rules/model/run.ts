@@ -1,10 +1,9 @@
-import { present } from "@masseater.dev/lint-host";
+import { present, reportedSeverity } from "@masseater.dev/lint-host";
 import type { Song } from "@r_masseater/fumx-parser";
 import { soundingsOf } from "@r_masseater/fumx-parser/analysis";
 import type { Sounding } from "@r_masseater/fumx-parser/analysis";
 import { Array as Arr, Effect, Option, pipe } from "effect";
 
-import { reportedSeverity } from "#/entities/rule/index.ts";
 import type { ResolvedRule } from "#/entities/rule/index.ts";
 import type { Diagnostic, Report } from "#/shared/config/index.ts";
 

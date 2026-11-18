@@ -4,7 +4,6 @@ import { Array as Arr, Match, Option, Record as Rec, String as Str, pipe } from 
 
 import type {
   BuiltinPlugin,
-  Diagnostic,
   MarkdownlintRule,
   Y8Config,
   Plugin,
@@ -18,12 +17,6 @@ const SEPARATOR = "/";
 const START = 0;
 
 export type { Setting } from "@masseater.dev/lint-host";
-
-export const reportedSeverity = (setting: Setting): Diagnostic["severity"] =>
-  Match.value(setting.severity).pipe(
-    Match.when("warn", (): Diagnostic["severity"] => "warn"),
-    Match.orElse((): Diagnostic["severity"] => "error"),
-  );
 
 export interface ScriptRule {
   readonly id: string;

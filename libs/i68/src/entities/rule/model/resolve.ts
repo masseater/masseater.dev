@@ -1,8 +1,8 @@
 import { settingOf } from "@masseater.dev/lint-host";
 import type { Setting } from "@masseater.dev/lint-host";
-import { Array as Arr, Match, Option, Record as Rec, String as Str, pipe } from "effect";
+import { Array as Arr, Option, Record as Rec, String as Str, pipe } from "effect";
 
-import type { Diagnostic, I68Config, Plugin, Rule } from "#/shared/config/index.ts";
+import type { I68Config, Plugin, Rule } from "#/shared/config/index.ts";
 
 const SEPARATOR = "/";
 const START = 0;
@@ -15,12 +15,6 @@ export interface ResolvedRule {
 }
 
 type PluginEntry = readonly [string, Plugin];
-
-export const reportedSeverity = (setting: Setting): Diagnostic["severity"] =>
-  Match.value(setting.severity).pipe(
-    Match.when("warn", (): Diagnostic["severity"] => "warn"),
-    Match.orElse((): Diagnostic["severity"] => "error"),
-  );
 
 const idOf = (plugin: string, name: string): string => `${plugin}${SEPARATOR}${name}`;
 
