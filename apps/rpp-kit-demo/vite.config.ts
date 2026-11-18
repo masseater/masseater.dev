@@ -20,6 +20,7 @@ export default defineConfig({
       typecheck: "tsc --runExternalCode",
     },
   },
+  preview: { host: "127.0.0.1" },
   test: { include: ["src/**/*.test.ts"] },
   plugins: [
     rpp(),
