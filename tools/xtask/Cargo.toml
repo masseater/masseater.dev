@@ -6,7 +6,7 @@ license.workspace = true
 publish = false
 
 [dependencies]
-nice-plug-xtask = "0.1.1"
+nice-plug-xtask = "=0.1.1"
 
 [lints]
 workspace = true
