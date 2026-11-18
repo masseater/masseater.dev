@@ -780,8 +780,8 @@ catalogs:
       specifier: 3.8.8
       version: 3.8.8
     officeparser:
-      specifier: 8.7.1
-      version: 8.7.1
+      specifier: 8.8.0
+      version: 8.8.0
     oxlint:
       specifier: 1.94.0
       version: 1.94.0
@@ -3772,7 +3772,7 @@ importers:
         version: 3.0.0
       officeparser:
         specifier: 'catalog:'
-        version: 8.7.1(supports-color@10.2.2)
+        version: 8.8.0(supports-color@10.2.2)
       parse5:
         specifier: 'catalog:'
         version: 8.1.1
@@ -15672,8 +15672,8 @@ packages:
     resolution: {integrity: sha512-5vvB5+W7ePv+p3uqxi+RcW1XAzLW0/hxt3/4X4Lc4qHudzOhmBiBwOY6DRob4WnanAEGvNcLjF+KNOufrUoEQw==}
     engines: {node: '>=12.20.0'}
 
-  officeparser@8.7.1:
-    resolution: {integrity: sha512-UceKm/rhBttB2EDtN1WannaljmgsKl9Y6GGpdBtBnUsG/AP9mbPmAMvPvrlR9QgKcGbPLFuQpIbdR4ELe4x4aw==}
+  officeparser@8.8.0:
+    resolution: {integrity: sha512-puBiaCEKvhClBd/+VUS/n9DpoVgOj7HakjojX/7QhPqSXoGudRqIbOAbJ9rOq1nQv/ecbER2MwgmKCHY72jNvw==}
     engines: {node: '>=22.23.4 <23 || >=24.22.1 <25 || >=26.12.1'}
     hasBin: true
     peerDependencies:
@@ -28296,7 +28296,7 @@ snapshots:
 
   obug@3.0.0: {}
 
-  officeparser@8.7.1(supports-color@10.2.2):
+  officeparser@8.8.0(supports-color@10.2.2):
     dependencies:
       '@xmldom/xmldom': 0.9.12
       fflate: 0.8.3
