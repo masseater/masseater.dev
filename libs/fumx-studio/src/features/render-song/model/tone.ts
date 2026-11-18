@@ -16,7 +16,7 @@ import { EVERY, compCurve, limitCurveOf } from "./stages.ts";
 
 const ONE = 1;
 
-interface Cutoff {
+export interface CutoffEffect {
   readonly hertz: number;
   readonly resonance: Option.Option<number>;
 }
@@ -24,14 +24,14 @@ interface Cutoff {
 const filtered =
   (bus: Bus) =>
   (kind: SvfKind) =>
-  ({ hertz, resonance }: Cutoff): Played =>
+  ({ hertz, resonance }: CutoffEffect): Played =>
     done(() => {
       eachChannel(bus)(svf({ kind, cutoff: hertz, ...optional("resonance")(resonance) }));
     });
 
-export const highPassed = (bus: Bus): ((cutoff: Cutoff) => Played) => filtered(bus)(SVF.high);
+export const highPassed = (bus: Bus): ((cutoff: CutoffEffect) => Played) => filtered(bus)(SVF.high);
 
-export const lowPassed = (bus: Bus): ((cutoff: Cutoff) => Played) => filtered(bus)(SVF.low);
+export const lowPassed = (bus: Bus): ((cutoff: CutoffEffect) => Played) => filtered(bus)(SVF.low);
 
 export const gained =
   (bus: Bus) =>

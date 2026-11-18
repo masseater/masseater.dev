@@ -6,6 +6,7 @@ import type { Bus } from "#/shared/lib/studio/bus.ts";
 import { compressionCurve, heldCurve } from "#/shared/lib/studio/dynamics.ts";
 import { limitCurve } from "#/shared/lib/studio/limiter.ts";
 
+import type { EffectOf } from "./effect-kinds.ts";
 import { Unplayable } from "./unplayable.ts";
 
 export const EVERY = 64;
@@ -17,14 +18,10 @@ const DEFAULT_LIMIT_RELEASE_MS = 80;
 
 export type Curve = Float32Array<ArrayBuffer>;
 
-type Comp = Extract<SongEffect, { kind: "comp" }>;
-
-type Limit = Extract<SongEffect, { kind: "limit" }>;
-
 export const compCurve =
   (frames: number) =>
   (bus: Bus) =>
-  (effect: Comp): Curve =>
+  (effect: EffectOf<"comp">): Curve =>
     compressionCurve(frames)({
       every: EVERY,
       threshold: effect.thresholdDecibels,
@@ -36,7 +33,7 @@ export const compCurve =
 
 export const limitCurveOf =
   (bus: Bus) =>
-  (effect: Limit): Curve =>
+  (effect: EffectOf<"limit">): Curve =>
     limitCurve({
       ceiling: effect.ceilingDecibels,
       lookahead: Option.getOrElse(effect.lookaheadMilliseconds, () => DEFAULT_LOOKAHEAD_MS),

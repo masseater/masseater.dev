@@ -17,9 +17,8 @@ export type Samples = Readonly<Record<string, Float32Array>>;
 
 const sampleName = (path: string): string =>
   pipe(
-    Str.split(path, "/"),
-    Arr.last,
-    Option.getOrElse(() => path),
+    Str.lastIndexOf("/")(path),
+    Option.match({ onNone: () => path, onSome: (slash) => Str.slice(slash + ONE)(path) }),
     Str.replace(EXTENSION, ""),
   );
 

@@ -1,4 +1,3 @@
-import type { Effect as SongEffect } from "@r_masseater/fumx-parser";
 import { Option } from "effect";
 
 import { SAMPLE_RATE } from "#/shared/lib/dsp/number.ts";
@@ -7,6 +6,7 @@ import { chorus } from "#/shared/lib/studio/chorus.ts";
 import { widen } from "#/shared/lib/studio/dynamics.ts";
 import { phaser, tremolo } from "#/shared/lib/studio/modulation.ts";
 
+import type { EffectOf } from "./effect-kinds.ts";
 import { done, optional } from "./played.ts";
 import type { Played } from "./played.ts";
 import type { Rack } from "./rack.ts";
@@ -15,12 +15,10 @@ const NONE = 0;
 const HALF = 0.5;
 const DEFAULT_PHASER_FEEDBACK = 0.4;
 
-type Of<Kind extends SongEffect["kind"]> = Extract<SongEffect, { kind: Kind }>;
-
 export const widened =
   (rack: Rack) =>
   (bus: Bus) =>
-  (effect: Of<"width">): Played =>
+  (effect: EffectOf<"width">): Played =>
     done(() => {
       widen(rack.frames)({ width: effect.amount, ...optional("monoBelow")(effect.monoBelowHertz) })(
         bus,
@@ -30,7 +28,7 @@ export const widened =
 export const chorused =
   (rack: Rack) =>
   (bus: Bus) =>
-  (effect: Of<"chorus">): Played =>
+  (effect: EffectOf<"chorus">): Played =>
     done(() => {
       chorus(rack.frames)({
         depth: effect.depthMilliseconds,
@@ -43,7 +41,7 @@ export const chorused =
 export const trembled =
   (rack: Rack) =>
   (bus: Bus) =>
-  (effect: Of<"tremolo">): Played =>
+  (effect: EffectOf<"tremolo">): Played =>
     done(() => {
       tremolo(rack.frames)({ rate: effect.rateHertz, depth: effect.depth })(bus);
     });
@@ -51,7 +49,7 @@ export const trembled =
 export const phased =
   (rack: Rack) =>
   (bus: Bus) =>
-  (effect: Of<"phaser">): Played =>
+  (effect: EffectOf<"phaser">): Played =>
     done(() => {
       phaser(rack.frames)({
         rate: effect.rateHertz,

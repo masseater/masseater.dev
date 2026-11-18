@@ -13,17 +13,17 @@ import { rootsOf, structureOf } from "./structure.ts";
 
 const UNSHADED = "";
 
-type Session = Omit<RenderSession, "signal">;
+export type RecordingSession = Omit<RenderSession, "signal">;
 
 export interface Recording {
   readonly structure: Structure;
-  readonly render: (session: Session) => Effect.Effect<Rendered, Unplayable, Scope.Scope>;
+  readonly render: (session: RecordingSession) => Effect.Effect<Rendered, Unplayable, Scope.Scope>;
 }
 
 const renderOf =
   (song: Song) =>
   (worklet: string): Recording["render"] =>
-    Effect.fn("fumx.song")(function* songRendered({ samples, report }: Session) {
+    Effect.fn("fumx.song")(function* songRendered({ samples, report }: RecordingSession) {
       const sheet = sheetOf(UNSHADED)(report);
       const mastered = yield* renderSong(song, {
         samples,

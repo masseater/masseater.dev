@@ -1,4 +1,3 @@
-import type { Effect as SongEffect } from "@r_masseater/fumx-parser";
 import { Effect, Match, Option, pipe } from "effect";
 
 import { convolvePair } from "#/shared/lib/dsp/convolve-pair.ts";
@@ -6,6 +5,7 @@ import { SAMPLE_RATE } from "#/shared/lib/dsp/number.ts";
 import type { Bus } from "#/shared/lib/studio/bus.ts";
 import { delayed } from "#/shared/lib/studio/delay.ts";
 
+import type { EffectOf } from "./effect-kinds.ts";
 import { blended } from "./rack.ts";
 import type { Rack } from "./rack.ts";
 import { Unplayable } from "./unplayable.ts";
@@ -16,10 +16,6 @@ const ONE = 1;
 const HALF = 0.5;
 const DEFAULT_DELAY_LOW_HZ = 6000;
 const DEFAULT_DELAY_HIGH_HZ = 120;
-
-type Reverb = Extract<SongEffect, { kind: "reverb" }>;
-
-type Delay = Extract<SongEffect, { kind: "delay" }>;
 
 const impulseOf =
   (rack: Rack) =>
@@ -43,7 +39,7 @@ const predelayed =
 export const reverbed =
   (rack: Rack) =>
   (bus: Bus) =>
-  (effect: Reverb): Effect.Effect<void, Unplayable> =>
+  (effect: EffectOf<"reverb">): Effect.Effect<void, Unplayable> =>
     Effect.gen(function* reverb() {
       const left = yield* impulseOf(rack)(effect.left);
       const right = yield* pipe(
@@ -59,7 +55,7 @@ export const reverbed =
 
 const delaySeconds =
   (rack: Rack) =>
-  (time: Delay["time"]): number =>
+  (time: EffectOf<"delay">["time"]): number =>
     Match.value(time).pipe(
       Match.discriminatorsExhaustive("kind")({
         milliseconds: ({ milliseconds }) => milliseconds * MILLI,
@@ -70,7 +66,7 @@ const delaySeconds =
 export const echoed =
   (rack: Rack) =>
   (bus: Bus) =>
-  (effect: Delay): void => {
+  (effect: EffectOf<"delay">): void => {
     const wet = delayed(rack.frames)({
       seconds: delaySeconds(rack)(effect.time),
       feedback: effect.feedback,

@@ -22,7 +22,6 @@
     "tonal": "catalog:"
   },
   "devDependencies": {
-    "@effect/vitest": "catalog:",
     "typescript": "catalog:stack",
     "vite-plus": "catalog:stack"
   }

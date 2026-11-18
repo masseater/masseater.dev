@@ -11,7 +11,7 @@ import type { Send } from "./params.ts";
 const MILLI = 1e-3;
 const CENTS_PER_SEMITONE = 100;
 
-type Track = Song["tracks"][number];
+export type SongTrack = Song["tracks"][number];
 
 type Voice = Song["kits"][number]["voices"][number];
 
@@ -51,7 +51,7 @@ const zonesIn =
 
 const zonesOf =
   (song: Song) =>
-  (track: Track): readonly Zone[] => {
+  (track: SongTrack): readonly Zone[] => {
     if (track.source.kind !== "instrument") {
       return [];
     }
@@ -119,7 +119,7 @@ const zonePlaced =
 
 export const notesPlaced =
   (timing: Timing) =>
-  (track: Track): readonly Placed[] => {
+  (track: SongTrack): readonly Placed[] => {
     const nearest = nearestZone(zonesOf(timing.song)(track));
     return pipe(
       timing.song.notes,
@@ -132,7 +132,7 @@ export const notesPlaced =
 
 const voicesOf =
   (song: Song) =>
-  (track: Track): readonly Voice[] => {
+  (track: SongTrack): readonly Voice[] => {
     if (track.source.kind !== "kit") {
       return [];
     }
@@ -161,7 +161,7 @@ const voicePlaced =
 
 export const hitsPlaced =
   (timing: Timing) =>
-  (track: Track): readonly Placed[] => {
+  (track: SongTrack): readonly Placed[] => {
     const voices = voicesOf(timing.song)(track);
     return pipe(
       timing.song.hits,
