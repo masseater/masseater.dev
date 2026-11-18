@@ -83,6 +83,27 @@ describe("repositoryConfig task cache", () => {
   });
 });
 
+describe("repositoryConfig check", () => {
+  it("runs the type check through effect-tsgo unless the repository names a launcher", () => {
+    expect(config).toHaveProperty(
+      ["run", "tasks", "check", "command"],
+      expect.stringContaining("msch-changed effect-tsgo --tsrs-lint vp check"),
+    );
+  });
+
+  it("runs the type check through the launcher the repository names after its build", () => {
+    const launched = repositoryConfig({
+      workspace: WORKSPACE,
+      run: { check: { launcher: "tsrs-effect", dependsOn: ["tsrs-effect#native"] } },
+    });
+    expect(launched).toHaveProperty(
+      ["run", "tasks", "check", "command"],
+      expect.stringContaining("msch-changed tsrs-effect vp check"),
+    );
+    expect(launched).toHaveProperty(["run", "tasks", "check", "dependsOn"], ["tsrs-effect#native"]);
+  });
+});
+
 describe("repositoryConfig", () => {
   it("makes verify depend on workspace verifies and every root task", () => {
     expect(config).toMatchObject({

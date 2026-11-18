@@ -1,5 +1,6 @@
 import { fileURLToPath } from "node:url";
 
+import { recommended } from "@r_masseater/fu4-presets";
 import { Option, Record as Rec, pipe } from "effect";
 import type { UserConfig } from "vite-plus";
 import type { OxlintOverride } from "vite-plus/lint";
@@ -15,7 +16,8 @@ import {
   structureOf,
 } from "#/features/define-lint-preset/index.ts";
 
-import { tasksOf } from "./repository-tasks.ts";
+import { DEFAULT_CHECK, tasksOf } from "./repository-tasks.ts";
+import type { CheckOptions } from "./repository-tasks.ts";
 import { secretsOf, textlintOf } from "./repository-text.ts";
 import type { SecretOptions, TextOptions } from "./repository-text.ts";
 
@@ -28,6 +30,7 @@ export interface RepositoryOptions {
   readonly run?: {
     readonly tasks?: Readonly<Record<string, string>>;
     readonly remoteCache?: string;
+    readonly check?: CheckOptions;
   };
 }
 
@@ -94,7 +97,7 @@ export const repositoryConfig = (options: RepositoryOptions): UserConfig => {
     }),
     textlint: textlintOf(textlint),
     y8: markdownOf(markdown),
-    fu4: {},
+    fu4: recommended(),
     test: { projects: [...workspace.testProjects], passWithNoTests: true },
     staged: { "*": "vp fmt --no-error-on-unmatched-pattern" },
     fmt: {
@@ -106,7 +109,7 @@ export const repositoryConfig = (options: RepositoryOptions): UserConfig => {
     lint: lintOf(options),
     run: {
       cache: cacheOf(run.remoteCache),
-      tasks: tasksOf({ workspace, commands: run.tasks ?? {} }),
+      tasks: tasksOf({ workspace, commands: run.tasks ?? {}, check: run.check ?? DEFAULT_CHECK }),
     },
   };
 };

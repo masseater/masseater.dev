@@ -7,17 +7,6 @@ import { defineConfig } from "vite-plus";
 const CARGO_INPUTS = await cargoInputs({ directory: import.meta.dirname });
 
 export default defineConfig({
-  msch: {
-    lint: {
-      ignorePatterns: ["native/core/tests/fixtures/**", "native/core/data/**"],
-      overrides: [
-        {
-          files: ["src/features/generate-data/model/if-version.ts"],
-          rules: { "typescript/prefer-readonly-parameter-types": "off" },
-        },
-      ],
-    },
-  },
   run: {
     tasks: {
       verify: { command: [], dependsOn: ["cargo", "test", "build"] },
@@ -26,7 +15,6 @@ export default defineConfig({
           "cargo fmt -p fu4-core -p fu4-node --check && cargo clippy -p fu4-core -p fu4-node --all-targets --locked -- -D warnings && cargo test -p fu4-core --release --locked",
         cache: { input: [...CARGO_INPUTS], output: [] },
       },
-      "generate-data": { command: "node bin/generate-data.ts", cache: false },
       ...addonTasks({
         command: "node bin/build-native.ts",
         inputs: CARGO_INPUTS,

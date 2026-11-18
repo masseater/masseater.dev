@@ -40,7 +40,7 @@ export default defineConfig({
       paths: [
         String.raw`(^|/)fixtures/[^/]+\.tgz!`,
         String.raw`/fixtures/actionlint/`,
-        String.raw`/fixtures/zizmor/`,
+        String.raw`/audit-workflows/fixtures/`,
       ],
     },
     textlint: {
@@ -68,6 +68,7 @@ export default defineConfig({
     run: {
       remoteCache: "https://task-cache.masseater.dev/projects/masseater.dev",
       tasks: { "db-check-all": "vp run -r db:check" },
+      check: { launcher: "tsrs-effect", dependsOn: ["@masseater.dev/tsrs-effect#native"] },
     },
   }),
   skills: {

@@ -38,7 +38,12 @@
     },
   ],
   "overrides": [{ "files": ["**/generated/**"], "rules": { "unused-enum-members": "off" } }],
-  "ignoreDependencies": ["@effect/language-service", "fallow-similar-code", "oxlint-tsgolint"],
+  "ignoreDependencies": [
+    "@effect/language-service",
+    "@masseater.dev/tsrs-effect",
+    "fallow-similar-code",
+    "oxlint-tsgolint",
+  ],
   "workspaces": {
     "settings": {
       "libs/h56m-presets": {
@@ -116,6 +121,7 @@
     ".claude/**",
     "apps/aredoko-unity/**",
     "apps/zenn-articles/**",
+    "libs/fu4-presets/src/**/fixtures/**",
     "libs/oxlint-plugin-decision/example*/**",
     "libs/oxlint-typed-rules/upstream/{react,tanstack-query,tanstack-router,drizzle,remotion}/**",
     "libs/vite-plus-adopt/upstream/**",

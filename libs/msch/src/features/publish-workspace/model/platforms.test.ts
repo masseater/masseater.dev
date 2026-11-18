@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vite-plus/test";
 
 import { environmentOf, goesToNpm, isVersioned, releaseName, tagOf } from "./manifest.ts";
-import { buildsOf, checksOf, nativeFields, nativeFileOf, nativeTargetsOf } from "./platforms.ts";
+import { buildsOf, checksOf, nativeFields, nativeTargetsOf } from "./platforms.ts";
 
 describe("publish names", () => {
   it("names the tag and environment after the unscoped package name", () => {
@@ -51,7 +51,6 @@ describe("publish platforms", () => {
         version: "1.0.0",
         binary: "y8",
         target: "linux-x64-gnu",
-        archive: false,
       }),
     ).toStrictEqual({
       name: "@r_masseater/y8-linux-x64-gnu",
@@ -62,27 +61,5 @@ describe("publish platforms", () => {
       main: "y8.linux-x64-gnu.node",
       files: ["y8.linux-x64-gnu.node"],
     });
-  });
-});
-
-describe("archived native packages", () => {
-  it("publishes an archived native build as a whole package without an entry point", () => {
-    const native = {
-      name: "@r_masseater/tsrs-effect",
-      version: "1.0.0",
-      binary: "tsrs",
-      target: "win32-x64-msvc",
-      archive: true,
-    };
-    expect([nativeFileOf(native), nativeFields(native)]).toStrictEqual([
-      "tsrs.win32-x64-msvc.tgz",
-      {
-        name: "@r_masseater/tsrs-effect-win32-x64-msvc",
-        version: "1.0.0",
-        os: ["win32"],
-        cpu: ["x64"],
-        preferUnplugged: true,
-      },
-    ]);
   });
 });

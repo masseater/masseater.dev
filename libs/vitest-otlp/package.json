@@ -35,6 +35,7 @@
     "./setup": "./src/app/setup.ts",
     "./semconv": "./src/app/semconv.ts",
     "./workers": "./src/app/workers.ts",
+    "./collector-files": "./src/app/collector-files.ts",
     "./tail-worker": "./src/app/tail-to-otlp.ts",
     "./package.json": "./package.json"
   },
@@ -55,6 +56,10 @@
       "./workers": {
         "types": "./dist/workers.d.mts",
         "default": "./dist/workers.mjs"
+      },
+      "./collector-files": {
+        "types": "./dist/collector-files.d.mts",
+        "default": "./dist/collector-files.mjs"
       },
       "./tail-worker": "./dist/tail-to-otlp.js",
       "./package.json": "./package.json"
