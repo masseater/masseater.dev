@@ -12,3 +12,11 @@ const MINIMUM_REPOSITORIES = 1;
 
 /** @internal */
 export const repoFlag = Flag.String("repo").pipe(Flag.atLeast(MINIMUM_REPOSITORIES));
+
+/** @internal */
+export const dirFlag = Flag.String("dir");
+
+const MINIMUM_DIRECTORIES = 1;
+
+/** @internal */
+export const dirsFlag = Flag.String("dir").pipe(Flag.atLeast(MINIMUM_DIRECTORIES));

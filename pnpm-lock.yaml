@@ -5528,6 +5528,9 @@ importers:
       '@masseater.dev/node-main':
         specifier: workspace:*
         version: link:../../libs/node-main
+      '@r_masseater/vitest-otlp':
+        specifier: workspace:*
+        version: link:../../libs/vitest-otlp
       effect:
         specifier: catalog:stack
         version: 4.1.4
