@@ -11,7 +11,10 @@ import { MCP_URL, SITE_HOST } from "./src/shared/config/index.ts";
 const CF_BEACON_TOKEN = "ad561fe157a84abb89c547d547524e9f";
 
 const web = Effect.gen(function* web() {
-  const DB = yield* D1.Database("DB", { migrations: "./drizzle" }).pipe(RemovalPolicy.protect());
+  const DB = yield* D1.Database("DB", {
+    migrations: "./drizzle",
+    clone: { databaseId: "080d1872-5307-40dc-a72a-cd8a0c465666" },
+  }).pipe(RemovalPolicy.protect());
   return yield* authSite({
     domain: SITE_HOST,
     name: Option.none(),
