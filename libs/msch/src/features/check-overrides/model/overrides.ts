@@ -18,7 +18,6 @@ import { lockedPackages, workspaceManifest } from "#/entities/workspace/index.ts
 import type { Problem } from "#/shared/lib/problem.ts";
 
 import { overrideProblem } from "./override-findings.ts";
-import { unlessPassed } from "./override-records.ts";
 import {
   BASELINE_PROBE,
   advisoriesIn,
@@ -189,5 +188,5 @@ export const checkOverrides = Effect.fn("checkOverrides")(function* checkOverrid
     return [];
   }
   const files = yield* trackedResolutionFiles(root);
-  return yield* unlessPassed(root, files, problemsFor({ root, files, overrides }, keys));
+  return yield* problemsFor({ root, files, overrides }, keys);
 });

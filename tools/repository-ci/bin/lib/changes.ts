@@ -6,6 +6,7 @@ import { lastRecorded } from "./deployment.ts";
 import type { DeploymentRecord } from "./deployment.ts";
 
 const ROOT = ".";
+const ROOT_NAME = "repository";
 
 const Package = Schema.Struct({
   dependencies: Schema.optionalKey(Schema.Array(Schema.String)),
@@ -133,7 +134,7 @@ export const isChanged = Effect.fn("isChanged")(function* isChanged(
 /** @internal */
 export const nameOf = (directory: string): string =>
   pipe(
-    Str.split(directory, "/"),
-    Arr.last,
-    Option.getOrElse(() => directory),
+    Option.liftPredicate(directory, (candidate) => candidate !== ROOT),
+    Option.flatMap((candidate) => Arr.last(Str.split(candidate, "/"))),
+    Option.getOrElse(() => ROOT_NAME),
   );

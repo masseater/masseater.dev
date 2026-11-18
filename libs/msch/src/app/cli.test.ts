@@ -16,7 +16,7 @@ import {
 import { ChildProcess } from "effect/process";
 import { expect } from "vite-plus/test";
 
-import { JSON_FLAG } from "#/shared/lib/cli-contract.ts";
+import { JSON_FLAG, OVERRIDES_FLAG } from "#/shared/lib/cli-contract.ts";
 
 const PASSED = 0;
 const FAILED = 1;
@@ -130,6 +130,12 @@ const printsProblemsAsJson = Effect.gen(function* printsProblemsAsJson() {
   ).toStrictEqual(["duplicate-value-set", "duplicate-value-set"]);
 });
 
+const checksOnlyOverridesWhenAsked = Effect.gen(function* checksOnlyOverridesWhenAsked() {
+  const root = yield* repositoryWith(DUPLICATED_SETS);
+  const run = yield* mschIn(root, [OVERRIDES_FLAG]);
+  expect(run).toStrictEqual({ stdout: "", stderr: "", status: PASSED });
+});
+
 const NOTHING_MEASURED = 0;
 const MEASURED_ATTRIBUTES = [
   "process.memory.rss",
@@ -162,6 +168,11 @@ layer(nodeServicesLayer)("msch CLI", (it) => {
   );
   it.effect("fails with one line per problem", () => failsWithOneLinePerProblem, CLI_TIMEOUT);
   it.effect("prints the problems as JSON", () => printsProblemsAsJson, CLI_TIMEOUT);
+  it.effect(
+    "checks only the overrides when asked",
+    () => checksOnlyOverridesWhenAsked,
+    CLI_TIMEOUT,
+  );
   it.effect(
     "traces the memory of itself and the compiler per project",
     () => tracesMemoryPerProject,

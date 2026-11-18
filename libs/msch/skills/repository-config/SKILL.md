@@ -60,8 +60,9 @@ A task added to `run.tasks` is therefore verified without listing it anywhere.
 The root `check` and `test` tasks run through `msch-changed`.
 It passes them only the workspaces whose files, dependencies or installed packages changed since the last pass.
 It records passes under `node_modules/.cache/msch/changed`; delete that directory to check everything again.
-`msch` checks the pnpm overrides again only when a file that pnpm resolves from changed since they last passed.
-It records that pass under `node_modules/.cache/msch/overrides`; delete that directory to check them again.
+The root `daily` task runs `msch --overrides`, which checks that every pnpm override is still needed.
+It is not part of `verify`, because it resolves the whole workspace once for each override.
+A pipeline that runs every workspace's `daily` task picks it up.
 The lint overrides already relax the rules for shadcn/ui components, public entries and deploy entries.
 They also apply `decisionTestRules` to `*.test.ts`.
 

@@ -97,6 +97,12 @@ describe("repositoryConfig", () => {
     });
   });
 
+  it("checks the overrides in the daily task and keeps them out of verify", () => {
+    expect(config).toMatchObject({
+      run: { tasks: { daily: { command: "msch --overrides", cache: false } } },
+    });
+  });
+
   it("lays out every member workspace with wism", () => {
     const reported = reportedByPlacement([
       "apps/web/package.json",

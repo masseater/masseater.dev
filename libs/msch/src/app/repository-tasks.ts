@@ -2,6 +2,7 @@ import { Record as Rec } from "effect";
 import type { UserConfig } from "vite-plus";
 
 import type { WorkspaceSettings } from "#/features/build-workspace-settings/index.ts";
+import { OVERRIDES_FLAG } from "#/shared/lib/cli-contract.ts";
 
 type Tasks = NonNullable<NonNullable<UserConfig["run"]>["tasks"]>;
 
@@ -77,6 +78,7 @@ export const tasksOf = ({
   };
   return {
     ...checks,
+    daily: { command: `msch ${OVERRIDES_FLAG}`, cache: false },
     verify: { command: [], dependsOn: [...workspace.tasks.verify, ...Rec.keys(checks)] },
   };
 };
