@@ -11,6 +11,7 @@ metadata:
 sources:
   - bin/msch.ts
   - src/app/**
+  - bin/msch-exits.ts
 ---
 
 # msch-checks
@@ -28,6 +29,14 @@ They read `VPA_BASE` (default `origin/main`) and other environment variables.
 A task that runs msch therefore sets `cache: false`.
 
 The lint preset `@r_masseater/msch/lint` reports the rest through `vp lint`, including the `msch-lint/*` rules.
+
+## Upstream exits
+
+Every overrides, patchedDependencies and packageExtensions entry in the root `pnpm-workspace.yaml` and every `[patch]` entry in the root `Cargo.toml` ends its line with `# exit: <condition>`. msch reports an entry without a condition it can check, and a deviation written anywhere else.
+
+Run `vp exec msch-exits` at the repository root to look the conditions up on npm, crates.io and GitHub. It exits with 1 when a condition is met or could not be checked, and `--json` prints the results as JSON. The root `daily` task runs it.
+
+For a met condition, remove the entry and its patch file and run verify. If verify still needs the deviation, keep it and replace the condition with the next event that could end it.
 
 ## Git hooks
 

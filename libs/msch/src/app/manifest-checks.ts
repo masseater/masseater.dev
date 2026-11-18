@@ -1,9 +1,14 @@
 import { Array as Arr, Effect } from "effect";
 
+import { checkEffectDiagnostics } from "#/features/check-effect-diagnostics/index.ts";
 import { checkExactVersions } from "#/features/check-exact-versions/index.ts";
 import { checkPackageScope } from "#/features/check-package-scope/index.ts";
 import { checkNodeVersion } from "#/features/check-runtime-version/index.ts";
 import { checkUnusedWorkspaces } from "#/features/check-unused-workspaces/index.ts";
+import {
+  checkScatteredDeviations,
+  checkUpstreamExits,
+} from "#/features/check-upstream-exits/index.ts";
 
 /** @internal */
 export const checkManifests = Effect.fn("checkManifests")(function* checkManifests(root: string) {
@@ -13,6 +18,9 @@ export const checkManifests = Effect.fn("checkManifests")(function* checkManifes
       checkPackageScope(root),
       checkUnusedWorkspaces(root),
       checkExactVersions(root),
+      checkUpstreamExits(root),
+      checkScatteredDeviations(root),
+      checkEffectDiagnostics(root),
     ],
     { concurrency: "unbounded" },
   );

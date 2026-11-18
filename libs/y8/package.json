@@ -1,6 +1,6 @@
 {
   "name": "@r_masseater/y8",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A Markdown linter written in Rust that matches markdownlint's built-in rules, configured from vite.config.ts, with TypeScript rules, markdownlint custom-rule support and a Japanese tokenizer.",
   "keywords": [
     "lint",
