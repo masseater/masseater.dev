@@ -1,6 +1,7 @@
 import { createServer } from "node:http2";
 
-import { NodeHttpServer, NodeHttpServerRequest } from "@effect/platform-node";
+import { make as makeNodeHttpServer } from "@effect/platform-node/NodeHttpServer";
+import { toServerResponse } from "@effect/platform-node/NodeHttpServerRequest";
 import type { Scope } from "effect";
 import { Array, Effect, Option } from "effect";
 import type { HttpServerError } from "effect/http";
@@ -46,7 +47,7 @@ const unframe =
 const reply =
   (request: HttpServerRequest.HttpServerRequest) =>
   (status: string, message: Uint8Array): HttpServerResponse.HttpServerResponse => {
-    NodeHttpServerRequest.toServerResponse(request).addTrailers({ "grpc-status": status });
+    toServerResponse(request).addTrailers({ "grpc-status": status });
     return HttpServerResponse.uint8Array(message, { contentType: "application/grpc" });
   };
 
@@ -98,7 +99,7 @@ const exportCall = (
   );
 
 export const serveGrpc = (store: Store): Effect.Effect<string, never, Scope.Scope> =>
-  NodeHttpServer.make(() => createServer(), { port: ANY_FREE_PORT, host: LOOPBACK }).pipe(
+  makeNodeHttpServer(() => createServer(), { port: ANY_FREE_PORT, host: LOOPBACK }).pipe(
     Effect.orDie,
     Effect.tap((server) => server.serve(exportCall(store))),
     Effect.map((server) => originOf(server.address)),
