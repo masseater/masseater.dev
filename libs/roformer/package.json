@@ -1,0 +1,10 @@
+{
+  "name": "@masseater.dev/roformer",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "devDependencies": {
+    "@r_masseater/msch": "workspace:*",
+    "vite-plus": "catalog:stack"
+  }
+}
