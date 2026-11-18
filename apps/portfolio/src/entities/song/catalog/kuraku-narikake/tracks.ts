@@ -1,8 +1,7 @@
 import type { Samples } from "@masseater.dev/daw-view";
+import type { Sheet } from "@masseater.dev/fumx-studio/daw/take";
+import { unpacked } from "@masseater.dev/fumx-studio/studio/stem";
 import { Array as Arr, Effect, Option, Schema, String as Str, pipe } from "effect";
-
-import { unpacked } from "#/entities/song/lib/studio/stem.ts";
-import type { Sheet } from "#/entities/song/model/take.ts";
 
 import type { Held } from "./deck.ts";
 import type { Kuraku } from "./engine/kuraku.ts";

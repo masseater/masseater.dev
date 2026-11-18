@@ -1,7 +1,6 @@
+import type { Bus } from "@masseater.dev/fumx-studio/studio/bus";
+import type { Studio } from "@masseater.dev/fumx-studio/studio/studio";
 import { Option } from "effect";
-
-import type { Bus } from "#/entities/song/lib/studio/bus.ts";
-import type { Studio } from "#/entities/song/lib/studio/studio.ts";
 
 export interface Rack {
   readonly open: (name: string, mono: boolean) => Bus;

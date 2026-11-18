@@ -1,5 +1,6 @@
+import { orDefault } from "@masseater.dev/fumx-studio/dsp/number";
+
 import patterns from "#/entities/song/catalog/life-is-but-a/score/patterns.json";
-import { orDefault } from "#/entities/song/lib/dsp/number.ts";
 
 import type { Life } from "./context.ts";
 import { chordOf } from "./harmony.ts";

@@ -2414,6 +2414,7 @@ dependencies = [
  "tauri-plugin-log",
  "tauri-plugin-prevent-default",
  "tauri-plugin-single-instance",
+ "tauri-plugin-updater",
  "tauri-plugin-window-state",
  "tempfile",
  "tokio",
@@ -14196,7 +14197,7 @@ dependencies = [
 
 [[package]]
 name = "yogoto"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "audio-fetch",
  "audioadapter-buffers 5.2.0",

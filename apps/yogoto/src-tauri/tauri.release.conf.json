@@ -12,6 +12,7 @@
     },
     "resources": {
       "cuda/runtime.json": "cuda-runtime.json"
-    }
+    },
+    "createUpdaterArtifacts": true
   }
 }

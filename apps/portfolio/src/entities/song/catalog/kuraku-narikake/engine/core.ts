@@ -1,5 +1,5 @@
-import { SAMPLE_RATE } from "#/entities/song/lib/dsp/number.ts";
-import type { Targets } from "#/entities/song/lib/live/targets.ts";
+import { SAMPLE_RATE } from "@masseater.dev/fumx-studio/dsp/number";
+import type { Targets } from "@masseater.dev/fumx-studio/live/targets";
 
 import { banded } from "./core-bands.ts";
 import { drumsBussed, interpolated } from "./core-drums.ts";

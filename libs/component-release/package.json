@@ -5,6 +5,7 @@
   "description": "Helpers shared by app release builds, such as bundle-collect for Tauri bundles and command runners.",
   "bin": {
     "bundle-collect": "./bin/bundle-collect.ts",
+    "updater-feed": "./bin/updater-feed.ts",
     "updater-key": "./bin/updater-key.ts",
     "with-cuda": "./bin/with-cuda.ts"
   },

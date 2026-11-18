@@ -1,4 +1,4 @@
-import { softTanh } from "#/entities/song/lib/dsp/shape.ts";
+import { softTanh } from "@masseater.dev/fumx-studio/dsp/shape";
 
 import type { Core } from "./core-state.ts";
 import { positionOf } from "./core-state.ts";

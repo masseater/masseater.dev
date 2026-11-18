@@ -1,5 +1,5 @@
-import { orDefault } from "#/entities/song/lib/dsp/number.ts";
-import { fieldOf } from "#/entities/song/lib/studio/field.ts";
+import { orDefault } from "@masseater.dev/fumx-studio/dsp/number";
+import { fieldOf } from "@masseater.dev/fumx-studio/studio/field";
 
 import type { Life } from "./context.ts";
 import { keyShiftOf } from "./harmony.ts";

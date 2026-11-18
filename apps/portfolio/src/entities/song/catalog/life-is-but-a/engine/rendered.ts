@@ -1,4 +1,4 @@
-import type { Lane } from "#/entities/song/model/form.ts";
+import type { Lane } from "@masseater.dev/fumx-studio/daw/view";
 
 import type { Mastered } from "./master.ts";
 
