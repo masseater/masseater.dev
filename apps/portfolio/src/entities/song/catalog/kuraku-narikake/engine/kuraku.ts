@@ -1,12 +1,11 @@
+import { SAMPLE_RATE } from "@masseater.dev/fumx-studio/dsp/number";
+import { curve } from "@masseater.dev/fumx-studio/dsp/shape";
+import { timeOf } from "@masseater.dev/fumx-studio/studio/moment";
+import type { Label, Ledger, SampleInfo } from "@masseater.dev/fumx-studio/studio/placement";
+import { studioOf } from "@masseater.dev/fumx-studio/studio/studio";
+import type { Studio } from "@masseater.dev/fumx-studio/studio/studio";
+import type { Grid } from "@masseater.dev/fumx-studio/studio/timing";
 import { Array as Arr, Option, Record as Rec, pipe } from "effect";
-
-import { SAMPLE_RATE } from "#/entities/song/lib/dsp/number.ts";
-import { curve } from "#/entities/song/lib/dsp/shape.ts";
-import { timeOf } from "#/entities/song/lib/studio/moment.ts";
-import type { Label, Ledger, SampleInfo } from "#/entities/song/lib/studio/placement.ts";
-import { studioOf } from "#/entities/song/lib/studio/studio.ts";
-import type { Studio } from "#/entities/song/lib/studio/studio.ts";
-import type { Grid } from "#/entities/song/lib/studio/timing.ts";
 
 import type { Automation, Clip, CurveName } from "./score-schema.ts";
 import { AUTOMATION, FORM } from "./score.ts";

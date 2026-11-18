@@ -15,6 +15,6 @@ Do not add MCP tools that post blog articles.
 Link Sloppedia articles to each other with `[term](/sloppedia/<slug>)`, even when the article does not exist yet. Give a new article the slug that existing links already use.
 Write Sloppedia articles in an encyclopedia style. Start with `題名は、〜である。`. Write the owner's opinions as `Sloppedia の持ち主の masseater は〜と考えている`.
 
-Each song lives in its own `src/entities/song/catalog/<slug>/`. The list and pages are built from the `work.ts`, `recording.ts` and `thumb.webp` there.
+Each song lives in its own `src/entities/song/catalog/<slug>/`. The list and pages are built from the `work.ts`, `thumb.webp` and either `song.fumx` or `recording.ts` there.
 
-Write the code that makes a song's sound in TypeScript too, and pass lint. Put score values in the `score/` data and sound processing in `engine/`. Treat a change that alters the rendered sound as remaking the song. For any other change, check that the rendered sound stays bit-identical.
+Write a new song as `song.fumx` with its samples in `samples/`. `@masseater.dev/fumx-studio` renders it, so the song needs no engine of its own. Songs that still have `recording.ts` keep their score values in `score/` and their sound processing in `engine/`, in TypeScript that passes lint, until they move to fumx. Treat a change that alters the rendered sound as remaking the song. For any other change, check that the rendered sound stays bit-identical.

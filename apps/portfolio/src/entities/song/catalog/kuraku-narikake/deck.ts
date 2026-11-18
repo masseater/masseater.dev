@@ -1,7 +1,6 @@
 import type { Tape } from "@masseater.dev/daw-view";
+import type { Block } from "@masseater.dev/fumx-studio/live/tape";
 import { Array as Arr, Option, pipe } from "effect";
-
-import type { Block } from "#/entities/song/lib/live/tape.ts";
 
 import type { BlockSource } from "./engine/master.ts";
 import { MIX } from "./engine/score.ts";

@@ -1,8 +1,7 @@
 import type { Rendered, Samples } from "@masseater.dev/daw-view";
+import type { Sheet } from "@masseater.dev/fumx-studio/daw/take";
+import { tapeFor } from "@masseater.dev/fumx-studio/daw/tape";
 import { Effect } from "effect";
-
-import type { Sheet } from "#/entities/song/model/take.ts";
-import { tapeFor } from "#/entities/song/model/tape.ts";
 
 import { heldOn } from "./deck.ts";
 import type { Kuraku } from "./engine/kuraku.ts";

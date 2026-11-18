@@ -2180,6 +2180,9 @@ importers:
       '@masseater.dev/daw-view':
         specifier: workspace:*
         version: link:../../libs/daw-view
+      '@masseater.dev/fumx-studio':
+        specifier: workspace:*
+        version: link:../../libs/fumx-studio
       '@masseater.dev/repositories':
         specifier: workspace:*
         version: link:../../infra/repositories
@@ -2271,9 +2274,15 @@ importers:
       '@masseater.dev/d1-test':
         specifier: workspace:*
         version: link:../../libs/d1-test
+      '@masseater.dev/song-format':
+        specifier: workspace:*
+        version: link:../../libs/song-format
       '@mdx-js/rollup':
         specifier: 'catalog:'
         version: 3.1.1(rollup@4.64.5)(supports-color@10.2.2)
+      '@r_masseater/fumx-parser':
+        specifier: workspace:*
+        version: link:../../libs/fumx-parser
       '@resvg/resvg-js':
         specifier: 'catalog:'
         version: 2.6.2
@@ -3673,6 +3682,31 @@ importers:
       langium-cli:
         specifier: 'catalog:'
         version: 4.4.1
+      typescript:
+        specifier: catalog:stack
+        version: 7.1.0-beta
+      vite-plus:
+        specifier: catalog:stack
+        version: 1.7.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(oxlint-tsgolint@7.0.2007)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
+
+  libs/fumx-studio:
+    dependencies:
+      '@masseater.dev/daw-view':
+        specifier: workspace:*
+        version: link:../daw-view
+      '@r_masseater/fumx-parser':
+        specifier: workspace:*
+        version: link:../fumx-parser
+      effect:
+        specifier: catalog:stack
+        version: 4.1.4
+      tonal:
+        specifier: 'catalog:'
+        version: 6.5.1
+    devDependencies:
+      '@effect/vitest':
+        specifier: 'catalog:'
+        version: 4.1.4(effect@4.1.4)(vitest@5.1.0)
       typescript:
         specifier: catalog:stack
         version: 7.1.0-beta

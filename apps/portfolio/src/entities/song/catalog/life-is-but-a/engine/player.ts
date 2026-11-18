@@ -1,13 +1,12 @@
 import type { MixPlayer, PlayerSetup, TapeSource } from "@masseater.dev/daw-view/worklet";
+import { SAMPLE_RATE } from "@masseater.dev/fumx-studio/dsp/number";
+import { trackAdded } from "@masseater.dev/fumx-studio/live/tape";
+import type { Ramps } from "@masseater.dev/fumx-studio/live/tape";
+import { slide, targetsOf } from "@masseater.dev/fumx-studio/live/targets";
+import type { Targets } from "@masseater.dev/fumx-studio/live/targets";
+import { transportOf } from "@masseater.dev/fumx-studio/live/transport";
+import { clipped, curveAt } from "@masseater.dev/fumx-studio/studio/curves";
 import { Array as Arr, Option, Schema, pipe } from "effect";
-
-import { SAMPLE_RATE } from "#/entities/song/lib/dsp/number.ts";
-import { trackAdded } from "#/entities/song/lib/live/tape.ts";
-import type { Ramps } from "#/entities/song/lib/live/tape.ts";
-import { slide, targetsOf } from "#/entities/song/lib/live/targets.ts";
-import type { Targets } from "#/entities/song/lib/live/targets.ts";
-import { transportOf } from "#/entities/song/lib/live/transport.ts";
-import { clipped, curveAt } from "#/entities/song/lib/studio/curves.ts";
 
 import { MASTER } from "./mastering.ts";
 

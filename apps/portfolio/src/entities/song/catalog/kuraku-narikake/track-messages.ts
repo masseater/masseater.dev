@@ -1,6 +1,5 @@
+import { LoggedSchema, SampleTableSchema } from "@masseater.dev/fumx-studio/studio/placement";
 import { Schema } from "effect";
-
-import { LoggedSchema, SampleTableSchema } from "#/entities/song/lib/studio/placement.ts";
 
 const owning = <View extends ArrayBufferView>(
   view: abstract new (...input: readonly never[]) => View,
