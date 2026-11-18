@@ -81,6 +81,7 @@ const rules = {
   ...testRules,
   "msch-lint/ecosystem-readers": "error",
   "msch-lint/get-or-insert": "error",
+  "msch-lint/mcp-tool-layer": "error",
   "msch-lint/inline-exports": "error",
   "msch-lint/ui-state-in-atoms": "error",
   "msch-lint/no-hand-written-sql": "error",

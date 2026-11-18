@@ -8,9 +8,8 @@ import {
   registerSongTools,
   registerVideoTools,
 } from "#/features/edit-catalog/index.server.ts";
+import { registerReadTools } from "#/features/search-catalog/index.server.ts";
 import { SITE_ORIGIN } from "#/shared/config/index.ts";
-
-import { registerReadTools } from "./read-tools.server.ts";
 
 const SERVER_INFO = { name: "med-db", version: "0.0.0", websiteUrl: SITE_ORIGIN };
 

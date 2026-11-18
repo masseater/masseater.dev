@@ -3,7 +3,7 @@ import { Schema } from "effect";
 
 const MAX_INSTANCES = 4;
 export const MIN_INSTANCES = 1;
-export const HOST_INSTANCE = 0;
+const HOST_INSTANCE = 0;
 const LAST_INSTANCE = MAX_INSTANCES - MIN_INSTANCES;
 const MIN_LOG_LINES = 1;
 const MAX_LOG_LINES = 2000;
@@ -88,3 +88,5 @@ export type InstanceRequest = typeof InstanceInput.Type;
 export type ActRequest = typeof ActInput.Type;
 
 export type LogsRequest = typeof LogsInput.Type;
+
+export const instanceOf = (instance: number | undefined): number => instance ?? HOST_INSTANCE;

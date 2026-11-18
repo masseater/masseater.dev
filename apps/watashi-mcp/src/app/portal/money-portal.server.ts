@@ -4,8 +4,8 @@ import { WorkerEntrypoint } from "cloudflare:workers";
 import { Effect, Layer, Logger, Match } from "effect";
 
 import { MONEY_READ } from "#/app/mcp/money-tools.server.ts";
-import { services } from "#/entities/ledger/index.server.ts";
 import type { Failure, Services } from "#/entities/ledger/index.server.ts";
+import { services } from "#/shared/api/index.server.ts";
 
 type Described = Readonly<{ errorTag: string; text: string }>;
 
