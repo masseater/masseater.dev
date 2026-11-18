@@ -2,6 +2,7 @@
   "name": "watashi-mcp",
   "version": "0.0.0",
   "private": true,
+  "description": "MCP server watashi.masseater.dev/mcp holding the owner's personal data: life records, agent work notes and the household ledger.",
   "type": "module",
   "imports": {
     "#/*": "./src/*"

@@ -2,6 +2,7 @@
   "name": "@masseater.dev/node-main",
   "version": "0.0.0",
   "private": true,
+  "description": "Runs Effect Node.js programs with tracing set up.",
   "type": "module",
   "imports": {
     "#/*": "./src/*"

@@ -2,6 +2,7 @@
   "name": "yohaku",
   "version": "0.1.8",
   "private": true,
+  "description": "Yohaku, a desktop app for writing and reviewing novels with Claude Code on the user's PC.",
   "type": "module",
   "imports": {
     "#/*": "./src/*"
