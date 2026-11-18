@@ -6,6 +6,8 @@ import { PlayParamSchema } from "./sound.ts";
 const timedFields = {
   track: Name,
   line: Schema.Int,
+  sourceLine: Schema.Int,
+  sourceColumn: Schema.Int,
   bar: Schema.Int,
   offset: Ticks,
   start: Ticks,
