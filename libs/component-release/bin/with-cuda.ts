@@ -13,6 +13,7 @@ const command = Command.make(
   {
     version: Flag.String("version"),
     computeCap: Flag.String("compute-cap"),
+    msvc: Flag.String("msvc").pipe(Flag.optional),
     runtime: Flag.String("runtime").pipe(Flag.optional),
     command: Argument.String("command").pipe(Argument.atLeast(AT_LEAST_ONE)),
   },
