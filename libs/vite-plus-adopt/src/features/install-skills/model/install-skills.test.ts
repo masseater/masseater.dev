@@ -3,6 +3,7 @@ import { layer } from "@effect/vitest";
 import { assertTrue, deepStrictEqual, strictEqual } from "@effect/vitest/utils";
 import {
   Array as Arr,
+  ConfigProvider,
   Effect,
   Exit,
   FileSystem,
@@ -16,6 +17,7 @@ import type { PlatformError, Scope } from "effect";
 import { HttpClient, HttpClientResponse } from "effect/http";
 import type { HttpClientRequest } from "effect/http";
 import type { ChildProcessSpawner } from "effect/process";
+import { TestClock } from "effect/testing";
 
 import { directoryWith, lines, tarGzArchive } from "#/shared/lib/fixture.test.support.ts";
 
@@ -40,6 +42,7 @@ const ONE = 1;
 const TWO = 2;
 const READ_ONLY_EXECUTABLE = 0o555;
 const PERMISSIONS = 0o1000;
+const UNAVAILABLE = 503;
 
 const skill = (name: string): string =>
   lines("---", `name: ${name}`, "description: x", "---", `# ${name}`);
@@ -93,17 +96,30 @@ const respondWith =
     return Ref.update(requests, (count) => count + ONE).pipe(Effect.as(response));
   };
 
-const install = ({
-  root,
-  cache,
-  requests,
-}: Run): Effect.Effect<InstallExit, never, FixtureServices> =>
+const respondUnavailableFirst =
+  (requests: Ref.Ref<number>, archive: Uint8Array) =>
+  (
+    request: HttpClientRequest.HttpClientRequest,
+  ): Effect.Effect<HttpClientResponse.HttpClientResponse> =>
+    Effect.gen(function* respondAfterOutage() {
+      const earlier = yield* Ref.getAndUpdate(requests, (count) => count + ONE);
+      if (earlier === NONE) {
+        return HttpClientResponse.fromWeb(request, new Response("", { status: UNAVAILABLE }));
+      }
+      return HttpClientResponse.fromWeb(request, new Response(new Uint8Array(archive)));
+    });
+
+const install = (
+  { root, cache, requests }: Run,
+  respond: typeof respondWith = respondWith,
+): Effect.Effect<InstallExit, never, FixtureServices> =>
   Effect.gen(function* runInstall() {
     const archive = yield* tarGzArchive(ARCHIVE);
-    const client = HttpClient.make(respondWith(requests, archive));
+    const client = HttpClient.make(respond(requests, archive));
     return yield* installSkills(root).pipe(
       Effect.provideService(HttpClient.HttpClient, client),
       Effect.provideService(SkillCacheDirectory, Option.some(cache)),
+      Effect.provideService(ConfigProvider.ConfigProvider, ConfigProvider.fromEnvRecord({})),
       Effect.exit,
     );
   });
@@ -218,6 +234,14 @@ const rejectsACommitOnALocalFolder = Effect.gen(function* rejectsACommitOnALocal
   assertTrue(saysNoCommit);
 });
 
+const retriesAnUnavailableDownload = Effect.gen(function* retriesAnUnavailableDownload() {
+  const run = yield* prepare(configWith('root: "skills", skills: ["alpha"]'));
+  const exit = yield* install(run, respondUnavailableFirst);
+  deepStrictEqual(exit, Exit.succeed(Option.some(ONE)));
+  const requests = yield* Ref.get(run.requests);
+  strictEqual(requests, TWO);
+});
+
 const doesNothingWithoutASection = Effect.gen(function* doesNothingWithoutASection() {
   const run = yield* prepare(lines("export default {};"));
   const exit = yield* install(run);
@@ -244,6 +268,9 @@ layer(fixtureLayer)("installing skills", (it) => {
   it.effect("links skills from a folder in the repository", () => Effect.scoped(linksLocalFolders));
   it.effect("rejects a commit on a folder in the repository", () =>
     Effect.scoped(rejectsACommitOnALocalFolder),
+  );
+  it.effect("downloads again after GitHub answers 503", () =>
+    TestClock.withLive(Effect.scoped(retriesAnUnavailableDownload)),
   );
   it.effect("does nothing without a skills section", () =>
     Effect.scoped(doesNothingWithoutASection),
