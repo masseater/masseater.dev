@@ -1,3 +1,4 @@
+import { LOCKED } from "@r_masseater/msch/locked-inputs";
 import { defineConfig } from "vite-plus";
 
 export default defineConfig({
@@ -15,7 +16,7 @@ export default defineConfig({
   },
   run: {
     tasks: {
-      build: "vp pack",
+      build: { command: "vp pack", cache: LOCKED },
       "fetch-model": "node bin/fetch-model.ts",
       "installer:resources": {
         command: "node bin/installer-resources.ts",

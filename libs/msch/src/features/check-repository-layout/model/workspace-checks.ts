@@ -4,9 +4,8 @@ import { checkCommandEntries } from "./command-entries.ts";
 import { checkCrates } from "./crates.ts";
 import { checkDeployEntryPatterns } from "./deploy-entry-patterns.ts";
 import { checkFallowEntries } from "./fallow-entries.ts";
-import { checkHiddenVerify } from "./hidden-verify.ts";
 import { checkRootWorkspacePaths } from "./root-workspace-paths.ts";
-import { checkSharedUncachedTasks } from "./shared-uncached-tasks.ts";
+import { checkTasks } from "./task-checks.ts";
 import { checkWorkflowPaths } from "./workflow-paths.ts";
 import { checkWorkflowScale } from "./workflow-scale.ts";
 
@@ -20,9 +19,8 @@ export const checkWorkspaces = Effect.fn("checkWorkspaces")(function* checkWorks
       checkCrates(root),
       checkDeployEntryPatterns(root),
       checkFallowEntries(root),
-      checkHiddenVerify(root),
       checkRootWorkspacePaths(root),
-      checkSharedUncachedTasks(root),
+      checkTasks(root),
       checkWorkflowPaths(root),
       checkWorkflowScale(root),
     ],
