@@ -49,6 +49,17 @@ const cacheOf = (remoteCache: string | undefined): SharedCache | true =>
     }),
   );
 
+type Allowed = NonNullable<NonNullable<UserConfig["dependencyRules"]>["allowed"]>;
+
+const allowedIn = (
+  allowances: WorkspaceSettings["devDependencies"],
+  field: "dependencies" | "devDependencies",
+): Allowed =>
+  pipe(
+    allowances,
+    Rec.map(({ workspaces, dependencies }) => ({ workspaces, dependencies, fields: [field] })),
+  );
+
 const COMMIT_CONVENTION = fileURLToPath(import.meta.resolve("@commitlint/config-conventional"));
 
 const lintOf = ({
@@ -78,14 +89,10 @@ export const repositoryConfig = (options: RepositoryOptions): UserConfig => {
   return {
     commitlint: { extends: [COMMIT_CONVENTION] },
     dependencyRules: {
-      allowed: pipe(
-        workspace.devDependencies,
-        Rec.map(({ workspaces, dependencies }) => ({
-          workspaces,
-          dependencies,
-          fields: ["devDependencies"] as const,
-        })),
-      ),
+      allowed: {
+        ...allowedIn(workspace.devDependencies, "devDependencies"),
+        ...allowedIn(workspace.dependencies, "dependencies"),
+      },
       banned: requiredStack,
       peerRanges: "intersect",
     },

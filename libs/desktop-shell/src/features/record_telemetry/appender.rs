@@ -3,8 +3,6 @@ use std::io::{self, Write};
 use std::path::Path;
 use std::sync::{Arc, Mutex, PoisonError};
 
-const TRACES: &str = "traces.jsonl";
-const PREVIOUS: &str = "traces.1.jsonl";
 const LIMIT: u64 = 64 * 1024 * 1024;
 const NEWLINE: u8 = b'\n';
 
@@ -24,13 +22,13 @@ impl Clone for Appender {
 }
 
 impl Appender {
-    pub fn open(dir: &Path) -> io::Result<Self> {
+    pub fn open(dir: &Path, signal: &str) -> io::Result<Self> {
         fs::create_dir_all(dir)?;
-        let traces = dir.join(TRACES);
-        if fs::metadata(&traces).is_ok_and(|meta| meta.len() > LIMIT) {
-            fs::rename(&traces, dir.join(PREVIOUS))?;
+        let current = dir.join(format!("{signal}.jsonl"));
+        if fs::metadata(&current).is_ok_and(|meta| meta.len() > LIMIT) {
+            fs::rename(&current, dir.join(format!("{signal}.1.jsonl")))?;
         }
-        let file = OpenOptions::new().create(true).append(true).open(traces)?;
+        let file = OpenOptions::new().create(true).append(true).open(current)?;
         Ok(Self {
             file: Arc::new(Mutex::new(file)),
             pending: Vec::new(),
@@ -74,19 +72,19 @@ mod tests {
     use std::fs;
     use std::io::Write;
 
-    use super::{Appender, TRACES};
+    use super::Appender;
 
     #[test]
     fn keeps_lines_whole_when_two_writers_share_the_file() {
         let dir = tempfile::tempdir().unwrap();
-        let mut spans = Appender::open(dir.path()).unwrap();
+        let mut spans = Appender::open(dir.path(), "traces").unwrap();
         let screen = spans.clone();
         spans.write_all(b"{\"resourceSpans\":").unwrap();
         screen
             .line(&serde_json::json!({ "resourceSpans": [] }))
             .unwrap();
         spans.write_all(b"[]}\n").unwrap();
-        let written = fs::read_to_string(dir.path().join(TRACES)).unwrap();
+        let written = fs::read_to_string(dir.path().join("traces.jsonl")).unwrap();
         assert_eq!(written, "{\"resourceSpans\":[]}\n{\"resourceSpans\":[]}\n");
     }
 }

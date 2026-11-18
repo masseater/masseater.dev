@@ -1,0 +1,27 @@
+{
+  "name": "@masseater.dev/desktop-telemetry",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Starts the OpenTelemetry Browser SDK in a Tauri desktop app's screen and records to the app's telemetry files through desktop-shell.",
+  "type": "module",
+  "imports": {
+    "#/*": "./src/*"
+  },
+  "exports": {
+    ".": "./src/app/index.ts"
+  },
+  "dependencies": {
+    "@opentelemetry/api": "catalog:",
+    "@opentelemetry/browser-instrumentation": "catalog:",
+    "@opentelemetry/browser-sdk": "catalog:",
+    "@opentelemetry/exporter-logs-otlp-http": "catalog:",
+    "@opentelemetry/exporter-trace-otlp-http": "catalog:",
+    "@opentelemetry/sdk-logs": "catalog:",
+    "@opentelemetry/sdk-trace": "catalog:",
+    "@tauri-apps/api": "catalog:",
+    "effect": "catalog:stack"
+  },
+  "devDependencies": {
+    "vite-plus": "catalog:stack"
+  }
+}

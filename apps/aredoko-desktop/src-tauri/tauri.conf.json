@@ -18,7 +18,7 @@
       }
     ],
     "security": {
-      "csp": "default-src 'self'; connect-src 'self' ws://127.0.0.1:* asset: http://asset.localhost http://localhost:4318",
+      "csp": "default-src 'self'; connect-src 'self' ws://127.0.0.1:* asset: http://asset.localhost otlp: http://otlp.localhost",
       "assetProtocol": {
         "enable": true,
         "scope": ["$APPLOCALDATA/endpoint.json"]
