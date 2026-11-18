@@ -51,6 +51,7 @@ export default defineConfig(({ mode }) => ({
     },
   },
   test: {
+    isolate: true,
     include: ["src/**/*.test.{ts,tsx}"],
     server: { deps: { external: ["miniflare", "workerd"] } },
   },
