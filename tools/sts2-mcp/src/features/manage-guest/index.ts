@@ -1,1 +1,1 @@
-export { deployScript, launchScript, logScript, stopScript } from "./model/guest-scripts.ts";
+export { registerGuestTools } from "./api/guest-tools.ts";

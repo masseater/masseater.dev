@@ -4,10 +4,16 @@ import type { McpServer, StandardSchemaWithJSON } from "@modelcontextprotocol/se
 import { Array as Arr, Effect, Layer, pipe } from "effect";
 import { Digest, SecureRandom } from "effect/crypto";
 
-import { meteredInput, runToolIn } from "#/shared/api/index.server.ts";
-import { InvalidRecord } from "#/shared/api/index.ts";
+import type { StorageFailed } from "#/shared/db/index.ts";
 
-import type { Failure, Services } from "./database.server.ts";
+import { InvalidRecord } from "./invalid-record.ts";
+import { meteredInput, runToolIn } from "./tool-call.server.ts";
+
+/** @internal */
+export type Failure = StorageFailed | InvalidRecord;
+
+/** @internal */
+export type Services = Digest.Digest | SecureRandom.SecureRandom;
 
 /** @internal */
 export type Annotations =
