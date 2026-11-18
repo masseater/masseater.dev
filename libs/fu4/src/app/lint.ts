@@ -1,7 +1,7 @@
 import { callAddon, traceparent } from "@masseater.dev/lint-host";
 import { Array as Arr, Effect, Option, pipe } from "effect";
 
-import { activeRules, isIgnored } from "#/entities/rule/index.ts";
+import { activeRules, flattenConfig, isIgnored } from "#/entities/rule/index.ts";
 import { kindOf, sourceOf } from "#/entities/source/index.ts";
 import { ordered, runFile } from "#/features/run-rules/index.ts";
 import type {
@@ -78,7 +78,7 @@ const parsedFiles = Effect.fn("fu4.parse")(function* parsedFiles(
 });
 
 export const lint = Effect.fn("fu4.lint")(function* lint(input: LintInput) {
-  const config = input.config ?? {};
+  const config = flattenConfig(input.config ?? {});
   const addon = yield* native;
   const parsed = yield* parsedFiles(input.root, targetsOf(config, input.files));
   const project = projectOf(input.root, addon);
@@ -104,7 +104,7 @@ const kindFor = (input: LintTextInput): InputKind =>
   );
 
 export const lintText = Effect.fn("fu4.lintText")(function* lintText(input: LintTextInput) {
-  const config = input.config ?? {};
+  const config = flattenConfig(input.config ?? {});
   const addon = yield* native;
   const source = sourceOf(sourceView(addon.parseText(input.text)));
   const results = yield* runFile({

@@ -185,6 +185,26 @@ test("fails with the rule and file when a rule throws", () =>
     expect(failure.message).toContain(`fu4 rule example/crashes failed on ${WORKFLOW}`);
   }).pipe(services.runPromise));
 
+test("takes the plugins, rules, settings and overrides of the configs a config extends", () =>
+  Effect.gen(function* extended() {
+    const base = configWith({ "example/first-key": "warn" });
+    const quiet: Fu4Config = {
+      overrides: [
+        { files: [".github/workflows/quiet.yml"], rules: { "example/first-key": "off" } },
+      ],
+    };
+    const diagnostics = yield* lintFiles(
+      { [WORKFLOW]: SOURCE, ".github/workflows/quiet.yml": SOURCE },
+      { extends: [base, quiet], rules: { "example/first-key": "error" } },
+    );
+    expect(
+      pipe(
+        diagnostics,
+        Arr.map(({ path, severity }) => `${path} ${severity}`),
+      ),
+    ).toStrictEqual([`${WORKFLOW} error`]);
+  }).pipe(services.runPromise));
+
 test("lints a text with an explicit input kind", () =>
   Effect.gen(function* text() {
     const diagnostics = yield* lintText({

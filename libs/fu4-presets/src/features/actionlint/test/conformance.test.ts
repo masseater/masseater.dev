@@ -12,7 +12,7 @@ import {
 } from "effect";
 import { afterAll, expect, test } from "vite-plus/test";
 
-import { presets } from "#/app/presets.ts";
+import { actionlint } from "#/app/presets.ts";
 
 import { FIXTURES, KNOWN, PREFIX, expectedOf, normalize, verdictOf } from "./harness.ts";
 import type { Outcome } from "./harness.ts";
@@ -64,7 +64,7 @@ const compare = Effect.fn("compare")(function* compare(dir: string, group: strin
     path: "test.yaml",
     kind: "workflow",
     text,
-    config: presets.actionlint,
+    config: actionlint(),
   });
   const want = yield* expectedIn(dir, group, stem);
   const shellchecked = group === PASSING || Str.includes(SHELLCHECK)(stem);

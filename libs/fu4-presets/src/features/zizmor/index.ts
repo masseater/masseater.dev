@@ -29,3 +29,4 @@ export const ZIZMOR_CONCERNS: Readonly<Record<Concern, readonly string[]>> = pip
 );
 
 export type { Concern } from "./concerns/index.ts";
+export type { Confidence, Persona, Severity } from "./model/finding.ts";

@@ -1,9 +1,10 @@
 import { lintText } from "@r_masseater/fu4";
-import type { Diagnostic, Fu4Config, Fu4Error } from "@r_masseater/fu4";
+import type { Diagnostic, Fu4Error } from "@r_masseater/fu4";
 import { Array as Arr, ConfigProvider, Effect, Option, Record as Rec, pipe } from "effect";
 import { FetchHttpClient } from "effect/http";
 
-import { presets } from "#/app/presets.ts";
+import { zizmor } from "#/app/presets.ts";
+import type { ZizmorOptions } from "#/app/presets.ts";
 import { encodePackets } from "#/shared/git-protocol/index.ts";
 import type { Packet } from "#/shared/git-protocol/index.ts";
 
@@ -36,7 +37,7 @@ export interface Run {
   readonly uses: string;
   readonly server: Server;
   readonly token?: string;
-  readonly zizmor?: Readonly<Record<string, unknown>>;
+  readonly zizmor?: ZizmorOptions;
 }
 
 export const workflow = (uses: string): string =>
@@ -94,11 +95,6 @@ export const fetchFor = (server: Server): typeof globalThis.fetch => {
   return fake;
 };
 
-export const configOf = (zizmor: Readonly<Record<string, unknown>>): Fu4Config => ({
-  ...presets.zizmor.all,
-  settings: { zizmor },
-});
-
 export const linted =
   (root: string) =>
   (run: Run): Effect.Effect<readonly Diagnostic[], Fu4Error> =>
@@ -106,7 +102,7 @@ export const linted =
       root,
       path: ".github/workflows/ci.yml",
       text: workflow(run.uses),
-      config: configOf(run.zizmor ?? {}),
+      config: zizmor(run.zizmor),
     }).pipe(
       Effect.provideService(FetchHttpClient.Fetch, fetchFor(run.server)),
       Effect.provideService(

@@ -1,6 +1,6 @@
 import { Array as Arr, Option, Record as Rec, String as Str, pipe } from "effect";
 
-import { presets } from "#/app/presets.ts";
+import { actionlint } from "#/app/presets.ts";
 
 import { isPorted, kindOf, sameLines } from "./expected.ts";
 
@@ -11,7 +11,7 @@ export const FIXTURES = "../../../../../fu4/native/core/tests/fixtures/actionlin
 export const PREFIX = "actionlint/";
 
 export const PORTED = pipe(
-  Rec.get(presets.actionlint.plugins ?? {}, "actionlint"),
+  Rec.get(actionlint().plugins ?? {}, "actionlint"),
   Option.map((plugin) => Rec.keys(plugin.rules)),
   Option.getOrElse((): readonly string[] => []),
 );

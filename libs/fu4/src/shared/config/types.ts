@@ -104,6 +104,7 @@ export interface Override {
 }
 
 export interface Fu4Config {
+  readonly extends?: readonly Fu4Config[];
   readonly plugins?: Readonly<Record<string, Plugin>>;
   readonly rules?: Readonly<Record<string, RuleEntry>>;
   readonly settings?: Readonly<Record<string, unknown>>;

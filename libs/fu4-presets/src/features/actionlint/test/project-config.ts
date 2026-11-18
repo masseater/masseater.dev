@@ -3,7 +3,7 @@ import { Array as Arr, Option, Predicate, Record as Rec, pipe } from "effect";
 import { minimatch } from "minimatch";
 import { parse } from "yaml";
 
-import { presets } from "#/app/presets.ts";
+import { actionlint } from "#/app/presets.ts";
 
 interface PathRule {
   readonly ignore?: readonly string[];
@@ -41,10 +41,7 @@ export const projectConfigOf = (text: Option.Option<string>): ProjectConfig => {
   const { paths, ...settings } = raw;
   const patterns = patternsFor(recordOf(paths));
   return {
-    config: {
-      ...presets.actionlint,
-      settings: { ...presets.actionlint.settings, actionlint: settings },
-    },
+    config: { ...actionlint(), settings: { actionlint: settings } },
     ignored: (file, message) =>
       pipe(
         patterns(file),
