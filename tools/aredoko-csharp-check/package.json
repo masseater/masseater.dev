@@ -2,6 +2,7 @@
   "name": "aredoko-csharp-check",
   "version": "0.0.0",
   "private": true,
+  "description": "Type-checks the C# of aredoko's Unity editor extension without Unity.",
   "type": "module",
   "devDependencies": {
     "vite-plus": "catalog:stack"

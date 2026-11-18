@@ -2,6 +2,7 @@
   "name": "@masseater.dev/cargo-tools",
   "version": "0.0.0",
   "private": true,
+  "description": "Builds the Rust command-line tools the repository's tasks use, such as clap-validator and gungraun-runner.",
   "type": "module",
   "devDependencies": {
     "@masseater.dev/component-release": "workspace:*",

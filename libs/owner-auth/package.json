@@ -2,6 +2,7 @@
   "name": "@masseater.dev/owner-auth",
   "version": "0.0.0",
   "private": true,
+  "description": "Owner-only passkey sign-in and MCP client consent screen for apps only the owner writes to.",
   "type": "module",
   "imports": {
     "#/*": "./src/*"

@@ -13,6 +13,7 @@ const ROOT_DIRECTORY = "";
 export interface WorkspaceProject {
   readonly directory: string;
   readonly packageName: Option.Option<string>;
+  readonly description: Option.Option<string>;
   readonly published: boolean;
   readonly keywords: readonly string[];
   readonly files: Option.Option<readonly string[]>;
@@ -49,6 +50,7 @@ export const workspaceProjects = Effect.fn("workspaceProjects")(function* worksp
     Arr.map(({ rootDir, manifest: own }): WorkspaceProject => ({
       directory: files.relative(root, rootDir),
       packageName: Option.fromUndefinedOr(own.name),
+      description: Option.filter(Option.fromUndefinedOr(own.description), Str.isNonEmpty),
       published: own.private !== true,
       keywords: Option.getOrElse(Option.fromUndefinedOr(own.keywords), () => []),
       files: Option.fromUndefinedOr(own.files),
@@ -73,6 +75,7 @@ const Strings = Schema.Array(Schema.String);
 const RootManifest = Schema.fromJsonString(
   Schema.Struct({
     name: Schema.String,
+    description: Schema.optional(Schema.String),
     private: Schema.optional(Schema.Boolean),
     keywords: Schema.optional(Strings),
     files: Schema.optional(Strings),
@@ -88,6 +91,7 @@ const rootProject = Effect.fn("rootProject")(function* rootProject(root: string)
     Option.map((own): WorkspaceProject => ({
       directory: ROOT_DIRECTORY,
       packageName: Option.some(own.name),
+      description: Option.filter(Option.fromUndefinedOr(own.description), Str.isNonEmpty),
       published: own.private !== true,
       keywords: own.keywords ?? [],
       files: Option.fromUndefinedOr(own.files),

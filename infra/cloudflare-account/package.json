@@ -2,6 +2,7 @@
   "name": "@masseater.dev/cloudflare-account",
   "version": "0.0.0",
   "private": true,
+  "description": "Cloudflare settings for the whole zone or account, such as WAF rules, log storage and read-only tokens.",
   "type": "module",
   "imports": {
     "#/*": "./src/*"

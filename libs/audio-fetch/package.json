@@ -2,6 +2,7 @@
   "name": "@masseater.dev/audio-fetch",
   "version": "0.0.0",
   "private": true,
+  "description": "Rust library that downloads the original audio from YouTube, Niconico and SoundCloud, falling back to a pinned yt-dlp.",
   "type": "module",
   "devDependencies": {
     "@r_masseater/msch": "workspace:*",

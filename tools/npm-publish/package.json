@@ -2,6 +2,7 @@
   "name": "npm-publish",
   "version": "0.0.0",
   "private": true,
+  "description": "Claims new npm names with a placeholder version and registers the Trusted Publisher.",
   "type": "module",
   "dependencies": {
     "@masseater.dev/github-workflow": "workspace:*",
