@@ -474,14 +474,14 @@ catalogs:
       specifier: 16.0.0
       version: 16.0.0
     '@textlint/kernel':
-      specifier: 15.8.0
-      version: 15.8.0
+      specifier: 16.0.0
+      version: 16.0.0
     '@textlint/types':
-      specifier: 15.8.0
-      version: 15.8.0
+      specifier: 16.0.0
+      version: 16.0.0
     '@textlint/utils':
-      specifier: 15.8.0
-      version: 15.8.0
+      specifier: 16.0.0
+      version: 16.0.0
     '@tsconfig/strictest':
       specifier: 2.0.9
       version: 2.0.9
@@ -894,8 +894,8 @@ catalogs:
       specifier: 7.0.0
       version: 7.0.0
     textlint:
-      specifier: 15.8.0
-      version: 15.8.0
+      specifier: 16.0.0
+      version: 16.0.0
     textlint-rule-preset-ja-technical-writing:
       specifier: 12.0.2
       version: 12.0.2
@@ -4757,10 +4757,10 @@ importers:
         version: 16.0.0
       '@textlint/kernel':
         specifier: 'catalog:'
-        version: 15.8.0(supports-color@10.2.2)
+        version: 16.0.0(supports-color@10.2.2)
       '@textlint/types':
         specifier: 'catalog:'
-        version: 15.8.0
+        version: 16.0.0
       effect:
         specifier: catalog:stack
         version: 4.1.4
@@ -4772,7 +4772,7 @@ importers:
         version: 14.3.0
       textlint:
         specifier: 'catalog:'
-        version: 15.8.0(supports-color@10.2.2)
+        version: 16.0.0(supports-color@10.2.2)
       typescript:
         specifier: catalog:stack
         version: 7.1.0-beta
@@ -4885,10 +4885,10 @@ importers:
         version: 16.0.0(supports-color@10.2.2)
       '@textlint/kernel':
         specifier: 'catalog:'
-        version: 15.8.0(supports-color@10.2.2)
+        version: 16.0.0(supports-color@10.2.2)
       '@textlint/utils':
         specifier: 'catalog:'
-        version: 15.8.0
+        version: 16.0.0
       chokidar:
         specifier: 'catalog:'
         version: 6.0.0
@@ -4930,7 +4930,7 @@ importers:
         version: 7.8.6
       textlint:
         specifier: 'catalog:'
-        version: 15.8.0(supports-color@10.2.2)
+        version: 16.0.0(supports-color@10.2.2)
       tsconfck:
         specifier: 'catalog:'
         version: 3.1.6(typescript@7.1.0-beta)
@@ -11435,6 +11435,10 @@ packages:
     resolution: {integrity: sha512-/Lwo9E6Kvltb/cYsOCKvBwVRz4GZ8CLgOVNTDRdyYVtXE6EGk5utCPCdzjEm1h3C6bdXcnoArGvgyhlFw7AsUg==}
     engines: {node: '>=20.18.0'}
 
+  '@textlint/fixer-formatter@16.0.0':
+    resolution: {integrity: sha512-aNqtybJxDFresFYb2taQlSqszcX6v2IrB+TY4j1zhnLn4ab60uw/FIkx6xCsrjwy+UenF3amjmZ+0JriOcF/Sg==}
+    engines: {node: '>=22.12.0'}
+
   '@textlint/kernel@13.4.1':
     resolution: {integrity: sha512-r2sUhjPysFjl2Ax37x9AfWkJM8jgKN0bL4SX3xRzOukdcj69Dst5On5qBZtULaVMX1LDkwkdxA6ZEADmq27qQA==}
 
@@ -11448,11 +11452,18 @@ packages:
     resolution: {integrity: sha512-+oU3A235NATv6Lzi4xa4kJ65PuNJlIxesaO4AvDhDWA9FWm7y4XKWaoQCW1esgaQQ6dwnUiFKArQ8TcJ86mC4w==}
     engines: {node: '>=20.18.0'}
 
+  '@textlint/linter-formatter@16.0.0':
+    resolution: {integrity: sha512-8VZ4ix2RHw5G0mcB2fQwUSqh/nqRTFDHSKi1Sr8NCVerVWt9/Dukgoe8A+Him1YId+LsLMcuNJ66HH23kWbZhQ==}
+    engines: {node: '>=22.12.0'}
+
   '@textlint/markdown-to-ast@13.4.1':
     resolution: {integrity: sha512-jUa5bTNmxjEgfCXW4xfn7eSJqzUXyNKiIDWLKtI4MUKRNhT3adEaa/NuQl0Mii3Hu3HraZR7hYhRHLh+eeM43w==}
 
   '@textlint/markdown-to-ast@15.8.0':
     resolution: {integrity: sha512-gWOcd2+UCqODMLGIIY5WiPE9zmR9L4aut3FIkxH8gSCiZ6EVkBaU2mgm+8KiGOjJqdtT98xkWocCwDtQ1kypOQ==}
+
+  '@textlint/markdown-to-ast@16.0.0':
+    resolution: {integrity: sha512-EPzXBknY6P7RjGeUnYLKSAuOriQla7gSW9qU7uFpNz/r61d1CINxlr6NX8X2p7FqyT0tg6dsndG0Q1tpLnaL6A==}
 
   '@textlint/module-interop@14.8.4':
     resolution: {integrity: sha512-1LdPYLAVpa27NOt6EqvuFO99s4XLB0c19Hw9xKSG6xQ1K82nUEyuWhzTQKb3KJ5Qx7qj14JlXZLfnEuL6A16Bw==}
@@ -11490,17 +11501,26 @@ packages:
   '@textlint/text-to-ast@15.8.0':
     resolution: {integrity: sha512-Mmhy0tW9fOhekLNMouyy93WEQR9xVrbigKtgCA+jyoqrs5vqSC6x06f/KeZZSvDXQ6hy2gA25m36Swfcg35BPA==}
 
+  '@textlint/text-to-ast@16.0.0':
+    resolution: {integrity: sha512-0wjiwxxkZgwO2GU1avs+qRCMEgLWWp3aTN/Bos0aPfly2gzSu7ZwGi1P9Bhr2Qn2sm6uWexxZGDcX5t7lPHYJg==}
+
   '@textlint/textlint-plugin-markdown@13.4.1':
     resolution: {integrity: sha512-OcLkFKYmbYeGJ0kj2487qcicCYTiE2vJLwfPcUDJrNoMYak5JtvHJfWffck8gON2mEM00DPkHH0UdxZpFjDfeg==}
 
   '@textlint/textlint-plugin-markdown@15.8.0':
     resolution: {integrity: sha512-susQtSt0omGIkQmb3vNXx3CQS92OViTHD7Qe79quSMxYv0jgN/bCZUa8ej96qOOqPeuoSDDDpMdEZ4D+B6Lb+A==}
 
+  '@textlint/textlint-plugin-markdown@16.0.0':
+    resolution: {integrity: sha512-hME2dvxwbBhB+Nllyddh9u3aUpSGVtIHbDY0au8PEgw23QKwzQFJJTte2Qb/d/0Ky4ez5gCihJXJmj9ADMoMhA==}
+
   '@textlint/textlint-plugin-text@13.4.1':
     resolution: {integrity: sha512-z0p5B8WUfTCIRmhjVHFfJv719oIElDDKWOIZei4CyYkfMGo0kq8fkrYBkUR6VZ6gofHwc+mwmIABdUf1rDHzYA==}
 
   '@textlint/textlint-plugin-text@15.8.0':
     resolution: {integrity: sha512-oz+tip3nSEkzPv5h4WVtXngLorBtJe97Sc1o3EddbcpIvI57jj5cCM7tNMQVGpgpQnGYplfzJt4M1EyFPopfCw==}
+
+  '@textlint/textlint-plugin-text@16.0.0':
+    resolution: {integrity: sha512-7OEilaEF3fiqREFgqVBobnv9ZRvylDIQYpS1Ah2AAEtw3F29SC0XyIkiYkZf583fFVYL88J+6pu1jckC7KH5vQ==}
 
   '@textlint/types@13.4.1':
     resolution: {integrity: sha512-1ApwQa31sFmiJeJ5yTNFqjbb2D1ICZvIDW0tFSM0OtmQCSDFNcKD3YrrwDBgSokZ6gWQq/FpNjlhi6iETUWt0Q==}
@@ -12727,6 +12747,9 @@ packages:
 
   argparse@2.0.1:
     resolution: {integrity: sha512-8+9WqebbFzpX9OR+Wa6O29asIogeRMzcGtAINdpMHHyAg10f05aSFVBbcEqGf/PXw1EjAZ+q2/bEBg3DvurK3Q==}
+
+  argparse@3.0.4:
+    resolution: {integrity: sha512-fwWK3Zq22l4XJJjx5mcBHGikIk+hJqO+32dPm0Jur7+rtG5x1scOjSfdT9ZKeWHPpsya/l0HHK4tDImBkTrtvA==}
 
   argue-cli@3.2.0:
     resolution: {integrity: sha512-VipTB0gXgGIFO2Rg9yEVN5wLt2AurJcZqDbgmYSwPwsykhLrQhs240/bfceev4w68lI8JshoOJIk9uW7tFzROw==}
@@ -15020,6 +15043,10 @@ packages:
     resolution: {integrity: sha512-m+aqu+LwO1O6sIopafj8HUVl5aawITwZQe/yHpMCKjaWBaA/d07B/QdMb3529REftiU+RMMHL3Vlsw3hON7vWg==}
     hasBin: true
 
+  js-yaml@5.5.0:
+    resolution: {integrity: sha512-paNr4LFIFPjeeSmwNYdrb8FafLLG/Cr2Af3GjbsHJ5CxIjH4r0c2emlmRdAtpPAieP1gRVzk6buBbVP5gBMGAg==}
+    hasBin: true
+
   jsbi@4.3.2:
     resolution: {integrity: sha512-9fqMSQbhJykSeii05nxKl4m6Eqn2P6rOlYiS+C5Dr/HPIU/7yZxu5qzbs40tgaFORiw2Amd0mirjxatXYMkIew==}
 
@@ -17152,6 +17179,11 @@ packages:
   textlint@15.8.0:
     resolution: {integrity: sha512-3xE8MknztkpEC5MYDO1lXhUDXx+uq45gdvZB16Xh80rX148NgUehSyWCc5ir2SBW0KVpzRRgU3EWAJZqsBfqtA==}
     engines: {node: '>=20.18.0'}
+    hasBin: true
+
+  textlint@16.0.0:
+    resolution: {integrity: sha512-2pM3CAxPqRQkGEk0KywiooFrSe8qeOwwuxvXLSkh/NPFBKjlEbbNC0jRr8wtPNpOg6lWm1KG+R3WAwlvAgpb5g==}
+    engines: {node: '>=22.12.0'}
     hasBin: true
 
   third-party-web@0.30.0:
@@ -23770,6 +23802,16 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@textlint/fixer-formatter@16.0.0(supports-color@10.2.2)':
+    dependencies:
+      '@textlint/module-interop': 16.0.0
+      '@textlint/resolver': 16.0.0
+      '@textlint/types': 16.0.0
+      debug: 4.4.3(supports-color@10.2.2)
+      diff: 8.0.4
+    transitivePeerDependencies:
+      - supports-color
+
   '@textlint/kernel@13.4.1(supports-color@10.2.2)':
     dependencies:
       '@textlint/ast-node-types': 13.4.1
@@ -23832,6 +23874,16 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@textlint/linter-formatter@16.0.0(supports-color@10.2.2)':
+    dependencies:
+      '@textlint/module-interop': 16.0.0
+      '@textlint/resolver': 16.0.0
+      '@textlint/types': 16.0.0
+      debug: 4.4.3(supports-color@10.2.2)
+      js-yaml: 5.5.0
+    transitivePeerDependencies:
+      - supports-color
+
   '@textlint/markdown-to-ast@13.4.1(supports-color@10.2.2)':
     dependencies:
       '@textlint/ast-node-types': 13.4.1
@@ -23860,6 +23912,10 @@ snapshots:
       unified: 9.2.2
     transitivePeerDependencies:
       - supports-color
+
+  '@textlint/markdown-to-ast@16.0.0':
+    dependencies:
+      '@textlint/ast-node-types': 16.0.0
 
   '@textlint/module-interop@14.8.4': {}
 
@@ -23916,6 +23972,10 @@ snapshots:
     dependencies:
       '@textlint/ast-node-types': 15.8.0
 
+  '@textlint/text-to-ast@16.0.0':
+    dependencies:
+      '@textlint/ast-node-types': 16.0.0
+
   '@textlint/textlint-plugin-markdown@13.4.1(supports-color@10.2.2)':
     dependencies:
       '@textlint/markdown-to-ast': 13.4.1(supports-color@10.2.2)
@@ -23929,6 +23989,11 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@textlint/textlint-plugin-markdown@16.0.0':
+    dependencies:
+      '@textlint/markdown-to-ast': 16.0.0
+      '@textlint/types': 16.0.0
+
   '@textlint/textlint-plugin-text@13.4.1':
     dependencies:
       '@textlint/text-to-ast': 13.4.1
@@ -23937,6 +24002,11 @@ snapshots:
     dependencies:
       '@textlint/text-to-ast': 15.8.0
       '@textlint/types': 15.8.0
+
+  '@textlint/textlint-plugin-text@16.0.0':
+    dependencies:
+      '@textlint/text-to-ast': 16.0.0
+      '@textlint/types': 16.0.0
 
   '@textlint/types@13.4.1':
     dependencies:
@@ -25000,6 +25070,8 @@ snapshots:
       sprintf-js: 1.0.3
 
   argparse@2.0.1: {}
+
+  argparse@3.0.4: {}
 
   argue-cli@3.2.0: {}
 
@@ -27393,6 +27465,10 @@ snapshots:
   js-yaml@5.4.2:
     dependencies:
       argparse: 2.0.1
+
+  js-yaml@5.5.0:
+    dependencies:
+      argparse: 3.0.4
 
   jsbi@4.3.2: {}
 
@@ -30374,6 +30450,30 @@ snapshots:
       rc-config-loader: 4.1.4(supports-color@10.2.2)
       read-package-up: 11.0.0
       structured-source: 4.0.0
+      zod: 4.6.7
+    transitivePeerDependencies:
+      - supports-color
+
+  textlint@16.0.0(supports-color@10.2.2):
+    dependencies:
+      '@modelcontextprotocol/server': 2.4.0
+      '@textlint/config-loader': 16.0.0(supports-color@10.2.2)
+      '@textlint/feature-flag': 16.0.0
+      '@textlint/fixer-formatter': 16.0.0(supports-color@10.2.2)
+      '@textlint/kernel': 16.0.0(supports-color@10.2.2)
+      '@textlint/linter-formatter': 16.0.0(supports-color@10.2.2)
+      '@textlint/module-interop': 16.0.0
+      '@textlint/resolver': 16.0.0
+      '@textlint/textlint-plugin-markdown': 16.0.0
+      '@textlint/textlint-plugin-text': 16.0.0
+      '@textlint/types': 16.0.0
+      '@textlint/utils': 16.0.0
+      debug: 4.4.3(supports-color@10.2.2)
+      file-entry-cache: 10.1.4
+      glob: 14.0.3
+      optionator: 0.9.4
+      path-to-glob-pattern: 2.0.1
+      read-package-up: 11.0.0
       zod: 4.6.7
     transitivePeerDependencies:
       - supports-color
