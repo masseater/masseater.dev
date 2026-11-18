@@ -1,4 +1,13 @@
-import { Array as Arr, Effect, FileSystem, Option, Path, String as Str, pipe } from "effect";
+import {
+  Array as Arr,
+  Effect,
+  FileSystem,
+  Option,
+  Path,
+  Schema,
+  String as Str,
+  pipe,
+} from "effect";
 import { Digest } from "effect/crypto";
 
 import { run } from "#/shared/lib/command.ts";
@@ -83,13 +92,16 @@ export const toolkitOf = Effect.fn("cuda.toolkit")(function* toolkitOf(
 const runtimeOf =
   (platform: Platform) =>
   (name: string): Option.Option<string> =>
-    Str.includes(platform.extension)(name)
-      ? pipe(
-          RUNTIME,
-          Arr.findFirst(({ prefix }) => Str.startsWith(prefix)(Str.replace(/^lib/u, "")(name))),
-          Option.map(({ component }) => component),
-        )
-      : Option.none();
+    pipe(
+      Option.some(name),
+      Option.filter(Str.includes(platform.extension)),
+      Option.flatMap((library) =>
+        Arr.findFirst(RUNTIME, ({ prefix }) =>
+          Str.startsWith(prefix)(Str.replace(/^lib/u, "")(library)),
+        ),
+      ),
+      Option.map(({ component }) => component),
+    );
 
 const runtimeFiles = Effect.fn("cuda.runtime-files")(function* runtimeFiles(
   platform: Platform,
@@ -114,14 +126,28 @@ const runtimeFiles = Effect.fn("cuda.runtime-files")(function* runtimeFiles(
   );
   return pipe(
     Arr.flatten(listed),
-    Arr.filterMap((file) =>
+    Arr.map((file) =>
       pipe(
         runtimeOf(platform)(path.basename(file)),
         Option.map((component) => ({ file, component })),
       ),
     ),
+    Arr.getSomes,
   );
 });
+
+const PinnedLibrary = Schema.Struct({
+  name: Schema.String,
+  archive: Schema.String,
+  sha256: Schema.String,
+  size: Schema.Finite,
+});
+
+const RuntimeManifest = Schema.fromJsonString(
+  Schema.Struct({ files: Schema.Array(PinnedLibrary) }),
+);
+
+const encodeManifest = Schema.encodeEffect(RuntimeManifest);
 
 /** @internal */
 export interface Runtime {
@@ -162,8 +188,6 @@ export const writeRuntime = Effect.fn("cuda.write-runtime")(function* writeRunti
     concurrency: 1,
   });
   yield* fileSystem.makeDirectory(destination.value, { recursive: true });
-  yield* fileSystem.writeFileString(
-    path.join(destination.value, "runtime.json"),
-    `${JSON.stringify({ files: entries }, undefined, 2)}\n`,
-  );
+  const text = yield* encodeManifest({ files: entries });
+  yield* fileSystem.writeFileString(path.join(destination.value, "runtime.json"), text);
 });

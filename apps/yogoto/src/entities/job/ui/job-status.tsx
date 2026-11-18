@@ -15,7 +15,10 @@ const MESSAGES: Readonly<Record<JobState, Readonly<Record<string, string>>>> = {
 
 const labelOf = (job: Job): string => {
   const label = MESSAGES[job.state][job.message] ?? JOB_STATES[job.state];
-  return job.state === "running" ? `${label} ${percent(job.progress)}` : label;
+  if (job.state === "running") {
+    return `${label} ${percent(job.progress)}`;
+  }
+  return label;
 };
 
 export const JobStatus = ({ job }: Readonly<{ job: Job }>): ReactNode => (
