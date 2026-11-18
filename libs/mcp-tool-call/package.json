@@ -2,6 +2,7 @@
   "name": "@masseater.dev/mcp-tool-call",
   "version": "0.0.0",
   "private": true,
+  "description": "Shared MCP server parts: the Cloudflare Access token endpoint and the per-tool-call Analytics Engine record.",
   "type": "module",
   "imports": {
     "#/*": "./src/*"

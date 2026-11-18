@@ -2,6 +2,7 @@
   "name": "@masseater.dev/daw-view",
   "version": "0.0.0",
   "private": true,
+  "description": "DAW-style song page components (transport, waveform, tracks, piano roll) used by portfolio's /ai-produced pages.",
   "type": "module",
   "imports": {
     "#/*": "./src/*"

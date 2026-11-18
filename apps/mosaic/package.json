@@ -2,6 +2,7 @@
   "name": "mosaic",
   "version": "0.0.0",
   "private": true,
+  "description": "masseater.dev/mosaic site showing mosaic art made from each character's video thumbnails.",
   "type": "module",
   "imports": {
     "#/*": "./src/*"

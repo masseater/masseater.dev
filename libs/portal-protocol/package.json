@@ -2,6 +2,7 @@
   "name": "@masseater.dev/portal-protocol",
   "version": "0.0.0",
   "private": true,
+  "description": "RPC types portal uses to call the Workers that hold data.",
   "type": "module",
   "imports": {
     "#/*": "./src/*"

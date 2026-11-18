@@ -2,6 +2,7 @@
   "name": "@masseater.dev/yohaku-protocol",
   "version": "0.0.0",
   "private": true,
+  "description": "Types shared by the Yohaku app and its sync service.",
   "type": "module",
   "imports": {
     "#/*": "./src/*"
