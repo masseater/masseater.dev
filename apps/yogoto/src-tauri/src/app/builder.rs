@@ -1,3 +1,4 @@
+use std::path::PathBuf;
 use std::sync::Arc;
 
 use desktop_shell::{Setup, Shell, open_window, screen_port};
@@ -11,6 +12,7 @@ use super::workshop::Workshop;
 use crate::entities::gpu_runtime::GpuRuntime;
 use crate::entities::job::Jobs;
 use crate::entities::song::Library;
+use crate::features::repair_titles::repair_titles;
 
 const SITES: &[Site] = &[Site::Youtube, Site::Niconico, Site::Soundcloud, Site::File];
 const SCREEN_PORT: u16 = 47_241;
@@ -35,6 +37,20 @@ fn builder() -> Builder<tauri::Wry> {
         ])
 }
 
+fn repair(app: &App, library: Library, client: reqwest::Client, cache: PathBuf) {
+    let handle = app.handle().clone();
+    async_runtime::spawn(async move {
+        match repair_titles(&library, &client, &cache).await {
+            Ok(0) => {}
+            Ok(repaired) => {
+                tracing::info!(repaired, "garbled titles repaired");
+                let _ = handle.emit(CHANGED, ());
+            }
+            Err(failure) => tracing::error!(%failure, "garbled titles could not be repaired"),
+        }
+    });
+}
+
 fn setup(app: &App, port: u16) -> Setup {
     let data = app.path().app_local_data_dir()?;
     let cache = app.path().app_cache_dir()?;
@@ -52,13 +68,9 @@ fn setup(app: &App, port: u16) -> Setup {
     let client = audio_fetch::shared::http::client()?;
     let manifest = app.path().resource_dir()?.join(CUDA_RUNTIME);
     let gpu = GpuRuntime::prepare(client.clone(), manifest.is_file().then_some(manifest));
-    let workshop = Workshop::start(
-        Library::open(&data.join(LIBRARY))?,
-        client,
-        cache,
-        jobs,
-        gpu,
-    );
+    let library = Library::open(&data.join(LIBRARY))?;
+    repair(app, library.clone(), client.clone(), cache.clone());
+    let workshop = Workshop::start(library, client, cache, jobs, gpu);
     let serving = mcp::Serving {
         workshop: workshop.clone(),
         token: notes.mcp.token.clone(),

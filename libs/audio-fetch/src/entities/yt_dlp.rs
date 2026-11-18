@@ -136,48 +136,91 @@ pub fn downloaded_from(output: &str) -> Fetching<Downloaded> {
     }
 }
 
-#[tracing::instrument(skip(program, directory))]
-pub async fn download(program: &Path, url: &str, directory: &Path) -> Fetching<Downloaded> {
-    let template = directory.join("source.%(ext)s");
+fn command(program: &Path) -> tokio::process::Command {
     let mut command = tokio::process::Command::new(program);
     #[cfg(target_os = "windows")]
     command.creation_flags(CREATE_NO_WINDOW);
-    let output = command
-        .args([
-            "--encoding",
-            "utf-8",
-            "--no-playlist",
-            "--no-progress",
-            "--no-mtime",
-            "--format",
-            "bestaudio/best",
-            "--output",
-        ])
-        .arg(&template)
-        .args([
-            "--print",
-            "after_move:filepath",
-            "--print",
-            "after_move:title",
-            "--print",
-            "after_move:uploader",
-        ])
-        .arg(url)
-        .kill_on_drop(true)
-        .output()
-        .await?;
+    command
+        .args(["--encoding", "utf-8", "--no-playlist"])
+        .kill_on_drop(true);
+    command
+}
+
+async fn printed(command: &mut tokio::process::Command) -> Fetching<String> {
+    let output = command.output().await?;
     if !output.status.success() {
         let reason = String::from_utf8_lossy(&output.stderr);
         return Err(failure(format!("{}: {}", output.status, reason.trim())));
     }
-    downloaded_from(&String::from_utf8_lossy(&output.stdout))
+    Ok(String::from_utf8_lossy(&output.stdout).into_owned())
+}
+
+pub struct Described {
+    pub title: String,
+    pub artist: String,
+}
+
+fn described_from(output: &str) -> Fetching<Described> {
+    let lines: Vec<&str> = output
+        .lines()
+        .filter(|line| !line.trim().is_empty())
+        .collect();
+    match lines.as_slice() {
+        [.., title, artist] => Ok(Described {
+            title: (*title).to_owned(),
+            artist: if *artist == "NA" {
+                String::new()
+            } else {
+                (*artist).to_owned()
+            },
+        }),
+        _ => Err(failure(format!("unexpected output: {output}"))),
+    }
+}
+
+#[tracing::instrument(skip(program))]
+pub async fn describe(program: &Path, url: &str) -> Fetching<Described> {
+    let output = printed(
+        command(program)
+            .args(["--skip-download", "--print", "title", "--print", "uploader"])
+            .arg(url),
+    )
+    .await?;
+    described_from(&output)
+}
+
+#[tracing::instrument(skip(program, directory))]
+pub async fn download(program: &Path, url: &str, directory: &Path) -> Fetching<Downloaded> {
+    let template = directory.join("source.%(ext)s");
+    let output = printed(
+        command(program)
+            .args([
+                "--no-progress",
+                "--no-mtime",
+                "--format",
+                "bestaudio/best",
+                "--output",
+            ])
+            .arg(&template)
+            .args([
+                "--print",
+                "after_move:filepath",
+                "--print",
+                "after_move:title",
+                "--print",
+                "after_move:uploader",
+            ])
+            .arg(url),
+    )
+    .await?;
+    downloaded_from(&output)
 }
 
 #[cfg(test)]
 mod tests {
     use std::path::PathBuf;
 
-    use super::downloaded_from;
+    use super::{described_from, downloaded_from};
 
     #[test]
     fn printed_fields_are_read_from_the_last_three_lines() {
@@ -189,5 +232,15 @@ mod tests {
             ("Song Title", "")
         );
         assert!(downloaded_from("only one line\n").is_err());
+    }
+
+    #[test]
+    fn described_fields_are_read_from_the_last_two_lines() {
+        let described = described_from("[info] noise\nメルト\nryo\n").unwrap();
+        assert_eq!(
+            (described.title.as_str(), described.artist.as_str()),
+            ("メルト", "ryo")
+        );
+        assert!(described_from("only one line\n").is_err());
     }
 }
