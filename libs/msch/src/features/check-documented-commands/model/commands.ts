@@ -50,14 +50,10 @@ const optionsOf = (args: string): readonly string[] =>
     Arr.takeWhile((token) => token !== END_OF_OPTIONS),
   );
 
-const isFilterFlag = (token: string): boolean => FILTER_FLAGS.has(token);
-
-const isPlaceholder = (token: string): boolean => PLACEHOLDER.test(token);
-
 const filterOf = (tokens: readonly string[]): Option.Option<string> =>
   pipe(
     tokens,
-    Arr.findFirstIndex(isFilterFlag),
+    Arr.findFirstIndex((token) => FILTER_FLAGS.has(token)),
     Option.flatMap((index) => Arr.get(tokens, index + ONE)),
     Option.orElse(() =>
       pipe(
@@ -71,7 +67,10 @@ const filterOf = (tokens: readonly string[]): Option.Option<string> =>
 const follows =
   (tokens: readonly string[]) =>
   (index: number): boolean =>
-    pipe(Arr.get(tokens, index - ONE), Option.exists(isFilterFlag));
+    pipe(
+      Arr.get(tokens, index - ONE),
+      Option.exists((previous) => FILTER_FLAGS.has(previous)),
+    );
 
 const specifierOf = (tokens: readonly string[]): Option.Option<string> =>
   pipe(
@@ -119,7 +118,13 @@ const parsed = (args: string): Option.Option<Invocation> => {
   const tokens = optionsOf(args);
   return pipe(
     specifierOf(tokens),
-    Option.filter(() => !pipe(tokens, Arr.some(isPlaceholder))),
+    Option.filter(
+      () =>
+        !pipe(
+          tokens,
+          Arr.some((token) => PLACEHOLDER.test(token)),
+        ),
+    ),
     Option.map(invocationOf(tokens)),
   );
 };

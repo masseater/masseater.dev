@@ -21,12 +21,7 @@ import {
   shadcnRestyleContracts,
 } from "./lint.config.ts";
 import { readonlyParameterAllow } from "./readonly-types.config.ts";
-import {
-  flakeMaskingSyntax,
-  reflectProperties,
-  testDoubleSyntax,
-  testRules,
-} from "./test-rules.config.ts";
+import { flakeMaskingSyntax, testDoubleSyntax, testRules } from "./test-rules.config.ts";
 
 type LintConfig = NonNullable<UserConfig["lint"]>;
 
@@ -88,6 +83,7 @@ const rules = {
   "msch-lint/inline-exports": "error",
   "msch-lint/ui-state-in-atoms": "error",
   "msch-lint/no-hand-written-sql": "error",
+  "msch-lint/typed-calls-not-reflect": "error",
   "react/react-in-jsx-scope": "off",
   "eslint/no-undef": "off",
   "typescript/promise-function-async": "off",
@@ -107,7 +103,6 @@ const rules = {
     "error",
     { ignoreInferredTypes: true, allow: readonlyParameterAllow },
   ],
-  "eslint/no-restricted-properties": ["error", ...reflectProperties],
   "eslint/no-duplicate-imports": ["error", { allowSeparateTypeImports: true }],
   "react/function-component-definition": [
     "error",

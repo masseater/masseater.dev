@@ -95,3 +95,11 @@ tester.run("db-writes-in-writers", ruleNamed("db-writes-in-writers"), {
     failing("db-writes-in-writers", "db.run(statement);\n"),
   ],
 });
+
+tester.run("typed-calls-not-reflect", ruleNamed("typed-calls-not-reflect"), {
+  valid: ["const keys = Reflect.ownKeys(target);\n", "const value = target.key;\n"],
+  invalid: [
+    failing("typed-calls-not-reflect", 'const value = Reflect.get(target, "key");\n'),
+    failing("typed-calls-not-reflect", "Reflect.apply(callback, undefined, []);\n"),
+  ],
+});

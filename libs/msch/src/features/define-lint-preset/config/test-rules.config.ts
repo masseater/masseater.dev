@@ -54,14 +54,3 @@ export const flakeMaskingSyntax: readonly Readonly<{ selector: string; message: 
   { selector: 'MemberExpression[property.name="retry"]', message: NO_FLAKE_MASKING },
   { selector: 'MemberExpression[property.name="flakyTest"]', message: NO_FLAKE_MASKING },
 ];
-
-const NO_REFLECT = "Reflect を使わず、型の付いた呼び出しか境界での Schema の decode を使う";
-
-export const reflectProperties: readonly Readonly<{
-  object: string;
-  property: string;
-  message: string;
-}>[] = [
-  { object: "Reflect", property: "get", message: NO_REFLECT },
-  { object: "Reflect", property: "apply", message: NO_REFLECT },
-];
