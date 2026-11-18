@@ -7,6 +7,9 @@ use crate::shared::error::{FetchError, Fetching};
 
 pub const VERSION: &str = "2026.10.26";
 
+#[cfg(target_os = "windows")]
+const CREATE_NO_WINDOW: u32 = 0x0800_0000;
+
 struct Build {
     asset: &'static str,
     sha256: &'static str,
@@ -136,8 +139,13 @@ pub fn downloaded_from(output: &str) -> Fetching<Downloaded> {
 #[tracing::instrument(skip(program, directory))]
 pub async fn download(program: &Path, url: &str, directory: &Path) -> Fetching<Downloaded> {
     let template = directory.join("source.%(ext)s");
-    let output = tokio::process::Command::new(program)
+    let mut command = tokio::process::Command::new(program);
+    #[cfg(target_os = "windows")]
+    command.creation_flags(CREATE_NO_WINDOW);
+    let output = command
         .args([
+            "--encoding",
+            "utf-8",
             "--no-playlist",
             "--no-progress",
             "--no-mtime",

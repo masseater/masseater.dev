@@ -8,6 +8,7 @@ use tauri_specta::{Builder, ErrorHandlingMode, collect_commands};
 use super::commands;
 use super::mcp_server as mcp;
 use super::workshop::Workshop;
+use crate::entities::gpu_runtime::GpuRuntime;
 use crate::entities::job::Jobs;
 use crate::entities::song::Library;
 
@@ -15,6 +16,7 @@ const SITES: &[Site] = &[Site::Youtube, Site::Niconico, Site::Soundcloud, Site::
 const SCREEN_PORT: u16 = 47_241;
 const CHANGED: &str = "yogoto://changed";
 const LIBRARY: &str = "library";
+const CUDA_RUNTIME: &str = "cuda-runtime.json";
 
 fn builder() -> Builder<tauri::Wry> {
     Builder::<tauri::Wry>::new()
@@ -48,14 +50,22 @@ fn setup(app: &App, port: u16) -> Setup {
         let _ = handle.emit(CHANGED, ());
     }));
     let client = audio_fetch::shared::http::client()?;
-    let workshop = Workshop::start(Library::open(&data.join(LIBRARY))?, client, cache, jobs);
+    let manifest = app.path().resource_dir()?.join(CUDA_RUNTIME);
+    let gpu = GpuRuntime::prepare(client.clone(), manifest.is_file().then_some(manifest));
+    let workshop = Workshop::start(
+        Library::open(&data.join(LIBRARY))?,
+        client,
+        cache,
+        jobs,
+        gpu,
+    );
     let serving = mcp::Serving {
         workshop: workshop.clone(),
         token: notes.mcp.token.clone(),
     };
     async_runtime::spawn(async move {
         if let Err(failure) = mcp::serve(serving).await {
-            eprintln!("mcp server stopped: {failure}");
+            tracing::error!(%failure, "mcp server stopped");
         }
     });
     app.manage(notes);

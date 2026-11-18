@@ -6,6 +6,7 @@ use media_notes::{Failure, Outcome};
 use roformer::features::separate_stems::Separator;
 
 use crate::entities::analyzer::Analyzer;
+use crate::entities::gpu_runtime::GpuRuntime;
 use crate::entities::job::Jobs;
 use crate::entities::model::{DEFAULT_MODELS, Model, load_separator, model};
 use crate::entities::song::Library;
@@ -30,6 +31,7 @@ struct Worker {
     jobs: Jobs,
     client: reqwest::Client,
     cache: PathBuf,
+    gpu: GpuRuntime,
 }
 
 #[derive(Clone)]
@@ -45,8 +47,19 @@ fn device() -> Device {
     Device::cuda_if_available(0).unwrap_or(Device::Cpu)
 }
 
+const DRIVER_TOO_OLD: &str = "driver too old";
+
+fn explained(failure: Failure) -> Failure {
+    if failure.message.contains("CUDA_ERROR_UNSUPPORTED_PTX_VERSION") {
+        tracing::error!(message = failure.message, "nvidia driver is older than the cuda build");
+        Failure::new(DRIVER_TOO_OLD)
+    } else {
+        failure
+    }
+}
+
 fn work_all(worker: &Worker, works: &Receiver<Work>) {
-    let device = device();
+    let mut device: Option<Device> = None;
     let mut loaded: Option<(&'static str, Separator)> = None;
     let mut analyzer: Option<Analyzer> = None;
     for work in works {
@@ -58,10 +71,17 @@ fn work_all(worker: &Worker, works: &Receiver<Work>) {
                 .ok_or_else(|| Failure::new("song was removed"))?;
             match work.task {
                 Task::Separate(model) => {
+                    if device.is_none() {
+                        worker
+                            .gpu
+                            .wait(&|ratio| progress(ratio, "preparing gpu"))?;
+                        device = Some(self::device());
+                    }
+                    let device = device.as_ref().ok_or_else(|| Failure::new("no device"))?;
                     if loaded.as_ref().is_none_or(|(id, _)| *id != model.id) {
                         progress(0.0, "loading model");
                         loaded = None;
-                        loaded = Some((model.id, load_separator(model, &device)?));
+                        loaded = Some((model.id, load_separator(model, device)?));
                     }
                     let (_, separator) = loaded
                         .as_ref()
@@ -83,7 +103,7 @@ fn work_all(worker: &Worker, works: &Receiver<Work>) {
                 }
             }
         })();
-        match outcome {
+        match outcome.map_err(explained) {
             Ok(song) => worker.jobs.finish(&work.job, &song.id),
             Err(failure) => worker.jobs.fail(&work.job, &failure.message),
         }
@@ -104,13 +124,20 @@ fn models_of(ids: &[String]) -> Outcome<Vec<&'static Model>> {
 
 impl Workshop {
     #[must_use]
-    pub fn start(library: Library, client: reqwest::Client, cache: PathBuf, jobs: Jobs) -> Self {
+    pub fn start(
+        library: Library,
+        client: reqwest::Client,
+        cache: PathBuf,
+        jobs: Jobs,
+        gpu: GpuRuntime,
+    ) -> Self {
         let (queue, works) = channel();
         let worker = Worker {
             library: library.clone(),
             jobs: jobs.clone(),
             client: client.clone(),
             cache: cache.clone(),
+            gpu,
         };
         std::thread::spawn(move || work_all(&worker, &works));
         Self {
