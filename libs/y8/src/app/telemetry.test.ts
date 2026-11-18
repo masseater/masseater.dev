@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { waitForSpans } from "@r_masseater/vitest-otlp";
 import { Array as Arr, Effect, FileSystem, Layer, ManagedRuntime, Path, pipe } from "effect";
 import { FetchHttpClient } from "effect/http";
@@ -7,7 +7,7 @@ import { afterAll, expect, test } from "vite-plus/test";
 
 import { definePlugin, defineRule, lint } from "./index.ts";
 
-const services = ManagedRuntime.make(NodeServices.layer);
+const services = ManagedRuntime.make(nodeServices);
 afterAll(() => services.dispose());
 
 const BUILTIN_RULES = 53;
@@ -48,7 +48,7 @@ const FIRST_COLUMN = 1;
 const TRANSFER_SPANS = ["y8.encode_tree", "y8.to_js", "y8.script_rules"];
 
 const traced = Layer.mergeAll(
-  NodeServices.layer,
+  nodeServices,
   Otlp.layerFromConfig({ resource: { serviceName: "y8-test" } }).pipe(
     Layer.provide(OtlpSerialization.layerJson),
     Layer.provide(FetchHttpClient.layer),

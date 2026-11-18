@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import {
   Array as Arr,
   Effect,
@@ -16,7 +16,7 @@ import { afterAll, expect, test } from "vite-plus/test";
 import { definePlugin, defineRule, lint } from "./index.ts";
 import type { Diagnostic, GraphEdge, RuleContext, WismConfig, WismError } from "./index.ts";
 
-const services = ManagedRuntime.make(NodeServices.layer);
+const services = ManagedRuntime.make(nodeServices);
 afterAll(() => services.dispose());
 
 const MODULE = "export const value = 1;\n";

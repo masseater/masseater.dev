@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-import { NodeRuntime, NodeServices } from "@effect/platform-node";
+import { runMain } from "@effect/platform-node/NodeRuntime";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { Effect, Layer } from "effect";
 import { Command } from "effect/cli";
 import { FetchHttpClient } from "effect/http";
@@ -7,6 +8,6 @@ import { FetchHttpClient } from "effect/http";
 import { watashi } from "./cli.ts";
 import { VERSION } from "./version.ts";
 
-const services = Layer.mergeAll(NodeServices.layer, FetchHttpClient.layer);
+const services = Layer.mergeAll(nodeServices, FetchHttpClient.layer);
 
-NodeRuntime.runMain(Command.run(watashi, { version: VERSION }).pipe(Effect.provide(services)));
+runMain(Command.run(watashi, { version: VERSION }).pipe(Effect.provide(services)));

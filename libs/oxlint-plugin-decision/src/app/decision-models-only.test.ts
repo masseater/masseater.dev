@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { layer } from "@effect/vitest";
 import { deepStrictEqual } from "@effect/vitest/utils";
 import { Array as Arr, Effect, FileSystem, Path, String as Str, pipe } from "effect";
@@ -39,6 +39,6 @@ const chatCallsInSource = Effect.gen(function* test() {
   );
 });
 
-layer(NodeServices.layer, { excludeTestServices: true })("decision models only", (it) => {
+layer(nodeServices, { excludeTestServices: true })("decision models only", (it) => {
   it.effect("has no chat-completions call in the plugin source", () => chatCallsInSource, TIMEOUT);
 });

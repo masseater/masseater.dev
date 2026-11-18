@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { expect, layer } from "@effect/vitest";
 import { Array, Effect, FileSystem, Layer, Option, pipe } from "effect";
 import { SqlClient } from "effect/sql";
@@ -71,7 +71,7 @@ const indexInTemporaryFolder = Layer.unwrap(
     });
     return Layer.merge(databaseLayer.pipe(Layer.provide(settings)), embedderLayer);
   }),
-).pipe(Layer.provideMerge(NodeServices.layer));
+).pipe(Layer.provideMerge(nodeServices));
 
 const addPackage = Effect.fn("addPackage")(function* addPackage(name: string) {
   const sql = yield* SqlClient.SqlClient;

@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { layer } from "@effect/vitest";
 import { deepStrictEqual } from "@effect/vitest/utils";
 import { Array as Arr, Effect, Option } from "effect";
@@ -67,7 +67,7 @@ const asksChoice = Effect.gen(function* test() {
   );
 });
 
-layer(NodeServices.layer, { excludeTestServices: true })("answer kinds", (it) => {
+layer(nodeServices, { excludeTestServices: true })("answer kinds", (it) => {
   it.effect(
     "reports a classify rule only for the labels it lists",
     () => withMock(classify),

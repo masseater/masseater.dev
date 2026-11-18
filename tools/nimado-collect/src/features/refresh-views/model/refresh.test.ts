@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import type { Path } from "effect";
 import {
   Array as Arr,
@@ -38,7 +38,7 @@ const GRACE_END = -3;
 
 const VIEWS_OF = { sm1: 1, sm2: 2, sm3: 3, sm4: 4, sm5: 5 };
 
-const environment = Layer.merge(NodeServices.layer, TestClock.layer());
+const environment = Layer.merge(nodeServices, TestClock.layer());
 
 const found = (ids: readonly string[]): Readonly<Record<string, number>> =>
   pipe(

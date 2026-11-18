@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { layer } from "@effect/vitest";
 import { assertInclude, deepStrictEqual, strictEqual } from "@effect/vitest/utils";
 import { Array as Arr, Effect, Option, Order, String as Str, pipe } from "effect";
@@ -175,7 +175,7 @@ const contexts = Effect.gen(function* test() {
   );
 });
 
-layer(NodeServices.layer, { excludeTestServices: true })("linting a project", (it) => {
+layer(nodeServices, { excludeTestServices: true })("linting a project", (it) => {
   it.effect(
     "asks about the match that only one parse of the same text has",
     () => withMock(askedTwins),

@@ -1,4 +1,4 @@
-import { NodeSocketServer } from "@effect/platform-node";
+import { layerWebSocket } from "@effect/platform-node/NodeSocketServer";
 import { Effect, Layer } from "effect";
 import { RpcSerialization, RpcServer } from "effect/rpc";
 
@@ -11,7 +11,7 @@ const ANY_PORT = 0;
 const socketServerLayer = Layer.unwrap(
   Effect.gen(function* socketServer() {
     const { presentedBy } = yield* ServerToken;
-    return NodeSocketServer.layerWebSocket({
+    return layerWebSocket({
       host: HOST,
       port: ANY_PORT,
       verifyClient: presentedBy,

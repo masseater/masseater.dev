@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { layer } from "@effect/vitest";
 import { assertInclude, deepStrictEqual, strictEqual } from "@effect/vitest/utils";
 import { Effect, Array as Arr, String as Str, pipe } from "effect";
@@ -97,23 +97,20 @@ const ruleNotEnabledSendsNothing = Effect.gen(function* test() {
   deepStrictEqual(requests, []);
 });
 
-layer(NodeServices.layer, { excludeTestServices: true })(
-  "skill task: write-decision-rules",
-  (it) => {
-    it.effect(
-      "the skill's setup reports the failing file only",
-      () => withMock(expectedSolution),
-      TIMEOUT,
-    );
-    it.effect(
-      "an API key in the plugin setup fails the run",
-      () => withMock(keyInSetupIsRefused),
-      TIMEOUT,
-    );
-    it.effect(
-      "a rule that is not turned on sends no request",
-      () => withMock(ruleNotEnabledSendsNothing),
-      TIMEOUT,
-    );
-  },
-);
+layer(nodeServices, { excludeTestServices: true })("skill task: write-decision-rules", (it) => {
+  it.effect(
+    "the skill's setup reports the failing file only",
+    () => withMock(expectedSolution),
+    TIMEOUT,
+  );
+  it.effect(
+    "an API key in the plugin setup fails the run",
+    () => withMock(keyInSetupIsRefused),
+    TIMEOUT,
+  );
+  it.effect(
+    "a rule that is not turned on sends no request",
+    () => withMock(ruleNotEnabledSendsNothing),
+    TIMEOUT,
+  );
+});

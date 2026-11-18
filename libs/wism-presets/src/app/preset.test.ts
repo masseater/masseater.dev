@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { lint } from "@r_masseater/wism";
 import type { Diagnostic, WismConfig, WismError } from "@r_masseater/wism";
 import {
@@ -18,7 +18,7 @@ import { rustCrate, skill, workspace } from "#/entities/kind/index.ts";
 
 import { structure } from "./preset.ts";
 
-const services = ManagedRuntime.make(NodeServices.layer);
+const services = ManagedRuntime.make(nodeServices);
 afterAll(() => services.dispose());
 
 const MODULE = "export const value = 1;\n";

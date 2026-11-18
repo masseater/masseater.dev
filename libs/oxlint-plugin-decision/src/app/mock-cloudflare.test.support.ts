@@ -1,4 +1,4 @@
-import { NodeHttpServer } from "@effect/platform-node";
+import { layerTest } from "@effect/platform-node/NodeHttpServer";
 import {
   Array as Arr,
   Boolean as Bool,
@@ -177,7 +177,7 @@ const routes = Layer.unwrap(
 /** @internal */
 export const MockCloudflareLayer = routes.pipe(
   Layer.provideMerge(MockLive),
-  Layer.provideMerge(NodeHttpServer.layerTest),
+  Layer.provideMerge(layerTest),
 );
 
 /** @internal */

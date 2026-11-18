@@ -1,4 +1,5 @@
-import { NodeRuntime, NodeServices } from "@effect/platform-node";
+import { runMain } from "@effect/platform-node/NodeRuntime";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { Array as Arr, Effect, FileSystem, Layer, Option, Path, pipe } from "effect";
 import { contentSecurityPolicy } from "security-headers";
 import { pageSlug, pageHashes } from "security-headers/static";
@@ -56,8 +57,8 @@ const program = Effect.gen(function* write() {
   );
 });
 
-NodeRuntime.runMain(
-  Layer.build(NodeServices.layer).pipe(
+runMain(
+  Layer.build(nodeServices).pipe(
     Effect.flatMap((context) =>
       Effect.provideContext(program.pipe(Effect.withSpan("build.asset-headers")), context),
     ),

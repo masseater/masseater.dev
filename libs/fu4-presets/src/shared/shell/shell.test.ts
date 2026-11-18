@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { defineRule, lintText } from "@r_masseater/fu4";
 import type { Fu4Config } from "@r_masseater/fu4";
 import {
@@ -17,7 +17,7 @@ import { afterAll, expect, test } from "vite-plus/test";
 import { CODES, checkShell, messageOf } from "./index.ts";
 import type { Finding } from "./index.ts";
 
-const services = ManagedRuntime.make(NodeServices.layer);
+const services = ManagedRuntime.make(nodeServices);
 afterAll(() => services.dispose());
 
 const CORPUS = "fixtures/shellcheck";

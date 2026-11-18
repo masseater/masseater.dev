@@ -14153,6 +14153,7 @@ name = "y8-core"
 version = "0.1.0"
 dependencies = [
  "agnix-core",
+ "blake3",
  "lindera",
  "pulldown-cmark",
  "rayon",

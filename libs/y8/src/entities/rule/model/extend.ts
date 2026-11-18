@@ -5,20 +5,25 @@ import type { Y8Config } from "#/shared/config/index.ts";
 
 type Layer = Omit<Y8Config, "extends">;
 
-const lastInlineConfig = (layers: readonly Layer[]): Partial<Pick<Y8Config, "inlineConfig">> =>
-  pipe(
-    layers,
-    Arr.findLast((layer) => Option.fromNullishOr(layer.inlineConfig)),
-    Option.match({
-      onNone: () => ({}),
-      onSome: (inlineConfig) => ({ inlineConfig }),
-    }),
-  );
+type Switch = "inlineConfig" | "cache";
+
+const lastOf =
+  (key: Switch) =>
+  (layers: readonly Layer[]): Partial<Pick<Y8Config, Switch>> =>
+    pipe(
+      layers,
+      Arr.findLast((layer) => Option.fromNullishOr(layer[key])),
+      Option.match({
+        onNone: () => ({}),
+        onSome: (value) => ({ [key]: value }),
+      }),
+    );
 
 export const flattenConfig = (config: Y8Config): Y8Config => {
   const layers = layersOf(config);
   return {
     ...mergedLayers(layers),
-    ...lastInlineConfig(layers),
+    ...lastOf("inlineConfig")(layers),
+    ...lastOf("cache")(layers),
   };
 };

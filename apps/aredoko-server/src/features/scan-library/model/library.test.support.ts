@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { Array, Effect, FileSystem, Layer, Option, Path, Ref, Schema, pipe } from "effect";
 import { SqlClient } from "effect/sql";
 
@@ -61,7 +61,7 @@ export const indexInTemporaryFolder = Layer.unwrap(
     });
     return databaseLayer.pipe(Layer.provide(settings));
   }),
-).pipe(Layer.provideMerge(NodeServices.layer));
+).pipe(Layer.provideMerge(nodeServices));
 
 /** @internal */
 export const addPackage = Effect.gen(function* addPackage() {

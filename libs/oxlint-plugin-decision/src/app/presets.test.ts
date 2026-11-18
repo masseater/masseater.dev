@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { layer } from "@effect/vitest";
 import { assertInclude, deepStrictEqual, strictEqual } from "@effect/vitest/utils";
 import {
@@ -191,7 +191,7 @@ const customExample = Effect.gen(function* test() {
   );
 });
 
-layer(NodeServices.layer, { excludeTestServices: true })("the presets", (it) => {
+layer(nodeServices, { excludeTestServices: true })("the presets", (it) => {
   it.effect(
     "recommended reports only the risky code",
     () => reportsOnlyFail("recommended"),

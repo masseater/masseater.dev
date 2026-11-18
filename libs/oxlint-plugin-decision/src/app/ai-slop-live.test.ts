@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { layer } from "@effect/vitest";
 import { deepStrictEqual } from "@effect/vitest/utils";
 import {
@@ -88,13 +88,10 @@ const aiSlopLive = Effect.scoped(
   }),
 );
 
-layer(NodeServices.layer, { excludeTestServices: true })(
-  "the ai-slop rules on Span-01 Lite",
-  (it) => {
-    it.effect(
-      "report each planted habit in fail.ts and nothing in pass.ts",
-      () => aiSlopLive,
-      TIMEOUT,
-    );
-  },
-);
+layer(nodeServices, { excludeTestServices: true })("the ai-slop rules on Span-01 Lite", (it) => {
+  it.effect(
+    "report each planted habit in fail.ts and nothing in pass.ts",
+    () => aiSlopLive,
+    TIMEOUT,
+  );
+});

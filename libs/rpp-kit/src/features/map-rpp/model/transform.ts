@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { Array as Arr, Effect, FileSystem, ManagedRuntime, Path, pipe } from "effect";
 import { mappedOutput } from "mapped-import/mapper";
 import type { Request } from "mapped-import/mapper";
@@ -43,7 +43,7 @@ const transformRpp = Effect.fn("transformRpp")(function* transformRpp(request: R
   });
 });
 
-const runtime = ManagedRuntime.make(NodeServices.layer);
+const runtime = ManagedRuntime.make(nodeServices);
 
 export const transform = (request: Request): Promise<TransformResult> =>
   runtime.runPromise(transformRpp(request));

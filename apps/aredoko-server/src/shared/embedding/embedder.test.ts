@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { expect, layer } from "@effect/vitest";
 import { env } from "@huggingface/transformers";
 import { Array, Effect, FileSystem, Layer, Option, Record, Ref, String as Str, pipe } from "effect";
@@ -64,7 +64,7 @@ const loadFailure = Effect.fn("loadFailure")(function* loadFailure(directory: st
   return String(failure.cause);
 });
 
-layer(NodeServices.layer, { excludeTestServices: true })("embedder", (it) => {
+layer(nodeServices, { excludeTestServices: true })("embedder", (it) => {
   it.effect("sends every request to a pinned commit", () =>
     Effect.gen(function* downloadsPinned() {
       const fileSystem = yield* FileSystem.FileSystem;

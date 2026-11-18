@@ -1,4 +1,4 @@
-import { NodeRuntime } from "@effect/platform-node";
+import { runMain } from "@effect/platform-node/NodeRuntime";
 import { PRODUCT_NAME, openRouter } from "@r_masseater/ocr-decide";
 import { Effect, Layer } from "effect";
 
@@ -22,4 +22,4 @@ const measure = Effect.gen(function* measure() {
 
 const services = Layer.mergeAll(openRouter, tracingLayer(`${PRODUCT_NAME}-measure`), resultsLayer);
 
-NodeRuntime.runMain(measure.pipe(provideAtEntry(services)));
+runMain(measure.pipe(provideAtEntry(services)));

@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { JaBenchSummarySchema } from "@ocr-decide/measurements/ja-bench-schema";
 import type { JaBenchSummary } from "@ocr-decide/measurements/ja-bench-schema";
 import { Context, Effect, FileSystem, Layer, Schema, Array as Arr, pipe } from "effect";
@@ -110,6 +110,4 @@ const makeResults = Effect.gen(function* makeResults() {
   });
 });
 
-export const resultsLayer = Layer.effect(Results, makeResults).pipe(
-  Layer.provide(NodeServices.layer),
-);
+export const resultsLayer = Layer.effect(Results, makeResults).pipe(Layer.provide(nodeServices));

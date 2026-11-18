@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { expect, layer } from "@effect/vitest";
 import { Array, Effect, FileSystem, Option, Path, Stream, pipe } from "effect";
 import { Tar } from "effect/encoding";
@@ -122,7 +122,7 @@ const shapeOf =
       Option.map(({ hasAsset, asset }) => ({ hasAsset, loaded: Option.isSome(asset) })),
     );
 
-layer(NodeServices.layer)("readPackage", (it) => {
+layer(nodeServices)("readPackage", (it) => {
   it.effect("reads the first line of pathname and the preview", () =>
     Effect.gen(function* test() {
       const entries = yield* fixture;

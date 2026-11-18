@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { layer } from "@effect/vitest";
 import { assertInclude, deepStrictEqual, strictEqual } from "@effect/vitest/utils";
 import { Array as Arr, Effect, Option, Record as Rec, String as Str, pipe } from "effect";
@@ -146,38 +146,35 @@ const noViolation = Effect.scoped(
   }),
 );
 
-layer(NodeServices.layer, { excludeTestServices: true })(
-  "locating a file rule's violation",
-  (it) => {
-    it.effect.each(["\n", "\r\n", "\r"])(
-      "reports the source line across %j",
-      (newline) => withMock(lineAndColumn(newline)),
-      TIMEOUT,
-    );
-    it.effect.each([LINE_SEPARATOR, PARAGRAPH_SEPARATOR])(
-      "reports the source span across %j",
-      (newline) => withMock(Effect.asVoid(spanAcross(newline))),
-      TIMEOUT,
-    );
-    it.effect(
-      "keeps the file-level report without a location question",
-      () => withMock(withoutLocation),
-      TIMEOUT,
-    );
-    it.effect.each(truncations)(
-      "never locates a truncated snippet (%o)",
-      (truncation) => withMock(neverLocatesTruncated(truncation)),
-      TIMEOUT,
-    );
-    it.effect.each(["location-uncertain", "location-unknown"])(
-      "caches an uncertain answer and reports at file level (%s)",
-      (token) => withMock(cachesUncertain(token)),
-      TIMEOUT,
-    );
-    it.effect(
-      "does not let a confident location create a violation",
-      () => withMock(noViolation),
-      TIMEOUT,
-    );
-  },
-);
+layer(nodeServices, { excludeTestServices: true })("locating a file rule's violation", (it) => {
+  it.effect.each(["\n", "\r\n", "\r"])(
+    "reports the source line across %j",
+    (newline) => withMock(lineAndColumn(newline)),
+    TIMEOUT,
+  );
+  it.effect.each([LINE_SEPARATOR, PARAGRAPH_SEPARATOR])(
+    "reports the source span across %j",
+    (newline) => withMock(Effect.asVoid(spanAcross(newline))),
+    TIMEOUT,
+  );
+  it.effect(
+    "keeps the file-level report without a location question",
+    () => withMock(withoutLocation),
+    TIMEOUT,
+  );
+  it.effect.each(truncations)(
+    "never locates a truncated snippet (%o)",
+    (truncation) => withMock(neverLocatesTruncated(truncation)),
+    TIMEOUT,
+  );
+  it.effect.each(["location-uncertain", "location-unknown"])(
+    "caches an uncertain answer and reports at file level (%s)",
+    (token) => withMock(cachesUncertain(token)),
+    TIMEOUT,
+  );
+  it.effect(
+    "does not let a confident location create a violation",
+    () => withMock(noViolation),
+    TIMEOUT,
+  );
+});
