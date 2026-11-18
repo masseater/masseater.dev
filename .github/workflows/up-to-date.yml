@@ -11,10 +11,6 @@ permissions: {}
 env:
   TAKUMI_GUARD_TOKEN: ${{ secrets.TAKUMI_GUARD_TOKEN }}
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
-
 jobs:
   up-to-date:
     runs-on: ubuntu-latest
