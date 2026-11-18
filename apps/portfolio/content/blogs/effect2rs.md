@@ -1,15 +1,12 @@
 ---
-title: "effect2rs"
-description: "effect2rs generates serde Rust types from Effect Schema, so a desktop app whose web side is TypeScript and whose native side is Rust keeps one definition of every type that crosses the boundary. With example output, the cases it refuses and the check that rejects hand-written copies."
-tags: ["Effect", "Rust", "TypeScript", "Tauri"]
-published: true
+title: "effect2rs" description: "effect2rsはEffectスキーマからSerdeのRust型を生成するため、Web側がTypeScriptでネイティブ側がRustであるデスクトップアプリでは、境界を越えるすべての型の定義を1つに集約できる。出力例では、拒否されるケースと、手書きのコピーを却下するチェックが示されている。" tags: ["Effect", "Rust", "TypeScript", "Tauri"] published: true
 ---
 
-[effect2rs](https://github.com/masseater/masseater.dev/tree/main/libs/effect2rs) generates Rust types with serde derives from Effect Schema. My desktop apps are built with Tauri, which puts a TypeScript web side in front of a Rust process, and every message between the two had been typed twice: once as an Effect Schema and once as a Rust struct written by hand. effect2rs makes the Effect Schema the only definition and generates the Rust side from it. I built it for my own use, so it is not on npm.
+[effect2rs](https://github.com/masseater/masseater.dev/tree/main/libs/effect2rs) は、Effect Schema から serde derive を用いて Rust の型を生成する。私のデスクトップアプリは Tauri で構築されており、Rust プロセスの前に TypeScript のウェブ側を配置し、両者間のすべてのメッセージは 2 回型付けされている。1 回は Effect Schema として、そしてもう 1 回は手書きの Rust 構造体としてだ。effect2rs は Effect Schema を唯一の定義とし、そこから Rust 側を生成する。自分用に構築したため、npm には掲載していない。
 
-## From an Effect Schema to a Rust module
+## エフェクトスキーマからRustモジュールへ
 
-effect2rs takes the exported values of a module and returns the text of one Rust module. A schema becomes a type when it has an `identifier` annotation, and a plain string, number or boolean exported next to the schemas becomes a constant.
+effect2rs はモジュールのエクスポート値を受け取り、Rust モジュール1つのテキストを返す。スキーマは `identifier` アノテーションが付くと型となり、スキーマの横にエクスポートされる単純な文字列、数値、またはブール値は定数となる。
 
 ```ts
 import { effect2rs } from "@masseater.dev/effect2rs";
@@ -29,7 +26,7 @@ const rust = await Effect.runPromise(
 );
 ```
 
-Running this on November 18, 2026 printed the following module.
+2026年11月18日にこれを実行したところ、以下のモジュールが出力された。
 
 ```rust
 // generated
@@ -81,11 +78,11 @@ impl Stem {
 }
 ```
 
-The field `bars` became `u32` because of the `isUint32` check, and `bpm` became `f64` because it has no integer check. `Eq` is derived for `Stem` and not for `Track`, because `Track` contains a float. The output is already in the form rustfmt would produce, so a formatting check never reports it.
+`bars` フィールドは `isUint32` チェックにより `u32` となり、`bpm` は整数チェックがないため `f64` となった。`Eq` は `Track` に float が含まれているため、`Track` ではなく `Stem` に対して導出される。出力はすでに rustfmt が生成する形式になっているため、フォーマットチェックで検出されることはない。
 
-## What becomes what
+## 何が何になるか
 
-effect2rs reads Effect v4's own representation of a schema, `SchemaRepresentation`, instead of converting it to JSON Schema first. The identifiers and integer checks therefore reach the Rust side as they were written.
+effect2rsは、SchemaをまずJSON Schemaに変換するのではなく、Effect v4独自のスキーマ表現である`SchemaRepresentation`を読み込む。これにより、識別子や整数チェックは記述されたままRust側に引き継がれる。
 
 | Effect Schema                                           | Rust                                                                    |
 | ------------------------------------------------------- | ----------------------------------------------------------------------- |
@@ -98,19 +95,19 @@ effect2rs reads Effect v4's own representation of a schema, `SchemaRepresentatio
 | A recursive reference                                   | A `Box`                                                                 |
 | An exported string, number or boolean                   | `pub const`                                                             |
 
-Rust keywords become raw identifiers. Names that cannot be raw identifiers get a suffix, and names that start with a digit get a prefix.
+Rustのキーワードは生の識別子になる。生の識別子にならない名前には接尾辞が、数字で始まる名前には接頭辞が付く。
 
-## Cases it refuses
+## 拒否するケース
 
-effect2rs fails with `UnsupportedSchema` and the path of the schema instead of guessing. A struct nested inside another struct without its own `identifier` fails at `Track.meta`, because Rust needs a name for it. A union of a string and a number fails, and so does a union of number literals. Effect quietly renames a second schema with the same identifier to `Name_1`, so effect2rs reports that as an error too.
+effect2rsは、推測ではなく`UnsupportedSchema`とスキーマのパスを指定して失敗する。独自の`identifier`を持たず別の構造体の中にネストされた構造体は、Rustが名前を必要とするため、`Track.meta`で失敗する。文字列と数値のユニオンは失敗し、数値リテラルのユニオンも同様に失敗する。Effectは、同じ識別子を持つ2つ目のスキーマをひっそりと`Name_1`にリネームするため、effect2rsもそれをエラーとして報告する。
 
-## A check rejects stale output and hand-written copies
+## チェックでは、古い出力や手書きのコピーは拒否される。
 
-`checkRust` compares each generated file with what the schemas generate now. It fails with `StaleRust` when the file is missing or different, and with `HandWrittenCopies` when another `.rs` file in the same directory declares a name that the generated file already declares. The second failure stops a Rust developer, or an AI, from writing a struct by hand next to the generated one.
+`checkRust` は、生成された各ファイルを、現在のスキーマが生成する内容と比較する。ファイルが欠落しているか異なっている場合は `StaleRust` で失敗し、同一ディレクトリ内の別の `.rs` ファイルが生成済みファイルが既に宣言している名前を宣言している場合は `HandWrittenCopies` で失敗する。2つ目の失敗により、Rust 開発者または AI が生成済みの構造体の隣に構造体を手入力することができなくなる。
 
-## Differences between the two sides
+## 両者の違い
 
-A Cargo crate in the package round-trips encoded samples through serde and checks that Rust rejects every sample that Effect rejects. The remaining differences are known and accepted.
+パッケージ内のCargoクレートは、サンプルをserde経由でラウンドトリップし、RustがEffectで却下したすべてのサンプルを却下するかどうかを確認する。それ以外の相違点は既知であり、認められている。
 
 | Case                                      | Effect         | Rust                             |
 | ----------------------------------------- | -------------- | -------------------------------- |
@@ -119,6 +116,6 @@ A Cargo crate in the package round-trips encoded samples through serde and check
 | Dates and other values encoded as strings | Validated      | Not validated                    |
 | Unknown keys                              | Ignored        | Ignored                          |
 
-## Where it fits with tauri-specta
+## tauri-specta と一致する箇所
 
-The direction is the opposite of most existing tools. [specta](https://github.com/specta-rs/specta) and tauri-specta generate TypeScript from Rust types, and the JSON Schema route goes through tools such as [typify](https://github.com/oxidecomputer/typify). When I built effect2rs on November 15, 2026, I found no tool that generated Rust from Effect Schema. In my apps, tauri-specta still types the Tauri commands, and effect2rs generates the types those commands take and return. Four apps use it today, with 3 to 25 generated types each.
+この方向性は、既存のほとんどのツールとは正反対だ。[specta](https://github.com/specta-rs/specta)やtauri-spectaはRustの型からTypeScriptを生成し、JSON Schemaルートは[typify](https://github.com/oxidecomputer/typify)などのツールを経由する。2026年11月15日にeffect2rsをビルドした際、Effect SchemaからRustを生成するツールは見当たらなかった。私のアプリでは、tauri-spectaは依然としてTauriコマンドを型付けしており、effect2rsはそれらのコマンドが受け取り、返す型を生成している。現在は4つのアプリで利用されており、それぞれ3〜25個の型が生成されている。

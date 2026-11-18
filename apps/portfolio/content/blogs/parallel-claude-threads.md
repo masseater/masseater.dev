@@ -1,35 +1,32 @@
 ---
-title: "Running dozens of Claude threads at once"
-description: "I run my personal development as one claude.ai project with dozens of Claude threads working in parallel. A coordinator routes my requests, and an hourly audit thread finds stalled threads and PRs, proposes merging duplicate threads and redraws the task graph."
-tags: ["Claude", "AI agents", "Automation"]
-published: true
+title: "数十個のClaudeスレッドを同時に実行中" description: "個人開発を一つのClaude.aiプロジェクトとして運用しており、数十個のClaudeスレッドを並列で動作させている。コーディネーターがリクエストをルーティングし、1時間ごとの監査スレッドが停滞中のスレッドやPRを検出して、重複スレッドのマージを提案し、タスクグラフを再描画する。" tags: ["Claude", "AIエージェント", "自動化"] published: true
 ---
 
-I build almost everything I make by myself through Claude threads in one claude.ai project. On November 17 (JST), about 40 new threads started in that project, and 194 pull requests were merged across my repositories. Of those, 118 were written by Claude under my account, 60 came from Renovate and 16 were release PRs from a bot. Since the project started, it has created 412 threads, and at 10:55 on November 18, 13 of them were still open. The limit at this scale is my attention, not Claude's speed. Everything below exists so that I can keep giving instructions while reading only one place.
+自分が作るものはほぼすべて、Claudeのスレッドを通じて一つのClaude.aiプロジェクトで自作している。11月17日（日本時間）にそのプロジェクトで40件ほどの新規スレッドが立ち、194件のプルリクエストが自分のリポジトリ間でマージされた。そのうち118件は自分のアカウントでClaudeが書き、60件はRenovateから、16件はボットからのリリースPRだった。プロジェクトが始まってから412件のスレッドが作成され、11月18日10時55分時点で13件がまだ開いていた。この規模での限界はClaudeの速度ではなく自分の注意力だ。1か所だけを読みながら指示を出し続けられるように、以下はすべて存在している。
 
-## I read only the project chat
+## プロジェクトチャットのみ読んだ
 
-I read only the project chat, and I never open the threads. A claude.ai project has a coordinator, a Claude that talks with me in the project chat, and each piece of work gets its own thread. When I write "build this" in the project chat, the coordinator starts a thread and passes my message to it. The thread does the work, opens a PR and merges it once its checks pass, because I no longer review PRs before they merge (I wrote why in [I stopped reviewing PRs](/blogs/stop-pr-review)).
+プロジェクトチャットのみを読み、スレッドを開くことはない。Claude.aiプロジェクトにはコーディネーターがおり、プロジェクトチャットで私とやり取りするClaudeが存在し、各作業にはそれぞれ専用のスレッドが割り当てられている。プロジェクトチャットで「build this」と入力すると、コーディネーターがスレッドを開始し、私のメッセージをそこに渡す。スレッドが作業を行い、PRを作成してチェックを通過したらマージする。というのも、マージ前にPRをレビューすることはもうないからだ（理由は [I stopped reviewing PRs](/blogs/stop-pr-review) に書いた）。
 
-The project instructions say that the coordinator copies into the project chat, in one line with a link, anything a thread needs from me: manual work, a look at a screen, a permission prompt or a decision. Finished work comes back the same way, with the PR or the public URL. My replies in the chat go back to the right thread through the coordinator. A thread therefore writes its request to me on the assumption that I will never come to read it.
+プロジェクトの指示書には、コーディネーターがプロジェクトチャットに、スレッドが私に求めるもの（手動作業、画面確認、権限プロンプト、または決定事項など）をリンク付きで1行でコピーすると記載されている。完了した作業も同様に、PRまたは公開URLで戻ってくる。チャットでの私の返信は、コーディネーターを通じて適切なスレッドに転送される。したがって、スレッドは、私が決してそれを読みに来ないという前提で、リクエストを私に書き込むことになる。
 
-## A thread that stops looks the same as a thread that works
+## 停止したスレッドは、正常に動作しているスレッドと同じ見た目になる。
 
-With dozens of threads running, I cannot notice by myself that one has stopped. A thread waiting on a CI result, a thread waiting on me and a thread whose session died all look like silence in the project chat. Conflicts make this worse: when one PR merges, the PRs of other threads in the same repository fall behind main and conflict, and nobody fixes them unless the owning thread notices.
+数十ものスレッドが稼働しているため、一つが停止したことに自分では気づかない。CIの結果を待っているスレッド、自分を待っているスレッド、そしてセッションが終了したスレッド――そのどれもが、プロジェクトチャットの中で沈黙しているように見える。コンフリクトが状況をさらに悪化させる。あるPRがマージされると、同じリポジトリ内の他のスレッドのPRがmainから遅れ、コンフリクトが発生するため、オーナースレッドが気づかない限り誰も修正しない。
 
-The second problem is threads that split the same work. When I ask for related things in separate messages, the coordinator sometimes starts a new thread for each. Two threads then edit the same files, open competing PRs and ask me the same question twice.
+2つ目の問題は、同一の作業を分割するスレッドだ。関連する内容を別々のメッセージで依頼すると、コーディネーターがその都度新しいスレッドを立てることがある。すると、2つのスレッドが同じファイルを編集し、競合するPRを開いて、同じ質問を2回してくる。
 
-## The audit started as hourly scheduled tasks
+## 監査は時間単位のスケジュール済みタスクとして開始された。
 
-On November 15, I first solved this with scheduled tasks. One task, run every hour, checked unmerged PRs and stalled threads, and another, at 52 minutes past every hour, told the coordinator to regroup duplicate threads. I asked for them to stay simple: they were to give instructions, not to investigate. Each run started a new thread, posted its result and closed itself.
+11月15日、私はまずスケジュール済みタスクでこれを解決した。1時間ごとに実行されるタスクの一つは、マージされていないPRのチェックとスレッドの停滞を行い、もう一つは1時間ごとの52分経過時点で、重複スレッドを再グループ化するようコーディネーターに指示した。私はシンプルさを求めた。指示を出すのであって、調査を行うのではないということだ。各実行は新しいスレッドを立ち上げ、その結果を投稿して自らをクローズした。
 
-This produced many threads that I could not follow. Every hour added two more short-lived threads to the list, and when a task was recreated without deleting the old one, three audit threads started in the same minute. I also could not see what the coordinator did with the instructions, because that loop ran inside its own session.
+これにより、把握しきれないスレッドが大量に発生した。1時間ごとに2つの短命なスレッドがリストに追加され、古いスレッドを削除せずにタスクを再作成すると、同じ1分間に3つの監査スレッドが起動した。また、そのループが独自のセッション内で動作していたため、コーディネーターが指示をどう処理したのかも確認できなかった。
 
-## One audit thread that never closes
+## 決して閉じない監査スレッド 1 つ
 
-On November 16, I replaced the scheduled tasks with one thread that audits every hour and is never resolved. At the end of each run, it schedules its own next run in the same thread. It reads only the thread list, the latest message of each stalled thread and my open PRs with their CI state and mergeability. It posts its result in Japanese, in at most 1,500 characters, even when nothing is wrong, so I can scroll back through every run in one place.
+11月16日、予定されていたタスクを、1時間ごとに監査して一度も解決されない1つのスレッドに置き換えた。各実行の終了時に、同じスレッド内で次の実行をスケジュールする。スレッド一覧、停止中の各スレッドの最新メッセージ、およびCIステータスとマージ可否が記載されたオープン済みPRのみを読み取る。何も問題がない場合でも、結果は日本語で最大1,500文字で出力されるため、すべての実行を一箇所で遡って確認できる。
 
-My first instructions told it both "do not dig into stalled threads" and "find out why they stalled," and I pointed out that the two contradict each other. The rule became that the audit writes the reason if the reason is visible and otherwise asks the coordinator to find it and restart the thread. The audit never messages other threads directly. It sends everything to the coordinator, which batches the restarts, merges every open PR and consolidates duplicate threads. A thread that is absorbed hands over its state before it is resolved.
+最初の指示では、「停滞しているスレッドを深掘りしない」ことと「なぜ停滞したのかを突き止める」ことの両方を伝え、両者が矛盾していることを指摘した。その結果、理由が明白な場合は監査がその理由を記述し、そうでない場合はコーディネーターにその理由の特定とスレッドの再起動を求めるというルールになった。監査が他のスレッドに直接メッセージを送ることはない。すべてをコーディネーターに送信し、コーディネーターが再起動をバッチ処理し、すべてのオープンなPRをマージして、重複するスレッドを集約する。吸収されたスレッドは、解決される前にその状態が引き渡される。
 
 | What the audit counts                       | 24 runs from 10:42 on Nov 17 to 10:01 on Nov 18 (JST) |
 | ------------------------------------------- | ----------------------------------------------------- |
@@ -37,12 +34,12 @@ My first instructions told it both "do not dig into stalled threads" and "find o
 | Merges it saw since the previous run        | 47                                                    |
 | Thread consolidations it proposed           | 5                                                     |
 
-The flags are often about something outside any one thread. At 15:52 on November 17, the audit reported that the package registry that blocks malicious npm packages was returning HTTP 429 to anonymous CI installs, which stopped CI in every repository at once. A PR that stayed in conflict for 2.9 hours was flagged the same way.
+これらのフラグは、多くの場合、特定のスレッド外の事象に関するものである。11月17日15時52分、監査報告によると、悪意のあるnpmパッケージをブロックするパッケージレジストリが、匿名のCIインストールに対してHTTP 429を返しており、その結果、すべてのリポジトリで一斉にCIが停止した。2.9時間にわたってコンフリクト状態が続いたPRにも、同様のフラグが立てられた。
 
-## The task graph shows only what I must decide
+## タスクグラフには、私が決定すべきことのみが表示されている。
 
-At the end of every run, the audit also rewrites the task graph. It is a page that reads a JSON file in the project's shared folder and lays out tasks from left to right along their dependencies. Each task has a status, the threads working on it and its PRs, and every task flows into one of four goals, such as "every rule of the repositories lives in msch." At the last update there were 51 tasks, 36 of them done.
+各実行の終了時に、監査ではタスクグラフも書き換えられる。これは、プロジェクトの共有フォルダ内にあるJSONファイルを読み込み、依存関係に沿ってタスクを左から右へ配置するページである。各タスクにはステータス、担当スレッドとそのPRが記載されており、すべてのタスクは「リポジトリのすべてのルールはmschに存在する」といった4つのゴールのいずれかへと流れ込む。前回の更新時点では51件のタスクがあり、そのうち36件が完了していた。
 
-The coordinator adds a task when it starts a thread, and when several threads do the same work it merges them into one task. A task that needs my choice gets its own card with two to four options, each drawn as a small diagram of what the repositories look like after I pick it. I answer on the page, and the coordinator forwards my answer to the thread. A choice on that page is never taken as my approval for a merge or a deletion.
+コーディネーターはスレッドを開始する際にタスクを追加し、複数のスレッドが同じ処理を行った場合は、それらを1つのタスクに統合する。私の選択を必要とするタスクには、2〜4つの選択肢が記載された専用のカードが割り当てられ、それぞれを選択後にリポジトリがどのような状態になるかを示す小さな図として表示される。私がページ上で回答すると、コーディネーターはその回答をスレッドに転送する。そのページ上の選択肢が、統合や削除の承認として扱われることはない。
 
-The page is my third attempt. On November 14, I threw away a status page with a one-word reply: "いらね." The second, a kanban board of what waits on me, what is running and what finished in the last 24 hours, was replaced by the graph on the day I approved it.
+このページは3度目の挑戦だ。11月14日、「いらね」という一言の返信を添えたステータスページを捨てた。2枚目――何が待ち構え、何が稼働し、過去24時間で何が完了したかというカンバンボード――は、承認したその日のグラフに取って代わられた。

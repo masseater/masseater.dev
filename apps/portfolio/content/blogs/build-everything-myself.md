@@ -1,11 +1,8 @@
 ---
-title: "Rebuilding tools that already exist"
-description: "I am having Claude rebuild linters and checkers that already exist, such as y8 for markdownlint, fu4 for actionlint and zizmor, h56m for secret scanners and msch for my repository rules. Owning them lets me fix what bothers me at once and keep every setting and measurement in one place."
-tags: ["Linter", "Rust", "Vite+", "Claude"]
-published: true
+title: "既存ツールの再構築" description: "Markdownlintのy8、ActionlintとZizmorのfu4、シークレットスキャナーのh56m、リポジトリルールのmschなど、既に存在するリンターやチェッカーをClaudeに再構築させている。自前で管理することで、気になる点を一度に修正でき、あらゆる設定や計測値を一箇所にまとめて管理できる。" tags: ["Linter", "Rust", "Vite+", "Claude"] published: true
 ---
 
-I am having Claude rebuild, one after another, tools that already exist and work well. y8 is a Markdown linter in place of markdownlint, fu4 is a GitHub Actions linter in place of actionlint and zizmor, h56m is a secret scanner in place of Betterleaks and secretlint, and msch gathers the checks of all my repositories into one command. On November 7, I put the reason this way: "I don't want to be tied to other people's OSS update flows; I want to build everything myself and fix it right away when something bothers me." What I want is a place where an AI can pull every measurement by itself, and borrowed tools keep getting in the way of that.
+Claudeに、既に存在してうまく動作しているツールを次々と作り直させている。y8はmarkdownlintの代わりにMarkdown linter、fu4はactionlintの代わりにGitHub Actions linter、zizmorはBetterleaksとsecretlintの代わりにh56mがシークレットスキャナー、そしてmschは私の全リポジトリのチェックを一つのコマンドにまとめてくれる。11月7日、その理由をこう記した。「他人のOSSアップデートフローに縛られたくない。すべて自分で作り、何か気になることがあればすぐに直したい」。私が欲しいのは、AIがあらゆる計測を自力で行える場所であり、借り物のツールがその邪魔をし続けることだ。
 
 | Tool                                                                   | Replaces                                           | Built on                                    | Gives the same results as                   |
 | ---------------------------------------------------------------------- | -------------------------------------------------- | ------------------------------------------- | ------------------------------------------- |
@@ -14,26 +11,26 @@ I am having Claude rebuild, one after another, tools that already exist and work
 | [h56m](https://github.com/masseater/masseater.dev/tree/main/libs/h56m) | Betterleaks, secretlint                            | Kingfisher's matching engine                | Betterleaks rules, read in their own format |
 | [msch](https://github.com/masseater/masseater.dev/tree/main/libs/msch) | per-repository scripts and rules written in skills | the tools above and oxlint                  | none; the rules are mine                    |
 
-## Bending my code to fit a library cost more than writing one
+## ライブラリに合わせてコードを曲げる方が、書くよりもコストがかかる。
 
-My rule is still the usual one: do not build or wrap things without a reason, and look for an existing library before writing anything new. On November 15, I added one exception: "If forcing a general library into its general usage lowers efficiency, that defeats the purpose, so I now allow myself to build my own library tailored to my use case."
+私のルールは相変わらず、理由なくビルドやラップはせず、新しいものを書く前に既存のライブラリを探すことだ。11月15日、ひとつ例外を追加した。「汎用ライブラリを汎用的な用途に無理に当てはめて効率が落ちるなら本末転倒なので、自分のユースケースに合わせた独自のライブラリを自作することを自分に許している」。
 
-The cost I mean showed up in every tool I replaced. markdownlint, actionlint and Betterleaks each read their own configuration file in their own format, while every other setting in my repositories lives in one `vite.config.ts`. actionlint ships as a Go binary, so it cannot report spans into the same trace as the TypeScript that calls it. When GitHub added the `uses: $/path` syntax that refers to the repository itself, actionlint 1.7.12 rejected it, and the only fix on my side was to wait for a release or stop using the syntax.
+コストについては、置き換えたすべてのツールで顕在化した。Markdownlint、ActionLint、BetterLeaksはそれぞれ独自のフォーマットで設定ファイルを読み込んでいたが、リポジトリ内の他のすべての設定は単一の `vite.config.ts` に収まっていた。ActionLintはGoバイナリとして提供されているため、呼び出し元のTypeScriptと同じトレースにスパンを報告することができない。GitHubがリポジトリ自体を参照する `uses: $/path` 構文を追加した際、ActionLint 1.7.12はこれを拒否し、私側での唯一の対処法はリリースを待つか、この構文の使用を止めることだった。
 
-## The original tool's tests become the specification
+## 元のツールのテストが仕様となる。
 
-A rebuild is affordable now because Claude writes the code and the original tool already defines what correct means. Every tool here vendors the test data of the tool it replaces and must give the same answers before it ships. y8 matches all 53 rules of markdownlint 0.42.1 on its 436 fixtures. fu4 reports actionlint's findings with the same messages and positions, and its port of zizmor's 43 security audits matches all 278 snapshot cases of zizmor 1.32.0.
+Claudeがコードを記述し、元のツールがすでに「正しい」の意味を定義しているため、リビルドは今や低コストで実現できる。ここでのすべてのツールは、置き換え対象となるツールのテストデータをベンダーに提供しており、リリース前に同一の回答を提示しなければならない。y8は、436個のフィクスチャにおいてMarkdownlint 0.42.1の全53ルールに一致している。fu4はactionlintの指摘事項を同一のメッセージと位置で報告しており、またzizmorの43件のセキュリティ監査の移植版は、zizmor 1.32.0の全278件のスナップショットケースと一致している。
 
-Matching the original first and changing it second keeps my changes deliberate. fu4 differs from actionlint in one place that I chose: it accepts `uses: $/path`, which my workflows use. y8 differs in speed. On the 267 Markdown files of my monorepo, y8 lints in 28 ms against 70 ms for rumdl, which is already a Rust rewrite of markdownlint.
+元の1つ目と一致させ、2つ目を変更することで、変更内容を意図した形に保てる。fu4がactionlintと異なる点は、私が選択した一点にある。それは、ワークフローで使用している `uses: $/path` を受け付けることだ。y8は速度が異なる。私のモノレポにある267個のMarkdownファイルにおいて、y8のリント処理時間は28 msであるのに対し、rumdlは70 msかかる。rumdlはすでにmarkdownlintをRustで書き直したものである。
 
-## I borrow the cores and build the surface
+## コアを借りて、サーフェスを構築する。
 
-I do not rebuild parsers or matching engines that follow a specification. y8 parses with pulldown-cmark, fu4 runs zizmor's audits on zizmor's own crates, and h56m matches secrets with Kingfisher's engine. What I build is the part I touch: the configuration section in `vite.config.ts`, the command, the diagnostics, the spans and the rules.
+仕様に準拠したパーサーやマッチングエンジンを再構築することはない。y8はpulldown-cmarkでパースし、fu4はzizmor自身のクレートでzizmorの監査を実行し、h56mはKingfisherのエンジンでシークレットを照合する。私がビルドするのは、実際に手を加える部分、つまり `vite.config.ts` の設定セクション、コマンド、診断、スパン、およびルールである。
 
-The rules are split from the engines in the same way. Each engine is a Rust package built per operating system, and its rules ship in one TypeScript package named `<engine>-presets`, from which a repository picks presets per concern. The engine hands its syntax tree to the TypeScript rules over shared memory, and a rule moves to Rust only when the measured numbers show TypeScript is too slow.
+ルールは同様にエンジンから分割される。各エンジンはOSごとにビルドされるRustパッケージであり、そのルールは `<engine>-presets` という1つのTypeScriptパッケージとして提供され、そこからリポジトリが対象ごとにプリセットを選択する。エンジンは構文木を共有メモリ経由でTypeScriptルールに渡し、計測値によってTypeScriptが遅すぎると判断された場合にのみ、ルールがRustに移行する。
 
-## msch turns my corrections into checks
+## mschは私の修正内容をチェックに変換する。
 
-msch is the place where these tools meet my own rules. It runs every check of a repository from one command and is part of `vp run verify`, which every push runs. When I correct Claude for the same mistake twice, such as a comment explaining code or a wrapper function that only forwards its arguments, the correction becomes a msch check instead of a sentence in a skill. Since then, Claude meets the rule as a failing check rather than as text it may skip.
+mschは、これらのツールが自身のルールと合致する場所だ。リポジトリのあらゆるチェックを単一のコマンドで実行し、すべてのプッシュで実行される `vp run verify` の一部となっている。コードを説明するコメントや、引数を転送するだけのラッパー関数など、Claudeが同じミスを2回修正した場合、その修正はスキル内の一文ではなく、mschチェックとなる。それ以来、Claudeはルールを、スキップしてよいテキストではなく、失敗時のチェックとして認識するようになった。
 
-Because I own every tool msch runs, a new check never waits on anyone else. When a rule needs a fix in y8 or fu4, the same thread changes the tool and the repository in one PR.
+mschが実行するすべてのツールを自分が管理しているため、新しいチェックが他を待機することはない。y8やfu4でルールの修正が必要になった際、同じスレッドが1つのPRでツールとリポジトリを変更する。
