@@ -6,11 +6,12 @@
     "windows": {
       "nsis": {
         "installMode": "currentUser",
-        "languages": ["Japanese"]
+        "languages": ["Japanese"],
+        "installerHooks": "./windows/hooks.nsh"
       }
     },
     "resources": {
-      "cuda/*.dll": ""
+      "cuda/runtime.json": "cuda-runtime.json"
     }
   }
 }

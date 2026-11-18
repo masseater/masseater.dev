@@ -7,7 +7,7 @@ import { CommandFailed, repositoryRoot } from "#/shared/lib/command.ts";
 import { environmentOf } from "./host.ts";
 import { platformOf } from "./platform.ts";
 import type { Platform } from "./platform.ts";
-import { copyRuntime, toolkitOf } from "./toolkit.ts";
+import { toolkitOf, writeRuntime } from "./toolkit.ts";
 
 const SUCCESS = 0;
 
@@ -27,8 +27,8 @@ const prepared = Effect.fn("cuda.prepare")(function* prepared(
   const path = yield* Path.Path;
   const root = yield* repositoryRoot;
   const directory = path.join(root, "target", "cuda", version);
-  const toolkit = yield* toolkitOf({ platform, directory }, version);
-  yield* copyRuntime(platform, toolkit, runtime);
+  const { toolkit, manifest } = yield* toolkitOf({ platform, directory }, version);
+  yield* writeRuntime({ platform, toolkit, manifest }, runtime);
   return yield* environmentOf({ platform, toolkit, computeCap, msvc });
 });
 
