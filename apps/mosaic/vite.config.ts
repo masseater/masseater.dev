@@ -47,6 +47,7 @@ export default defineConfig({
   },
   base: `${BASE_PATH}/`,
   build: { copyPublicDir: false },
+  preview: { host: "127.0.0.1" },
   test: { include: ["src/**/*.test.{ts,tsx}", "bin/lib/*.test.ts"] },
   plugins: mosaicPlugins(),
 });
