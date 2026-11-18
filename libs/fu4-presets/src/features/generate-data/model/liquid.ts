@@ -43,8 +43,7 @@ const makeEngine = (run: Run): Render => {
   const fetchCached = (url: string): Effect.Effect<string, GenerateDataError> =>
     Effect.tryPromise({
       try: () => {
-        const pending = cache.get(url) ?? run(fetchText(url));
-        cache.set(url, pending);
+        const pending = cache.getOrInsertComputed(url, () => run(fetchText(url)));
         return pending;
       },
       catch: failedWith(`could not fetch ${url}`),
