@@ -1,15 +1,15 @@
 ---
-title: "fallow similar-code"
-description: "fallow similar-code finds functions that do the same thing in different syntax with a local embedding model, and leaves the decision to a separate verdict document. This post compares it with fallow dupes on sample code and on a monorepo."
+title: "ファロー・アナログコード"
+description: "fallow similar-codeは、ローカル埋め込みモデルを用いて異なる構文で同様の動作をする関数を検出し、その判定を別途Verdictドキュメントに委ねている。この記事では、サンプルコードとモノレポにおけるフォールー・デュープと比較する。"
 tags: ["fallow", "TypeScript", "静的解析"]
 published: true
 ---
 
-`fallow dupes` finds code that was copied and then renamed. It does not find the same calculation written a second time in a different style, such as a `for` loop in one file and a `reduce` in another. `fallow similar-code` covers that gap. It turns each function into a vector with a local embedding model and lists the pairs whose vectors are close[^fallow-similar-code-docs]. [The fallow post](/blogs/fallow) covers the other commands.
+`fallow dupes` は、コピーされた後に名前が変更されたコードを検出する。あるファイルには `for` ループ、別のファイルには `reduce` ループがあるといった、異なるスタイルで記述された同一の計算は検出されない。`fallow similar-code` がその隙間を埋めている。各関数をローカル埋め込みモデルを持つベクトルに変換し、ベクトルが近接しているペアを列挙する[^fallow-similar-code-docs]。[Fallowの投稿](/blogs/fallow)では、その他のコマンドについて解説している。
 
-## What dupes misses
+## 重複が見落としていること
 
-The test project has three functions that compute a cart total. `orderTotal` is `cartTotal` with its variables renamed. `invoiceAmount` computes the same value with `reduce`.
+テストプロジェクトには、カートの合計を計算する関数が3つある。`orderTotal` は `cartTotal` の変数名を変更したものである。`invoiceAmount` は `reduce` で同じ値を計算する。
 
 ```ts
 export function cartTotal(items: readonly Item[]): number {
@@ -32,25 +32,25 @@ export const invoiceAmount = (lines: readonly Item[]): number =>
   lines.reduce((sum, line) => sum + line.quantity * line.price, 0);
 ```
 
-With fallow 3.43.1, the results were as follows. I ran dupes with `--min-tokens 20 --min-lines 3` so that small functions could match.
+fallow 3.43.1 では、結果は以下の通りだった。小さな関数がマッチするように、`--min-tokens 20 --min-lines 3` を指定して重複を処理した。
 
-| Pair                             | `dupes --mode mild` | `dupes --mode semantic` | `similar-code` score |
-| -------------------------------- | ------------------- | ----------------------- | -------------------- |
-| `cartTotal` and `orderTotal`     | Not found           | Found                   | 0.83                 |
-| `orderTotal` and `invoiceAmount` | Not found           | Not found               | 0.76                 |
-| `cartTotal` and `invoiceAmount`  | Not found           | Not found               | 0.72                 |
+| ペア                            | `dupes --mode mild` | `dupes --mode semantic` | `similar-code` スコア |
+| ------------------------------- | ------------------- | ----------------------- | --------------------- |
+| `cartTotal` と `orderTotal`     | 見つからない        | 見つかった              | 0.83                  |
+| `orderTotal` と `invoiceAmount` | 見つからない        | 見つからない            | 0.76                  |
+| `cartTotal` と `invoiceAmount`  | 見つからない        | 見つからない            | 0.72                  |
 
-The default mode of dupes compares token sequences with the names kept, so renaming alone hides a copy. Semantic mode replaces names and literals, so it finds the renamed copy. Neither mode finds the `reduce` version, because the order of the tokens differs. Only `similar-code` gives that pair a score.
+重複のデフォルトモードでは、トークンシーケンスと保持された名前を比較するため、名前を変更するだけでコピーは非表示になる。セマンティックモードは名前やリテラルを置き換えるため、名称変更されたコピーを検出する。トークンの順序が異なるため、どちらのモードでも `reduce` のバージョンが見つからない。`similar-code` のみがそのペアにスコアを付与する。
 
-## A score is not a verdict
+## スコアは判定ではない
 
-The default threshold of `similar-code` is 0.8, so with the default settings the `reduce` pairs are not shown. The results above are with `--threshold 0.5`. Before the list of candidates, the command prints "model scores are cosine similarity, not probability or a refactoring verdict", and it labels each candidate as unverified. The documentation describes the division of work in one line: "a pinned local model finds them, and a human decides"[^fallow-similar-code-docs].
+`similar-code` のデフォルトの閾値は 0.8 なので、デフォルト設定では `reduce` ペアは表示されない。上記の結果は `--threshold 0.5` の場合である。候補リストの前に、コマンドは「モデルスコアはコサイン類似度であり、確率やリファクタリング判定ではない」と出力し、各候補を未検証としてラベル付けする。ドキュメントでは、作業分担について「固定されたローカルモデルがそれらを見つけ、人間が判断する」と一行で説明されている[^fallow-similar-code-docs]。
 
-The model is `jinaai/jina-embeddings-v2-base-code` under the Apache-2.0 license, pinned to one revision. After a setup that downloads it once with explicit consent, the analysis runs offline, and source code does not leave the machine[^fallow-similar-code-docs]. The model files took 310 MB in the user cache.
+モデルは Apache-2.0 ライセンスの `jinaai/jina-embeddings-v2-base-code` で、1 つのリビジョンに固定されている。明示的な同意を得て一度だけダウンロードするセットアップの後、解析はオフラインで実行され、ソースコードはマシンから排出されない[^fallow-similar-code-docs]。モデルファイルがユーザーキャッシュに310 MB消費した。
 
-## Write verdicts in a separate document
+## 判定は別文書に記載すること
 
-Judging takes three steps. First, `fallow similar-code inspect <candidate_id> --candidates similar-code.json` shows the source of both functions. The output ends with the words "Decide candidate_worthy, behaviorally_equivalent, and refactor_safe separately".
+判断には3つのステップがある。まず、`fallow similar-code inspect <candidate_id> --candidates similar-code.json` で、両方の関数のソースコードが表示される。出力は「Decide candidate_worthy, behaviorally_equivalent, and refactor_safe separately」という言葉で締めくくられている。
 
 ```text
 src/invoice.ts:3  invoiceAmount
@@ -70,7 +70,7 @@ function cartTotal(items: readonly Item[]): number {
 }
 ```
 
-Verdicts are written not in the candidate list but in a separate JSON document. Each verdict has three independent axes and an outcome. `refactor_safe: true` requires `behaviorally_equivalent: true`, which in turn requires `candidate_worthy: true`[^fallow-similar-code-skill]. The outcome is one of `same-responsibility`, `related-but-distinct`, `intentional-duplication`, `unrelated` and `needs-human-review`. Intentional duplication is one of the expected answers.
+判定結果は候補リストではなく、別のJSONドキュメントに記載されている。各判定には3つの独立した軸と結果がある。`refactor_safe: true` には `behaviorally_equivalent: true` が必要であり、さらにそれには `candidate_worthy: true` が必要となる[^fallow-similar-code-skill]。結果は、`same-responsibility`、`related-but-distinct`、`intentional-duplication`、`unrelated`、および `needs-human-review` のいずれかとなる。意図的な重複は想定される回答の一つだ。
 
 ```json
 {
@@ -89,7 +89,7 @@ Verdicts are written not in the candidate list but in a separate JSON document. 
 }
 ```
 
-`fallow similar-code review` joins the candidates and the verdicts without changing either file. With verdicts for two of the three candidates, the third is reported as `needs-human-review`. With `--require-verdict-for-each-candidate`, it fails with "a verdict is required for every candidate".
+`fallow similar-code review` は、いずれのファイルも変更することなく、候補と判定結果を結合する。3つの候補のうち2つに判定が出たため、3つ目は `needs-human-review` と報告されている。`--require-verdict-for-each-candidate` だと、「各候補に対して判定が必要」で失敗する。
 
 ```text
 src/invoice.ts:3 invoiceAmount
@@ -101,20 +101,20 @@ src/invoice.ts:3 invoiceAmount
 Reviewed: 3 candidates, 2 matched verdicts, 1 unmatched candidate
 ```
 
-When I ran discovery again on unchanged code, the candidates' `candidate_id` and `review_key` stayed the same. So a verdict file saved in the repository points at the same pairs on the next run, and only new or changed pairs come out as candidates without a verdict.
+変更のないコードで再度ディスカバリを実行したところ、候補の `candidate_id` と `review_key` は変わらなかった。つまり、リポジトリに保存された判定ファイルは、次回の実行時に同一のペアを判定し、判定なしの候補として現れるのは新規または変更されたペアのみとなる。
 
-## It stays out of the checks that stop builds
+## ビルドを停止するチェックからは除外される。
 
-fallow leaves `similar-code` out of the analysis with no arguments, the pass or fail of `audit`, SARIF, editor diagnostics and auto-fixes[^fallow-changelog]. Its exit code does not fail on candidates. The design fits the verdict list above. A score of 0.83 can be a forgotten copy, or two functions that should change separately, and you cannot tell which without reading both. `similar-code` fits a regular review that reads candidates and records verdicts, and dupes remains the check that fails builds.
+fallowは、引数なしの`similar-code`、`audit`の合否判定、SARIF、エディタの診断機能、および自動修正を解析対象から除外している[^fallow-changelog]。その終了コードは候補に対して失敗しない。デザインは上記の判定リストに合致している。スコア0.83は、忘れられたコピーか、あるいは個別に変更すべき2つの関数のいずれかであり、両方を読まなければどちらであるか判別できない。`similar-code`は、候補を読み込み判定を記録する通常のレビューに適しており、dupesはビルドに失敗するチェックとして残っている。
 
-## Numbers on a monorepo
+## モノレポ上の数値
 
-On a TypeScript monorepo of 2,643 files and about 180,000 lines, in a Linux container with 4 cores, `similar-code` turned 1,414 functions into vectors. The first run took 4 minutes 18 seconds, and the second run, with the vector cache, took 2 seconds. With the default threshold, it returned 65 candidates. The run stopped at the limit of 1,000,000 comparisons and skipped about 27.7 million pairs, so it was marked "partial". Only a complete run makes an empty result conclusive[^fallow-similar-code-skill].
+2,643ファイル、約18万行からなるTypeScriptのモノレポで、4コアのLinuxコンテナにおいて、`similar-code`は1,414個の関数をベクトルに変換した。1回目の実行は4分18秒、2回目はベクトルキャッシュ付きで2秒かかった。デフォルトの閾値では、65件の候補が返された。実行は1,000,000回の比較という制限で停止し、約2,770万組をスキップしたため、「一部」とマークされた。完全な実行を行って初めて、結果が空で確定的になる[^fallow-similar-code-skill]。
 
-The top candidate, with a score of 1.0, was two identical 7-line functions in separate files that build the same object. `fallow dupes` in its default mode had not reported any clone in the repository, because those functions were below its minimum of 50 tokens.
+スコア1.0の最有力候補は、別々のファイルにある同一の7行関数2つで、同じオブジェクトを構築するものだった。デフォルトモードの `fallow dupes` は、それらの関数が最小値の 50 トークンを下回っていたため、リポジトリにクローンが報告されなかった。
 
-[^fallow-similar-code-docs]: Find semantically similar functions in TypeScript. fallow documentation. https://fallow.tools/docs/analysis/similar-code/
+[^fallow-similar-code-docs]: TypeScriptのfallowドキュメントで、意味的に類似した関数を探す。https://fallow.tools/docs/analysis/similar-code/
 
-[^fallow-similar-code-skill]: Semantic Similar-Code Workflow. fallow skill reference, in the fallow 3.43.1 npm package (`skills/fallow/references/similar-code.md`).
+[^fallow-similar-code-skill]: セマンティック・類似コード・ワークフロー。fallowスキルのリファレンス。fallow 3.43.1 npm パッケージ (`skills/fallow/references/similar-code.md`) 内。
 
 [^fallow-changelog]: fallow CHANGELOG. https://github.com/fallow-rs/fallow/blob/main/CHANGELOG.md
