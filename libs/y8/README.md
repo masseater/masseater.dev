@@ -55,7 +55,7 @@ Measured on 2026-11-18 on linux x64, 4 CPUs with [lint-bench](https://github.com
 
 y8 reports the same findings as markdownlint-cli2 apart from a few lines, and runs 5 to 30 times faster. rumdl is faster still; its defaults differ from markdownlint (it adds MD043, MD057 and MD067 findings and drops MD060), so its findings overlap only in part.
 
-#### masseater.dev
+### masseater.dev
 
 | Tool              | Version                                                 | Cold   | Warm            | Peak RSS | Findings | Same as ours | Only ours | Only theirs |
 | ----------------- | ------------------------------------------------------- | ------ | --------------- | -------- | -------- | ------------ | --------- | ----------- |
@@ -69,7 +69,7 @@ y8 reports the same findings as markdownlint-cli2 apart from a few lines, and ru
 - rumdl: Markdown files git tracks, markdownlint's default rules
 - remark-lint: Markdown files git tracks, remark-preset-lint-recommended
 
-#### nodejs/node
+### nodejs/node
 
 | Tool              | Version                                                 | Cold    | Warm           | Peak RSS | Findings | Same as ours | Only ours | Only theirs |
 | ----------------- | ------------------------------------------------------- | ------- | -------------- | -------- | -------- | ------------ | --------- | ----------- |

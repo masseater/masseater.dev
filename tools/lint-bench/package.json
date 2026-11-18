@@ -13,12 +13,7 @@
   },
   "dependencies": {
     "@masseater.dev/node-main": "workspace:*",
-    "@r_masseater/fu4": "workspace:*",
-    "@r_masseater/fu4-presets": "workspace:*",
-    "@r_masseater/h56m": "workspace:*",
     "@r_masseater/h56m-presets": "workspace:*",
-    "@r_masseater/wism": "workspace:*",
-    "@r_masseater/y8": "workspace:*",
     "effect": "catalog:stack"
   },
   "devDependencies": {

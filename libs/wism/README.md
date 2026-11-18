@@ -49,7 +49,7 @@ Measured on 2026-11-18 on linux x64, 4 CPUs with [lint-bench](https://github.com
 
 None of the tools finds a problem in this repository except steiger, whose recommended rules do not match the layout the repository uses. wism also checks file placement and Rust and Markdown imports, which the others do not.
 
-#### masseater.dev
+### masseater.dev
 
 | Tool                     | Version                                      | Cold     | Warm            | Peak RSS | Findings | Same as ours | Only ours | Only theirs |
 | ------------------------ | -------------------------------------------- | -------- | --------------- | -------- | -------- | ------------ | --------- | ----------- |

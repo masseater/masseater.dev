@@ -55,7 +55,7 @@ Measured on 2026-11-18 on linux x64, 4 CPUs with [lint-bench](https://github.com
 
 On the same files in nodejs/node, fu4 reports 63 of the 86 findings of actionlint and zizmor together, misses 23 and adds 1. It is slower, mostly in starting Node and loading the presets.
 
-#### masseater.dev
+### masseater.dev
 
 | Tool                | Version                              | Cold    | Warm             | Peak RSS | Findings | Same as ours | Only ours | Only theirs |
 | ------------------- | ------------------------------------ | ------- | ---------------- | -------- | -------- | ------------ | --------- | ----------- |
@@ -75,7 +75,7 @@ On the same files in nodejs/node, fu4 reports 63 of the 86 findings of actionlin
 - ghalint: Workflows and actions, default policies
 - sisakulint: Workflows, default rules
 
-#### nodejs/node
+### nodejs/node
 
 | Tool                | Version                              | Cold   | Warm            | Peak RSS | Findings | Same as ours | Only ours | Only theirs |
 | ------------------- | ------------------------------------ | ------ | --------------- | -------- | -------- | ------------ | --------- | ----------- |

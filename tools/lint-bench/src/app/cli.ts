@@ -1,3 +1,4 @@
+import { homedir } from "node:os";
 import { fileURLToPath } from "node:url";
 
 import { betterleaks } from "@r_masseater/h56m-presets";
@@ -55,8 +56,6 @@ const ANY_COUNT = 0;
 
 const DEFAULT_BUDGET_SECONDS = 60;
 
-const LINTERS = ["y8", "wism", "fu4", "h56m"];
-
 const Meta = Schema.Struct({
   measuredAt: Schema.String,
   machine: Schema.String,
@@ -77,12 +76,14 @@ type Input = Readonly<{ family: readonly string[]; budget: number; out: string }
 
 const pathOf = (specifier: string): string => fileURLToPath(import.meta.resolve(specifier));
 
-const binsOf = (path: Path.Path): Readonly<Record<string, string>> =>
+const LINTERS = ["y8", "wism", "fu4", "h56m"];
+
+const binsOf = (path: Path.Path, repository: string): Readonly<Record<string, string>> =>
   pipe(
     LINTERS,
     Arr.map((name): readonly [string, string] => [
       name,
-      path.join(path.dirname(pathOf(`@r_masseater/${name}/package.json`)), "bin", `${name}.ts`),
+      path.join(repository, "libs", name, "bin", `${name}.ts`),
     ]),
     Rec.fromEntries,
   );
@@ -147,24 +148,23 @@ type Setup = Readonly<{
 const setup = Effect.fn("lint-bench.setup")(function* setup() {
   const path = yield* Path.Path;
   const repository = yield* repositoryOf;
-  const cache = path.join(
-    repository,
-    "tools",
-    "lint-bench",
-    "node_modules",
-    ".cache",
-    "lint-bench",
-  );
+  const cache = path.join(homedir(), ".cache", "lint-bench");
   const corpora = yield* prepareCorpora(repository, cache);
   const tools = yield* installNpmTools(cache, { ...markdownConfig, ...structureConfig });
   const dropCaches = yield* canDropCaches;
   const config = {
     ...tools.config,
-    "fu4-presets": pathOf("@r_masseater/fu4-presets"),
+    "fu4-presets": path.join(repository, "libs", "fu4-presets", "src", "app", "index.ts"),
     "h56m-presets": pathOf("@r_masseater/h56m-presets"),
     "betterleaks.toml": betterleaks,
   };
-  return { corpora, npm: tools.npm, config, dropCaches, bins: binsOf(path) } satisfies Setup;
+  return {
+    corpora,
+    npm: tools.npm,
+    config,
+    dropCaches,
+    bins: binsOf(path, repository),
+  } satisfies Setup;
 });
 
 const measureOne = Effect.fn("lint-bench.case")(function* measureOne(

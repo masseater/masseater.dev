@@ -5454,24 +5454,9 @@ importers:
       '@masseater.dev/node-main':
         specifier: workspace:*
         version: link:../../libs/node-main
-      '@r_masseater/fu4':
-        specifier: workspace:*
-        version: link:../../libs/fu4
-      '@r_masseater/fu4-presets':
-        specifier: workspace:*
-        version: link:../../libs/fu4-presets
-      '@r_masseater/h56m':
-        specifier: workspace:*
-        version: link:../../libs/h56m
       '@r_masseater/h56m-presets':
         specifier: workspace:*
         version: link:../../libs/h56m-presets
-      '@r_masseater/wism':
-        specifier: workspace:*
-        version: link:../../libs/wism
-      '@r_masseater/y8':
-        specifier: workspace:*
-        version: link:../../libs/y8
       effect:
         specifier: catalog:stack
         version: 4.1.4

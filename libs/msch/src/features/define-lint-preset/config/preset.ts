@@ -84,6 +84,7 @@ const rules = {
   "msch-lint/inline-exports": "error",
   "msch-lint/ui-state-in-atoms": "error",
   "msch-lint/no-hand-written-sql": "error",
+  "msch-lint/platform-node-by-module": "error",
   "msch-lint/typed-calls-not-reflect": "error",
   "react/react-in-jsx-scope": "off",
   "eslint/no-undef": "off",
@@ -105,18 +106,6 @@ const rules = {
     { ignoreInferredTypes: true, allow: readonlyParameterAllow },
   ],
   "eslint/no-duplicate-imports": ["error", { allowSeparateTypeImports: true }],
-  "eslint/no-restricted-imports": [
-    "error",
-    {
-      paths: [
-        {
-          name: "@effect/platform-node",
-          message:
-            'Import names from a module path, such as import { layer } from "@effect/platform-node/NodeServices". The package root loads every module, the Redis client included, and adds about 250 ms to each start.',
-        },
-      ],
-    },
-  ],
   "react/function-component-definition": [
     "error",
     { namedComponents: "arrow-function", unnamedComponents: "arrow-function" },

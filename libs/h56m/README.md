@@ -34,7 +34,7 @@ Measured on 2026-11-18 on linux x64, 4 CPUs with [lint-bench](https://github.com
 
 h56m uses the Betterleaks rules, but reports findings that Betterleaks drops: low-confidence `generic-password` and `generic-api-key` matches in test fixtures. This is a difference to fix in h56m, not an intended one.
 
-#### masseater.dev
+### masseater.dev
 
 | Tool        | Version                             | Cold   | Warm            | Peak RSS | Findings | Same as ours | Only ours | Only theirs |
 | ----------- | ----------------------------------- | ------ | --------------- | -------- | -------- | ------------ | --------- | ----------- |
@@ -50,7 +50,7 @@ h56m uses the Betterleaks rules, but reports findings that Betterleaks drops: lo
 - TruffleHog: Commits from the base to HEAD, all detectors, --no-verification
 - Kingfisher: Commits from the base to HEAD, default rules, --no-validate
 
-#### nodejs/node
+### nodejs/node
 
 | Tool        | Version                             | Cold    | Warm             | Peak RSS | Findings | Same as ours | Only ours | Only theirs |
 | ----------- | ----------------------------------- | ------- | ---------------- | -------- | -------- | ------------ | --------- | ----------- |

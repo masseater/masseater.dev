@@ -96,6 +96,17 @@ tester.run("db-writes-in-writers", ruleNamed("db-writes-in-writers"), {
   ],
 });
 
+tester.run("platform-node-by-module", ruleNamed("platform-node-by-module"), {
+  valid: [
+    'import { layer } from "@effect/platform-node/NodeServices";\n',
+    'import type { NodeServices } from "@effect/platform-node";\n',
+  ],
+  invalid: [
+    failing("platform-node-by-module", 'import { NodeServices } from "@effect/platform-node";\n'),
+    failing("platform-node-by-module", 'import * as Node from "@effect/platform-node";\n'),
+  ],
+});
+
 tester.run("typed-calls-not-reflect", ruleNamed("typed-calls-not-reflect"), {
   valid: ["const keys = Reflect.ownKeys(target);\n", "const value = target.key;\n"],
   invalid: [

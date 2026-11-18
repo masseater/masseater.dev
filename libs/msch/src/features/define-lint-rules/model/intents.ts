@@ -61,6 +61,12 @@ export const INTENTS: Readonly<Record<string, Intent>> = {
       { object: "ManagedRuntime", properties: ["make"] },
     ],
   },
+  "platform-node-by-module": {
+    message:
+      'Import names from a module path, such as import { layer } from "@effect/platform-node/NodeServices". The package root loads every module, the Redis client included, and adds about 250 ms to each start.',
+    imports: [{ module: "@effect/platform-node", names: Option.none(), typesAllowed: true }],
+    members: [],
+  },
   "typed-calls-not-reflect": {
     message:
       "Read properties and call functions through typed access, or decode untyped values with Schema at the boundary. Do not go around the types with Reflect.",
