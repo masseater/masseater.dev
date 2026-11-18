@@ -1,7 +1,7 @@
 import type { Sounding } from "@r_masseater/fumx-parser/analysis";
 import { defineRule } from "@r_masseater/i68";
 import type { Rule } from "@r_masseater/i68";
-import { Array as Arr, pipe } from "effect";
+import { Array as Arr, Option, pipe } from "effect";
 
 import { numberOption } from "#/shared/lib/options.ts";
 import { clockOf } from "#/shared/lib/time.ts";
@@ -11,6 +11,7 @@ import type { Reporter } from "#/shared/lib/voices.ts";
 const DEFAULT_SECONDS = 8;
 const DEFAULT_REST = 0.15;
 const DIGITS = 1;
+const LAST = 1;
 const maxSeconds = numberOption({ key: "seconds", fallback: DEFAULT_SECONDS });
 const minRest = numberOption({ key: "rest", fallback: DEFAULT_REST });
 
@@ -21,11 +22,16 @@ type Phrase = Arr.NonEmptyReadonlyArray<Sounding>;
 const phrasesOf =
   (clock: Clock, rest: number) =>
   (line: readonly Sounding[]): readonly Phrase[] =>
-    Arr.match(line, {
-      onEmpty: (): readonly Phrase[] => [],
-      onNonEmpty: (notes) =>
-        Arr.groupWith(notes, (previous, next) => clock(next.start) - clock(previous.end) < rest),
-    });
+    Arr.reduce(line, Arr.empty<Phrase>(), (phrases, note): readonly Phrase[] =>
+      pipe(
+        Arr.last(phrases),
+        Option.filter((phrase) => clock(note.start) - clock(Arr.lastNonEmpty(phrase).end) < rest),
+        Option.match({
+          onNone: () => Arr.append(phrases, Arr.of(note)),
+          onSome: (phrase) => Arr.append(Arr.dropRight(phrases, LAST), Arr.append(phrase, note)),
+        }),
+      ),
+    );
 
 const endOf = (phrase: Phrase): number =>
   pipe(

@@ -73,6 +73,8 @@ const IGNORED = [
   song("  lead: D6 1/1 // i68-ignore range/too-high"),
   song("  // i68-ignore-next-line\n  lead: D6 1/1"),
   `// i68-ignore-file range/too-high\n${song("  lead: D6 1/1")}`,
+  song("  lead: D6 1/1 // i68-ignore range/too-high -- the climax"),
+  `// i68-disable range/too-high -- the climax\n${song("  lead: D6 1/1")}`,
 ];
 
 it.effect("follows i68-ignore comments on the line, the line before and the file", () =>
@@ -86,6 +88,14 @@ it.effect("keeps what an ignore comment for another rule does not name", () =>
   Effect.gen(function* other() {
     const found = yield* linesOf(song("  lead: D6 1/1 // i68-ignore range/other"));
     expect(found).toStrictEqual(["/song.fumx:8:9 warn range/too-high lead is too high"]);
+  }),
+);
+
+it.effect("reports again after an i68-enable comment closes the range", () =>
+  Effect.gen(function* enabled() {
+    const text = `// i68-disable range/too-high\n// i68-enable range/too-high\n${song("  lead: D6 1/1")}`;
+    const found = yield* linesOf(text);
+    expect(found).toStrictEqual(["/song.fumx:10:9 warn range/too-high lead is too high"]);
   }),
 );
 

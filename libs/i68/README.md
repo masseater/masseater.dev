@@ -53,16 +53,19 @@ Register a plugin under a name in `plugins` and its rules become `<name>/<rule>`
 
 ## Ignoring a finding
 
-When a note breaks a rule on purpose, say so in the file:
+When a passage breaks a rule on purpose, say so in the file, and write why after `--`:
 
 ```fumx
-lead: C5 1/2, F#5 1/2  // i68-ignore pop/out-of-key
+lead: C5 1/2, F#5 1/2  // i68-ignore pop/out-of-key -- borrowed from the parallel minor
 // i68-ignore-next-line voicing/semitone-clash
 pad: [B4 C5] 1/1
+// i68-disable pop/melody-leap -- the chorus jumps on purpose
+...
+// i68-enable pop/melody-leap
 // i68-ignore-file classical/parallel-perfects
 ```
 
-A comment without rule names ignores every rule.
+`i68-disable` covers every line until the matching `i68-enable`, or to the end of the file. A comment without rule names covers every rule.
 
 ## Programmatic use
 

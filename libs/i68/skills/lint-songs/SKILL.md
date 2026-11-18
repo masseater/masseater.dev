@@ -48,4 +48,4 @@ Report with the sounding's `line` and `column` so the finding points at the note
 
 ## Ignore a finding
 
-`// i68-ignore rule-a, rule-b` on the line, `// i68-ignore-next-line` on the line above, or `// i68-ignore-file` anywhere. Without rule names it ignores every rule.
+`// i68-ignore rule-a, rule-b` on the line, `// i68-ignore-next-line` on the line above, `// i68-ignore-file` anywhere, or `// i68-disable rule-a` ... `// i68-enable rule-a` around a passage. Without rule names it covers every rule. Write the reason after `--`, for example `// i68-disable pop/melody-leap -- the chorus jumps on purpose`.

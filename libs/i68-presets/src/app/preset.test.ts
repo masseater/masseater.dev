@@ -96,6 +96,25 @@ bar {
   }),
 );
 
+it.effect("pop lets each rest start a new phrase", () =>
+  Effect.gen(function* rests() {
+    const text = song(`bar meter 4/4 tempo 60bpm {
+  lead: C4 3/4, rest 1/4
+}
+bar {
+  lead: D4 3/4, rest 1/4
+}
+bar {
+  lead: E4 3/4, rest 1/4
+}
+bar {
+  lead: F4 3/4, rest 1/4
+}`);
+    const found = yield* rulesOf(text, pop());
+    expect(found).toStrictEqual([]);
+  }),
+);
+
 it.effect(
   "voicing flags clashes, low intervals, crowded low mids and chords above the melody",
   () =>
