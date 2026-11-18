@@ -47,6 +47,7 @@ export const partsOf =
     };
     root.classList.add(...ROOT);
     root.replaceChildren(
+      ...root.childNodes,
       parts.header.node,
       parts.deck.node,
       parts.tracks.node,

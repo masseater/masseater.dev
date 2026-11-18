@@ -39,10 +39,12 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "catalog:",
+    "@distilled.cloud/cloudflare": "catalog:stack",
     "@effect/tsgo": "catalog:stack",
     "@effect/vitest": "catalog:",
     "@masseater.dev/cloudflare-account": "workspace:*",
     "@masseater.dev/d1-test": "workspace:*",
+    "@masseater.dev/node-main": "workspace:*",
     "@tailwindcss/vite": "catalog:",
     "@tanstack/devtools-vite": "catalog:",
     "@types/react": "catalog:",
