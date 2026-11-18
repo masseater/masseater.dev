@@ -8,7 +8,7 @@ export const make =
   ): HTMLElementTagNameMap[Tag] => {
     const node = document.createElement(tag);
     node.className = className;
-    node.append(...children);
+    node.replaceChildren(...children);
     return node;
   };
 
