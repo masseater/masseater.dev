@@ -4,7 +4,7 @@ import { analyze } from "@r_masseater/fumx-parser/analysis";
 import { Array as Arr, Option, pipe } from "effect";
 import { Chord, Note } from "tonal";
 
-import { clockOf } from "#/features/render-song/model/clock.ts";
+import { clockOf } from "#/entities/clock/index.ts";
 
 const STRAIGHT = 0.5;
 const FIRST_BAR = 1;

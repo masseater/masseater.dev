@@ -17,4 +17,4 @@ Write Sloppedia articles in an encyclopedia style. Start with `題名は、〜�
 
 Each song lives in its own `src/entities/song/catalog/<slug>/`. The list and pages are built from the `work.ts`, `thumb.webp` and either `song.fumx` or `recording.ts` there.
 
-Write a new song as `song.fumx` with its samples in `samples/`. `@masseater.dev/fumx-studio` renders it, so the song needs no engine of its own. Songs that still have `recording.ts` keep their score values in `score/` and their sound processing in `engine/`, in TypeScript that passes lint, until they move to fumx. Treat a change that alters the rendered sound as remaking the song. For any other change, check that the rendered sound stays bit-identical.
+Write a new song as `song.fumx` with its samples in `samples/`. `@masseater.dev/fumx-studio` renders it, so the song needs no engine of its own. A song with `recording.ts` keeps score values in `score/` and sound processing in `engine/` until it moves to fumx. That code is TypeScript that passes lint. Treat a change that alters the rendered sound as remaking the song. For any other change, check that the rendered sound stays bit-identical.

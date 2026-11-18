@@ -1,6 +1,5 @@
+import type { Clock } from "#/entities/clock/index.ts";
 import type { Bus } from "#/shared/lib/studio/bus.ts";
-
-import type { Clock } from "./clock.ts";
 
 const NONE = 0;
 const ONE = 1;

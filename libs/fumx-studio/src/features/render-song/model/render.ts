@@ -1,11 +1,11 @@
 import type { Song } from "@r_masseater/fumx-parser";
 import { Array as Arr, Effect, Option, pipe } from "effect";
 
+import { clockOf } from "#/entities/clock/index.ts";
 import { SAMPLE_RATE } from "#/shared/lib/dsp/number.ts";
 import { busOf } from "#/shared/lib/studio/bus.ts";
 import type { Bus } from "#/shared/lib/studio/bus.ts";
 
-import { clockOf } from "./clock.ts";
 import type { Context, Session } from "./context.ts";
 import { mastered } from "./master.ts";
 import { busStem, trackStem } from "./stems.ts";

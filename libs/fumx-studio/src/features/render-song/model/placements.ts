@@ -1,10 +1,10 @@
 import type { Hit, Note, Slice, Song } from "@r_masseater/fumx-parser";
 import { Array as Arr, Option, pipe } from "effect";
 
+import type { Clock } from "#/entities/clock/index.ts";
+import { nudged } from "#/entities/clock/index.ts";
 import type { Placement } from "#/shared/lib/studio/placement.ts";
 
-import type { Clock } from "./clock.ts";
-import { nudged } from "./clock.ts";
 import { placementOf, sendsOf } from "./params.ts";
 import type { Send } from "./params.ts";
 

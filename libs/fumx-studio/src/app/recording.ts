@@ -3,13 +3,13 @@ import type { Song } from "@r_masseater/fumx-parser";
 import { Effect } from "effect";
 import type { Scope } from "effect";
 
-import { renderSong } from "#/features/render-song/model/render.ts";
-import type { Unplayable } from "#/features/render-song/model/unplayable.ts";
+import { renderSong } from "#/features/render-song/index.ts";
+import type { Unplayable } from "#/features/render-song/index.ts";
+import { rootsOf, structureOf } from "#/features/show-song/index.ts";
 import { withLive } from "#/shared/lib/daw/mixdown.ts";
 import { sheetOf } from "#/shared/lib/daw/take.ts";
 
 import { liveFor } from "./live.ts";
-import { rootsOf, structureOf } from "./structure.ts";
 
 const UNSHADED = "";
 

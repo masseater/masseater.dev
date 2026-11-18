@@ -2,8 +2,8 @@ import type { LiveMix, Tape } from "@masseater.dev/daw-view";
 import { Array as Arr, Effect, Option, Record as Rec, pipe } from "effect";
 import type { Scope } from "effect";
 
-import type { LiveInit } from "#/features/play-song/model/player.ts";
-import type { Mastered } from "#/features/render-song/model/master.ts";
+import type { LiveInit } from "#/features/play-song/index.ts";
+import type { Mastered } from "#/features/render-song/index.ts";
 import { tapeFor } from "#/shared/lib/daw/tape.ts";
 
 const liveOf =

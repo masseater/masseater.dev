@@ -1,1 +1,1 @@
-export { playerOf } from "#/features/play-song/model/player.ts";
+export { playerOf } from "#/features/play-song/index.ts";
