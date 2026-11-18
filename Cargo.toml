@@ -27,7 +27,7 @@ members = [
   "libs/audio-fetch",
   "apps/yogoto/src-tauri",
 ]
-exclude = ["patches/crates/proc-macro-crate"]
+exclude = ["patches/crates/proc-macro-crate", "patches/crates/tauri-macros"]
 
 [workspace.package]
 version = "0.0.0"
