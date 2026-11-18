@@ -29,7 +29,30 @@ const excludesIgnoredDirectories = Effect.gen(function* excludesIgnoredDirectori
   ]);
 });
 
+const excludesEveryNamedDirectory = Effect.gen(function* excludesEveryNamedDirectory() {
+  const root = yield* gitRepositoryWith({
+    ".gitignore": "/target/\n",
+    "apps/game/.gitignore": "bin/\n",
+    "apps/game/src/run.ts": "",
+  });
+  const ignored = yield* Effect.promise(() => ignoredDirectories(root));
+  expect(ignored).toStrictEqual([
+    { pattern: "!target", base: "workspace" },
+    { pattern: "!target/**", base: "workspace" },
+    { pattern: "!apps/game/**/bin", base: "workspace" },
+    { pattern: "!apps/game/**/bin/**", base: "workspace" },
+    { pattern: "!**/node_modules/.vite", base: "workspace" },
+    { pattern: "!**/node_modules/.vite/**", base: "workspace" },
+    { pattern: "!**/node_modules/.vite-temp", base: "workspace" },
+    { pattern: "!**/node_modules/.vite-temp/**", base: "workspace" },
+  ]);
+});
+
 layer(fixtureLayer)("ignored directories", (it) => {
+  it.effect(
+    "excludes every named directory when none of them holds a listed file",
+    () => excludesEveryNamedDirectory,
+  );
   it.effect(
     "turns the directories each .gitignore names and the cache directories of Vite into exclusions of the directory and its contents and keeps any that hold listed files",
     () => excludesIgnoredDirectories,

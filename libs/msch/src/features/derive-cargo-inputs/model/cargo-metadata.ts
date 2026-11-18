@@ -5,9 +5,8 @@ import { reachable } from "#/shared/lib/reachable.ts";
 export const SEPARATOR = "/";
 export const LOCK_FILE = "Cargo.lock";
 export const MANIFEST_FILE = "Cargo.toml";
-const IGNORE_FILE = ".gitignore";
+export const WORKSPACE_CACHE = "node_modules/.cache/msch/cargo-workspace.json";
 const LAST_SEGMENT = /\/[^/]*$/u;
-const NEXT = 1;
 
 const IgnoredDirectory = Schema.Struct({
   pattern: Schema.String,
@@ -15,6 +14,7 @@ const IgnoredDirectory = Schema.Struct({
 });
 const CargoPackageSchema = Schema.Struct({
   id: Schema.String,
+  name: Schema.String,
   manifest_path: Schema.String,
   source: Schema.NullOr(Schema.String),
 });
@@ -28,11 +28,16 @@ export const CargoMetadataSchema = Schema.Struct({
   workspace_members: Schema.Array(Schema.String),
   workspace_root: Schema.String,
 });
-export const CargoWorkspaceSchema = Schema.Struct({
+export const CargoSourceSchema = Schema.Struct({
   metadata: CargoMetadataSchema,
+  manifest: Schema.String,
+});
+export const CargoWorkspaceSchema = Schema.Struct({
+  ...CargoSourceSchema.fields,
   ignored: Schema.Array(IgnoredDirectory),
 });
 export type CargoMetadata = typeof CargoMetadataSchema.Type;
+export type CargoSource = typeof CargoSourceSchema.Type;
 export type CargoWorkspace = typeof CargoWorkspaceSchema.Type;
 export type CargoPackage = typeof CargoPackageSchema.Type;
 
@@ -84,23 +89,3 @@ export const closureOf =
       Arr.filter((entry) => ids.has(entry.id)),
     );
   };
-
-const ancestorsOf = (directory: string): readonly string[] => {
-  const parts = Str.split(directory, SEPARATOR);
-  return pipe(
-    parts,
-    Arr.map((_part, index) => pipe(parts, Arr.take(index + NEXT), Arr.join(SEPARATOR))),
-  );
-};
-
-export const keysOf = (metadata: CargoMetadata): readonly string[] => {
-  const relative = relativeTo(metadata.workspace_root);
-  const ignoreFiles = pipe(
-    metadata.packages,
-    Arr.filter(isLocal),
-    Arr.flatMap((entry) => Option.toArray(relative(directoryOf(entry.manifest_path)))),
-    Arr.flatMap(ancestorsOf),
-    Arr.map((directory) => `${directory}${SEPARATOR}${IGNORE_FILE}`),
-  );
-  return Arr.sort(Arr.dedupe([LOCK_FILE, MANIFEST_FILE, IGNORE_FILE, ...ignoreFiles]), Str.Order);
-};
