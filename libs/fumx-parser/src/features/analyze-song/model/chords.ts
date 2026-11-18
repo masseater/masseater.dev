@@ -16,6 +16,8 @@ const PositionSchema = Schema.Struct({ bar: Schema.Int, offset: Schema.String })
 export const ChordSpanSchema = Schema.Struct({
   from: PositionSchema,
   to: PositionSchema,
+  start: Schema.Int,
+  end: Schema.Int,
   symbol: Schema.String,
   notes: Schema.Array(Schema.String),
 });
@@ -106,6 +108,8 @@ export const chordsOf = (song: Song): readonly ChordSpan[] => {
     Arr.map((span) => ({
       from: at(span.start),
       to: at(span.end),
+      start: span.start,
+      end: span.end,
       symbol: span.symbol,
       notes: span.notes,
     })),

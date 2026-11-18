@@ -54,7 +54,7 @@ it.effect("pop flags a note outside the key and the chord", () =>
 }`);
     const found = yield* linesOf(text, pop());
     expect(found).toStrictEqual([
-      "/song.fumx:10:17 warn pop/out-of-key Eb4 in lead is outside C major and the chord under it [Move it a semitone, or ignore the line if the borrowed note is intended]",
+      "/song.fumx:10:17 warn pop/out-of-key D#4 in lead is outside C major and the chord under it [Move it a semitone, or ignore the line if the borrowed note is intended]",
     ]);
   }),
 );

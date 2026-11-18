@@ -77,20 +77,20 @@ export const tokenOf =
 
 const placeOf =
   (soundings: readonly Sounding[]) =>
-  (bar: number): Option.Option<Sounding> =>
+  (tick: number): Option.Option<Sounding> =>
     pipe(
       soundings,
-      Arr.findFirst((sounding) => sounding.bar === bar),
+      Arr.findFirst((sounding) => sounding.start >= tick),
     );
 
 const stepOf =
-  (keys: readonly KeySpan[], place: (bar: number) => Option.Option<Sounding>) =>
+  (keys: readonly KeySpan[], place: (tick: number) => Option.Option<Sounding>) =>
   (span: ChordSpan): Option.Option<Step> =>
     pipe(
       keyAt(keys)(span.from.bar),
       Option.flatMap((key) => tokenOf(key)(span.symbol)),
       Option.flatMap((token) =>
-        Option.map(place(span.from.bar), (sounding) => ({
+        Option.map(place(span.start), (sounding) => ({
           token,
           bar: span.from.bar,
           line: sounding.line,

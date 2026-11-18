@@ -19,6 +19,7 @@ export interface Sounding extends Span {
   readonly bar: number;
   readonly role: Option.Option<Role>;
   readonly midi: number;
+  readonly spelling: string;
   readonly pitchClass: string;
 }
 
@@ -45,6 +46,7 @@ export const soundingsOf = (song: Song): readonly Sounding[] => {
           bar: note.bar,
           role: track.role,
           midi: note.midi,
+          spelling: note.spelling,
           pitchClass: TonalNote.pitchClass(TonalNote.fromMidi(note.midi)),
           start: note.start,
           end: note.start + Math.round(note.length * note.gate),

@@ -25,6 +25,7 @@ import {
 import type { Item, LineKind, NoteItem, Placed } from "./items.ts";
 import { problemAt, problemsOf } from "./problem.ts";
 import type { Compiled, From } from "./problem.ts";
+import { sourceOf } from "./source.ts";
 
 export type Items = Compiled<readonly Item[]>;
 
@@ -48,7 +49,15 @@ const notesOf: HeadOf<readonly NoteNode[]> =
             problems: [problemAt(pitch)("pitch")(`${pitch.pitch} は音名として読めません`)],
           }),
           onSome: ({ midi, cents }) => ({
-            value: Option.some<NoteItem>({ ...placed, ...fields, kind: "note", midi, cents }),
+            value: Option.some<NoteItem>({
+              ...placed,
+              ...sourceOf(pitch),
+              ...fields,
+              kind: "note",
+              midi,
+              cents,
+              spelling: pitch.pitch,
+            }),
             problems: [],
           }),
         }),
