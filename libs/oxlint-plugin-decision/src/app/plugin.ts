@@ -1,5 +1,5 @@
 import type { Plugin, RuleMeta } from "@oxlint/plugins";
-import { Predicate, Array as Arr, Record as Rec, Struct, pipe } from "effect";
+import { Array as Arr, Record as Rec, Struct, pipe } from "effect";
 
 import { PREFIX, checkRules, resolveOptions, toJson } from "#/entities/decision/index.ts";
 import type {
@@ -42,13 +42,7 @@ const memoized = (resolve: Resolve): Resolve => {
   const resolved = new Map<string, ResolvedOptions>();
   return (settings) => {
     const key = toJson([settings]);
-    const cached = resolved.get(key);
-    if (Predicate.isNotUndefined(cached)) {
-      return cached;
-    }
-    const fresh = resolve(settings);
-    resolved.set(key, fresh);
-    return fresh;
+    return resolved.getOrInsertComputed(key, () => resolve(settings));
   };
 };
 
@@ -57,16 +51,9 @@ const memoizedRules = (
 ): ((rule: ResolvedRule, options: unknown) => ResolvedRule) => {
   const resolved = new WeakMap<ResolvedRule, Map<string, ResolvedRule>>();
   return (rule, options) => {
-    const known = resolved.get(rule) ?? new Map<string, ResolvedRule>();
-    resolved.set(rule, known);
+    const known = resolved.getOrInsertComputed(rule, () => new Map<string, ResolvedRule>());
     const key = toJson([options]);
-    const cached = known.get(key);
-    if (Predicate.isNotUndefined(cached)) {
-      return cached;
-    }
-    const fresh = overrideRule(rule, options, providers);
-    known.set(key, fresh);
-    return fresh;
+    return known.getOrInsertComputed(key, () => overrideRule(rule, options, providers));
   };
 };
 

@@ -1,7 +1,7 @@
 import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
-import { Option, Schema } from "effect";
+import { Schema } from "effect";
 
 import { mschPlugin } from "#/features/report-problems/index.ts";
 import { JSON_FLAG } from "#/shared/lib/cli-contract.ts";
@@ -22,12 +22,6 @@ const runCli = (cwd: string): readonly Problem[] =>
   );
 
 const loadProblems = (cwd: string): readonly Problem[] =>
-  Option.fromUndefinedOr(loaded.get(cwd)).pipe(
-    Option.getOrElse(() => {
-      const problems = runCli(cwd);
-      loaded.set(cwd, problems);
-      return problems;
-    }),
-  );
+  loaded.getOrInsertComputed(cwd, () => runCli(cwd));
 
 export default mschPlugin(loadProblems);

@@ -34,8 +34,4 @@ const parse = (raw: RuleContext["settings"]): Settings => {
 };
 
 export const settingsOf = (context: RuleContext): Settings =>
-  Option.getOrElse(Option.fromNullishOr(parsed.get(context.settings)), () => {
-    const found = parse(context.settings);
-    parsed.set(context.settings, found);
-    return found;
-  });
+  parsed.getOrInsertComputed(context.settings, () => parse(context.settings));
