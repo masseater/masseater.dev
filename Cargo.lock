@@ -344,6 +344,7 @@ dependencies = [
 name = "aredoko-desktop"
 version = "0.0.0"
 dependencies = [
+ "desktop-shell",
  "dunce",
  "tauri",
  "tauri-build",
@@ -14180,6 +14181,7 @@ dependencies = [
 name = "yakusu"
 version = "0.1.5"
 dependencies = [
+ "desktop-shell",
  "dunce",
  "futures-util",
  "getrandom 0.4.3",

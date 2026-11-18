@@ -19,6 +19,7 @@ const WORKSPACE: WorkspaceSettings = {
   testProjects: ["apps/web"],
   tasks: { verify: ["web#verify"], native: [] },
   devDependencies: {},
+  dependencies: {},
 };
 
 const OWNER = String.raw`\bOWNER = "[0-9]+"`;
@@ -101,6 +102,23 @@ describe("repositoryConfig check", () => {
       expect.stringContaining("msch-changed tsrs-effect vp check"),
     );
     expect(launched).toHaveProperty(["run", "tasks", "check", "dependsOn"], ["tsrs-effect#native"]);
+  });
+});
+
+describe("repositoryConfig dependency allowances", () => {
+  it("allows a banned package only in the manifest field its reason names", () => {
+    const allowance = { workspaces: ["apps/web"], dependencies: ["x"] };
+    const allowing = repositoryConfig({
+      workspace: {
+        ...WORKSPACE,
+        devDependencies: { "apps/web: tests": allowance },
+        dependencies: { "apps/web: screen": allowance },
+      },
+    });
+    expect(allowing).toHaveProperty(["dependencyRules", "allowed"], {
+      "apps/web: tests": { ...allowance, fields: ["devDependencies"] },
+      "apps/web: screen": { ...allowance, fields: ["dependencies"] },
+    });
   });
 });
 
