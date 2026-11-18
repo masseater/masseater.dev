@@ -36,7 +36,10 @@ export default defineConfig({
       },
     ],
     secrets: {
-      lines: [String.raw`\bOWNER_DISCORD_ID = "[0-9]{17,20}"`],
+      lines: [
+        String.raw`\bOWNER_DISCORD_ID = "[0-9]{17,20}"`,
+        String.raw`untrusted comment: minisign public key: [0-9A-F]{16}`,
+      ],
       paths: [
         String.raw`(^|/)fixtures/[^/]+\.tgz!`,
         String.raw`/fixtures/actionlint/`,

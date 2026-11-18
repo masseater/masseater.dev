@@ -46,5 +46,16 @@
         "languages": ["Japanese"]
       }
     }
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEMxMDE5QkQzMDhCNkRFRkEKUldUNjNyWUkwNXNCd1F1ZHRGeWdQYWU3YkRHQVlIbXREUU0vVnRmZEc3S2UzUURmRzc5TEVzV1oK",
+      "endpoints": [
+        "https://github.com/masseater/masseater.dev/releases/download/yogoto-updater/latest.json"
+      ],
+      "windows": {
+        "installMode": "passive"
+      }
+    }
   }
 }
