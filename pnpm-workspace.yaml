@@ -301,22 +301,22 @@ catalogs:
     typescript: 7.1.0-beta
     vite-plus: 1.7.0
 overrides:
-  "@feature-sliced/filesystem>typescript": "catalog:stack"
-  "langium>vscode-languageserver": "catalog:"
-  "@remotion/eslint-plugin>@typescript-eslint/utils": "-"
-  "@remotion/eslint-plugin>typescript": "-"
-  workerd: 1.20261115.1
-  vite@*: "catalog:"
-  fflate@>=0.7.0 <0.7.5: ^0.8.0
-  glob@>=9.0.0 <=14.0.1: ^14.0.2
-  "capnp-es>typescript": "-"
-  minimatch@<11.0.1: ^11.0.1
-  postcss-selector-parser@<6.1.5: ^6.1.5
-  zod@<4.6.6: ^4.6.6
-  sharp@<0.35.5: ^0.35.5
-  undici@>=7.0.0 <7.30.1: ^7.30.1
-  katex@>=0.11.0 <0.18.2: ^0.19.0
-  ws@<8.22.1: ^8.22.1
+  "@feature-sliced/filesystem>typescript": "catalog:stack" # exit: npm:@feature-sliced/filesystem allows typescript@>=7
+  "langium>vscode-languageserver": "catalog:" # exit: npm:langium allows vscode-languageserver@>=11
+  "@remotion/eslint-plugin>@typescript-eslint/utils": "-" # exit: npm:@remotion/eslint-plugin allows @typescript-eslint/utils@>=8
+  "@remotion/eslint-plugin>typescript": "-" # exit: npm:@remotion/eslint-plugin drops typescript || npm:@remotion/eslint-plugin allows typescript@>=7
+  workerd: 1.20261115.1 # exit: npm:miniflare requires workerd@>=1.20261115.1
+  vite@*: "catalog:" # exit: unused
+  fflate@>=0.7.0 <0.7.5: ^0.8.0 # exit: unused
+  glob@>=9.0.0 <=14.0.1: ^14.0.2 # exit: unused
+  "capnp-es>typescript": "-" # exit: npm:capnp-es drops typescript || npm:capnp-es allows typescript@>=7
+  minimatch@<11.0.1: ^11.0.1 # exit: unused
+  postcss-selector-parser@<6.1.5: ^6.1.5 # exit: unused
+  zod@<4.6.6: ^4.6.6 # exit: unused
+  sharp@<0.35.5: ^0.35.5 # exit: unused
+  undici@>=7.0.0 <7.30.1: ^7.30.1 # exit: unused
+  katex@>=0.11.0 <0.18.2: ^0.19.0 # exit: unused
+  ws@<8.22.1: ^8.22.1 # exit: unused
 peerDependencyRules:
   allowAny:
     - vite
@@ -335,20 +335,20 @@ allowBuilds:
   onnxruntime-node: false
   "@bufbuild/buf": true
 packageExtensions:
-  eslint-plugin-react-jsx@^5.30.1:
+  eslint-plugin-react-jsx@^5.30.1: # exit: npm:eslint-plugin-react-jsx@>5.30.4
     dependencies:
       entities: 9.0.0
-  safer-buffer@2.1.2:
+  safer-buffer@2.1.2: # exit: npm:@kenjiuno/msgreader@>1.29.0
     dependencies:
       buffer: ^6.0.3
 audit:
   ignorePrune: true
 patchedDependencies:
-  "@tanstack/eslint-plugin-start@0.1.0": patches/@tanstack__eslint-plugin-start@0.1.0.patch
-  eslint-plugin-drizzle@0.2.3: patches/eslint-plugin-drizzle@0.2.3.patch
-  eslint-plugin-react-jsx@^5.30.1: patches/eslint-plugin-react-jsx.patch
-  "@voidzero-dev/vite-plus-core@8.3.8000": patches/@voidzero-dev__vite-plus-core@8.3.8000.patch
-  "@tanstack/intent@0.5.6": patches/@tanstack__intent@0.5.6.patch
+  "@tanstack/eslint-plugin-start@0.1.0": patches/@tanstack__eslint-plugin-start@0.1.0.patch # exit: npm:@tanstack/eslint-plugin-start@>0.1.0
+  eslint-plugin-drizzle@0.2.3: patches/eslint-plugin-drizzle@0.2.3.patch # exit: npm:eslint-plugin-drizzle@>0.2.3
+  eslint-plugin-react-jsx@^5.30.1: patches/eslint-plugin-react-jsx.patch # exit: npm:eslint-plugin-react-jsx@>5.30.4
+  "@voidzero-dev/vite-plus-core@8.3.8000": patches/@voidzero-dev__vite-plus-core@8.3.8000.patch # exit: npm:@voidzero-dev/vite-plus-core@>8.3.8000
+  "@tanstack/intent@0.5.6": patches/@tanstack__intent@0.5.6.patch # exit: npm:@tanstack/intent@>0.5.6
 minimumReleaseAgeExclude:
   - "@r_masseater/vite-plus-adopt@0.10.2"
   - "@effect/tsgo-darwin-arm64@0.70.0"
