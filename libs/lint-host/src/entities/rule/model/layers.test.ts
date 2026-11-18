@@ -2,11 +2,12 @@ import { Array as Arr, pipe } from "effect";
 import { describe, expect, test } from "vite-plus/test";
 
 import { flattenLayers, reportedSeverity } from "./layers.ts";
+import type { RuleEntry } from "./setting.ts";
 
 interface Config {
   readonly extends?: readonly Config[];
   readonly plugins?: Readonly<Record<string, string>>;
-  readonly rules?: Readonly<Record<string, "off" | "warn" | "error">>;
+  readonly rules?: Readonly<Record<string, RuleEntry>>;
   readonly ignores?: readonly string[];
   readonly name: string;
 }

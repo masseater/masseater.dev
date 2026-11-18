@@ -51,3 +51,7 @@ Common-practice part writing, off unless you add it. `classical()`.
 | `classical/unresolved-dissonance` | A dissonant melody note on a strong beat that does not step down | Move the next note down a step |
 
 Rules find parts by the `role` of their track (`melody`, `countermelody`, `harmony`, `bass`, `drums`), so give each track a role.
+
+## Agent skills
+
+The package ships TanStack Intent skills for coding agents. Load one with `vp exec intent load @r_masseater/i68-presets#<skill>`.
