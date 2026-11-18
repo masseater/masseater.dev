@@ -27,7 +27,7 @@ export default defineConfig({
         cache: false,
       },
       "release:publish": { command: "node bin/release.ts", cache: false },
-      "signing-key": { command: "node bin/signing-key.ts", cache: false },
+      "updater-key": { command: "updater-key", cache: false },
     },
   },
 });
