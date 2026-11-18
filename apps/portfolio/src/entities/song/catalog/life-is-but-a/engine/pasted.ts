@@ -22,21 +22,17 @@ const SPOKEN = {
   fade: { fadeIn: 0.01, fadeOut: 0.05 },
 };
 
-const spokenOf = (life: Life): Float32Array => {
-  const cached = life.words.get(SPOKEN.name);
-  if (Predicate.isNotUndefined(cached)) {
-    return cached;
-  }
-  const said = resample({ rate: semitoneRatio(SPOKEN.semitones) })(
-    life.samples[SPOKEN.source] ?? new Float32Array(),
-  );
-  const spoken = fade(SPOKEN.fade)(
-    new Float32Array(stretch({ ratio: SPOKEN.ratio, grain: SPOKEN.grain, mode: "akai" })(said)),
-  );
-  life.labelled(spoken, { name: SPOKEN.name });
-  life.words.set(SPOKEN.name, spoken);
-  return spoken;
-};
+const spokenOf = (life: Life): Float32Array =>
+  life.words.getOrInsertComputed(SPOKEN.name, () => {
+    const said = resample({ rate: semitoneRatio(SPOKEN.semitones) })(
+      life.samples[SPOKEN.source] ?? new Float32Array(),
+    );
+    const spoken = fade(SPOKEN.fade)(
+      new Float32Array(stretch({ ratio: SPOKEN.ratio, grain: SPOKEN.grain, mode: "akai" })(said)),
+    );
+    life.labelled(spoken, { name: SPOKEN.name });
+    return spoken;
+  });
 
 const sourceOf = (life: Life, source: Pasted["source"]): Source =>
   Match.value(source).pipe(

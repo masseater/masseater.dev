@@ -59,10 +59,7 @@ export const lifeOf = ({ samples, table, log, tape }: Setup): Life => {
       labels.set(sample, label);
     },
     words: {
-      get: (key) => words.get(key),
-      set: (key, sample) => {
-        words.set(key, sample);
-      },
+      getOrInsertComputed: (key, compute) => words.getOrInsertComputed(key, compute),
     },
     tape,
   };

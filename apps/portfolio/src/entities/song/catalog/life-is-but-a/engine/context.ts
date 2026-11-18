@@ -39,11 +39,6 @@ export const NotedTableSchema = Schema.Record(Schema.String, EntrySchema);
 
 export type SampleTableEntry = (typeof NotedTableSchema.Type)[string];
 
-export interface WordCache {
-  readonly get: (key: string) => Float32Array | undefined;
-  readonly set: (key: string, sample: Float32Array) => void;
-}
-
 export interface Sink {
   readonly write: (
     name: string,
@@ -58,3 +53,10 @@ export const entryOf =
   (life: Life) =>
   (name: string): SampleTableEntry =>
     life.table[name] ?? NO_ENTRY;
+
+export interface WordCache {
+  readonly getOrInsertComputed: (
+    key: string,
+    compute: (key: string) => Float32Array,
+  ) => Float32Array;
+}

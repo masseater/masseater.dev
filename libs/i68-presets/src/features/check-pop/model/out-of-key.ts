@@ -1,10 +1,9 @@
-import type { Bar, Song } from "@r_masseater/fumx-parser";
-import { keyIn } from "@r_masseater/fumx-parser/analysis";
-import type { BarRange, KeySpan, Sounding } from "@r_masseater/fumx-parser/analysis";
+import type { KeySpan, Sounding } from "@r_masseater/fumx-parser/analysis";
 import { defineRule } from "@r_masseater/i68";
 import type { Rule } from "@r_masseater/i68";
 import { Array as Arr, Option, Record as Rec, pipe } from "effect";
 
+import { keyAt, keysOf } from "#/shared/lib/keys.ts";
 import { nameOf, pitchClassOf } from "#/shared/lib/pitch.ts";
 import { hasRole, isPitched, reporterOf, soundingAt } from "#/shared/lib/voices.ts";
 import type { Reporter } from "#/shared/lib/voices.ts";
@@ -23,24 +22,6 @@ const MINOR_STEPS = {
 };
 const MAJOR = Rec.values(MAJOR_STEPS);
 const MINOR = Rec.values(MINOR_STEPS);
-const PHRASE_BARS = 4;
-const FIRST = 1;
-
-const labelOf = (bar: Bar): string =>
-  Option.getOrElse(bar.section, () => `#${String(Math.floor((bar.index - FIRST) / PHRASE_BARS))}`);
-
-const rangesOf = (song: Song): readonly BarRange[] =>
-  pipe(
-    Arr.match(song.bars, {
-      onEmpty: (): readonly Arr.NonEmptyReadonlyArray<Bar>[] => [],
-      onNonEmpty: (bars) => Arr.groupWith(bars, (left, right) => labelOf(left) === labelOf(right)),
-    }),
-    Arr.map((bars) => ({
-      fromBar: Arr.headNonEmpty(bars).index,
-      toBar: Arr.lastNonEmpty(bars).index,
-    })),
-  );
-
 const stepsOf = (key: KeySpan): readonly number[] => {
   if (key.mode === "major") {
     return MAJOR;
@@ -52,14 +33,6 @@ const inScale =
   (key: KeySpan) =>
   (midi: number): boolean =>
     Arr.contains(stepsOf(key), pitchClassOf(midi - key.pitchClass));
-
-const keyAt =
-  (keys: readonly KeySpan[]) =>
-  (bar: number): Option.Option<KeySpan> =>
-    pipe(
-      keys,
-      Arr.findFirst((span) => span.fromBar <= bar && bar <= span.toBar),
-    );
 
 type InChord = (sounding: Sounding) => boolean;
 
@@ -90,7 +63,7 @@ const checkNote =
 export const outOfKey: Rule = defineRule({
   meta: { description: "Notes stay in the key the notes around them imply" },
   check: (context) => {
-    const keys = pipe(rangesOf(context.song), Arr.map(keyIn(context.song)), Arr.getSomes);
+    const keys = keysOf(context.song);
     const check = checkNote(reporterOf(context), keys, inChordOf(context.soundings));
     for (const sounding of pipe(context.soundings, Arr.filter(isPitched))) {
       check(sounding);

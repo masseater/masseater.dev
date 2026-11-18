@@ -91,8 +91,10 @@ export const createResolutionStore = (source: ResolutionSource): ResolutionStore
   const noDtsCache = createModuleResolutionCache();
   const byFile = new Map<string, Map<string, CachedResolution>>();
   const tableFor = (containingFile: string): Map<string, CachedResolution> => {
-    const table = byFile.get(containingFile) ?? new Map<string, CachedResolution>();
-    byFile.set(containingFile, table);
+    const table = byFile.getOrInsertComputed(
+      containingFile,
+      () => new Map<string, CachedResolution>(),
+    );
     return table;
   };
   const cacheFor = (request: ModuleNameRequest): ModuleResolutionCache => {

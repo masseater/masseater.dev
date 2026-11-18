@@ -1,7 +1,7 @@
 {
   "name": "@r_masseater/i68-presets",
   "version": "0.1.0",
-  "description": "The official i68 rule presets for .fumx songs, one per concern: pop (key, range, leaps, breath), voicing (clashes, low interval limits, crowded low mids, chord placement, voice leaps) and classical (parallel fifths and octaves, unresolved dissonance).",
+  "description": "The official i68 rule presets for .fumx songs, one per concern: pop (key, range, leaps, breath), voicing (clashes, low interval limits, crowded low mids, chord placement, voice leaps), classical (parallel fifths and octaves, unresolved dissonance), progressions (famous chord progressions) and bach (chord changes compared with the Bach chorales).",
   "keywords": [
     "fumx",
     "i68",
@@ -48,14 +48,17 @@
     "prepublishOnly": "vp run build"
   },
   "dependencies": {
-    "@r_masseater/fumx-parser": "workspace:*"
+    "@r_masseater/fumx-parser": "workspace:*",
+    "tonal": "catalog:"
   },
   "devDependencies": {
     "@effect/platform-node": "catalog:",
     "@effect/vitest": "catalog:",
+    "@masseater.dev/song-format": "workspace:*",
     "@r_masseater/i68": "workspace:*",
     "@types/node": "catalog:",
     "effect": "catalog:stack",
+    "verovio": "catalog:",
     "vite-plus": "catalog:stack"
   },
   "peerDependencies": {
