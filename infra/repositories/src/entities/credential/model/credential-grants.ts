@@ -44,7 +44,7 @@ const PROFILES = {
   deploy: DEPLOY,
   transforms: extend({
     account: ["AI Gateway Write", "Billing Write"],
-    zone: ["Zone Transform Rules Write", "Dynamic URL Redirects Write"],
+    zone: ["Zone Transform Rules Write"],
   }),
   access: extend({ account: ["Access: Apps and Policies Write", "MCP Portals Write"] }),
   exposure: EXPOSURE,
