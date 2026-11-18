@@ -12,6 +12,8 @@ import {
 } from "effect";
 import { Argument, Command } from "effect/cli";
 
+import { assetName, releaseOf } from "#/features/collect-bundle/index.ts";
+import type { Release } from "#/features/collect-bundle/index.ts";
 import { repositoryRoot } from "#/shared/lib/command.ts";
 
 const ASSETS = "release-assets";
@@ -45,7 +47,19 @@ const bundled = Effect.fn("collect.bundled")(function* bundled(from: string, ext
   return files;
 });
 
-const collectKind = Effect.fn("collect.kind")(function* collectKind(bundle: string, kind: string) {
+const renamed = (release: Release, file: string): Effect.Effect<string> =>
+  pipe(
+    assetName(release, file),
+    Option.match({
+      onNone: () => Effect.die(`${file} does not carry version ${release.version}`),
+      onSome: Effect.succeed,
+    }),
+  );
+
+const collectKind = Effect.fn("collect.kind")(function* collectKind(
+  { bundle, release }: Readonly<{ bundle: string; release: Release }>,
+  kind: string,
+) {
   const fileSystem = yield* FileSystem.FileSystem;
   const path = yield* Path.Path;
   const extension = yield* extensionOf(kind);
@@ -55,7 +69,10 @@ const collectKind = Effect.fn("collect.kind")(function* collectKind(bundle: stri
   yield* fileSystem.makeDirectory(to, { recursive: true });
   yield* Effect.forEach(
     files,
-    (name) => fileSystem.copyFile(path.join(from, name), path.join(to, name)),
+    (name) =>
+      Effect.flatMap(renamed(release, name), (asset) =>
+        fileSystem.copyFile(path.join(from, name), path.join(to, asset)),
+      ),
     { concurrency: 1, discard: true },
   );
 });
@@ -68,7 +85,8 @@ const command = Command.make(
       const path = yield* Path.Path;
       const root = yield* repositoryRoot;
       const bundle = path.join(root, "target", "release", "bundle");
-      yield* Effect.forEach(kinds, (kind) => collectKind(bundle, kind), {
+      const release = yield* releaseOf(process.cwd());
+      yield* Effect.forEach(kinds, (kind) => collectKind({ bundle, release }, kind), {
         concurrency: 1,
         discard: true,
       });
