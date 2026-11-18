@@ -228,9 +228,5 @@ export const firstSquat =
   (name: string) =>
   (owner: string): Option.Option<string> => {
     const key = `${owner}/${name}`;
-    return Option.getOrElse(Option.fromNullishOr(squats.get(key)), () => {
-      const found = searched(name, owner);
-      squats.set(key, found);
-      return found;
-    });
+    return squats.getOrInsertComputed(key, () => searched(name, owner));
   };

@@ -80,6 +80,7 @@ const rules = {
   "import/exports-last": "off",
   ...testRules,
   "msch-lint/ecosystem-readers": "error",
+  "msch-lint/get-or-insert": "error",
   "msch-lint/inline-exports": "error",
   "msch-lint/ui-state-in-atoms": "error",
   "msch-lint/no-hand-written-sql": "error",

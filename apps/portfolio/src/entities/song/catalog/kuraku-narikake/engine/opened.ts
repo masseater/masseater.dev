@@ -1,6 +1,5 @@
+import type { Sheet } from "@masseater.dev/fumx-studio/daw/take";
 import { Option } from "effect";
-
-import type { Sheet } from "#/entities/song/model/take.ts";
 
 import { automationOf } from "./automation.ts";
 import { editsLogged } from "./cut-ups.ts";

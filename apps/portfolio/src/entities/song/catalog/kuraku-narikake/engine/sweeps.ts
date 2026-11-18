@@ -1,11 +1,10 @@
+import { svf } from "@masseater.dev/fumx-studio/dsp/filter";
+import type { SvfKind } from "@masseater.dev/fumx-studio/dsp/filter";
+import { SAMPLE_RATE } from "@masseater.dev/fumx-studio/dsp/number";
+import { activeIn } from "@masseater.dev/fumx-studio/studio/activity";
+import type { Bus } from "@masseater.dev/fumx-studio/studio/bus";
+import { timeOf } from "@masseater.dev/fumx-studio/studio/moment";
 import { Option } from "effect";
-
-import { svf } from "#/entities/song/lib/dsp/filter.ts";
-import type { SvfKind } from "#/entities/song/lib/dsp/filter.ts";
-import { SAMPLE_RATE } from "#/entities/song/lib/dsp/number.ts";
-import { activeIn } from "#/entities/song/lib/studio/activity.ts";
-import type { Bus } from "#/entities/song/lib/studio/bus.ts";
-import { timeOf } from "#/entities/song/lib/studio/moment.ts";
 
 import type { Kuraku } from "./kuraku.ts";
 import type { TimeSpan } from "./score-schema.ts";

@@ -51,6 +51,7 @@ export default defineConfig({
     copy: [{ from: "src/app/server/Containerfile", to: "dist/server" }],
   },
   test: {
+    isolate: true,
     include: ["**/*.test.ts"],
     server: { deps: { inline: ["@effect/vitest"] } },
   },

@@ -344,6 +344,7 @@ mod tests {
 
     use super::{Serving, listed, router};
     use crate::app::workshop::Workshop;
+    use crate::entities::gpu_runtime::GpuRuntime;
     use crate::entities::job::Jobs;
     use crate::entities::song::Library;
 
@@ -356,6 +357,7 @@ mod tests {
             reqwest::Client::new(),
             root.join("cache"),
             Jobs::new(Arc::new(|| {})),
+            GpuRuntime::prepare(reqwest::Client::new(), None),
         )
     }
 

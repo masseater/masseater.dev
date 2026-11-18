@@ -96,9 +96,7 @@ const esTreeIndex = ({ context }: FileProgram): ReadonlyMap<string, MappedNode> 
   const { visitorKeys } = context.sourceCode;
   const visit = (node: MappedNode): void => {
     const key = rangeKey(node.range);
-    if (!index.has(key)) {
-      index.set(key, node);
-    }
+    index.getOrInsert(key, node);
     for (const child of childNodesOf(node, visitorKeys[node.type] ?? [])) {
       visit(child);
     }

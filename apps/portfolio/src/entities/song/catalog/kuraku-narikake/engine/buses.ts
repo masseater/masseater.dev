@@ -1,6 +1,5 @@
+import type { Bus } from "@masseater.dev/fumx-studio/studio/bus";
 import { Option, Schema } from "effect";
-
-import type { Bus } from "#/entities/song/lib/studio/bus.ts";
 
 import type { Kuraku } from "./kuraku.ts";
 import type { Role, Step } from "./score-schema.ts";

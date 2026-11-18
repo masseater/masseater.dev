@@ -1,6 +1,7 @@
+import { SAMPLE_RATE } from "@masseater.dev/fumx-studio/dsp/number";
+import { scoreOf } from "@masseater.dev/fumx-studio/studio/score";
+
 import form from "#/entities/song/catalog/life-is-but-a/score/form.json";
-import { SAMPLE_RATE } from "#/entities/song/lib/dsp/number.ts";
-import { scoreOf } from "#/entities/song/lib/studio/score.ts";
 import { samplesIn } from "#/entities/song/model/daw.ts";
 import type { Recording } from "#/entities/song/model/daw.ts";
 import { FormSchema } from "#/entities/song/model/form.ts";

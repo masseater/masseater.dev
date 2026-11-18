@@ -1,6 +1,6 @@
-import { SAMPLE_RATE } from "#/entities/song/lib/dsp/number.ts";
-import type { Bus } from "#/entities/song/lib/studio/bus.ts";
-import { timeOf } from "#/entities/song/lib/studio/moment.ts";
+import { SAMPLE_RATE } from "@masseater.dev/fumx-studio/dsp/number";
+import type { Bus } from "@masseater.dev/fumx-studio/studio/bus";
+import { timeOf } from "@masseater.dev/fumx-studio/studio/moment";
 
 import type { Kuraku } from "./kuraku.ts";
 import type { CueEdit } from "./score-schema.ts";

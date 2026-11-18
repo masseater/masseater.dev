@@ -1,10 +1,10 @@
+import { SAMPLE_RATE, orDefault, semitoneRatio } from "@masseater.dev/fumx-studio/dsp/number";
+import { fade, resample } from "@masseater.dev/fumx-studio/dsp/sampling";
+import { stretch } from "@masseater.dev/fumx-studio/dsp/stretch";
+import type { Stretching } from "@masseater.dev/fumx-studio/dsp/stretch";
 import { Array as Arr, Predicate } from "effect";
 
 import patterns from "#/entities/song/catalog/life-is-but-a/score/patterns.json";
-import { SAMPLE_RATE, orDefault, semitoneRatio } from "#/entities/song/lib/dsp/number.ts";
-import { fade, resample } from "#/entities/song/lib/dsp/sampling.ts";
-import { stretch } from "#/entities/song/lib/dsp/stretch.ts";
-import type { Stretching } from "#/entities/song/lib/dsp/stretch.ts";
 
 import type { Life } from "./context.ts";
 
@@ -107,12 +107,9 @@ export const wordOf =
   (life: Life) =>
   (word: Word): Float32Array => {
     const key = keyOf(word);
-    const cached = life.words.get(key);
-    if (Predicate.isNotUndefined(cached)) {
-      return cached;
-    }
-    const shaped = fade(FADE)(stretched(word, sungOf(life, word)));
-    life.labelled(shaped, { name: labelOf(word), midi: word.key });
-    life.words.set(key, shaped);
-    return shaped;
+    return life.words.getOrInsertComputed(key, () => {
+      const shaped = fade(FADE)(stretched(word, sungOf(life, word)));
+      life.labelled(shaped, { name: labelOf(word), midi: word.key });
+      return shaped;
+    });
   };

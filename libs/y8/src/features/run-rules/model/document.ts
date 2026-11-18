@@ -151,15 +151,7 @@ const treeOf = (view: SourceView): Tree => {
   const made = new Map<number, MarkdownNode>();
   const tree: Tree = {
     field: (id, field) => view.nodes[id * NODE_WORDS + field] ?? NONE,
-    at: (id) =>
-      pipe(
-        Option.fromNullishOr(made.get(id)),
-        Option.getOrElse(() => {
-          const node = nodeOf(tree, view, id);
-          made.set(id, node);
-          return node;
-        }),
-      ),
+    at: (id) => made.getOrInsertComputed(id, () => nodeOf(tree, view, id)),
   };
   return tree;
 };

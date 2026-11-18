@@ -1,10 +1,10 @@
+import { SAMPLE_RATE } from "@masseater.dev/fumx-studio/dsp/number";
+import { randomFrom } from "@masseater.dev/fumx-studio/dsp/random";
+import type { Label, Ledger } from "@masseater.dev/fumx-studio/studio/placement";
+import { studioOf } from "@masseater.dev/fumx-studio/studio/studio";
 import { Option } from "effect";
 
 import form from "#/entities/song/catalog/life-is-but-a/score/form.json";
-import { SAMPLE_RATE } from "#/entities/song/lib/dsp/number.ts";
-import { randomFrom } from "#/entities/song/lib/dsp/random.ts";
-import type { Label, Ledger } from "#/entities/song/lib/studio/placement.ts";
-import { studioOf } from "#/entities/song/lib/studio/studio.ts";
 
 import type { Life, SampleTableEntry, Sink } from "./context.ts";
 import { rackOf } from "./rack.ts";
@@ -59,10 +59,7 @@ export const lifeOf = ({ samples, table, log, tape }: Setup): Life => {
       labels.set(sample, label);
     },
     words: {
-      get: (key) => words.get(key),
-      set: (key, sample) => {
-        words.set(key, sample);
-      },
+      getOrInsertComputed: (key, compute) => words.getOrInsertComputed(key, compute),
     },
     tape,
   };

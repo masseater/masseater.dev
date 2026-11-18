@@ -1,6 +1,6 @@
-import { SVF } from "#/entities/song/lib/dsp/filter.ts";
-import { busOf } from "#/entities/song/lib/studio/bus.ts";
-import type { Bus } from "#/entities/song/lib/studio/bus.ts";
+import { SVF } from "@masseater.dev/fumx-studio/dsp/filter";
+import { busOf } from "@masseater.dev/fumx-studio/studio/bus";
+import type { Bus } from "@masseater.dev/fumx-studio/studio/bus";
 
 import { editorOf } from "./editor.ts";
 import type { Editing } from "./editor.ts";
