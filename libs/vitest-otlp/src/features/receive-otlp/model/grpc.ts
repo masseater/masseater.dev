@@ -1,6 +1,7 @@
 import { createServer } from "node:http2";
 
-import { NodeHttpServer, NodeHttpServerRequest } from "@effect/platform-node";
+import * as NodeHttpServer from "@effect/platform-node/NodeHttpServer";
+import * as NodeHttpServerRequest from "@effect/platform-node/NodeHttpServerRequest";
 import type { Scope } from "effect";
 import { Array, Effect, Option } from "effect";
 import type { HttpServerError } from "effect/http";

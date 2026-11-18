@@ -1,5 +1,5 @@
 import type { Message } from "@bufbuild/protobuf";
-import { NodeHttpServer } from "@effect/platform-node";
+import * as NodeHttpServer from "@effect/platform-node/NodeHttpServer";
 import type { Scope } from "effect";
 import { Array, Context, Effect, Layer, Option, String, pipe } from "effect";
 import type { HttpServerError } from "effect/http";
