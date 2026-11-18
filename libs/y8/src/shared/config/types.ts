@@ -88,6 +88,7 @@ export interface Override {
 }
 
 export interface Y8Config {
+  readonly extends?: readonly Y8Config[];
   readonly plugins?: Readonly<Record<string, Plugin>>;
   readonly rules?: Readonly<Record<string, RuleEntry>>;
   readonly ignores?: readonly string[];
