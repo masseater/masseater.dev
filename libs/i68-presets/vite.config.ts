@@ -7,6 +7,7 @@ export default defineConfig({
       test: { command: "vp test run", cache: LOCKED },
       build: { command: "vp pack", cache: LOCKED },
       verify: { command: [], dependsOn: ["test", "build"] },
+      "build-style-tables": { command: "node bin/build-style-tables.ts", cache: false },
     },
   },
   pack: {
