@@ -50,7 +50,7 @@ dupes のデフォルトモードは名前を残したままトークン列を�
 
 ## 判定は別の文書に書く
 
-判定は3つのステップで行われる。`fallow similar-code inspect <candidate_id> --candidates similar-code.json` は両方の関数のソースを表示し、「Decide candidate_worthy, behaviorally_equivalent, and refactor_safe separately」という言葉で締めくくられる。
+判定は3つのステップで行われる。最初の `fallow similar-code inspect <candidate_id> --candidates similar-code.json` は両方の関数のソースを表示する。出力は「Decide candidate_worthy, behaviorally_equivalent, and refactor_safe separately」という言葉で締めくくられる。
 
 ```text
 src/invoice.ts:3  invoiceAmount
@@ -70,7 +70,7 @@ function cartTotal(items: readonly Item[]): number {
 }
 ```
 
-判定結果は候補リストではなく、個別のJSONドキュメントに記述される。各判定結果には3つの独立した軸とアウトカムがある。`refactor_safe: true` には `behaviorally_equivalent: true` が必要であり、これには `candidate_worthy: true` が必要となる[^fallow-similar-code-skill]。アウトカムは、`same-responsibility`、`related-but-distinct`、`intentional-duplication`、`unrelated`、`needs-human-review`のいずれかとなる。意図的な重複は、想定される回答の一つである。
+判定結果は候補リストではなく、個別のJSONドキュメントに記述される。各判定結果には3つの独立した軸とアウトカムがある。`refactor_safe: true` には `behaviorally_equivalent: true` が必要であり、これには `candidate_worthy: true` が必要となる[^fallow-similar-code-skill]。アウトカムは、`same-responsibility`、`related-but-distinct`、`intentional-duplication`、`unrelated`、`needs-human-review`のいずれかとなる。意図的な重複は、想定される回答の1つである。
 
 ```json
 {
@@ -89,7 +89,7 @@ function cartTotal(items: readonly Item[]): number {
 }
 ```
 
-`fallow similar-code review` は、いずれのファイルも変更せずに候補と判定結果を結合する。3つの候補のうち2つの判定結果がある場合、3つ目は `needs-human-review` として報告され、`--require-verdict-for-each-candidate` は "a verdict is required for every candidate" と判定されて失敗する。
+`fallow similar-code review` は、いずれのファイルも変更せずに候補と判定結果を結合する。3つの候補のうち2つの判定結果がある場合、3つ目は `needs-human-review` として報告される。`--require-verdict-for-each-candidate` を付けると、"a verdict is required for every candidate" と出して失敗する。
 
 ```text
 src/invoice.ts:3 invoiceAmount
@@ -103,9 +103,9 @@ Reviewed: 3 candidates, 2 matched verdicts, 1 unmatched candidate
 
 変更のないコードでディスカバリを再実行した場合、候補の `candidate_id` と `review_key` は同一のままであった。したがって、リポジトリに保存された判定ファイルは次回の実行でも同一のペアを対象とし、判定の無い候補として出るのは、新規または変更されたペアだけになる。
 
-## ゲートの外
+## ビルドを止める検査には入らない
 
-fallow は、引数なしの解析、`audit` のゲート、SARIF、エディタの診断、自動修正から `similar-code` を外している[^fallow-changelog]。その終了コードは、候補に対して失敗しない。設計は上記の判定リストに適合している。スコア0.83は、忘れられたコピーのこともあれば、別々に変わるべき2つの関数のこともあり、どちらなのかは両方を読まないと分からない。`similar-code` は、候補を読み取り判定を記録する定期レビューに適合し、dupes はビルドを失敗させるチェックとして残る。
+fallow は、引数なしの解析、`audit` の合否判定、SARIF、エディタの診断、自動修正から `similar-code` を外している[^fallow-changelog]。その終了コードは、候補に対して失敗しない。設計は上記の判定リストに適合している。スコア0.83は、忘れられたコピーのこともあれば、別々に変わるべき2つの関数のこともあり、どちらなのかは両方を読まないと分からない。`similar-code` は、候補を読み取り判定を記録する定期レビューに適合し、dupes はビルドを失敗させるチェックとして残る。
 
 ## モノレポの数値
 
