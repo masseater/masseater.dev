@@ -1696,6 +1696,9 @@ importers:
       '@cloudflare/workers-types':
         specifier: 'catalog:'
         version: 5.20261115.1
+      '@distilled.cloud/cloudflare':
+        specifier: catalog:stack
+        version: 1.0.0-rc.20(effect@4.1.4)
       '@effect/tsgo':
         specifier: catalog:stack
         version: 0.70.0
@@ -1708,6 +1711,9 @@ importers:
       '@masseater.dev/d1-test':
         specifier: workspace:*
         version: link:../../libs/d1-test
+      '@masseater.dev/node-main':
+        specifier: workspace:*
+        version: link:../../libs/node-main
       '@tailwindcss/vite':
         specifier: 'catalog:'
         version: 4.3.5(@voidzero-dev/vite-plus-core@8.3.8000(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))
