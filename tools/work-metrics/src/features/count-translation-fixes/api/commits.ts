@@ -12,12 +12,12 @@ import {
 } from "effect";
 import { Base64 } from "effect/encoding";
 
-import { fixesOf } from "#/features/translation-fixes/model/fixes.ts";
-import type { FileChange } from "#/features/translation-fixes/model/fixes.ts";
-import { pairsOf } from "#/features/translation-fixes/model/pairs.ts";
-import type { Commit, Pair } from "#/features/translation-fixes/model/pairs.ts";
-import { PAGE_SIZE, mergedPulls } from "#/shared/api/pulls.ts";
-import type { Repository } from "#/shared/api/pulls.ts";
+import { fixesOf } from "#/features/count-translation-fixes/model/fixes.ts";
+import type { FileChange } from "#/features/count-translation-fixes/model/fixes.ts";
+import { pairsOf } from "#/features/count-translation-fixes/model/pairs.ts";
+import type { Commit, Pair } from "#/features/count-translation-fixes/model/pairs.ts";
+import { PAGE_SIZE, mergedPulls } from "#/shared/api/index.ts";
+import type { Repository } from "#/shared/api/index.ts";
 
 const MERGE_PARENTS = 2;
 const NONE = 0;

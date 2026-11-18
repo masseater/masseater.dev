@@ -1,7 +1,7 @@
 import { Array as Arr, Clock, Effect } from "effect";
 
-import { repositoryOf } from "#/shared/api/pulls.ts";
-import type { Repository } from "#/shared/api/pulls.ts";
+import { repositoryOf } from "#/shared/api/index.ts";
+import type { Repository } from "#/shared/api/index.ts";
 import { sinceDays } from "#/shared/lib/output.ts";
 
 /** @internal */

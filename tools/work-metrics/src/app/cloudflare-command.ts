@@ -1,7 +1,7 @@
 import { Array as Arr, DateTime, Effect, Schema, pipe } from "effect";
 import { Command } from "effect/cli";
 
-import { meterGroups, usageOf, usageSummary } from "#/features/cloudflare-usage/index.ts";
+import { meterGroups, usageOf, usageSummary } from "#/features/measure-cloudflare-usage/index.ts";
 import { writeReport } from "#/shared/lib/output.ts";
 
 import { daysFlag, outFlag } from "./flags.ts";

@@ -7,8 +7,8 @@ import type {
   FlowEvent,
   PullRequestHistory,
 } from "#/features/pull-request-flow/model/flow.ts";
-import { PAGE_SIZE, mergedPulls } from "#/shared/api/pulls.ts";
-import type { Repository } from "#/shared/api/pulls.ts";
+import { PAGE_SIZE, mergedPulls } from "#/shared/api/index.ts";
+import type { Repository } from "#/shared/api/index.ts";
 import { millis } from "#/shared/lib/time.ts";
 
 const MERGE_SUBJECT = /^Merge (?:branch|remote-tracking branch|pull request) /u;
@@ -34,14 +34,16 @@ const committedOf = (item: unknown): Option.Option<FlowEvent> =>
     })),
   );
 
-const kindOf = (event: string): Option.Option<"queued" | "dequeued" | "merged"> => {
+type DatedKind = Exclude<FlowEvent["kind"], "committed">;
+
+const kindOf = (event: string): Option.Option<DatedKind> => {
   if (QUEUED.has(event)) {
     return Option.some("queued");
   }
   if (event === "auto_merge_disabled") {
     return Option.some("dequeued");
   }
-  return Option.liftPredicate(event, (name): name is "merged" => name === "merged");
+  return Option.liftPredicate(event, (name): name is DatedKind => name === "merged");
 };
 
 const datedOf = (item: unknown): Option.Option<FlowEvent> =>

@@ -1,7 +1,7 @@
 import { Effect, Schema } from "effect";
 import { Command } from "effect/cli";
 
-import { fixesSummary, translationFixes } from "#/features/translation-fixes/index.ts";
+import { fixesSummary, translationFixes } from "#/features/count-translation-fixes/index.ts";
 import { writeReport } from "#/shared/lib/output.ts";
 
 import { daysFlag, outFlag, repoFlag } from "./flags.ts";

@@ -1,9 +1,9 @@
 import { Array as Arr, Config, Effect, Option, Record, Schema, pipe } from "effect";
 import { HttpClient, HttpClientRequest, HttpClientResponse } from "effect/http";
 
-import { METERS } from "#/features/cloudflare-usage/model/meters.ts";
-import type { Meter } from "#/features/cloudflare-usage/model/meters.ts";
-import type { Group } from "#/features/cloudflare-usage/model/usage.ts";
+import { METERS } from "#/features/measure-cloudflare-usage/model/meters.ts";
+import type { Meter } from "#/features/measure-cloudflare-usage/model/meters.ts";
+import type { Group } from "#/features/measure-cloudflare-usage/model/usage.ts";
 
 import { resourceNames } from "./names.ts";
 
