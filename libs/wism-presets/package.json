@@ -1,16 +1,17 @@
 {
-  "name": "@r_masseater/wism-fsd",
+  "name": "@r_masseater/wism-presets",
   "version": "0.1.0",
-  "description": "wism rules for Feature-Sliced Design layers, slices and public APIs, file placement and Markdown links, with presets for workspaces, Rust crates and Agent Skills.",
+  "description": "Official rule presets for wism: Feature-Sliced Design layers, file placement and Markdown links, for workspaces, Rust crates and Agent Skills.",
   "keywords": [
     "feature-sliced-design",
     "fsd",
     "lint",
+    "presets",
     "structure",
     "tanstack-intent",
     "wism"
   ],
-  "homepage": "https://github.com/masseater/masseater.dev/tree/main/libs/wism-fsd#readme",
+  "homepage": "https://github.com/masseater/masseater.dev/tree/main/libs/wism-presets#readme",
   "bugs": {
     "url": "https://github.com/masseater/masseater.dev/issues"
   },
@@ -18,12 +19,12 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/masseater/masseater.dev.git",
-    "directory": "libs/wism-fsd"
+    "directory": "libs/wism-presets"
   },
   "files": [
     "LICENSE",
     "dist",
-    "skills/lint-fsd"
+    "skills/lint-presets"
   ],
   "type": "module",
   "imports": {
