@@ -11,6 +11,7 @@ export const COMMENT_DIRECTIVES: readonly string[] = [
   String.raw`shellcheck \w`,
   String.raw`zizmor: ignore\[`,
   "renovate:",
+  String.raw`exit: \S`,
   "yaml-language-server:",
   "> statement-breakpoint$",
   String.raw`fallow-ignore-(?:next-line|file) \S`,
