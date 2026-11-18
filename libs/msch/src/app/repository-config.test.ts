@@ -35,7 +35,7 @@ const placementRule = (): Option.Option<Rule> =>
   pipe(
     Option.fromNullishOr(config.wism),
     Option.flatMap(({ plugins }) => Option.fromNullishOr(plugins)),
-    Option.flatMap(Rec.get("fsd")),
+    Option.flatMap(Rec.get("structure")),
     Option.flatMap(({ rules }) => Option.fromNullishOr(rules)),
     Option.flatMap(Rec.get("placement")),
   );
@@ -61,6 +61,28 @@ const reportedByPlacement = (files: readonly string[]): readonly string[] => {
   );
 };
 
+describe("repositoryConfig task cache", () => {
+  it("caches tasks and scripts without a remote cache unless one is named", () => {
+    expect(config).toMatchObject({ run: { cache: true } });
+  });
+
+  it("reads the remote task cache the repository names", () => {
+    const shared = repositoryConfig({
+      workspace: WORKSPACE,
+      run: { remoteCache: "https://cache.example/projects/demo" },
+    });
+    expect(shared).toMatchObject({
+      run: {
+        cache: {
+          scripts: true,
+          tasks: true,
+          remote: { url: "https://cache.example/projects/demo" },
+        },
+      },
+    });
+  });
+});
+
 describe("repositoryConfig", () => {
   it("makes verify depend on workspace verifies and every root task", () => {
     expect(config).toMatchObject({
@@ -82,7 +104,7 @@ describe("repositoryConfig", () => {
       "tools/x/package.json",
       "tools/x/stray.ts",
     ]);
-    expect(config).toHaveProperty(["wism", "rules", "fsd/placement"], "error");
+    expect(config).toHaveProperty(["wism", "rules", "structure/placement"], "error");
     expect(reported).toStrictEqual(["apps/web/stray.ts"]);
   });
 

@@ -1,34 +1,57 @@
-import { Array as Arr, Effect, Layer, Option, Schema, Stream, pipe } from "effect";
+import {
+  Array as Arr,
+  Console,
+  Effect,
+  Layer,
+  Option,
+  Schema,
+  Stream,
+  String as Str,
+  pipe,
+} from "effect";
 import { ChildProcess } from "effect/process";
 
 import { collectIgnoredDirectories } from "#/shared/lib/ignored-directories.ts";
 import {
-  NODE_MODULES,
   RepositoryFiles,
   nodeRepositoryFiles,
   nodeServicesLayer,
 } from "#/shared/lib/repository-files.ts";
+import { startedOnce } from "#/shared/lib/started-once.ts";
 
 import { cargoInputsOf } from "./cargo-inputs.ts";
-import type { CargoInput } from "./cargo-inputs.ts";
-import { CargoMetadataSchema, CargoWorkspaceSchema, LOCK_FILE, keysOf } from "./cargo-metadata.ts";
-import type { CargoWorkspace } from "./cargo-metadata.ts";
+import type { CargoInput, DerivedInputs } from "./cargo-inputs.ts";
+import {
+  CargoMetadataSchema,
+  CargoSourceSchema,
+  LOCK_FILE,
+  MANIFEST_FILE,
+  WORKSPACE_CACHE,
+} from "./cargo-metadata.ts";
+import type { CargoSource, CargoWorkspace } from "./cargo-metadata.ts";
+import { readManifest } from "./root-manifest.ts";
 
 const KEY_SEPARATOR = "\u0000";
-const READ_CONCURRENCY = 16;
-const CACHE_FILE = [NODE_MODULES, ".cache", "msch", "cargo-workspace.json"] as const;
+const SUCCESS = 0;
+const KEYS = [LOCK_FILE, MANIFEST_FILE] as const;
 const METADATA_ARGS = ["metadata", "--format-version", "1", "--offline", "--locked"];
 
-const CachedWorkspace = Schema.fromJsonString(
+const CachedSource = Schema.fromJsonString(
   Schema.Struct({
     fingerprint: Schema.String,
-    keys: Schema.Array(Schema.String),
-    workspace: CargoWorkspaceSchema,
+    source: CargoSourceSchema,
   }),
 );
 const decodeMetadata = Schema.decodeUnknownEffect(Schema.fromJsonString(CargoMetadataSchema));
-const decodeCached = Schema.decodeUnknownOption(CachedWorkspace);
-const encodeCached = Schema.encodeEffect(CachedWorkspace);
+const decodeCached = Schema.decodeUnknownOption(CachedSource);
+const encodeCached = Schema.encodeEffect(CachedSource);
+
+const taggedError = Schema.TaggedError;
+
+class MetadataFailed extends taggedError<MetadataFailed, { readonly brand: unique symbol }>()(
+  "MetadataFailed",
+  { output: Schema.String },
+) {}
 
 const AUTO: readonly CargoInput[] = [{ auto: true }];
 const nodeLayer = Layer.provideMerge(nodeRepositoryFiles, nodeServicesLayer);
@@ -38,55 +61,94 @@ export interface CargoInputOptions {
   readonly extras?: readonly string[];
 }
 
-const fingerprintOf = Effect.fn("fingerprintOf")(function* fingerprintOf(
-  root: string,
-  keys: readonly string[],
-) {
+const fingerprintOf = Effect.fn("fingerprintOf")(function* fingerprintOf(root: string) {
   const files = yield* RepositoryFiles;
-  const texts = yield* Effect.forEach(keys, (key) => files.readFile(files.join(root, key)), {
-    concurrency: READ_CONCURRENCY,
+  const texts = yield* Effect.forEach(KEYS, (key) => files.readFile(files.join(root, key)), {
+    concurrency: "unbounded",
   });
-  const joined = pipe(
-    keys,
-    Arr.zip(texts),
-    Arr.map(([key, text]) => `${key}${KEY_SEPARATOR}${Option.getOrElse(text, () => "")}`),
-    Arr.join(KEY_SEPARATOR),
-  );
-  return yield* files.hash(joined);
-});
-
-const cachedWorkspace = Effect.fn("cachedWorkspace")(function* cachedWorkspace(root: string) {
-  const files = yield* RepositoryFiles;
-  const text = yield* files.readFile(files.join(root, ...CACHE_FILE));
-  const cached = pipe(text, Option.flatMap(decodeCached));
-  if (Option.isNone(cached)) {
-    return Option.none<CargoWorkspace>();
-  }
-  const fingerprint = yield* fingerprintOf(root, cached.value.keys);
-  return Option.some(cached.value.workspace).pipe(
-    Option.filter(() => fingerprint === cached.value.fingerprint),
+  return yield* files.hash(
+    pipe(
+      texts,
+      Arr.map((text) => Option.getOrElse(text, () => "")),
+      Arr.join(KEY_SEPARATOR),
+    ),
   );
 });
 
-const readWorkspace = Effect.fn("readWorkspace")(function* readWorkspace(root: string) {
+const cachedSource = Effect.fn("cachedSource")(function* cachedSource(root: string) {
   const files = yield* RepositoryFiles;
+  const text = yield* files.readFile(files.join(root, WORKSPACE_CACHE));
+  const fingerprint = yield* fingerprintOf(root);
+  return text.pipe(
+    Option.flatMap(decodeCached),
+    Option.filter((cached) => cached.fingerprint === fingerprint),
+    Option.map((cached) => cached.source),
+  );
+});
+
+const metadataIn = Effect.fn("metadataIn")(function* metadataIn(root: string) {
   const handle = yield* ChildProcess.make("cargo", METADATA_ARGS, {
     cwd: root,
     extendEnv: true,
     stdin: "ignore",
   });
-  const output = yield* handle.stdout.pipe(Stream.decodeText(), Stream.mkString);
-  const metadata = yield* decodeMetadata(output);
+  const [output, problem] = yield* Effect.all(
+    [
+      handle.stdout.pipe(Stream.decodeText(), Stream.mkString),
+      handle.stderr.pipe(Stream.decodeText(), Stream.mkString),
+    ],
+    { concurrency: "unbounded" },
+  );
+  const code = yield* handle.exitCode;
+  if (code !== SUCCESS) {
+    return yield* MetadataFailed.make({ output: Str.trim(problem) });
+  }
+  return yield* decodeMetadata(output);
+}, Effect.scoped);
+
+const readSource = Effect.fn("readSource")(function* readSource(root: string) {
+  const files = yield* RepositoryFiles;
+  const source: CargoSource = {
+    metadata: yield* metadataIn(root),
+    manifest: yield* readManifest(root),
+  };
+  const text = yield* encodeCached({ fingerprint: yield* fingerprintOf(root), source });
+  yield* files.writeFile(files.join(root, WORKSPACE_CACHE), text);
+  return source;
+});
+
+const workspaceIn = Effect.fn("workspaceIn")(function* workspaceIn(root: string) {
+  const cached = yield* cachedSource(root);
+  const source = yield* Option.match(cached, {
+    onNone: () => readSource(root),
+    onSome: Effect.succeed,
+  });
   const workspace: CargoWorkspace = {
-    metadata,
+    ...source,
     ignored: yield* collectIgnoredDirectories(root),
   };
-  const keys = keysOf(metadata);
-  const fingerprint = yield* fingerprintOf(root, keys);
-  const text = yield* encodeCached({ fingerprint, keys, workspace });
-  yield* files.writeFile(files.join(root, ...CACHE_FILE), text);
   return workspace;
-}, Effect.scoped);
+});
+
+const warn = (root: string, reason: string): Effect.Effect<void> =>
+  Console.error(
+    `msch: the cargo workspace in ${root} could not be read, so its cargo tasks track every file they read: ${reason}`,
+  );
+
+const loaded = (
+  root: string,
+): Effect.Effect<Option.Option<CargoWorkspace>, never, Layer.Success<typeof nodeLayer>> =>
+  workspaceIn(root).pipe(
+    Effect.asSome,
+    Effect.catchTag("MetadataFailed", ({ output }) => Effect.fail(output)),
+    Effect.tapError((cause) => warn(root, String(cause))),
+    Effect.orElseSucceed(() => Option.none<CargoWorkspace>()),
+  );
+
+const loadedOnce = startedOnce<Option.Option<CargoWorkspace>>();
+
+const loadWorkspace = (root: string): Promise<Option.Option<CargoWorkspace>> =>
+  loadedOnce(root, () => Effect.runPromise(loaded(root).pipe(Effect.provide(nodeLayer))));
 
 const lockDirectory = (
   directory: string,
@@ -103,24 +165,29 @@ const lockDirectory = (
     return yield* lockDirectory(parent);
   });
 
-const inputsIn = Effect.fn("inputsIn")(function* inputsIn(
+const writeClosure = Effect.fn("writeClosure")(function* writeClosure(
   root: string,
-  directory: string,
-  extras: readonly string[],
+  derived: DerivedInputs,
 ) {
   const files = yield* RepositoryFiles;
-  const cached = yield* cachedWorkspace(root);
-  const workspace = yield* Option.match(cached, {
-    onNone: () => readWorkspace(root),
-    onSome: Effect.succeed,
-  });
-  const derived = cargoInputsOf({ workspace, directory, extras });
   const file = files.join(root, derived.closureFile);
   const written = yield* files.readFile(file);
   if (!Option.exists(written, (text) => text === derived.closure)) {
     yield* files.writeFile(file, derived.closure);
   }
   return derived.inputs;
+});
+
+const inputsIn = Effect.fn("inputsIn")(function* inputsIn(
+  root: string,
+  directory: string,
+  extras: readonly string[],
+) {
+  const workspace = yield* Effect.promise(() => loadWorkspace(root));
+  return yield* Option.match(workspace, {
+    onNone: () => Effect.succeed(AUTO),
+    onSome: (found) => writeClosure(root, cargoInputsOf({ workspace: found, directory, extras })),
+  });
 });
 
 const deriveCargoInputs = Effect.fn("deriveCargoInputs")(function* deriveCargoInputs({
@@ -137,9 +204,4 @@ const deriveCargoInputs = Effect.fn("deriveCargoInputs")(function* deriveCargoIn
 });
 
 export const cargoInputs = (options: CargoInputOptions): Promise<readonly CargoInput[]> =>
-  Effect.runPromise(
-    deriveCargoInputs(options).pipe(
-      Effect.orElseSucceed(() => AUTO),
-      Effect.provide(nodeLayer),
-    ),
-  );
+  Effect.runPromise(deriveCargoInputs(options).pipe(Effect.provide(nodeLayer)));

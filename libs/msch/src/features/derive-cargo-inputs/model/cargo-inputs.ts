@@ -1,7 +1,10 @@
 import { Array as Arr, Option, String as Str, pipe } from "effect";
 
 import {
+  LOCK_FILE,
+  MANIFEST_FILE,
   SEPARATOR,
+  WORKSPACE_CACHE,
   closureOf,
   directoryOf,
   isLocal,
@@ -9,6 +12,7 @@ import {
   relativeTo,
 } from "./cargo-metadata.ts";
 import type { CargoMetadata, CargoPackage, CargoWorkspace } from "./cargo-metadata.ts";
+import { manifestFor } from "./root-manifest.ts";
 
 const NEGATION = "!";
 const CONTENTS = "/**";
@@ -18,7 +22,7 @@ const CLOSURE_SUFFIX = ".lock";
 const ROOT_SLUG = "root";
 const SLUG_SEPARATOR = "__";
 const LINE = "\n";
-const WORKSPACE_FILES = ["Cargo.toml", "rust-toolchain.toml", ".cargo/**"] as const;
+const WORKSPACE_FILES = ["rust-toolchain.toml", ".cargo/**"] as const;
 const GENERATED = ["node_modules", "dist"] as const;
 
 export type CargoInput =
@@ -38,6 +42,11 @@ export interface CargoInputRequest {
 }
 
 const workspaceInput = (pattern: string): CargoInput => ({ pattern, base: "workspace" });
+
+export const DERIVATION_READS: readonly CargoInput[] = pipe(
+  [LOCK_FILE, MANIFEST_FILE, WORKSPACE_CACHE, `${CLOSURE_DIRECTORY}${CONTENTS}`],
+  Arr.map((file) => workspaceInput(`${NEGATION}${file}`)),
+);
 
 const withoutContents = Str.replace(CONTENTS, "");
 
@@ -110,6 +119,17 @@ const externalIds = (closure: readonly CargoPackage[]): readonly string[] =>
     Arr.map((entry) => entry.id),
   );
 
+const closureText = (manifest: string, closure: readonly CargoPackage[]): string => {
+  const names = pipe(
+    closure,
+    Arr.map((entry) => entry.name),
+  );
+  return Arr.join(
+    [...Arr.sort(externalIds(closure), Str.Order), manifestFor(names)(manifest)],
+    LINE,
+  );
+};
+
 /** @internal */
 export const cargoInputsOf = ({
   workspace,
@@ -148,6 +168,6 @@ export const cargoInputsOf = ({
       ...pipe(added, Arr.map(workspaceInput)),
     ],
     closureFile,
-    closure: Arr.join(Arr.sort(externalIds(closure), Str.Order), LINE),
+    closure: closureText(workspace.manifest, closure),
   };
 };
