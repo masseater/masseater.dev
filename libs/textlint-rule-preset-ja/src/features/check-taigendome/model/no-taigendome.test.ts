@@ -2,23 +2,26 @@ import { TextlintKernelDescriptor } from "@textlint/kernel";
 import type { TextlintMessage } from "@textlint/types";
 import { Array as Arr, Effect, pipe } from "effect";
 import { createLinter } from "textlint";
-import { builtInPlugins } from "textlint/lib/src/loader/TextlintrcLoader.js";
+import { loadBuiltinPlugins } from "textlint/lib/src/loader/TextlintrcLoader.js";
 import { describe, expect, test } from "vite-plus/test";
 
 import { noTaigendome } from "./no-taigendome.ts";
 
 const MARKDOWN = "doc.md";
 const SECOND_PARAGRAPH_LINE = 3;
-const linter = createLinter({
-  descriptor: new TextlintKernelDescriptor({
-    rules: [{ ruleId: "no-taigendome", rule: noTaigendome, options: true }],
-    filterRules: [],
-    plugins: [...builtInPlugins],
+const linter = Effect.map(Effect.promise(loadBuiltinPlugins), (builtIn) =>
+  createLinter({
+    descriptor: new TextlintKernelDescriptor({
+      rules: [{ ruleId: "no-taigendome", rule: noTaigendome, options: true }],
+      filterRules: [],
+      plugins: builtIn.toKernelOptions().plugins ?? [],
+    }),
   }),
-});
+);
 
 const messagesOf = (text: string): Effect.Effect<readonly TextlintMessage[]> =>
-  Effect.promise(() => linter.lintText(text, MARKDOWN)).pipe(
+  linter.pipe(
+    Effect.flatMap((loaded) => Effect.promise(() => loaded.lintText(text, MARKDOWN))),
     Effect.map((result) => result.messages),
   );
 

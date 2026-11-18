@@ -1,0 +1,143 @@
+song "まどろみの窓"
+
+kit kit {
+  kick  "samples/k1.flac"
+  snare "samples/sn1.flac" gain -3dB
+  hat   "samples/ch1.flac" gain -12dB
+}
+instrument voice multisample {
+  "samples/org_69.flac" root A3
+  "samples/org_72.flac" root C4
+  "samples/org_75.flac" root Eb4
+  "samples/org_78.flac" root Gb4
+  "samples/org_81.flac" root A4
+  "samples/org_84.flac" root C5
+}
+instrument piano multisample {
+  "samples/fm_56.flac" root Ab3
+  "samples/fm_60.flac" root C4
+  "samples/fm_64.flac" root E4
+  "samples/fm_68.flac" root Ab4
+}
+instrument bass sample "samples/b_sub.flac" root C2
+
+bus plate volume -4dB fx [highpass 300Hz, reverb ir "samples/irL.flac" "samples/irR.flac" predelay 20ms, gain -25dB]
+
+track vocal instrument voice role melody volume -10dB send plate 35%
+track piano instrument piano role harmony volume -16dB send plate 25%
+track bass  instrument bass role bass volume -9dB
+track drums kit kit volume -11dB send plate 8%
+
+master fx [limit -1dB]
+bar meter 4/4 tempo 92bpm section verse {
+  vocal: rest 1/8, B4 1/8 lyric "ま", B4 1/8 lyric "ど", A4 1/8 lyric "の", B4 1/4 lyric "そ", D5 1/8 lyric "と", B4 1/8 lyric "に"
+  piano: [B3 D4 G4] 1/2, [B3 D4 G4] 1/2
+  bass:  G2 1/4, G2 1/4, D3 1/4, G2 1/4
+  drums: kick 1/4, snare 1/4, kick 1/4, snare 1/4
+  drums: hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8
+}
+bar {
+  vocal: A4 1/8 lyric "あ", B4 1/8 lyric "め", G4 1/8 lyric "の", A4 1/8 lyric "お", B4 1/4 lyric "と", rest 1/4
+  piano: [B3 E4 G4] 1/2, [B3 E4 G4] 1/2
+  bass:  E2 1/4, E2 1/4, B2 1/4, E2 1/4
+  drums: kick 1/4, snare 1/4, kick 1/4, snare 1/4
+  drums: hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8
+}
+bar {
+  vocal: rest 1/8, E5 1/8 lyric "ね", D5 1/8 lyric "む", C5 1/8 lyric "い", B4 1/4 lyric "め", A4 1/8 lyric "を", G4 1/8 lyric "こ"
+  piano: [C4 E4 G4] 1/2, [C4 E4 G4] 1/2
+  bass:  C2 1/4, C2 1/4, G2 1/4, C2 1/4
+  drums: kick 1/4, snare 1/4, kick 1/4, snare 1/4
+  drums: hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8
+}
+bar {
+  vocal: A4 1/8 lyric "す", B4 1/8 lyric "っ", A4 1/4 lyric "て", rest 1/2
+  piano: [D4 F#4 A4] 1/2, [D4 F#4 A4] 1/2
+  bass:  D2 1/4, D2 1/4, A2 1/4, D2 1/4
+  drums: kick 1/4, snare 1/4, kick 1/4, snare 1/4
+  drums: hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8
+}
+bar {
+  vocal: rest 1/8, B4 1/8 lyric "き", D5 1/8 lyric "み", D5 1/8 lyric "の", E5 1/4 lyric "こ", D5 1/8 lyric "え", B4 1/8 lyric "が"
+  piano: [B3 D4 G4] 1/2, [B3 D4 G4] 1/2
+  bass:  G2 1/4, G2 1/4, D3 1/4, G2 1/4
+  drums: kick 1/4, snare 1/4, kick 1/4, snare 1/4
+  drums: hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8
+}
+bar {
+  vocal: A4 1/8 lyric "き", B4 1/8 lyric "こ", D5 1/8 lyric "え", B4 1/4 lyric "た", rest 3/8
+  piano: [B3 D4 F#4] 1/2, [B3 D4 F#4] 1/2
+  bass:  B1 1/4, B1 1/4, F#2 1/4, B1 1/4
+  drums: kick 1/4, snare 1/4, kick 1/4, snare 1/4
+  drums: hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8
+}
+bar {
+  vocal: rest 1/4, G4 1/8 lyric "ま", A4 1/8 lyric "だ", B4 1/4 lyric "ゆ", C5 1/8 lyric "め", B4 1/8 lyric "の"
+  piano: [C4 E4 G4] 1/2, [C4 E4 G4] 1/2
+  bass:  C2 1/4, C2 1/4, G2 1/4, C2 1/4
+  drums: kick 1/4, snare 1/4, kick 1/4, snare 1/4
+  drums: hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8
+}
+bar {
+  vocal: A4 1/4 lyric "な", A4 1/4 lyric "か", rest 1/2
+  piano: [D4 F#4 A4] 1/2, [D4 F#4 A4] 1/2
+  bass:  D2 1/4, D2 1/4, A2 1/4, D2 1/4
+  drums: kick 1/4, snare 1/4, kick 1/4, snare 1/4
+  drums: hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8
+}
+bar section chorus {
+  vocal: rest 1/8, C5 1/8 lyric "ひ", D5 1/8 lyric "か", E5 1/4 lyric "り", D5 1/8 lyric "の", C5 1/8 lyric "ほ", D5 1/8 lyric "う"
+  piano: [C4 E4 G4] 1/2, [C4 E4 G4] 1/2
+  bass:  C2 1/4, C2 1/4, G2 1/4, C2 1/4
+  drums: kick 1/4, snare 1/4, kick 1/4, snare 1/4
+  drums: hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8
+}
+bar {
+  vocal: D5 1/4 lyric "へ", rest 1/8, A4 1/8 lyric "あ", B4 1/8 lyric "る", D5 1/8 lyric "い", B4 1/8 lyric "て", rest 1/8
+  piano: [D4 F#4 A4] 1/2, [D4 F#4 A4] 1/2
+  bass:  D2 1/4, D2 1/4, A2 1/4, D2 1/4
+  drums: kick 1/4, snare 1/4, kick 1/4, snare 1/4
+  drums: hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8
+}
+bar {
+  vocal: rest 1/8, B4 1/8 lyric "ぬ", D5 1/8 lyric "れ", F#5 1/4 lyric "た", D5 1/8 lyric "み", E5 1/8 lyric "ち", D5 1/8 lyric "を"
+  piano: [B3 D4 F#4] 1/2, [B3 D4 F#4] 1/2
+  bass:  B1 1/4, B1 1/4, F#2 1/4, B1 1/4
+  drums: kick 1/4, snare 1/4, kick 1/4, snare 1/4
+  drums: hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8
+}
+bar {
+  vocal: B4 1/4 lyric "け", G4 1/8 lyric "っ", B4 3/8 lyric "て", rest 1/4
+  piano: [B3 E4 G4] 1/2, [B3 E4 G4] 1/2
+  bass:  E2 1/4, E2 1/4, B2 1/4, E2 1/4
+  drums: kick 1/4, snare 1/4, kick 1/4, snare 1/4
+  drums: hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8
+}
+bar {
+  vocal: rest 1/8, C5 1/8 lyric "あ", E5 1/8 lyric "し", E5 1/8 lyric "た", D5 1/8 lyric "の", C5 1/8 lyric "い", D5 1/8 lyric "ろ", E5 1/8 lyric "を"
+  piano: [C4 E4 A4] 1/2, [C4 E4 A4] 1/2
+  bass:  A1 1/4, A1 1/4, E2 1/4, A1 1/4
+  drums: kick 1/4, snare 1/4, kick 1/4, snare 1/4
+  drums: hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8
+}
+bar {
+  vocal: F#5 1/4 lyric "さ", E5 1/8 lyric "が", D5 1/8 lyric "し", D5 1/4 lyric "て", rest 1/4
+  piano: [D4 F#4 A4] 1/2, [D4 F#4 A4] 1/2
+  bass:  D2 1/4, D2 1/4, A2 1/4, D2 1/4
+  drums: kick 1/4, snare 1/4, kick 1/4, snare 1/4
+  drums: hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8
+}
+bar {
+  vocal: rest 1/8, B4 1/8 lyric "ふ", D5 1/8 lyric "た", B4 1/8 lyric "り", D5 1/8 lyric "で", rest 3/8
+  piano: [B3 D4 G4] 1/2, [B3 D4 G4] 1/2
+  bass:  G2 1/4, G2 1/4, D3 1/4, G2 1/4
+  drums: kick 1/4, snare 1/4, kick 1/4, snare 1/4
+  drums: hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8
+}
+bar {
+  vocal: D5 1/8 lyric "わ", B4 1/8 lyric "ら", A4 1/8 lyric "お", G4 5/8 lyric "う"
+  piano: [B3 D4 G4] 1/2, [B3 D4 G4] 1/2
+  bass:  G2 1/4, G2 1/4, D3 1/4, G2 1/4
+  drums: kick 1/4, snare 1/4, kick 1/4, snare 1/4
+  drums: hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8, hat 1/8
+}

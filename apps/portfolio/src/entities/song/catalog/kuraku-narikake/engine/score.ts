@@ -1,3 +1,4 @@
+import { scoreOf } from "@masseater.dev/fumx-studio/studio/score";
 import { Array as Arr, Schema, String as Str, pipe } from "effect";
 
 import automation from "#/entities/song/catalog/kuraku-narikake/score/automation.json";
@@ -5,7 +6,6 @@ import cues from "#/entities/song/catalog/kuraku-narikake/score/cues.json";
 import form from "#/entities/song/catalog/kuraku-narikake/score/form.json";
 import sections from "#/entities/song/catalog/kuraku-narikake/score/sections.json";
 import tracks from "#/entities/song/catalog/kuraku-narikake/score/tracks.json";
-import { scoreOf } from "#/entities/song/lib/studio/score.ts";
 import { FormSchema } from "#/entities/song/model/form.ts";
 
 import {
