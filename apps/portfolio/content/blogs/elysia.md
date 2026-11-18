@@ -1,17 +1,17 @@
 ---
-title: "Elysia: サーバーの型定義をそのままクライアントの型として使う"
-description: "Elysia のルート定義から Eden Treaty でクライアントの型が得られる仕組みを、サンプルコードと tsc の出力で示す。バリデーション、プラグイン、Cloudflare Workers での実行も扱う。"
+title: "Elysia: サーバーの型定義をクライアントの型として使用する"
+description: "Eden TreatyでElysiaのルート定義からクライアントの型を取得する仕組みを、サンプルコードとtscの出力で示す。また、バリデーションやプラグイン、Cloudflare Workersでの運用についても解説している。"
 tags: ["Elysia", "TypeScript", "Bun"]
 published: true
 ---
 
-REST API のクライアントを書くとき、レスポンスの型はサーバーのコードを見て手で写すか、OpenAPI からコード生成して用意する。どちらの方法でも、サーバーを変更した時点で古くなる。[Elysia](https://elysiajs.com/) では、サーバーの `app` の型をクライアント側に import するだけで、パス、パラメータ、ボディ、ステータスごとのレスポンスの型がコード生成なしに得られる[^eden-overview]。
+REST API のクライアントを書く際は、サーバーのコードから手作業でコピーするか、OpenAPI からコードを生成してレスポンスタイプを用意する。いずれにせよ、サーバーが変わった途端に古くなってしまう。[Elysia](https://elysiajs.com/)では、クライアント側でサーバーの`app`の型をインポートするだけで、コード生成なしにパス、パラメータ、ボディ、ステータスごとのレスポンスの型を取得できる[^eden-overview]。
 
-Elysia は Bun 向けに設計された backend フレームワークだが、[WinterTC](https://wintertc.org/) 準拠のため Node.js、Deno、Cloudflare Workers でもアダプター経由で動作する[^elysia-at-glance]。
+ElysiaはBun向けに設計されたバックエンドフレームワークだが、[WinterTC](https://wintertc.org/)に準拠しているため、アダプター[^elysia-at-glance]を介してNode.js、Deno、Cloudflare Workersでも動作する。
 
 ## サーバー
 
-ユーザーを 1 件返す GET と、1 件作成する POST を定義する。
+1人のユーザーを返すGETと、1人を作成するPOSTを定義する。
 
 ```ts
 // server.ts
@@ -51,13 +51,13 @@ export const app = new Elysia({ prefix: "/api" })
 export type App = typeof app;
 ```
 
-`t` は Elysia に同梱された [TypeBox](https://github.com/sinclairzx81/typebox) で、ここで書いたスキーマは実行時のバリデーションと、ハンドラ内の `params.id` や `body.name` の型付けの両方に使われる[^elysia-validation]。`:id` は URL 上では文字列だが、`t.Number()` を指定したので数値に変換された値がハンドラに届く。`status(404, ...)` で返した値は、200 とは別のレスポンス型として記録される。
+`t` は Elysia に同梱されている [TypeBox](https://github.com/sinclairzx81/typebox) で、ここで記述したスキーマは実行時のバリデーションと、ハンドラ内での `params.id` や `body.name` の型付けの両方に使用される[^elysia-validation]。`:id` は URL 内の文字列だが、`t.Number()` が指定されているため、ハンドラは数値に変換された値を受け取る。`status(404, ...)` で返される値は、200とは別のレスポンスタイプとして記録される。
 
-最後の `export type App = typeof app` が、クライアント側に渡す情報のすべてになる。
+最後の `export type App = typeof app` は、クライアント側に渡されたすべての情報である。
 
 ## クライアント
 
-[Eden Treaty](https://elysiajs.com/eden/treaty/overview.html) に `App` の型を渡す。
+`App` 型を [Eden Treaty](https://elysiajs.com/eden/treaty/overview.html) に渡す。
 
 ```ts
 // client.ts
@@ -77,9 +77,9 @@ if (error) {
 await api.api.users.post({ name: "bob" });
 ```
 
-`api.api.users({ id: 1 }).get()` は、パス `/api/users/:id` をそのままプロパティのチェーンに写した呼び出しで、戻り値は `{ data, error }` の組になる[^eden-overview]。`error` がある分岐では `error.status` が `404`、`error.value` が `{ message: string }` に絞り込まれ、`data` の分岐では 200 のスキーマの型が付く。
+`api.api.users({ id: 1 }).get()` は、パス `/api/users/:id` をプロパティの連鎖に直接マッピングする呼び出しであり、`{ data, error }`[^eden-overview] のペアを返す。`error` が存在するブランチでは `error.status` が `404` に、`error.value` が `{ message: string }` に絞り込まれ、`data` ブランチでは 200 スキーマの型が適用される。
 
-存在しないプロパティの参照も、ボディのキーの打ち間違いも、コンパイル時に検出される。
+存在しないプロパティへの参照とbodyキーの打ち間違いは、いずれもコンパイル時に検出される。
 
 ```text
 $ tsc
@@ -87,11 +87,11 @@ client.ts(12,20): error TS2339: Property 'email' does not exist on type '{ id: n
 client.ts(15,28): error TS2353: Object literal may only specify known properties, and 'nmae' does not exist in type '{ name: string; }'.
 ```
 
-サーバー側の `response` スキーマに `email` を追加すれば、1 つ目のエラーはクライアントを変更しなくても消える。
+サーバー側の `response` スキーマに `email` を追加すると、クライアントを変更することなく最初のエラーが消える。
 
-## HTTP を介さずに呼び出す
+## HTTPを介さない呼び出し
 
-`treaty` には URL の代わりに Elysia のインスタンスも渡せる。この場合 fetch は使われず、内部で `app.handle(request)` が直接呼ばれる。テストでサーバーを起動する必要がなくなり、SSR 中にサーバー自身の API を呼ぶ場合も HTTP の往復が発生しない。
+URLの代わりに Elysia インスタンスを `treaty` に渡すこともできる。このケースでは fetch は使用されず、内部で直接 `app.handle(request)` が呼び出されている。テストはサーバーを起動する必要がなくなり、SSR時にサーバー自身のAPIを呼び出してもHTTPラウンドトリップが発生しない。
 
 ```ts
 import { app } from "./server";
@@ -104,7 +104,7 @@ const invalid = await api.api.users.post({ name: "" });
 console.log(invalid.status, invalid.error?.value);
 ```
 
-`minLength: 1` に反したリクエストには 422 が返り、どのプロパティが何に反したかが含まれる。
+`minLength: 1` に違反するリクエストには 422 が返される。これには、どのプロパティが何に違反したかが含まれる。
 
 ```text
 422 {
@@ -118,22 +118,22 @@ console.log(invalid.status, invalid.error?.value);
 }
 ```
 
-## TypeBox 以外のバリデータ
+## TypeBox以外のバリデータ
 
-[Standard Schema](https://standardschema.dev/) に対応しているので、`t` の代わりに Zod、Valibot、Effect Schema、ArkType のスキーマをそのまま `body` や `params` に指定できる。1 つのルートの `body` と `query` で別のライブラリを混在させることもできる[^elysia-1-4-supersymmetry]。JSON Schema を出力できないバリデータについては、TypeScript の型から OpenAPI スキーマを生成する経路が用意されている[^elysia-1-4-supersymmetry]。
+Elysiaは[Standard Schema](https://standardschema.dev/)に対応しているため、`t`の代わりに`body`と`params`でZod、Valibot、Effect Schema、またはArkTypeスキーマを直接指定できる。単一のルートの `body` と `query` で異なるライブラリを混在させることさえできる[^elysia-1-4-supersymmetry]。JSON Schema を出力できないバリデータには、TypeScript の型から OpenAPI スキーマを生成するパスがある[^elysia-1-4-supersymmetry]。
 
 ## プラグイン
 
-ルートのまとまりは別の `Elysia` インスタンスとして定義し、`.use()` で親に取り込む。親の型にはプラグイン側のルートが合成されるので、`App` の型を export するのは根の 1 箇所で足りる。ライフサイクルフック（`onBeforeHandle` など）は既定ではそのインスタンスの中に閉じていて、`scoped` を指定すると親へ、`global` を指定すると全体へ適用範囲が広がる[^elysia-plugin]。
+ルートのグループは個別の `Elysia` インスタンスとして定義され、`.use()` で親に組み込まれる。プラグインのルートは親の型にマージされているので、根のインスタンス1か所から `App` 型をエクスポートすれば十分だ。ライフサイクルフック（`onBeforeHandle` など）はデフォルトで自身のインスタンスに限定されており、`scoped` を指定すると親に拡張され、`global` を指定するとすべてに拡張される[^elysia-plugin]。
 
 ```ts
 const todos = new Elysia({ prefix: "/todos" }).get("/", () => [...]);
 const app = new Elysia().use(todos);
 ```
 
-## Cloudflare Workers での実行
+## Cloudflare Workersでの実行
 
-`elysia/adapter/cloudflare-worker` の `CloudflareAdapter` を指定する。AoT コンパイルはそのまま使える[^elysia-integration-with-cloudflare-worker]。
+`elysia/adapter/cloudflare-worker` から `CloudflareAdapter` を指定する。AoTのコンパイルはそのまま動作する[^elysia-integration-with-cloudflare-worker]。
 
 ```ts
 import { Elysia } from "elysia";
@@ -144,7 +144,7 @@ export default new Elysia({ adapter: CloudflareAdapter })
   .compile();
 ```
 
-Workers には `fs` がないため、`Elysia.file`、Static プラグイン、OpenAPI Type Gen は使えない。起動前に Response を生成する `.get('/', 'Hello')` のような inline の値もエラーになる[^elysia-integration-with-cloudflare-worker]。このアダプターは experimental の扱いである[^elysia-integration-with-cloudflare-worker]。
+Workersには `fs` がないため、`Elysia.file`、Static プラグイン、および OpenAPI Type Gen は利用できない。起動前に Response を作成する `.get('/', 'Hello')` のようなインライン値もエラーの原因となる[^elysia-integration-with-cloudflare-worker]。このアダプターは実験的なものとして扱われる[^elysia-integration-with-cloudflare-worker]。
 
 [^eden-overview]: Eden - Overview. https://elysiajs.com/eden/overview.html
 

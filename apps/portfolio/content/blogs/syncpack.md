@@ -1,24 +1,24 @@
 ---
-title: "syncpack: monorepo の package.json の依存の版をそろえる"
-description: "syncpack の lint と fix の実行結果、Version Groups による禁止と pnpm catalog への自動移行、Semver Groups による範囲の指定。"
+title: "syncpack: モノレポ内のpackage.jsonファイル間で依存関係のバージョンを統一する"
+description: "syncpackのリントと修正を実行した結果、Version Groupを用いた依存関係の禁止とpnpmカタログへの自動移行、Semver Groupによる範囲の指定。"
 tags: ["syncpack", "pnpm", "monorepo"]
 published: true
 ---
 
-monorepo では、`packages/web` が react 19.1.0 を、`packages/api` が react 18.3.1 を持つような不一致が、誰も気づかないまま残りやすい。[syncpack](https://syncpack.dev/) は、ワークスペース内のすべての `package.json` を読み、同じ依存の版が食い違っている箇所を報告して修正する CLI である[^syncpack-readme]。npm パッケージとしては OS ごとのネイティブバイナリが optionalDependencies で配布されていて、現在の版は 15.3.3 である[^npm-syncpack-www-npmjs-com-package-syncpack]。
+モノレポでは、`packages/web` が react 19.1.0 なのに `packages/api` が react 18.3.1 といった不一致は、誰にも気づかれない傾向にある。[syncpack](https://syncpack.dev/) は、ワークスペース内のすべての `package.json` を読み込み、同一依存関係のバージョンが一致しない箇所を報告して修正する CLI だ[^syncpack-readme]。npm パッケージとして、optionalDependencies を通じて各 OS 用のネイティブバイナリが同梱されており、現在のバージョンは 15.3.3[^npm-syncpack-www-npmjs-com-package-syncpack] である。
 
-| コマンド | 内容                                                      |
-| -------- | --------------------------------------------------------- |
-| `lint`   | 版と範囲の不一致を報告し、終了コード 0 か 1 を返す        |
-| `fix`    | `lint` が報告した問題のうち自動修正できるものを書き換える |
-| `update` | npm レジストリの最新版に更新する                          |
-| `format` | `package.json` のフィールドの順序をそろえる               |
-| `list`   | 依存を有効なものと無効なものに分けて一覧する              |
-| `json`   | 依存のインスタンスごとに 1 行の JSON を出力する           |
+| コマンド | 機能                                                           |
+| -------- | -------------------------------------------------------------- |
+| `lint`   | バージョンや範囲の不一致を報告し、終了コード 0 または 1 を返す |
+| `fix`    | `lint` で報告された、自動的に修正可能な問題を書き直す          |
+| `update` | npmレジストリの最新バージョンに更新する                        |
+| `format` | `package.json` のフィールドの順序を揃える                      |
+| `list`   | 依存関係を、有効なものと無効なものに分けて列挙している         |
+| `json`   | 依存関係の各インスタンスに対して1行のJSONを出力する            |
 
 ## 不一致の検出と修正
 
-2 つのパッケージが react、zod、typescript を違う版で持っている状態で `lint` を実行する。
+2つのパッケージがreact、zod、typescriptを異なるバージョンで持っている状態で`lint`を実行する。
 
 ```text
 $ syncpack lint
@@ -32,7 +32,7 @@ $ syncpack lint
 ✗ Issues found
 ```
 
-既定の方針では、見つかった中で最も高い semver にそろえる。末尾の `DiffersToHighestOrLowestSemver` がその方針に対する違反の status code である。`fix` を実行すると矢印の向きが逆になり、各 `package.json` が書き換わる。
+デフォルトのポリシーは、見つかった中で最も高いsemverに合わせることである。末尾の `DiffersToHighestOrLowestSemver` は、そのポリシー違反を示すステータスコードである。`fix` を実行すると、矢印の向きが反転し、各 `package.json` が書き換えられる。
 
 ```text
 $ syncpack fix
@@ -40,25 +40,25 @@ $ syncpack fix
       ✓ 19.1.0 ← 18.3.1 in packages/api/package.json at .dependencies
 ```
 
-## Version Groups で方針を分ける
+## バージョングループによるポリシーの分割
 
-依存を Version Group に分けると、グループごとに別の方針を持たせられる。設定は `.syncpackrc.json` か `syncpack.config.ts` に書き、TypeScript の場合は `import("syncpack").RcFile` の型が使える[^syncpack-config-file]。
+依存関係をバージョングループに分割すると、各グループに独自のポリシーを設定できる。設定は `.syncpackrc.json` または `syncpack.config.ts` に記述し、TypeScript では `import("syncpack").RcFile`[^syncpack-config-file] という型を利用できる。
 
-| 方針                    | 動作                                                |
-| ----------------------- | --------------------------------------------------- |
-| Highest / Lowest Semver | 見つかった中で最も高い、または低い版にそろえる      |
-| Pinned                  | `pinVersion` に書いた版に固定する                   |
-| Snapped To              | 指定したパッケージが持つ版に他を合わせる            |
-| Same Range              | 版はそろえず、semver の範囲が重なっていれば許容する |
-| Banned                  | その依存の使用を禁止する                            |
-| Catalog                 | pnpm か Bun の catalog からの参照を強制する         |
-| Ignored                 | 検査から除外する                                    |
+| ポリシー           | 挙動                                                       |
+| ------------------ | ---------------------------------------------------------- |
+| 最高 / 最低 Semver | 見つかった最高または最低のバージョンに合わせる             |
+| 固定               | `pinVersion` で記述されたバージョンにピン留めされる        |
+| Snapped To         | 他のものを指定したパッケージのバージョンに合わせる         |
+| 同一範囲           | バージョンは揃えず、semverの範囲が重複する場合は許容する。 |
+| 禁止               | その依存関係の使用を禁止する                               |
+| カタログ           | pnpmまたはBunカタログの参照を強制する                      |
+| 無視               | チェック対象から除外する                                   |
 
-出典は Version Groups の一覧である[^syncpack-version-groups]。グループは上から順に照合され、依存は最初に一致したグループだけに属する。
+ソースは Version Group[^syncpack-version-groups] の一覧である。グループは上から下へと対応付けられ、依存関係は最初にマッチしたグループにのみ属する。
 
 ### Banned
 
-HTTP クライアントを fetch へ統一するために、axios を禁止する。`label` に書いた文がそのまま出力の見出しになる。
+fetch で HTTP クライアントを統一するため、axios を禁止する。`label` に書かれた文がそのまま出力の見出しになる。
 
 ```json
 {
@@ -79,11 +79,11 @@ $ syncpack lint
       ✘ 1.7.0 →  in packages/web/package.json at .dependencies (IsBanned)
 ```
 
-`IsBanned` は自動修正の対象なので、`fix` を実行すると `axios` の行が `package.json` から削除される[^syncpack-banned-version-groups]。禁止の理由を `label` に書いておけば、CI の失敗ログがそのまま説明になる。
+`IsBanned` は自動修正の対象なので、`fix` を実行すると `package.json` から `axios` の行が削除される[^syncpack-banned-version-groups]。`label` に禁止理由を記述すれば、CI の失敗ログで自然と説明される。
 
 ### Catalog
 
-[pnpm の catalog](https://pnpm.io/catalogs) は、版を `pnpm-workspace.yaml` の 1 箇所に書き、各 `package.json` からは `catalog:` で参照する仕組みである。既存のリポジトリを catalog に移すには、`policy: "catalog"` のグループを作る。
+[pnpm カタログ](https://pnpm.io/catalogs) は、バージョンを `pnpm-workspace.yaml` という一箇所に記述し、各 `package.json` が `catalog:` で参照する仕組みだ。既存のリポジトリをカタログに移動するには、`policy: "catalog"` のグループを作成する。
 
 ```json
 {
@@ -101,7 +101,7 @@ $ syncpack lint
       ✘ 19.1.0 → catalog: in packages/web/package.json at .dependencies (MissingFromCatalog)
 ```
 
-`fix` を実行すると、`pnpm-workspace.yaml` に `catalog:` の節が追加されて版がそこに移り、`package.json` 側は `"react": "catalog:"` に置き換わる[^syncpack-catalog-version-groups]。
+`fix` を実行すると、`pnpm-workspace.yaml` に `catalog:` セクションが追加され、バージョンがそこに移動し、`package.json` の `"react": "catalog:"` に置き換えられる。[^syncpack-catalog-version-groups]
 
 ```yaml
 packages:
@@ -111,11 +111,11 @@ catalog:
   zod: ^3.25.0
 ```
 
-catalog に移した後の版の更新は、`syncpack update --dependency-types pnpmCatalog` で catalog の項目だけを対象にできる[^syncpack-readme]。
+カタログに移動した後、`syncpack update --dependency-types pnpmCatalog`[^syncpack-readme] を指定することで、カタログエントリのみを対象にバージョンを更新できる。
 
-## Semver Groups で範囲の書き方を決める
+## Semver Groupで範囲を記述する方法を決める
 
-版そのものではなく `^` や `~` の付け方を決めるのが Semver Groups である。本番の依存は固定、devDependencies は `~`、peerDependencies は `^` のように、依存の種類ごとに範囲を指定する[^syncpack-semver-groups]。
+Semver Groupsは、バージョンそのものではなく、`^`や`~`の付け方を決定する。本番環境の依存関係には固定、devDependencies には `~`、peerDependencies には `^` というように、依存関係の種類ごとに範囲を指定する[^syncpack-semver-groups]。
 
 ```json
 {
