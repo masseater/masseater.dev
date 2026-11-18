@@ -1,7 +1,7 @@
 import { Schema } from "effect";
 import { Rpc, RpcGroup } from "effect/rpc";
 
-export const SuggestionSchema = Schema.Struct({
+const SuggestionSchema = Schema.Struct({
   name: Schema.String,
   root: Schema.String,
   directory: Schema.String,
