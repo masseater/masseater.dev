@@ -23,9 +23,21 @@ runs:
       shell: bash
       run: |
         cp "$GITHUB_ACTION_PATH/linux-packages.txt" "$RUNNER_TEMP/linux-packages.txt"
+        printf '%s\n' 'Acquire::Retries "3";' 'Acquire::http::Timeout "20";' 'Acquire::https::Timeout "20";' 'DPkg::Lock::Timeout "120";' |
+          sudo tee /etc/apt/apt.conf.d/99-setup-timeouts > /dev/null
         (
-          status=0
-          { sudo apt-get update && xargs -a "$RUNNER_TEMP/linux-packages.txt" sudo apt-get install -y; } || status="$?"
+          for attempt in 1 2; do
+            status=0
+            {
+              sudo dpkg --configure -a &&
+                sudo timeout -k 10 60 apt-get update &&
+                xargs -a "$RUNNER_TEMP/linux-packages.txt" sudo env DEBIAN_FRONTEND=noninteractive timeout -k 10 240 apt-get install -y
+            } || status="$?"
+            if [ "$status" -eq 0 ]; then
+              break
+            fi
+            echo "::warning::apt attempt $attempt ended with status $status"
+          done
           echo "$status" > "$RUNNER_TEMP/linux-packages.status"
         ) > "$RUNNER_TEMP/linux-packages.log" 2>&1 &
         echo "$!" > "$RUNNER_TEMP/linux-packages.pid"
@@ -71,8 +83,7 @@ runs:
     - if: ${{ inputs.native == 'true' }}
       shell: bash
       run: |
-        tail --pid="$(cat "$RUNNER_TEMP/linux-packages.pid")" -s 0.2 -f /dev/null
-        cat "$RUNNER_TEMP/linux-packages.log"
+        tail --pid="$(cat "$RUNNER_TEMP/linux-packages.pid")" -s 0.2 -n +1 -f "$RUNNER_TEMP/linux-packages.log"
         status="$(cat "$RUNNER_TEMP/linux-packages.status")"
         exit "$status"
     - if: ${{ inputs.sccache == 'true' }}
