@@ -47,6 +47,27 @@ const stack: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: s
         },
       ],
     });
+    yield* Ruleset.Ruleset("HostRedirects", {
+      zone: owned,
+      name: `${PREFIX}host-redirects`,
+      phase: "http_request_dynamic_redirect",
+      rules: [
+        {
+          description: "Redirect medley-manager to med-db",
+          expression: 'http.host eq "medley-manager.masseater.dev"',
+          action: "redirect",
+          actionParameters: {
+            fromValue: {
+              statusCode: 301,
+              targetUrl: {
+                expression: 'concat("https://med-db.masseater.dev", http.request.uri.path)',
+              },
+              preserveQueryString: true,
+            },
+          },
+        },
+      ],
+    });
   }),
 );
 

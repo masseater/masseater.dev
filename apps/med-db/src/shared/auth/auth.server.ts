@@ -8,7 +8,7 @@ import { MCP_URL, SITE_NAME, SITE_ORIGIN } from "#/shared/config/index.ts";
 import { db } from "#/shared/db/index.server.ts";
 
 const ADMIN_INVITE_HASH =
-  "0783be06da583619492f48ab0b63cf28:321e2a524c933faa5d97530e7ff2498507de79ce6ed3e708dd5ccf686b176076c86eedd68415c65a4a060de0a2d3db814e60922aed2261e693706e31a32e1dc4";
+  "09ede8fe35ffb5c8af0177f6b7ca4157:761aa2057403f491eae984cb0f6ae9bc7d9d69f38c37f38cc1d57f4f2b9fd8a908ff3daa42b227b95b5f4fe20c1e0d9cb6740d08f7c524e8b04ea17b4558d1cd";
 
 export const createAuth = (): Auth<OwnerAuthOptions> =>
   createOwnerAuth({

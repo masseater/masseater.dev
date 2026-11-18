@@ -12,7 +12,7 @@ import { SITE_ORIGIN } from "#/shared/config/index.ts";
 
 import { registerReadTools } from "./read-tools.server.ts";
 
-const SERVER_INFO = { name: "medley-manager", version: "0.0.0", websiteUrl: SITE_ORIGIN };
+const SERVER_INFO = { name: "med-db", version: "0.0.0", websiteUrl: SITE_ORIGIN };
 
 export const buildServer = (): McpServer =>
   pipe(
