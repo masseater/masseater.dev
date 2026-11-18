@@ -191,8 +191,8 @@ fn install(
     directory: &Path,
     report: &dyn Fn(f64),
 ) -> Outcome<()> {
-    let manifest: Manifest =
-        serde_json::from_str(&std::fs::read_to_string(manifest)?).map_err(|error| failure(&error))?;
+    let manifest: Manifest = serde_json::from_str(&std::fs::read_to_string(manifest)?)
+        .map_err(|error| failure(&error))?;
     let missing: Vec<&Pinned> = manifest
         .files
         .iter()
@@ -201,7 +201,11 @@ fn install(
     let total: u64 = missing.iter().map(|file| file.size).sum();
     let mut done = 0;
     for file in missing {
-        tracing::info!(name = file.name, archive = file.archive, "fetching gpu runtime");
+        tracing::info!(
+            name = file.name,
+            archive = file.archive,
+            "fetching gpu runtime"
+        );
         let progress = |written: u64| report(kib(done + written) / kib(total).max(1.0));
         fetch(client, directory, file, &progress)?;
         done += file.size;
@@ -239,7 +243,10 @@ impl GpuRuntime {
                 (_, Err(error)) => Err(error.into()),
             };
             if let Err(failure) = &outcome {
-                tracing::error!(message = failure.message, "gpu runtime could not be prepared");
+                tracing::error!(
+                    message = failure.message,
+                    "gpu runtime could not be prepared"
+                );
             }
             shared.finish(outcome.map_err(|failure| failure.message));
         });
@@ -248,7 +255,10 @@ impl GpuRuntime {
 
     fn report(&self, ratio: f64) {
         let (state, _) = &*self.state;
-        state.lock().unwrap_or_else(PoisonError::into_inner).progress = ratio;
+        state
+            .lock()
+            .unwrap_or_else(PoisonError::into_inner)
+            .progress = ratio;
     }
 
     fn finish(&self, outcome: Result<(), String>) {

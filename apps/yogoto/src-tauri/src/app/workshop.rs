@@ -50,8 +50,14 @@ fn device() -> Device {
 const DRIVER_TOO_OLD: &str = "driver too old";
 
 fn explained(failure: Failure) -> Failure {
-    if failure.message.contains("CUDA_ERROR_UNSUPPORTED_PTX_VERSION") {
-        tracing::error!(message = failure.message, "nvidia driver is older than the cuda build");
+    if failure
+        .message
+        .contains("CUDA_ERROR_UNSUPPORTED_PTX_VERSION")
+    {
+        tracing::error!(
+            message = failure.message,
+            "nvidia driver is older than the cuda build"
+        );
         Failure::new(DRIVER_TOO_OLD)
     } else {
         failure
@@ -72,9 +78,7 @@ fn work_all(worker: &Worker, works: &Receiver<Work>) {
             match work.task {
                 Task::Separate(model) => {
                     if device.is_none() {
-                        worker
-                            .gpu
-                            .wait(&|ratio| progress(ratio, "preparing gpu"))?;
+                        worker.gpu.wait(&|ratio| progress(ratio, "preparing gpu"))?;
                         device = Some(self::device());
                     }
                     let device = device.as_ref().ok_or_else(|| Failure::new("no device"))?;
