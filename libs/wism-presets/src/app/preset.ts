@@ -20,7 +20,7 @@ import {
 } from "#/features/check-placement/index.ts";
 import type { Finding } from "#/shared/lib/finding.ts";
 
-export const FSD_PLUGIN = "fsd";
+export const STRUCTURE_PLUGIN = "structure";
 
 const DESCRIPTIONS: Readonly<Record<string, string>> = {
   [PLACEMENT]: "Each file sits where its kind allows",
@@ -35,8 +35,19 @@ const DESCRIPTIONS: Readonly<Record<string, string>> = {
 
 const ERROR: RuleEntry = "error";
 
-export interface FsdPresetOptions {
+export const PRESETS = {
+  fsd: [LAYER_NAME, LOOSE_FILE, LAYER_IMPORT, CROSS_SLICE, PUBLIC_API, WILDCARD_EXPORT],
+  placement: [PLACEMENT],
+  links: [LINK_TARGET],
+} as const satisfies Readonly<Record<string, readonly string[]>>;
+
+export type PresetName = keyof typeof PRESETS;
+
+const ALL: readonly PresetName[] = ["fsd", "placement", "links"];
+
+export interface StructureOptions {
   readonly kinds: readonly Kind[];
+  readonly presets?: readonly PresetName[];
   readonly ignores?: readonly string[];
 }
 
@@ -59,7 +70,7 @@ const analyze = (
     Option.getOrElse(Option.fromNullishOr(cache.get(files)), () => compute(files, edges));
 };
 
-export const fsdPlugin = (kinds: readonly Kind[]): Plugin => {
+export const structurePlugin = (kinds: readonly Kind[]): Plugin => {
   const findings = analyze(kinds);
   const ruleOf = (description: string, name: string): Rule =>
     defineRule({
@@ -73,13 +84,18 @@ export const fsdPlugin = (kinds: readonly Kind[]): Plugin => {
   return definePlugin({ rules: pipe(DESCRIPTIONS, Rec.map(ruleOf)) });
 };
 
-export const fsdPreset = ({ kinds, ignores }: FsdPresetOptions): WismConfig => ({
-  plugins: { [FSD_PLUGIN]: fsdPlugin(kinds) },
-  rules: pipe(
-    Rec.keys(DESCRIPTIONS),
-    Arr.map((name) => [`${FSD_PLUGIN}/${name}`, ERROR] as const),
+const rulesOf = (presets: readonly PresetName[]): Readonly<Record<string, RuleEntry>> =>
+  pipe(
+    presets,
+    Arr.flatMap((name): readonly string[] => PRESETS[name]),
+    Arr.dedupe,
+    Arr.map((rule) => [`${STRUCTURE_PLUGIN}/${rule}`, ERROR] as const),
     Rec.fromEntries,
-  ),
+  );
+
+export const structure = ({ kinds, presets = ALL, ignores }: StructureOptions): WismConfig => ({
+  plugins: { [STRUCTURE_PLUGIN]: structurePlugin(kinds) },
+  rules: rulesOf(presets),
   ...Option.match(Option.fromNullishOr(ignores), {
     onNone: () => ({}),
     onSome: (value) => ({ ignores: value }),

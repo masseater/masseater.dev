@@ -16,13 +16,13 @@ import { afterAll, expect, test } from "vite-plus/test";
 
 import { rustCrate, skill, workspace } from "#/entities/kind/index.ts";
 
-import { fsdPreset } from "./preset.ts";
+import { structure } from "./preset.ts";
 
 const services = ManagedRuntime.make(NodeServices.layer);
 afterAll(() => services.dispose());
 
 const MODULE = "export const value = 1;\n";
-const PRESET: WismConfig = fsdPreset({
+const PRESET: WismConfig = structure({
   kinds: [workspace({ paths: ["libs/*"] }), rustCrate(), skill()],
 });
 
@@ -105,15 +105,15 @@ test("reports files outside the layout and imports against the layers", () =>
       "skills/write/notes.txt": "x\n",
     });
     expect(found(diagnostics)).toStrictEqual([
-      "fsd/layer-import libs/core/src/entities/note.rs:1",
-      "fsd/link-target libs/kit/README.md:1",
-      "fsd/placement libs/kit/kit.ts:1",
-      "fsd/layer-import libs/kit/src/entities/job/index.ts:1",
-      "fsd/wildcard-export libs/kit/src/features/run-kit/index.ts:1",
-      "fsd/cross-slice libs/kit/src/features/run-kit/model/run.ts:1",
-      "fsd/loose-file libs/kit/src/index.ts:1",
-      "fsd/layer-name libs/kit/src/utils:1",
-      "fsd/placement skills/write/notes.txt:1",
+      "structure/layer-import libs/core/src/entities/note.rs:1",
+      "structure/link-target libs/kit/README.md:1",
+      "structure/placement libs/kit/kit.ts:1",
+      "structure/layer-import libs/kit/src/entities/job/index.ts:1",
+      "structure/wildcard-export libs/kit/src/features/run-kit/index.ts:1",
+      "structure/cross-slice libs/kit/src/features/run-kit/model/run.ts:1",
+      "structure/loose-file libs/kit/src/index.ts:1",
+      "structure/layer-name libs/kit/src/utils:1",
+      "structure/placement skills/write/notes.txt:1",
     ]);
   }).pipe(services.runPromise));
 
@@ -146,9 +146,9 @@ test("follows what the presets allow and forbid", () =>
       "skills/write/assets/logo.svg": "<svg/>\n",
     });
     expect(found(diagnostics)).toStrictEqual([
-      "fsd/placement libs/core/examples/demo.rs:1",
-      "fsd/placement libs/kit/scripts/build.ts:1",
-      "fsd/public-api libs/kit/src/features/auth/login/model/login.ts:2",
+      "structure/placement libs/core/examples/demo.rs:1",
+      "structure/placement libs/kit/scripts/build.ts:1",
+      "structure/public-api libs/kit/src/features/auth/login/model/login.ts:2",
     ]);
   }).pipe(services.runPromise));
 
@@ -161,15 +161,34 @@ test("follows the severities set over the preset and keeps its ignores", () =>
     };
     const diagnostics = yield* lintTree(tree, {
       ...PRESET,
-      rules: { ...PRESET.rules, "fsd/placement": "warn", "fsd/loose-file": "off" },
+      rules: { ...PRESET.rules, "structure/placement": "warn", "structure/loose-file": "off" },
     });
     expect(
       pipe(
         diagnostics,
         Arr.map(({ rule, severity }) => `${severity} ${rule}`),
       ),
-    ).toStrictEqual(["warn fsd/placement"]);
-    expect(fsdPreset({ kinds: [], ignores: ["libs/kit/kit.ts"] }).ignores).toStrictEqual([
+    ).toStrictEqual(["warn structure/placement"]);
+    expect(structure({ kinds: [], ignores: ["libs/kit/kit.ts"] }).ignores).toStrictEqual([
       "libs/kit/kit.ts",
     ]);
+  }).pipe(services.runPromise));
+
+test("turns on only the rules of the chosen presets", () =>
+  Effect.gen(function* chosen() {
+    const kinds = [workspace({ paths: ["libs/*"] })];
+    const diagnostics = yield* lintTree(
+      {
+        "libs/kit/package.json": `{ "name": "kit" }`,
+        "libs/kit/kit.ts": MODULE,
+        "libs/kit/src/index.ts": MODULE,
+        "libs/kit/README.md": "[gone](./gone.md)\n",
+      },
+      structure({ kinds, presets: ["placement", "links"] }),
+    );
+    expect(found(diagnostics)).toStrictEqual([
+      "structure/link-target libs/kit/README.md:1",
+      "structure/placement libs/kit/kit.ts:1",
+    ]);
+    expect(structure({ kinds, presets: [] }).rules).toStrictEqual({});
   }).pipe(services.runPromise));
