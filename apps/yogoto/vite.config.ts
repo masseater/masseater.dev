@@ -13,6 +13,11 @@ export default defineConfig({
       }),
       verify: { command: [], dependsOn: ["cargo"] },
       ...tauriReleaseTasks("yogoto"),
+      "release:windows": {
+        command:
+          "with-cuda --version 13.4.3 --compute-cap 80 --runtime src-tauri/cuda -- tauri build --features cuda --config src-tauri/tauri.release.conf.json --bundles nsis && bundle-collect nsis",
+        cache: false,
+      },
     },
   },
 });
