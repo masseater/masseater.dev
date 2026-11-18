@@ -121,6 +121,7 @@ export const environmentOf = Effect.fn("cuda.environment")(function* environment
     CUDA_PATH: toolkit,
     CUDA_HOME: toolkit,
     CUDA_COMPUTE_CAP: computeCap,
+    ...platform.compiler,
   };
   const base = pipe(
     developer,
