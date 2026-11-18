@@ -2,6 +2,7 @@
   "name": "@masseater.dev/exposure-protocol",
   "version": "0.0.0",
   "private": true,
+  "description": "Types exposure-check, the credential broker and sundries use to exchange found exposures and notices.",
   "type": "module",
   "imports": {
     "#/*": "./src/*"

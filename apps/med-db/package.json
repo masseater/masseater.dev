@@ -2,6 +2,7 @@
   "name": "med-db",
   "version": "0.0.0",
   "private": true,
+  "description": "med-db.masseater.dev, a read-only database of songs and videos used in Niconico medleys and collaborations, written through its MCP.",
   "type": "module",
   "imports": {
     "#/*": "./src/*"

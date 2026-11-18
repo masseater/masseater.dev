@@ -28,11 +28,11 @@ When h56m cannot load or a finding survives masking, the CLI refuses to send, so
 
 ## Send every session automatically
 
-1. Install the plugin from the masseater/skills marketplace.
+1. Install the plugin from the masseater/masseater.dev marketplace.
 
    ```sh
-   /plugin marketplace add masseater/skills
-   /plugin install watashi@masseater
+   /plugin marketplace add masseater/masseater.dev
+   /plugin install watashi@masseater-dev
    ```
 
 2. Set `WATASHI_SEND_CONVERSATIONS=1`. The hook sends nothing without it.
