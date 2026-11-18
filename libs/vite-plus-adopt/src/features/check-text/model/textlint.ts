@@ -3,7 +3,7 @@ import type { TextlintLoadPackagesFromRawConfigResult } from "@textlint/config-l
 import { TextlintKernelDescriptor } from "@textlint/kernel";
 import { Effect, Path, Array as Arr, pipe, Function as Fn } from "effect";
 import { createLinter, loadLinterFormatter } from "textlint";
-import { builtInPlugins } from "textlint/lib/src/loader/TextlintrcLoader.js";
+import { loadBuiltinPlugins } from "textlint/lib/src/loader/TextlintrcLoader.js";
 
 import type { TextlintConfig } from "#/shared/config/index.ts";
 import { attempt } from "#/shared/lib/attempt.ts";
@@ -23,13 +23,16 @@ const descriptorOf = (
   if (!loaded.ok) {
     return Effect.fail(toolFailed("textlint")(loaded.error.message));
   }
-  return Effect.succeed(
-    new TextlintKernelDescriptor({
-      rules: [...loaded.config.rules, ...presetRulesOf(config)],
-      filterRules: loaded.config.filterRules,
-      plugins: [...builtInPlugins, ...loaded.config.plugins],
-      configBaseDir: root,
-    }),
+  const { rules, filterRules, plugins } = loaded.config;
+  return Effect.map(
+    attempt("textlint")(loadBuiltinPlugins),
+    (builtIn) =>
+      new TextlintKernelDescriptor({
+        rules: [...rules, ...presetRulesOf(config)],
+        filterRules,
+        plugins: [...builtIn.plugin.toKernelPluginsFormat(), ...plugins],
+        configBaseDir: root,
+      }),
   );
 };
 

@@ -181,8 +181,8 @@ export const descriptionOf = (value: unknown): Option.Option<string> =>
   pipe(
     Option.liftPredicate(value, Predicate.hasProperty("annotations")),
     Option.flatMapNullishOr(({ annotations }) => annotations),
-    Option.filter(Predicate.isObject),
-    Option.flatMapNullishOr((annotations) => Reflect.get(annotations, "description")),
+    Option.filter(Predicate.hasProperty("description")),
+    Option.map(({ description }) => description),
     Option.filter(Predicate.isString),
   );
 

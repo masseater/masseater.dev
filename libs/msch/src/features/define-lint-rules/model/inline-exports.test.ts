@@ -30,10 +30,14 @@ const invalid = (code: string, output: string): Fixed => ({
 const unfixable = (code: string): Expected => ({ code, errors: [{ message: MESSAGE }] });
 
 RuleTester.describe = (text, run): void => {
-  describe(text, run);
+  describe(text, () => {
+    run();
+  });
 };
 RuleTester.it = (text, run): void => {
-  it(text, run);
+  it(text, () => {
+    run();
+  });
 };
 
 new RuleTester({ languageOptions: { parserOptions: { lang: "ts" } } }).run("inline-exports", rule, {

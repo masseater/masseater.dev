@@ -3,7 +3,7 @@ import { Array as Arr, Effect, Option, pipe } from "effect";
 import { blobIdOf, isInline, newest, valueOf } from "#/entities/entry/index.ts";
 import type { Entry } from "#/entities/entry/index.ts";
 import { spendObjectReads } from "#/entities/spending/index.ts";
-import { LIMITS } from "#/shared/config/index.ts";
+import { Limits } from "#/shared/config/index.ts";
 import { digestOf } from "#/shared/lib/bytes.ts";
 import { decodeLookup, encodeCandidates } from "#/shared/lib/envelope.ts";
 import type { Candidate } from "#/shared/lib/envelope.ts";
@@ -14,14 +14,16 @@ const NOTHING = 0;
 const FIRST = 0;
 const SELF = 1;
 
-const withinBudget = (found: readonly Entry[]): readonly Entry[] => {
-  const totals = Arr.scan(found, NOTHING, (bytes, entry) => bytes + entry.valueBytes);
-  return pipe(
-    Arr.zip(found, Arr.drop(totals, SELF)),
-    Arr.takeWhile(([, bytes], index) => index === FIRST || bytes <= LIMITS.responseBytes),
-    Arr.map(([entry]) => entry),
-  );
-};
+const withinBudget =
+  (responseBytes: number) =>
+  (found: readonly Entry[]): readonly Entry[] => {
+    const totals = Arr.scan(found, NOTHING, (bytes, entry) => bytes + entry.valueBytes);
+    return pipe(
+      Arr.zip(found, Arr.drop(totals, SELF)),
+      Arr.takeWhile(([, bytes], index) => index === FIRST || bytes <= responseBytes),
+      Arr.map(([entry]) => entry),
+    );
+  };
 
 const readable = Effect.fn("serveEntries.readable")(function* readable(found: readonly Entry[]) {
   const inline = pipe(found, Arr.filter(isInline));
@@ -48,7 +50,8 @@ export const fetchEntries = Effect.fn("serveEntries.fetchEntries")(function* fet
   const lookup = yield* decodeLookup(body);
   const key = yield* digestOf(lookup.key);
   const found = yield* newest(namespace, key);
-  const usable = yield* readable(withinBudget(found));
+  const { responseBytes } = yield* Limits;
+  const usable = yield* readable(withinBudget(responseBytes)(found));
   const read = yield* Effect.forEach(usable, candidateOf, { concurrency: "unbounded" });
   const candidates = Arr.getSomes(read);
   if (!Arr.isReadonlyArrayNonEmpty(candidates)) {

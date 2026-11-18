@@ -1,7 +1,7 @@
-import { SAMPLE_RATE } from "#/entities/song/lib/dsp/number.ts";
-import { activeIn } from "#/entities/song/lib/studio/activity.ts";
-import type { Bus } from "#/entities/song/lib/studio/bus.ts";
-import { onePole } from "#/entities/song/lib/studio/dynamics.ts";
+import { SAMPLE_RATE } from "@masseater.dev/fumx-studio/dsp/number";
+import { activeIn } from "@masseater.dev/fumx-studio/studio/activity";
+import type { Bus } from "@masseater.dev/fumx-studio/studio/bus";
+import { onePole } from "@masseater.dev/fumx-studio/studio/dynamics";
 
 const PAD = 0.05;
 const MILLI = 1e3;

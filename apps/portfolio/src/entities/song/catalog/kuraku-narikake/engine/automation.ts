@@ -1,7 +1,6 @@
+import type { Lane } from "@masseater.dev/fumx-studio/daw/view";
+import { timeOf } from "@masseater.dev/fumx-studio/studio/moment";
 import { Array as Arr, pipe } from "effect";
-
-import { timeOf } from "#/entities/song/lib/studio/moment.ts";
-import type { Lane } from "#/entities/song/model/form.ts";
 
 import type { Kuraku } from "./kuraku.ts";
 import { CUES, FORM, SECTIONS } from "./score.ts";

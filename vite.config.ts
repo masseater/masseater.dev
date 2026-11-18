@@ -24,7 +24,7 @@ export default defineConfig({
       { files: [...workspace.lint.deployEntries], rules: tracedRules },
       {
         files: ["apps/*/src/**/*.{ts,tsx}"],
-        excludeFiles: ["**/*.test.ts"],
+        excludeFiles: ["**/*.test.ts", "**/*.test.tsx", "**/*.test.support.ts"],
         rules: {
           "eslint-js/no-restricted-syntax": [
             "error",
@@ -36,7 +36,10 @@ export default defineConfig({
       },
     ],
     secrets: {
-      lines: [String.raw`\bOWNER_DISCORD_ID = "[0-9]{17,20}"`],
+      lines: [
+        String.raw`\bOWNER_DISCORD_ID = "[0-9]{17,20}"`,
+        String.raw`untrusted comment: minisign public key: [0-9A-F]{16}`,
+      ],
       paths: [
         String.raw`(^|/)fixtures/[^/]+\.tgz!`,
         String.raw`/fixtures/actionlint/`,

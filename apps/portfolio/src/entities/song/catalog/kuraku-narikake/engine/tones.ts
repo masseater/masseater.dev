@@ -1,5 +1,5 @@
-import { phaser, tremolo } from "#/entities/song/lib/studio/modulation.ts";
-import { timeOf } from "#/entities/song/lib/studio/moment.ts";
+import { phaser, tremolo } from "@masseater.dev/fumx-studio/studio/modulation";
+import { timeOf } from "@masseater.dev/fumx-studio/studio/moment";
 
 import type { Handlers, Rig } from "./buses.ts";
 import { chainOf } from "./filters.ts";

@@ -1,10 +1,9 @@
+import type { Bus } from "@masseater.dev/fumx-studio/studio/bus";
+import { loggedEdit } from "@masseater.dev/fumx-studio/studio/edits";
+import { timeOf } from "@masseater.dev/fumx-studio/studio/moment";
+import { mute } from "@masseater.dev/fumx-studio/studio/mute";
+import type { Studio } from "@masseater.dev/fumx-studio/studio/studio";
 import { Match } from "effect";
-
-import type { Bus } from "#/entities/song/lib/studio/bus.ts";
-import { loggedEdit } from "#/entities/song/lib/studio/edits.ts";
-import { timeOf } from "#/entities/song/lib/studio/moment.ts";
-import { mute } from "#/entities/song/lib/studio/mute.ts";
-import type { Studio } from "#/entities/song/lib/studio/studio.ts";
 
 import type { Kuraku } from "./kuraku.ts";
 import { looped } from "./loop.ts";

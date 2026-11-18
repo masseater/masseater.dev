@@ -2,7 +2,7 @@ import { expect, it } from "@effect/vitest";
 import type { Caller } from "@masseater.dev/mcp-tool-call";
 import { createMcpHandler } from "@modelcontextprotocol/server";
 import { Array as Arr, Effect, Option, Record as Rec, Schema, String as Str, pipe } from "effect";
-import { beforeEach, vi } from "vite-plus/test";
+import { afterAll, beforeAll, beforeEach, vi } from "vite-plus/test";
 
 import {
   MAIN_SHA,
@@ -10,17 +10,22 @@ import {
   REPO,
   sentRequests,
   setScene,
-  stubGithub,
+  github,
 } from "./sloppedia-tools.test.support.ts";
 import type { Sent } from "./sloppedia-tools.test.support.ts";
 import { registerTools } from "./tools.ts";
 
 vi.mock("cloudflare:workers", () => import("./sloppedia-tools.test.support.ts"));
 
-stubGithub();
-
+beforeAll(() => {
+  github.listen({ onUnhandledFrame: "error" });
+});
 beforeEach(() => {
   setScene({});
+});
+
+afterAll(() => {
+  github.close();
 });
 
 const CALLER: Caller = { client: "vitest", userAgent: "vitest" };

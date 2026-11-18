@@ -28,6 +28,7 @@ export const readonlyParameterAllow = [
   { from: "package" as const, package: "@webgpu/types", name: [...WEBGPU_HANDLES] },
   { from: "package" as const, package: "@vscode/tree-sitter-wasm", name: ["Language", "Node"] },
   { from: "package" as const, package: "domhandler", name: ["AnyNode", "Text", "Element"] },
+  { from: "package" as const, package: "msw", name: ["StrictRequest"] },
   {
     from: "package" as const,
     package: "@cloudflare/workers-types",

@@ -1,9 +1,8 @@
+import { activeIn } from "@masseater.dev/fumx-studio/studio/activity";
+import type { Bus } from "@masseater.dev/fumx-studio/studio/bus";
+import { timeOf } from "@masseater.dev/fumx-studio/studio/moment";
+import { sent } from "@masseater.dev/fumx-studio/studio/send";
 import { Match, Option } from "effect";
-
-import { activeIn } from "#/entities/song/lib/studio/activity.ts";
-import type { Bus } from "#/entities/song/lib/studio/bus.ts";
-import { timeOf } from "#/entities/song/lib/studio/moment.ts";
-import { sent } from "#/entities/song/lib/studio/send.ts";
 
 import { busesOf } from "./buses.ts";
 import type { Buses, Handlers, Rig } from "./buses.ts";

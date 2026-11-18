@@ -1,4 +1,4 @@
-import type { Placement } from "#/entities/song/lib/studio/placement.ts";
+import type { Placement } from "@masseater.dev/fumx-studio/studio/placement";
 
 import type { Life } from "./context.ts";
 

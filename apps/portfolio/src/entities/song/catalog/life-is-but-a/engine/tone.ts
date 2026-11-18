@@ -1,8 +1,7 @@
+import { biquad } from "@masseater.dev/fumx-studio/dsp/biquad";
+import { SVF, svf } from "@masseater.dev/fumx-studio/dsp/filter";
+import type { Bus } from "@masseater.dev/fumx-studio/studio/bus";
 import { Option } from "effect";
-
-import { biquad } from "#/entities/song/lib/dsp/biquad.ts";
-import { SVF, svf } from "#/entities/song/lib/dsp/filter.ts";
-import type { Bus } from "#/entities/song/lib/studio/bus.ts";
 
 import type { Life } from "./context.ts";
 import { cutUp } from "./cuts.ts";

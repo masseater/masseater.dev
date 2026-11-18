@@ -1,12 +1,12 @@
+import { SVF, svf } from "@masseater.dev/fumx-studio/dsp/filter";
+import { SAMPLE_RATE } from "@masseater.dev/fumx-studio/dsp/number";
+import { curve } from "@masseater.dev/fumx-studio/dsp/shape";
+import type { Point } from "@masseater.dev/fumx-studio/dsp/shape";
+import type { Bus } from "@masseater.dev/fumx-studio/studio/bus";
+import type { Grid } from "@masseater.dev/fumx-studio/studio/timing";
 import { Array as Arr, Predicate, pipe } from "effect";
 
 import automation from "#/entities/song/catalog/life-is-but-a/score/automation.json";
-import { SVF, svf } from "#/entities/song/lib/dsp/filter.ts";
-import { SAMPLE_RATE } from "#/entities/song/lib/dsp/number.ts";
-import { curve } from "#/entities/song/lib/dsp/shape.ts";
-import type { Point } from "#/entities/song/lib/dsp/shape.ts";
-import type { Bus } from "#/entities/song/lib/studio/bus.ts";
-import type { Grid } from "#/entities/song/lib/studio/timing.ts";
 
 import type { Life } from "./context.ts";
 

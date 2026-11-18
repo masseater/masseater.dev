@@ -89,13 +89,22 @@ const loadModel = (
     ),
   );
 
+const propertyOf =
+  (key: string) =>
+  (target: unknown): unknown =>
+    pipe(
+      Option.liftPredicate(target, Predicate.hasProperty(key)),
+      Option.map((found) => found[key]),
+      Option.getOrUndefined,
+    );
+
 const loadProcessor = Effect.gen(function* loadProcessor() {
   const processor = yield* attempt(() => AutoProcessor.from_pretrained(MODEL_ID));
-  const imageProcessor: unknown = Reflect.get(processor, "image_processor");
+  const imageProcessor: unknown = propertyOf("image_processor")(processor);
   if (Predicate.isObjectKeyword(imageProcessor)) {
     Reflect.set(imageProcessor, "max_soft_tokens", IMAGE_SOFT_TOKENS);
   }
-  const imageToken = yield* decodeImageToken(Reflect.get(processor, "image_token")).pipe(
+  const imageToken = yield* decodeImageToken(propertyOf("image_token")(processor)).pipe(
     Effect.mapError(failed),
   );
   return { processor, imageToken };

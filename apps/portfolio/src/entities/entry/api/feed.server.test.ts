@@ -1,29 +1,24 @@
 import { Array as Arr, Effect, Option, Record as Rec, String as Str, pipe } from "effect";
-import { expect, test, vi } from "vite-plus/test";
+import { expect, test } from "vite-plus/test";
 
 import type { Entry } from "#/entities/entry/model/entry.ts";
 import { site } from "#/shared/config/index.ts";
 
-import { feedResponse } from "./feed.server.ts";
+import { feedResponseOf } from "./feed.server.ts";
 
-const { entries } = vi.hoisted(() => {
-  const base = {
-    description: "説明",
-    date: "2026-01-02",
-    updated: "2026-01-02",
-    tags: [],
-    infobox: [],
-  };
-  const fixtures: readonly Entry[] = [
-    { ...base, category: "blogs", slug: "published-blog", title: "公開", status: "published" },
-    { ...base, category: "blogs", slug: "idea-blog", title: "アイデア", status: "idea" },
-    { ...base, category: "blogs", slug: "draft-blog", title: "下書き", status: "draft" },
-    { ...base, category: "sloppedia", slug: "wiki-article", title: "事典", status: "published" },
-  ];
-  return { entries: fixtures };
-});
-
-vi.mock("./entries", () => ({ allEntries: Effect.succeed(entries) }));
+const base = {
+  description: "説明",
+  date: "2026-01-02",
+  updated: "2026-01-02",
+  tags: [],
+  infobox: [],
+};
+const entries: readonly Entry[] = [
+  { ...base, category: "blogs", slug: "published-blog", title: "公開", status: "published" },
+  { ...base, category: "blogs", slug: "idea-blog", title: "アイデア", status: "idea" },
+  { ...base, category: "blogs", slug: "draft-blog", title: "下書き", status: "draft" },
+  { ...base, category: "sloppedia", slug: "wiki-article", title: "事典", status: "published" },
+];
 
 const ITEM_ID = /<guid[^>]*>(?<id>[^<]+)<\/guid>/gu;
 
@@ -41,7 +36,7 @@ const itemIds = (feed: string): readonly string[] =>
 
 const feedText = (): Promise<string> =>
   Effect.runPromise(
-    Effect.promise(feedResponse).pipe(
+    Effect.promise(() => feedResponseOf(Effect.succeed(entries))).pipe(
       Effect.flatMap((response) => Effect.promise(() => response.text())),
     ),
   );

@@ -1,6 +1,5 @@
+import type { Logged } from "@masseater.dev/fumx-studio/studio/placement";
 import { Option, Schema, pipe } from "effect";
-
-import type { Logged } from "#/entities/song/lib/studio/placement.ts";
 
 import { kurakuOf } from "./engine/kuraku.ts";
 import type { Kuraku } from "./engine/kuraku.ts";

@@ -4,7 +4,7 @@ import { drizzle } from "drizzle-orm/d1";
 import { Array as Arr, DateTime, Effect, Option } from "effect";
 
 import { objectReads, uploads } from "#/entities/spending/model/spending.table.ts";
-import { LIMITS } from "#/shared/config/index.ts";
+import { Limits } from "#/shared/config/index.ts";
 import { StoreFailed, storeFailed } from "#/shared/lib/store-failed.ts";
 
 const LEDGERS = { objectReads, uploads } as const;
@@ -42,12 +42,20 @@ const spentToday = Effect.fn("spending.spentToday")(function* spentToday(
   });
 });
 
-export const spendUpload: Effect.Effect<boolean, StoreFailed> = spentToday("uploads", ONCE).pipe(
-  Effect.map((spent) => spent <= LIMITS.uploadsPerDay),
+export const spendUpload: Effect.Effect<boolean, StoreFailed> = Effect.gen(
+  function* spendOneUpload() {
+    const spent = yield* spentToday("uploads", ONCE);
+    const { uploadsPerDay } = yield* Limits;
+    return spent <= uploadsPerDay;
+  },
 );
 
 export const spendObjectReads = (count: number): Effect.Effect<boolean, StoreFailed> =>
-  spentToday("objectReads", count).pipe(Effect.map((spent) => spent <= LIMITS.objectReadsPerDay));
+  Effect.gen(function* spendReads() {
+    const spent = yield* spentToday("objectReads", count);
+    const { objectReadsPerDay } = yield* Limits;
+    return spent <= objectReadsPerDay;
+  });
 
 export const forgetPastDays = Effect.gen(function* forgetPastDays() {
   const day = yield* today;

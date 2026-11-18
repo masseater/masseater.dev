@@ -1,5 +1,4 @@
-import { DEFAULT_READERS, readDocument } from "@r_masseater/injection-bisect";
-import type { Document, Unreadable } from "@r_masseater/injection-bisect";
+import type { Document, ReadError, ReadInput, Unreadable } from "@r_masseater/injection-bisect";
 import { Effect, MutableRef, Option, String as Str } from "effect";
 import type { Fiber } from "effect";
 
@@ -19,9 +18,12 @@ export interface Draft {
   readonly format: string;
 }
 
+export type Read = (input: ReadInput) => Effect.Effect<Document, ReadError>;
+
 export interface Sink {
   readonly opening: (opening: Opening) => void;
   readonly draft: (draft: Draft) => void;
+  readonly read: Read;
 }
 
 interface Kept {
@@ -29,14 +31,14 @@ interface Kept {
   readonly unreadable: readonly Unreadable[];
 }
 
-const documentOf = ({ name, load }: Picked): Effect.Effect<Document, string> =>
-  Effect.tryPromise({ try: load, catch: String }).pipe(
-    Effect.flatMap((buffer) =>
-      readDocument({ bytes: new Uint8Array(buffer), name, readers: DEFAULT_READERS }).pipe(
-        Effect.mapError(({ reason }) => reason),
+const documentOf =
+  (read: Read) =>
+  ({ name, load }: Picked): Effect.Effect<Document, string> =>
+    Effect.tryPromise({ try: load, catch: String }).pipe(
+      Effect.flatMap((buffer) =>
+        read({ bytes: new Uint8Array(buffer), name }).pipe(Effect.mapError(({ reason }) => reason)),
       ),
-    ),
-  );
+    );
 
 const keptOf = (name: string, { text, unreadable = [] }: Document): Kept => {
   if (text.length <= MAX_CHARS) {
@@ -62,7 +64,7 @@ export const pickedOf = (files: Readonly<Pick<FileList, "item">> | null): Option
   );
 
 const reading = (picked: Picked, sink: Sink): Effect.Effect<void> =>
-  documentOf(picked).pipe(
+  documentOf(sink.read)(picked).pipe(
     Effect.match({
       onFailure: failedOf(picked.name),
       onSuccess: (document) => {

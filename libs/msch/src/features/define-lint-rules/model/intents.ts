@@ -61,6 +61,12 @@ export const INTENTS: Readonly<Record<string, Intent>> = {
       { object: "ManagedRuntime", properties: ["make"] },
     ],
   },
+  "typed-calls-not-reflect": {
+    message:
+      "Read properties and call functions through typed access, or decode untyped values with Schema at the boundary. Do not go around the types with Reflect.",
+    imports: [],
+    members: [{ object: "Reflect", properties: ["get", "apply"] }],
+  },
   "db-writes-in-writers": {
     message:
       "Write tables only from a *-writer.server.ts module, so that a table update and its revision go into the same batch. Call the writer here instead of writing through db.",

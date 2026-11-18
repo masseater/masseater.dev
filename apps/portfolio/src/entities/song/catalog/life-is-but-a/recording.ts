@@ -1,9 +1,9 @@
 import type { RenderSession, Song } from "@masseater.dev/daw-view";
+import { sheetOf } from "@masseater.dev/fumx-studio/daw/take";
+import { tapeFor } from "@masseater.dev/fumx-studio/daw/tape";
 import { Effect, Option, pipe } from "effect";
 
 import { dawSongOf } from "#/entities/song/model/daw.ts";
-import { sheetOf } from "#/entities/song/model/take.ts";
-import { tapeFor } from "#/entities/song/model/tape.ts";
 
 import { FRAMES } from "./engine/life.ts";
 import { render } from "./engine/render.ts";

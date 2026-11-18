@@ -6,6 +6,7 @@ import {
   Option,
   Record as Rec,
   Redacted,
+  Schedule,
   Schema,
   String as Str,
   pipe,
@@ -157,6 +158,9 @@ export const skillsIn =
 export const labelOf = ({ repository, source }: Declared): string =>
   `${repository}@${Str.slice(START, SHORT_COMMIT)(source.commit)}`;
 
+const RETRY_DELAY = "1 second";
+const RETRIES = 4;
+
 const codeload = ({ repository, source }: Declared): HttpClientRequest.HttpClientRequest =>
   HttpClientRequest.get(`https://codeload.github.com/${repository}/tar.gz/${source.commit}`);
 
@@ -172,7 +176,12 @@ const fetchBytes = (
 ): Effect.Effect<Uint8Array, HttpClientError.HttpClientError, HttpClient.HttpClient> =>
   Effect.gen(function* fetchArchive() {
     const httpClient = yield* HttpClient.HttpClient;
-    const response = yield* HttpClient.filterStatusOk(httpClient).execute(request);
+    const response = yield* httpClient
+      .pipe(
+        HttpClient.filterStatusOk,
+        HttpClient.retryTransient({ schedule: Schedule.exponential(RETRY_DELAY), times: RETRIES }),
+      )
+      .execute(request);
     const body = yield* response.arrayBuffer;
     return new Uint8Array(body);
   });

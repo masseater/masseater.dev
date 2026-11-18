@@ -9,7 +9,8 @@ const MAX_BATCH = 64;
 
 const keepAlive = Layer.succeed(FetchHttpClient.RequestInit, { keepalive: true });
 
-const browserTelemetry = Layer.mergeAll(
+/** @internal */
+export const browserTelemetry = Layer.mergeAll(
   FetchHttpClient.layer,
   keepAlive,
   OtlpTracer.layer({

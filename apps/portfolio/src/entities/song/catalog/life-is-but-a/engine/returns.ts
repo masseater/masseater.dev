@@ -1,7 +1,7 @@
-import { convolve } from "#/entities/song/lib/dsp/convolve.ts";
-import { SVF, svf } from "#/entities/song/lib/dsp/filter.ts";
-import { SAMPLE_RATE } from "#/entities/song/lib/dsp/number.ts";
-import type { Bus } from "#/entities/song/lib/studio/bus.ts";
+import { convolve } from "@masseater.dev/fumx-studio/dsp/convolve";
+import { SVF, svf } from "@masseater.dev/fumx-studio/dsp/filter";
+import { SAMPLE_RATE } from "@masseater.dev/fumx-studio/dsp/number";
+import type { Bus } from "@masseater.dev/fumx-studio/studio/bus";
 
 import type { Life } from "./context.ts";
 import { LEVEL } from "./levels.ts";

@@ -1,9 +1,8 @@
+import { reached } from "@masseater.dev/fumx-studio/studio/breathe";
+import type { Progressing } from "@masseater.dev/fumx-studio/studio/breathe";
+import type { Ledger } from "@masseater.dev/fumx-studio/studio/placement";
 import { Effect } from "effect";
 import type { Option } from "effect";
-
-import { reached } from "#/entities/song/lib/studio/breathe.ts";
-import type { Progressing } from "#/entities/song/lib/studio/breathe.ts";
-import type { Ledger } from "#/entities/song/lib/studio/placement.ts";
 
 import type { SampleTableEntry, Sink } from "./context.ts";
 import { lifeOf } from "./life.ts";
