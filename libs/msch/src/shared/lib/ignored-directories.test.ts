@@ -4,7 +4,7 @@ import { expect } from "vite-plus/test";
 
 import { gitRepositoryWith, fixtureLayer } from "#/shared/lib/repository.test.support.ts";
 
-import { ignoredDirectories } from "./ignored-directories.ts";
+import { collectPlacedIgnoredDirectories, ignoredDirectories } from "./ignored-directories.ts";
 
 const excludesIgnoredDirectories = Effect.gen(function* excludesIgnoredDirectories() {
   const root = yield* gitRepositoryWith({
@@ -48,7 +48,32 @@ const excludesEveryNamedDirectory = Effect.gen(function* excludesEveryNamedDirec
   ]);
 });
 
+const placesAnywhereRules = Effect.gen(function* placesAnywhereRules() {
+  const root = yield* gitRepositoryWith({
+    ".gitignore": "/target/\n.cache/\n**/src-tauri/cuda/\n**/shots-*/raw/\n",
+    "apps/game/.gitignore": ".godot/\n",
+    "apps/game/src-tauri/src/main.rs": "",
+    "apps/viewer/src-tauri/Cargo.toml": "",
+    "libs/engine/src/lib.rs": "",
+  });
+  const ignored = yield* collectPlacedIgnoredDirectories(root);
+  expect(ignored).toStrictEqual([
+    { pattern: "!target", base: "workspace" },
+    { pattern: "!target/**", base: "workspace" },
+    { pattern: "!apps/game/src-tauri/cuda", base: "workspace" },
+    { pattern: "!apps/game/src-tauri/cuda/**", base: "workspace" },
+    { pattern: "!apps/viewer/src-tauri/cuda", base: "workspace" },
+    { pattern: "!apps/viewer/src-tauri/cuda/**", base: "workspace" },
+    { pattern: "!apps/game/**/.godot", base: "workspace" },
+    { pattern: "!apps/game/**/.godot/**", base: "workspace" },
+  ]);
+});
+
 layer(fixtureLayer)("ignored directories", (it) => {
+  it.effect(
+    "places a rule for any depth under each listed directory its parent names and drops the rules that name no parent",
+    () => placesAnywhereRules,
+  );
   it.effect(
     "excludes every named directory when none of them holds a listed file",
     () => excludesEveryNamedDirectory,

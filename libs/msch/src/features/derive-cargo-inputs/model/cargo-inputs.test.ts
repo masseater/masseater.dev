@@ -72,7 +72,6 @@ it.effect("keys a crate on its own path dependencies and the ids of its registry
       "node_modules/.cache/msch/cargo-inputs/libs__notes.lock",
       "rust-toolchain.toml",
       ".cargo/**",
-      "!**/.cache",
       "!libs/notes/reference",
       "!libs/notes/**/node_modules/**",
       "!libs/notes/**/dist/**",
