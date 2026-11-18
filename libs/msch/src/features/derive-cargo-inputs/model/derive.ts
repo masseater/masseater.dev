@@ -11,7 +11,7 @@ import {
 } from "effect";
 import { ChildProcess } from "effect/process";
 
-import { collectIgnoredDirectories } from "#/shared/lib/ignored-directories.ts";
+import { collectPlacedIgnoredDirectories } from "#/shared/lib/ignored-directories.ts";
 import {
   RepositoryFiles,
   nodeRepositoryFiles,
@@ -125,7 +125,7 @@ const workspaceIn = Effect.fn("workspaceIn")(function* workspaceIn(root: string)
   });
   const workspace: CargoWorkspace = {
     ...source,
-    ignored: yield* collectIgnoredDirectories(root),
+    ignored: yield* collectPlacedIgnoredDirectories(root),
   };
   return workspace;
 });
