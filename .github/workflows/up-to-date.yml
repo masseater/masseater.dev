@@ -11,10 +11,6 @@ permissions: {}
 env:
   TAKUMI_GUARD_TOKEN: ${{ secrets.TAKUMI_GUARD_TOKEN }}
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
-
 jobs:
   up-to-date:
     runs-on: ubuntu-latest
@@ -22,10 +18,10 @@ jobs:
       contents: read
       pull-requests: read
     steps:
-      - uses: masseater/typescript-template/.github/actions/auto-merge-gate@5fbdf9423d0e5debb5d59bc6d59bfec624343aff
+      - uses: masseater/typescript-template/.github/actions/auto-merge-gate@c116d175574f2f6917e2aa39caf83a141ef4bd94
       - id: lockfile
         if: github.event_name == 'pull_request'
-        uses: masseater/typescript-template/.github/actions/pr-changed@5fbdf9423d0e5debb5d59bc6d59bfec624343aff
+        uses: masseater/typescript-template/.github/actions/pr-changed@c116d175574f2f6917e2aa39caf83a141ef4bd94
         with:
           file: pnpm-lock.yaml
           github-token: ${{ github.token }}
