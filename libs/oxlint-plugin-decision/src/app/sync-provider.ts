@@ -1,4 +1,4 @@
-import { Array as Arr, Effect, Option, Predicate, String as Str, pipe } from "effect";
+import { Array as Arr, Effect, Option, String as Str, pipe } from "effect";
 import { createSyncFn } from "synckit";
 import type { Syncify } from "synckit";
 
@@ -35,15 +35,10 @@ const workerUrl = (worker: string): URL => {
   return new URL(`${worker}${extension}`, import.meta.url);
 };
 
-const workerCall = (worker: string): Syncify<Worker> => {
-  const existing = workers.get(worker);
-  if (Predicate.isNotUndefined(existing)) {
-    return existing;
-  }
-  const created = createSyncFn<Worker>(workerUrl(worker), { timeout: BACKSTOP_MS });
-  workers.set(worker, created);
-  return created;
-};
+const workerCall = (worker: string): Syncify<Worker> =>
+  workers.getOrInsertComputed(worker, () =>
+    createSyncFn<Worker>(workerUrl(worker), { timeout: BACKSTOP_MS }),
+  );
 
 const reasonOf = (error: unknown): string => {
   const message = messageOf(error);

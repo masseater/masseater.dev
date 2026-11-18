@@ -80,15 +80,8 @@ const build = (source: Source): Result.Result<Document, string> => {
   }));
 };
 
-export const documentOf = (source: Source): Result.Result<Document, string> => {
-  const hit = Option.fromNullishOr(cache.get(source));
-  if (Option.isSome(hit)) {
-    return hit.value;
-  }
-  const built = build(source);
-  cache.set(source, built);
-  return built;
-};
+export const documentOf = (source: Source): Result.Result<Document, string> =>
+  cache.getOrInsertComputed(source, () => build(source));
 
 export const resolveAnchor =
   (document: Document) =>

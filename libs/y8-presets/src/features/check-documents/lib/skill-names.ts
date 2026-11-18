@@ -22,15 +22,7 @@ const compile = (name: string): RegExp => {
   );
 };
 
-const patternOf = (name: string): RegExp =>
-  pipe(
-    Option.fromNullishOr(patterns.get(name)),
-    Option.getOrElse(() => {
-      const pattern = compile(name);
-      patterns.set(name, pattern);
-      return pattern;
-    }),
-  );
+const patternOf = (name: string): RegExp => patterns.getOrInsertComputed(name, () => compile(name));
 
 const ownName = (context: RuleContext): readonly string[] =>
   pipe(

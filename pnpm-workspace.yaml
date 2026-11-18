@@ -30,7 +30,7 @@ catalog:
   "@pnpm/workspace.workspace-manifest-writer": 1100.2.11
   "@textlint-ja/textlint-rule-preset-ai-writing": 1.7.0
   textlint-rule-preset-ja-technical-writing: 12.0.2
-  "@textlint/ast-node-types": 15.8.0
+  "@textlint/ast-node-types": 16.0.0
   "@textlint/types": 15.8.0
   "@bufbuild/buf": 1.75.0
   "@bufbuild/protobuf": 2.17.0
@@ -222,7 +222,7 @@ catalog:
   "@commitlint/load": 21.2.4
   "@commitlint/types": 21.2.3
   "@loaderkit/resolve": 1.0.6
-  "@textlint/config-loader": 15.8.0
+  "@textlint/config-loader": 16.0.0
   "@textlint/kernel": 15.8.0
   "@textlint/utils": 15.8.0
   cjs-module-lexer: 2.3.0
