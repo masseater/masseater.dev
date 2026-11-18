@@ -11,16 +11,6 @@ pub enum Confidence {
     High,
 }
 
-impl From<kingfisher_rules::Confidence> for Confidence {
-    fn from(confidence: kingfisher_rules::Confidence) -> Self {
-        match confidence {
-            kingfisher_rules::Confidence::Low => Self::Low,
-            kingfisher_rules::Confidence::Medium => Self::Medium,
-            kingfisher_rules::Confidence::High => Self::High,
-        }
-    }
-}
-
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Finding {
@@ -41,39 +31,6 @@ pub struct Finding {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub commit: Option<String>,
     pub encoded: bool,
-}
-
-const SOURCE_PREFIXES: [&str; 2] = ["custom.", "betterleaks."];
-
-fn rule_of(id: &str) -> String {
-    SOURCE_PREFIXES
-        .iter()
-        .find_map(|prefix| id.strip_prefix(prefix))
-        .unwrap_or(id)
-        .to_owned()
-}
-
-impl Finding {
-    #[must_use]
-    pub fn from_scanner(finding: &kingfisher_scanner::Finding, path: &str) -> Self {
-        let location = &finding.location;
-        Self {
-            rule: rule_of(&finding.rule_id),
-            description: finding.rule_name.clone(),
-            confidence: finding.confidence.into(),
-            path: path.to_owned(),
-            line: location.line,
-            column: location.column + 1,
-            end_line: location.end_line,
-            end_column: location.end_column + 1,
-            start_offset: location.start_offset,
-            end_offset: location.end_offset,
-            digest: digest_of(&finding.secret),
-            secret: finding.secret.clone(),
-            commit: None,
-            encoded: finding.is_base64_encoded,
-        }
-    }
 }
 
 #[must_use]
