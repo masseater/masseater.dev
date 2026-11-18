@@ -35,14 +35,7 @@ const nearestMirror = (span: Option.Option<Tracer.AnySpan>): Option.Option<Mirro
   );
 
 const fiberContext = (fiber: Fiber.Fiber<unknown, unknown>): RunInContext =>
-  pipe(
-    Option.fromUndefinedOr(fiberContexts.get(fiber)),
-    Option.getOrElse(() => {
-      const captured = capture();
-      fiberContexts.set(fiber, captured);
-      return captured;
-    }),
-  );
+  fiberContexts.getOrInsertComputed(fiber, () => capture());
 
 const contextOf = (fiber: Fiber.Fiber<unknown, unknown>): RunInContext =>
   pipe(

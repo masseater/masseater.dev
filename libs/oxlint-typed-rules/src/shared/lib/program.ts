@@ -34,13 +34,7 @@ const api = startApi();
 const snapshots = new Map<API, Snapshot>([[api, api.createSnapshot()]]);
 
 const currentSnapshot = (): Snapshot =>
-  Option.fromNullishOr(snapshots.get(api)).pipe(
-    Option.getOrElse(() => {
-      const created = api.createSnapshot();
-      snapshots.set(api, created);
-      return created;
-    }),
-  );
+  snapshots.getOrInsertComputed(api, () => api.createSnapshot());
 
 const matchesText = (project: Project, overlay: Overlay): boolean =>
   Option.fromNullishOr(project.program.getSourceFile(overlay.fileName)).pipe(

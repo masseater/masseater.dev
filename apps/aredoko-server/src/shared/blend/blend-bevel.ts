@@ -41,9 +41,7 @@ const groupsOf = (shape: Shape): readonly (readonly Side[])[] => {
   const sides = pipe(shape.faces, Array.flatMap(sidesOf(shape.points)));
   for (const side of sides) {
     const key = Math.min(side.from, side.to) * total + Math.max(side.from, side.to);
-    const group = groups.get(key) ?? [];
-    group.push(side);
-    groups.set(key, group);
+    groups.getOrInsertComputed(key, () => []).push(side);
   }
   return Array.fromIterable(groups.values());
 };

@@ -1,5 +1,4 @@
 import type { Position, Source } from "@r_masseater/fu4";
-import { Option } from "effect";
 
 import { parseWorkflow } from "#/entities/workflow/lib/parse.ts";
 import { optional } from "#/shared/record/index.ts";
@@ -28,8 +27,4 @@ const parse = (source: Source): ParsedWorkflow => {
 };
 
 export const workflowOf = (source: Source): ParsedWorkflow =>
-  Option.getOrElse(Option.fromNullishOr(parsed.get(source)), () => {
-    const result = parse(source);
-    parsed.set(source, result);
-    return result;
-  });
+  parsed.getOrInsertComputed(source, () => parse(source));

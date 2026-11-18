@@ -233,14 +233,7 @@ const skillNamesOf = (filesUnder: RuleContext["filesUnder"]): readonly string[] 
   );
 
 export const skillNamesIn = ({ filesUnder }: RuleContext): readonly string[] =>
-  pipe(
-    Option.fromNullishOr(skillNamesBy.get(filesUnder)),
-    Option.getOrElse(() => {
-      const names = skillNamesOf(filesUnder);
-      skillNamesBy.set(filesUnder, names);
-      return names;
-    }),
-  );
+  skillNamesBy.getOrInsertComputed(filesUnder, () => skillNamesOf(filesUnder));
 
 export const isPublished = (data: Readonly<Record<string, unknown>>): boolean =>
   data["private"] !== true && Predicate.isString(data["name"]);
