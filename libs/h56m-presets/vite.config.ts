@@ -9,7 +9,11 @@ export default defineConfig({
       native: {
         command: "node bin/extract.ts",
         cache: {
-          input: [{ pattern: "Cargo.lock", base: "workspace" }, "bin/extract.ts"],
+          input: [
+            "package.json",
+            "bin/extract.ts",
+            { pattern: "pnpm-lock.yaml", base: "workspace" },
+          ],
           output: ["presets/**", "THIRD-PARTY-NOTICES.txt"],
         },
       },
