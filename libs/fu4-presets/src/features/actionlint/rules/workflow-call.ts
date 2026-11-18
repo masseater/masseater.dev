@@ -1,7 +1,7 @@
 import type { Project } from "@r_masseater/fu4";
 import { Option, Result, String as Str, pipe } from "effect";
 
-import { containsExpression, findReusable } from "#/entities/workflow/index.ts";
+import { containsExpression, findReusable, skipReusable } from "#/entities/workflow/index.ts";
 import type { WorkflowCall } from "#/entities/workflow/model/job-types.ts";
 import { checkReusableCall } from "#/features/actionlint/lib/reusable-call.ts";
 import { NOOP, workflowRule } from "#/features/actionlint/lib/workflow-rule.ts";
@@ -58,6 +58,16 @@ const checkLocal = ({ fail, project }: Env, call: WorkflowCall, uses: Text): voi
   }
 };
 
+const failMalformed = ({ fail, project }: Env, uses: Text): void => {
+  if (Str.startsWith("./")(uses.value)) {
+    skipReusable(project)(uses.value);
+  }
+  fail(
+    uses,
+    `reusable workflow call ${quote(uses.value)} at "uses" is not following the format "owner/repo/path/to/workflow.yml@ref" nor "./path/to/workflow.yml". see https://docs.github.com/en/actions/learn-github-actions/reusing-workflows for more details`,
+  );
+};
+
 const checkUses = (env: Env, call: WorkflowCall, uses: Text): void => {
   const { fail } = env;
   if (isLocalFormat(uses.value)) {
@@ -71,10 +81,7 @@ const checkUses = (env: Env, call: WorkflowCall, uses: Text): void => {
     fail(uses, selfReferenceError(uses.value));
     return;
   }
-  fail(
-    uses,
-    `reusable workflow call ${quote(uses.value)} at "uses" is not following the format "owner/repo/path/to/workflow.yml@ref" nor "./path/to/workflow.yml". see https://docs.github.com/en/actions/learn-github-actions/reusing-workflows for more details`,
-  );
+  failMalformed(env, uses);
 };
 
 const usesOf = (call: WorkflowCall): Option.Option<Text> =>

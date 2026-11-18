@@ -1,5 +1,6 @@
 import { definePlugin } from "@r_masseater/fu4";
 
+import { expression } from "./rules/expression.ts";
 import { JOB_RULES } from "./rules/job-rules.ts";
 import { STEP_RULES } from "./rules/step-rules.ts";
 import { syntaxCheck } from "./rules/syntax-check.ts";
@@ -13,5 +14,6 @@ export const actionlint = definePlugin({
     ...TRIGGER_RULES,
     ...JOB_RULES,
     ...STEP_RULES,
+    expression,
   },
 });

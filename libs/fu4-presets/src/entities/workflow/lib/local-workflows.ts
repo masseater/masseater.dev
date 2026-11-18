@@ -1,5 +1,5 @@
 import type { Project } from "@r_masseater/fu4";
-import { Option, Result, String as Str } from "effect";
+import { Option, Result, String as Str, pipe } from "effect";
 
 import type { ReusableMetadata } from "#/entities/workflow/model/reusable.ts";
 import { quote } from "#/shared/text/index.ts";
@@ -51,6 +51,18 @@ export const findReusable =
       return hit.value;
     }
     const loaded = Option.some(load(project, spec, relative.value));
-    entries.set(spec, loaded);
+    entries.set(
+      spec,
+      pipe(
+        loaded,
+        Option.filter((found) => Result.isSuccess(found)),
+      ),
+    );
     return loaded;
+  };
+
+export const skipReusable =
+  (project: Project) =>
+  (spec: string): void => {
+    cacheOf(project).set(spec, Option.none());
   };
