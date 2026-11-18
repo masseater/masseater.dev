@@ -45,3 +45,22 @@ fi
 if ! claude mcp get sts2 >/dev/null 2>&1; then
   claude mcp add --scope user sts2 -- node "$CLAUDE_PROJECT_DIR/tools/sts2-mcp/bin/sts2-mcp.ts" >&2
 fi
+
+settings="$HOME/.claude/settings.json"
+[ -s "$settings" ] || echo "{}" >"$settings"
+collector="pgrep -x otelcol >/dev/null || [ -z \"\${CLAUDE_CODE_REMOTE_SESSION_ID:-}\" ] || { export OTEL_FILES=\"\$HOME/.claude/otel/\$CLAUDE_CODE_REMOTE_SESSION_ID\"; mkdir -p \"\$OTEL_FILES\"; setsid $(mise which otelcol) --config $CLAUDE_PROJECT_DIR/.github/actions/setup/otelcol.yaml --config $CLAUDE_PROJECT_DIR/.claude/otelcol.yaml >\"\$OTEL_FILES/collector.log\" 2>&1 </dev/null & }"
+keep="[ -d /mnt/project-files ] && [ -n \"\${CLAUDE_CODE_REMOTE_SESSION_ID:-}\" ] && mkdir -p /mnt/project-files/telemetry/claude-code/\$CLAUDE_CODE_REMOTE_SESSION_ID/ && cp \$HOME/.claude/otel/\$CLAUDE_CODE_REMOTE_SESSION_ID/*.jsonl /mnt/project-files/telemetry/claude-code/\$CLAUDE_CODE_REMOTE_SESSION_ID/ || true"
+jq --arg start "$collector" --arg stop "$keep" '
+  def own($event; $command): [.hooks[$event] // [] | .[] | select((.hooks[0].command // "") | test("otelcol|telemetry/claude-code") | not)] + [{hooks: [{type: "command", command: $command}]}];
+  .env += {
+    CLAUDE_CODE_ENABLE_TELEMETRY: "1",
+    CLAUDE_CODE_ENHANCED_TELEMETRY_BETA: "1",
+    OTEL_METRICS_EXPORTER: "otlp",
+    OTEL_LOGS_EXPORTER: "otlp",
+    OTEL_TRACES_EXPORTER: "otlp",
+    OTEL_EXPORTER_OTLP_PROTOCOL: "http/json",
+    OTEL_EXPORTER_OTLP_ENDPOINT: "http://127.0.0.1:4318"
+  }
+  | .hooks.SessionStart = own("SessionStart"; $start)
+  | .hooks.Stop = own("Stop"; $stop)
+' "$settings" >"$settings.tmp" && mv "$settings.tmp" "$settings"

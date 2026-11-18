@@ -34,7 +34,13 @@ export default defineConfig({
   plugins: [otlp()],
   pack: [
     {
-      entry: ["src/app/index.ts", "src/app/setup.ts", "src/app/semconv.ts", "src/app/workers.ts"],
+      entry: [
+        "src/app/index.ts",
+        "src/app/setup.ts",
+        "src/app/semconv.ts",
+        "src/app/workers.ts",
+        "src/app/collector-files.ts",
+      ],
       platform: "node",
       sourcemap: true,
       dts: true,
