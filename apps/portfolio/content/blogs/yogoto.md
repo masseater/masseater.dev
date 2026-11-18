@@ -1,61 +1,61 @@
 ---
-title: "Python を使わない曲マネージャー yogoto（2026年11月18日時点）"
-description: "曲を取り込んでステム分離し、拍とキーを解析するデスクトップアプリ yogoto を Rust だけで作っている。モデル推論、音声のダウンロード、デコードの Python 依存を置き換えたときに分かったことを記録する。"
-tags: ["Rust", "音楽", "yogoto"]
+title: "yogoto, a song manager without Python (as of November 18, 2026)"
+description: "yogoto is a desktop app I am building in Rust to import songs, separate them into stems and detect beats and keys. This memo records what I found when I replaced the Python parts: model inference, audio downloading and decoding."
+tags: ["Rust", "Music", "yogoto"]
 published: true
 ---
 
-yogoto は、僕が曲を管理するために作っているデスクトップアプリである。YouTube やニコニコ動画や SoundCloud のリンク、手元の音声ファイルを入れると、元の音声を再エンコードせずに保管する。そのうえで BS-RoFormer のモデルでステムに分離し、拍と小節とキーを解析する。アプリは `127.0.0.1` で MCP サーバーを立てていて、AI はそこから取り込みと分離を頼み、結果を読める。コードは masseater.dev の [apps/yogoto](https://github.com/masseater/masseater.dev/tree/main/apps/yogoto) にある。
+yogoto is a desktop app I am building to manage songs. When I drop in a YouTube, Niconico or SoundCloud link, or an audio file on my PC, it keeps the original audio without re-encoding it, separates it into stems with a BS-RoFormer model, and detects beats, bars and keys. AIs can request imports and separations and read the results through the MCP server the app serves on `127.0.0.1`. The code is in [apps/yogoto](https://github.com/masseater/masseater.dev/tree/main/apps/yogoto) of masseater.dev.
 
-アプリはすべて Rust で書き、Python は使っていない。モデル推論、音声のダウンロード、音声のデコードは Python のエコシステムで済ませるのが普通の部分だった。このメモには、それぞれを置き換えたときに分かったことを残す。
+The whole app is in Rust with no Python. Model inference, audio downloading and audio decoding were the parts where the Python ecosystem is the usual answer, so this memo records what I found when I replaced each of them.
 
-| 工程         | 動かしているもの                                            | 避けた Python の相当品 |
-| ------------ | ----------------------------------------------------------- | ---------------------- |
-| ダウンロード | 自前の Rust の抽出器。失敗したらバージョンを固定した yt-dlp | yt-dlp                 |
-| 分離         | candle で実装した BS-RoFormer                               | PyTorch、ONNX への変換 |
-| 拍と小節     | rten で動く Beat This! の Rust 移植                         | beat_this              |
-| キー         | ONNX に書き出した S-KEY を rten で動かす                    | skey                   |
-| デコード     | symphonia と、Opus 用の opus-rs                             | ffmpeg                 |
+| Stage          | What runs                                                  | Python equivalent avoided |
+| -------------- | ---------------------------------------------------------- | ------------------------- |
+| Download       | Own Rust extractors, falling back to a pinned yt-dlp build | yt-dlp                    |
+| Separation     | BS-RoFormer implemented with candle                        | PyTorch, ONNX conversion  |
+| Beats and bars | Rust port of Beat This! on the rten runtime                | beat_this                 |
+| Key            | S-KEY exported to ONNX, on rten                            | skey                      |
+| Decoding       | symphonia, plus opus-rs for Opus                           | ffmpeg                    |
 
-## BS-RoFormer は candle でチェックポイントを直接読む
+## BS-RoFormer runs on candle by reading the community checkpoints directly
 
-BS-RoFormer 系の分離モデルは、PyTorch のチェックポイントと YAML の設定で公開されている。ONNX に変換するには Python が要るので、candle 0.11 でネットワークを実装し、`.ckpt` と `.yaml` をそのまま読ませた。重みは Hugging Face からリビジョンを固定して取る。既定のモデルは BS-RoFormer SW で、bass、drums、other、vocals、guitar、piano の6本のステムを出す[^bs-rofo-sw]。
+Separation models in the BS-RoFormer family are published as PyTorch checkpoints with a YAML config. Converting them to ONNX needs Python, so I implemented the network with candle 0.11 and made it read the `.ckpt` and `.yaml` files as they are. The weights come from Hugging Face at a pinned revision. The default model is BS-RoFormer SW, which outputs six stems: bass, drums, other, vocals, guitar and piano[^bs-rofo-sw].
 
-テストでは、固定したリビジョンの重みと PyTorch の出力を取ってきて両者を比べている。最初は出力が一致しなかった。原因はスペクトログラムの DC 成分を0にする `zero_dc` という設定だった。分離のテストは CPU で243秒かかっていた。読み込み済みの分離器を関数へ渡す形に変え、テストのチャンクを短くしたところ、約21秒になった。
+The tests download the same weights and a PyTorch output at a pinned revision and compare the two. The output did not match at first, and the cause was `zero_dc`, the option that zeroes the DC bin of the spectrogram. Running the separation test on CPU took 243 seconds. Passing a loaded separator into the function and using a shorter chunk in the test brought it to about 21 seconds.
 
-もっと新しいモデルがないかも確かめた。重みが公開されている最新のモデルは、2026年11月8日に出た ZFTurbo の学習コード v1.0.23 の SubRoformer だった。Multisong の平均スコアは10.45で、SW を下回る。BS Roformer 124 bands 2026.07 のようにスコアが最も高いモデルは MVSep の有料サービスでしか使えず、重みは公開されていない[^mvsep-algorithms]。
+I also checked whether a newer model was available. The newest model with public weights was SubRoformer in ZFTurbo's training code v1.0.23, released on 2026-11-08, and its average Multisong score of 10.45 was below SW. The models with the highest scores, such as BS Roformer 124 bands 2026.07, are only available as a paid service on MVSep, and their weights are not public[^mvsep-algorithms].
 
-## 自前のダウンローダーはクラウドで yt-dlp の4〜15倍速い
+## The own downloader is 4 to 15 times faster than yt-dlp in the cloud
 
-yt-dlp は Python で書かれているので、サイトごとの抽出器を Rust で書き、クラウドのコンテナで両方を測った。各セルは5回の中央値で、プロセスの起動からファイルを書き終えるまでの時間である。
+yt-dlp is written in Python, so I wrote an extractor for each site in Rust and measured both in the cloud container. Each cell is the median of 5 runs, from process start to the file being written.
 
-| サイト                         | yt-dlp onefile | yt-dlp onedir、`-N 8` | Rust   |
-| ------------------------------ | -------------- | --------------------- | ------ |
-| YouTube、3.4 MB の Opus        | 14.1秒         | 19.5秒                | 0.94秒 |
-| ニコニコ動画、HLS 54セグメント | 5.6秒          | 4.0秒                 | 3.4秒  |
-| SoundCloud、AAC の HLS         | 4.1秒          | 3.7秒                 | 1.4秒  |
+| Site                      | yt-dlp onefile | yt-dlp onedir, `-N 8` | Rust   |
+| ------------------------- | -------------- | --------------------- | ------ |
+| YouTube, 3.4 MB Opus      | 14.1 s         | 19.5 s                | 0.94 s |
+| Niconico, 54 HLS segments | 5.6 s          | 4.0 s                 | 3.4 s  |
+| SoundCloud, AAC HLS       | 4.1 s          | 3.7 s                 | 1.4 s  |
 
-YouTube の差はほとんどがリクエストの数から来ている。yt-dlp は視聴ページとプレイヤーの JavaScript を読み込み、Deno でチャレンジを解く。データセンターの IP からだと Web クライアントは403や429を受けて再試行を繰り返す。Rust の側は visionOS クライアントとして InnerTube に1回だけリクエストを送る。返ってくるのは暗号化されていない直接の URL で、それを 1 MiB ずつの Range リクエストで並列に取る。Range ヘッダーのない普通の GET は約 32 KB/s に絞られる。YouTube とニコニコ動画のファイルは yt-dlp の出力とバイト単位で一致した。
+Most of the difference on YouTube comes from requests. yt-dlp loads the watch page and the player JavaScript and solves a challenge with Deno, and from a datacenter IP the web client gets 403 and 429 responses and retries. The Rust path sends one InnerTube request as the visionOS client, which returns direct URLs without a cipher, and downloads in parallel 1 MiB Range requests. A plain GET without a Range header is throttled to about 32 KB/s. The YouTube and Niconico files are byte-identical to yt-dlp's output.
 
-Rust の側が扱えるのはよくある場合だけである。子ども向けの動画、年齢制限のある動画、メンバー限定の動画、ライブ配信は再生できない。1つのクライアントが予告なく使えなくなることもある。そのため、自前の取得に失敗したときは、バージョンと SHA-256 で固定した yt-dlp 公式の onedir ビルドを落としてきて代わりに使う。どちらの経路を通ったかと、自前の取得が失敗した理由は tracing の span に記録している。
+The Rust path only covers the common case. It cannot play videos made for kids, age-restricted videos, members-only videos or live streams, and a single client can be cut off without warning. So when it fails, yogoto downloads the official yt-dlp onedir build pinned by version and SHA-256, and uses it instead. The route that was used and the reason the own path failed are recorded on a tracing span.
 
-## symphonia は Opus をデコードできない
+## symphonia does not decode Opus
 
-YouTube の音声は WebM に入った Opus で届くが、symphonia 0.6 には Opus のデコーダーがない。そこで Opus のパケットは opus-rs でデコードし、OpusHead ヘッダーの10〜11バイト目にある pre-skip の数だけ先頭のサンプルを捨てている。これを捨てないと、デコードした音声の先頭に余計なサンプルが付き、元の音声と位置がずれる。
+YouTube audio arrives as Opus in WebM, and symphonia 0.6 has no Opus decoder. I decode Opus packets with opus-rs and drop the number of samples given by the pre-skip field at bytes 10 and 11 of the OpusHead header. Without that, the decoded audio starts with extra samples and no longer lines up with the original.
 
-ステムは 24 bit の FLAC で書き出す。最初に試したエンコーダーの flacenc は、symphonia で読めないファイルを作った。そこで flac-codec に切り替えた。浮動小数点を `32767 * 256` 倍していたときは、書いて読み戻すと 1.5e-5 の誤差が残った。2の23乗倍にしてクランプすると誤差は消えた。
+The stems are written as 24-bit FLAC. The first encoder I tried, flacenc, produced files that symphonia could not decode, so I switched to flac-codec. Scaling floats by `32767 * 256` left an error of 1.5e-5 after a round trip. Scaling by 2^23 with a clamp removed it.
 
-## 拍とキーのモデルは rten で動く
+## Beat and key models run on rten without Python
 
-[Beat This! の Rust 移植](https://github.com/danigb/beat-this-rs)は、Rust で書かれたランタイムの rten で ONNX のモデルを動かし、システムのライブラリを必要としない[^beat-this-rs]。拍と小節の頭の時刻を返すので、yogoto は小節の頭から小節を組み立てる。合成した30秒の曲では、フルサイズのモデルが CPU で約3秒かかった。
+The [Rust port of Beat This!](https://github.com/danigb/beat-this-rs) runs ONNX models on rten, a runtime written in Rust, and needs no system library[^beat-this-rs]. It returns beat and downbeat times, and yogoto builds bars from the downbeats. On a synthetic 30-second track, the full model took about 3 seconds on CPU.
 
-キーの判定には Deezer の S-KEY を ONNX に書き出したものを使う。特徴量の抽出までグラフに入っているので、22,050 Hz の生の音声を渡すと24個の確率が返る。ファイルは 0.33 MB で、同じ rten で動く。書き出した人の説明によると、ボーカルだけを渡すと本来のキーと平行調を同じくらいの頻度で返すので、伴奏のステムに使う想定である[^skey-onnx]。yogoto はボーカル以外のステムを足し合わせ、8小節ごとにキーを推定する。転調した箇所は範囲として現れる。
+For key detection, an ONNX export of Deezer's S-KEY includes the feature extraction in the graph, so it takes raw audio at 22,050 Hz and returns 24 probabilities. The file is 0.33 MB and runs on the same rten. The export notes that it is meant for the instrumental stem, because an isolated vocal yields the relative minor about as often as the key[^skey-onnx]. yogoto sums every stem except vocals and estimates the key every 8 bars, so that key changes show up as ranges.
 
-Aメロやサビのような構成の判定には SongFormer を候補にしている。ONNX に書き出したものはあるが、MuQ と MusicFM という約 410 MB のエンコーダーが2つ要る。MuQ の重みは非営利の利用に限ったライセンスである[^songformer-onnx]。
+For sections such as verse and chorus, SongFormer is the candidate. An ONNX export exists, but it needs two encoders of about 410 MB each, MuQ and MusicFM, and the MuQ weights are licensed for non-commercial use only[^songformer-onnx].
 
-## クラウドのコンテナはメモリより先にディスクが尽きる
+## The cloud container runs out of disk before memory
 
-クラウドのセッションには、書き込めるディスクが約 39 GB、メモリが 15 GB ある。モノレポの Rust の検査を一度に全部走らせると `target/debug` がディスクを埋め、push が `No space left on device` で失敗した。ワークスペースごとに1つずつ検査を走らせ、その合間に `target/debug` を消すと push が通った。タスクランナーがキャッシュした結果を再生するからである。
+The cloud session has about 39 GB of writable disk and 15 GB of memory. Running every Rust check of the monorepo at once filled `target/debug` and the push failed with `No space left on device`. Running each workspace's checks one at a time and deleting `target/debug` in between let the push go through, because the task runner replays results it has cached.
 
 [^bs-rofo-sw]: [enerjazzer/BS-ROFO-SW-Fixed](https://huggingface.co/enerjazzer/BS-ROFO-SW-Fixed)
 
