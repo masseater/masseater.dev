@@ -11,6 +11,7 @@ import {
   usedFrom,
   workspaceDirectories,
   prefixed,
+  shadcnUiIn,
   NO_TASKS,
   TEST_TASK,
   definesTask,
@@ -21,7 +22,6 @@ import { collectIgnoredDirectories } from "#/shared/lib/ignored-directories.ts";
 import type { IgnoredDirectory } from "#/shared/lib/ignored-directories.ts";
 import { RepositoryFiles, nodeRepositoryFiles } from "#/shared/lib/repository-files.ts";
 
-import { shadcnUiIn } from "./shadcn-ui.ts";
 import { publicEntryFiles } from "./workspace-public-entries.ts";
 
 export type RuleSet = Readonly<Record<string, unknown>>;
@@ -29,7 +29,6 @@ export type RuleSets = Readonly<Record<string, RuleSet>>;
 export type DependencySets = Readonly<Record<string, readonly string[]>>;
 
 const CONFIG_FILE = "vite.config.ts";
-const SHADCN_FILE = "components.json";
 const READ_CONCURRENCY = 16;
 const ROOT_WORKSPACE = ".";
 const MSCH_LINT = ["msch", "lint"] as const;
@@ -227,7 +226,6 @@ const mergedTasks = (found: readonly { readonly tasks: WorkspaceTasks }[]): Work
 
 const collectWorkspaceSettings = Effect.fn("collectWorkspaceSettings")(
   function* collectWorkspaceSettings(options: SettingsOptions) {
-    const files = yield* RepositoryFiles;
     const directories = yield* workspaceDirectories(options.root);
     const found: readonly Workspace[] = yield* Effect.forEach(
       directories,
@@ -236,7 +234,7 @@ const collectWorkspaceSettings = Effect.fn("collectWorkspaceSettings")(
     );
     const shadcnUi = yield* Effect.forEach(
       directories,
-      (directory) => shadcnUiIn(options.root, files.join(directory, SHADCN_FILE)),
+      (directory) => shadcnUiIn(options.root, directory),
       { concurrency: READ_CONCURRENCY },
     );
     return {
