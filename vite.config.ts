@@ -68,6 +68,7 @@ export default defineConfig({
     run: {
       remoteCache: "https://task-cache.masseater.dev/projects/masseater.dev",
       tasks: { "db-check-all": "vp run -r db:check" },
+      check: { launcher: "tsrs-effect", dependsOn: ["@masseater.dev/tsrs-effect#native"] },
     },
   }),
   skills: {
