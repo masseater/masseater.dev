@@ -9,11 +9,16 @@ const AUTOMERGE_OFF = /["']?platformAutomerge["']?\s*:\s*false/gu;
 const VERSION_CAP = /["']?allowedVersions["']?\s*:\s*["'](?<range>[^"']*<[^"']*)["']/gu;
 const AUTOMERGE_RULE: RuleName = "renovate-platform-automerge";
 const CAP_RULE: RuleName = "renovate-version-cap";
+const PRESET_RULE: RuleName = "renovate-msch-preset";
+const PRESET = "github>masseater/masseater.dev//libs/msch/renovate";
+const START = 0;
 const READ_CONCURRENCY = 16;
 const AUTOMERGE_MESSAGE =
   "sets `platformAutomerge: false`. Keep the platform's automerge on so passing updates merge without waiting for the next Renovate run.";
 const CAP_MESSAGE =
   "caps a dependency below a version with `allowedVersions`. A cap holds the dependency on an old version, which is a downgrade that never ends: fix what breaks on the new version instead.";
+
+const PRESET_MESSAGE = `does not extend \`${PRESET}\`, so Renovate writes ranges that the \`version-range\` check rejects. Add it to \`extends\`.`;
 
 const offsetsOf = (pattern: RegExp, source: string): readonly number[] =>
   pipe(
@@ -31,6 +36,10 @@ const problemsIn = (file: string, source: string): readonly Problem[] => {
   return [
     ...found(AUTOMERGE_OFF, AUTOMERGE_RULE, AUTOMERGE_MESSAGE),
     ...found(VERSION_CAP, CAP_RULE, CAP_MESSAGE),
+    ...pipe(
+      [{ file, ...at(START), rule: PRESET_RULE, message: PRESET_MESSAGE }],
+      Arr.filter(() => !Str.includes(`"${PRESET}"`)(source)),
+    ),
   ];
 };
 
