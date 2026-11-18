@@ -2,6 +2,7 @@
   "name": "sts2-mcp",
   "version": "0.0.0",
   "private": true,
+  "description": "MCP through which agents operate and observe Slay the Spire 2 in the VM via the AgentBridge mod.",
   "type": "module",
   "imports": {
     "#/*": "./src/*"

@@ -2,6 +2,7 @@
   "name": "sts2-mods",
   "version": "0.0.0",
   "private": true,
+  "description": "Mods for Slay the Spire 2, including the AgentBridge mod agents use to play the game.",
   "type": "module",
   "dependencies": {
     "@masseater.dev/github-workflow": "workspace:*",

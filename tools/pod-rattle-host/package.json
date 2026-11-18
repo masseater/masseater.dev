@@ -2,6 +2,7 @@
   "name": "@masseater.dev/pod-rattle-host",
   "version": "0.0.0",
   "private": true,
+  "description": "Small host that plays the Pod Rattle plugin with MIDI and checks its sound and editor screen.",
   "type": "module",
   "devDependencies": {
     "@r_masseater/msch": "workspace:*",

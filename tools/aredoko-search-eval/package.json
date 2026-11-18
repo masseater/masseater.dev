@@ -2,6 +2,7 @@
   "name": "aredoko-search-eval",
   "version": "0.0.0",
   "private": true,
+  "description": "Measures how well aredoko finds the right assets for pairs of search words and expected assets.",
   "type": "module",
   "imports": {
     "#/*": "./src/*"

@@ -14,12 +14,12 @@ runtime dependency is the native addon of h56m.
 ## As a Claude Code plugin
 
 The package is also the Claude Code plugin `watashi` in the
-[masseater/skills](https://github.com/masseater/skills) marketplace. The plugin
+[masseater/masseater.dev](https://github.com/masseater/masseater.dev) marketplace. The plugin
 runs `watashi hook stop` when a session stops.
 
 ```sh
-/plugin marketplace add masseater/skills
-/plugin install watashi@masseater
+/plugin marketplace add masseater/masseater.dev
+/plugin install watashi@masseater-dev
 ```
 
 The hook sends nothing unless `WATASHI_SEND_CONVERSATIONS=1` is set.

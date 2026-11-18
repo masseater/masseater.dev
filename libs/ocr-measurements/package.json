@@ -2,6 +2,7 @@
   "name": "@ocr-decide/measurements",
   "version": "0.0.0",
   "private": true,
+  "description": "Measurements of ocr-decide and the Japanese OCR benchmark shown by the demo.",
   "type": "module",
   "imports": {
     "#/*": "./src/*"

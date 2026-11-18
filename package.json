@@ -2,6 +2,11 @@
   "name": "masseater.dev",
   "version": "0.0.1",
   "private": true,
+  "description": "masseater's monorepo: the masseater.dev sites, the owner's tools and published libraries.",
+  "author": {
+    "name": "masseater",
+    "url": "https://github.com/masseater"
+  },
   "type": "module",
   "scripts": {
     "prepare": "vp config && effect-tsgo patch --typescript --oxlint && msch --prepare"

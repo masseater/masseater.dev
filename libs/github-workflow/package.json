@@ -2,6 +2,7 @@
   "name": "@masseater.dev/github-workflow",
   "version": "0.0.0",
   "private": true,
+  "description": "Helpers for GitHub Actions steps that call this repository's GitHub API and write step outputs and warnings.",
   "type": "module",
   "imports": {
     "#/*": "./src/*"
