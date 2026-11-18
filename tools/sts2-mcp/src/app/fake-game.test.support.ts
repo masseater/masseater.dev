@@ -3,9 +3,12 @@ import { Array as Arr, Context, Effect, Option, Ref, pipe } from "effect";
 import { HttpClient, HttpClientRequest, HttpClientResponse } from "effect/http";
 
 import { Vm } from "#/shared/api/index.ts";
-import type { Output } from "#/shared/api/index.ts";
+import type { fromOutput } from "#/shared/api/index.ts";
 
 import MAIN_MENU from "./main-menu.json" with { type: "json" };
+
+/** @internal */
+export type Output = Parameters<typeof fromOutput> extends readonly [infer Run] ? Run : never;
 
 /** @internal */
 export type Sent = Readonly<{ method: string; url: string; body: string }>;
