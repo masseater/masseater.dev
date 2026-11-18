@@ -22,10 +22,8 @@ const excludesIgnoredDirectories = Effect.gen(function* excludesIgnoredDirectori
     { pattern: "!apps/game/**/.godot/**", base: "workspace" },
     { pattern: "!apps/game/out", base: "workspace" },
     { pattern: "!apps/game/out/**", base: "workspace" },
-    { pattern: "!**/node_modules/.vite", base: "workspace" },
-    { pattern: "!**/node_modules/.vite/**", base: "workspace" },
-    { pattern: "!**/node_modules/.vite-temp", base: "workspace" },
-    { pattern: "!**/node_modules/.vite-temp/**", base: "workspace" },
+    { pattern: "!**/node_modules/.vite*", base: "workspace" },
+    { pattern: "!**/node_modules/.vite*/**", base: "workspace" },
   ]);
 });
 
@@ -41,10 +39,8 @@ const excludesEveryNamedDirectory = Effect.gen(function* excludesEveryNamedDirec
     { pattern: "!target/**", base: "workspace" },
     { pattern: "!apps/game/**/bin", base: "workspace" },
     { pattern: "!apps/game/**/bin/**", base: "workspace" },
-    { pattern: "!**/node_modules/.vite", base: "workspace" },
-    { pattern: "!**/node_modules/.vite/**", base: "workspace" },
-    { pattern: "!**/node_modules/.vite-temp", base: "workspace" },
-    { pattern: "!**/node_modules/.vite-temp/**", base: "workspace" },
+    { pattern: "!**/node_modules/.vite*", base: "workspace" },
+    { pattern: "!**/node_modules/.vite*/**", base: "workspace" },
   ]);
 });
 
