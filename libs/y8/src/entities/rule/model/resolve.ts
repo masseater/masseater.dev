@@ -3,6 +3,7 @@ import type { Setting } from "@masseater.dev/lint-host";
 import { Array as Arr, Match, Option, Record as Rec, String as Str, pipe } from "effect";
 
 import type {
+  BuiltinPlugin,
   Diagnostic,
   MarkdownlintRule,
   Y8Config,
@@ -36,17 +37,17 @@ export interface CompatRule {
   readonly setting: Setting;
 }
 
-export interface AgentRules {
-  readonly plugin: string;
-  readonly disabled: readonly string[];
-  readonly settings: Readonly<Record<string, Setting>>;
+export interface BuiltinRules {
+  readonly name: BuiltinPlugin;
+  readonly prefix: string;
+  readonly rules: Readonly<Record<string, Severity>>;
 }
 
 export interface Resolved {
   readonly core: Readonly<Record<string, unknown>>;
   readonly scripts: readonly ScriptRule[];
   readonly compat: readonly CompatRule[];
-  readonly agent: Option.Option<AgentRules>;
+  readonly builtins: readonly BuiltinRules[];
 }
 
 interface RuleId {
@@ -136,29 +137,23 @@ const builtinEntries = (config: Y8Config): Readonly<Record<string, unknown>> =>
     Rec.fromEntries,
   );
 
-const agentSettings = (config: Y8Config, plugin: string): Readonly<Record<string, Setting>> =>
+const severities = (config: Y8Config, plugin: string): Readonly<Record<string, Severity>> =>
   pipe(
     Rec.toEntries(config.rules ?? {}),
     Arr.map(([id, entry]) => ({ ...ruleIdOf(id), setting: settingOf(entry) })),
     Arr.filter((rule) => rule.plugin === plugin),
-    Arr.map(({ name, setting }): readonly [string, Setting] => [name, setting]),
+    Arr.map(({ name, setting }): readonly [string, Severity] => [name, setting.severity]),
     Rec.fromEntries,
   );
 
-const agentRules =
+const builtinRules =
   (config: Y8Config) =>
-  ([plugin]: PluginEntry): AgentRules => {
-    const settings = agentSettings(config, plugin);
-    return {
-      plugin,
-      settings,
-      disabled: pipe(
-        Rec.toEntries(settings),
-        Arr.filter(([, setting]) => !isOn(setting)),
-        Arr.map(([name]) => name),
-      ),
-    };
-  };
+  ([prefix, value]: PluginEntry): readonly BuiltinRules[] =>
+    pipe(
+      Option.fromNullishOr(value.builtin),
+      Option.map((name): BuiltinRules => ({ name, prefix, rules: severities(config, prefix) })),
+      Option.toArray,
+    );
 
 export const resolve = (config: Y8Config): Resolved => {
   const plugins = Rec.toEntries(config.plugins ?? {});
@@ -166,11 +161,7 @@ export const resolve = (config: Y8Config): Resolved => {
     core: { default: true, ...builtinEntries(config) },
     scripts: pipe(plugins, Arr.flatMap(scriptRules(config))),
     compat: pipe(plugins, Arr.flatMap(compatRules(config))),
-    agent: pipe(
-      plugins,
-      Arr.findFirst(([, value]) => value.agentConfig === true),
-      Option.map(agentRules(config)),
-    ),
+    builtins: pipe(plugins, Arr.flatMap(builtinRules(config))),
   };
 };
 
