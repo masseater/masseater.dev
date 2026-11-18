@@ -11,6 +11,7 @@ import type { RuleSet, SkillNameOptions } from "#/features/check-documents/lib/p
 import { noShouting } from "#/features/check-documents/lib/shapes.ts";
 import { noSkillNames } from "#/features/check-documents/lib/skill-names.ts";
 
+import { codePathExists } from "./code-path-rules.ts";
 import {
   skillDescriptionPerson,
   skillNoSteps,
@@ -33,6 +34,7 @@ const SKILL: RuleSet = {
     "no-time-sensitive": skillNoTimeSensitive,
     "no-skill-names": noSkillNames,
     "no-shouting": noShouting,
+    "code-paths-exist": codePathExists,
   },
 };
 
@@ -55,6 +57,7 @@ export const skillMd = (options: SkillMdOptions = {}): Y8Config => ({
       rules: {
         ...turned("error")(SKILL),
         ...option("no-skill-names", skillNameOptions(options.skillNames ?? {})),
+        ...option("code-paths-exist", { fromRoot: false }),
         ...whenGiven((headings) => option("purpose-first", { headings }))(options.purpose),
         ...whenGiven((headings) => option("usecases", { headings }))(options.usecases),
       },

@@ -1,5 +1,8 @@
 import { Effect, Option } from "effect";
-import { afterEach, expect, test, vi } from "vite-plus/test";
+import type { DefaultBodyType, StrictRequest } from "msw";
+import { http } from "msw/http";
+import { setupServer } from "msw/node";
+import { afterAll, afterEach, beforeAll, expect, test } from "vite-plus/test";
 
 import { memoryStore } from "#/shared/lib/app-store.test.support.ts";
 import type { MemoryStore } from "#/shared/lib/app-store.test.support.ts";
@@ -42,8 +45,7 @@ const ROUTES: Readonly<Record<string, () => Response>> = {
     }),
 };
 
-const fakeAccess: typeof fetch = (input, init) => {
-  const request = new Request(input, init);
+const fakeAccess = (request: Request): Promise<Response> => {
   const url = new URL(request.url);
   const answer = Option.fromNullishOr(ROUTES[`${request.method} ${url.origin}${url.pathname}`]);
   return Promise.resolve(
@@ -54,8 +56,41 @@ const fakeAccess: typeof fetch = (input, init) => {
   );
 };
 
+const EMPTY = 0;
+
+const workerRequestOf = (request: StrictRequest<DefaultBodyType>, body: ArrayBuffer): Request =>
+  new Request(request.url, {
+    method: request.method,
+    headers: [...request.headers],
+    body: Option.getOrNull(Option.liftPredicate(body, (bytes) => bytes.byteLength > EMPTY)),
+  });
+
+const answering =
+  (answer: (request: Request) => Promise<Response>) =>
+  ({ request }: Readonly<{ request: StrictRequest<DefaultBodyType> }>): Promise<Response> =>
+    Effect.runPromise(
+      Effect.promise(() => request.arrayBuffer()).pipe(
+        Effect.map((body) => workerRequestOf(request, body)),
+        Effect.flatMap((worker) => Effect.promise(() => answer(worker))),
+      ),
+    );
+
+const network = setupServer();
+
+const answeredBy = (answer: (request: Request) => Promise<Response>): void => {
+  network.use(http.all("*", answering(answer)));
+};
+
+beforeAll(() => {
+  network.listen({ onUnhandledFrame: "error" });
+});
+
 afterEach(() => {
-  vi.unstubAllGlobals();
+  network.resetHandlers();
+});
+
+afterAll(() => {
+  network.close();
 });
 
 type Env = MemoryStore["env"];
@@ -71,7 +106,7 @@ const stateOf = (response: Response): string =>
 test("Access から state 付きで戻ったコールバックで、トークンを受け取って保存する", () =>
   Effect.runPromise(
     Effect.gen(function* loginAndReturn() {
-      vi.stubGlobal("fetch", fakeAccess);
+      answeredBy(fakeAccess);
       const { env, rows } = memoryStore();
       const started = yield* route(env, `${BROKER}/access-oauth/login?site=${SITE}`);
       expect(started.status).toBe(FOUND);
@@ -90,7 +125,7 @@ test("Access から state 付きで戻ったコールバックで、トークン
 test("同じ state で 2 回戻ってきたら 2 回目は断る", () =>
   Effect.runPromise(
     Effect.gen(function* replay() {
-      vi.stubGlobal("fetch", fakeAccess);
+      answeredBy(fakeAccess);
       const { env } = memoryStore();
       const started = yield* route(env, `${BROKER}/access-oauth/login?site=${SITE}`);
       const callback = `${BROKER}/access-oauth/callback?code=${CODE}&state=${stateOf(started)}`;
@@ -125,8 +160,7 @@ const TWILOG_ROUTES: Readonly<Record<string, () => Response>> = {
     }),
 };
 
-const fakeTwilog: typeof fetch = (input, init) => {
-  const request = new Request(input, init);
+const fakeTwilog = (request: Request): Promise<Response> => {
   const url = new URL(request.url);
   const answer = Option.fromNullishOr(
     TWILOG_ROUTES[`${request.method} ${url.origin}${url.pathname}`],
@@ -142,7 +176,7 @@ const fakeTwilog: typeof fetch = (input, init) => {
 test("twilog のアカウントは twilog の認可サーバーへ scope と MCP の resource を付けて送る", () =>
   Effect.runPromise(
     Effect.gen(function* twilogLogin() {
-      vi.stubGlobal("fetch", fakeTwilog);
+      answeredBy(fakeTwilog);
       const { env } = memoryStore();
       const login = new URL(`${BROKER}/access-oauth/login`);
       login.searchParams.set("site", TWILOG_SITE);
@@ -164,7 +198,7 @@ test("twilog のアカウントは twilog の認可サーバーへ scope と MCP
 test("twilog のアカウントごとに別のトークンとして保存する", () =>
   Effect.runPromise(
     Effect.gen(function* twilogGrant() {
-      vi.stubGlobal("fetch", fakeTwilog);
+      answeredBy(fakeTwilog);
       const { env, rows } = memoryStore();
       const login = new URL(`${BROKER}/access-oauth/login`);
       login.searchParams.set("site", TWILOG_SITE);

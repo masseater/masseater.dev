@@ -3,11 +3,11 @@ import { Client, InMemoryTransport } from "@modelcontextprotocol/client";
 import type { CallToolResult, ContentBlock, TextContent } from "@modelcontextprotocol/client";
 import { McpServer, createMcpHandler } from "@modelcontextprotocol/server";
 import { Array as Arr, Effect, Option, Schema, String as Str, pipe } from "effect";
-import { afterEach, vi } from "vite-plus/test";
+import { afterAll, afterEach, beforeAll, vi } from "vite-plus/test";
 
 import { PostsJson } from "#/features/search-posts/index.test.support.ts";
 
-import { TOKENS, tokens } from "./search-tools.test.support.ts";
+import { TOKENS, networkAnswering, tokens } from "./search-tools.test.support.ts";
 import { registerTools } from "./tools.ts";
 
 vi.mock("cloudflare:workers", () => import("./search-tools.test.support.ts"));
@@ -75,19 +75,27 @@ const fakeTwilog = (self: string): McpServer => {
   return server;
 };
 
-const upstream: typeof fetch = (input, init) => {
-  const request = new Request(input, init);
+const upstream = (request: Request): Promise<Response> => {
   const self = Option.fromNullishOr(SELF_OF[request.headers.get("authorization") ?? ""]);
   if (!Str.startsWith(TWILOG_MCP)(request.url) || Option.isNone(self)) {
     return Promise.resolve(new Response("Unauthorized", { status: UNAUTHORIZED }));
   }
-  return createMcpHandler(() => fakeTwilog(self.value)).fetch(request);
+  return Promise.resolve(createMcpHandler(() => fakeTwilog(self.value)).fetch(request));
 };
 
+const twilog = networkAnswering(upstream);
+
+beforeAll(() => {
+  twilog.listen({ onUnhandledFrame: "error" });
+});
+
 afterEach(() => {
-  vi.unstubAllGlobals();
   tokens.current = TOKENS;
   received.current = [];
+});
+
+afterAll(() => {
+  twilog.close();
 });
 
 const OptionalString = Schema.optionalKey(Schema.String);
@@ -122,7 +130,6 @@ const callSearch = (
 
 const search = (args: Readonly<Record<string, unknown>>): Effect.Effect<typeof Result.Type> =>
   Effect.gen(function* searched() {
-    vi.stubGlobal("fetch", upstream);
     const [clientSide, serverSide] = InMemoryTransport.createLinkedPair();
     const server = registerTools({ client: "vitest", userAgent: "vitest" });
     const client = new Client({ name: "vitest", version: "0.0.0" });

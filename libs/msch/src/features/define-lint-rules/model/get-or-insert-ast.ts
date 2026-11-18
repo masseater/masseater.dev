@@ -144,8 +144,8 @@ export const typeOf = (node: unknown): string =>
 
 export const parentOf = (node: unknown): Option.Option<unknown> =>
   pipe(
-    Option.liftPredicate(node, Predicate.isObject),
-    Option.flatMap((found) => Option.fromNullishOr(Reflect.get(found, "parent"))),
+    Option.liftPredicate(node, Predicate.hasProperty("parent")),
+    Option.flatMap((found) => Option.fromNullishOr(found.parent)),
   );
 
 const childrenOf = (keys: Keys, node: unknown): readonly unknown[] =>
@@ -156,7 +156,15 @@ const childrenOf = (keys: Keys, node: unknown): readonly unknown[] =>
       onSome: (found) =>
         pipe(
           keys[typeOf(found)] ?? [],
-          Arr.flatMap((key): readonly unknown[] => Arr.ensure(Reflect.get(found, key))),
+          Arr.flatMap((key): readonly unknown[] =>
+            pipe(
+              Option.liftPredicate(found, Predicate.hasProperty(key)),
+              Option.match({
+                onNone: (): readonly unknown[] => [],
+                onSome: (owner) => Arr.ensure(owner[key]),
+              }),
+            ),
+          ),
           Arr.filter(Predicate.isObject),
         ),
     }),

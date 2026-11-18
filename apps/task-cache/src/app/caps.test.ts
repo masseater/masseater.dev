@@ -4,28 +4,29 @@ import { TestClock } from "effect/testing";
 import { afterAll, beforeEach, vi } from "vite-plus/test";
 
 import { sweep } from "#/features/sweep-entries/index.ts";
+import { Limits } from "#/shared/config/index.ts";
 import { closeDatabase, objectCount, resetStores } from "#/shared/lib/cloudflare.test.support.ts";
 
 import { blobResponse, found, lookup, store } from "./routes.test.support.ts";
 
 vi.mock("cloudflare:workers", () => import("#/shared/lib/cloudflare.test.support.ts"));
 
-vi.mock("jose", () => import("#/app/token.test.support.ts"));
+const SMALL_LIMITS = {
+  requestBytes: 4096,
+  inlineValueBytes: 16,
+  responseBytes: 4096,
+  entriesPerKey: 8,
+  storedBytes: 250,
+  retentionDays: 7,
+  uploadsPerDay: 6,
+  objectReadsPerDay: 4,
+  requestsPerMinute: 1200,
+};
 
-vi.mock("#/shared/config/limits.ts", () => ({
-  SECONDS_PER_DAY: 86_400,
-  LIMITS: {
-    requestBytes: 4096,
-    inlineValueBytes: 16,
-    responseBytes: 4096,
-    entriesPerKey: 8,
-    storedBytes: 250,
-    retentionDays: 7,
-    uploadsPerDay: 6,
-    objectReadsPerDay: 4,
-    requestsPerMinute: 1200,
-  },
-}));
+const withSmallLimits = <Success, Failure, Requirements>(
+  effect: Effect.Effect<Success, Failure, Requirements>,
+): Effect.Effect<Success, Failure, Requirements> =>
+  Effect.provideService(effect, Limits, SMALL_LIMITS);
 
 const OK = 200;
 const NOT_FOUND = 404;
@@ -121,15 +122,19 @@ beforeEach(() => Effect.runPromise(resetStores));
 afterAll(() => Effect.runPromise(closeDatabase));
 
 describe("task cache caps", () => {
-  it.effect(
-    "drops the oldest entries once the stored bytes pass the cap",
-    () => dropsTheOldestPastTheStoredBytes,
+  it.effect("drops the oldest entries once the stored bytes pass the cap", () =>
+    withSmallLimits(dropsTheOldestPastTheStoredBytes),
   );
-  it.effect("drops entries older than the retention period", () => dropsEntriesPastRetention);
-  it.effect("refuses uploads beyond the daily cap", () => refusesUploadsPastTheDailyCap);
-  it.effect(
-    "stops reading stored objects beyond the daily cap",
-    () => stopsReadingObjectsPastTheDailyCap,
+  it.effect("drops entries older than the retention period", () =>
+    withSmallLimits(dropsEntriesPastRetention),
   );
-  it.effect("refuses a request body over the size limit", () => refusesAnOversizedBody);
+  it.effect("refuses uploads beyond the daily cap", () =>
+    withSmallLimits(refusesUploadsPastTheDailyCap),
+  );
+  it.effect("stops reading stored objects beyond the daily cap", () =>
+    withSmallLimits(stopsReadingObjectsPastTheDailyCap),
+  );
+  it.effect("refuses a request body over the size limit", () =>
+    withSmallLimits(refusesAnOversizedBody),
+  );
 });

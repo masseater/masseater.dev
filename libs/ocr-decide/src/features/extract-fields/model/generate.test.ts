@@ -98,12 +98,12 @@ test("fails with ImageError instead of throwing when the image is not a PNG", ()
   expect(failureOf(reread(JPEG))).resolves.toBeInstanceOf(ImageError));
 
 test("keeps 16-bit samples in the line it cuts out", () =>
-  expect(Effect.runPromise(reread(DEEP_PNG))).resolves.toEqual([
+  expect(Effect.runPromise(reread(DEEP_PNG))).resolves.toStrictEqual([
     `16 bit, 1 channels, ${samplesOf(DEEP)}`,
   ]));
 
 test("turns palette indexes into colours in the line it cuts out", () =>
-  expect(Effect.runPromise(reread(INDEXED_PNG))).resolves.toEqual([
+  expect(Effect.runPromise(reread(INDEXED_PNG))).resolves.toStrictEqual([
     `8 bit, 3 channels, ${samplesOf([...RED, ...BLUE, ...BLUE, ...RED])}`,
   ]));
 

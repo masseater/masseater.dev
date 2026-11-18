@@ -69,7 +69,7 @@ describe("sync", () => {
       ]);
       expect(pushed.status).toBe(OK);
       const changes = yield* changesAfter(START);
-      expect(fieldOf("id")(changes)).toEqual(["m1", "s1"]);
+      expect(fieldOf("id")(changes)).toStrictEqual(["m1", "s1"]);
       expect(changes.more).toBe(false);
     }),
   );
@@ -79,7 +79,7 @@ describe("sync", () => {
       yield* push([manuscript("newer", LATE)]);
       yield* push([manuscript("older", EARLY)]);
       const changes = yield* changesAfter(START);
-      expect(fieldOf("body")(changes)).toEqual(["newer"]);
+      expect(fieldOf("body")(changes)).toStrictEqual(["newer"]);
     }),
   );
 
@@ -89,7 +89,7 @@ describe("sync", () => {
       const seen = yield* changesAfter(START);
       yield* push([manuscript("second", LATE)]);
       const changes = yield* changesAfter(lastRevision(seen));
-      expect(fieldOf("body")(changes)).toEqual(["second"]);
+      expect(fieldOf("body")(changes)).toStrictEqual(["second"]);
     }),
   );
 
