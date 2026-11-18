@@ -20,7 +20,7 @@
       }
     ],
     "security": {
-      "csp": "default-src 'self'; img-src 'self' data:; media-src 'self' asset: http://asset.localhost; style-src 'self' 'unsafe-inline'; font-src 'self' data:; connect-src 'self' ipc: http://ipc.localhost asset: http://asset.localhost",
+      "csp": "default-src 'self'; img-src 'self' data:; media-src 'self' asset: http://asset.localhost; style-src 'self' 'unsafe-inline'; font-src 'self' data:; connect-src 'self' ipc: http://ipc.localhost otlp: http://otlp.localhost asset: http://asset.localhost",
       "assetProtocol": {
         "enable": true,
         "scope": ["$APPLOCALDATA/library/**"]
