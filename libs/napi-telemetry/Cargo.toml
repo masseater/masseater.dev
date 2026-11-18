@@ -8,12 +8,12 @@ rust-version.workspace = true
 publish = false
 
 [dependencies]
-init-tracing-opentelemetry = { version = "0.44.0", features = ["otlp", "tracing_subscriber_ext"] }
-opentelemetry = "0.33.1"
-opentelemetry_sdk = "0.33.1"
-tracing = "0.1.44"
-tracing-opentelemetry = "0.34.0"
-tracing-subscriber = { version = "0.3.23", features = ["registry"] }
+init-tracing-opentelemetry = { version = "=0.44.0", features = ["otlp", "tracing_subscriber_ext"] }
+opentelemetry = "=0.33.1"
+opentelemetry_sdk = "=0.33.1"
+tracing = "=0.1.44"
+tracing-opentelemetry = "=0.34.0"
+tracing-subscriber = { version = "=0.3.23", features = ["registry"] }
 
 [lints]
 workspace = true

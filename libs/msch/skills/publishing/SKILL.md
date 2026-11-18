@@ -25,6 +25,8 @@ Every release is manual. Nothing publishes on a push to main, and msch reports r
 
 A version that is already on npm or already has a GitHub Release with assets is skipped, so dispatching twice is safe. A version that is published but has no tag, including an older version, gets its tag on the next dispatch, on the commit its npm provenance names. The tag is created with a GitHub token from the credential broker when the broker grants one, because the workflow token cannot tag a commit that changes `.github/workflows`. A package whose `workspace:` dependencies are not on npm at their current versions is refused; publish those first.
 
+In the repository every dependency is an exact version, as the `version-range` check requires. When packing, msch-publish widens each exact version in `dependencies` and `peerDependencies` to a `^` range, so users of the package can share one copy with their other dependencies. `optionalDependencies`, which hold the per-target native packages, stay exact.
+
 ## What the workspace declares
 
 `msch-publish plan <directory>` reads the workspace and decides what to publish.

@@ -1,28 +1,28 @@
 ---
-title: "fallow: 未使用コード・重複・境界違反を 1 つのバイナリで検出する"
-description: "Rust 製の解析ツール fallow で、未使用のファイル・export・依存、重複コード、変更差分だけを判定する audit を実行した結果と、AI エージェントの commit を止める hook。"
+title: "fallow: 未使用コード、重複、および境界違反を単一のバイナリで検出する"
+description: "Rustで書かれた分析ツール「fallow」を実行し、未使用のファイル、エクスポート、依存関係、重複コードを検出した結果と、差分ファイル内の変更のみを判定する監査、およびAIエージェントのコミットを阻止するフックの結果。"
 tags: ["fallow", "TypeScript", "静的解析"]
 published: true
 ---
 
-TypeScript のプロジェクトで、どこからも import されていないファイル、使われていない export、`package.json` に残ったまま import されない依存を探すには、これまで [knip](https://knip.dev/) を使うのが一般的だった。コピペされた関数の検出には [jscpd](https://github.com/kucherenko/jscpd)、CSS の検査には [stylelint](https://stylelint.io/) と、目的ごとに別のツールを並べる必要があった。[fallow](https://fallow.tools/) は、これらの検査を Rust 製の 1 つのバイナリにまとめた解析ツールで、構文解析には [Oxc](https://oxc.rs/) が使われている[^fallow-readme]。Node.js のプロセスを起動しないため、next.js の monorepo（20,558 ファイル）に対する未使用コードの検出は 2.95 秒で完了する[^fallow-readme]。
+TypeScriptのプロジェクトで、どこからもインポートされていないファイルや一度も使用されていないエクスポートを探す一般的な方法は、[knip](https://knip.dev/) を使うことだった。`package.json` に残されているが一度もインポートされていない依存関係も同じだ。用途ごとに別々のツールが必要だった：コピペされた関数を検出する [jscpd](https://github.com/kucherenko/jscpd)、CSSをチェックする [stylelint](https://stylelint.io/) などだ。[fallow](https://fallow.tools/)は、これらのチェックをRustで書かれた単一のバイナリに集約する解析ツールであり、パースには[Oxc](https://oxc.rs/)を使用している[^fallow-readme]。Node.js プロセスを起動しないため、next.js モノレポ（20,558 ファイル）内で未使用のコードを検出する処理は 2.95 秒で完了する[^fallow-readme]。
 
-## 検出できるもの
+## 検出できること
 
-| コマンド                              | 検出対象                                                       |
-| ------------------------------------- | -------------------------------------------------------------- |
-| `fallow dead-code`                    | 未使用のファイル、export、型、クラスと enum のメンバー、依存   |
-| `fallow dupes`                        | JS、TS、CSS、Vue、Svelte、Astro の重複コード                   |
-| `fallow health`                       | 複雑度のホットスポットと 0〜100 の健全性スコア                 |
-| `fallow architecture`、`fallow guard` | レイヤー間の依存の向きの違反と循環依存                         |
-| `fallow security`                     | エントリーポイントから到達可能な順に並べたセキュリティ上の候補 |
-| `fallow audit`                        | 変更したファイルだけを対象にした pass / warn / fail の判定     |
+| コマンド                              | 検出するもの                                                           |
+| ------------------------------------- | ---------------------------------------------------------------------- |
+| `fallow dead-code`                    | 未使用ファイル、エクスポート、型、クラスおよび列挙型のメンバ、依存関係 |
+| `fallow dupes`                        | JS、TS、CSS、Vue、Svelte、Astroにおける重複コード                      |
+| `fallow health`                       | 複雑性のホットスポットと0〜100の健全性スコア                           |
+| `fallow architecture`、`fallow guard` | レイヤー間の依存関係の方向性の違反、および循環依存関係                 |
+| `fallow security`                     | エントリポイントからの到達可能性順のセキュリティ候補                   |
+| `fallow audit`                        | 変更されたファイルのみを対象としたpass、warn、failの判定               |
 
-引数なしで `fallow` を実行すると、dead-code、dupes、複雑度の検査がまとめて走る[^fallow-readme]。
+引数なしで `fallow` を実行すると、デッドコード、重複、および複雑性チェックがまとめて実行される[^fallow-readme]。
 
 ## 実行例
 
-次の構成で試す。エントリーポイントは `index.ts` だけで、`legacy.ts` はどこからも import されていない。`price.ts` には使われていない export があり、`package.json` には import していない lodash が残っている。
+以下の設定で試してみる。唯一のエントリポイントは `index.ts` であり、`legacy.ts` はどこからもインポートされていない。`price.ts` には未使用のエクスポートがあり、`package.json` には依然として lodash が記載されているが、インポートされていない。
 
 ```ts
 import { z } from "zod";
@@ -47,7 +47,7 @@ export type Currency = "JPY" | "USD";
 { "entry": ["src/index.ts"] }
 ```
 
-`npx fallow` の出力のうち、未使用コードの部分を抜き出す。
+`npx fallow` の出力に含まれる未使用のコード部分がこれだ。
 
 ```text
 ● Unused files (1)
@@ -69,22 +69,22 @@ export type Currency = "JPY" | "USD";
 ✗ 1 file · 1 export · 1 type · 1 unused dependency (0.07s)
 ```
 
-ファイル、export、型、依存の 4 種類が、1 回の走査でまとめて報告される。
+ファイル、エクスポート、型、依存関係の4種類が、一度のパスでまとめて報告される。
 
-## 残したいコードには理由を添えて抑制する
+## 残したいコードを、理由を添えて抑制する
 
-来月使う予定の export を消したくない場合は、その行の直前にコメントを置く。
+来月使用する予定のエクスポートを削除したくない場合は、その直前の行にコメントを記載すること。
 
 ```ts
 // fallow-ignore-next-line unused-export -- 来月の USD 対応で使う
 export const formatPriceUsd = (n: number) => `${n.toFixed(2)} USD`;
 ```
 
-次の実行では `1 suppressed` として数えられ、違反からは外れる。抑制の対象だった問題が後に消えると、今度はその抑制コメント自体が `stale suppression` として報告される[^fallow-readme]。効いていない `eslint-disable` が放置されるような状態が起きない。
+次回の実行時には `1 suppressed` としてカウントされ、違反から除外される。後から抑制された問題が消えた場合、抑制コメント自体が `stale suppression`[^fallow-readme] として報告される。もはや何の役にも立たない `eslint-disable` コメントが放置されるような状態にはならない。
 
 ## 重複の検出
 
-同じ計算を 2 ファイルに貼り付け、変数名だけを変えた状態で `fallow dupes` を実行する。
+同じ計算を2つのファイルに貼り付け、変数名だけを変更して `fallow dupes` を実行する。
 
 ```text
 ● Duplicates (1 clone groups)
@@ -96,13 +96,13 @@ export const formatPriceUsd = (n: number) => `${n.toFixed(2)} USD`;
 ⚠ 24 lines (58.5%) duplicated across 2 files (0.01s)
 ```
 
-比較は識別子の名前ではなく構造で行われるため、`Row` を `Line` に、`invoiceTotal` を `quoteTotal` に書き換えた複製も同じクローンとして報告される。
+比較は識別子名ではなく構造に基づいて行われるため、`Row` が `Line` に、`invoiceTotal` が `quoteTotal` に書き換えられたコピーも、同一のクローンとして報告される。
 
-## 変更した箇所だけを判定する audit
+## 変更された部分のみを判定する監査
 
-既存のコードベースには、すでに未使用の export が何百もあることが多い。全部を直すまで CI を赤くし続けるわけにはいかないので、`fallow audit` では base ブランチとの差分で変わったファイルだけが検査対象になり、その変更で新たに持ち込まれた問題だけで合否が決まる[^fallow-readme]。
+既存のコードベースには、多くの場合、すでに数百もの未使用のエクスポートが存在する。すべて修正されるまでCIを赤いままにはしておけないため、`fallow audit`はベースブランチからのdiffで変更されたファイルのみをチェックし、判定はその変更によって新たに生じた問題のみに基づいて行われる[^fallow-readme]。
 
-feature ブランチで `tax.ts` を追加し、そのうち `withTax` だけを使った状態で実行する。
+フィーチャーブランチに `tax.ts` を追加し、そこから `withTax` のみを使用して監査する。
 
 ```text
 $ fallow audit --base main
@@ -116,18 +116,18 @@ Audit scope: 2 changed files vs main (cf92e12..HEAD)
 ✗ dead code: 2 issues · 2 changed files (0.08s)
 ```
 
-main に元からある `legacy.ts` は報告に含まれない。既存の問題も含めて落としたい場合は `--gate all` を付ける[^fallow-readme]。
+mainに既にあった`legacy.ts`はレポートに含まれていない。既存の問題でも失敗させたいなら、`--gate all`[^fallow-readme]を追加する。
 
-## AI エージェントの commit を止める hook
+## AIエージェントのコミットを阻止するフック
 
-`fallow agent install` を実行すると、Claude Code、Codex、Cursor のうち検出されたものに hook が設定される[^fallow-readme]。[Claude Code](https://code.claude.com/docs/) の場合は PreToolUse hook として登録される。エージェントが `git commit` か `git push` を実行しようとした時点で `fallow audit` が走り、verdict が fail ならコマンドの実行が拒否される。エージェントは、自分が追加した未使用 export をその場で直すまで commit できない。
+`fallow agent install` を実行すると、検出された Claude Code、Codex、Cursor のいずれかのフックが設定される[^fallow-readme]。[Claude Code](https://code.claude.com/docs/)では、PreToolUse フックとして登録されている。エージェントが `git commit` や `git push` を実行しようとすると `fallow audit` が実行され、判定が失敗した場合はコマンドが拒否される。エージェントは、追加した未使用のエクスポートをその場で修正するまで、コミットできない。
 
-## 型情報を使った解析
+## 型情報を用いた解析
 
-既定の解析は構文だけで行われる。`--type-aware` を付けると、TypeScript のシンボルの同一性が alias、re-export、パッケージ境界をまたいで追跡され、interface の実装や基底クラスのメンバーが未使用と誤判定されなくなる[^fallow-readme]。
+デフォルトの解析は構文のみに基づいている。`--type-aware` により、TypeScript シンボルの同一性がエイリアス、再エクスポート、パッケージ境界をまたいで追跡されるため、インターフェースの実装や基底クラスのメンバが未使用であると誤判定されることがなくなる[^fallow-readme]。
 
-## knip からの移行
+## knipからの移行
 
-`npx fallow migrate` を実行すると、knip、jscpd、stylelint の既存の設定が読み込まれ、fallow の設定に変換される[^fallow-readme]。
+`npx fallow migrate` を実行すると、既存の knip、jscpd、stylelint の設定が読み込まれ、fallow の設定に変換される[^fallow-readme]。
 
 [^fallow-readme]: fallow README. https://github.com/fallow-rs/fallow
