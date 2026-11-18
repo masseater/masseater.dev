@@ -21,7 +21,7 @@ Effectの診断機能は、TypeScript本体内では一度も動作しなかっ�
 
 ポート作業はAIエージェントを用いて行われた。コミットにはClaude Codeの共同執筆者トレーラーが含まれており、リポジトリにはポート用のエージェントスキルと、ルールワークのコーディング標準を記載した`AGENTS.md`が用意されている。
 
-移植が破綻しないのは、Goコードとの整合性の取り方による：
+移植が破綻しないのは、Goコードとの整合性の取り方による。
 
 - Goのコードが仕様となる。Goのビルドはデフォルトのままとし、Rustのビルドは任意とする。
 - 移植したGoコードを変更するプルリクエストは、同じプルリクエスト内でRustのポートを更新しなければならない。それ以外の場合、`repoctl tsrs port-check` がCIを失敗させる。
@@ -32,28 +32,32 @@ tsrsにはフックがないため、Effectはそれに対して[33件のパッ�
 
 ## その後、どれくらい速く動いたか
 
-- 10月26日：`effect-tsgo tsrs` は `node_modules` に手を加えずに Effect パッチ適用済みの tsrs を実行し、リリースビルドでは tsrs 独自の PGO および BOLT パイプラインを使用する。
-- 11月3日: [#999](https://github.com/Effect-TS/tsgo/pull/999) が、tsgolintのtsrs移植版である `tsrs --lint` に対し、Effect のものを含む Oxlint の型認識ルールを適用した。これにより、未リリースの tsrs ブランチを必要としていた実験 ([#945](https://github.com/Effect-TS/tsgo/pull/945)) が置き換えられた。
-- 11月11日: [#1032](https://github.com/Effect-TS/tsgo/pull/1032) は、ユーザーからの報告から1日後、`--tsrs-lint --type-check` が Effect の提案をエラーとして報告するのを停止した。
+10月26日：`effect-tsgo tsrs` は `node_modules` に手を加えずに Effect パッチ適用済みの tsrs を実行し、リリースビルドでは tsrs 独自の PGO および BOLT パイプラインを使用する。
+
+11月3日: [#999](https://github.com/Effect-TS/tsgo/pull/999) が、tsgolintのtsrs移植版である `tsrs --lint` に対し、Effect のものを含む Oxlint の型認識ルールを適用した。これにより、未リリースの tsrs ブランチを必要としていた実験 ([#945](https://github.com/Effect-TS/tsgo/pull/945)) が置き換えられた。
+
+11月11日: [#1032](https://github.com/Effect-TS/tsgo/pull/1032) は、ユーザーからの報告から1日後、`--tsrs-lint --type-check` が Effect の提案をエラーとして報告するのを停止した。
 
 10月20日から11月17日にかけて、リポジトリには121件のコミットと31件のリリースが寄せられ、1日あたり約1件のペースで更新が行われた。コミットのうち、65件はMattiaによるもので、55件はアップストリームにバンプしてバージョンを公開するボットによるものだった。GoとRustの両方のコードに次々と新しいルールが導入されており、多くの場合、1日に数件のペースで更新されている。
 
 ## 他に誰が関わっているか
 
-これは主に、エージェントや自動化機能を持つメンテナー1名によるものだ。その他、周辺的な役割で貢献している者もいる：
+これは主に、エージェントや自動化機能を持つメンテナー1名によるものだ。その他、周辺的な役割で貢献している者もいる。
 
-- ユーザーが問題を報告し、修正している。あるユーザーは、macOS上でCLIプロキシが64 KiBに達した時点でパイプ経由のtsrs出力を途中で切ってしまう問題を報告した。別のユーザーは、tsrsが直接取り込まないため、条件型とインデックスアクセス型に関するチェッカーの修正をEffectのパッチセットに送った。
-- ユーザーが結果を測定した。#883では、パッチ適用済みのtypescript-goでビルド時間378秒、メモリ7.9GBだったのに対し、tsrsでは92 CPU秒、3.7GBでビルド完了したと報告したユーザーがいた。別のユーザーは、壁時間（wall time）およびCPU・メモリ使用量がTypeScript 7.1の約3分の1だったと報告した。
-- これをベースに構築されたその他のもの：[effect-tsrs](https://github.com/yielded-dev/effect-tsrs)（診断機能をCLIとしてRustに独立して移植したもの）や、Effectでパッチ適用されたtsrsを言語サーバーとして利用する[Zed拡張機能](https://github.com/NoksLabs/effect-tsrs-lsp)などがある。
+ユーザーが問題を報告し、修正している。あるユーザーは、macOS上でCLIプロキシが64 KiBに達した時点でパイプ経由のtsrs出力を途中で切ってしまう問題を報告した。別のユーザーは、tsrsが直接取り込まないため、条件型とインデックスアクセス型に関するチェッカーの修正をEffectのパッチセットに送った。
 
-tsrs側では、VoidZeroのBoshen氏が10月28日に[oxc-project/tsrs#834](https://github.com/oxc-project/tsrs/issues/834)「Support Effect diagnostics」をオープンした。同プロジェクトでは、Effectのtsrsパッチを起点として挙げている。トリアージボットは、TypeScriptとのパリティ外であるとして「対応不可」と判定し、コメントの末尾では2つのチームがDiscordで協議を行う旨が記されている。それ以降、プラグインAPIやアップストリーム化に関する発表は行われていない。
+ユーザーが結果を測定した。#883では、パッチ適用済みのtypescript-goでビルド時間378秒、メモリ7.9GBだったのに対し、tsrsでは92 CPU秒、3.7GBでビルド完了したと報告したユーザーがいた。別のユーザーは、壁時間（wall time）およびCPU・メモリ使用量がTypeScript 7.1の約3分の1だったと報告した。
+
+これをベースに構築されたその他のもの：[effect-tsrs](https://github.com/yielded-dev/effect-tsrs)（診断機能をCLIとしてRustに独立して移植したもの）や、Effectでパッチ適用されたtsrsを言語サーバーとして利用する[Zed拡張機能](https://github.com/NoksLabs/effect-tsrs-lsp)などがある。
+
+tsrs側では、VoidZeroのBoshen氏が10月28日に[oxc-project/tsrs#834](https://github.com/oxc-project/tsrs/issues/834)「Support Effect diagnostics」をオープンした。同プロジェクトでは、Effectのtsrsパッチを起点として挙げている。トリアージボットは、TypeScriptとのパリティ外であるとして「対応不可」と判定し、コメントの末尾では2つのチームがDiscordで協議する旨が記されている。それ以降、プラグインAPIやアップストリーム化に関する発表は行われていない。
 
 ## 私のようなプロジェクトにおけるこれが意味すること
 
 サポートは実在し進みも速いが、変化の速いコンパイラへのパッチに依存しており、それが継ぎ目から滲み出ている。
 
-tsrsは11月12日にTypeScript準拠のバージョンに移行した ([#973](https://github.com/oxc-project/tsrs/pull/973))。npmに最初に公開された `7.1.0-beta.tsrs2` は11月16日に `next` タグ付きで配布されたため、`latest` は依然として `0.25.0-ts7.1.0-beta` を指している。Effectのアップストリームボットは `latest` を辿るため、`@effect/tsgo` は依然として 0.25.0 ビルドのみを配信し、Vite+ 1.7.0 は `tsrs2` をバンドルしている。そのため、masseater.dev は `effect-tsgo --tsrs-lint vp check` を通じてチェックを行い、Vite+ が配信する tsrs ではなく、Effect の 0.25.0 ビルドを使っている。
+tsrsは11月12日にTypeScript準拠のバージョンに移行した ([#973](https://github.com/oxc-project/tsrs/pull/973))。npmで最初に公開された `7.1.0-beta.tsrs2` は11月16日に `next` タグ付きで配布されたため、`latest` は依然として `0.25.0-ts7.1.0-beta` を指している。Effectのアップストリームボットは `latest` を辿るため、`@effect/tsgo` は依然として 0.25.0 ビルドのみを配信し、Vite+ 1.7.0 は `tsrs2` をバンドルしている。そのため、masseater.dev は `effect-tsgo --tsrs-lint vp check` を通じてチェックを行い、Vite+ が配信する tsrs ではなく、Effect の 0.25.0 ビルドを使っている。
 
 これを確認したところ、すべてのEffectの検出結果が2回ずつ報告されていることも分かった。1回は `@effect/language-service` プラグインによる型チェックで、もう1回は `effecttsgo/*` のリントルールによるものだ。Effectの [Oxlintガイド](https://github.com/Effect-TS/tsgo/blob/main/docs/README.md) では、このケースではプラグインの `"diagnostics": false` が推奨されている。現在は masseater.dev でこれが設定されており、私のチェックツールである msch は、これをオンのままにしている tsconfig を報告している。
 
-リポジトリ全体のチェック時間は、tsgolintでは193〜212秒かかっていたが、Effectルールを含めるとtsrsでは約70秒になった。当面は、プラグインAPIを待つよりも、1人のメンテナーと厳格なパリティポリシーに頼る方がいいと考えており、ルールがtsrs本体に移る日に向けて#834を追うつもりだ。
+リポジトリ全体のチェック時間は、tsgolintでは193〜212秒かかっていたが、Effectルールを含めるとtsrsでは約70秒になった。当面は、プラグインAPIを待つよりも、1人のメンテナーと厳格なパリティポリシーに頼る方がいいと考えており、ルールがtsrs本体へ移る日に向けて#834を追うつもりだ。
