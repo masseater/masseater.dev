@@ -4,8 +4,17 @@ import { markdownPathspecs, y8Section } from "./section.ts";
 
 describe("y8Section", () => {
   test("reads the y8 key of the Vite config", () => {
-    const y8 = { ignores: ["vendor/**"] };
-    expect(y8Section({ y8, test: {} })).toBe(y8);
+    expect(y8Section({ y8: { ignores: ["vendor/**"] }, test: {} })).toStrictEqual({
+      plugins: {},
+      rules: {},
+      ignores: ["vendor/**"],
+      overrides: [],
+    });
+  });
+
+  test("takes the ignores of the configs the section extends", () => {
+    const y8 = { extends: [{ ignores: ["vendor/**"] }], ignores: ["**/CHANGELOG.md"] };
+    expect(y8Section({ y8 }).ignores).toStrictEqual(["vendor/**", "**/CHANGELOG.md"]);
   });
 
   test.each([[true], [{}], [{ y8: "on" }], ["y8"]])(
