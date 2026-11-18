@@ -67,6 +67,7 @@ impl Library {
             primary: String::new(),
             sources: Vec::new(),
             separations: Vec::new(),
+            analysis: None,
         };
         std::fs::create_dir_all(self.folder(&song.id))?;
         Ok(song)
