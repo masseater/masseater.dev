@@ -5,7 +5,7 @@ mod shared;
 
 pub use app::{Shell, builder};
 pub use entities::access_token::token as mcp_token;
-pub use features::record_telemetry::telemetry_plugin;
+pub use features::record_telemetry::{telemetry_plugin, traced_commands};
 pub use features::serve_screen::{Setup, open_window, screen_port, served};
 pub use features::serve_tools::{
     MCP_PATH, router as mcp_router, serve as serve_mcp, serve_on as serve_mcp_on, url as mcp_url,

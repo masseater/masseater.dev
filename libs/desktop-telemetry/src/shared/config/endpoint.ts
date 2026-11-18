@@ -1,11 +1,12 @@
 import { convertFileSrc } from "@tauri-apps/api/core";
 
-const SCHEME = "otlp";
-
 export type Signal = "traces" | "logs";
 
-const base = (): string => convertFileSrc("", SCHEME);
+const origin = (scheme: string): RegExp =>
+  new RegExp(`^${RegExp.escape(convertFileSrc("", scheme))}`, "u");
 
-export const endpointOf = (signal: Signal): string => `${base()}v1/${signal}`;
+export const endpointOf = (signal: Signal): string => `${convertFileSrc("", "otlp")}v1/${signal}`;
 
-export const endpointPattern = (): RegExp => new RegExp(`^${RegExp.escape(base())}`, "u");
+export const telemetryUrls = (): RegExp => origin("otlp");
+
+export const commandUrls = (): RegExp => origin("ipc");

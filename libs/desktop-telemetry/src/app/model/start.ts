@@ -11,7 +11,7 @@ import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
 import { BatchLogRecordProcessor } from "@opentelemetry/sdk-logs";
 import { BatchSpanProcessor } from "@opentelemetry/sdk-trace";
 
-import { endpointOf, endpointPattern } from "#/shared/config/index.ts";
+import { commandUrls, endpointOf, telemetryUrls } from "#/shared/config/index.ts";
 
 export type ScreenTelemetry = ReturnType<typeof startBrowserSdk>;
 
@@ -32,7 +32,10 @@ export const startScreenTelemetry = (serviceName: string): ScreenTelemetry =>
       new DocumentLoadInstrumentation(),
       new NavigationInstrumentation({ useNavigationApiIfAvailable: true }),
       new UserActionInstrumentation(),
-      new FetchInstrumentation({ ignoreUrls: [endpointPattern()] }),
+      new FetchInstrumentation({
+        ignoreUrls: [telemetryUrls()],
+        propagateTraceHeaderCorsUrls: [commandUrls()],
+      }),
       new WebVitalsInstrumentation(),
       new LongAnimationFrameInstrumentation(),
       new ErrorsInstrumentation(),

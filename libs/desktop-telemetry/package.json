@@ -11,6 +11,7 @@
     ".": "./src/app/index.ts"
   },
   "dependencies": {
+    "@effect/opentelemetry": "catalog:",
     "@opentelemetry/api": "catalog:",
     "@opentelemetry/browser-instrumentation": "catalog:",
     "@opentelemetry/browser-sdk": "catalog:",
@@ -18,7 +19,8 @@
     "@opentelemetry/exporter-trace-otlp-http": "catalog:",
     "@opentelemetry/sdk-logs": "catalog:",
     "@opentelemetry/sdk-trace": "catalog:",
-    "@tauri-apps/api": "catalog:"
+    "@tauri-apps/api": "catalog:",
+    "effect": "catalog:stack"
   },
   "devDependencies": {
     "vite-plus": "catalog:stack"

@@ -266,6 +266,9 @@ catalogs:
     '@effect/ai-openrouter':
       specifier: 4.1.4
       version: 4.1.4
+    '@effect/opentelemetry':
+      specifier: 4.1.4
+      version: 4.1.4
     '@effect/platform-node':
       specifier: 4.1.4
       version: 4.1.4
@@ -3563,6 +3566,9 @@ importers:
 
   libs/desktop-telemetry:
     dependencies:
+      '@effect/opentelemetry':
+        specifier: 'catalog:'
+        version: 4.1.4(@opentelemetry/api@1.10.0)(@opentelemetry/sdk-logs@3.1.1(@opentelemetry/api@1.10.0))(@opentelemetry/semantic-conventions@1.45.0)(effect@4.1.4)
       '@opentelemetry/api':
         specifier: 'catalog:'
         version: 1.10.0
@@ -3587,6 +3593,9 @@ importers:
       '@tauri-apps/api':
         specifier: 'catalog:'
         version: 2.12.4
+      effect:
+        specifier: catalog:stack
+        version: 4.1.4
     devDependencies:
       vite-plus:
         specifier: catalog:stack
@@ -6837,6 +6846,38 @@ packages:
       effect: ^4.1.4
       react: '>=19.0.0 <20.0.0'
       scheduler: '>=0.25.0 <0.29.0'
+
+  '@effect/opentelemetry@4.1.4':
+    resolution: {integrity: sha512-VJnookNrIWk0ZHl51DYMTRHXZrogR13kSSOJzcDxGhyUNDHvgWg217OY4R6bOrtdgM3mrPQiLRGNZ0a7bGyAJg==}
+    engines: {node: '>=22.19.0'}
+    peerDependencies:
+      '@opentelemetry/api': '>=1.9.0 <2.0.0'
+      '@opentelemetry/api-logs': '>=0.203.0 <0.300.0'
+      '@opentelemetry/resources': '>=2.0.0 <3.0.0'
+      '@opentelemetry/sdk-logs': '>=0.203.0 <0.300.0'
+      '@opentelemetry/sdk-metrics': '>=2.0.0 <3.0.0'
+      '@opentelemetry/sdk-trace-base': '>=2.0.0 <3.0.0'
+      '@opentelemetry/sdk-trace-node': '>=2.0.0 <3.0.0'
+      '@opentelemetry/sdk-trace-web': '>=2.0.0 <3.0.0'
+      '@opentelemetry/semantic-conventions': '>=1.33.0 <2.0.0'
+      effect: ^4.1.4
+    peerDependenciesMeta:
+      '@opentelemetry/api':
+        optional: true
+      '@opentelemetry/api-logs':
+        optional: true
+      '@opentelemetry/resources':
+        optional: true
+      '@opentelemetry/sdk-logs':
+        optional: true
+      '@opentelemetry/sdk-metrics':
+        optional: true
+      '@opentelemetry/sdk-trace-base':
+        optional: true
+      '@opentelemetry/sdk-trace-node':
+        optional: true
+      '@opentelemetry/sdk-trace-web':
+        optional: true
 
   '@effect/platform-node-shared@4.1.4':
     resolution: {integrity: sha512-DWdfphHGOFJNj/mYadgpT3jIm8aRXDcPrQiGXFBH4p2H4XmA7iYMrPsI8NxVgZ7kNX0q1+FGJZJama0tINHRAg==}
@@ -19426,6 +19467,14 @@ snapshots:
       effect: 4.1.4
       react: 19.3.1
       scheduler: 0.28.0
+
+  '@effect/opentelemetry@4.1.4(@opentelemetry/api@1.10.0)(@opentelemetry/sdk-logs@3.1.1(@opentelemetry/api@1.10.0))(@opentelemetry/semantic-conventions@1.45.0)(effect@4.1.4)':
+    dependencies:
+      '@opentelemetry/semantic-conventions': 1.45.0
+      effect: 4.1.4
+    optionalDependencies:
+      '@opentelemetry/api': 1.10.0
+      '@opentelemetry/sdk-logs': 3.1.1(@opentelemetry/api@1.10.0)
 
   '@effect/platform-node-shared@4.1.4(effect@4.1.4)':
     dependencies:

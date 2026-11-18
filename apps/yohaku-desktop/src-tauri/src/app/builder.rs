@@ -116,7 +116,7 @@ pub fn run() -> tauri::Result<()> {
     .plugin(tauri_plugin_opener::init())
     .plugin(tauri_plugin_dialog::init())
     .plugin(tauri_plugin_updater::Builder::new().build())
-    .invoke_handler(builder.invoke_handler())
+    .invoke_handler(desktop_shell::traced_commands(builder.invoke_handler()))
     .on_window_event(|window, event| {
         if window.label() != MAIN_WINDOW {
             return;

@@ -13,12 +13,11 @@ import type {
   SourceKind,
   Status,
 } from "@masseater.dev/aredoko-protocol";
-import { endpointOf } from "@masseater.dev/desktop-telemetry";
+import { screenTracer } from "@masseater.dev/desktop-telemetry";
 import { convertFileSrc } from "@tauri-apps/api/core";
 import { appLocalDataDir, join } from "@tauri-apps/api/path";
 import { Array, Duration, Effect, Layer, ManagedRuntime, Option, Schema, pipe } from "effect";
 import { FetchHttpClient, HttpClient } from "effect/http";
-import { OtlpSerialization, OtlpTracer } from "effect/observability";
 
 import { ServerError } from "./server-error.ts";
 
@@ -50,18 +49,10 @@ const serverUrlLayer = Layer.effect(
   }),
 );
 
-const SERVICE_NAME = "aredoko-desktop-screen";
-
-const tracingLayer = Layer.unwrap(
-  Effect.sync(() =>
-    OtlpTracer.layer({ url: endpointOf("traces"), resource: { serviceName: SERVICE_NAME } }),
-  ),
-).pipe(Layer.provide(OtlpSerialization.layerJson));
-
 const clientLayer = aredokoClientLayer.pipe(Layer.provide(serverUrlLayer));
 
 const runtime = ManagedRuntime.make(
-  Layer.mergeAll(clientLayer, tracingLayer).pipe(Layer.provide(FetchHttpClient.layer)),
+  Layer.mergeAll(clientLayer, screenTracer).pipe(Layer.provide(FetchHttpClient.layer)),
 );
 
 const run = <Value>(

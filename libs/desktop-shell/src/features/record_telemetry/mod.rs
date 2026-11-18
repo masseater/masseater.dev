@@ -1,4 +1,5 @@
 mod appender;
+mod invoke;
 
 use std::borrow::Cow;
 use std::error::Error;
@@ -16,6 +17,7 @@ use tracing_subscriber::filter::{LevelFilter, Targets};
 use tracing_subscriber::layer::SubscriberExt;
 
 use appender::Appender;
+pub use invoke::traced_commands;
 
 const FOLDER: &str = "telemetry";
 const SCHEME: &str = "otlp";
