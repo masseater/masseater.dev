@@ -61,7 +61,10 @@ mod tests {
 
     #[test]
     fn names_only_known_languages() {
-        assert_eq!(ScriptLanguage::from_name("bash"), Some(ScriptLanguage::Bash));
+        assert_eq!(
+            ScriptLanguage::from_name("bash"),
+            Some(ScriptLanguage::Bash)
+        );
         assert_eq!(ScriptLanguage::from_name("sh"), None);
     }
 }

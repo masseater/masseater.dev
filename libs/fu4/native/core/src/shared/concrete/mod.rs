@@ -21,17 +21,10 @@ fn flags(node: Node<'_>) -> u32 {
     flags
 }
 
-fn encode(
-    buffer: &mut Buffer,
-    cursor: &mut TreeCursor<'_>,
-    offsets: &[u32],
-    parent: u32,
-) -> u32 {
+fn encode(buffer: &mut Buffer, cursor: &mut TreeCursor<'_>, offsets: &[u32], parent: u32) -> u32 {
     let node = cursor.node();
     let kind = buffer.string(node.kind());
-    let field = cursor
-        .field_name()
-        .map_or(NONE, |name| buffer.string(name));
+    let field = cursor.field_name().map_or(NONE, |name| buffer.string(name));
     let id = buffer.concrete(ConcreteRecord {
         kind,
         flags: flags(node),

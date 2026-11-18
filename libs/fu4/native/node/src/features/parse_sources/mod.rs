@@ -27,7 +27,9 @@ pub fn parse_paths(
     let encoded = paths
         .into_par_iter()
         .map(|path| {
-            let _file = info_span!(parent: &parent, "fu4.parse_file", "code.file.path" = path.as_str()).entered();
+            let _file =
+                info_span!(parent: &parent, "fu4.parse_file", "code.file.path" = path.as_str())
+                    .entered();
             match std::fs::read_to_string(base.join(&path)) {
                 Ok(text) => Ok(Some((path, encode_document(&text)))),
                 Err(error) if error.kind() == std::io::ErrorKind::NotFound => Ok(None),
@@ -52,9 +54,8 @@ pub fn parse_text(text: String) -> Buffer {
 
 #[napi]
 pub fn parse_script(language: String, text: String) -> Result<Buffer> {
-    let language = ScriptLanguage::from_name(&language).ok_or_else(|| {
-        napi::Error::from_reason(format!("fu4 cannot parse {language} scripts"))
-    })?;
+    let language = ScriptLanguage::from_name(&language)
+        .ok_or_else(|| napi::Error::from_reason(format!("fu4 cannot parse {language} scripts")))?;
     Ok(encode_script(language, &text).into())
 }
 

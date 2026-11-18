@@ -37,7 +37,11 @@ impl Semantic<'_> {
         if let Some(id) = self.seen.get(&key) {
             return *id;
         }
-        let ids: Vec<u32> = node.content.iter().map(|child| self.encode(child)).collect();
+        let ids: Vec<u32> = node
+            .content
+            .iter()
+            .map(|child| self.encode(child))
+            .collect();
         let tag = self.buffer.string(&node.tag);
         let value = self.buffer.string(&node.value);
         let children = self.buffer.children(&ids);
