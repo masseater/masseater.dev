@@ -2,7 +2,7 @@
   "name": "@masseater.dev/song-format",
   "version": "0.0.0",
   "private": true,
-  "description": "The .fumx song format: TypeScript imports, language server, analysis, MIDI conversion and the song-report command.",
+  "description": "The .fumx song format: TypeScript imports, language server, MIDI conversion and the song-report command.",
   "bin": {
     "fumx-language-server": "./bin/fumx-language-server.ts",
     "midi-to-fumx": "./bin/midi-to-fumx.ts",
@@ -13,7 +13,6 @@
     "#/*": "./src/*"
   },
   "exports": {
-    "./analysis": "./src/features/analyze-song/index.ts",
     "./convert-midi": "./src/features/convert-midi/index.ts",
     "./vite": "./src/app/vite.ts"
   },

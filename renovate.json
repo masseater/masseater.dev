@@ -42,7 +42,7 @@
       "enabled": false
     },
     {
-      "description": "fixtures/ はテストが記録と突き合わせる入力である。中の action の版を上げると記録と食い違ってテストが落ちる (#1405, #1406)。更新しない。",
+      "description": "テストの fixtures は外部ツールの出力と突き合わせる写しで、版を上げると記録した結果と食い違う (#1399, #1401, #1405, #1406)。更新しない。",
       "matchFileNames": ["**/fixtures/**"],
       "enabled": false
     },
