@@ -38,6 +38,7 @@ jobs:
     permissions:
       contents: read
       id-token: write
+      issues: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -54,11 +55,13 @@ jobs:
         env:
           TASK: ${{ inputs.task }}
           SETTINGS: ${{ inputs.settings }}
+          ACTIONS_TOKEN: ${{ github.token }}
       - if: inputs.credentials == 'root'
         run: env -S "$SETTINGS" vp run -r "$TASK"
         env:
           TASK: ${{ inputs.task }}
           SETTINGS: ${{ inputs.settings }}
+          ACTIONS_TOKEN: ${{ github.token }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
