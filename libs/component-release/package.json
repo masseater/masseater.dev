@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "bin": {
-    "bundle-collect": "./bin/bundle-collect.ts"
+    "bundle-collect": "./bin/bundle-collect.ts",
+    "with-cuda": "./bin/with-cuda.ts"
   },
   "type": "module",
   "imports": {

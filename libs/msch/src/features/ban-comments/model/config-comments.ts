@@ -1,67 +1,28 @@
 import { DockerfileParser } from "dockerfile-ast";
-import { Array as Arr, Effect, Number as Num, Record as Rec, String as Str, pipe } from "effect";
+import { Array as Arr, Effect, Number as Num, String as Str, pipe } from "effect";
 import { parse as parseSql } from "sql-parser-cst";
-import { parseTOML } from "toml-eslint-parser";
-import { Parser as YamlParser } from "yaml";
+
+import {
+  collectNodes,
+  isRecord,
+  tomlSourceComments,
+  yamlSourceComments,
+} from "#/shared/lib/config-comments.ts";
 
 import { trimmed, unreadable } from "./found-comment.ts";
 import type { Found } from "./found-comment.ts";
 
 const NEXT = 1;
 
-const isRecord = (value: unknown): value is Readonly<Record<string, unknown>> =>
-  typeof value === "object" && value !== null;
-
-const childrenOf = (value: unknown): readonly unknown[] => {
-  if (Arr.isArray(value)) {
-    return value;
-  }
-  if (isRecord(value)) {
-    return Rec.values(value);
-  }
-  return [];
-};
-
-const collect =
-  <Item>(isItem: (value: unknown) => value is Item) =>
-  (value: unknown): readonly Item[] => {
-    if (isItem(value)) {
-      return [value];
-    }
-    return pipe(childrenOf(value), Arr.flatMap(collect(isItem)));
-  };
-
-interface YamlSourceToken {
-  readonly offset: number;
-  readonly source: string;
-}
-
-const isYamlComment = (value: unknown): value is YamlSourceToken =>
-  isRecord(value) &&
-  value["type"] === "comment" &&
-  typeof value["offset"] === "number" &&
-  typeof value["source"] === "string";
-
 export const yamlComments = (source: string): Found =>
   Effect.try({
-    try: () =>
-      pipe(
-        Arr.fromIterable(new YamlParser().parse(source)),
-        Arr.flatMap(collect(isYamlComment)),
-        Arr.map((token) => trimmed({ index: token.offset, text: token.source })),
-      ),
+    try: () => pipe(yamlSourceComments(source), Arr.map(trimmed)),
     catch: unreadable("yaml"),
   });
 
 export const tomlComments = (source: string): Found =>
   Effect.try({
-    try: () =>
-      pipe(
-        parseTOML(source).comments,
-        Arr.map(({ range: [start, end] }) =>
-          trimmed({ index: start, text: Str.slice(start, end)(source) }),
-        ),
-      ),
+    try: () => pipe(tomlSourceComments(source), Arr.map(trimmed)),
     catch: unreadable("toml"),
   });
 
@@ -86,7 +47,7 @@ export const sqlComments = (source: string): Found =>
         paramTypes: [],
       });
       return pipe(
-        collect(isSqlComment)(program),
+        collectNodes(isSqlComment)(program),
         Arr.map(({ range: [start], text }) => trimmed({ index: start, text })),
       );
     },
