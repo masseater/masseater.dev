@@ -32,8 +32,13 @@ export const JOB_STATES: Readonly<Record<JobState, string>> = {
   failed: "失敗",
 };
 
+export const JOB_FAILURES: Readonly<Record<string, string>> = {
+  "driver too old": "NVIDIA ドライバを更新",
+};
+
 export const JOB_STAGES: Readonly<Record<string, string>> = {
   downloading: "取得中",
+  "preparing gpu": "GPU を準備中",
   "loading model": "モデルを準備中",
   decoding: "読み込み中",
   separating: "分離中",
