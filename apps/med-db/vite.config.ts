@@ -37,6 +37,13 @@ export default defineConfig(({ mode }) => ({
       ...alchemyTasks,
       "deploy:production": deployTo("production"),
       verify: { command: [], dependsOn: ["auth:check"] },
+      "destroy-legacy": {
+        command: [
+          "alchemy deploy --config alchemy.legacy.ts --stage production --yes",
+          "alchemy destroy --config alchemy.legacy.ts --stage production --yes",
+        ],
+        cache: false,
+      },
       ...d1Tasks,
       "auth:generate":
         "auth generate --config auth.config.ts --output src/shared/auth/generated/auth.table.ts --yes",
