@@ -1,6 +1,6 @@
 import { fileURLToPath } from "node:url";
 
-import { Record as Rec, pipe } from "effect";
+import { Option, Record as Rec, pipe } from "effect";
 import type { UserConfig } from "vite-plus";
 import type { OxlintOverride } from "vite-plus/lint";
 
@@ -25,8 +25,26 @@ export interface RepositoryOptions {
   readonly secrets?: SecretOptions;
   readonly textlint?: TextOptions;
   readonly markdown?: MarkdownOptions;
-  readonly run?: { readonly tasks?: Readonly<Record<string, string>> };
+  readonly run?: {
+    readonly tasks?: Readonly<Record<string, string>>;
+    readonly remoteCache?: string;
+  };
 }
+
+interface SharedCache {
+  readonly scripts: true;
+  readonly tasks: true;
+  readonly remote: { readonly url: string };
+}
+
+const cacheOf = (remoteCache: string | undefined): SharedCache | true =>
+  pipe(
+    Option.fromNullishOr(remoteCache),
+    Option.match({
+      onNone: (): SharedCache | true => true,
+      onSome: (url) => ({ scripts: true, tasks: true, remote: { url } }),
+    }),
+  );
 
 const COMMIT_CONVENTION = fileURLToPath(import.meta.resolve("@commitlint/config-conventional"));
 
@@ -86,6 +104,9 @@ export const repositoryConfig = (options: RepositoryOptions): UserConfig => {
       sortPackageJson: true,
     },
     lint: lintOf(options),
-    run: { cache: true, tasks: tasksOf({ workspace, commands: run.tasks ?? {} }) },
+    run: {
+      cache: cacheOf(run.remoteCache),
+      tasks: tasksOf({ workspace, commands: run.tasks ?? {} }),
+    },
   };
 };
