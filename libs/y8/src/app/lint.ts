@@ -3,7 +3,7 @@ import { Array as Arr, Effect, Match, Option, pipe } from "effect";
 
 import { BUILTIN, groupByOverrides, resolve, unknownPlugins } from "#/entities/rule/index.ts";
 import type { FileGroup, Resolved } from "#/entities/rule/index.ts";
-import { agentDiagnosticsOf } from "#/features/map-agent-diagnostics/index.ts";
+import { pluginDiagnosticsOf } from "#/features/map-plugin-diagnostics/index.ts";
 import { readProject } from "#/features/read-project/index.ts";
 import { runCompatRules } from "#/features/run-compat-rules/index.ts";
 import { runScriptRules } from "#/features/run-rules/index.ts";
@@ -64,7 +64,8 @@ const nativeOptions = (
       keepTree: Arr.isReadonlyArrayNonEmpty(resolved.scripts),
       keepSource: needsText(resolved),
       ...present(parent, (value) => ({ traceparent: value })),
-      ...present(resolved.agent, ({ disabled }) => ({ agnix: { root, disabled } })),
+      root,
+      plugins: resolved.builtins,
     })),
   );
 
@@ -136,11 +137,8 @@ const lintGroup = (
         attributes: { "y8.files": results.length, "y8.rules": resolved.scripts.length },
       }),
     );
-    const agent = Option.match(resolved.agent, {
-      onNone: (): readonly Diagnostic[] => [],
-      onSome: (rules) => pipe(results, Arr.flatMap(agentDiagnosticsOf(rules))),
-    });
-    return [...builtin, ...scripted, ...compat, ...agent];
+    const plugins = pipe(results, Arr.flatMap(pluginDiagnosticsOf));
+    return [...builtin, ...scripted, ...compat, ...plugins];
   });
 
 export const lint = Effect.fn("y8.lint")(function* lint(input: LintInput) {
