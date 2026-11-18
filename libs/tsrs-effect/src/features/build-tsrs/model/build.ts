@@ -46,9 +46,6 @@ const checkOut = Effect.fn("checkOut")(function* checkOut(
   checkout: Checkout,
   upstream: UpstreamPins,
 ) {
-  const fileSystem = yield* FileSystem.FileSystem;
-  yield* fileSystem.remove(checkout.work, { recursive: true, force: true });
-  yield* fileSystem.makeDirectory(checkout.work, { recursive: true });
   yield* clone(EFFECT_REPOSITORY, upstream.effect, checkout.effect);
   yield* clone(TSRS_REPOSITORY, upstream.tsrs, checkout.tsrs);
 });
@@ -138,12 +135,10 @@ const pack = Effect.fn("pack")(function* pack({
   });
 });
 
-const checkoutFor = Effect.fn("checkoutFor")(function* checkoutFor(
-  directory: string,
-  target: string,
-) {
+const checkoutFor = Effect.fn("checkoutFor")(function* checkoutFor(directory: string) {
+  const fileSystem = yield* FileSystem.FileSystem;
   const path = yield* Path.Path;
-  const work = path.join(directory, "target", target);
+  const work = yield* fileSystem.makeTempDirectory({ prefix: "tsrs-effect-" });
   const effect = path.join(work, "tsgo");
   return { directory, work, effect, tsrs: path.join(effect, BINARY) } satisfies Checkout;
 });
@@ -160,7 +155,7 @@ export const buildPackage = Effect.fn("buildPackage")(function* buildPackage({
       UnsupportedPlatform.make({ message: `no target for ${platform}-${arch}` }),
     ),
   );
-  const checkout = yield* checkoutFor(directory, target);
+  const checkout = yield* checkoutFor(directory);
   yield* checkOut(checkout, manifest.upstream);
   yield* applyPatches(checkout, manifest.upstream);
   const built = yield* compile(checkout);
