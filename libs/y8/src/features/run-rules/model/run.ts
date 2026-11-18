@@ -1,7 +1,6 @@
-import { present } from "@masseater.dev/lint-host";
+import { present, reportedSeverity } from "@masseater.dev/lint-host";
 import { Array as Arr, Option, String as Str, pipe } from "effect";
 
-import { reportedSeverity } from "#/entities/rule/index.ts";
 import type { ScriptRule } from "#/entities/rule/index.ts";
 import type { Diagnostic, MarkdownNode, Project, Report, Visitors } from "#/shared/config/index.ts";
 import type { SourceView } from "#/shared/native/index.ts";
