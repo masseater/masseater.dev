@@ -5,7 +5,7 @@ tags: ["Cloudflare", "Workers AI", "コスト"]
 published: true
 ---
 
-2026年11月15日および2026年11月16日、CloudflareはWorkers Paidプランに加えて従量課金制の利用分を請求した。Workers AI（Regular Twitch Neurons）とContainersは、いずれもプランに含まれる範囲を超えた。以下は、請求対象利用APIおよびGraphQL Analyticsによる数値と、変更された内容である。
+2026年11月15日および2026年11月16日、CloudflareはWorkers Paidプランに加えて従量課金制の利用分を請求した。Workers AI（Regular Twitch Neurons）とContainersは、いずれもプランに含まれる範囲を超えた。以下は、請求対象利用APIとGraphQL Analyticsによる数値と、変更された内容である。
 
 ## 請求額
 
@@ -34,13 +34,13 @@ Workers AIは1日あたり1万個のニューロンを含み、それを超え�
 
 Containersの使用量は、plamo-jaプラグインが使用していた翻訳サーバーのplamo-translateによるものだ。このサーバーは4 GiBを割り当てる`standard-1`インスタンスタイプで動作し、1時間ごとに約10分間起動していた。
 
-コンテナのメモリは月間25 GiB-hoursまで含まれ、それを超える分は1 GiB-secondあたり0.0000025ドルとなる[^containers-pricing]。月間の割り当て量は11月15日に上限に達した。それ以降は、使用される1分ごとに課金された。最大メモリ使用量は約1.15 GiBであり、必要量の約3倍のメモリを保持していた。
+コンテナのメモリは月間25 GiB-hoursまで含まれ、それを超える分は1 GiB-secondあたり0.0000025ドルとなる[^containers-pricing]。月間の割り当て量は11月15日で上限に達した。それ以降は、使用される1分ごとに課金された。最大メモリ使用量は約1.15 GiBであり、必要量の約3倍のメモリを保持していた。
 
 コンテナに支出上限はない。spend-policies APIが対象とするのは`workers`と`durable_objects`のみである。コストを抑える唯一の方法は、実行頻度を下げるか、メモリ使用量を減らすか、あるいは削除することだった。
 
 ## ホスト型翻訳の削除
 
-計画では、4 GiBから2 GiBに縮小することになっていた。その後、masseaterは、ClaudeのクラウドセッションVM内で動作するモデルは、MCPツールとして提供する必要はないと指摘した。
+計画では、4 GiBから2 GiBに縮小する予定だった。その後、masseaterは、ClaudeのクラウドセッションVM内で動作するモデルは、MCPツールとして提供する必要はないと指摘した。
 
 :::masseater
 まあplamo翻訳はツール自体削除かもなあこれ。どうせclaudeのクラウド環境のvmでも動くくらいだから、mcpとして提供する必要はないかも
@@ -53,7 +53,7 @@ Containersの使用量は、plamo-jaプラグインが使用していた翻訳�
 | 文書の翻訳                                 | MCPポータルの `sundries_translate` | plamo-ja がすでにセッション内で実行している `llama-server` を使用した plamo-ja の `translate` スキル |
 | watashi-mcp のトレイトとプロファイルの翻訳 | plamo-translateコンテナ            | AIゲートウェイ `default` 経由の `@cf/google/gemma-4-26b-a4b-it`                                      |
 
-コードは [masseater.dev#1292](https://github.com/masseater/masseater.dev/pull/1292) で削除された。ただし、コードを削除しても本番環境のリソースは削除されない。Worker、コンテナアプリケーション、Durable Object 名前空間、カスタムドメイン、および Access アプリケーションは Alchemy の state に残る。MCP ポータル上の Cloudflare トークンは読み取り専用であるため、API で直接削除することはできなかった。一度限りの手順として、sundries のデプロイに古いスタックの `alchemy destroy` が追加され（[masseater.dev#1317](https://github.com/masseater/masseater.dev/pull/1317)）、次の PR でその手順が再び削除された。
+コードは [masseater.dev#1292](https://github.com/masseater/masseater.dev/pull/1292) で削除された。ただし、コードを削除しても本番環境のリソースは削除されない。Worker、コンテナアプリケーション、Durable Object 名前空間、カスタムドメイン、および Access アプリケーションは Alchemy の state に残る。MCP ポータル上の Cloudflare トークンは読み取り専用であるため、API で直接削除できなかった。一度限りの手順として、sundries のデプロイに古いスタックの `alchemy destroy` が追加され（[masseater.dev#1317](https://github.com/masseater/masseater.dev/pull/1317)）、次の PR でその手順が再び削除された。
 
 ## 変更後のチェック
 
