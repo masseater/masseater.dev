@@ -3704,6 +3704,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 26.6.6
+      betterleaks:
+        specifier: github:betterleaks/betterleaks#e07e69ba6a441313529b3e72be43ffdcc62bdf86
+        version: git+https://github.com/betterleaks/betterleaks.git#e07e69ba6a441313529b3e72be43ffdcc62bdf86
       effect:
         specifier: catalog:stack
         version: 4.1.4
@@ -12672,6 +12675,10 @@ packages:
     peerDependenciesMeta:
       zod:
         optional: true
+
+  betterleaks@git+https://github.com/betterleaks/betterleaks.git#e07e69ba6a441313529b3e72be43ffdcc62bdf86:
+    resolution: {commit: e07e69ba6a441313529b3e72be43ffdcc62bdf86, repo: https://github.com/betterleaks/betterleaks.git, type: git}
+    version: 0.0.0
 
   bignumber.js@9.3.1:
     resolution: {integrity: sha512-Ko0uX15oIUS7wJ3Rb30Fs6SkVbLmPBAKdlm7q9+ak9bbIeFf0MwuBsQV6z7+X768/cHsfg+WlysDWJcmthjsjQ==}
@@ -24889,6 +24896,8 @@ snapshots:
       set-cookie-parser: 3.2.2
     optionalDependencies:
       zod: 4.6.7
+
+  betterleaks@git+https://github.com/betterleaks/betterleaks.git#e07e69ba6a441313529b3e72be43ffdcc62bdf86: {}
 
   bignumber.js@9.3.1: {}
 

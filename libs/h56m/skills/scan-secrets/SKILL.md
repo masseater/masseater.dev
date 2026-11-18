@@ -16,7 +16,7 @@ sources:
 
 # scan-secrets
 
-h56m finds secrets with the Kingfisher engine. It has no rules of its own, so extend a preset from
+h56m finds secrets with its own engine, which follows Betterleaks. It has no rules of its own, so extend a preset from
 `@r_masseater/h56m-presets` or a TOML file of your own. It never sends a secret anywhere to check
 whether it is live.
 

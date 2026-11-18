@@ -1,54 +1,40 @@
-use std::collections::{BTreeMap, HashMap, HashSet};
-use std::io::Write;
+mod codec;
+mod config;
+mod scanner;
+mod span;
+
+use std::borrow::Cow;
+use std::collections::{HashMap, HashSet};
 use std::sync::{Arc, LazyLock, Mutex, PoisonError};
 
-use anyhow::{Context, Result, bail};
-use kingfisher_rules::{Confidence, RuleCacheConfig, Rules, RulesDatabase};
-use kingfisher_scanner::{Blob, Scanner};
+use anyhow::Result;
 use serde_json::Value;
 use tracing::info_span;
 
-use crate::shared::finding::Finding;
+use crate::shared::finding::{Confidence, Finding, digest_of};
+use scanner::{Hit, Scanner};
 
 const ALLOW_MARKER: &[u8] = b"h56m:allow";
+const BINARY_PROBE: usize = 8000;
 
-static COMPILED: LazyLock<Mutex<HashMap<String, Arc<RulesDatabase>>>> =
+static COMPILED: LazyLock<Mutex<HashMap<String, Arc<Scanner>>>> =
     LazyLock::new(|| Mutex::new(HashMap::new()));
 
-fn compile(config: &Value) -> Result<Arc<RulesDatabase>> {
+fn compile(config: &Value) -> Result<Arc<Scanner>> {
     let key = config.to_string();
     let mut compiled = COMPILED.lock().unwrap_or_else(PoisonError::into_inner);
-    if let Some(database) = compiled.get(&key) {
-        return Ok(Arc::clone(database));
+    if let Some(scanner) = compiled.get(&key) {
+        return Ok(Arc::clone(scanner));
     }
     let _span = info_span!("h56m.compile_rules").entered();
-    let database = Arc::new(RulesDatabase::from_rule_collection_with_cache(
-        rules_of(config)?,
-        &RuleCacheConfig::from_dir_or_env(None),
-    )?);
-    compiled.insert(key, Arc::clone(&database));
-    Ok(database)
+    let scanner = Arc::new(Scanner::new(config::load(config)?)?);
+    compiled.insert(key, Arc::clone(&scanner));
+    Ok(scanner)
 }
 
 pub struct Detector {
-    scanner: Scanner,
+    scanner: Arc<Scanner>,
     ignored: HashSet<String>,
-}
-
-fn rules_of(config: &Value) -> Result<Rules> {
-    if config.pointer("/extend/useDefault") == Some(&Value::Bool(true)) {
-        bail!(
-            "h56m has no built-in rules; extend a preset file with extend.path instead of useDefault"
-        );
-    }
-    let text = toml::to_string(config).context("h56m config is not representable as TOML")?;
-    let mut file = tempfile::Builder::new()
-        .prefix("h56m-")
-        .suffix(".toml")
-        .tempfile()
-        .context("could not create a temporary rules file")?;
-    file.write_all(text.as_bytes())?;
-    Rules::from_toml_file(file.path(), Confidence::Low)
 }
 
 fn line_bounds(text: &[u8], start: usize, end: usize) -> (usize, usize) {
@@ -73,14 +59,6 @@ fn utf16_column(text: &[u8], offset: usize) -> usize {
         .count()
 }
 
-fn with_columns(text: &[u8], finding: Finding) -> Finding {
-    Finding {
-        column: utf16_column(text, finding.start_offset) + 1,
-        end_column: utf16_column(text, finding.end_offset),
-        ..finding
-    }
-}
-
 fn allowed_inline(text: &[u8], finding: &Finding) -> bool {
     let (first, last) = line_bounds(text, finding.start_offset, finding.end_offset);
     text[first..last]
@@ -88,25 +66,97 @@ fn allowed_inline(text: &[u8], finding: &Finding) -> bool {
         .any(|window| window == ALLOW_MARKER)
 }
 
+struct Decoded<'a> {
+    text: Cow<'a, str>,
+    original: Vec<(usize, usize)>,
+}
+
+impl Decoded<'_> {
+    fn new(bytes: &[u8]) -> Decoded<'_> {
+        if let Ok(text) = std::str::from_utf8(bytes) {
+            return Decoded {
+                text: Cow::Borrowed(text),
+                original: Vec::new(),
+            };
+        }
+        let mut text = String::with_capacity(bytes.len());
+        let mut original = Vec::new();
+        let mut at = 0;
+        for chunk in bytes.utf8_chunks() {
+            original.push((text.len(), at));
+            text.push_str(chunk.valid());
+            at += chunk.valid().len();
+            if !chunk.invalid().is_empty() {
+                original.push((text.len(), at));
+                text.push(char::REPLACEMENT_CHARACTER);
+                at += chunk.invalid().len();
+            }
+        }
+        Decoded {
+            text: Cow::Owned(text),
+            original,
+        }
+    }
+
+    fn offset(&self, offset: usize) -> usize {
+        if self.original.is_empty() {
+            return offset;
+        }
+        let index = self.original.partition_point(|(text, _)| *text <= offset);
+        let (text, bytes) = self.original[index.saturating_sub(1)];
+        bytes + (offset - text)
+    }
+}
+
+fn confidence_of(level: &str) -> Confidence {
+    match level {
+        "high" => Confidence::High,
+        "low" => Confidence::Low,
+        _ => Confidence::Medium,
+    }
+}
+
 impl Detector {
     pub fn new(config: &Value, ignored: impl IntoIterator<Item = String>) -> Result<Self> {
         Ok(Self {
-            scanner: Scanner::new(compile(config)?),
+            scanner: compile(config)?,
             ignored: ignored.into_iter().collect(),
         })
     }
 
+    fn finding(text: &[u8], decoded: &Decoded<'_>, path: &str, hit: Hit) -> Finding {
+        let start = decoded.offset(hit.start);
+        let end = decoded.offset(hit.end);
+        Finding {
+            rule: hit.rule_id,
+            description: hit.description,
+            confidence: confidence_of(&hit.confidence),
+            path: path.to_owned(),
+            line: hit.start_line,
+            column: utf16_column(text, start) + 1,
+            end_line: hit.end_line,
+            end_column: utf16_column(text, end),
+            start_offset: start,
+            end_offset: end,
+            digest: digest_of(&hit.secret),
+            secret: hit.secret,
+            commit: None,
+            encoded: hit.encoded,
+        }
+    }
+
     pub fn scan(&self, path: &str, text: &[u8]) -> Result<Vec<Finding>> {
-        let attributes = BTreeMap::from([("path".to_owned(), path.to_owned())]);
-        let blob = Blob::from_bytes(text.to_vec());
-        let found = self.scanner.scan_blob_with_attributes(&blob, &attributes)?;
-        let mut findings: Vec<Finding> = found
-            .iter()
-            .filter(|finding| finding.rule().visible())
-            .map(|finding| Finding::from_scanner(finding, path))
+        if text[..text.len().min(BINARY_PROBE)].contains(&0) {
+            return Ok(Vec::new());
+        }
+        let decoded = Decoded::new(text);
+        let mut findings: Vec<Finding> = self
+            .scanner
+            .scan(path, &decoded.text)?
+            .into_iter()
+            .map(|hit| Self::finding(text, &decoded, path, hit))
             .filter(|finding| !self.ignored.contains(&finding.digest))
             .filter(|finding| !allowed_inline(text, finding))
-            .map(|finding| with_columns(text, finding))
             .collect();
         findings.sort_by_key(|finding| (finding.start_offset, finding.end_offset));
         Ok(findings)
@@ -340,5 +390,86 @@ mod tests {
             rules(&detector(&config), &text),
             ["github-pat", "watashi-token"]
         );
+    }
+
+    #[test]
+    fn a_rule_with_components_needs_them_nearby() {
+        let config = json!({ "rules": [
+            { "id": "pair", "regex": "\\bid_([a-z0-9]{8})\\b", "keywords": ["id_"], "components": [{ "id": "key", "within": "2L" }] },
+            { "id": "key", "regex": "\\bkey_([a-z0-9]{8})\\b", "keywords": ["key_"], "skipReport": true }
+        ] });
+        let detector = detector(&config);
+        assert_eq!(rules(&detector, "id_abcd1234\nkey_wxyz9876\n"), ["pair"]);
+        assert_eq!(rules(&detector, "id_abcd1234\n\n\n\nkey_wxyz9876\n"), NONE);
+    }
+
+    #[test]
+    fn a_more_specific_rule_hides_a_generic_one_on_the_same_secret() {
+        let config = json!({ "rules": [
+            { "id": "generic", "regex": "token = \"([a-zA-Z0-9_]{20,})\"", "keywords": ["token"] },
+            { "id": "specific", "regex": "ghp_[0-9a-zA-Z]{36}", "keywords": ["ghp_"], "specificity": 10 }
+        ] });
+        assert_eq!(
+            rules(&detector(&config), &format!("token = \"{TOKEN}\"\n")),
+            ["specific"]
+        );
+    }
+
+    #[test]
+    fn a_path_rule_reports_the_file_itself() {
+        let config = json!({ "rules": [{ "id": "keystore", "path": "\\.p12$" }] });
+        let detector = detector(&config);
+        assert_eq!(found(&detector, "certs/a.p12", "x").len(), 1);
+        assert_eq!(found(&detector, "certs/a.pem", "x").len(), 0);
+    }
+
+    #[test]
+    fn honours_the_betterleaks_allow_comment() {
+        let text = format!("t = \"{TOKEN}\" # betterleaks:allow\n");
+        assert_eq!(rules(&detector(&defaults()), &text), NONE);
+    }
+
+    #[test]
+    fn decodes_hex_and_percent_text() {
+        let hex: String = format!("key: {TOKEN}")
+            .bytes()
+            .map(|b| format!("{b:02x}"))
+            .collect::<Vec<_>>()
+            .concat();
+        let percent: String = TOKEN
+            .bytes()
+            .map(|b| format!("%{b:02X}"))
+            .collect::<Vec<_>>()
+            .concat();
+        let detector = detector(&defaults());
+        for text in [format!("v = {hex}\n"), format!("v = {percent}\n")] {
+            let found = found(&detector, "a.ts", &text);
+            assert_eq!(found.len(), 1, "{text}");
+            assert!(found[0].encoded);
+            assert_eq!(found[0].secret, TOKEN);
+        }
+    }
+
+    #[test]
+    fn keeps_byte_offsets_after_invalid_utf8() {
+        let mut text = vec![0xff, 0xfe, b'\n'];
+        text.extend_from_slice(format!("t = \"{TOKEN}\"\n").as_bytes());
+        let found = detector(&defaults()).scan("a.ts", &text).unwrap();
+        assert_eq!(found.len(), 1);
+        assert_eq!(
+            &text[found[0].start_offset..found[0].end_offset],
+            TOKEN.as_bytes()
+        );
+        assert_eq!((found[0].line, found[0].column), (2, 6));
+    }
+
+    #[test]
+    fn rejects_duplicate_ids_and_unknown_components() {
+        let duplicate =
+            json!({ "rules": [{ "id": "a", "regex": "a" }, { "id": "a", "regex": "b" }] });
+        assert!(Detector::new(&duplicate, []).is_err());
+        let dangling =
+            json!({ "rules": [{ "id": "a", "regex": "a", "components": [{ "id": "b" }] }] });
+        assert!(Detector::new(&dangling, []).is_err());
     }
 }
