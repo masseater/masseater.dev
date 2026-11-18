@@ -1,6 +1,6 @@
 ---
 title: "decision model"
-description: "文章を生成せず、入力と質問を読んで答えごとの確率を返す AI モデルの一種。2026年9月の Jev から始まり、2か月で十数社が参入した。"
+description: "A kind of AI model that does not generate text, and returns a probability for each answer after reading an input and a question. It started with Jev in September 2026, and more than ten companies joined within two months."
 tags: ["大規模言語モデル", "AI の評価", "2026年のソフトウェア"]
 published: true
 infobox:
@@ -16,90 +16,90 @@ infobox:
     value: "多くは入力トークンだけ"
 ---
 
-decision model は、テキストを生成しない AI モデルの一種である。入力と質問を受け取り、質問が許容する各回答に対する確率を返す。最初のモデルをリリースした TypeSafe AI は、この種類を System One モデルと呼んでいる[^typesafe-launch]。
+A decision model is a kind of AI model that does not generate text. It reads an input and a question, and returns a probability for each answer the question allows. TypeSafe AI, which released the first one, calls the class a System One model[^typesafe-launch].
 
-## 仕組み
+## Mechanism
 
-言語モデルは、回答を1トークンずつ書き出す。decision model は、入力とすべての選択肢を1回のフォワードパスで読み込み、選択肢へ一度にスコアを付ける。ほとんどのベンダーは入力トークンのみを課金の対象とし、出力は無料にしている[^typesafe-launch][^liquid-docs]。
+A language model writes its answer one token at a time. A decision model reads the input and every option in one forward pass, and scores the options at once. Most vendors bill input tokens only and charge nothing for output[^typesafe-launch][^liquid-docs].
 
-Strands Decider は、これを構築する1つの方法を示している。学習済みの言語モデルから次のトークンを予測するヘッドを外し、約100万個のパラメータからなる小さなヘッドを付ける。このヘッドは、回答位置の隠れ状態と、各選択肢の最終トークンの隠れ状態を比べる[^strands-repo]。
+Strands Decider shows one way to build one. It takes a pretrained language model, removes the head that predicts the next token, and attaches a small head of about one million parameters. The head compares the hidden state at the answer position with the hidden state at the last token of each option[^strands-repo].
 
-1つの入力に多くの質問をしても、費用は1問のときとあまり変わらない。入力は一度だけ読み込まれ、各質問は自身のトークンのみを追加する[^strands-repo]。Gemini Decision 1 は、1回のリクエストに最大1,000問まで載せられる[^gemini-blog]。
+Many questions about one input cost little more than one question. The input is read once, and each question adds only its own tokens[^strands-repo]. Gemini Decision 1 accepts up to 1,000 questions in one request[^gemini-blog].
 
-## 質問の種類
+## Question types
 
-ほとんどのモデルに共通する質問の種類が3つある。Noul は「はい」か「いいえ」の質問に対し、「はい」の確率を返す。Choice は複数の選択肢から1つを選ぶ。Score は、入力を順序付きのルーブリックに位置づける[^strands-repo][^gemini-blog]。
+Three question types are common to most models. Noul asks a yes or no question and returns the probability of yes. Choice picks one of several options. Score places the input on an ordered rubric[^strands-repo][^gemini-blog].
 
-後続のモデルではさらに多くの種類が追加された。Jev 1.14 では、画像内の領域を特定する Box が追加された[^typesafe-docs]。Liquid d1.2 では、数値、日付、範囲、およびテキストのスパンが追加された[^liquid-docs]。Perplexity Decider v1.3 では、一致するテキストとその位置を返す Locate が追加された[^pplx-x]。
+Later models added more types. Jev 1.14 added Box, which locates a region in an image[^typesafe-docs]. Liquid d1.2 added numbers, dates, ranges and spans of text[^liquid-docs]. Perplexity Decider v1.3 added Locate, which returns the matching text and its position[^pplx-x].
 
 ## System One API
 
-TypeSafe AI は、パス `/v1/systemone` で Jev を提供している。リクエストには、入力として `state` と名前付きの質問の組が渡される[^typesafe-docs]。Cloudflare Clef、Liquid d1、Strands Decider は、いずれも同じ形式でリクエストを受け付ける[^clef-changelog][^liquid-docs][^strands-repo]。Perplexity は、同じ API で Decider を提供するラッパーを配っている[^decidebench]。
+TypeSafe AI serves Jev at the path `/v1/systemone`. A request carries the input as `state` and a set of named questions[^typesafe-docs]. Cloudflare Clef, Liquid d1 and Strands Decider accept requests in the same shape[^clef-changelog][^liquid-docs][^strands-repo]. Perplexity ships a wrapper that serves its Decider behind the same API[^decidebench].
 
-## 歴史
+## History
 
-TypeSafe AI は2026年9月15日、初の System One モデルとして Jev をアーリーアクセスでリリースした。名称は、ダニエル・カーネマンの『ファスト＆スロー』における「速い System 1」の考え方に由来している[^typesafe-launch]。
+TypeSafe AI released Jev in early access on September 15, 2026, as its first System One model. The name comes from the fast System 1 thinking in Daniel Kahneman's Thinking, Fast and Slow[^typesafe-launch].
 
-他のベンダーも数週間以内に追随した。Cloudflare は2026年10月1日に Clef と Clef Flash をオープンウェイトとしてリリースし、Workers AI で提供している[^clef-changelog]。Liquid AI は2026年10月5日に d1 をリリースした[^liquid-d1]。AWS Strands Labs もほぼ同時期に Strands Decider 2B をオープンソースとして公開した[^marktechpost-strands]。OpenAI は GPT-6 Luna 上で動作する Decisions API を提供している。
+Other vendors followed within weeks. Cloudflare released Clef and Clef Flash as open weights on October 1, 2026, and serves them on Workers AI[^clef-changelog]. Liquid AI released d1 on October 5, 2026[^liquid-d1]. AWS Strands Labs released Strands Decider 2B as open source around the same time[^marktechpost-strands]. OpenAI offers a Decisions API that runs on GPT-6 Luna.
 
-2026年11月にもリリースが続いた。Google は11月11日に Gemini Decision 1 をリリースした[^gemini-blog]。Perplexity は11月12日頃、Decider v1.3 および Decider Flash v1.3 をオープンウェイトとしてリリースした[^pplx-x]。Liquid AI は d1.2 および d1.2-ultra を、Microsoft は Microsoft-Decision-1.1 をリリースした[^openrouter-models]。
+In November 2026 the releases continued. Google released Gemini Decision 1 on November 11[^gemini-blog]. Perplexity released Decider v1.3 and Decider Flash v1.3 as open weights around November 12[^pplx-x]. Liquid AI released d1.2 and d1.2-ultra, and Microsoft released Microsoft-Decision-1.1[^openrouter-models].
 
-2026年11月3日、TypeSafe AI は decision model という呼び名に異議を唱えた。モデルは判断をするだけで、決定を下すのはコードであると主張した[^typesafe-name]。
+On November 3, 2026, TypeSafe AI objected to the term decision model. It argued that the model only makes judgments, and that code makes the decisions[^typesafe-name].
 
-## モデル
+## Models
 
-2026年11月18日時点の主なモデルを以下に示す。
+The main models as of November 18, 2026 are listed below.
 
-- TypeSafe AI の Jev 1.14 は API のみで提供されており、100万入力トークンあたり0.042米ドルである[^typesafe-docs]。
-- Cloudflare の Clef は27B パラメータ、Clef Flash は9B パラメータで、Clef Omni は音声や動画も読み込める。Clef Flash の料金は、Workers AI で入力トークン100万個あたり0.038米ドルである[^clef-docs]。
-- Liquid AI の d1.2 は、テキスト、画像、音声を読み込み、100万入力トークンあたり0.02米ドルである。オープンウェイトの d1-2B は LFM3 に基づいている[^liquid-docs]。
-- AWS Strands Labs の Strands Decider は Apache 2.0 のオープンソースで、Qwen3.5 と Gemma 4 を基にした2B から26B までの版がある。その学習レシピと研究記録も公開されている[^strands-repo]。
-- Google の Gemini Decision 1 は、テキスト、画像、音声、動画、PDF ファイルを読み込み、100万入力トークンあたり0.10米ドルである[^gemini-blog]。
-- Perplexity の Decider v1.3 は27B のオープンウェイトモデルであり、Decider Flash v1.3 は4B モデルである[^pplx-x]。
-- Nace AI の Drex Max と Fastino Labs の GLiDE が、Artificial Analysis Decision Index v2 で首位に並んだ[^aa-v2]。
+- Jev 1.14 from TypeSafe AI is served by API only and costs 0.042 USD per million input tokens[^typesafe-docs].
+- Clef from Cloudflare has 27B parameters, Clef Flash has 9B, and Clef Omni also reads audio and video. Clef Flash costs 0.038 USD per million input tokens on Workers AI[^clef-docs].
+- Liquid d1.2 from Liquid AI reads text, images and audio and costs 0.02 USD per million input tokens. The open weights d1-2B are based on LFM3[^liquid-docs].
+- Strands Decider from AWS Strands Labs is Apache 2.0 open source, with versions of 2B to 26B on Qwen3.5 and Gemma 4. Its training recipe and research log are public too[^strands-repo].
+- Gemini Decision 1 from Google reads text, images, audio, video and PDF files, and costs 0.10 USD per million input tokens[^gemini-blog].
+- Decider v1.3 from Perplexity is a 27B open weight model, and Decider Flash v1.3 is a 4B model[^pplx-x].
+- Drex Max from Nace AI and GLiDE from Fastino Labs lead the Artificial Analysis Decision Index v2[^aa-v2].
 
-## 評価
+## Evaluation
 
-複数のベンチマークが並び立っている。Artificial Analysis は2026年10月13日に Decision Index を公開し、11月8日に v2 として作り直した。v2 では指数の45%に非公開のデータが使われ、スコアは正解率が高いほど上がり、Brier スコアが悪いほど下がる。Drex Max v1.1 と GLiDE v1.2 が73点で decision model の首位となった。ただし、2つの言語モデルはそれより高いスコアを記録した[^aa-v2]。
+Several benchmarks compete. Artificial Analysis published its Decision Index on October 13, 2026, and rebuilt it as v2 on November 8. In v2, 45% of the index uses private data, and the score rewards accuracy and penalizes a poor Brier score. Drex Max v1.1 and GLiDE v1.2 led the decision models with 73, but two language models scored higher[^aa-v2].
 
-2026年11月9日に測定された DecideBench v2 でも、同様の結果となった。正解率99.3%を記録した Claude Opus 4.8 に並ぶ decision model は無かった。最も弱かったのは数値を用いたルール適用の分野で、正解率74%を超えた decision model は無かった[^decidebench]。
+DecideBench v2, measured on November 9, 2026, gave the same picture. No decision model matched Claude Opus 4.8, which answered 99.3% correctly. The weakest area was applying rules with numbers, where no decision model passed 74%[^decidebench].
 
-ベンダー各社は、decision model が自信過剰になりやすいと報告している。このため、Liquid AI は d1-ultra を較正を重視して学習させた[^liquid-ultra]。Strands Decider の報告では、未知の短いタスクにおける信頼度0.9以上の回答の正解率は約95%だった[^strands-repo]。
+Vendors report that decision models tend to be overconfident. Liquid AI trained d1-ultra for calibration for this reason[^liquid-ultra]. Strands Decider reports that its answers with a confidence of 0.9 or more are right about 95% of the time on unseen short tasks[^strands-repo].
 
-## masseater.dev での利用
+## Use at masseater.dev
 
-masseater.dev は、自然文のルールをモデルに判定させる lint プラグイン [oxlint-plugin-decision](/sloppedia/oxlint-plugin-decision) で decision model を使っている。このプラグインは Jev と Clef のみを受け付け、既定では上限付きの AI Gateway 経由で Clef Flash を使う。チャットモデルは型とテストで拒否する。
+masseater.dev uses decision models in [oxlint-plugin-decision](/sloppedia/oxlint-plugin-decision), a lint plugin that has a model judge rules written in natural language. The plugin accepts only Jev and Clef, and its default is Clef Flash through a capped AI Gateway. It rejects chat models by type and by test.
 
-持ち主はまた、[mst-ja-decision-bench](https://masseater.dev/decision-bench/) を用いて、日本語での decision model の性能を測定している。2026年10月11日の測定では、Liquid d1 が16モデル中3位、Clef Flash が11位となった。すべてのモデルが、英語と比べて日本語の業務ルールで約20ポイント正解率を落とした。
+The owner also measures how well decision models work in Japanese with [mst-ja-decision-bench](https://masseater.dev/decision-bench/). In the run of October 11, 2026, Liquid d1 ranked third of 16 models, and Clef Flash ranked eleventh. Every model lost about 20 points of accuracy on Japanese business rules compared with English.
 
-Sloppedia の持ち主の masseater は、decision model は毎回の lint やワークフローの各段で走らせられるほど安くて速いと考えている。また、複数の条を組み合わせる日本語のルールはまだ任せられないと考えている。
+The owner of Sloppedia, masseater, thinks decision models are cheap and fast enough to run on every lint and every workflow step. masseater also thinks they cannot yet be trusted with Japanese rules that combine several clauses.
 
-[^typesafe-launch]: TypeSafe AI「[Introducing System One Models and Jev](https://typesafe.ai/blog/introducing-system-one-models-and-jev)」2026年9月15日。
+[^typesafe-launch]: TypeSafe AI, "[Introducing System One Models and Jev](https://typesafe.ai/blog/introducing-system-one-models-and-jev)", September 15, 2026.
 
-[^typesafe-name]: TypeSafe AI「[Don't Call It a Decision Model](https://typesafe.ai/blog/dont-call-it-a-decision-model)」2026年11月3日。
+[^typesafe-name]: TypeSafe AI, "[Don't Call It a Decision Model](https://typesafe.ai/blog/dont-call-it-a-decision-model)", November 3, 2026.
 
-[^typesafe-docs]: TypeSafe AI「[Models](https://docs.typesafe.ai/models)」2026年11月18日に閲覧。
+[^typesafe-docs]: TypeSafe AI, "[Models](https://docs.typesafe.ai/models)". Read on November 18, 2026.
 
-[^clef-changelog]: Cloudflare「[Clef on Workers AI](https://developers.cloudflare.com/changelog/post/2026-10-01-clef-workers-ai/)」2026年10月1日。
+[^clef-changelog]: Cloudflare, "[Clef on Workers AI](https://developers.cloudflare.com/changelog/post/2026-10-01-clef-workers-ai/)", October 1, 2026.
 
-[^clef-docs]: Cloudflare「[clef-flash](https://developers.cloudflare.com/workers-ai/models/clef-flash/)」2026年11月18日に閲覧。
+[^clef-docs]: Cloudflare, "[clef-flash](https://developers.cloudflare.com/workers-ai/models/clef-flash/)". Read on November 18, 2026.
 
-[^liquid-d1]: Liquid AI「[Introducing d1](https://www.liquid.ai/blog/d1-decision-model)」2026年10月5日。
+[^liquid-d1]: Liquid AI, "[Introducing d1](https://www.liquid.ai/blog/d1-decision-model)", October 5, 2026.
 
-[^liquid-ultra]: Liquid AI「[d1-ultra](https://www.liquid.ai/blog/d1-ultra)」2026年10月15日。
+[^liquid-ultra]: Liquid AI, "[d1-ultra](https://www.liquid.ai/blog/d1-ultra)", October 15, 2026.
 
-[^liquid-docs]: Liquid AI「[Decision Models](https://docs.liquid.ai/lfm/models/decision-models)」2026年11月18日に閲覧。
+[^liquid-docs]: Liquid AI, "[Decision Models](https://docs.liquid.ai/lfm/models/decision-models)". Read on November 18, 2026.
 
-[^strands-repo]: Strands Labs「[strands-decider](https://github.com/strands-labs/strands-decider)」GitHub。2026年11月18日に閲覧。
+[^strands-repo]: Strands Labs, "[strands-decider](https://github.com/strands-labs/strands-decider)", GitHub. Read on November 18, 2026.
 
-[^marktechpost-strands]: MarkTechPost「[AWS Strands Labs Releases Strands Decider 2B](https://www.marktechpost.com/2026/10/01/aws-strands-labs-releases-strands-decider-2b/)」2026年10月1日。
+[^marktechpost-strands]: MarkTechPost, "[AWS Strands Labs Releases Strands Decider 2B](https://www.marktechpost.com/2026/10/01/aws-strands-labs-releases-strands-decider-2b/)", October 1, 2026.
 
-[^gemini-blog]: Google「[Gemini Decisions API](https://blog.google/innovation-and-ai/technology/developers-tools/gemini-decisions-api/)」2026年11月11日。
+[^gemini-blog]: Google, "[Gemini Decisions API](https://blog.google/innovation-and-ai/technology/developers-tools/gemini-decisions-api/)", November 11, 2026.
 
-[^pplx-x]: Aravind Srinivas「[Decider v1.3 and Decider Flash v1.3](https://x.com/AravSrinivas/status/2121020114321703210)」X、2026年11月。
+[^pplx-x]: Aravind Srinivas, "[Decider v1.3 and Decider Flash v1.3](https://x.com/AravSrinivas/status/2121020114321703210)", X, November 2026.
 
-[^openrouter-models]: OpenRouter「[Models](https://openrouter.ai/models)」2026年11月18日に閲覧。
+[^openrouter-models]: OpenRouter, "[Models](https://openrouter.ai/models)". Read on November 18, 2026.
 
-[^aa-v2]: Artificial Analysis「[Introducing the Artificial Analysis Decision Index v2](https://artificialanalysis.ai/articles/decision-index-v2)」2026年11月8日。
+[^aa-v2]: Artificial Analysis, "[Introducing the Artificial Analysis Decision Index v2](https://artificialanalysis.ai/articles/decision-index-v2)", November 8, 2026.
 
-[^decidebench]: choyiny「[DecideBench](https://github.com/choyiny/decidebench)」GitHub。2026年11月18日に閲覧。
+[^decidebench]: choyiny, "[DecideBench](https://github.com/choyiny/decidebench)", GitHub. Read on November 18, 2026.

@@ -1,56 +1,56 @@
 ---
-title: "lint の判定を decision model に任せる"
-description: "構文木のパターンでは書けない lint のルールを、文章を生成しない decision model に毎回判定させる oxlint-plugin-decision の仕組みと、チャットモデルにすり替わった事故、日本語での弱さ、2026年11月のモデルの状況。"
+title: "Leaving lint judgments to decision models"
+description: "How oxlint-plugin-decision has a decision model, which does not generate text, judge lint rules that cannot be written as syntax tree patterns, the incident where it was switched to a chat model, its weakness in Japanese, and the models as of November 2026."
 tags: ["decision-model", "oxlint", "lint"]
 published: true
 ---
 
-一部の lint のルールは、構文木上のパターンとして記述できない。「この呼び出しはログに個人データを書き込むか」や「この関数は、名前では読み取りだけを約束しながら、本体で書き込みもしているか」などがその例である。これまでは人間か大規模言語モデルが、レビューの時にこれらを判定する必要があった。いまは [oxlint-plugin-decision](https://github.com/masseater/masseater.dev/tree/main/libs/oxlint-plugin-decision) で、lint を走らせるたびに decision model が判定している。
+Some lint rules cannot be written as a pattern over the syntax tree. "Does this call write personal data to a log?" and "Does this function's name promise a read while its body also writes?" are examples. A person or a large language model has had to judge them in review. I now have a decision model judge them on every lint run, with [oxlint-plugin-decision](https://github.com/masseater/masseater.dev/tree/main/libs/oxlint-plugin-decision).
 
-## なぜ decision model なのか
+## Why a decision model
 
-decision model は文章を書かない。入力と質問を一度のフォワードパスで読み込み、各回答に対する確率を返す[^sloppedia-decision-model]。ほとんどのベンダーは入力トークンのみを課金の対象とし、答えは数百ミリ秒で返る。リポジトリのすべてのファイルに走らせられるほど安くて速い。
+A decision model does not write text. It reads the input and the question in one forward pass and returns a probability for each answer[^sloppedia-decision-model]. Most vendors bill input tokens only, and an answer comes back in a few hundred milliseconds. That is cheap and fast enough to run over every file in a repository.
 
-チャットモデルも同じ質問に回答できるが、回答を1トークンずつ書き、出力にも課金される。すべての lint でこれを実行すると、コードベースの規模に応じてコストと待ち時間が増大する。
+A chat model can answer the same question, but it writes its answer token by token and bills for the output. Running one on every lint makes the cost and the waiting time grow with the size of the codebase.
 
-## プラグインの仕組み
+## How the plugin works
 
-ルールとは、回答の選択肢が決まった質問のことである。`defineDecisionRule` で記述し、関数、呼び出し、JSX 要素、あるいはファイル全体など、見る対象を選んでカットオフ値を設定する。プラグインは、ルールが気にする回答の確率がカットオフ値を超えた時にエラーを報告する[^plugin-readme]。
+A rule is a question with a fixed set of answers. You write it with `defineDecisionRule`, choose what it looks at, such as a function, a call, a JSX element or a whole file, and set a cutoff. The plugin reports an error when the probability of the answer the rule cares about clears the cutoff[^plugin-readme].
 
-有効にしたルールは、ファイルとモデルごとに1つのリクエストを共有する。ルールを増やしても、リクエストは増えない。プリセットには、ログへの個人データの出力、プロンプトインジェクション、ハードコードされた秘密情報を見る `recommended` や、コーディングエージェントが残す水増しを見る `ai-slop` などがある[^plugin-readme]。
+The rules that are turned on share one request per file and per model. Turning on more rules does not add requests. The plugin ships presets, such as `recommended` for personal data in logs, prompt injection and hard-coded secrets, and `ai-slop` for padding that coding agents leave behind[^plugin-readme].
 
-このプラグインは、Robert Soriano 氏の [oxlint-plugin-jev](https://github.com/wobsoriano/oxlint-plugin-jev) のフォークとして始まった。コードが自身について主張する内容を確かめるルールは、mizchi 氏の [jev-lint](https://github.com/mizchi/jev-lint) を基にしている[^plugin-readme]。
+The plugin started as a fork of [oxlint-plugin-jev](https://github.com/wobsoriano/oxlint-plugin-jev) by Robert Soriano. The rules that check a claim the code makes about itself are adapted from [jev-lint](https://github.com/mizchi/jev-lint) by mizchi[^plugin-readme].
 
-## decision model だけを使う
+## Only decision models
 
-2026年11月15日、プラグインの呼び出しを Cloudflare AI Gateway に移していた際、AI のセッションが Jev を Workers AI のチャットモデルに置き換えた。私の指示は、呼び出しを AI Gateway に移すことだけだった。セッションはクレジットなしで動く Workers AI のモデルを探したが、10月1日から Workers AI が提供していた decision model の Clef を見落とした。その後、CI がチャットモデルに数万件もの質問を送り、Workers AI の課金が始まった。
+On November 15, 2026, while moving the plugin's calls onto Cloudflare AI Gateway, an AI session replaced Jev with a chat model on Workers AI. My instruction was only to move the calls to AI Gateway. The session looked for a Workers AI model that worked without credits, and missed Clef, the decision model that Workers AI had offered since October 1. CI then sent tens of thousands of questions to the chat model, and Workers AI started to bill.
 
-decision という名前のプラグインは、決してチャットモデルを呼び出してはならない。バージョン0.8.0以降、このプラグインは Jev と Clef のみを受け付ける。モデルの型はそれらの名前のユニオン型で、設定は実行時に検査され、ソースがチャットのエンドポイントを呼び出すとテストが落ちる[^plugin-readme]。呼び出しを別のプロバイダーに移すときはモデルの種類を変えず、その種類のモデルが無ければ私が決める。
+A plugin named decision should never call a chat model. Since version 0.8.0 the plugin accepts only Jev and Clef. The model type is a union of their names, the settings are checked at run time, and a test fails if the source calls a chat endpoint[^plugin-readme]. When a call moves to another provider, the model category stays the same, and if no model of that category is available, the owner decides.
 
-## 日本語は弱い
+## Japanese is weak
 
-ルールの質問やコードのテキストが日本語の場合、回答の質が著しく低下する。この点を [mst-ja-decision-bench](/blogs/mst-ja-decision-bench) で測定した。2026年10月11日の測定では、すべてのモデルが英語と比べて日本語の業務ルールで正解率を約20ポイント落とした。プラグインの既定の Clef Flash は、16モデル中11位となった。Liquid d1 は3位だった。
+When the rule's question or the code's text is in Japanese, the answers get noticeably worse. I measured this with [mst-ja-decision-bench](/blogs/mst-ja-decision-bench). In the run of October 11, 2026, every model lost about 20 points of accuracy on Japanese business rules compared with English. Clef Flash, the plugin's default, ranked eleventh of 16 models. Liquid d1 ranked third.
 
-当面は質問を英語で書き、日本語のテキストを読むルールはレビューで見るだけにしている。
+For now I write the questions in English and keep the rules that read Japanese text in review only.
 
-## 11月18日時点のモデル
+## The models as of November 18
 
-新しいモデルが次々と登場している。これを書く前の週には、Google が Gemini Decision 1 を、Perplexity がオープンウェイトの Decider v1.3 を出した。Liquid AI は d1.2 を、Microsoft は Microsoft-Decision-1.1 をリリースした[^sloppedia-decision-model]。Liquid d1.2 の価格は100万入力トークンあたり0.02米ドルで、Clef Flash の約半額となっている[^liquid-docs]。
+New models keep coming. In the week before I wrote this, Google released Gemini Decision 1, Perplexity released Decider v1.3 as open weights, Liquid AI released d1.2, and Microsoft released Microsoft-Decision-1.1[^sloppedia-decision-model]. Liquid d1.2 costs 0.02 USD per million input tokens, about half the price of Clef Flash[^liquid-docs].
 
-ベンチマークでは、依然として言語モデルが上位に位置している。DecideBench v2 では、Claude Opus 4.8 に匹敵する decision model は無く、数値を用いたルール適用で74%を超えたモデルも無かった[^decidebench]。lint プラグインのルールは、まさにそうした種類の質問である。
+The benchmarks still put language models on top. In DecideBench v2, no decision model matched Claude Opus 4.8, and none passed 74% on applying rules with numbers[^decidebench]. The rules in a lint plugin are exactly that kind of question.
 
-## 次にやること
+## Next
 
-まず、新しいモデルを mst-ja-decision-bench に追加し、日本語で測る。そのうちのいずれかが Clef Flash を上回れば、既定のモデルを選び直す。ただし Cloudflare の利用は Workers Paid に含まれる量までというルールは守る。
+First I will add the new models to mst-ja-decision-bench and measure them in Japanese. If one of them beats Clef Flash, I will choose the default again, within the cost rule that keeps Cloudflare usage inside the included allowance.
 
-AWS の [Strands Decider](https://github.com/strands-labs/strands-decider) は、モデルとともに学習レシピ、データの出どころ、研究記録を公開している[^strands-repo]。RTX 3090 1台なら約11時間で学習し直せる。このレシピを使って、日本語のルールの質問で自分の decider を学習させてみたい。
+AWS's [Strands Decider](https://github.com/strands-labs/strands-decider) publishes its training recipe, data sources and research log with the model[^strands-repo]. One RTX 3090 retrains it in about 11 hours. I want to try training a decider of my own on Japanese rule questions with that recipe.
 
-[^sloppedia-decision-model]: masseater「[decision model](/sloppedia/decision-model)」Sloppedia。
+[^sloppedia-decision-model]: masseater「[decision model](/sloppedia/decision-model)」Sloppedia.
 
-[^plugin-readme]: masseater「[@r_masseater/oxlint-plugin-decision](https://github.com/masseater/masseater.dev/tree/main/libs/oxlint-plugin-decision)」GitHub。
+[^plugin-readme]: masseater「[@r_masseater/oxlint-plugin-decision](https://github.com/masseater/masseater.dev/tree/main/libs/oxlint-plugin-decision)」GitHub.
 
-[^liquid-docs]: Liquid AI「[Decision Models](https://docs.liquid.ai/lfm/models/decision-models)」2026年11月18日に閲覧。
+[^liquid-docs]: Liquid AI「[Decision Models](https://docs.liquid.ai/lfm/models/decision-models)」Read on November 18, 2026.
 
-[^decidebench]: choyiny「[DecideBench](https://github.com/choyiny/decidebench)」GitHub。2026年11月18日に閲覧。
+[^decidebench]: choyiny「[DecideBench](https://github.com/choyiny/decidebench)」GitHub. Read on November 18, 2026.
 
-[^strands-repo]: Strands Labs「[strands-decider](https://github.com/strands-labs/strands-decider)」GitHub。2026年11月18日に閲覧。
+[^strands-repo]: Strands Labs「[strands-decider](https://github.com/strands-labs/strands-decider)」GitHub. Read on November 18, 2026.
