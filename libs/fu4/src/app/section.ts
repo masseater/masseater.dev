@@ -1,5 +1,6 @@
 import { Array as Arr, Option, Predicate, pipe } from "effect";
 
+import { flattenConfig } from "#/entities/rule/index.ts";
 import type { Fu4Config } from "#/shared/config/index.ts";
 
 const WORKFLOWS = [
@@ -21,7 +22,7 @@ const hasSection = (value: unknown): value is { readonly fu4: Fu4Config } =>
 export const fu4Section = (config: unknown): Fu4Config =>
   pipe(
     Option.liftPredicate(config, hasSection),
-    Option.map((value) => value.fu4),
+    Option.map((value) => flattenConfig(value.fu4)),
     Option.getOrElse((): Fu4Config => ({})),
   );
 
