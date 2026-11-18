@@ -16,7 +16,6 @@ export default defineConfig({
         input: await cargoInputs({ directory: import.meta.dirname }),
       }),
       verify: { command: [], dependsOn: ["cargo"] },
-      jaeger: { command: "jaeger --config jaeger.yaml", cache: false },
       installer: {
         command: "tauri build --config src-tauri/tauri.release.conf.json",
         dependsOn: ["aredoko-server#installer:resources"],
@@ -29,10 +28,9 @@ export default defineConfig({
       },
       "dev:app": {
         command:
-          "set WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS=--remote-debugging-port=9222&& set OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318&& set OTEL_TRACES_EXPORTER=otlp&& tauri dev",
+          "set WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS=--remote-debugging-port=9222&& tauri dev",
         cache: false,
       },
     },
   },
-  envPrefix: ["VITE_", "OTEL_"],
 });

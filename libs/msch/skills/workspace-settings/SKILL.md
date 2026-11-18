@@ -50,6 +50,7 @@ export default defineConfig({
 | `lint.ignorePatterns` | Paths in the workspace that oxlint skips                                                                                    |
 | `lint.overrides`      | Oxlint overrides. `use` names a rule set the root passes to `workspaceSettings`                                             |
 | `devDependencies`     | Each key states why the workspace needs the packages. `dependencies` lists them, `use` names a dependency set from the root |
+| `dependencies`        | The same for packages the workspace ships at run time, for a banned package with no other way to do the job                 |
 | `publish.installSize` | The largest install size a published package may reach                                                                      |
 
 ## Test and build tasks

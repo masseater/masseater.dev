@@ -24,7 +24,7 @@ export interface WorkspaceLintSettings {
   readonly overrides?: readonly WorkspaceLintOverride[];
 }
 
-export interface DevDependencyAllowance {
+export interface DependencyAllowance {
   readonly use?: readonly string[];
   readonly dependencies?: readonly string[];
 }
@@ -37,7 +37,8 @@ export interface MschConfig {
   readonly comments?: CommentSettings;
   readonly publish?: PublishSettings;
   readonly lint?: WorkspaceLintSettings;
-  readonly devDependencies?: Readonly<Record<string, DevDependencyAllowance>>;
+  readonly devDependencies?: Readonly<Record<string, DependencyAllowance>>;
+  readonly dependencies?: Readonly<Record<string, DependencyAllowance>>;
   readonly workspaceAgentsMd?: true;
 }
 
