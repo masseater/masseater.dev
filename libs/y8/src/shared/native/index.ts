@@ -1,5 +1,4 @@
-import { loadAddon } from "@masseater.dev/lint-host";
-import { Array as Arr, Predicate, pipe } from "effect";
+import { exposes, loadAddon } from "@masseater.dev/lint-host";
 import type { Effect } from "effect";
 
 import { failedWith } from "#/shared/lib/errors.ts";
@@ -119,13 +118,7 @@ export interface Native {
 
 const NATIVE_FUNCTIONS = ["lint", "lintPaths", "flushTelemetry", "readTexts", "tokenize"] as const;
 
-const hasFunction =
-  (value: unknown) =>
-  (name: string): boolean =>
-    Predicate.hasProperty(value, name) && Predicate.isFunction(value[name]);
-
-const isNative = (value: unknown): value is Native =>
-  pipe(NATIVE_FUNCTIONS, Arr.every(hasFunction(value)));
+const isNative = exposes<Native>(NATIVE_FUNCTIONS);
 
 export const native: Effect.Effect<Native, Y8Error> = loadAddon({
   packageName: "@r_masseater/y8",

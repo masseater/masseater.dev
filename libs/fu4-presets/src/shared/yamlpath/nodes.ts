@@ -21,14 +21,6 @@ export const childAt =
   (node: SyntaxNode): Option.Option<SyntaxNode> =>
     Arr.get(node.children, index);
 
-export const fieldOf =
-  (field: string) =>
-  (node: SyntaxNode): Option.Option<SyntaxNode> =>
-    pipe(
-      node.children,
-      Arr.findFirst((child) => child.field === field),
-    );
-
 export const namedWhere =
   (predicate: (node: SyntaxNode) => boolean) =>
   (node: SyntaxNode): Option.Option<SyntaxNode> =>
@@ -36,6 +28,3 @@ export const namedWhere =
 
 export const parentOf = (node: SyntaxNode): Option.Option<SyntaxNode> =>
   Option.fromNullishOr(node.parent);
-
-export const descendants = (node: SyntaxNode): readonly SyntaxNode[] =>
-  Arr.prepend(pipe(node.children, Arr.flatMap(descendants)), node);

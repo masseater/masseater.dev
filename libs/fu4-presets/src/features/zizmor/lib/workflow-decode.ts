@@ -24,6 +24,7 @@ import {
   loe,
   permissions,
   reusableUses,
+  stepHead,
   stepUses,
 } from "./common.ts";
 import {
@@ -102,16 +103,14 @@ const environment: Decoder<DeploymentEnvironment> = untagged<DeploymentEnvironme
 
 const shared = (fields: Fields): Result.Result<SharedStepFields, string> =>
   Result.gen(function* decode() {
-    const id = yield* optional("id")(string)(fields);
-    const condition = yield* optional("if")(ifCondition)(fields);
-    const name = yield* optional("name")(string)(fields);
+    const head = yield* stepHead(fields);
     yield* optional("timeout-minutes")(loe(number))(fields);
     yield* defaulted("continue-on-error")(loe(boolean))(
       () => ({ type: "literal", value: false }) as const,
     )(fields);
     yield* defaulted("background")(boolean)(() => false)(fields);
     const stepEnv = yield* defaulted("env")(loe(env))(emptyEnv)(fields);
-    return { id, if: condition, name, env: stepEnv };
+    return { ...head, env: stepEnv };
   });
 
 const usesStep: Decoder<StepModel> = struct((fields) =>

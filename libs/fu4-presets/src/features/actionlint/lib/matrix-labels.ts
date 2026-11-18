@@ -2,7 +2,7 @@ import { Array as Arr, Option, Record as Rec, Result, String as Str, pipe } from
 
 import { parse } from "#/entities/expression/index.ts";
 import { containsExpression, isExpressionAssigned } from "#/entities/workflow/index.ts";
-import type { Matrix, RawValue } from "#/entities/workflow/model/job-types.ts";
+import type { Matrix, MatrixAssign, RawValue } from "#/entities/workflow/model/job-types.ts";
 import type { Text } from "#/shared/yaml/index.ts";
 
 const OPEN = 3;
@@ -34,6 +34,14 @@ const textOf = (value: RawValue): readonly Text[] => {
   return [{ value: value.value, quoted: false, line: value.line, column: value.column }];
 };
 
+export const includedOf = (matrix: Matrix): readonly (readonly [string, MatrixAssign])[] =>
+  pipe(
+    Option.fromNullishOr(matrix.include),
+    Option.map((include) => include.combinations),
+    Option.getOrElse(() => []),
+    Arr.flatMap((combination) => Rec.toEntries(combination.assigns)),
+  );
+
 const labelsOf = (matrix: Matrix, property: string): readonly Text[] => {
   const rows = pipe(
     Rec.get(matrix.rows, property),
@@ -41,11 +49,9 @@ const labelsOf = (matrix: Matrix, property: string): readonly Text[] => {
     Option.getOrElse((): readonly RawValue[] => []),
   );
   const included = pipe(
-    Option.fromNullishOr(matrix.include),
-    Option.map((include) => include.combinations),
-    Option.getOrElse(() => []),
-    Arr.flatMap((combination) => Option.toArray(Rec.get(combination.assigns, property))),
-    Arr.map((assign) => assign.value),
+    includedOf(matrix),
+    Arr.filter(([name]) => name === property),
+    Arr.map(([, assign]) => assign.value),
   );
   return pipe([...rows, ...included], Arr.flatMap(textOf));
 };

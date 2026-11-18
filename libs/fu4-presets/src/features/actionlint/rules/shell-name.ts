@@ -2,7 +2,7 @@ import { Array as Arr, Option, Order, String as Str, pipe } from "effect";
 
 import { containsExpression } from "#/entities/workflow/index.ts";
 import type { Runner } from "#/entities/workflow/model/job-types.ts";
-import type { Defaults } from "#/entities/workflow/model/types.ts";
+import { defaultShell } from "#/features/actionlint/lib/shellcheck.ts";
 import { runOf } from "#/features/actionlint/lib/step.ts";
 import { NOOP, workflowRule } from "#/features/actionlint/lib/workflow-rule.ts";
 import type { Fail, Visitor } from "#/features/actionlint/lib/workflow-rule.ts";
@@ -80,14 +80,6 @@ const check =
     }
   };
 
-const defaultShell = (defaults: Defaults | undefined): Text | undefined =>
-  pipe(
-    Option.fromNullishOr(defaults),
-    Option.flatMap((found) => Option.fromNullishOr(found.run)),
-    Option.flatMap((run) => Option.fromNullishOr(run.shell)),
-    Option.getOrUndefined,
-  );
-
 export const shellName = workflowRule({
   description: "Reports shell names that the runner does not provide",
   docs: "https://github.com/rhysd/actionlint/blob/main/docs/checks.md#check-shell-names",
@@ -96,12 +88,12 @@ export const shellName = workflowRule({
     return {
       ...NOOP,
       workflowPre: (workflow) => {
-        check(fail, platform)(defaultShell(workflow.defaults));
+        check(fail, platform)(Option.getOrUndefined(defaultShell(workflow.defaults)));
       },
       jobPre: (job) => {
         for (const runner of Option.toArray(Option.fromNullishOr(job.runsOn))) {
           platform = platformOf(runner);
-          check(fail, platform)(defaultShell(job.defaults));
+          check(fail, platform)(Option.getOrUndefined(defaultShell(job.defaults)));
         }
       },
       step: (step) => {

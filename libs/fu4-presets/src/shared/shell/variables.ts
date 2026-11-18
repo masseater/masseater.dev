@@ -1,9 +1,11 @@
 import type { SyntaxNode } from "@r_masseater/fu4";
 import { Array as Arr, Option, String as Str, pipe } from "effect";
 
+import { fieldOf } from "#/shared/syntax/index.ts";
+
 import { findingAt, report } from "./finding.ts";
 import type { State } from "./finding.ts";
-import { ancestors, fieldOf, parentOf, sameNode } from "./node.ts";
+import { ancestors, parentOf, sameNode } from "./node.ts";
 
 const NAMED = new Set(["variable_assignment", "subscript"]);
 

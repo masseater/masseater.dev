@@ -2,6 +2,7 @@ import type { Project } from "@r_masseater/fu4";
 import { Option, Result, String as Str, pipe } from "effect";
 
 import type { ReusableMetadata } from "#/entities/workflow/model/reusable.ts";
+import { projectCache } from "#/shared/project-cache/index.ts";
 import { quote } from "#/shared/text/index.ts";
 import { localPath } from "#/shared/uses/index.ts";
 
@@ -10,7 +11,7 @@ import { reusableOf } from "./reusable.ts";
 
 export type Found = Result.Result<ReusableMetadata, string>;
 
-const cache = new WeakMap<Project, Map<string, Option.Option<Found>>>();
+const reusables = projectCache<Option.Option<Found>>();
 
 const unreadable = (spec: string, relative: string): Found =>
   Result.fail(
@@ -28,16 +29,6 @@ const load = (project: Project, spec: string, relative: string): Found =>
       ),
   });
 
-const cacheOf = (project: Project): Map<string, Option.Option<Found>> => {
-  const found = Option.fromNullishOr(cache.get(project));
-  if (Option.isSome(found)) {
-    return found.value;
-  }
-  const created = new Map<string, Option.Option<Found>>();
-  cache.set(project, created);
-  return created;
-};
-
 export const findReusable =
   (project: Project) =>
   (spec: string): Option.Option<Found> => {
@@ -45,13 +36,12 @@ export const findReusable =
     if (Option.isNone(relative)) {
       return Option.none();
     }
-    const entries = cacheOf(project);
-    const hit = Option.fromNullishOr(entries.get(spec));
+    const hit = reusables.get(project)(spec);
     if (Option.isSome(hit)) {
       return hit.value;
     }
     const loaded = Option.some(load(project, spec, relative.value));
-    entries.set(
+    reusables.set(project)(
       spec,
       pipe(
         loaded,
@@ -64,5 +54,5 @@ export const findReusable =
 export const skipReusable =
   (project: Project) =>
   (spec: string): void => {
-    cacheOf(project).set(spec, Option.none());
+    reusables.set(project)(spec, Option.none());
   };

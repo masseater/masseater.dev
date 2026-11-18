@@ -1,7 +1,9 @@
 import type { Source, SyntaxNode } from "@r_masseater/fu4";
 import { Array as Arr, Option, Result, String as Str, pipe } from "effect";
 
-import { descendants, isAnchor, isComment, isContainer, namedWhere, parentOf } from "./nodes.ts";
+import { descendants } from "#/shared/syntax/index.ts";
+
+import { isAnchor, isComment, isContainer, namedWhere, parentOf } from "./nodes.ts";
 
 const NONE = 0;
 const NAME_START = 1;

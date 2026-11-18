@@ -1,3 +1,4 @@
+import { aligned, wordAt } from "@masseater.dev/lint-host";
 import { Option } from "effect";
 
 const WORD = 4;
@@ -61,17 +62,6 @@ export interface SourceView {
 
 const utf16 = new TextDecoder("utf-16le");
 
-const aligned = (buffer: Uint8Array): Uint8Array =>
-  Option.match(
-    Option.liftPredicate(buffer, ({ byteOffset }) => byteOffset % WORD === EMPTY),
-    {
-      onNone: () => Uint8Array.from(buffer),
-      onSome: (value) => value,
-    },
-  );
-
-const wordAt = (words: Uint32Array, index: number): number => words[index] ?? EMPTY;
-
 const rootOf = (value: number): Option.Option<number> =>
   Option.liftPredicate(value, (id) => id !== NONE);
 
@@ -88,15 +78,15 @@ interface Layout {
 }
 
 const layoutOf = (header: Uint32Array): Layout => {
-  const semanticCount = wordAt(header, HEADER.semanticCount);
-  const concreteCount = wordAt(header, HEADER.concreteCount);
-  const errorCount = wordAt(header, HEADER.errorCount);
+  const semanticCount = wordAt(header)(HEADER.semanticCount);
+  const concreteCount = wordAt(header)(HEADER.concreteCount);
+  const errorCount = wordAt(header)(HEADER.errorCount);
   const semanticAt = HEADER_WORDS;
   const concreteAt = semanticAt + semanticCount * SEMANTIC_WORDS;
   const childAt = concreteAt + concreteCount * CONCRETE_WORDS;
-  const errorAt = childAt + wordAt(header, HEADER.childCount);
+  const errorAt = childAt + wordAt(header)(HEADER.childCount);
   const spanAt = errorAt + errorCount * ERROR_WORDS;
-  const blobAt = (spanAt + wordAt(header, HEADER.stringCount) * STRING_WORDS) * WORD;
+  const blobAt = (spanAt + wordAt(header)(HEADER.stringCount) * STRING_WORDS) * WORD;
   return {
     semanticCount,
     concreteCount,
@@ -117,8 +107,8 @@ const stringsOf = (
 ): ((index: number) => string) => {
   const cache = new Map<number, string>();
   const decode = (index: number): string => {
-    const offset = wordAt(words, spanAt + index * STRING_WORDS) * STRING_WORDS;
-    const length = wordAt(words, spanAt + index * STRING_WORDS + NEXT) * STRING_WORDS;
+    const offset = wordAt(words)(spanAt + index * STRING_WORDS) * STRING_WORDS;
+    const length = wordAt(words)(spanAt + index * STRING_WORDS + NEXT) * STRING_WORDS;
     const value = utf16.decode(blob.subarray(offset, offset + length));
     cache.set(index, value);
     return value;
@@ -134,14 +124,14 @@ export const sourceView = (raw: Uint8Array): SourceView => {
   const stringAt = stringsOf(words, buffer.subarray(layout.blobAt), layout.spanAt);
   return {
     semanticCount: layout.semanticCount,
-    semanticRoot: rootOf(wordAt(header, HEADER.semanticRoot)),
+    semanticRoot: rootOf(wordAt(header)(HEADER.semanticRoot)),
     concreteCount: layout.concreteCount,
-    concreteRoot: rootOf(wordAt(header, HEADER.concreteRoot)),
+    concreteRoot: rootOf(wordAt(header)(HEADER.concreteRoot)),
     errorCount: layout.errorCount,
-    semantic: (id, field) => wordAt(words, layout.semanticAt + id * SEMANTIC_WORDS + field),
-    concrete: (id, field) => wordAt(words, layout.concreteAt + id * CONCRETE_WORDS + field),
-    child: (index) => wordAt(words, layout.childAt + index),
-    error: (index, field) => wordAt(words, layout.errorAt + index * ERROR_WORDS + field),
+    semantic: (id, field) => wordAt(words)(layout.semanticAt + id * SEMANTIC_WORDS + field),
+    concrete: (id, field) => wordAt(words)(layout.concreteAt + id * CONCRETE_WORDS + field),
+    child: (index) => wordAt(words)(layout.childAt + index),
+    error: (index, field) => wordAt(words)(layout.errorAt + index * ERROR_WORDS + field),
     stringAt,
     text: stringAt(EMPTY),
   };

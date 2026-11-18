@@ -3,7 +3,7 @@ import { Array as Arr, Option, String as Str, pipe } from "effect";
 
 import { codePoints } from "#/shared/text/index.ts";
 
-import { isNull, isQuoted } from "./node.ts";
+import { isNull, isQuoted, valueAt } from "./node.ts";
 
 export type Sink = (message: string) => void;
 
@@ -93,6 +93,15 @@ export const decodeBoolean =
     }
     return found.value;
   };
+
+export const flagAt =
+  (sink: Sink) =>
+  (key: string) =>
+  (node: YamlNode): boolean =>
+    Option.match(valueAt(key)(node), {
+      onNone: () => false,
+      onSome: decodeBoolean(sink),
+    });
 
 export const isPresent =
   (sink: Sink) =>

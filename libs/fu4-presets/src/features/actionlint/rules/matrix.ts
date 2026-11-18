@@ -8,6 +8,7 @@ import type {
   MatrixRow,
   RawValue,
 } from "#/entities/workflow/model/job-types.ts";
+import { includedOf } from "#/features/actionlint/lib/matrix-labels.ts";
 import { NOOP, workflowRule } from "#/features/actionlint/lib/workflow-rule.ts";
 import type { Fail, Visitor } from "#/features/actionlint/lib/workflow-rule.ts";
 import { quote, sortedQuotes } from "#/shared/text/index.ts";
@@ -48,14 +49,6 @@ const hasExpression = (combinations: MatrixCombinations): boolean =>
   pipe(
     combinations.combinations,
     Arr.some((combination) => isSet(combination.expression)),
-  );
-
-const includedOf = (matrix: Matrix): readonly (readonly [string, MatrixAssign])[] =>
-  pipe(
-    Option.fromNullishOr(matrix.include),
-    Option.map((include) => include.combinations),
-    Option.getOrElse(() => []),
-    Arr.flatMap((combination) => Rec.toEntries(combination.assigns)),
   );
 
 const withValue = (rows: Rows, name: string, value: RawValue): Rows => {

@@ -1,7 +1,7 @@
 import { Array as Arr, Option, pipe } from "effect";
 
 import type { Event, EventFilter, WebhookEvent } from "#/entities/workflow/model/types.ts";
-import { NOOP, workflowRule } from "#/features/actionlint/lib/workflow-rule.ts";
+import { NOOP, eachEvent, workflowRule } from "#/features/actionlint/lib/workflow-rule.ts";
 import type { Fail, Visitor } from "#/features/actionlint/lib/workflow-rule.ts";
 import { validatePath, validateRef } from "#/shared/glob/index.ts";
 import type { InvalidGlob } from "#/shared/glob/index.ts";
@@ -78,11 +78,7 @@ export const glob = workflowRule({
   docs: "https://github.com/rhysd/actionlint/blob/main/docs/checks.md#check-glob-pattern",
   visitor: (fail): Visitor => ({
     ...NOOP,
-    workflowPre: (workflow) => {
-      for (const event of Option.getOrElse(Option.fromNullishOr(workflow.on), () => [])) {
-        checkEvent(fail)(event);
-      }
-    },
+    workflowPre: eachEvent(checkEvent(fail)),
     jobPre: (job) => {
       const version = pipe(
         Option.fromNullishOr(job.snapshot),

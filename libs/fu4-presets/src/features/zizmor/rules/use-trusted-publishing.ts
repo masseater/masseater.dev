@@ -20,8 +20,7 @@ import {
   withinAt,
   withKeys,
 } from "#/features/zizmor/lib/location.ts";
-import { commandsOf, scriptDialectOf, treeOf } from "#/features/zizmor/lib/script.ts";
-import type { Command, ScriptParser } from "#/features/zizmor/lib/script.ts";
+import { matchingCommands, scriptDialectOf } from "#/features/zizmor/lib/script.ts";
 import { hasIdToken } from "#/features/zizmor/lib/workflow.ts";
 import type { Audit, AuditContext, Drafts } from "#/features/zizmor/model/audit.ts";
 import type { Coordinate } from "#/features/zizmor/model/coordinate.ts";
@@ -139,14 +138,9 @@ export const isPublishCommand =
       onNone: () => Str.startsWith("python")(name) && pythonPublishes(args),
     });
 
-export const publishCommands =
-  (parse: ScriptParser) =>
-  (dialect: "bash" | "pwsh", run: string): readonly Command[] =>
-    pipe(
-      Option.toArray(treeOf(parse)(dialect, run)),
-      Arr.flatMap(commandsOf(dialect)),
-      Arr.filter((command) => isPublishCommand(command.name)(command.args)),
-    );
+export const publishCommands = matchingCommands((command) =>
+  isPublishCommand(command.name)(command.args),
+);
 
 const actionFindings = (step: StepView): Drafts =>
   pipe(

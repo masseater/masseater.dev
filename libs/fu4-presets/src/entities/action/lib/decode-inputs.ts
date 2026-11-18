@@ -5,8 +5,8 @@ import type { ActionInput } from "#/entities/action/model/types.ts";
 import { quote } from "#/shared/text/index.ts";
 import {
   custom,
-  decodeBoolean,
   decodeString,
+  flagAt,
   isMappingOrError,
   lowerKey,
   typeError,
@@ -34,10 +34,7 @@ const defaulted = (sink: Sink, node: YamlNode): boolean => {
 };
 
 const fieldsOf = (sink: Sink, node: YamlNode): Fields => ({
-  required: Option.match(valueAt("required")(node), {
-    onNone: () => false,
-    onSome: decodeBoolean(sink),
-  }),
+  required: flagAt(sink)("required")(node),
   defaulted: Option.exists(valueAt("default")(node), (value) => defaulted(sink, value)),
   message: Option.match(valueAt(DEPRECATION)(node), {
     onNone: () => "",

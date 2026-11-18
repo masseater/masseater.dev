@@ -2,6 +2,7 @@ import type { Project } from "@r_masseater/fu4";
 import { Array as Arr, Option, Result, String as Str, pipe } from "effect";
 
 import type { ActionMetadata } from "#/entities/action/model/types.ts";
+import { projectCache } from "#/shared/project-cache/index.ts";
 import { quote } from "#/shared/text/index.ts";
 import { localPath } from "#/shared/uses/index.ts";
 
@@ -21,7 +22,7 @@ const FILES: readonly string[] = ["action.yaml", "action.yml"];
 const PARENT = "..";
 const SKIPPED: readonly string[] = ["", "."];
 
-const cache = new WeakMap<Project, Map<string, Option.Option<LocalAction>>>();
+const actions = projectCache<Option.Option<LocalAction>>();
 
 export const cleanJoin = (relative: string): string => {
   const parts: string[] = [];
@@ -60,16 +61,6 @@ const load = (project: Project, dir: string): Loaded => {
   );
 };
 
-const cacheOf = (project: Project): Map<string, Option.Option<LocalAction>> => {
-  const found = Option.fromNullishOr(cache.get(project));
-  if (Option.isSome(found)) {
-    return found.value;
-  }
-  const created = new Map<string, Option.Option<LocalAction>>();
-  cache.set(project, created);
-  return created;
-};
-
 export const findAction =
   (project: Project) =>
   (spec: string): Loaded => {
@@ -77,8 +68,7 @@ export const findAction =
     if (Option.isNone(relative)) {
       return Option.none();
     }
-    const entries = cacheOf(project);
-    const hit = Option.fromNullishOr(entries.get(spec));
+    const hit = actions.get(project)(spec);
     if (Option.isSome(hit)) {
       return pipe(
         hit.value,
@@ -86,6 +76,6 @@ export const findAction =
       );
     }
     const loaded = load(project, cleanJoin(relative.value));
-    entries.set(spec, pipe(loaded, Option.flatMap(Result.getSuccess)));
+    actions.set(project)(spec, pipe(loaded, Option.flatMap(Result.getSuccess)));
     return loaded;
   };

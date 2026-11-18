@@ -97,10 +97,17 @@ const cron: Decoder<readonly string[]> = map(
   ),
 )(noStrings);
 
+const described = (
+  fields: Fields,
+): Result.Result<readonly [Option.Option<string>, boolean], string> =>
+  Result.all([
+    optional("description")(string)(fields),
+    defaulted("required")(boolean)(() => false)(fields),
+  ]);
+
 const callInput = struct((fields) =>
   Result.gen(function* decode() {
-    yield* optional("description")(string)(fields);
-    yield* defaulted("required")(boolean)(() => false)(fields);
+    yield* described(fields);
     const type = yield* required("type")(literal(["boolean", "number", "string"]))(fields);
     return type;
   }),
@@ -114,12 +121,7 @@ const callOutput = struct((fields) =>
   }),
 );
 
-const callSecret = struct((fields) =>
-  Result.all([
-    optional("description")(string)(fields),
-    defaulted("required")(boolean)(() => false)(fields),
-  ]),
-);
+const callSecret = struct(described);
 
 export const nullAsTrue = map(unit)(() => true);
 
@@ -144,8 +146,7 @@ const workflowCall: Decoder<WorkflowCallEvent> = struct((fields) =>
 
 const dispatchInput = struct((fields) =>
   Result.gen(function* decode() {
-    yield* optional("description")(string)(fields);
-    yield* defaulted("required")(boolean)(() => false)(fields);
+    yield* described(fields);
     const type = yield* defaulted("type")(
       literal(["boolean", "choice", "environment", "number", "string"]),
     )((): DispatchInputType => "string")(fields);

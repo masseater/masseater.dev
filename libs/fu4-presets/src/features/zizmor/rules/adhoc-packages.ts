@@ -11,8 +11,7 @@ import {
   withinAt,
   withKeys,
 } from "#/features/zizmor/lib/location.ts";
-import { commandsOf, scriptDialectOf, treeOf } from "#/features/zizmor/lib/script.ts";
-import type { Command, ScriptParser } from "#/features/zizmor/lib/script.ts";
+import { matchingCommands, scriptDialectOf } from "#/features/zizmor/lib/script.ts";
 import type { Audit, AuditContext, Drafts } from "#/features/zizmor/model/audit.ts";
 import type { StepView } from "#/features/zizmor/model/step.ts";
 
@@ -109,14 +108,9 @@ export const isAdhocInstall =
   (args: readonly string[]): boolean =>
     Option.exists(Option.fromNullishOr(INSTALLERS.get(name)), (installer) => installer(args));
 
-export const installCommands =
-  (parse: ScriptParser) =>
-  (dialect: "bash" | "pwsh", run: string): readonly Command[] =>
-    pipe(
-      Option.toArray(treeOf(parse)(dialect, run)),
-      Arr.flatMap(commandsOf(dialect)),
-      Arr.filter((command) => isAdhocInstall(command.name)(command.args)),
-    );
+export const installCommands = matchingCommands((command) =>
+  isAdhocInstall(command.name)(command.args),
+);
 
 const check = (step: StepView, context: AuditContext): Drafts => {
   const { body } = step;

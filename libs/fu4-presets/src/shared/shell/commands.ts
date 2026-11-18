@@ -1,9 +1,11 @@
 import type { SyntaxNode } from "@r_masseater/fu4";
 import { Array as Arr, Option, String as Str, pipe } from "effect";
 
+import { fieldOf, fieldsOf } from "#/shared/syntax/index.ts";
+
 import { report } from "./finding.ts";
 import type { State } from "./finding.ts";
-import { fieldOf, fieldsOf, firstNamed, parentOf, sameNode } from "./node.ts";
+import { firstNamed, parentOf, sameNode } from "./node.ts";
 
 const SINGLE = 1;
 const QUOTES = 2;

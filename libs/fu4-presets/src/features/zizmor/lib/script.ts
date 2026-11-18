@@ -109,3 +109,13 @@ export const commandsOf =
       Arr.filter(isType("command")),
       Arr.flatMap((node) => Option.toArray(COMMANDS[dialect](node))),
     );
+
+export const matchingCommands =
+  (matches: (command: Command) => boolean) =>
+  (parse: ScriptParser) =>
+  (dialect: "bash" | "pwsh", run: string): readonly Command[] =>
+    pipe(
+      Option.toArray(treeOf(parse)(dialect, run)),
+      Arr.flatMap(commandsOf(dialect)),
+      Arr.filter(matches),
+    );

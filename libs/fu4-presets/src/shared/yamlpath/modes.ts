@@ -1,8 +1,10 @@
 import type { SyntaxNode } from "@r_masseater/fu4";
 import { Array as Arr, Option, Predicate, Result, pipe } from "effect";
 
+import { fieldOf } from "#/shared/syntax/index.ts";
+
 import type { Document } from "./document.ts";
-import { fieldOf, isPair, namedWhere, parentOf } from "./nodes.ts";
+import { isPair, namedWhere, parentOf } from "./nodes.ts";
 import { resolveTarget, walk } from "./query.ts";
 import type { Route } from "./query.ts";
 

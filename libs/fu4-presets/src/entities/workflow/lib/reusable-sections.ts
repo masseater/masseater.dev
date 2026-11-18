@@ -6,6 +6,7 @@ import {
   decodeBoolean,
   decodeOptionalString,
   decodeString,
+  flagAt,
   isMappingOrError,
   isPresent,
   lowerKey,
@@ -30,10 +31,7 @@ interface Fields {
 }
 
 const fieldsOf = (sink: Sink, node: YamlNode): Fields => ({
-  required: Option.match(valueAt("required")(node), {
-    onNone: () => false,
-    onSome: decodeBoolean(sink),
-  }),
+  required: flagAt(sink)("required")(node),
   defaulted: Option.exists(valueAt("default")(node), (value) =>
     Option.isSome(decodeOptionalString(sink)(value)),
   ),

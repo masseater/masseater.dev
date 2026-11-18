@@ -1,11 +1,12 @@
 import type { SyntaxNode } from "@r_masseater/fu4";
 import { Array as Arr, Option, Predicate, Result, String as Str, pipe } from "effect";
 
+import { fieldOf } from "#/shared/syntax/index.ts";
+
 import { resolveAnchor } from "./document.ts";
 import type { Document } from "./document.ts";
 import {
   childAt,
-  fieldOf,
   isAlias,
   isAnchor,
   isContainer,

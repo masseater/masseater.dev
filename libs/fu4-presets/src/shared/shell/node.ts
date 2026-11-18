@@ -4,22 +4,6 @@ import { Array as Arr, Option, pipe } from "effect";
 export const parentOf = (node: SyntaxNode): Option.Option<SyntaxNode> =>
   Option.fromNullishOr(node.parent);
 
-export const fieldOf =
-  (field: string) =>
-  (node: SyntaxNode): Option.Option<SyntaxNode> =>
-    pipe(
-      node.children,
-      Arr.findFirst((child) => child.field === field),
-    );
-
-export const fieldsOf =
-  (field: string) =>
-  (node: SyntaxNode): readonly SyntaxNode[] =>
-    pipe(
-      node.children,
-      Arr.filter((child) => child.field === field),
-    );
-
 export const firstNamed = (node: SyntaxNode): Option.Option<SyntaxNode> =>
   Arr.head(node.namedChildren);
 

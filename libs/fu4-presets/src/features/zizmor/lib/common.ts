@@ -10,8 +10,18 @@ import type {
   Uses,
 } from "#/features/zizmor/model/common.ts";
 
-import { boolean, literal, map, number, record, string, untagged, unit } from "./decode.ts";
-import type { Decoder } from "./decode.ts";
+import {
+  boolean,
+  literal,
+  map,
+  number,
+  optional,
+  record,
+  string,
+  untagged,
+  unit,
+} from "./decode.ts";
+import type { Decoder, Fields } from "./decode.ts";
 
 const OPEN = "${{";
 const CLOSE = "}}";
@@ -181,3 +191,17 @@ export const reusableUses: Decoder<Uses> = (node) =>
   });
 
 export const boolOrString: Decoder<string> = untagged<string>(map(boolean)(String), string);
+
+export interface StepHead {
+  readonly id: Option.Option<string>;
+  readonly if: Option.Option<If>;
+  readonly name: Option.Option<string>;
+}
+
+export const stepHead = (fields: Fields): Result.Result<StepHead, string> =>
+  Result.gen(function* decode() {
+    const id = yield* optional("id")(string)(fields);
+    const condition = yield* optional("if")(ifCondition)(fields);
+    const name = yield* optional("name")(string)(fields);
+    return { id, if: condition, name };
+  });

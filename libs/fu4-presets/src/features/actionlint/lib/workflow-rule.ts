@@ -4,6 +4,7 @@ import { Function as Fn, Option, Record as Rec } from "effect";
 
 import { workflowOf } from "#/entities/workflow/index.ts";
 import type { Job, Step, Workflow } from "#/entities/workflow/model/job-types.ts";
+import type { Event } from "#/entities/workflow/model/types.ts";
 
 export interface Visitor {
   readonly workflowPre: (workflow: Workflow) => void;
@@ -22,6 +23,14 @@ export const NOOP: Visitor = {
 };
 
 export type Fail = (at: Position, message: string) => void;
+
+export const eachEvent =
+  (check: (event: Event) => void) =>
+  (workflow: Workflow): void => {
+    for (const event of Option.getOrElse(Option.fromNullishOr(workflow.on), () => [])) {
+      check(event);
+    }
+  };
 
 export interface WorkflowRule {
   readonly description: string;

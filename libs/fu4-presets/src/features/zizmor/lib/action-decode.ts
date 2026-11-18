@@ -8,7 +8,7 @@ import type {
 } from "#/features/zizmor/model/action.ts";
 import type { EnvValue, LoE } from "#/features/zizmor/model/common.ts";
 
-import { env, ifCondition, loe, parseDocker, stepUses } from "./common.ts";
+import { env, ifCondition, loe, parseDocker, stepHead, stepUses } from "./common.ts";
 import {
   anyScalar,
   boolean,
@@ -62,21 +62,13 @@ const runBody: Decoder<ActionStepModel["body"]> = struct((fields) =>
 
 const step: Decoder<ActionStepModel> = struct((fields) =>
   Result.gen(function* decode() {
-    const id = yield* optional("id")(string)(fields);
-    const condition = yield* optional("if")(ifCondition)(fields);
-    const name = yield* optional("name")(string)(fields);
+    const head = yield* stepHead(fields);
     yield* defaulted("continue-on-error")(loe(boolean))(
       () => ({ type: "literal", value: false }) as const,
     )(fields);
     const stepEnv = yield* defaulted("env")(loe(env))(emptyEnv)(fields);
     const body = yield* untagged(usesBody, runBody)(fields.node);
-    return {
-      id,
-      if: condition,
-      name,
-      env: stepEnv,
-      body,
-    };
+    return { ...head, env: stepEnv, body };
   }),
 );
 

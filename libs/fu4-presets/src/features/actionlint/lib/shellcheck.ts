@@ -4,6 +4,7 @@ import type { ExecRun, Job } from "#/entities/workflow/model/job-types.ts";
 import type { Defaults } from "#/entities/workflow/model/types.ts";
 import { CODES, messageOf } from "#/shared/shell/index.ts";
 import type { Finding } from "#/shared/shell/index.ts";
+import type { Text } from "#/shared/yaml/index.ts";
 
 const EXPRESSION = /\$\{\{[\s\S]*?\}\}/gu;
 const CHECKED = new Set(["bash", "sh"]);
@@ -22,13 +23,15 @@ export const sanitize = (script: string): string => {
 export const isChecked = (shell: string): boolean =>
   CHECKED.has(shell) || Str.startsWith("bash ")(shell) || Str.startsWith("sh ")(shell);
 
-export const shellOf = (defaults: Defaults | undefined): Option.Option<string> =>
+export const defaultShell = (defaults: Defaults | undefined): Option.Option<Text> =>
   pipe(
     Option.fromNullishOr(defaults),
     Option.flatMap((found) => Option.fromNullishOr(found.run)),
     Option.flatMap((run) => Option.fromNullishOr(run.shell)),
-    Option.map((shell) => shell.value),
   );
+
+export const shellOf = (defaults: Defaults | undefined): Option.Option<string> =>
+  Option.map(defaultShell(defaults), (shell) => shell.value);
 
 const isWindows = (label: string): boolean => {
   const lower = Str.toLowerCase(label);
