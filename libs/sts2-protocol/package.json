@@ -2,6 +2,7 @@
   "name": "@masseater.dev/sts2-protocol",
   "version": "0.0.0",
   "private": true,
+  "description": "Types shared by sts2-mcp and AgentBridge; the C# types are generated from them.",
   "type": "module",
   "imports": {
     "#/*": "./src/*"

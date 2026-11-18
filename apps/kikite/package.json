@@ -2,6 +2,7 @@
   "name": "kikite",
   "version": "0.0.0",
   "private": true,
+  "description": "kikite.masseater.dev, a mock interviewer that listens to spoken answers and asks the next question.",
   "type": "module",
   "imports": {
     "#/*": "./src/*"

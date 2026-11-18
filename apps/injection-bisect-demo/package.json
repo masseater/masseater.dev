@@ -2,6 +2,7 @@
   "name": "injection-bisect-demo",
   "version": "0.0.0",
   "private": true,
+  "description": "Serverless browser demo of injection-bisect that shows where a prompt injection hides in a document.",
   "type": "module",
   "imports": {
     "#/*": "./src/*"

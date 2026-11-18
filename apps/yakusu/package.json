@@ -2,6 +2,7 @@
   "name": "yakusu",
   "version": "0.1.5",
   "private": true,
+  "description": "Desktop app that translates text with PLaMo 3 Translate on the user's own PC.",
   "type": "module",
   "imports": {
     "#/*": "./src/*"

@@ -2,6 +2,7 @@
   "name": "@masseater.dev/component-release",
   "version": "0.0.0",
   "private": true,
+  "description": "Helpers shared by app release builds, such as bundle-collect for Tauri bundles and command runners.",
   "bin": {
     "bundle-collect": "./bin/bundle-collect.ts",
     "with-cuda": "./bin/with-cuda.ts"
