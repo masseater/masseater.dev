@@ -5,8 +5,7 @@ import { Array as Arr, Effect, Schema, Stdio, Stream, pipe } from "effect";
 import { checkAll } from "#/app/all-checks.ts";
 import { ProblemsFound, writeStdout } from "#/app/output.ts";
 import { runCli } from "#/app/runtime.ts";
-import { checkOverrides } from "#/features/check-overrides/index.ts";
-import { JSON_FLAG, OVERRIDES_FLAG } from "#/shared/lib/cli-contract.ts";
+import { JSON_FLAG } from "#/shared/lib/cli-contract.ts";
 import { ProblemList, formatProblem, sortProblems } from "#/shared/lib/problem.ts";
 import type { Problem } from "#/shared/lib/problem.ts";
 import { RepositoryFiles } from "#/shared/lib/repository-files.ts";
@@ -85,28 +84,6 @@ const checkEverything = Effect.fn("checkEverything")(function* checkEverything(r
   return yield* failWhenAny(problems.length + toolFailures);
 });
 
-const checkOverridesOnly = Effect.fn("checkOverridesOnly")(function* checkOverridesOnly(
-  root: string,
-) {
-  const found = yield* checkOverrides(root);
-  const problems = sortProblems(found);
-  yield* writeProblems(root, problems);
-  return yield* failWhenAny(problems.length);
-});
-
-const runChecks = Effect.fn("runChecks")(function* runChecks(
-  root: string,
-  args: readonly string[],
-) {
-  if (args.includes(OVERRIDES_FLAG)) {
-    return yield* checkOverridesOnly(root);
-  }
-  if (Arr.isReadonlyArrayNonEmpty(args)) {
-    return yield* toolChecks(root, args).pipe(Effect.flatMap(failWhenAny));
-  }
-  return yield* checkEverything(root);
-});
-
 const msch = Effect.gen(function* msch() {
   const stdio = yield* Stdio.Stdio;
   const files = yield* RepositoryFiles;
@@ -115,7 +92,10 @@ const msch = Effect.gen(function* msch() {
   if (args.includes(JSON_FLAG)) {
     return yield* writeJson(root);
   }
-  return yield* runChecks(root, args);
+  if (Arr.isReadonlyArrayNonEmpty(args)) {
+    return yield* toolChecks(root, args).pipe(Effect.flatMap(failWhenAny));
+  }
+  return yield* checkEverything(root);
 });
 
 runCli(msch);
