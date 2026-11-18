@@ -12,7 +12,7 @@ export default defineConfig({
         input: await cargoInputs({ directory: import.meta.dirname }),
       }),
       verify: { command: [], dependsOn: ["cargo"] },
-      ...tauriReleaseTasks("shirushi"),
+      ...tauriReleaseTasks(),
     },
   },
 });
