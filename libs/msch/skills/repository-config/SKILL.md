@@ -67,13 +67,13 @@ They also apply `decisionTestRules` to `*.test.ts`.
 
 ## Options
 
-| Option      | Holds                                                                                                                           |
-| ----------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| `workspace` | The result of `workspaceSettings`                                                                                               |
-| `overrides` | Extra oxlint overrides for the repository                                                                                       |
-| `secrets`   | `lines` and `paths` regular expressions that h56m accepts as public                                                             |
-| `textlint`  | `ignores`, `kanji` words allowed past the kanji run limit, `technicalWriting` and `rules` settings, `filters` and `sources`     |
-| `run`       | `tasks`, extra root tasks as `{ name: command }`, and `remoteCache`, the URL of the remote task cache that every `vp run` reads |
+| Option      | Holds                                                                                                                                                                                                                                                              |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `workspace` | The result of `workspaceSettings`                                                                                                                                                                                                                                  |
+| `overrides` | Extra oxlint overrides for the repository                                                                                                                                                                                                                          |
+| `secrets`   | `lines` and `paths` regular expressions that h56m accepts as public                                                                                                                                                                                                |
+| `textlint`  | `ignores`, `kanji` words allowed past the kanji run limit, `technicalWriting` and `rules` settings, `filters` and `sources`                                                                                                                                        |
+| `run`       | `tasks`, extra root tasks as `{ name: command }`; `remoteCache`, the URL of the remote task cache that every `vp run` reads; and `check`, `{ launcher, dependsOn }` to run `vp check` through another command than `effect-tsgo --tsrs-lint` after the named tasks |
 
 ## Rule sets
 

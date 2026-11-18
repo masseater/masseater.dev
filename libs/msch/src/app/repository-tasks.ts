@@ -5,9 +5,17 @@ import type { WorkspaceSettings } from "#/features/build-workspace-settings/inde
 
 type Tasks = NonNullable<NonNullable<UserConfig["run"]>["tasks"]>;
 
+export interface CheckOptions {
+  readonly launcher: string;
+  readonly dependsOn: readonly string[];
+}
+
+export const DEFAULT_CHECK: CheckOptions = { launcher: "effect-tsgo --tsrs-lint", dependsOn: [] };
+
 export interface TaskOptions {
   readonly workspace: WorkspaceSettings;
   readonly commands: Readonly<Record<string, string>>;
+  readonly check: CheckOptions;
 }
 
 const NOT_INPUTS = [
@@ -43,8 +51,8 @@ const FALLOW = [
   "fallow security --fail-on-issues --quiet",
 ];
 
-const CHECK =
-  "GOMEMLIMIT=4GiB TSRS_LINT_RUN_EXTERNAL_CODE=1 msch-changed effect-tsgo --tsrs-lint vp check --deny-warnings --continue-on-error";
+const checkCommand = (launcher: string): string =>
+  `GOMEMLIMIT=4GiB TSRS_LINT_RUN_EXTERNAL_CODE=1 msch-changed ${launcher} vp check --deny-warnings --continue-on-error`;
 
 const AUDIT =
   'before="$(cksum pnpm-workspace.yaml)"; vp pm audit --fix || exit; if [ "$before" != "$(cksum pnpm-workspace.yaml)" ]; then echo "vp pm audit --fix rewrote pnpm-workspace.yaml. Run vp install and commit the diff." >&2; exit 1; fi';
@@ -52,6 +60,7 @@ const AUDIT =
 export const tasksOf = ({
   workspace,
   commands,
+  check,
 }: TaskOptions): NonNullable<NonNullable<UserConfig["run"]>["tasks"]> => {
   const inputs = [{ auto: true }, ...workspace.ignoredDirectories, ...NOT_INPUTS];
   const checks: Tasks = {
@@ -63,7 +72,8 @@ export const tasksOf = ({
       },
     },
     check: {
-      command: CHECK,
+      command: checkCommand(check.launcher),
+      dependsOn: [...check.dependsOn],
       cache: { input: inputs, untrackedEnv: UNTRACKED_ENV },
     },
     test: {

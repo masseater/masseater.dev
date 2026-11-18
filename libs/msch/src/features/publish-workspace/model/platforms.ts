@@ -1,4 +1,4 @@
-import { Array as Arr, Boolean as Bool, Option, Record as Rec, String as Str, pipe } from "effect";
+import { Array as Arr, Option, Record as Rec, String as Str, pipe } from "effect";
 
 const RUNNERS = {
   linux: "ubuntu-latest",
@@ -67,7 +67,6 @@ export interface NativePackage {
   readonly version: string;
   readonly binary: string;
   readonly target: string;
-  readonly archive: boolean;
 }
 
 const libcOf = (parts: readonly string[]): Readonly<Record<string, readonly string[]>> =>
@@ -78,8 +77,8 @@ const libcOf = (parts: readonly string[]): Readonly<Record<string, readonly stri
   );
 
 /** @internal */
-export const nativeFileOf = ({ binary, target, archive }: NativePackage): string =>
-  `${binary}.${target}.${Bool.match(archive, { onFalse: () => "node", onTrue: () => "tgz" })}`;
+export const nativeFileOf = ({ binary, target }: NativePackage): string =>
+  `${binary}.${target}.node`;
 
 /** @internal */
 export const nativeFields = (native: NativePackage): Readonly<Record<string, unknown>> => {
@@ -91,13 +90,11 @@ export const nativeFields = (native: NativePackage): Readonly<Record<string, unk
     os: Option.toArray(Arr.head(parts)),
     cpu: Option.toArray(Arr.get(parts, CPU_INDEX)),
     ...libcOf(parts),
-    ...Bool.match(native.archive, {
-      onFalse: (): Readonly<Record<string, unknown>> => ({ main: file, files: [file] }),
-      onTrue: (): Readonly<Record<string, unknown>> => ({ preferUnplugged: true }),
-    }),
+    main: file,
+    files: [file],
   };
 };
 
 /** @internal */
-export const nativeReadme = ({ name, target, archive }: NativePackage): string =>
-  `# ${name}-${target}\n\nThe prebuilt ${target} ${Bool.match(archive, { onFalse: () => "native addon", onTrue: () => "build" })} of [${name}](https://www.npmjs.com/package/${name}). Install ${name} instead; npm picks this package for your platform.\n`;
+export const nativeReadme = ({ name, target }: NativePackage): string =>
+  `# ${name}-${target}\n\nThe prebuilt ${target} native addon of [${name}](https://www.npmjs.com/package/${name}). Install ${name} instead; npm picks this package for your platform.\n`;

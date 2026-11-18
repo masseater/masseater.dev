@@ -20,8 +20,6 @@ export interface DependencyEntry {
 
 const DependencyMap = Schema.optional(Schema.Record(Schema.String, Schema.String));
 
-const NativeBuild = Schema.Struct({ archive: Schema.optional(Schema.Boolean) });
-
 const PackageManifest = Schema.Struct({
   name: Schema.optional(Schema.String),
   dependencies: DependencyMap,
@@ -31,7 +29,6 @@ const PackageManifest = Schema.Struct({
   types: Schema.optional(Schema.String),
   typings: Schema.optional(Schema.String),
   main: Schema.optional(Schema.String),
-  native: Schema.optional(NativeBuild),
 });
 
 export type Manifest = typeof PackageManifest.Type;
