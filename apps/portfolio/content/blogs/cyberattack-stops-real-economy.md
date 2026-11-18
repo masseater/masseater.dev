@@ -1,38 +1,38 @@
 ---
-title: "Capitalism will end in a chain of system outages"
-description: "ALL.Net went down after unauthorized access, and I could not play games on my way home. Store staff are just an interface between the network and the real world, and one service going down stops even the stores of companies that were never attacked. Through the accumulation of outages like these, the day capitalism ends will surely come soon."
+title: "資本主義はシステム障害の連鎖で終わるだろう"
+description: "ALL.Netが不正アクセスでダウンし、帰宅途中にゲームができなかった。店舗スタッフはネットワークと現実世界をつなぐ単なるインターフェースに過ぎず、サービスが一度停止すれば、攻撃を受けたことのない企業の店舗さえも停止してしまう。こうした障害の積み重ねによって、資本主義が終わる日はきっとすぐにやってくるだろう。"
 tags: ["セキュリティ", "サプライチェーン"]
 published: true
 ---
 
-The day will surely come soon when one service somewhere goes down, the other services go down one after another in a chain, and capitalism ends. Every system in this world is connected through networks, and store staff are just an interface between those networks and the real world. If what is on the other side of the network stops, nothing can be bought or sold, even when the store has its people, its goods and its machines in place. Unauthorized access tends to be seen as an incident where information leaks, but in reality it interferes directly with real economic activity.
+どこかのサービスがダウンし、他のサービスも連鎖的に次々とダウンし、資本主義が終わる日がきっとすぐにやってくるだろう。この世のあらゆるシステムはネットワークでつながっており、ストアのスタッフはそれらのネットワークと現実世界との単なるインターフェースに過ぎない。ネットワークの向こう側で停止すれば、たとえ店に人員や商品、設備が揃っていたとしても、何も売買できなくなる。不正アクセスは情報漏洩の事案と見なされがちだが、実際には実際の経済活動に直接支障をきたす。
 
-In November 2026, ALL.Net, which supports online play at game arcades, went down after unauthorized access, and I could not play games on my way home. Its operator, SEGA FAVE, stopped various services from 15:00 on November 1, and as of 18:00 on November 2 it had stopped online play for ALL.Net titles, play using Aime, PrizeON, and even new SEGA ID registrations. The initial investigation found no leak of user or business partner information[^segafave-allnet][^denfaminico-allnet]. Even so, players of the Gundam EXVS series were told that even cabinets running offline were expected to become unplayable one after another[^exvs-offline]. A store manager also wrote on note that we now live in an era where you cannot play when the network stops even if the machines work fine, and that the problems stores can do nothing about have increased[^erina-note].
+2026年11月、ゲームセンターでのオンラインプレイに対応しているALL.Netが不正アクセスによりダウンし、帰宅途中にゲームをプレイできなかった。そのオペレーターであるSEGA FAVEは、11月1日15時から各種サービスを停止し、11月2日18時時点でALL.Netタイトルのオンラインプレイ、AimeやPrizeON、さらには新規のSEGA ID登録までも停止していた。初期調査の結果、ユーザーまたはビジネスパートナー情報の漏洩は認められなかった[^segafave-allnet][^denfaminico-allnet]。それでも、ガンダムEXVSシリーズのプレイヤーたちは、オフラインで動作する筐体であっても次々とプレイ不能になると予想されていた[^exvs-offline]。店長もnoteで、マシンは問題なく動いていてもネットワークが止まると遊べない時代になっており、店舗側ではどうしようもない問題が増えている[^erina-note]と書いていた。
 
-At a game arcade it ends at "too bad I couldn't play," but the same thing is already happening to the business of stores itself. In July 2026, the food logistics company Nichirei suffered unauthorized access, and KFC Japan announced that ingredients were not arriving and all its stores might close temporarily or stop selling. All stores returned to normal business on July 22[^impress-nichirei].
+ゲームセンターでは「遊べなかったのが残念」で終わっているが、店舗というビジネス自体にも同じことが既に起きている。2026年7月、食品物流企業のニチレイが不正アクセスを受け、日本KFCは食材が届かなくなったこと、および全店舗が一時的に休業または販売停止となる可能性があることを発表した。全店舗が7月22日に通常営業に戻った[^impress-nichirei]。
 
-It is not only the party that was attacked that stops. When ASKUL was infected with ransomware in October 2025, MUJI and LOFT, which had outsourced their logistics to it, also stopped selling in their online stores. Ryohin Keikaku's own systems were not infected[^sakigake-askul]. In this ALL.Net incident too, Bandai Namco's Taiko no Tatsujin was caught up in it[^gamespark-allnet]. A dependency you do not even know about stops your real world.
+攻撃を受けた当事者だけが止まるわけではない。2025年10月にアスクルがランサムウェアに感染した際、物流を委託していた無印良品とロフトもオンラインストアでの販売を停止した。良品計画独自のシステムは感染していなかった[^sakigake-askul]。今回のALL.Netの事件でも、バンダイナムコの太鼓の達人が巻き込まれた[^gamespark-allnet]。自覚すらしていない依存関係が、現実世界を阻む。
 
-The chain reaches even competitors with no business relationship. On September 29, 2025, Asahi Group was hit by ransomware, its order taking and shipping stopped, and many of its factories halted production. Shipments even stopped for convenience store private brands that were made by Asahi under contract, such as Seven-Eleven's chuhai "Clear Cooler" and FamilyMart's tea[^hokkaido-np-asahi-pb]. A month later there was still no prospect of recovery, and at the end of October Asahi Breweries was shipping only about 10% of its usual items[^sakigake-asahi]. Kirin, flooded with orders replacing Asahi's, limited shipments of beer for restaurants and bars and also stopped selling its year-end gift sets[^oanda-kirin]. Kirin, which had not been attacked, could not fill the hole left by Asahi and had to cut its supply.
+そのチェーンは、取引関係のない競合他社にまで及んでいる。2025年9月29日、アサヒグループはランサムウェアの被害に遭い、受注および出荷が停止し、多くの工場で生産が停止した。セブン-イレブンのチューハイ「クリアクーラー」やファミリーマートのティーなど、アサヒが契約して製造していたコンビニのプライベートブランドでは、出荷が止まることさえあった[^hokkaido-np-asahi-pb]。1カ月経っても回復の見込みはなく、10月末の時点でアサヒビールは通常商品の約1割しか出荷していなかった[^sakigake-asahi]。キリンはアサヒに代わって注文が殺到し、飲食店向けのビールを限定出荷したほか、年末ギフトセットの販売も中止した[^oanda-kirin]。攻撃を受けていなかったキリンは、アサヒの穴を埋めることができず、供給を断たざるを得なかった。
 
-A chain does not even need an attacker. In July 2024, a faulty update to CrowdStrike's security software stopped about 8.5 million Windows machines. That was less than 1% of all Windows machines[^techcrunch-crowdstrike], yet hospitals, airlines and banks around the world stopped working. In October 2025, AWS and Azure had large outages one after the other[^theregister-azure]. Because dependencies are concentrated on a small number of cloud providers, when one of those clouds goes down, the services running on it stop with it, no matter how carefully they were built.
+チェーンに攻撃者すら必要ない。2024年7月、CrowdStrikeのセキュリティソフトウェアの不具合のあるアップデートにより、約850万台のWindowsマシンが停止した。それはWindowsマシン全体の1%にも満たない数だったが[^techcrunch-crowdstrike]、世界中の病院や航空会社、銀行が機能停止に追い込まれた。2025年10月、AWSとAzureで相次いで大規模な障害が発生した[^theregister-azure]。依存関係が少数のクラウドプロバイダーに集中しているため、それらのクラウドのいずれかがダウンすると、いかに丁寧に構築されていたとしても、その上で動作しているサービスも共に停止してしまう。
 
 ::figure{name=cascade-failure}
 
-These outages are spreading wider while the intervals between them shrink.
+これらの障害は拡大しており、その間隔は狭まっている。
 
-| Period         | What stopped                                                                               | What caused it                                            |
-| -------------- | ------------------------------------------------------------------------------------------ | --------------------------------------------------------- |
-| July 2024      | About 8.5 million Windows machines worldwide                                               | A faulty security software update                         |
-| September 2025 | Asahi's shipments, convenience store private brands, Kirin's beer for restaurants and bars | Ransomware at Asahi                                       |
-| October 2025   | The online stores of MUJI and LOFT                                                         | Ransomware at ASKUL, their logistics contractor           |
-| October 2025   | Services running on AWS and Azure                                                          | Cloud outages                                             |
-| July 2026      | All KFC stores                                                                             | Unauthorized access at Nichirei, a food logistics company |
-| November 2026  | ALL.Net titles at game arcades across the country                                          | Unauthorized access to ALL.Net                            |
+| 期間       | 何が止まったのか                                                               | 何が原因だったのか                           |
+| ---------- | ------------------------------------------------------------------------------ | -------------------------------------------- |
+| 2024年7月  | 世界中で約850万台のWindowsマシン                                               | 不具合のあるセキュリティソフトのアップデート |
+| 2025年9月  | アサヒの出荷品、コンビニのプライベートブランド、キリンの飲食店・バー向けビール | アサヒのランサムウェア                       |
+| 2025年10月 | 無印良品とLOFTのオンラインストア                                               | ASKUL（物流請負業者）におけるランサムウェア  |
+| 2025年10月 | AWSおよびAzure上で動作するサービス                                             | クラウド障害                                 |
+| 2026年7月  | 全KFC店舗                                                                      | 食品物流企業「ニチレイ」への不正アクセス     |
+| 2026年11月 | 全国のゲームセンターにおけるALL.Netタイトル                                    | ALL.Netへの不正アクセス                      |
 
-Even within what I could find, after July 2024 there was a gap of more than a year, but since the autumn of 2025 they have been happening every few months. The scope of what stops has also widened, from the business partners of the attacked company, to competitors with no business relationship, to worldwide outages with no attacker at all. Meanwhile, systems keep moving toward being connected to each other, and dependencies keep moving toward a small number of providers.
+見つけられた範囲でも、2024年7月以降は1年以上の間隔があったが、2025年秋以降は数ヶ月おきに起きている。停止の範囲も、攻撃を受けた企業の取引先から、取引のない競合他社、さらには攻撃者が全くいない世界的な障害へと広がっている。一方で、システムは互いに接続される方向へ進み続け、依存関係も少数のプロバイダーへと移行し続けている。
 
-The day capitalism ends is not a story of the distant future. Each outage recovers in days or months, makes the news, and is forgotten. But with each outage, the reach of the chain grows, and someday one outage somewhere will stop the economy before it recovers. That day will come soon, at the end of the accumulation of outages like these.
+資本主義が終わる日は、遠い未来の話ではない。どの障害も、数日か数ヶ月で復旧し、ニュースになり、そして忘れ去られる。しかし、障害が起きるたびに連鎖の影響範囲は広がり、いつの日か、どこかで一つの障害が経済を回復する前に食い止めることになるだろう。こうした障害の積み重ねの果てに、その日はもうすぐやってくる。
 
 [^segafave-allnet]: [【重要】当社サーバーへの不正アクセスに関するお詫びとお知らせ](https://www.segafave.co.jp/news/261102_1/)（セガ フェイブ、2026年11月2日）
 
@@ -50,10 +50,10 @@ The day capitalism ends is not a story of the distant future. Each outage recove
 
 [^sakigake-asahi]: [アサヒ障害1カ月復旧めど立たず ビール出荷品目1割に低迷](https://www.sakigake.jp/news/article/20251029CO0099/)（秋田魁新報、2025年10月29日）
 
-[^oanda-kirin]: [キリン業務用出荷正常化へ](https://www.oanda.jp/lab-education/?p=105105), [キリン、歳暮商品全て販売停止へ](https://www.oanda.jp/lab-education/market_news/kn_2025111901001815/) (articles distributed by Kyodo News). Sapporo and Suntory also suspended sales of some of their year-end gift sets.
+[^oanda-kirin]: [キリン業務用出荷正常化へ](https://www.oanda.jp/lab-education/?p=105105), [キリン、歳暮商品全て販売停止へ](https://www.oanda.jp/lab-education/market_news/kn_2025111901001815/) (articles distributed by Kyodo News).サッポロとサントリーも、一部の年末ギフトセットの販売を停止した。
 
 [^impress-nichirei]: [ネットショップ担当者フォーラムの記事](https://netshop.impress.co.jp/n/2026/07/22/16439)（2026年7月22日）
 
-[^techcrunch-crowdstrike]: [Microsoft says 8.5M Windows devices were affected by CrowdStrike outage](https://techcrunch.com/2024/07/20/microsoft-says-8-5m-windows-devices-were-affected-by-crowdstrike-outage/) (TechCrunch, July 20, 2024)
+[^techcrunch-crowdstrike]: [Microsoft、CrowdStrikeの障害により850万台のWindowsデバイスが影響を受けたと発表](https://techcrunch.com/2024/07/20/microsoft-says-8-5m-windows-devices-were-affected-by-crowdstrike-outage/) (TechCrunch, 2024年7月20日)
 
-[^theregister-azure]: [An article in The Register](https://theregister.com/2025/10/29/microsoft_azure_outage/) (October 29, 2025). AWS had an outage on October 20 caused by a DNS fault in DynamoDB in us-east-1, and Azure had one on October 29 caused by a configuration change to Azure Front Door.
+[^theregister-azure]: [The Registerの記事](https://theregister.com/2025/10/29/microsoft_azure_outage/)（2025年10月29日）。AWSでは10月20日にus-east-1のDynamoDBにおけるDNS障害により障害が発生し、Azureでは10月29日にAzure Front Doorの設定変更により障害が発生した。

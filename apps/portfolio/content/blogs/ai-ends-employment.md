@@ -1,43 +1,43 @@
 ---
-title: "Engineers will be gone by 2030, and employment by 2035"
-description: "I told a friend at the riverbank what I had been thinking since last year, and my friend called it a conspiracy theory. It does not need to spread. AI will change society by force. Now that a chain of data breaches has social media saying the same thing, I am putting into words the view I had been seeing alone."
+title: "エンジニアは2030年までにいなくなり、雇用は2035年までになくなる。"
+description: "川岸で友人に、去年から考えていたことを話したら、友人はそれを陰謀論だと言った。拡散する必要はない。AIは力ずくで社会を変える。相次ぐデータ漏洩を受けてSNS上でも同様の声が上がっている今、私は一人で抱いていた見解を言葉にしている。"
 tags: ["AI", "雇用", "ポエム"]
 published: true
 ---
 
-By 2030, IT engineers will be gone, and by 2035, 80% of employment will disappear and society will collapse. I have thought this since last year. The trigger was using Cursor intensively at the start of 2025. I spent weeks watching code get written without moving my own hands, and that experience led me to this view.
+2030年にはITエンジニアがいなくなり、2035年には雇用の80%が消え、社会は崩壊する。去年からそう考えていた。きっかけは、2025年の初めにCursorを多用したことだった。数週間、自ら手を動かさずにコードが書き上がっていく様子を眺めており、その経験からこの見解に至った。
 
-The other day I talked about this with a friend at the riverbank, and my friend replied, "That's a conspiracy theory. Pay the cost of spreading it through society." I answered that it does not need to spread, because AI will change society by force, but I could not make my friend understand.
+先日、河原で友人とこの話をしたら、友人が「それは陰謀論だよ。社会に広めるコストを支払え。」AIが力ずくで社会を変えるため、普及させる必要はないと答えたが、友人には理解させることができなかった。
 
-My friend's way of putting it assumes that a new idea changes society only after someone goes around preaching it and gathering supporters. As the procedure for changing institutions in a democracy, that is correct.
+友人の言い方では、誰かがあちこちで説いて支持者を集めて初めて、新しいアイデアが社会を変えるという前提になっている。民主主義における機関変更の手続きとしては、その通りだ。
 
-But what is happening now is different. Companies bring in AI to cut labor costs. Each company makes that decision on its own without anyone's approval, and the decisions add up to change the shape of society. Nobody agreed to it, yet by the time we notice, it has already changed.
+だが、今起きていることは違う。企業は人件費削減のためにAIを導入している。各企業は誰の承認も得ずに独自にその決定を下しており、そうした決定が積み重なって社会のあり方を変えていく。誰もそれに同意しなかったのに、気づいたときにはもう変わっていた。
 
-That is why no cost of spreading it is needed. I think I could not persuade my friend at the riverbank because I had not put this one point into words. I am writing this post to find those words.
+だからこそ、配布コストは不要なのだ。この一点を言葉にしていなかったため、川岸にいた友人を説得することはできなかったと思う。それらの言葉を探すためにこの投稿を書いている。
 
-This month, some company has announced a data breach every single day[^westeria-incidents-2026]. A single PHP vulnerability took well-known services down all at once. A post saying "Isn't this the end of capitalism?" came up in my timeline.
+今月、どっかの会社が毎日データ漏洩を発表している[^westeria-incidents-2026]。たった一つのPHPの脆弱性で、有名なサービスが一斉にダウンした。タイムラインに「資本主義の終焉じゃないか？」という投稿が流れてきた。
 
-Seeing it made me happy. Not because my prediction looked like it was coming true, but because other people had started to see the view I had been seeing alone.
+それを見て嬉しかった。自分の予測が当たりそうだったからではなく、他の人たちが、自分だけが見ていた景色が見え始めていたからだ。
 
-A breach does not end with the information alone. Some companies will be attacked and simply shut their services down. They have no money for recovery and nobody who can deal with it, so they disappear with an apology as their last word. Even for the services that survive, users start to wonder, "Is it safe to put my personal information into this?" They hesitate to sign up, move their payments to other services, and business partners cut their connections. Whether or not a service was actually attacked, its business starts to shrink the moment it is doubted.
+侵害は情報だけでは終わらない。一部の企業は攻撃を受け、単にサービスを停止することになるだろう。彼らには復旧費用がなく、対応できる者もいないため、最後の一言として謝罪とともに姿を消す。生き残ったサービスであっても、ユーザーは「ここに個人情報を入れて大丈夫なのか」と疑問を持ち始める。彼らは契約をためらい、支払い先を他のサービスに移し、取引先は人脈を断つ。サービスが実際に攻撃を受けたかどうかにかかわらず、疑念を抱いた瞬間、その事業は縮小し始める。
 
-The businesses we have built on top of the internet assume that we trust each other. That assumption started to collapse this month.
+私たちがインターネットの上に築き上げたビジネスは、私たちが互いに信頼し合っていることを前提としている。その前提が今月から崩れ始めた。
 
-As an engineer, I have AI write code every day. Before I feel that AI's abilities are growing, I can tell that my own role is being whittled away. The work I was doing half a year ago is now done by AI. Half a year from now, the work I am doing now will be done by AI, and this is not a prediction but something I have already experienced many times over.
+エンジニアとして、毎日AIにコードを書かせている。AIの能力が伸びていると感じる前に、自分の役割が削られていることが分かる。半年前にやっていた作業が、今はAIによって行われている。半年後、今やっている作業はAIによって行われるようになるが、これは予測ではなく、すでに何度も経験済みのことだ。
 
-METR measures that the length of tasks AI can complete on its own doubles about every four months[^metr-time-horizon], and I have no doubt this is right.
+METRは、AIが単独で完了できるタスクの長さが約4か月ごとに倍増すること[^metr-time-horizon]を測定しており、これが正しいことに疑いの余地はない。
 
-Engineers disappear first because they are replacing themselves. Code is the easiest thing to teach AI, and engineers are the most eager users of AI. The profession that gives up its own work the fastest was my own profession. The year 2030 did not come from a calculation; it is what I got by counting on my fingers how many more times this whittling can continue.
+エンジニアが真っ先に消えるのは、彼らが自らを置き換えているからだ。コードはAIに教えるのが最も簡単だし、エンジニアはAIを最も熱心に利用するユーザーだ。自らの仕事を最も早く手放した職業は、私自身の職業だった。2030年は計算で出たのではなく、この木彫りがあと何回続けられるかを指折り数えて出したものだ。
 
-After engineers, the same thing will happen to everyone who sits in front of a screen. Reading, judging and writing is the same work as writing code, and more than half of the people working in Japan make their living that way. Meetings, Slack conversations, approval requests and email replies can all be done by AI. In the few years after engineers are gone, the same curve will reach them.
+エンジニアに続き、画面の前に座るすべての人に同じことが起こるだろう。読むこと、判断すること、書くことはコードを書くことと同じ作業であり、日本で働く人の半数以上がそれで生計を立てている。会議、Slackでのやり取り、承認依頼、メールの返信はすべてAIで行える。エンジニアがいなくなった後の数年で、同じ曲線が彼らに辿り着くだろう。
 
-Jobs that carry things, make things, sell things and serve customers look like they will remain, but they will not. If half of the workers lose their pay, the shops and restaurants they used can no longer survive. What takes the jobs away is not robots but the customers disappearing. That is why it reaches 80%. This is my own mental arithmetic, and I have no intention of dressing it up with evidence.
+物を運ぶ、物を作る、物を売る、そして顧客にサービスを提供する仕事は、存続しそうに見えるが、実際にはそうはならない。労働者の半分が給料を失えば、彼らが利用していた店やレストランは存続できなくなる。職を奪うのはロボットではなく、顧客の消滅だ。だから80%に達するんだ。これは私自身の暗算であり、証拠で飾り立てるつもりはない。
 
-What collapses is the cycle in which people work, get paid, buy things with that pay, and the country runs on the taxes and insurance premiums from it. If this cycle breaks anywhere, all of it stops. Companies that cut people make money, but the customers who pay them also shrink. Pensions and insurance are deducted from pay. A service that loses the assumption of trust and use is doubted and shrinks even before it loses its customers. This is what the suspicion I saw this month looks like when it spreads across the whole economy.
+崩壊するのは、人々が働き、報酬を得て、その報酬で物を買い、そしてその国がそこからの税金や保険料で成り立っているという循環だ。このサイクルがどこかで途切れたら、すべて止まる。人を切り捨てる企業は儲かるが、それに金を払う顧客も減る。年金や保険は給与から差し引かれる。信頼と利用という前提を失ったサービスは、顧客を失う前から疑念を抱かれ、縮小していく。今月私が抱いた疑念が、経済全体に波及するとしたらこんな感じだ。
 
-What this year's data breaches showed was human organizations losing to AI in how fast they decide and act. Countries will lose in the same way.
+今年のデータ漏洩が示したのは、組織が意思決定や対応のスピードにおいてAIに後れを取っているということだ。各国は同じように負けるだろう。
 
-In the end, I suppose all we can do is become good people. Instead of "how to build," which was what traditional IT engineers were asked for, we have to spill over into "why to build" and build trust with the people who have problems and with the stakeholders. Yukihiro Matsumoto also says, "Thinking about how to resolve the frustrations people feel is a precious activity that only humans can do"[^matz-engineer-type].
+結局、私たちにできるのはいい人間になることくらいだろうな。従来のITエンジニアに求められていた「どう構築するか」ではなく、「なぜ構築するのか」へと踏み込み、問題を抱えている人々やステークホルダーとの信頼関係を築く必要がある。松本幸弘も、「人々が感じる不満をどう解消するかを考えることは、人間にしかできない貴重な営みだ」と述べている[^matz-engineer-type]。
 
 [^westeria-incidents-2026]: ウェステリア「2026年の情報漏洩・不正アクセス・ランサムウェア事案一覧」 https://westeria.jp/security-incidents/2026/
 
