@@ -1,7 +1,7 @@
-import { screenTracer } from "@masseater.dev/desktop-telemetry";
+import { OtelTracer } from "@effect/opentelemetry";
 import { Layer } from "effect";
 import { FetchHttpClient } from "effect/http";
 import { Atom } from "effect/reactivity";
 
 /** @internal */
-export const runtime = Atom.runtime(Layer.mergeAll(FetchHttpClient.layer, screenTracer));
+export const runtime = Atom.runtime(Layer.mergeAll(FetchHttpClient.layer, OtelTracer.layerGlobal));

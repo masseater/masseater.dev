@@ -1,43 +1,14 @@
-import { DocumentLoadInstrumentation } from "@opentelemetry/browser-instrumentation/experimental/document-load";
-import { ErrorsInstrumentation } from "@opentelemetry/browser-instrumentation/experimental/errors";
-import { FetchInstrumentation } from "@opentelemetry/browser-instrumentation/experimental/fetch";
-import { LongAnimationFrameInstrumentation } from "@opentelemetry/browser-instrumentation/experimental/long-animation-frame";
-import { NavigationInstrumentation } from "@opentelemetry/browser-instrumentation/experimental/navigation";
-import { UserActionInstrumentation } from "@opentelemetry/browser-instrumentation/experimental/user-action";
-import { WebVitalsInstrumentation } from "@opentelemetry/browser-instrumentation/experimental/web-vitals";
 import { startBrowserSdk } from "@opentelemetry/browser-sdk";
-import { OTLPLogExporter } from "@opentelemetry/exporter-logs-otlp-http";
-import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
-import { BatchLogRecordProcessor } from "@opentelemetry/sdk-logs";
-import { BatchSpanProcessor } from "@opentelemetry/sdk-trace";
 
-import { commandUrls, endpointOf, telemetryUrls } from "#/shared/config/index.ts";
+import { instrumentations } from "#/app/config/instrumentations.ts";
+import { logProcessors, spanProcessors } from "#/app/config/processors.ts";
 
 export type ScreenTelemetry = ReturnType<typeof startBrowserSdk>;
 
 export const startScreenTelemetry = (serviceName: string): ScreenTelemetry =>
   startBrowserSdk({
     serviceName,
-    logs: {
-      processors: [
-        new BatchLogRecordProcessor({ exporter: new OTLPLogExporter({ url: endpointOf("logs") }) }),
-      ],
-    },
-    traces: {
-      processors: [
-        new BatchSpanProcessor({ exporter: new OTLPTraceExporter({ url: endpointOf("traces") }) }),
-      ],
-    },
-    instrumentations: [
-      new DocumentLoadInstrumentation(),
-      new NavigationInstrumentation({ useNavigationApiIfAvailable: true }),
-      new UserActionInstrumentation(),
-      new FetchInstrumentation({
-        ignoreUrls: [telemetryUrls()],
-        propagateTraceHeaderCorsUrls: [commandUrls()],
-      }),
-      new WebVitalsInstrumentation(),
-      new LongAnimationFrameInstrumentation(),
-      new ErrorsInstrumentation(),
-    ],
+    logs: { processors: logProcessors() },
+    traces: { processors: spanProcessors() },
+    instrumentations: instrumentations(),
   });

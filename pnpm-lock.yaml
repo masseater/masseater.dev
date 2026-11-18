@@ -1152,6 +1152,9 @@ importers:
       '@effect/atom-react':
         specifier: catalog:stack
         version: 4.1.4(effect@4.1.4)(react@19.3.1)(scheduler@0.28.0)
+      '@effect/opentelemetry':
+        specifier: 'catalog:'
+        version: 4.1.4(@opentelemetry/api@1.10.0)(@opentelemetry/semantic-conventions@1.45.0)(effect@4.1.4)
       '@masseater.dev/aredoko-protocol':
         specifier: workspace:*
         version: link:../../libs/aredoko-protocol
@@ -3033,6 +3036,9 @@ importers:
       '@effect/atom-react':
         specifier: catalog:stack
         version: 4.1.4(effect@4.1.4)(react@19.3.1)(scheduler@0.28.0)
+      '@effect/opentelemetry':
+        specifier: 'catalog:'
+        version: 4.1.4(@opentelemetry/api@1.10.0)(@opentelemetry/semantic-conventions@1.45.0)(effect@4.1.4)
       '@masseater.dev/desktop-telemetry':
         specifier: workspace:*
         version: link:../../libs/desktop-telemetry
@@ -3569,9 +3575,6 @@ importers:
 
   libs/desktop-telemetry:
     dependencies:
-      '@effect/opentelemetry':
-        specifier: 'catalog:'
-        version: 4.1.4(@opentelemetry/api@1.10.0)(@opentelemetry/sdk-logs@3.1.1(@opentelemetry/api@1.10.0))(@opentelemetry/semantic-conventions@1.45.0)(effect@4.1.4)
       '@opentelemetry/api':
         specifier: 'catalog:'
         version: 1.10.0
@@ -19484,13 +19487,12 @@ snapshots:
       react: 19.3.1
       scheduler: 0.28.0
 
-  '@effect/opentelemetry@4.1.4(@opentelemetry/api@1.10.0)(@opentelemetry/sdk-logs@3.1.1(@opentelemetry/api@1.10.0))(@opentelemetry/semantic-conventions@1.45.0)(effect@4.1.4)':
+  '@effect/opentelemetry@4.1.4(@opentelemetry/api@1.10.0)(@opentelemetry/semantic-conventions@1.45.0)(effect@4.1.4)':
     dependencies:
       '@opentelemetry/semantic-conventions': 1.45.0
       effect: 4.1.4
     optionalDependencies:
       '@opentelemetry/api': 1.10.0
-      '@opentelemetry/sdk-logs': 3.1.1(@opentelemetry/api@1.10.0)
 
   '@effect/platform-node-shared@4.1.4(effect@4.1.4)':
     dependencies:

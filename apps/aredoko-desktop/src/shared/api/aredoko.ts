@@ -1,3 +1,4 @@
+import { OtelTracer } from "@effect/opentelemetry";
 import {
   AredokoClient,
   ENDPOINT_FILE,
@@ -13,7 +14,6 @@ import type {
   SourceKind,
   Status,
 } from "@masseater.dev/aredoko-protocol";
-import { screenTracer } from "@masseater.dev/desktop-telemetry";
 import { convertFileSrc } from "@tauri-apps/api/core";
 import { appLocalDataDir, join } from "@tauri-apps/api/path";
 import { Array, Duration, Effect, Layer, ManagedRuntime, Option, Schema, pipe } from "effect";
@@ -52,7 +52,7 @@ const serverUrlLayer = Layer.effect(
 const clientLayer = aredokoClientLayer.pipe(Layer.provide(serverUrlLayer));
 
 const runtime = ManagedRuntime.make(
-  Layer.mergeAll(clientLayer, screenTracer).pipe(Layer.provide(FetchHttpClient.layer)),
+  Layer.mergeAll(clientLayer, OtelTracer.layerGlobal).pipe(Layer.provide(FetchHttpClient.layer)),
 );
 
 const run = <Value>(

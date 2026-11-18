@@ -1,7 +1,12 @@
 import { convertFileSrc } from "@tauri-apps/api/core";
+import { String as Text } from "effect";
 
-const origin = (scheme: string): RegExp =>
-  new RegExp(`^${RegExp.escape(convertFileSrc("", scheme))}`, "u");
+const SPECIAL = /[$()*+.?[\\\]^{|}/]/gu;
+
+const origin = (scheme: string): RegExp => {
+  const base = Text.replaceAll(SPECIAL, String.raw`\$&`)(convertFileSrc("", scheme));
+  return new RegExp(`^${base}`, "u");
+};
 
 export const endpointOf = (signal: "traces" | "logs"): string =>
   `${convertFileSrc("", "otlp")}v1/${signal}`;
