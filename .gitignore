@@ -40,6 +40,7 @@ dist-ssr
 /.pnpm/
 /.cargo/config.toml
 **/src-tauri/permissions/
+**/src-tauri/cuda/
 
 release-assets/
 release-reports/
