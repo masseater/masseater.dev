@@ -1,6 +1,6 @@
 {
   "name": "@r_masseater/fumx-parser",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Reads .fumx, a text format for music, into a typed song value with notes, hits, controllers and tempo placed in time, so tools can lint musical rules.",
   "keywords": [
     "fumx",
