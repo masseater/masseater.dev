@@ -222,15 +222,7 @@ export const checkerFor: From<Problem[], Context> = (problems) => {
       problems.push(problem);
       return UNKNOWN;
     },
-    typeOf: (node) =>
-      pipe(
-        Option.fromNullishOr(memo.get(node)),
-        Option.getOrElse(() => {
-          const type = computeType(context)(node);
-          memo.set(node, type);
-          return type;
-        }),
-      ),
+    typeOf: (node) => memo.getOrInsertComputed(node, () => computeType(context)(node)),
     bindingType: (binding) => {
       if (visiting.has(binding)) {
         return UNKNOWN;

@@ -1,5 +1,3 @@
-import { Option } from "effect";
-
 const ONE = 1;
 const TWO = 2;
 const FIRST = 0;
@@ -58,15 +56,11 @@ interface Plan {
 const plans = new Map<number, Plan>();
 
 const planOf = (size: number): Plan =>
-  Option.getOrElse(Option.fromUndefinedOr(plans.get(size)), () => {
-    const plan = {
-      swaps: swapsOf(size),
-      forward: twiddlesOf(size, -ONE),
-      backward: twiddlesOf(size, ONE),
-    };
-    plans.set(size, plan);
-    return plan;
-  });
+  plans.getOrInsertComputed(size, () => ({
+    swaps: swapsOf(size),
+    forward: twiddlesOf(size, -ONE),
+    backward: twiddlesOf(size, ONE),
+  }));
 
 const swapped = (values: Float64Array, left: number, right: number): void => {
   const held = values[left] ?? SILENT;
