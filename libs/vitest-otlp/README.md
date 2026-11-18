@@ -73,6 +73,19 @@ test("caching writes to KV", () =>
   }).pipe(Effect.runPromise));
 ```
 
+## Files from a collector
+
+An OpenTelemetry Collector with the [file exporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/fileexporter) writes one OTLP/JSON export per line. `spansInFile`, `logsInFile` and `metricsInFile` read such a file into the same shapes that `waitForSpans`, `waitForLogs` and `waitForMetrics` return.
+
+```ts
+import { readFile } from "node:fs/promises";
+
+import { spansInFile } from "@r_masseater/vitest-otlp/collector-files";
+import { Effect } from "effect";
+
+const spans = await Effect.runPromise(spansInFile(await readFile("traces.jsonl", "utf8")));
+```
+
 ## Agent skills
 
 The package ships TanStack Intent skills for coding agents. Load one with `vp exec intent load @r_masseater/vitest-otlp#<skill>`.

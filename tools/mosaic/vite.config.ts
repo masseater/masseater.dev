@@ -10,7 +10,8 @@ export default defineConfig({
         command: ["cargo build --release --locked -p mosaic", "node bin/character.ts"],
         cache: false,
       },
-      daily: { command: [], dependsOn: ["mosaic#deploy:mosaic-files"] },
+      daily: { command: [], dependsOn: ["character"] },
+      "daily:deploy": { command: [], dependsOn: ["mosaic#deploy:mosaic-files"] },
       cargo: {
         command:
           "cargo fmt -p mosaic --check && cargo clippy -p mosaic --all-targets -- -D warnings && cargo test -p mosaic",

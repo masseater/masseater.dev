@@ -12,10 +12,8 @@ const DEPENDENCY_SETS = { telemetry: ["@opentelemetry/sdk-trace-base"] };
 const WORKSPACE = "packages:\n  - apps/*\n  - libs/*\n";
 const MANIFEST = `{ "name": "web", "imports": { "#/*": "./src/*" } }`;
 const VITE_CACHES = [
-  { pattern: "!**/node_modules/.vite", base: "workspace" },
-  { pattern: "!**/node_modules/.vite/**", base: "workspace" },
-  { pattern: "!**/node_modules/.vite-temp", base: "workspace" },
-  { pattern: "!**/node_modules/.vite-temp/**", base: "workspace" },
+  { pattern: "!**/node_modules/.vite*", base: "workspace" },
+  { pattern: "!**/node_modules/.vite*/**", base: "workspace" },
 ];
 const SHADCN = `{ "aliases": { "ui": "#/shared/ui" } }`;
 

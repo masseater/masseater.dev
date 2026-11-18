@@ -33,6 +33,7 @@ const OWNED_PATHSPECS = [":(exclude,attr:linguist-vendored)", ":(exclude,attr:li
 export const NODE_MODULES = "node_modules";
 const LISTED_ARGS = ["--cached", "--others", "--exclude-standard", `--exclude=${NODE_MODULES}/`];
 const IGNORED_ARGS = ["--others", "--ignored", "--exclude-standard"];
+const TRACKED_ARGS = ["--cached"];
 const STAGED_ARGS = ["--stage"];
 const LINK_ENTRY = /^120000 \S+ \d+\t(?<name>.+)$/u;
 
@@ -60,6 +61,10 @@ export class RepositoryFiles extends Context.Service<
       name: string,
     ) => Effect.Effect<Option.Option<string>>;
     readonly matchingFiles: (
+      root: string,
+      pathspecs: readonly string[],
+    ) => Effect.Effect<readonly string[]>;
+    readonly trackedFiles: (
       root: string,
       pathspecs: readonly string[],
     ) => Effect.Effect<readonly string[]>;
@@ -183,6 +188,7 @@ export const nodeRepositoryFiles = Layer.effect(
         ),
       readAtRevision: (root, revision, name) => gitText(root, ["show", `${revision}:${name}`]),
       matchingFiles: (root, pathspecs) => gitFiles(root, [...LISTED_ARGS, "--", ...pathspecs]),
+      trackedFiles: (root, pathspecs) => gitFiles(root, [...TRACKED_ARGS, "--", ...pathspecs]),
       ignoredFiles: (root, pathspecs) => gitFiles(root, [...IGNORED_ARGS, "--", ...pathspecs]),
       ignoredPaths: (root, paths) => gitPaths(root, ["check-ignore", "--", ...paths], "\n"),
       readFile: (file) => fs.readFileString(file).pipe(Effect.option),

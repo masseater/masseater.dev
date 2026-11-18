@@ -1,8 +1,8 @@
-import { flattenLayers } from "@masseater.dev/lint-host";
+import { layersOf, mergedLayers } from "@masseater.dev/lint-host";
 
-import type { I68Config, Plugin } from "#/shared/config/index.ts";
+import type { I68Config } from "#/shared/config/index.ts";
 
 export const flattenConfig = (config: I68Config): I68Config => {
-  const { plugins, rules, ignores } = flattenLayers<Plugin, I68Config>(config);
+  const { plugins, rules, ignores } = mergedLayers(layersOf(config));
   return { plugins, rules, ignores };
 };

@@ -101,3 +101,29 @@ const idsAs = (convert: Reader): Readonly<Record<string, Reader>> => ({
 export const normalize = mapTree({ ...idsAs(toHex), attributes, body: anyValue });
 
 export const hexIdsToBase64 = mapTree(idsAs(toBase64));
+
+const SPAN_KINDS = [
+  "SPAN_KIND_UNSPECIFIED",
+  "SPAN_KIND_INTERNAL",
+  "SPAN_KIND_SERVER",
+  "SPAN_KIND_CLIENT",
+  "SPAN_KIND_PRODUCER",
+  "SPAN_KIND_CONSUMER",
+];
+const STATUS_CODES = ["STATUS_CODE_UNSET", "STATUS_CODE_OK", "STATUS_CODE_ERROR"];
+
+const enumOf =
+  (names: readonly string[]) =>
+  (value: JsonValue): JsonValue =>
+    pipe(
+      Option.liftPredicate(value, Predicate.isNumber),
+      Option.flatMap((index) => Array.get(names, index)),
+      Option.getOrElse(() => value),
+    );
+
+export const normalizeOtlpJson = mapTree({
+  attributes,
+  body: anyValue,
+  kind: enumOf(SPAN_KINDS),
+  code: enumOf(STATUS_CODES),
+});
