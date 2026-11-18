@@ -5,11 +5,7 @@ const SCOPE = /^@[^/]+\//u;
 const UNVERSIONED = "0.0.0";
 const ROOT = ".";
 
-const Native = Schema.Struct({
-  binary: Schema.String,
-  targets: Schema.Array(Schema.String),
-  archive: Schema.optionalKey(Schema.Boolean),
-});
+const Native = Schema.Struct({ binary: Schema.String, targets: Schema.Array(Schema.String) });
 
 const ManifestSchema = Schema.Struct({
   name: Schema.String,

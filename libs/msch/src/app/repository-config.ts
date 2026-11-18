@@ -16,7 +16,8 @@ import {
   structureOf,
 } from "#/features/define-lint-preset/index.ts";
 
-import { tasksOf } from "./repository-tasks.ts";
+import { DEFAULT_CHECK, tasksOf } from "./repository-tasks.ts";
+import type { CheckOptions } from "./repository-tasks.ts";
 import { secretsOf, textlintOf } from "./repository-text.ts";
 import type { SecretOptions, TextOptions } from "./repository-text.ts";
 
@@ -29,6 +30,7 @@ export interface RepositoryOptions {
   readonly run?: {
     readonly tasks?: Readonly<Record<string, string>>;
     readonly remoteCache?: string;
+    readonly check?: CheckOptions;
   };
 }
 
@@ -107,7 +109,7 @@ export const repositoryConfig = (options: RepositoryOptions): UserConfig => {
     lint: lintOf(options),
     run: {
       cache: cacheOf(run.remoteCache),
-      tasks: tasksOf({ workspace, commands: run.tasks ?? {} }),
+      tasks: tasksOf({ workspace, commands: run.tasks ?? {}, check: run.check ?? DEFAULT_CHECK }),
     },
   };
 };
