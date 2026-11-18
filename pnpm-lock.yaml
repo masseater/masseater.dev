@@ -471,8 +471,8 @@ catalogs:
       specifier: 15.8.0
       version: 15.8.0
     '@textlint/config-loader':
-      specifier: 15.8.0
-      version: 15.8.0
+      specifier: 16.0.0
+      version: 16.0.0
     '@textlint/kernel':
       specifier: 15.8.0
       version: 15.8.0
@@ -3740,7 +3740,7 @@ importers:
         version: 26.6.6
       betterleaks:
         specifier: github:betterleaks/betterleaks#e07e69ba6a441313529b3e72be43ffdcc62bdf86
-        version: git+https://github.com/betterleaks/betterleaks.git#e07e69ba6a441313529b3e72be43ffdcc62bdf86
+        version: https://codeload.github.com/betterleaks/betterleaks/tar.gz/e07e69ba6a441313529b3e72be43ffdcc62bdf86
       effect:
         specifier: catalog:stack
         version: 4.1.4
@@ -4851,7 +4851,7 @@ importers:
         version: link:../h56m
       '@textlint/config-loader':
         specifier: 'catalog:'
-        version: 15.8.0(supports-color@10.2.2)
+        version: 16.0.0(supports-color@10.2.2)
       '@textlint/kernel':
         specifier: 'catalog:'
         version: 15.8.0(supports-color@10.2.2)
@@ -11364,11 +11364,17 @@ packages:
   '@textlint/ast-node-types@15.8.0':
     resolution: {integrity: sha512-5CiH9COYmovWmExQgs7763DzX6Gy9zjkjJ7JxCC95wyTcjwQn/8poNF6fv3qzRlmx8CRRde8DHr9FcgAAiPzgw==}
 
+  '@textlint/ast-node-types@16.0.0':
+    resolution: {integrity: sha512-GGcKyKjHqvq1oD82KsXhjyKGjJBZFLuL4omJgT++eUW0xO2zvwzuB/G054A2qa1Ldok8UjejYAQSQmfArJcOjQ==}
+
   '@textlint/ast-tester@13.4.1':
     resolution: {integrity: sha512-YSHUR1qDgMPGF5+nvrquEhif6zRJ667xUnfP/9rTNtThIhoTQINvczr5/7xa43F1PDWplL6Curw+2jrE1qHwGQ==}
 
   '@textlint/ast-tester@15.8.0':
     resolution: {integrity: sha512-EoNPm/Xpv59BYQimlUcEsD8iHWVLMiyA/U66ATQCiZQTrvS93C67q3V630fhCJWeSuSR660BGadHGX1jv+IeTg==}
+
+  '@textlint/ast-tester@16.0.0':
+    resolution: {integrity: sha512-yV+GuuGggfRDPMEsuupvniD9xdRHFj6S0q15wgM+KIu/iDL5uU77IaRlNkSYvChuUyalljdoXMLq5c3urdhwkA==}
 
   '@textlint/ast-traverse@13.4.1':
     resolution: {integrity: sha512-uucuC7+NHWkXx2TX5vuyreuHeb+GFiA83V65I+FnYP5EC4dAMOQ86rTSPrZmCwLz+qIWgfDgihGzPccpj3EZGg==}
@@ -11376,14 +11382,23 @@ packages:
   '@textlint/ast-traverse@15.8.0':
     resolution: {integrity: sha512-N/FhYDJLXUFOIlsRAuyx78ll2/O2SCU5mZBB1jWQhX71653YcrJvFf6r+EavnKlxNie0mcaTt0hrCnX2q0SdLg==}
 
+  '@textlint/ast-traverse@16.0.0':
+    resolution: {integrity: sha512-1BDqQgaJYUuVGc3d2dBeASxVSq6beL0NEqCJESNgYjWKDGDnIGTbGn8H9IsqdaxmXpy20oUVbPbWFy8K+V1J3w==}
+
   '@textlint/config-loader@15.8.0':
     resolution: {integrity: sha512-iJjgkZxURc7YAIRwNkhjsD2d0j3zKzlyRAw5EAmX/Rxr1/jBXPm2taaLOX1yMaaeZxVpWZ+7mauU5B96qjfQpQ==}
+
+  '@textlint/config-loader@16.0.0':
+    resolution: {integrity: sha512-f7rLdN6UfF+PnwwTaHDDqeolJjp/UyFu54RJdRRmYlEJTFPIk/oFtRwovxbvQnApFWzAXj6TjnYxhM69BQ1o4Q==}
 
   '@textlint/feature-flag@13.4.1':
     resolution: {integrity: sha512-qY8gKUf30XtzWMTkwYeKytCo6KPx6milpz8YZhuRsEPjT/5iNdakJp5USWDQWDrwbQf7RbRncQdU+LX5JbM9YA==}
 
   '@textlint/feature-flag@15.8.0':
     resolution: {integrity: sha512-qvk6DV9lazH9EVHGLglvO9LwJbi22yy2LdZDQNH4EvlGk5+cNxbV1yZzuLdk+7elOuK2Lb9l5geMpZPa/j11XQ==}
+
+  '@textlint/feature-flag@16.0.0':
+    resolution: {integrity: sha512-Vs/6STRpCSKulPDVqWw5izc0ydJWB2mOzEdBcUDfFZzSrNYJpDKqgHjW0H9N3nwTCwsfykXiJPHt/e/aFIpdDg==}
 
   '@textlint/fixer-formatter@15.8.0':
     resolution: {integrity: sha512-/Lwo9E6Kvltb/cYsOCKvBwVRz4GZ8CLgOVNTDRdyYVtXE6EGk5utCPCdzjEm1h3C6bdXcnoArGvgyhlFw7AsUg==}
@@ -11394,6 +11409,9 @@ packages:
 
   '@textlint/kernel@15.8.0':
     resolution: {integrity: sha512-Wc2Z2Oq95v+IXj+G4j3cKpfQ1t2YRgubxHHj8i93Nu+R2F/GvszRC7pYBHYBH9HMmlJyTBq8jcjBOYG/b52CUQ==}
+
+  '@textlint/kernel@16.0.0':
+    resolution: {integrity: sha512-IIres1X9m4F33JfoNnVnyFHljK7ta4qJD3UcOfJ7rIwOT6zOLvbCvrFGBuwLl78AjHkpwRyPrYq4nO2EpLysqQ==}
 
   '@textlint/linter-formatter@15.8.0':
     resolution: {integrity: sha512-+oU3A235NATv6Lzi4xa4kJ65PuNJlIxesaO4AvDhDWA9FWm7y4XKWaoQCW1esgaQQ6dwnUiFKArQ8TcJ86mC4w==}
@@ -11411,6 +11429,9 @@ packages:
   '@textlint/module-interop@15.8.0':
     resolution: {integrity: sha512-rt+OR1WYGoLOY8HkA/aBPrqufF6yUUEsKEAh7XohTsT3lp9IyZFT6zOIbjul9P4FAzsmSPkcrYjVx3Bz/IUfkg==}
 
+  '@textlint/module-interop@16.0.0':
+    resolution: {integrity: sha512-Vg8bgwiM6ZWssifRWATXk0fkuaJwkSAZON4jmiOIcfsMVBa3oR+HFDKFvYrCjprwXTkHbd4ot/ACd4PJWxBLTw==}
+
   '@textlint/regexp-string-matcher@1.1.1':
     resolution: {integrity: sha512-rrNUCKGKYBrZALotSF8D5A8xD05VHX6kxv0BP805Ig2M73Ha6LK+de31+ZocGm4CO+sikVFYyMCPPJhp7bCXcw==}
 
@@ -11420,11 +11441,17 @@ packages:
   '@textlint/resolver@15.8.0':
     resolution: {integrity: sha512-E88tzfX3K8Jykk+38aJ9cy8RquD8ABVOPTO2rFEESq0wcg8x6/ypdAS8ZgR7OKiGqlRF0hkO/m5PbQwVfKM3VA==}
 
+  '@textlint/resolver@16.0.0':
+    resolution: {integrity: sha512-YL60K7FQ9IQZ0WlR7uY7D2W1sUC0Qi4+zmJtGRNutY94G2c4HbHJTpfJvEAfqztkjGvjPkkvEaViJQV+xdvdlw==}
+
   '@textlint/source-code-fixer@13.4.1':
     resolution: {integrity: sha512-Sl29f3Tpimp0uVE3ysyJBjxaFTVYLOXiJX14eWCQ/kC5ZhIXGosEbStzkP1n8Urso1rs1W4p/2UemVAm3NH2ng==}
 
   '@textlint/source-code-fixer@15.8.0':
     resolution: {integrity: sha512-oWEBXLRzvv9bMu7/8NFMDM6GXil6iPXbNdiopQfxmrEVduc7mZ5gPoKr77gwrUO05jLS5ycfxE7kwPUu5sXP8Q==}
+
+  '@textlint/source-code-fixer@16.0.0':
+    resolution: {integrity: sha512-SqViW26pECpl0D5CCF9zSXhQGrMQISVn7Q6CPMf+TX7sF+Zp95YZb7MrEcZnCspglfZgDmhsYC6KafzfqRn3HA==}
 
   '@textlint/text-to-ast@13.4.1':
     resolution: {integrity: sha512-vCA7uMmbjRv06sEHPbwxTV5iS8OQedC5s7qwmXnWAn2LLWxg4Yp98mONPS1o4D5cPomzYyKNCSfbLwu6yJBUQA==}
@@ -11450,11 +11477,17 @@ packages:
   '@textlint/types@15.8.0':
     resolution: {integrity: sha512-Anhc6y5736YIsvqae0U6k0YmB2M/QVHkEeOv2aydAn/WIkdI69dCOiDbe3/+RagS3qstFTSFWJzNRA2lUjv19w==}
 
+  '@textlint/types@16.0.0':
+    resolution: {integrity: sha512-1wA/gd9kEa6kv5x1b7wi1WCGszT691q8o9vy1SK1S8k+CgMwHs7RZc2UWQlxvZyb4n854TFEvI1gPIJIIV2vmQ==}
+
   '@textlint/utils@13.4.1':
     resolution: {integrity: sha512-wX8RT1ejHAPTDmqlzngf0zI5kYoe3QvGDcj+skoTxSv+m/wOs/NyEr92d+ahCP32YqFYzXlqU7aDx2FkULKT+g==}
 
   '@textlint/utils@15.8.0':
     resolution: {integrity: sha512-waINJCI7sBVs1A3K05UFKe8QoNAsdJFCXr3PJ1QsgAf0BeEgCtyrLVcZUdbOtKxRkF4QB4NuClB0By1Ty4znpQ==}
+
+  '@textlint/utils@16.0.0':
+    resolution: {integrity: sha512-xiv10Kv/av9FQg1u71i7B0pRN9Hx8q/3anWlQloRgLGA7CAx2/jmXYgpMLLFwZjwpwu95nYqBOre1xs3to2suQ==}
 
   '@tokenizer/inflate@0.6.0':
     resolution: {integrity: sha512-+0RDxhBkyT9xMnGdJAwmats9yxRLR8ypJrQgrnLqOu4Gv/aHlnxYgdGVy2QTwvBl6IF/w2Hr+ZNirH+iMUbVZA==}
@@ -12847,8 +12880,8 @@ packages:
       zod:
         optional: true
 
-  betterleaks@git+https://github.com/betterleaks/betterleaks.git#e07e69ba6a441313529b3e72be43ffdcc62bdf86:
-    resolution: {commit: e07e69ba6a441313529b3e72be43ffdcc62bdf86, repo: https://github.com/betterleaks/betterleaks.git, type: git}
+  betterleaks@https://codeload.github.com/betterleaks/betterleaks/tar.gz/e07e69ba6a441313529b3e72be43ffdcc62bdf86:
+    resolution: {gitHosted: true, integrity: sha512-Nuw5CBCTOf1XTPDu7DNEH0w29VQ4w1PvgCneVx1UVakuF3eAFJorFnMkYyqf2hX4VGSH9HeyUF6Qmd/Ekor8PQ==, tarball: https://codeload.github.com/betterleaks/betterleaks/tar.gz/e07e69ba6a441313529b3e72be43ffdcc62bdf86}
     version: 0.0.0
 
   bignumber.js@9.3.1:
@@ -23629,6 +23662,8 @@ snapshots:
 
   '@textlint/ast-node-types@15.8.0': {}
 
+  '@textlint/ast-node-types@16.0.0': {}
+
   '@textlint/ast-tester@13.4.1(supports-color@10.2.2)':
     dependencies:
       '@textlint/ast-node-types': 13.4.1
@@ -23643,6 +23678,13 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@textlint/ast-tester@16.0.0(supports-color@10.2.2)':
+    dependencies:
+      '@textlint/ast-node-types': 16.0.0
+      debug: 4.4.3(supports-color@10.2.2)
+    transitivePeerDependencies:
+      - supports-color
+
   '@textlint/ast-traverse@13.4.1':
     dependencies:
       '@textlint/ast-node-types': 13.4.1
@@ -23650,6 +23692,10 @@ snapshots:
   '@textlint/ast-traverse@15.8.0':
     dependencies:
       '@textlint/ast-node-types': 15.8.0
+
+  '@textlint/ast-traverse@16.0.0':
+    dependencies:
+      '@textlint/ast-node-types': 16.0.0
 
   '@textlint/config-loader@15.8.0(supports-color@10.2.2)':
     dependencies:
@@ -23663,9 +23709,22 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@textlint/config-loader@16.0.0(supports-color@10.2.2)':
+    dependencies:
+      '@textlint/kernel': 16.0.0(supports-color@10.2.2)
+      '@textlint/module-interop': 16.0.0
+      '@textlint/resolver': 16.0.0
+      '@textlint/types': 16.0.0
+      '@textlint/utils': 16.0.0
+      rc-config-loader: 4.1.4(supports-color@10.2.2)
+    transitivePeerDependencies:
+      - supports-color
+
   '@textlint/feature-flag@13.4.1': {}
 
   '@textlint/feature-flag@15.8.0': {}
+
+  '@textlint/feature-flag@16.0.0': {}
 
   '@textlint/fixer-formatter@15.8.0(supports-color@10.2.2)':
     dependencies:
@@ -23707,6 +23766,20 @@ snapshots:
       debug: 4.4.3(supports-color@10.2.2)
       fast-equals: 4.0.3
       structured-source: 4.0.0
+    transitivePeerDependencies:
+      - supports-color
+
+  '@textlint/kernel@16.0.0(supports-color@10.2.2)':
+    dependencies:
+      '@textlint/ast-node-types': 16.0.0
+      '@textlint/ast-tester': 16.0.0(supports-color@10.2.2)
+      '@textlint/ast-traverse': 16.0.0
+      '@textlint/feature-flag': 16.0.0
+      '@textlint/source-code-fixer': 16.0.0(supports-color@10.2.2)
+      '@textlint/types': 16.0.0
+      '@textlint/utils': 16.0.0
+      debug: 4.4.3(supports-color@10.2.2)
+      fast-equals: 4.0.3
     transitivePeerDependencies:
       - supports-color
 
@@ -23761,6 +23834,8 @@ snapshots:
 
   '@textlint/module-interop@15.8.0': {}
 
+  '@textlint/module-interop@16.0.0': {}
+
   '@textlint/regexp-string-matcher@1.1.1':
     dependencies:
       escape-string-regexp: 2.0.0
@@ -23779,6 +23854,8 @@ snapshots:
 
   '@textlint/resolver@15.8.0': {}
 
+  '@textlint/resolver@16.0.0': {}
+
   '@textlint/source-code-fixer@13.4.1(supports-color@10.2.2)':
     dependencies:
       '@textlint/types': 13.4.1
@@ -23789,6 +23866,13 @@ snapshots:
   '@textlint/source-code-fixer@15.8.0(supports-color@10.2.2)':
     dependencies:
       '@textlint/types': 15.8.0
+      debug: 4.4.3(supports-color@10.2.2)
+    transitivePeerDependencies:
+      - supports-color
+
+  '@textlint/source-code-fixer@16.0.0(supports-color@10.2.2)':
+    dependencies:
+      '@textlint/types': 16.0.0
       debug: 4.4.3(supports-color@10.2.2)
     transitivePeerDependencies:
       - supports-color
@@ -23831,9 +23915,15 @@ snapshots:
     dependencies:
       '@textlint/ast-node-types': 15.8.0
 
+  '@textlint/types@16.0.0':
+    dependencies:
+      '@textlint/ast-node-types': 16.0.0
+
   '@textlint/utils@13.4.1': {}
 
   '@textlint/utils@15.8.0': {}
+
+  '@textlint/utils@16.0.0': {}
 
   '@tokenizer/inflate@0.6.0(supports-color@10.2.2)':
     dependencies:
@@ -25072,7 +25162,7 @@ snapshots:
     optionalDependencies:
       zod: 4.6.7
 
-  betterleaks@git+https://github.com/betterleaks/betterleaks.git#e07e69ba6a441313529b3e72be43ffdcc62bdf86: {}
+  betterleaks@https://codeload.github.com/betterleaks/betterleaks/tar.gz/e07e69ba6a441313529b3e72be43ffdcc62bdf86: {}
 
   bignumber.js@9.3.1: {}
 
