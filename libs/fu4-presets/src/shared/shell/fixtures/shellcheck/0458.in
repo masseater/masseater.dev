@@ -1,0 +1,3 @@
+mv node "$DIR"
+cd "$DIR"
+./tools/test.py --flaky-tests keep_retrying -p actions -j 4

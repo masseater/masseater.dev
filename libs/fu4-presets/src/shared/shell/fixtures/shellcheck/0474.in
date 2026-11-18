@@ -1,0 +1,1 @@
+echo "Comparing current version $current_version to new version $new_version"

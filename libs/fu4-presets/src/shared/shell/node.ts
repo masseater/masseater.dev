@@ -12,8 +12,24 @@ export const sameNode =
   (other: SyntaxNode): boolean =>
     other.id === node.id;
 
+const isMissingName = (node: SyntaxNode): boolean =>
+  node.isMissing &&
+  Option.exists(
+    parentOf(node),
+    (parent) =>
+      parent.type === "command_name" &&
+      Option.exists(parentOf(parent), (command) =>
+        pipe(
+          command.namedChildren,
+          Arr.some((child) => child.type === "variable_assignment"),
+        ),
+      ),
+  );
+
 export const hasError = (node: SyntaxNode): boolean =>
-  node.isError || node.isMissing || pipe(node.children, Arr.some(hasError));
+  node.isError ||
+  (node.isMissing && !isMissingName(node)) ||
+  pipe(node.children, Arr.some(hasError));
 
 export const ancestors = (node: SyntaxNode): readonly SyntaxNode[] => {
   const found: SyntaxNode[] = [];

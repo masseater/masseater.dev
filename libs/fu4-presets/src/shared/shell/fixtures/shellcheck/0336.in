@@ -1,0 +1,20 @@
+nix-shell \
+  -I nixpkgs=./tools/nix/pkgs.nix \
+  --pure \
+  -E '(import <nixpkgs> {}).mkShellNoCC { buildInputs = import ./tools/nix/benchmarkTools.nix { withHttpBenchmarkDeps = false; }; }' \
+  --run '
+      export LC_ALL=C.UTF-8
+      echo "> [!WARNING] "
+      echo "> Do not take GHA benchmark results as face value, always confirm them"
+      echo "> using a dedicated machine, e.g. Jenkins CI."
+      echo
+      echo "Benchmark results:"
+      echo
+      echo '"'"'```'"'"'
+      awk "FNR==1 && NR!=1{next;}{print}" raw-results/*.csv | Rscript benchmark/compare.R
+      echo '"'"'```'"'"'
+      echo
+      echo "> [!WARNING] "
+      echo "> Do not take GHA benchmark results as face value, always confirm them"
+      echo "> using a dedicated machine, e.g. Jenkins CI."
+  ' | tee /dev/stderr ______________________________________________ >> "$GITHUB_STEP_SUMMARY"

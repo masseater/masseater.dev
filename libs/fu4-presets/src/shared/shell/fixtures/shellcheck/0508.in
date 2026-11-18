@@ -1,0 +1,1 @@
+foo | grep -r bar | wc -l

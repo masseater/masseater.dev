@@ -1,0 +1,23 @@
+api_association=$(gh api "/repos/$GITHUB_REPOSITORY/pulls/$NUMBER" \
+  --jq '.author_association')
+echo "API author association: $api_association"
+echo "Event author association: $EVENT_ASSOCIATION"
+
+case "$api_association" in
+  FIRST_TIMER|FIRST_TIME_CONTRIBUTOR)
+    echo 'is_first_time=true' >> "$GITHUB_OUTPUT"
+    echo 'should_scan=true' >> "$GITHUB_OUTPUT"
+    ;;
+  CONTRIBUTOR|NONE)
+    echo 'is_first_time=false' >> "$GITHUB_OUTPUT"
+    echo 'should_scan=true' >> "$GITHUB_OUTPUT"
+    ;;
+  COLLABORATOR|MANNEQUIN|MEMBER|OWNER)
+    echo 'is_first_time=false' >> "$GITHUB_OUTPUT"
+    echo 'should_scan=false' >> "$GITHUB_OUTPUT"
+    ;;
+  *)
+    echo "Unexpected author association: $api_association" >&2
+    exit 1
+    ;;
+esac

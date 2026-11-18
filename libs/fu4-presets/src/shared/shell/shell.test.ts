@@ -14,7 +14,7 @@ import {
 } from "effect";
 import { afterAll, expect, test } from "vite-plus/test";
 
-import { CODES, checkShell, messageOf } from "./index.ts";
+import { CODES, checkShell, messageOf, parseableScript } from "./index.ts";
 import type { Finding } from "./index.ts";
 
 const services = ManagedRuntime.make(nodeServices);
@@ -46,7 +46,7 @@ const scriptIn = (settings: Readonly<Record<string, unknown>>): string =>
 const probe = defineRule({
   meta: { description: "Runs the shell checker on the script in the settings" },
   check: (context) => {
-    const parsed = context.parseScript("bash", scriptIn(context.settings));
+    const parsed = context.parseScript("bash", parseableScript(scriptIn(context.settings)));
     for (const finding of checkShell(parsed)) {
       context.report({ line: 1, column: 1, message: rendered(finding) });
     }

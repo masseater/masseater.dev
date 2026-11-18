@@ -1,0 +1,2 @@
+tar xzf tarballs/*.tar.gz -C "$RUNNER_TEMP"
+echo "TAR_DIR=$RUNNER_TEMP/$(basename tarballs/*.tar.gz .tar.gz)" >> "$GITHUB_ENV"
