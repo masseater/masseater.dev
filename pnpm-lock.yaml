@@ -864,8 +864,8 @@ catalogs:
       specifier: 4.0.2
       version: 4.0.2
     simple-icons:
-      specifier: 16.37.0
-      version: 16.37.0
+      specifier: 16.38.0
+      version: 16.38.0
     simple-statistics:
       specifier: 8.0.0
       version: 8.0.0
@@ -1806,7 +1806,7 @@ importers:
         version: link:../../libs/security-headers
       simple-icons:
         specifier: 'catalog:'
-        version: 16.37.0
+        version: 16.38.0
       tailwindcss:
         specifier: catalog:stack
         version: 4.3.5
@@ -16708,8 +16708,8 @@ packages:
   simple-git@4.0.2:
     resolution: {integrity: sha512-l0sIsv9VrPwovKELFDBOj/lhmIcbMvxBk2B+hRhsMM4/VL3gKtuZvYnBNixVo+N/0HnqQx2cBdLvxnAbygHpqA==}
 
-  simple-icons@16.37.0:
-    resolution: {integrity: sha512-8mCJIhpMYOL9g13GW59EiL3sVXJnTEKGCTZFaekl9UQ3Qo0SwVjnLaJ82QiaH8BKBdouEDzrHMXIWh8cBIy48A==}
+  simple-icons@16.38.0:
+    resolution: {integrity: sha512-B0Wws90eL0Fm65aH35CA8kM+7/Zzgsaytt0DndBx7VFm3+o9HurVIVRQZ1hvqqYYIyNJq7ycn3kQm2v2FhiWSQ==}
     engines: {node: '>=0.12.18'}
 
   simple-statistics@8.0.0:
@@ -29708,7 +29708,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  simple-icons@16.37.0: {}
+  simple-icons@16.38.0: {}
 
   simple-statistics@8.0.0: {}
 
