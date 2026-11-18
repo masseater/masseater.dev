@@ -7,7 +7,7 @@ description: >
 metadata:
   type: core
   library: "@r_masseater/fumx-parser"
-  library_version: 0.0.0
+  library_version: 0.1.0
 sources:
   - src/app/**
   - src/entities/song/**
