@@ -105,6 +105,23 @@ describe("repositoryConfig check", () => {
   });
 });
 
+describe("repositoryConfig dependency allowances", () => {
+  it("allows a banned package only in the manifest field its reason names", () => {
+    const allowance = { workspaces: ["apps/web"], dependencies: ["x"] };
+    const allowing = repositoryConfig({
+      workspace: {
+        ...WORKSPACE,
+        devDependencies: { "apps/web: tests": allowance },
+        dependencies: { "apps/web: screen": allowance },
+      },
+    });
+    expect(allowing).toHaveProperty(["dependencyRules", "allowed"], {
+      "apps/web: tests": { ...allowance, fields: ["devDependencies"] },
+      "apps/web: screen": { ...allowance, fields: ["dependencies"] },
+    });
+  });
+});
+
 describe("repositoryConfig", () => {
   it("makes verify depend on workspace verifies and every root task", () => {
     expect(config).toMatchObject({
@@ -140,21 +157,6 @@ describe("repositoryConfig", () => {
           },
         },
       },
-    });
-  });
-
-  it("allows a banned package only in the manifest field its reason names", () => {
-    const allowance = { workspaces: ["apps/web"], dependencies: ["x"] };
-    const allowed = repositoryConfig({
-      workspace: {
-        ...WORKSPACE,
-        devDependencies: { "apps/web: tests": allowance },
-        dependencies: { "apps/web: screen": allowance },
-      },
-    }).dependencyRules?.allowed;
-    expect(allowed).toStrictEqual({
-      "apps/web: tests": { ...allowance, fields: ["devDependencies"] },
-      "apps/web: screen": { ...allowance, fields: ["dependencies"] },
     });
   });
 

@@ -22,20 +22,19 @@ import { collectIgnoredDirectories } from "#/shared/lib/ignored-directories.ts";
 import type { IgnoredDirectory } from "#/shared/lib/ignored-directories.ts";
 import { RepositoryFiles, nodeRepositoryFiles } from "#/shared/lib/repository-files.ts";
 
+import { MSCH_DEPENDENCIES, MSCH_DEV_DEPENDENCIES, allowancesOf } from "./dependency-allowances.ts";
+import type { DependencyAllowances, DependencySets } from "./dependency-allowances.ts";
 import { sharedTestProject, testProjectOf } from "./test-project.ts";
 import type { TestProject } from "./test-project.ts";
 import { publicEntryFiles } from "./workspace-public-entries.ts";
 
 export type RuleSet = Readonly<Record<string, unknown>>;
 export type RuleSets = Readonly<Record<string, RuleSet>>;
-export type DependencySets = Readonly<Record<string, readonly string[]>>;
 
 const CONFIG_FILE = "vite.config.ts";
 const READ_CONCURRENCY = 16;
 const ROOT_WORKSPACE = ".";
 const MSCH_LINT = ["msch", "lint"] as const;
-const MSCH_DEV_DEPENDENCIES = ["msch", "devDependencies"] as const;
-const MSCH_DEPENDENCIES = ["msch", "dependencies"] as const;
 
 type SeverityName = Extract<AllowWarnDeny, string>;
 
@@ -64,13 +63,6 @@ const WorkspaceLintSettings = Schema.Struct({
   ignorePatterns: Names,
   overrides: Schema.optional(Schema.Array(WorkspaceOverride)),
 });
-const DependencySettings = Schema.Struct({ use: Names, dependencies: Names });
-const WorkspaceDependencyAllowances = Schema.Record(Schema.String, DependencySettings);
-
-export interface DependencyAllowance {
-  readonly workspaces: readonly string[];
-  readonly dependencies: readonly string[];
-}
 
 export interface WorkspaceLint {
   readonly ignorePatterns: readonly string[];
@@ -86,8 +78,8 @@ export interface WorkspaceSettings {
   readonly ignoredDirectories: readonly IgnoredDirectory[];
   readonly testProjects: readonly TestProject[];
   readonly tasks: WorkspaceTasks;
-  readonly devDependencies: Readonly<Record<string, DependencyAllowance>>;
-  readonly dependencies: Readonly<Record<string, DependencyAllowance>>;
+  readonly devDependencies: DependencyAllowances;
+  readonly dependencies: DependencyAllowances;
 }
 
 export interface SettingsOptions {
@@ -100,8 +92,8 @@ interface Workspace {
   readonly directory: string;
   readonly ignorePatterns: readonly string[];
   readonly overrides: readonly OxlintOverride[];
-  readonly devDependencies: Readonly<Record<string, DependencyAllowance>>;
-  readonly dependencies: Readonly<Record<string, DependencyAllowance>>;
+  readonly devDependencies: DependencyAllowances;
+  readonly dependencies: DependencyAllowances;
   readonly ownTests: boolean;
   readonly testProject: TestProject;
   readonly tasks: WorkspaceTasks;
@@ -146,40 +138,6 @@ const lintOf = Effect.fn("lintOf")(function* lintOf(source: WorkspaceSource, rul
   );
   const ignorePatterns = pipe(lint.ignorePatterns ?? [], Arr.map(prefixed(source.directory)));
   return { ignorePatterns, overrides };
-});
-
-const allowanceOf = Effect.fn("allowanceOf")(function* allowanceOf(
-  source: WorkspaceSource,
-  dependencySets: DependencySets,
-  [reason, allowance]: readonly [string, typeof DependencySettings.Type],
-) {
-  const sets = yield* usedFrom(source.file, dependencySets, allowance.use ?? []);
-  const dependencies = [...Arr.flatten(sets), ...(allowance.dependencies ?? [])];
-  return [
-    `${source.directory}: ${reason}`,
-    { workspaces: [source.directory], dependencies },
-  ] as const;
-});
-
-const allowancesOf = Effect.fn("allowancesOf")(function* allowancesOf(
-  source: WorkspaceSource,
-  dependencySets: DependencySets,
-  path: typeof MSCH_DEV_DEPENDENCIES | typeof MSCH_DEPENDENCIES,
-) {
-  const settings = yield* literalSettings({
-    source,
-    path,
-    decode: Schema.decodeUnknownEffect(WorkspaceDependencyAllowances),
-  });
-  const allowed = Rec.toEntries(Option.getOrElse(settings, () => ({})));
-  const entries = yield* Effect.forEach(
-    allowed,
-    (entry) => allowanceOf(source, dependencySets, entry),
-    {
-      concurrency: 1,
-    },
-  );
-  return Rec.fromEntries(entries);
 });
 
 const settingsOf = Effect.fn("settingsOf")(function* settingsOf(
@@ -256,6 +214,23 @@ const mergedTasks = (found: readonly { readonly tasks: WorkspaceTasks }[]): Work
   ),
 });
 
+const mergedAllowances = (
+  found: readonly Workspace[],
+): Pick<Workspace, "devDependencies" | "dependencies"> => ({
+  devDependencies: merged(
+    pipe(
+      found,
+      Arr.map(({ devDependencies }) => devDependencies),
+    ),
+  ),
+  dependencies: merged(
+    pipe(
+      found,
+      Arr.map(({ dependencies }) => dependencies),
+    ),
+  ),
+});
+
 const collectWorkspaceSettings = Effect.fn("collectWorkspaceSettings")(
   function* collectWorkspaceSettings(options: SettingsOptions) {
     yield* Effect.ignore(writeLockedClosures(options.root));
@@ -298,18 +273,7 @@ const collectWorkspaceSettings = Effect.fn("collectWorkspaceSettings")(
         Arr.map(({ testProject }) => testProject),
       ),
       tasks: mergedTasks(found),
-      devDependencies: merged(
-        pipe(
-          found,
-          Arr.map(({ devDependencies }) => devDependencies),
-        ),
-      ),
-      dependencies: merged(
-        pipe(
-          found,
-          Arr.map(({ dependencies }) => dependencies),
-        ),
-      ),
+      ...mergedAllowances(found),
     };
   },
 );

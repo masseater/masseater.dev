@@ -49,10 +49,12 @@ const cacheOf = (remoteCache: string | undefined): SharedCache | true =>
     }),
   );
 
+type Allowed = NonNullable<NonNullable<UserConfig["dependencyRules"]>["allowed"]>;
+
 const allowedIn = (
   allowances: WorkspaceSettings["devDependencies"],
   field: "dependencies" | "devDependencies",
-) =>
+): Allowed =>
   pipe(
     allowances,
     Rec.map(({ workspaces, dependencies }) => ({ workspaces, dependencies, fields: [field] })),
