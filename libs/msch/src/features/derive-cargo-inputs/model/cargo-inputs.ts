@@ -91,12 +91,10 @@ const excludedFrom = (
     workspace.ignored,
     Arr.filter(({ pattern }) => {
       const covered = withoutContents(Str.slice(NEGATION.length)(pattern));
-      const applies =
-        Str.startsWith(ANYWHERE)(covered) ||
-        pipe(
-          walked,
-          Arr.some((dir) => isWithin(dir)(covered)),
-        );
+      const applies = pipe(
+        walked,
+        Arr.some((dir) => isWithin(dir)(covered)),
+      );
       return applies && !pipe(kept, Arr.some(isWithin(covered)));
     }),
   );
