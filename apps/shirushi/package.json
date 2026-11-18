@@ -2,6 +2,7 @@
   "name": "shirushi",
   "version": "0.0.0",
   "private": true,
+  "description": "Desktop app for playing reference songs and videos and marking liked or disliked ranges, with an MCP for creative AIs.",
   "type": "module",
   "imports": {
     "#/*": "./src/*"

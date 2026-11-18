@@ -2,6 +2,7 @@
   "name": "@masseater.dev/pod-rattle-engine",
   "version": "0.0.0",
   "private": true,
+  "description": "Pod Rattle sound engine in Rust.",
   "type": "module",
   "imports": {
     "#engine": {

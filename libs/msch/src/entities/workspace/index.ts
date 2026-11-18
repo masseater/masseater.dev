@@ -20,7 +20,11 @@ export type { WorkspaceSource } from "./model/workspace-config-source.ts";
 export { runTasksOf } from "./model/run-tasks.ts";
 export type { RunTask, RunTasks } from "./model/run-tasks.ts";
 export { workspaceManifest } from "./model/workspace-manifest.ts";
-export { publishedProjects, workspaceDirectories } from "./model/workspace-projects.ts";
+export {
+  publishedProjects,
+  workspaceDirectories,
+  workspaceProjects,
+} from "./model/workspace-projects.ts";
 export type { WorkspaceProject } from "./model/workspace-projects.ts";
 export { prefixed } from "./model/workspace-patterns.ts";
 export { shadcnUiIn, shadcnUiOf } from "./model/shadcn-ui.ts";

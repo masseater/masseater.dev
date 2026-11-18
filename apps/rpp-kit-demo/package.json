@@ -2,6 +2,7 @@
   "name": "rpp-kit-demo",
   "version": "0.0.0",
   "private": true,
+  "description": "masseater.dev/rpp-kit demo that shows a REAPER project loaded in the browser.",
   "type": "module",
   "imports": {
     "#/*": "./src/*"

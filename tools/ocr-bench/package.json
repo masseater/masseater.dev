@@ -2,6 +2,7 @@
   "name": "@ocr-decide/bench",
   "version": "0.0.0",
   "private": true,
+  "description": "Measures how well ocr-decide reads invoices and how well OCR engines read Japanese.",
   "type": "module",
   "imports": {
     "#/*": "./src/*"

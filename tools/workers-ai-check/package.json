@@ -2,6 +2,7 @@
   "name": "workers-ai-check",
   "version": "0.0.0",
   "private": true,
+  "description": "Daily check that the Workers AI models used in the code are not scheduled for deprecation.",
   "type": "module",
   "imports": {
     "#/*": "./src/*"

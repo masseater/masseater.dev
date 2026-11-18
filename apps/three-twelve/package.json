@@ -2,6 +2,7 @@
   "name": "three-twelve",
   "version": "0.0.0",
   "private": true,
+  "description": "Discord bot that joins an occupied voice channel at 3:12 JST, plays one song and leaves.",
   "type": "module",
   "imports": {
     "#/*": "./src/*"

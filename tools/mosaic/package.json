@@ -2,6 +2,7 @@
   "name": "@masseater.dev/mosaic-build",
   "version": "0.0.0",
   "private": true,
+  "description": "Builds the files the mosaic art site serves for each character.",
   "type": "module",
   "dependencies": {
     "@masseater.dev/github-workflow": "workspace:*",

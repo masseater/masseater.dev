@@ -2,6 +2,7 @@
   "name": "aredoko-server",
   "version": "0.0.0",
   "private": true,
+  "description": "aredoko search server on the Unity PC: indexes the user's assets with image embeddings and answers searches from the Unity editor extension.",
   "type": "module",
   "imports": {
     "#/*": "./src/*"
