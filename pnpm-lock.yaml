@@ -180,7 +180,7 @@ catalogs:
       specifier: 0.3.325
       version: 0.3.325
     '@atproto/api':
-      specifier: ^0.32.0
+      specifier: 0.32.0
       version: 0.32.0
     '@better-auth/drizzle-adapter':
       specifier: 1.7.25
@@ -201,7 +201,7 @@ catalogs:
       specifier: 2.17.0
       version: 2.17.0
     '@cfworker/json-schema':
-      specifier: ^4.1.6
+      specifier: 4.1.6
       version: 4.1.6
     '@cloudflare/workers-types':
       specifier: 5.20261115.1
@@ -300,7 +300,7 @@ catalogs:
       specifier: 5.3.0
       version: 5.3.0
     '@fontsource/klee-one':
-      specifier: ^5.3.1
+      specifier: 5.3.1
       version: 5.3.1
     '@fontsource/m-plus-rounded-1c':
       specifier: 5.3.0
@@ -309,7 +309,7 @@ catalogs:
       specifier: 5.3.1
       version: 5.3.1
     '@fontsource/noto-serif-jp':
-      specifier: ^5.3.1
+      specifier: 5.3.1
       version: 5.3.1
     '@fontsource/shippori-mincho-b1':
       specifier: 5.3.0
@@ -318,16 +318,16 @@ catalogs:
       specifier: 5.3.1
       version: 5.3.1
     '@fontsource/zen-kurenaido':
-      specifier: ^5.3.1
+      specifier: 5.3.1
       version: 5.3.1
     '@html-eslint/eslint-plugin-react':
       specifier: 0.68.0
       version: 0.68.0
     '@jupyterlab/nbformat':
-      specifier: ^4.5.11
+      specifier: 4.6.6
       version: 4.6.6
     '@kenjiuno/msgreader':
-      specifier: ^1.28.0
+      specifier: 1.29.0
       version: 1.29.0
     '@loaderkit/resolve':
       specifier: 1.0.6
@@ -369,7 +369,7 @@ catalogs:
       specifier: 3.5.5
       version: 3.5.5
     '@plussub/srt-vtt-parser':
-      specifier: ^2.0.5
+      specifier: 2.0.5
       version: 2.0.5
     '@pnpm/deps.path':
       specifier: 1101.0.9
@@ -462,7 +462,7 @@ catalogs:
       specifier: 2.7.3
       version: 2.7.3
     '@tesseract.js-data/eng':
-      specifier: ^1.0.0
+      specifier: 1.0.0
       version: 1.0.0
     '@textlint-ja/textlint-rule-preset-ai-writing':
       specifier: 1.7.0
@@ -513,7 +513,7 @@ catalogs:
       specifier: 7.8.0
       version: 7.8.0
     '@types/sshpk':
-      specifier: ^1.17.5
+      specifier: 1.17.5
       version: 1.17.5
     '@types/three':
       specifier: 0.187.0
@@ -531,7 +531,7 @@ catalogs:
       specifier: 8.72.2
       version: 8.72.2
     '@typescript-eslint/utils':
-      specifier: ^8.72.1
+      specifier: 8.72.2
       version: 8.72.2
     '@typescript/typescript-wasip1-wasm':
       specifier: 7.1.0-dev.20261106.1
@@ -564,7 +564,7 @@ catalogs:
       specifier: 0.33.0
       version: 0.33.0
     ass-compiler:
-      specifier: ^0.1.16
+      specifier: 0.1.16
       version: 0.1.16
     auth:
       specifier: 1.7.25
@@ -576,7 +576,7 @@ catalogs:
       specifier: 7.0.0
       version: 7.0.0
     cfb:
-      specifier: ^1.2.2
+      specifier: 1.2.2
       version: 1.2.2
     chokidar:
       specifier: 6.0.0
@@ -657,19 +657,19 @@ catalogs:
       specifier: 7.1.1
       version: 7.1.1
     fast-png:
-      specifier: ^8.0.0
+      specifier: 8.0.0
       version: 8.0.0
     fastest-levenshtein:
-      specifier: ^1.0.16
+      specifier: 1.0.16
       version: 1.0.16
     feed:
       specifier: 6.0.0
       version: 6.0.0
     fflate:
-      specifier: ^0.8.3
+      specifier: 0.8.3
       version: 0.8.3
     file-type:
-      specifier: ^22.1.0
+      specifier: 22.3.0
       version: 22.3.0
     forecast-calibration-kit:
       specifier: 0.1.2
@@ -684,22 +684,22 @@ catalogs:
       specifier: 21.0.4
       version: 21.0.4
     hast-util-from-html:
-      specifier: ^2.1.0
+      specifier: 2.1.0
       version: 2.1.0
     hast-util-select:
-      specifier: ^6.0.4
+      specifier: 6.0.4
       version: 6.0.4
     hast-util-to-string:
-      specifier: ^3.0.1
+      specifier: 3.0.1
       version: 3.0.1
     htmlparser2:
-      specifier: ^12.0.0
+      specifier: 12.0.0
       version: 12.0.0
     hyparquet:
       specifier: 1.33.0
       version: 1.33.0
     ical.js:
-      specifier: ^2.2.1
+      specifier: 2.2.1
       version: 2.2.1
     immer:
       specifier: 11.2.10
@@ -708,7 +708,7 @@ catalogs:
       specifier: 6.2.17
       version: 6.2.17
     jsonc-parser:
-      specifier: ^3.3.1
+      specifier: 3.3.1
       version: 3.3.1
     langium:
       specifier: 4.4.2
@@ -720,10 +720,10 @@ catalogs:
       specifier: 13.6.0
       version: 13.6.0
     linguist-languages:
-      specifier: ^9.5.0
+      specifier: 9.5.0
       version: 9.5.0
     liquidjs:
-      specifier: ^10.30.1
+      specifier: 10.30.1
       version: 10.30.1
     lucide-react:
       specifier: 1.73.0
@@ -732,16 +732,16 @@ catalogs:
       specifier: 0.42.1
       version: 0.42.1
     mdast-util-directive:
-      specifier: ^3.2.0
+      specifier: 3.2.0
       version: 3.2.0
     mdast-util-from-markdown:
-      specifier: ^2.1.0
+      specifier: 2.1.0
       version: 2.1.0
     mdast-util-frontmatter:
-      specifier: ^2.0.1
+      specifier: 2.0.1
       version: 2.0.1
     mdast-util-gfm:
-      specifier: ^3.1.0
+      specifier: 3.1.0
       version: 3.1.0
     mdast-util-mdx-jsx:
       specifier: 3.2.1
@@ -750,10 +750,10 @@ catalogs:
       specifier: 4.0.0
       version: 4.0.0
     micromark-extension-frontmatter:
-      specifier: ^2.0.0
+      specifier: 2.0.0
       version: 2.0.0
     micromark-extension-gfm:
-      specifier: ^3.0.0
+      specifier: 3.0.0
       version: 3.0.0
     micromatch:
       specifier: 4.0.8
@@ -777,10 +777,10 @@ catalogs:
       specifier: 0.1.2
       version: 0.1.2
     oauth4webapi:
-      specifier: ^3.8.8
+      specifier: 3.8.8
       version: 3.8.8
     officeparser:
-      specifier: ^8.1.1
+      specifier: 8.7.1
       version: 8.7.1
     oxlint:
       specifier: 1.94.0
@@ -792,7 +792,7 @@ catalogs:
       specifier: 7.0.2007
       version: 7.0.2007
     parse5:
-      specifier: ^8.1.0
+      specifier: 8.1.1
       version: 8.1.1
     patronum:
       specifier: 2.3.0
@@ -804,7 +804,7 @@ catalogs:
       specifier: 8.0.0
       version: 8.0.0
     postal-mime:
-      specifier: ^4.2.0
+      specifier: 4.2.1
       version: 4.2.1
     publint:
       specifier: 0.3.25
@@ -822,13 +822,13 @@ catalogs:
       specifier: 3.10.1
       version: 3.10.1
     refractor:
-      specifier: ^5.0.0
+      specifier: 5.0.0
       version: 5.0.0
     rehype-slug:
       specifier: 6.0.0
       version: 6.0.0
     remark-directive:
-      specifier: ^4.0.0
+      specifier: 4.0.0
       version: 4.0.0
     remark-frontmatter:
       specifier: 5.0.0
@@ -855,7 +855,7 @@ catalogs:
       specifier: 7.8.6
       version: 7.8.6
     sequoia-cli:
-      specifier: ^0.5.8
+      specifier: 0.5.8
       version: 0.5.8
     sharp:
       specifier: 0.35.5
@@ -879,7 +879,7 @@ catalogs:
       specifier: 0.1.9
       version: 0.1.9
     sshpk:
-      specifier: ^1.18.0
+      specifier: 1.18.0
       version: 1.18.0
     steiger:
       specifier: 0.10.0
@@ -891,7 +891,7 @@ catalogs:
       specifier: 3.7.0
       version: 3.7.0
     tesseract.js:
-      specifier: ^7.0.0
+      specifier: 7.0.0
       version: 7.0.0
     textlint:
       specifier: 15.8.0
@@ -921,13 +921,13 @@ catalogs:
       specifier: 11.0.5
       version: 11.0.5
     unist-util-visit:
-      specifier: ^5.2.0
+      specifier: 5.2.0
       version: 5.2.0
     universal-github-app-jwt:
       specifier: 2.2.2
       version: 2.2.2
     unpdf:
-      specifier: ^2.0.0
+      specifier: 2.2.0
       version: 2.2.0
     validate-npm-package-name:
       specifier: 8.0.0
@@ -1603,7 +1603,7 @@ importers:
         specifier: catalog:stack
         version: 1.7.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(oxlint-tsgolint@7.0.2007)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
 
-  apps/medley-manager:
+  apps/med-db:
     dependencies:
       '@alchemy.run/cloudflare':
         specifier: catalog:stack
@@ -4023,15 +4023,15 @@ importers:
       '@r_masseater/wism':
         specifier: workspace:*
         version: link:../wism
-      '@r_masseater/wism-fsd':
+      '@r_masseater/wism-presets':
         specifier: workspace:*
-        version: link:../wism-fsd
+        version: link:../wism-presets
       '@r_masseater/y8':
         specifier: workspace:*
         version: link:../y8
-      '@r_masseater/y8-docs':
+      '@r_masseater/y8-presets':
         specifier: workspace:*
-        version: link:../y8-docs
+        version: link:../y8-presets
       '@shadcn/lint':
         specifier: 'catalog:'
         version: 0.2.5(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))
@@ -4120,6 +4120,9 @@ importers:
 
   libs/napi-telemetry:
     devDependencies:
+      '@r_masseater/msch':
+        specifier: workspace:*
+        version: link:../msch
       vite-plus:
         specifier: catalog:stack
         version: 1.7.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(oxlint-tsgolint@7.0.2007)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
@@ -4978,7 +4981,7 @@ importers:
         specifier: catalog:stack
         version: 1.7.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(oxlint-tsgolint@7.0.2007)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
 
-  libs/wism-fsd:
+  libs/wism-presets:
     dependencies:
       minimatch:
         specifier: 'catalog:'
@@ -5085,7 +5088,7 @@ importers:
         specifier: catalog:stack
         version: 1.7.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(oxlint-tsgolint@7.0.2007)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
 
-  libs/y8-docs:
+  libs/y8-presets:
     dependencies:
       minimatch:
         specifier: 'catalog:'
