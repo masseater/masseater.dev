@@ -58,7 +58,9 @@ export default defineConfig({
         "大学共同利用機関",
       ],
       technicalWriting: {
-        "no-exclamation-question-mark": { allow: ["ぶいあーる!", "超かぐや姫!", "超かぐや姫！"] },
+        "no-exclamation-question-mark": {
+          allow: ["ぶいあーる!", "超かぐや姫!", "超かぐや姫！", "Beat This!"],
+        },
       },
       rules: { "@r_masseater/preset-ja": { "no-taigendome": false } },
     },
