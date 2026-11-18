@@ -2411,6 +2411,7 @@ dependencies = [
  "tauri",
  "tauri-plugin-dialog",
  "tauri-plugin-localhost",
+ "tauri-plugin-log",
  "tauri-plugin-prevent-default",
  "tauri-plugin-single-instance",
  "tauri-plugin-window-state",
@@ -14231,6 +14232,7 @@ dependencies = [
  "tracing",
  "tracing-opentelemetry",
  "tracing-subscriber",
+ "zip",
 ]
 
 [[package]]
@@ -14255,7 +14257,6 @@ dependencies = [
  "tauri",
  "tauri-build",
  "tauri-plugin-dialog",
- "tauri-plugin-log",
  "tauri-plugin-opener",
  "tauri-plugin-single-instance",
  "tauri-plugin-updater",

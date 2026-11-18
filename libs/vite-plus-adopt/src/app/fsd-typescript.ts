@@ -79,17 +79,13 @@ const createResolverCache = (): ((compilerOptions: object) => ModuleResolver) =>
   const byOptions = new Map<string, ModuleResolver>();
   return (compilerOptions) => {
     const key = toJson(compilerOptions);
-    return Option.fromNullishOr(byOptions.get(key)).pipe(
-      Option.getOrElse(() => {
-        const { options } = api.parseJsonConfigFileContent(
-          { compilerOptions },
-          { configDirectory: CWD },
-        );
-        const created = api.createModuleResolver(options);
-        byOptions.set(key, created);
-        return created;
-      }),
-    );
+    return byOptions.getOrInsertComputed(key, () => {
+      const { options } = api.parseJsonConfigFileContent(
+        { compilerOptions },
+        { configDirectory: CWD },
+      );
+      return api.createModuleResolver(options);
+    });
   };
 };
 

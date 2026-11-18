@@ -8,15 +8,8 @@ export interface ProjectCache<Value> {
 
 export const projectCache = <Value>(): ProjectCache<Value> => {
   const cache = new WeakMap<Project, Map<string, Value>>();
-  const entriesOf = (project: Project): Map<string, Value> => {
-    const found = Option.fromNullishOr(cache.get(project));
-    if (Option.isSome(found)) {
-      return found.value;
-    }
-    const created = new Map<string, Value>();
-    cache.set(project, created);
-    return created;
-  };
+  const entriesOf = (project: Project): Map<string, Value> =>
+    cache.getOrInsertComputed(project, () => new Map<string, Value>());
   return {
     get: (project) => (key) => Option.fromNullishOr(entriesOf(project).get(key)),
     set: (project) => (key, value) => {

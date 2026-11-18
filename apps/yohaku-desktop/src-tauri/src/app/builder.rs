@@ -1,7 +1,6 @@
 use std::path::Path;
 
 use tauri::{App, Manager, RunEvent, WindowEvent, async_runtime};
-use tauri_plugin_log::{RotationStrategy, log::LevelFilter};
 use tauri_specta::{Builder, ErrorHandlingMode, collect_commands};
 
 use super::commands::{self, Yohaku};
@@ -15,8 +14,6 @@ use crate::shared::lib::Failure;
 
 pub const MAIN_WINDOW: &str = "main";
 const WORK_DIRECTORY: &str = "work";
-const LOG_FILE_BYTES: u128 = 1_000_000;
-const LOG_FILES_KEPT: usize = 5;
 
 fn builder() -> Builder<tauri::Wry> {
     Builder::<tauri::Wry>::new()
@@ -103,13 +100,7 @@ pub fn run() -> tauri::Result<()> {
             window::show(app);
         },
     ))
-    .plugin(
-        tauri_plugin_log::Builder::new()
-            .level(LevelFilter::Info)
-            .max_file_size(LOG_FILE_BYTES)
-            .rotation_strategy(RotationStrategy::KeepSome(LOG_FILES_KEPT))
-            .build(),
-    )
+    .plugin(desktop_shell::log_plugin())
     .plugin(desktop_shell::telemetry_plugin())
     .plugin(desktop_shell::state_plugin())
     .plugin(desktop_shell::browser_keys_plugin())

@@ -74,11 +74,4 @@ export const inputOf =
   (kind: InputKind) =>
   (path: string) =>
   (source: Source): Option.Option<AuditInput> =>
-    pipe(
-      Option.fromNullishOr(cache.get(source)),
-      Option.getOrElse(() => {
-        const built = Result.getSuccess(decoded(kind, path, source));
-        cache.set(source, built);
-        return built;
-      }),
-    );
+    cache.getOrInsertComputed(source, () => Result.getSuccess(decoded(kind, path, source)));

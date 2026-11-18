@@ -1,17 +1,24 @@
-import type { Job } from "@masseater.dev/yogoto-protocol";
+import type { Job, JobState } from "@masseater.dev/yogoto-protocol";
 import type { ReactNode } from "react";
 
-import { JOB_STAGES, JOB_STATES } from "#/shared/config/index.ts";
+import { JOB_FAILURES, JOB_STAGES, JOB_STATES } from "#/shared/config/index.ts";
 import { percent } from "#/shared/lib/index.ts";
 
 import { JobMeter } from "./job-meter.tsx";
 
+const MESSAGES: Readonly<Record<JobState, Readonly<Record<string, string>>>> = {
+  queued: {},
+  running: JOB_STAGES,
+  done: {},
+  failed: JOB_FAILURES,
+};
+
 const labelOf = (job: Job): string => {
-  if (job.state !== "running") {
-    return JOB_STATES[job.state];
+  const label = MESSAGES[job.state][job.message] ?? JOB_STATES[job.state];
+  if (job.state === "running") {
+    return `${label} ${percent(job.progress)}`;
   }
-  const stage = JOB_STAGES[job.message] ?? JOB_STATES.running;
-  return `${stage} ${percent(job.progress)}`;
+  return label;
 };
 
 export const JobStatus = ({ job }: Readonly<{ job: Job }>): ReactNode => (

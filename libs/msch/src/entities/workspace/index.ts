@@ -32,11 +32,11 @@ export type { ShadcnUi } from "./model/shadcn-ui.ts";
 export {
   NO_TASKS,
   RUN_TASKS,
-  TEST_TASK,
   VERIFY_TASK,
   definesTask,
   hasVerifyTask,
   tasksOf,
+  testsItself,
 } from "./model/workspace-tasks.ts";
 export type { WorkspaceTasks } from "./model/workspace-tasks.ts";
 export { namedWorkspaces, patternOf } from "./model/workspace-names.ts";

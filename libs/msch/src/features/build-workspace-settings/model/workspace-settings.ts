@@ -14,15 +14,16 @@ import {
   prefixed,
   shadcnUiIn,
   NO_TASKS,
-  TEST_TASK,
-  definesTask,
   tasksOf,
+  testsItself,
 } from "#/entities/workspace/index.ts";
 import type { WorkspaceSource, WorkspaceTasks } from "#/entities/workspace/index.ts";
 import { collectIgnoredDirectories } from "#/shared/lib/ignored-directories.ts";
 import type { IgnoredDirectory } from "#/shared/lib/ignored-directories.ts";
 import { RepositoryFiles, nodeRepositoryFiles } from "#/shared/lib/repository-files.ts";
 
+import { sharedTestProject, testProjectOf } from "./test-project.ts";
+import type { TestProject } from "./test-project.ts";
 import { publicEntryFiles } from "./workspace-public-entries.ts";
 
 export type RuleSet = Readonly<Record<string, unknown>>;
@@ -83,7 +84,7 @@ export interface WorkspaceSettings {
   readonly lint: WorkspaceLint;
   readonly members: readonly string[];
   readonly ignoredDirectories: readonly IgnoredDirectory[];
-  readonly testProjects: readonly string[];
+  readonly testProjects: readonly TestProject[];
   readonly tasks: WorkspaceTasks;
   readonly devDependencies: Readonly<Record<string, DependencyAllowance>>;
   readonly dependencies: Readonly<Record<string, DependencyAllowance>>;
@@ -102,6 +103,7 @@ interface Workspace {
   readonly devDependencies: Readonly<Record<string, DependencyAllowance>>;
   readonly dependencies: Readonly<Record<string, DependencyAllowance>>;
   readonly ownTests: boolean;
+  readonly testProject: TestProject;
   readonly tasks: WorkspaceTasks;
   readonly publicEntries: readonly string[];
 }
@@ -191,11 +193,40 @@ const settingsOf = Effect.fn("settingsOf")(function* settingsOf(
     MSCH_DEV_DEPENDENCIES,
   );
   const dependencies = yield* allowancesOf(source, options.dependencySets, MSCH_DEPENDENCIES);
-  const ownTests = definesTask(TEST_TASK)(source.program);
+  const ownTests = testsItself(source.program);
   const files = yield* RepositoryFiles;
   const manifest = yield* readManifest(files.dirname(source.file));
   const tasks = tasksOf(manifest)(source.program);
-  return { directory: source.directory, ...lint, devDependencies, dependencies, ownTests, tasks };
+  const testProject = yield* testProjectOf(source, `${source.directory}/${CONFIG_FILE}`, manifest);
+  return {
+    directory: source.directory,
+    ...lint,
+    devDependencies,
+    dependencies,
+    ownTests,
+    testProject,
+    tasks,
+  };
+});
+
+const unconfiguredWorkspace = Effect.fn("unconfiguredWorkspace")(function* unconfiguredWorkspace(
+  root: string,
+  directory: string,
+) {
+  const files = yield* RepositoryFiles;
+  const publicEntries = yield* publicEntryFiles(root, directory, Option.none());
+  const manifest = yield* readManifest(files.join(root, directory));
+  return {
+    directory,
+    ignorePatterns: [],
+    overrides: [],
+    devDependencies: {},
+    dependencies: {},
+    ownTests: false,
+    testProject: sharedTestProject(manifest)({ directory, config: false }),
+    tasks: NO_TASKS,
+    publicEntries,
+  };
 });
 
 const workspaceIn = Effect.fn("workspaceIn")(function* workspaceIn(
@@ -206,17 +237,7 @@ const workspaceIn = Effect.fn("workspaceIn")(function* workspaceIn(
   const file = files.join(options.root, directory, CONFIG_FILE);
   const text = yield* files.readFile(file);
   if (Option.isNone(text)) {
-    const publicEntries = yield* publicEntryFiles(options.root, directory, Option.none());
-    return {
-      directory,
-      ignorePatterns: [],
-      overrides: [],
-      devDependencies: {},
-      dependencies: {},
-      ownTests: false,
-      tasks: NO_TASKS,
-      publicEntries,
-    };
+    return yield* unconfiguredWorkspace(options.root, directory);
   }
   const program = yield* programOf(file, text.value);
   const settings = yield* settingsOf({ file, directory, program }, options);
@@ -274,7 +295,7 @@ const collectWorkspaceSettings = Effect.fn("collectWorkspaceSettings")(
       testProjects: pipe(
         found,
         Arr.filter(({ ownTests }) => !ownTests),
-        Arr.map(({ directory }) => directory),
+        Arr.map(({ testProject }) => testProject),
       ),
       tasks: mergedTasks(found),
       devDependencies: merged(

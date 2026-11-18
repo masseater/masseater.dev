@@ -55,8 +55,10 @@ const edgesOf = (faces: readonly Face[], total: number): Edges => {
     Math.min(from, to) * total + Math.max(from, to);
   for (const [face, sides] of pipe(faces, Array.map(sidesOf)).entries()) {
     for (const [from, to] of sides) {
-      const found = index.get(keyOf(from, to)) ?? list.push({ from, to, faces: [] }) - NEXT;
-      index.set(keyOf(from, to), found);
+      const found = index.getOrInsertComputed(
+        keyOf(from, to),
+        () => list.push({ from, to, faces: [] }) - NEXT,
+      );
       Option.map(Array.get(list, found), (edge) => edge.faces.push(face));
     }
   }
