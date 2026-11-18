@@ -22,6 +22,9 @@ jobs:
     concurrency:
       group: verify-${{ github.ref }}
       cancel-in-progress: true
+    env:
+      OTEL_TRACES_EXPORTER: otlp
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://127.0.0.1:4318
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -37,6 +40,7 @@ jobs:
           session-path: "true"
           rust-cache: "false"
           sccache: "true"
+          telemetry: "true"
       - if: github.event_name != 'schedule'
         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
@@ -48,6 +52,8 @@ jobs:
           github-token: ${{ github.token }}
           full-history: "true"
           share: "false"
+      - if: always()
+        uses: $/.github/actions/telemetry-files
       - if: always()
         uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
@@ -71,6 +77,9 @@ jobs:
       id-token: write
     concurrency:
       group: cache-${{ github.ref }}
+    env:
+      OTEL_TRACES_EXPORTER: otlp
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://127.0.0.1:4318
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -87,6 +96,7 @@ jobs:
           session-path: "true"
           rust-cache: "false"
           sccache: "true"
+          telemetry: "true"
       - uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: node_modules/.cache/msch
@@ -96,6 +106,8 @@ jobs:
         with:
           github-token: ${{ github.token }}
           full-history: "true"
+      - if: always()
+        uses: $/.github/actions/telemetry-files
       - if: always()
         uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
