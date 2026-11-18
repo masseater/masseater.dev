@@ -1,50 +1,100 @@
 import { NodeServices } from "@effect/platform-node";
-import { Array as Arr, Effect, FileSystem, ManagedRuntime, Path, Record, pipe } from "effect";
+import {
+  Array as Arr,
+  Effect,
+  FileSystem,
+  ManagedRuntime,
+  Option,
+  Path,
+  Record,
+  pipe,
+} from "effect";
 import type { PlatformError } from "effect/PlatformError";
 import { afterAll, expect, test } from "vite-plus/test";
 
-import { format, fu4Section, lint, workflowPathspecs } from "./index.ts";
-import type { Diagnostic, Fu4Config, Fu4Error } from "./index.ts";
+import {
+  definePlugin,
+  defineRule,
+  format,
+  fu4Section,
+  lint,
+  lintText,
+  workflowPathspecs,
+} from "./index.ts";
+import type { Diagnostic, Fu4Config, Fu4Error, RuleContext } from "./index.ts";
 
 const services = ManagedRuntime.make(NodeServices.layer);
 afterAll(() => services.dispose());
 
 const WORKFLOW = ".github/workflows/ci.yml";
-
-const SOURCE = `on: push
-jobs:
-  test:
-    runs-on: gpu-box
-    steps:
-      - run: echo \${{ github.events }}
-`;
-
 const ACTION = "actions/setup/action.yml";
+const SOURCE = "on: push\njobs:\n  test:\n    runs-on: ubuntu-latest\n";
+const TOP = 1;
 
-const ACTION_SOURCE = `name: setup
-description: set up
-runs:
-  using: composite
-  steps:
-    - uses: actions/checkout@v6
-`;
+const firstKey = (context: RuleContext): string =>
+  pipe(
+    Option.fromNullishOr(context.source.yaml),
+    Option.flatMap((root) => Arr.head(root.children)),
+    Option.map((key) => key.value),
+    Option.getOrElse(() => ""),
+  );
 
-const DEPENDABOT = ".github/dependabot.yml";
-
-const DEPENDABOT_SOURCE = `version: 2
-updates:
-  - package-ecosystem: npm
-    directory: /
-    schedule:
-      interval: daily
-`;
-
-const QUIET_AUDITS = {
+const example = definePlugin({
   rules: {
-    "excessive-permissions": { disable: true },
-    "template-injection": { disable: true },
+    "first-key": defineRule({
+      meta: { description: "Reports the first top-level key" },
+      check: (context) => {
+        context.report({ message: firstKey(context), line: TOP, column: TOP });
+      },
+    }),
+    "action-name": defineRule({
+      meta: { description: "Reports the action file's name", kinds: ["action"] },
+      check: (context) => {
+        context.report({ message: context.kind, line: TOP, column: TOP });
+      },
+    }),
+    "reads-project": defineRule({
+      meta: { description: "Reads another file through the project" },
+      check: (context) => {
+        const found = pipe(
+          context.project.read("notes.txt"),
+          Option.getOrElse(() => "missing"),
+        );
+        context.report({ message: found, line: TOP, column: TOP });
+      },
+    }),
+    "parses-script": defineRule({
+      meta: { description: "Parses a bash script" },
+      check: (context) => {
+        const root = pipe(
+          Option.fromNullishOr(context.parseScript("bash", "echo hi\n").syntax),
+          Option.map((syntax) => syntax.type),
+          Option.getOrElse(() => "none"),
+        );
+        context.report({ message: root, line: TOP, column: TOP });
+      },
+    }),
+    "effect-rule": defineRule({
+      meta: { description: "Reports from an Effect" },
+      check: (context) =>
+        Effect.sync(() => {
+          context.report({ message: "from effect", line: TOP, column: TOP });
+        }),
+    }),
+    crashes: defineRule({
+      meta: { description: "Throws" },
+      check: () => {
+        throw new Error("boom");
+      },
+    }),
   },
-};
+});
+
+const configWith = (rules: NonNullable<Fu4Config["rules"]>, extra: Fu4Config = {}): Fu4Config => ({
+  plugins: { example },
+  rules,
+  ...extra,
+});
 
 type Linted = Effect.Effect<
   readonly Diagnostic[],
@@ -65,82 +115,106 @@ const lintFiles = (files: Readonly<Record<string, string>>, config: Fu4Config): 
     return yield* lint({ root, files: Record.keys(files), config });
   }).pipe(Effect.scoped);
 
-const rulesOf = (diagnostics: readonly Diagnostic[]): readonly string[] =>
+const messagesOf = (diagnostics: readonly Diagnostic[]): readonly string[] =>
   pipe(
     diagnostics,
-    Arr.map(({ rule }) => rule),
+    Arr.map(({ message }) => message),
   );
 
-const lintWorkflow = (config: Fu4Config): Linted => lintFiles({ [WORKFLOW]: SOURCE }, config);
-
-test("reports actionlint's and zizmor's findings with their rule and position", () =>
+test("runs enabled plugin rules and names each finding by plugin and rule", () =>
   Effect.gen(function* reports() {
-    const diagnostics = yield* lintWorkflow({});
-    expect(diagnostics).toMatchObject([
-      { path: WORKFLOW, line: 3, column: 3, rule: "excessive-permissions" },
-      { path: WORKFLOW, line: 4, column: 14, rule: "runner-label" },
-      { path: WORKFLOW, line: 6, column: 23, rule: "expression" },
-      { path: WORKFLOW, line: 6, column: 23, rule: "template-injection" },
+    const diagnostics = yield* lintFiles(
+      { [WORKFLOW]: SOURCE },
+      configWith({ "example/first-key": "warn" }),
+    );
+    expect(diagnostics).toStrictEqual([
+      {
+        path: WORKFLOW,
+        line: TOP,
+        column: TOP,
+        message: "on",
+        rule: "example/first-key",
+        severity: "warn",
+      },
     ]);
   }).pipe(services.runPromise));
 
-test("links each audit finding to zizmor's documentation", () =>
-  Effect.gen(function* links() {
-    const diagnostics = yield* lintWorkflow({});
+test("runs a rule only on the input kinds it declares", () =>
+  Effect.gen(function* kinds() {
+    const diagnostics = yield* lintFiles(
+      { [WORKFLOW]: SOURCE, [ACTION]: "name: setup\n" },
+      configWith({ "example/action-name": "error" }),
+    );
+    expect(diagnostics).toMatchObject([{ path: ACTION, message: "action" }]);
+  }).pipe(services.runPromise));
+
+test("applies overrides and ignores by path", () =>
+  Effect.gen(function* overrides() {
+    const diagnostics = yield* lintFiles(
+      { [WORKFLOW]: SOURCE, ".github/workflows/other.yml": SOURCE },
+      configWith(
+        { "example/first-key": "error" },
+        {
+          overrides: [{ files: ["**/other.yml"], rules: { "example/first-key": "off" } }],
+          ignores: [".github/workflows/vendored-*.yml"],
+        },
+      ),
+    );
+    expect(diagnostics).toMatchObject([{ path: WORKFLOW }]);
+  }).pipe(services.runPromise));
+
+test("gives rules the project's files, script parsing and Effect results", () =>
+  Effect.gen(function* context() {
+    const diagnostics = yield* lintFiles(
+      { [WORKFLOW]: SOURCE, "notes.txt": "hello" },
+      configWith({
+        "example/reads-project": "error",
+        "example/parses-script": "error",
+        "example/effect-rule": "error",
+      }),
+    );
+    expect(messagesOf(diagnostics)).toStrictEqual(["from effect", "hello", "program"]);
+  }).pipe(services.runPromise));
+
+test("fails with the rule and file when a rule throws", () =>
+  Effect.gen(function* crash() {
+    const failure = yield* lintFiles(
+      { [WORKFLOW]: SOURCE },
+      configWith({ "example/crashes": "error" }),
+    ).pipe(Effect.flip);
+    expect(failure.message).toContain(`fu4 rule example/crashes failed on ${WORKFLOW}`);
+  }).pipe(services.runPromise));
+
+test("takes the plugins, rules, settings and overrides of the configs a config extends", () =>
+  Effect.gen(function* extended() {
+    const base = configWith({ "example/first-key": "warn" });
+    const quiet: Fu4Config = {
+      overrides: [
+        { files: [".github/workflows/quiet.yml"], rules: { "example/first-key": "off" } },
+      ],
+    };
+    const diagnostics = yield* lintFiles(
+      { [WORKFLOW]: SOURCE, ".github/workflows/quiet.yml": SOURCE },
+      { extends: [base, quiet], rules: { "example/first-key": "error" } },
+    );
     expect(
       pipe(
         diagnostics,
-        Arr.map(({ message }) => message),
+        Arr.map(({ path, severity }) => `${path} ${severity}`),
       ),
-    ).toContain(
-      "overly broad permissions: default permissions used due to no permissions: block (https://docs.zizmor.sh/audits/#excessive-permissions)",
-    );
+    ).toStrictEqual([`${WORKFLOW} error`]);
   }).pipe(services.runPromise));
 
-test("accepts configured self-hosted labels, ignored messages and disabled audits", () =>
-  Effect.gen(function* configured() {
-    const diagnostics = yield* lintWorkflow({
-      selfHostedRunner: { labels: ["gpu-box"] },
-      paths: { [WORKFLOW]: { ignore: ['^property "events" is not defined'] } },
-      audit: QUIET_AUDITS,
+test("lints a text with an explicit input kind", () =>
+  Effect.gen(function* text() {
+    const diagnostics = yield* lintText({
+      root: ".",
+      path: "test.yaml",
+      kind: "workflow",
+      text: SOURCE,
+      config: configWith({ "example/first-key": "error" }),
     });
-    expect(diagnostics).toStrictEqual([]);
-  }).pipe(services.runPromise));
-
-test("drops audit findings below the minimum severity", () =>
-  Effect.gen(function* minimum() {
-    const diagnostics = yield* lintWorkflow({ audit: { minSeverity: "high" } });
-    expect(rulesOf(diagnostics)).toStrictEqual([
-      "runner-label",
-      "expression",
-      "template-injection",
-    ]);
-  }).pipe(services.runPromise));
-
-test("audits actions and Dependabot configs without running actionlint on them", () =>
-  Effect.gen(function* inputs() {
-    const diagnostics = yield* lintFiles(
-      { [ACTION]: ACTION_SOURCE, [DEPENDABOT]: DEPENDABOT_SOURCE },
-      { audit: { online: false } },
-    );
-    expect(diagnostics).toMatchObject([
-      { path: DEPENDABOT, line: 3, column: 5, rule: "dependabot-cooldown" },
-      { path: ACTION, line: 6, column: 7, rule: "artipacked" },
-      { path: ACTION, line: 6, column: 13, rule: "unpinned-uses" },
-    ]);
-  }).pipe(services.runPromise));
-
-test("adds pedantic findings only for the pedantic persona", () =>
-  Effect.gen(function* persona() {
-    const regular = yield* lintWorkflow({});
-    const pedantic = yield* lintWorkflow({ audit: { persona: "pedantic" } });
-    const isNew = (finding: Diagnostic): boolean =>
-      !pipe(
-        regular,
-        Arr.some((seen) => seen.message === finding.message),
-      );
-    const added = pipe(pedantic, Arr.filter(isNew), rulesOf);
-    expect(new Set(added)).toStrictEqual(new Set(["anonymous-definition", "concurrency-limits"]));
+    expect(messagesOf(diagnostics)).toStrictEqual(["on"]);
   }).pipe(services.runPromise));
 
 test("formats a diagnostic like actionlint", () => {

@@ -2,48 +2,52 @@
 
 ![fu4 logo](logo.svg)
 
-A GitHub Actions workflow linter written in Rust and configured from `vite.config.ts`.
+The engine of a GitHub Actions linter, configured from `vite.config.ts`.
 
-It reports what [actionlint](https://github.com/rhysd/actionlint) reports, with the same
-messages and positions, except for its pyflakes integration. Instead of running shellcheck,
-it checks `run:` scripts itself with tree-sitter-bash for the most common shellcheck findings.
-It also accepts the `$/` self repository reference in `uses:`, which actionlint 1.7.12 rejects.
-Its knowledge of
-contexts, events, permissions, runners and popular actions is generated from GitHub's docs and
-schemas.
+fu4 parses workflows, `action.yml` files, the Dependabot config and pre-commit configs in Rust,
+hands the YAML and tree-sitter trees to TypeScript rules without copying them, and runs those
+rules. It ships no rules of its own. Take the official ones from
+[`@r_masseater/fu4-presets`](https://www.npmjs.com/package/@r_masseater/fu4-presets): actionlint's
+checks and zizmor's audits.
 
-It also runs [zizmor](https://github.com/zizmorcore/zizmor)'s security audits on workflows,
-actions, Dependabot configs and pre-commit configs, with zizmor's findings and positions, built
-on zizmor's published crates. Audits that query GitHub run when `GH_TOKEN` is set. zizmor's
-auto-fixes are not included.
+```sh
+npm install -D @r_masseater/fu4 @r_masseater/fu4-presets effect
+```
 
 ```ts
 import "@r_masseater/fu4/vite";
+import { recommended } from "@r_masseater/fu4-presets";
 import { defineConfig } from "vite-plus";
 
 export default defineConfig({
   fu4: {
-    selfHostedRunner: { labels: ["gpu"] },
-    configVariables: ["DEPLOY_TARGET"],
-    paths: {
-      ".github/workflows/release.yml": { ignore: ['^input "token" is not defined'] },
-    },
-    ignores: [".github/workflows/vendored-*.yml"],
-    audit: {
-      persona: "regular",
-      minSeverity: "low",
-      rules: { "unpinned-uses": { config: { policies: { "actions/*": "ref-pin" } } } },
-    },
+    extends: [recommended()],
+    rules: { "zizmor/stale-action-refs": "warn" },
+    overrides: [
+      { files: [".github/workflows/vendored-*.yml"], rules: { "actionlint/shellcheck": "off" } },
+    ],
+    ignores: [".github/workflows/generated-*.yml"],
   },
 });
 ```
 
-`audit.rules` takes the `rules` section of a zizmor config. Set `audit.online` to `false` to
-skip the audits that query GitHub.
+| Key         | Meaning                                                               |
+| ----------- | --------------------------------------------------------------------- |
+| `extends`   | Configs to start from; this config's own keys come after them and win |
+| `plugins`   | Rule plugins by name; a rule is then `<plugin>/<rule>`                |
+| `rules`     | `"error"`, `"warn"` or `"off"` per rule, or `[severity, options]`     |
+| `settings`  | Settings every rule can read, keyed by plugin                         |
+| `overrides` | `files` globs with their own `rules`                                  |
+| `ignores`   | Globs of files the CLI does not lint                                  |
 
-Run `fu4` to lint the workflows under `.github/workflows`, the `action.yml` files, the
-Dependabot config and the pre-commit configs, or pass pathspecs to lint others.
-Call `lint` to lint from code.
+Run `fu4` in the repository root. It lints the workflows under `.github/workflows`, the
+`action.yml` files, `.github/dependabot.yml` and the pre-commit configs at the root, prints
+`path:line:column: message [rule]`, and exits with 1 when it reports anything. Pass pathspecs to
+lint other files. From code, `lint({ root, files, config })` returns the diagnostics as an Effect.
+
+Write your own rules with `defineRule` and group them with `definePlugin`. A rule receives the
+parsed source, can parse a `run:` script with `parseScript`, and reports positions with
+`report`.
 
 ## Agent skills
 
