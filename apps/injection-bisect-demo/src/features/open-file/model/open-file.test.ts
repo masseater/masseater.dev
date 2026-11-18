@@ -1,4 +1,3 @@
-import { DEFAULT_READERS, readDocument } from "@r_masseater/injection-bisect";
 import { Array as Arr, Effect, String as Str, pipe } from "effect";
 import { expect, test, vi } from "vite-plus/test";
 import type { Mock } from "vite-plus/test";
@@ -16,6 +15,10 @@ interface Probe {
 }
 
 const encoder = new TextEncoder();
+
+const decoder = new TextDecoder();
+
+const TEXT = "text";
 
 const SETTLED = "20 millis";
 
@@ -42,7 +45,7 @@ const detached = (): ArrayBuffer => {
 const probe = (): Probe => ({
   opening: vi.fn<(opening: Opening) => void>(),
   draft: vi.fn<(draft: Readonly<{ text: string; format: string }>) => void>(),
-  read: (input) => readDocument({ ...input, readers: DEFAULT_READERS }),
+  read: ({ bytes }) => Effect.sync(() => ({ text: decoder.decode(bytes), format: TEXT })),
 });
 
 const statusesOf = (calls: readonly (readonly [Opening])[]): readonly string[] =>
