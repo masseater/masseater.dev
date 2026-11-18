@@ -51,7 +51,7 @@ Run `y8` in the repository root. It lints the Markdown files git tracks and prin
 and later entries win.
 
 Rule packages export presets that return a whole config.
-The `agnix` plugin runs the agnix rules for agent files: register it as `plugins: { agnix }` and turn one off with `"agnix/<ID>": "off"`.
+Built-in plugins run inside the native engine, as oxlint's built-in plugins do. `agnix` runs the agnix rules for agent files: register it as `plugins: { agnix }` and its rules are named `agnix/<ID>`, or `<name>/<ID>` under another key. Set one to `"off"`, `"warn"` or `"error"`; unset rules keep agnix's own level.
 
 ## Rules in TypeScript
 

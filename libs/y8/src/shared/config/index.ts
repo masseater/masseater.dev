@@ -1,4 +1,5 @@
 export type {
+  BuiltinPlugin,
   Diagnostic,
   Frontmatter,
   Override,
