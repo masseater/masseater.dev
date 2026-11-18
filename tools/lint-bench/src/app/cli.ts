@@ -1,5 +1,4 @@
 import { homedir } from "node:os";
-import { fileURLToPath } from "node:url";
 
 import { betterleaks } from "@r_masseater/h56m-presets";
 import {
@@ -73,8 +72,6 @@ type Corpora = Readonly<{ own: Corpus; node: Corpus; repository: Corpus }>;
 type Report = Readonly<{ meta: typeof Meta.Type; rows: ReturnType<typeof rowsOf> }>;
 
 type Input = Readonly<{ family: readonly string[]; budget: number; out: string }>;
-
-const pathOf = (specifier: string): string => fileURLToPath(import.meta.resolve(specifier));
 
 const LINTERS = ["y8", "wism", "fu4", "h56m"];
 
@@ -155,7 +152,7 @@ const setup = Effect.fn("lint-bench.setup")(function* setup() {
   const config = {
     ...tools.config,
     "fu4-presets": path.join(repository, "libs", "fu4-presets", "src", "app", "index.ts"),
-    "h56m-presets": pathOf("@r_masseater/h56m-presets"),
+    "h56m-presets": path.join(repository, "libs", "h56m-presets", "src", "app", "index.ts"),
     "betterleaks.toml": betterleaks,
   };
   return {
