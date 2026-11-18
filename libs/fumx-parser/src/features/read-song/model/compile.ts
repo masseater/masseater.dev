@@ -26,12 +26,22 @@ type PlacedNote = PlacedOf<"note">;
 
 type Timed = Pick<
   Note,
-  "track" | "line" | "bar" | "offset" | "start" | "length" | "nudgeMilliseconds"
+  | "track"
+  | "line"
+  | "sourceLine"
+  | "sourceColumn"
+  | "bar"
+  | "offset"
+  | "start"
+  | "length"
+  | "nudgeMilliseconds"
 >;
 
 const timedOf: From<PlacedItem, Timed> = (placed) => ({
   track: placed.track,
   line: placed.line,
+  sourceLine: placed.item.sourceLine,
+  sourceColumn: placed.item.sourceColumn,
   bar: placed.bar,
   offset: placed.item.offset,
   start: placed.start,
