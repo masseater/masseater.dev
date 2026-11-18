@@ -3565,6 +3565,9 @@ importers:
       '@effect/platform-node':
         specifier: 'catalog:'
         version: 4.1.4(effect@4.1.4)(redis@6.2.1(@opentelemetry/api@1.10.0))
+      minimatch:
+        specifier: 'catalog:'
+        version: 11.0.8
     devDependencies:
       '@masseater.dev/lint-host':
         specifier: workspace:*
@@ -3572,6 +3575,31 @@ importers:
       '@r_masseater/vitest-otlp':
         specifier: workspace:*
         version: link:../vitest-otlp
+      '@types/node':
+        specifier: 'catalog:'
+        version: 26.6.6
+      effect:
+        specifier: catalog:stack
+        version: 4.1.4
+      vite:
+        specifier: 'catalog:'
+        version: '@voidzero-dev/vite-plus-core@8.3.8000(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)'
+      vite-plus:
+        specifier: catalog:stack
+        version: 1.7.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(oxlint-tsgolint@7.0.2007)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
+      yaml:
+        specifier: 'catalog:'
+        version: 2.9.1
+
+  libs/fu4-presets:
+    dependencies:
+      '@effect/platform-node':
+        specifier: 'catalog:'
+        version: 4.1.4(effect@4.1.4)(redis@6.2.1(@opentelemetry/api@1.10.0))
+    devDependencies:
+      '@r_masseater/fu4':
+        specifier: workspace:*
+        version: link:../fu4
       '@types/hast':
         specifier: 'catalog:'
         version: 3.0.5
@@ -3599,6 +3627,9 @@ importers:
       mdast-util-to-string:
         specifier: 'catalog:'
         version: 4.0.0
+      minimatch:
+        specifier: 'catalog:'
+        version: 11.0.8
       remark-gfm:
         specifier: 'catalog:'
         version: 4.0.1(supports-color@10.2.2)
@@ -3611,9 +3642,6 @@ importers:
       unist-util-visit:
         specifier: 'catalog:'
         version: 5.2.0
-      vite:
-        specifier: 'catalog:'
-        version: '@voidzero-dev/vite-plus-core@8.3.8000(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)'
       vite-plus:
         specifier: catalog:stack
         version: 1.7.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(oxlint-tsgolint@7.0.2007)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
@@ -4036,6 +4064,9 @@ importers:
       '@r_masseater/fu4':
         specifier: workspace:*
         version: link:../fu4
+      '@r_masseater/fu4-presets':
+        specifier: workspace:*
+        version: link:../fu4-presets
       '@r_masseater/h56m':
         specifier: workspace:*
         version: link:../h56m

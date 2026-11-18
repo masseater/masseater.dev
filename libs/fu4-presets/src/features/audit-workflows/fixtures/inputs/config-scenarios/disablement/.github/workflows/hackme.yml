@@ -1,0 +1,16 @@
+name: hackme
+on:
+  issues:
+
+permissions: {}
+
+jobs:
+  inject-me:
+    name: inject-me
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
+        with:
+          script: |
+            return "doing a thing: ${{ github.event.issue.title }}"

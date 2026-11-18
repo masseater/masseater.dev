@@ -7,17 +7,20 @@ import {
   Option,
   Path,
   Record as Rec,
+  Schema,
   String as Str,
   pipe,
 } from "effect";
 import { Argument, Command } from "effect/cli";
 
-import { assetName, releaseOf } from "#/features/collect-bundle/index.ts";
-import type { Release } from "#/features/collect-bundle/index.ts";
 import { repositoryRoot } from "#/shared/lib/command.ts";
 
 const ASSETS = "release-assets";
 const AT_LEAST_ONE = 1;
+
+const SEPARATOR = "_";
+
+const Manifest = Schema.Struct({ name: Schema.String });
 
 const EXTENSIONS: Readonly<Record<string, string>> = {
   appimage: ".AppImage",
@@ -47,18 +50,26 @@ const bundled = Effect.fn("collect.bundled")(function* bundled(from: string, ext
   return files;
 });
 
-const renamed = (release: Release, file: string): Effect.Effect<string> =>
+const packageName = Effect.fn("collect.package")(function* packageName() {
+  const fileSystem = yield* FileSystem.FileSystem;
+  const text = yield* fileSystem.readFileString("package.json");
+  const manifest = yield* Schema.decodeEffect(Schema.fromJsonString(Manifest))(text);
+  return manifest.name;
+});
+
+const assetName = (name: string, file: string): string =>
   pipe(
-    assetName(release, file),
+    Str.indexOf(SEPARATOR)(file),
     Option.match({
-      onNone: () => Effect.die(`${file} does not carry version ${release.version}`),
-      onSome: Effect.succeed,
+      onNone: () => file,
+      onSome: (index) => `${name}${Str.slice(index)(file)}`,
     }),
   );
 
 const collectKind = Effect.fn("collect.kind")(function* collectKind(
-  { bundle, release }: Readonly<{ bundle: string; release: Release }>,
+  bundle: string,
   kind: string,
+  name: string,
 ) {
   const fileSystem = yield* FileSystem.FileSystem;
   const path = yield* Path.Path;
@@ -69,10 +80,7 @@ const collectKind = Effect.fn("collect.kind")(function* collectKind(
   yield* fileSystem.makeDirectory(to, { recursive: true });
   yield* Effect.forEach(
     files,
-    (name) =>
-      Effect.flatMap(renamed(release, name), (asset) =>
-        fileSystem.copyFile(path.join(from, name), path.join(to, asset)),
-      ),
+    (file) => fileSystem.copyFile(path.join(from, file), path.join(to, assetName(name, file))),
     { concurrency: 1, discard: true },
   );
 });
@@ -85,8 +93,8 @@ const command = Command.make(
       const path = yield* Path.Path;
       const root = yield* repositoryRoot;
       const bundle = path.join(root, "target", "release", "bundle");
-      const release = yield* releaseOf(process.cwd());
-      yield* Effect.forEach(kinds, (kind) => collectKind({ bundle, release }, kind), {
+      const name = yield* packageName();
+      yield* Effect.forEach(kinds, (kind) => collectKind(bundle, kind, name), {
         concurrency: 1,
         discard: true,
       });
