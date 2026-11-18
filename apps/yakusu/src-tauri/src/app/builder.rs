@@ -29,15 +29,16 @@ pub fn run() -> tauri::Result<()> {
                 show_main(app);
             },
         ))
+        .plugin(desktop_shell::telemetry_plugin())
         .manage(Engine {
             phase: watch::Sender::new(Phase::Idle),
             process: Arc::new(Mutex::new(Process::Idle)),
             inflight: Mutex::new(None),
         })
-        .invoke_handler(tauri::generate_handler![
+        .invoke_handler(desktop_shell::traced_commands(tauri::generate_handler![
             crate::features::prepare_engine::prepare,
             crate::features::translate_text::translate
-        ])
+        ]))
         .build(tauri::generate_context!())?;
     app.run(|app, event| {
         if matches!(event, RunEvent::Exit) {
