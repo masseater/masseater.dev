@@ -1,47 +1,40 @@
-import { loadAddon } from "@masseater.dev/lint-host";
-import { Predicate } from "effect";
+import { exposes, loadAddon } from "@masseater.dev/lint-host";
 import type { Effect } from "effect";
 
-import type { AuditConfig, Fu4Config } from "#/shared/config/index.ts";
 import { failedWith } from "#/shared/lib/errors.ts";
 import type { Fu4Error } from "#/shared/lib/errors.ts";
 
-export interface NativeDiagnostic {
-  readonly line: number;
-  readonly column: number;
-  readonly message: string;
-  readonly kind: string;
-}
+export { CONCRETE, FLAG, NONE, SEMANTIC, sourceView } from "./source.ts";
+export type { SourceView } from "./source.ts";
 
-export interface NativeResult {
+export interface ParsedFile {
   readonly path: string;
-  readonly diagnostics: readonly NativeDiagnostic[];
-}
-
-export interface NativeAuditOptions extends Omit<AuditConfig, "online"> {
-  readonly githubToken?: string;
-}
-
-export interface NativeOptions {
-  readonly config?: Fu4Config;
-  readonly audit?: NativeAuditOptions;
-  readonly traceparent?: string;
+  readonly source: Uint8Array;
 }
 
 export interface Native {
-  readonly lintPaths: (
+  readonly parsePaths: (
     root: string,
     paths: readonly string[],
-    options: NativeOptions,
-  ) => readonly NativeResult[];
+    options: { readonly traceparent: string | undefined },
+  ) => readonly ParsedFile[];
+  readonly parseText: (text: string) => Uint8Array;
+  readonly parseScript: (language: string, text: string) => Uint8Array;
+  readonly readText: (root: string, path: string) => string | null;
+  readonly pathExists: (root: string, path: string) => boolean;
   readonly flushTelemetry: () => Promise<void>;
 }
 
-const isNative = (value: unknown): value is Native =>
-  Predicate.hasProperty(value, "lintPaths") &&
-  Predicate.isFunction(value.lintPaths) &&
-  Predicate.hasProperty(value, "flushTelemetry") &&
-  Predicate.isFunction(value.flushTelemetry);
+const NATIVE_FUNCTIONS = [
+  "parsePaths",
+  "parseText",
+  "parseScript",
+  "readText",
+  "pathExists",
+  "flushTelemetry",
+] as const;
+
+const isNative = exposes<Native>(NATIVE_FUNCTIONS);
 
 export const native: Effect.Effect<Native, Fu4Error> = loadAddon({
   packageName: "@r_masseater/fu4",

@@ -1,0 +1,5 @@
+src/shared/data/** linguist-generated
+src/app/fixtures/** linguist-vendored
+src/shared/shell/fixtures/** linguist-vendored
+src/features/audit-workflows/lib/fixtures/** linguist-vendored
+src/features/audit-workflows/fixtures/** linguist-vendored

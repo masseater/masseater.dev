@@ -40,7 +40,7 @@ export default defineConfig({
       paths: [
         String.raw`(^|/)fixtures/[^/]+\.tgz!`,
         String.raw`/fixtures/actionlint/`,
-        String.raw`/fixtures/zizmor/`,
+        String.raw`/audit-workflows/fixtures/`,
       ],
     },
     textlint: {

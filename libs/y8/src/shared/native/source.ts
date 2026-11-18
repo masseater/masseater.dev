@@ -1,4 +1,4 @@
-import { Option } from "effect";
+import { aligned, wordAt } from "@masseater.dev/lint-host";
 
 import type { NodeType } from "./index.ts";
 
@@ -67,17 +67,6 @@ const decoder = new TextDecoder();
 
 const padded = (length: number): number => Math.ceil(length / WORD) * WORD;
 
-const aligned = (buffer: Uint8Array): Uint8Array =>
-  Option.match(
-    Option.liftPredicate(buffer, ({ byteOffset }) => byteOffset % WORD === EMPTY),
-    {
-      onNone: () => Uint8Array.from(buffer),
-      onSome: (value) => value,
-    },
-  );
-
-const wordAt = (words: Uint32Array, index: number): number => words[index] ?? EMPTY;
-
 const decode = (from: Uint8Array, start: number, end: number): string =>
   decoder.decode(from.subarray(start, end));
 
@@ -94,10 +83,10 @@ const wordsOf =
     new Uint32Array(buffer.buffer, buffer.byteOffset + at * WORD, count);
 
 const layoutOf = (header: Uint32Array): Layout => ({
-  nodeCount: wordAt(header, HEADER.nodes),
-  stringCount: wordAt(header, HEADER.strings),
-  lineCount: wordAt(header, HEADER.lines),
-  textLength: wordAt(header, HEADER.text),
+  nodeCount: wordAt(header)(HEADER.nodes),
+  stringCount: wordAt(header)(HEADER.strings),
+  lineCount: wordAt(header)(HEADER.lines),
+  textLength: wordAt(header)(HEADER.text),
 });
 
 export const sourceView = (raw: Uint8Array): SourceView => {
@@ -117,8 +106,8 @@ export const sourceView = (raw: Uint8Array): SourceView => {
     text: () => decoder.decode(bytes),
     slice: (start, end) => decode(bytes, start, end),
     stringAt: (index) => {
-      const offset = wordAt(strings, index * STRING_WORDS);
-      return decode(blob, offset, offset + wordAt(strings, index * STRING_WORDS + LENGTH));
+      const offset = wordAt(strings)(index * STRING_WORDS);
+      return decode(blob, offset, offset + wordAt(strings)(index * STRING_WORDS + LENGTH));
     },
   };
 };
