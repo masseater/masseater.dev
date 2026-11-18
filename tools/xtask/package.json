@@ -2,6 +2,7 @@
   "name": "@masseater.dev/xtask",
   "version": "0.0.0",
   "private": true,
+  "description": "Bundles the Rust audio plugin for release.",
   "type": "module",
   "devDependencies": {
     "@r_masseater/msch": "workspace:*",

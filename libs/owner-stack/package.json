@@ -2,6 +2,7 @@
   "name": "@masseater.dev/owner-stack",
   "version": "0.0.0",
   "private": true,
+  "description": "Finds the private stack holding the owner-only Access parts and slide index in the Alchemy state.",
   "type": "module",
   "imports": {
     "#/*": "./src/*"

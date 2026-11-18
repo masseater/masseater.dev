@@ -16,6 +16,9 @@ inputs:
   sccache:
     description: Whether Rust compiles through sccache, which fetches each crate's compiled output from the GitHub Actions cache only when a Rust task really runs
     default: "false"
+  telemetry:
+    description: Whether a job that installs the native tools starts the OpenTelemetry Collector, which writes what it receives over OTLP on 127.0.0.1:4318 and the CPU and memory of the runner to files that the telemetry-files action keeps
+    default: "false"
 runs:
   using: composite
   steps:
@@ -23,9 +26,32 @@ runs:
       shell: bash
       run: |
         cp "$GITHUB_ACTION_PATH/linux-packages.txt" "$RUNNER_TEMP/linux-packages.txt"
+        printf '%s\n' 'Acquire::Retries "3";' 'Acquire::http::Timeout "20";' 'Acquire::https::Timeout "20";' 'DPkg::Lock::Timeout "120";' |
+          sudo tee /etc/apt/apt.conf.d/99-setup-timeouts > /dev/null
         (
-          status=0
-          { sudo apt-get update && xargs -a "$RUNNER_TEMP/linux-packages.txt" sudo apt-get install -y; } || status="$?"
+          for attempt in 1 2; do
+            status=0
+            {
+              sudo dpkg --configure -a &&
+                sudo timeout -k 10 60 apt-get update &&
+                xargs -a "$RUNNER_TEMP/linux-packages.txt" sudo env DEBIAN_FRONTEND=noninteractive timeout -k 10 240 apt-get install -y
+            } || status="$?"
+            if [ "$status" -eq 0 ]; then
+              break
+            fi
+            echo "::warning::apt attempt $attempt ended with status $status"
+            # apt's mirror method fails over only when a mirror errors, not when it is slow,
+            # so the retry demotes the mirror tried first via the mirrorlist's priority metadata.
+            if [ "$attempt" -eq 1 ] && [ -f /etc/apt/apt-mirrors.txt ]; then
+              first="$(awk -F '\t' '$1 !~ /^(#|$)/ && match($0, /priority:[0-9]+/) { p = substr($0, RSTART + 9, RLENGTH - 9) + 0; if (uri == "" || p < best) { best = p; uri = $1 } } END { print uri }' /etc/apt/apt-mirrors.txt)"
+              if [ -n "$first" ]; then
+                echo "::warning::moving $first to the end of the apt mirror order for the retry"
+                awk -v uri="$first" 'BEGIN { FS = OFS = "\t" } $1 == uri { sub(/priority:[0-9]+/, "priority:999") } { print }' /etc/apt/apt-mirrors.txt |
+                  sudo tee /etc/apt/apt-mirrors.txt.new > /dev/null &&
+                  sudo mv /etc/apt/apt-mirrors.txt.new /etc/apt/apt-mirrors.txt
+              fi
+            fi
+          done
           echo "$status" > "$RUNNER_TEMP/linux-packages.status"
         ) > "$RUNNER_TEMP/linux-packages.log" 2>&1 &
         echo "$!" > "$RUNNER_TEMP/linux-packages.pid"
@@ -68,11 +94,17 @@ runs:
       with:
         fetch_from_github: false
         cache: ${{ inputs.cache }}
+    - if: ${{ inputs.native == 'true' && inputs.telemetry == 'true' }}
+      shell: bash
+      env:
+        OTEL_FILES: ${{ runner.temp }}/otel
+      run: |
+        mkdir -p "$OTEL_FILES"
+        nohup otelcol --config "$GITHUB_ACTION_PATH/otelcol.yaml" > "$OTEL_FILES/collector.log" 2>&1 &
     - if: ${{ inputs.native == 'true' }}
       shell: bash
       run: |
-        tail --pid="$(cat "$RUNNER_TEMP/linux-packages.pid")" -s 0.2 -f /dev/null
-        cat "$RUNNER_TEMP/linux-packages.log"
+        tail --pid="$(cat "$RUNNER_TEMP/linux-packages.pid")" -s 0.2 -n +1 -f "$RUNNER_TEMP/linux-packages.log"
         status="$(cat "$RUNNER_TEMP/linux-packages.status")"
         exit "$status"
     - if: ${{ inputs.sccache == 'true' }}

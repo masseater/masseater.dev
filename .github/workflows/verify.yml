@@ -22,15 +22,25 @@ jobs:
     concurrency:
       group: verify-${{ github.ref }}
       cancel-in-progress: true
+    env:
+      OTEL_TRACES_EXPORTER: otlp
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://127.0.0.1:4318
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+      - if: github.event_name != 'schedule'
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/pnpm/v12
+          key: pnpm-metadata-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: pnpm-metadata-
       - uses: $/.github/actions/setup
         with:
           session-path: "true"
           rust-cache: "false"
           sccache: "true"
+          telemetry: "true"
       - if: github.event_name != 'schedule'
         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
@@ -41,7 +51,8 @@ jobs:
         with:
           github-token: ${{ github.token }}
           full-history: "true"
-          share: "false"
+      - if: always()
+        uses: $/.github/actions/telemetry-files
       - if: always()
         uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
@@ -55,39 +66,6 @@ jobs:
             .vitest/attachments/
             apps/*/.vitest/attachments/
           if-no-files-found: ignore
-
-  cache:
-    if: github.event_name == 'push'
-    runs-on: ubuntu-latest
-    continue-on-error: true
-    permissions:
-      contents: read
-      id-token: write
-    concurrency:
-      group: cache-${{ github.ref }}
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: $/.github/actions/setup
-        with:
-          session-path: "true"
-          rust-cache: "false"
-          sccache: "true"
-      - uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: node_modules/.cache/msch
-          key: msch-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}
-          restore-keys: msch-
-      - uses: masseater/typescript-template/.github/actions/verify@5fbdf9423d0e5debb5d59bc6d59bfec624343aff
-        with:
-          github-token: ${{ github.token }}
-          full-history: "true"
-      - if: always()
-        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-        with:
-          path: node_modules/.cache/msch
-          key: msch-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}
 
   autofix:
     needs: verify
@@ -182,7 +160,7 @@ jobs:
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}
 
   ci-telemetry:
-    needs: [verify, cache, autofix, deploy, private-names, exposure, deploy-failure]
+    needs: [verify, autofix, deploy, private-names, exposure, deploy-failure]
     if: always()
     runs-on: ubuntu-latest
     permissions:

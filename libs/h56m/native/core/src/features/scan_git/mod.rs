@@ -1,9 +1,9 @@
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 use std::path::Path;
 
-use anyhow::{Result, bail};
-use kingfisher_scanner::ScanControl;
-use kingfisher_scanner::git::{GitEvent, GitInputs, GitMode, GitOptions, GitScope};
+use anyhow::{Context, Result};
+use gix::ObjectId;
+use gix::index::entry::{Mode, Stage};
 use serde::Deserialize;
 use tracing::info_span;
 
@@ -24,70 +24,192 @@ pub enum GitSource {
     },
 }
 
-fn is_commit(repository: &gix::Repository, revision: &str) -> bool {
-    repository
-        .rev_parse_single(revision)
-        .ok()
-        .and_then(|id| id.object().ok())
-        .and_then(|object| object.peel_to_commit().ok())
-        .is_some()
+struct Blob {
+    path: String,
+    id: ObjectId,
+    commit: Option<ObjectId>,
 }
 
-fn scope_of(root: &Path, source: &GitSource) -> Result<GitScope> {
-    Ok(match source {
-        GitSource::History { bases, head } => GitScope {
-            mode: GitMode::History,
-            refs: Some(vec![head.clone()]),
-            since_commit: {
-                let repository = gix::open(root)?;
-                bases
-                    .iter()
-                    .find(|base| is_commit(&repository, base))
-                    .cloned()
-            },
-            ..GitScope::default()
-        },
-        GitSource::Staged => GitScope {
-            mode: GitMode::Staged,
-            ..GitScope::default()
-        },
-        GitSource::Snapshot { revision } => GitScope {
-            mode: GitMode::Snapshot,
-            refs: Some(vec![revision.clone()]),
-            ..GitScope::default()
-        },
-    })
+fn commit_of(repository: &gix::Repository, revision: &str) -> Result<ObjectId> {
+    Ok(repository
+        .rev_parse_single(revision)
+        .with_context(|| format!("unknown revision {revision:?}"))?
+        .object()?
+        .peel_to_commit()
+        .with_context(|| format!("{revision:?} is not a commit"))?
+        .id)
+}
+
+fn tree_of(repository: &gix::Repository, commit: ObjectId) -> Result<ObjectId> {
+    Ok(repository.find_commit(commit)?.tree_id()?.detach())
+}
+
+type Entries = HashMap<Vec<u8>, (bool, ObjectId)>;
+
+type TreeEntry = (Vec<u8>, bool, bool, ObjectId);
+
+fn entries_of(repository: &gix::Repository, tree: ObjectId) -> Result<Vec<TreeEntry>> {
+    let tree = repository.find_tree(tree)?;
+    Ok(tree
+        .decode()?
+        .entries
+        .iter()
+        .map(|entry| {
+            (
+                entry.filename.to_vec(),
+                entry.mode.is_tree(),
+                entry.mode.is_blob(),
+                entry.oid.to_owned(),
+            )
+        })
+        .collect())
+}
+
+fn joined(prefix: &str, name: &[u8]) -> String {
+    let name = String::from_utf8_lossy(name);
+    if prefix.is_empty() {
+        name.into_owned()
+    } else {
+        format!("{prefix}/{name}")
+    }
+}
+
+fn changed_blobs(
+    repository: &gix::Repository,
+    old: Option<ObjectId>,
+    new: ObjectId,
+    prefix: &str,
+    out: &mut Vec<(String, ObjectId)>,
+) -> Result<()> {
+    if old == Some(new) {
+        return Ok(());
+    }
+    let before: Entries = match old {
+        Some(old) => entries_of(repository, old)?
+            .into_iter()
+            .map(|(name, tree, _, id)| (name, (tree, id)))
+            .collect(),
+        None => HashMap::new(),
+    };
+    for (name, tree, blob, id) in entries_of(repository, new)? {
+        let previous = before.get(&name).copied();
+        if tree {
+            let old_tree = previous.filter(|(was_tree, _)| *was_tree).map(|(_, id)| id);
+            changed_blobs(repository, old_tree, id, &joined(prefix, &name), out)?;
+        } else if blob && previous != Some((false, id)) {
+            out.push((joined(prefix, &name), id));
+        }
+    }
+    Ok(())
+}
+
+fn history(repository: &gix::Repository, bases: &[String], head: &str) -> Result<Vec<Blob>> {
+    let head = commit_of(repository, head)?;
+    let hidden: Vec<ObjectId> = bases
+        .iter()
+        .find_map(|base| commit_of(repository, base).ok())
+        .into_iter()
+        .collect();
+    let mut commits = Vec::new();
+    for info in repository.rev_walk([head]).with_hidden(hidden).all()? {
+        commits.push(info?.id);
+    }
+    commits.reverse();
+    let mut seen = HashSet::new();
+    let mut blobs = Vec::new();
+    for commit in commits {
+        let parent = repository
+            .find_commit(commit)?
+            .parent_ids()
+            .next()
+            .map(gix::Id::detach);
+        let parent_tree = parent
+            .map(|parent| tree_of(repository, parent))
+            .transpose()?;
+        let mut changed = Vec::new();
+        changed_blobs(
+            repository,
+            parent_tree,
+            tree_of(repository, commit)?,
+            "",
+            &mut changed,
+        )?;
+        for (path, id) in changed {
+            if seen.insert((path.clone(), id)) {
+                blobs.push(Blob {
+                    path,
+                    id,
+                    commit: Some(commit),
+                });
+            }
+        }
+    }
+    Ok(blobs)
+}
+
+fn snapshot(repository: &gix::Repository, revision: &str) -> Result<Vec<Blob>> {
+    let mut changed = Vec::new();
+    let tree = tree_of(repository, commit_of(repository, revision)?)?;
+    changed_blobs(repository, None, tree, "", &mut changed)?;
+    Ok(changed
+        .into_iter()
+        .map(|(path, id)| Blob {
+            path,
+            id,
+            commit: None,
+        })
+        .collect())
+}
+
+fn staged(repository: &gix::Repository) -> Result<Vec<Blob>> {
+    let mut committed = Vec::new();
+    if let Ok(head) = commit_of(repository, "HEAD") {
+        changed_blobs(
+            repository,
+            None,
+            tree_of(repository, head)?,
+            "",
+            &mut committed,
+        )?;
+    }
+    let committed: HashMap<String, ObjectId> = committed.into_iter().collect();
+    let index = repository.open_index()?;
+    Ok(index
+        .entries()
+        .iter()
+        .filter(|entry| entry.stage() == Stage::Unconflicted)
+        .filter(|entry| matches!(entry.mode, Mode::FILE | Mode::FILE_EXECUTABLE))
+        .map(|entry| (entry.path(&index).to_string(), entry.id))
+        .filter(|(path, id)| committed.get(path) != Some(id))
+        .map(|(path, id)| Blob {
+            path,
+            id,
+            commit: None,
+        })
+        .collect())
 }
 
 impl Detector {
     pub fn scan_git(&self, root: &Path, source: &GitSource) -> Result<Vec<Finding>> {
         let _span = info_span!("h56m.scan_git", "h56m.source" = ?source).entered();
-        let options = GitOptions {
-            discover: false,
-            ..GitOptions::default()
+        let repository = gix::open(root)?;
+        let blobs = match source {
+            GitSource::History { bases, head } => history(&repository, bases, head)?,
+            GitSource::Staged => staged(&repository)?,
+            GitSource::Snapshot { revision } => snapshot(&repository, revision)?,
         };
-        let inputs = GitInputs::open(
-            root,
-            scope_of(root, source)?,
-            options,
-            ScanControl::default(),
-        )?;
         let mut findings = Vec::new();
-        for event in inputs {
-            match event? {
-                GitEvent::Input(input) => {
-                    let commit = input.origins.first().map(|origin| origin.id.to_string());
-                    findings.extend(self.scan(&input.path, &input.data)?.into_iter().map(
-                        |finding| Finding {
-                            commit: commit.clone(),
-                            ..finding
-                        },
-                    ));
-                }
-                GitEvent::Skipped { path, reason, .. } => {
-                    bail!("{path} was not scanned: {reason:?}");
-                }
-            }
+        for blob in blobs {
+            let data = repository.find_object(blob.id)?.detach().data;
+            let commit = blob.commit.map(|id| id.to_string());
+            findings.extend(
+                self.scan(&blob.path, &data)?
+                    .into_iter()
+                    .map(|finding| Finding {
+                        commit: commit.clone(),
+                        ..finding
+                    }),
+            );
         }
         findings.sort_by(|left, right| {
             (&left.path, left.line, left.column).cmp(&(&right.path, right.line, right.column))

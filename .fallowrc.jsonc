@@ -41,6 +41,9 @@
   "ignoreDependencies": ["@effect/language-service", "fallow-similar-code", "oxlint-tsgolint"],
   "workspaces": {
     "settings": {
+      "libs/h56m-presets": {
+        "ignoreDependencies": ["betterleaks"],
+      },
       "libs/msch": {
         "ignoreDependencies": ["oxlint-plugin-eslint"],
       },

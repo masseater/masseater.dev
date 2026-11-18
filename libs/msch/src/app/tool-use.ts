@@ -1,6 +1,6 @@
 import { Array as Arr, Effect } from "effect";
 
-import { checkMissingHooks } from "#/features/check-agent-settings/index.ts";
+import { checkKnownPlugins, checkMissingHooks } from "#/features/check-agent-settings/index.ts";
 import { checkMarkdown } from "#/features/check-markdown/index.ts";
 import { checkRestrictedRules } from "#/features/check-overrides/index.ts";
 import { checkScripts } from "#/features/check-scripts/index.ts";
@@ -21,6 +21,7 @@ export const checkToolUse = Effect.fn("checkToolUse")(function* checkToolUse(roo
     [
       checkVitePlus(root),
       checkMissingHooks(root),
+      checkKnownPlugins(root),
       checkScripts(root),
       checkWorkflowQueues(root),
       checkWorkflowCommits(root),

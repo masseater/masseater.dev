@@ -5,6 +5,7 @@
     "plugins": [
       {
         "name": "@effect/language-service",
+        "diagnostics": false,
         "allowedUnstableApis": [
           "effect/PlatformError#PlatformError",
           "effect/http/HttpClient#HttpClient",

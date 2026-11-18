@@ -2,6 +2,7 @@
   "name": "labs",
   "version": "0.0.0",
   "private": true,
+  "description": "Small non-React experimental pages on masseater.dev, such as Pod Rattle.",
   "type": "module",
   "imports": {
     "#/*": "./src/*"

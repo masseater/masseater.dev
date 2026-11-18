@@ -16,6 +16,7 @@ import {
 import { ChildProcess } from "effect/process";
 import { expect } from "vite-plus/test";
 
+import marketplace from "#/shared/config/masseater-marketplace.json" with { type: "json" };
 import { JSON_FLAG } from "#/shared/lib/cli-contract.ts";
 
 const PASSED = 0;
@@ -36,7 +37,21 @@ const fixtureFiles = Effect.gen(function* fixtureFiles() {
     },
     include: ["src"],
   });
-  return { "package.json": manifest, "tsconfig.json": tsconfig };
+  const settings = yield* encodeJson({
+    extraKnownMarketplaces: {
+      [marketplace.name]: { source: { source: "github", repo: "masseater/masseater.dev" } },
+    },
+    enabledPlugins: pipe(
+      marketplace.plugins,
+      Arr.map(({ name }): readonly [string, boolean] => [`${name}@${marketplace.name}`, true]),
+      Rec.fromEntries,
+    ),
+  });
+  return {
+    "package.json": manifest,
+    "tsconfig.json": tsconfig,
+    ".claude/settings.json": settings,
+  };
 }).pipe(Effect.orDie);
 
 const DUPLICATED_SETS: Readonly<Record<string, string>> = {

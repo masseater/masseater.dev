@@ -2,6 +2,7 @@
   "name": "bench-summary",
   "version": "0.0.0",
   "private": true,
+  "description": "Summary of the decision model benchmark, written by the runner and read by the leaderboard page.",
   "type": "module",
   "imports": {
     "#/*": "./src/*"

@@ -2,6 +2,7 @@
   "name": "@masseater.dev/shirushi-protocol",
   "version": "0.0.0",
   "private": true,
+  "description": "Types exchanged between shirushi's screens and its Tauri side.",
   "type": "module",
   "exports": {
     ".": "./src/entities/mark/index.ts"

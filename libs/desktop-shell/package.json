@@ -2,6 +2,7 @@
   "name": "@masseater.dev/desktop-shell",
   "version": "0.0.0",
   "private": true,
+  "description": "Window behavior, shared access token and local bearer-token MCP server for the Tauri desktop apps.",
   "type": "module",
   "devDependencies": {
     "@r_masseater/msch": "workspace:*",
