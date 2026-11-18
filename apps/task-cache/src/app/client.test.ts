@@ -14,8 +14,6 @@ import {
 
 vi.mock("cloudflare:workers", () => import("#/shared/lib/cloudflare.test.support.ts"));
 
-vi.mock("jose", () => import("#/app/token.test.support.ts"));
-
 const TIMEOUT = 60_000;
 const SUCCEEDED = 0;
 

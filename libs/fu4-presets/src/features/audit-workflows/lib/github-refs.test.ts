@@ -33,7 +33,7 @@ test.each([
   ["allowlist-check", "allowlist-check/v1.0.0"],
   ["pelican", "allowlist-check/v1.0.0"],
 ])("prefers tags under the subpath %s", (subpath, expected) => {
-  expect(nameOf(Option.some(subpath), "abcd")(MONOREPO)).toEqual(Option.some(expected));
+  expect(nameOf(Option.some(subpath), "abcd")(MONOREPO)).toStrictEqual(Option.some(expected));
 });
 
 test("prefers the longest plain tag", () => {
@@ -42,9 +42,9 @@ test("prefers the longest plain tag", () => {
     ["v1.2.3", "abcd"],
     ["v2.0.0", "beef"],
   ]);
-  expect(nameOf(Option.none(), "abcd")(plain)).toEqual(Option.some("v1.2.3"));
-  expect(nameOf(Option.some("sub"), "abcd")(plain)).toEqual(Option.some("v1.2.3"));
-  expect(nameOf(Option.none(), "dead")(plain)).toEqual(Option.none());
+  expect(nameOf(Option.none(), "abcd")(plain)).toStrictEqual(Option.some("v1.2.3"));
+  expect(nameOf(Option.some("sub"), "abcd")(plain)).toStrictEqual(Option.some("v1.2.3"));
+  expect(nameOf(Option.none(), "dead")(plain)).toStrictEqual(Option.none());
 });
 
 test("prefers a tag without a slash when there is no subpath", () => {
@@ -52,5 +52,5 @@ test("prefers a tag without a slash when there is no subpath", () => {
     ["v1.0.0", "abcd"],
     ["some-action/v1.0.0", "abcd"],
   ]);
-  expect(nameOf(Option.none(), "abcd")(mixed)).toEqual(Option.some("v1.0.0"));
+  expect(nameOf(Option.none(), "abcd")(mixed)).toStrictEqual(Option.some("v1.0.0"));
 });

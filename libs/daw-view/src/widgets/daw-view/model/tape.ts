@@ -1,4 +1,4 @@
-import { Array as Arr, Effect, Option, Schema, pipe } from "effect";
+import { Array as Arr, Effect, Option, Predicate, Schema, pipe } from "effect";
 
 import type { TrackBlock } from "#/entities/live/index.ts";
 
@@ -170,13 +170,13 @@ const ReadSchema = Schema.Struct({ id: Schema.Finite, tracks: Schema.Array(Schem
 const openedOf = Schema.decodeUnknownOption(OpenedSchema);
 const readOf = Schema.decodeUnknownOption(ReadSchema);
 
-const deviceMemory = (): number => {
-  const reported: unknown = Reflect.get(navigator, "deviceMemory");
-  if (typeof reported === "number") {
-    return reported;
-  }
-  return Number.POSITIVE_INFINITY;
-};
+const deviceMemory = (): number =>
+  pipe(
+    Option.liftPredicate(navigator, Predicate.hasProperty("deviceMemory")),
+    Option.map((found) => found.deviceMemory),
+    Option.filter(Predicate.isNumber),
+    Option.getOrElse(() => Number.POSITIVE_INFINITY),
+  );
 
 const roomy = (): boolean => deviceMemory() >= LOW_MEMORY && !PHONE.test(navigator.userAgent);
 

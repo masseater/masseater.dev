@@ -1,7 +1,7 @@
 import type { Samples } from "@masseater.dev/daw-view";
 import type { Sheet } from "@masseater.dev/fumx-studio/daw/take";
 import { unpacked } from "@masseater.dev/fumx-studio/studio/stem";
-import { Array as Arr, Effect, Option, Schema, String as Str, pipe } from "effect";
+import { Array as Arr, Effect, Option, Predicate, Schema, String as Str, pipe } from "effect";
 
 import type { Held } from "./deck.ts";
 import type { Kuraku } from "./engine/kuraku.ts";
@@ -37,13 +37,13 @@ class WorkerLost extends taggedError<WorkerLost, { readonly brand: unique symbol
 
 const replyOf = Schema.decodeUnknownOption(ReplySchema);
 
-const reported = (key: string, fallback: number): number => {
-  const value: unknown = Reflect.get(navigator, key);
-  if (typeof value === "number") {
-    return value;
-  }
-  return fallback;
-};
+const reported = (key: string, fallback: number): number =>
+  pipe(
+    Option.liftPredicate(navigator, Predicate.hasProperty(key)),
+    Option.map((found) => found[key]),
+    Option.filter(Predicate.isNumber),
+    Option.getOrElse(() => fallback),
+  );
 
 const limitOf = (memory: number): number => {
   if (PHONE.test(navigator.userAgent) || memory < MEMORY.low) {

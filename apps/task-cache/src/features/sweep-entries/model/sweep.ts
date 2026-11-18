@@ -10,7 +10,7 @@ import {
 } from "#/entities/entry/index.ts";
 import type { Sized } from "#/entities/entry/index.ts";
 import { forgetPastDays } from "#/entities/spending/index.ts";
-import { LIMITS, SECONDS_PER_DAY } from "#/shared/config/index.ts";
+import { Limits, SECONDS_PER_DAY } from "#/shared/config/index.ts";
 import { nowSeconds } from "#/shared/lib/clock.ts";
 
 const NOTHING = 0;
@@ -27,17 +27,19 @@ const leading = (candidates: readonly Sized[], surplus: number): readonly Sized[
 };
 
 const overBudget = Effect.gen(function* overBudget() {
+  const limits = yield* Limits;
   const total = yield* storedBytes;
-  if (total <= LIMITS.storedBytes) {
+  if (total <= limits.storedBytes) {
     return NO_ENTRIES;
   }
   const candidates = yield* oldest;
-  return leading(candidates, total - LIMITS.storedBytes);
+  return leading(candidates, total - limits.storedBytes);
 });
 
 const sweepOnce = Effect.gen(function* sweepOnce() {
+  const { retentionDays } = yield* Limits;
   const now = yield* nowSeconds;
-  const expired = yield* olderThan(now - LIMITS.retentionDays * SECONDS_PER_DAY);
+  const expired = yield* olderThan(now - retentionDays * SECONDS_PER_DAY);
   yield* remove(expired);
   const surplus = yield* overBudget;
   yield* remove(surplus);

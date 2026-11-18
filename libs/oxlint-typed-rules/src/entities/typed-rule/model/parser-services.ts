@@ -82,10 +82,12 @@ const isRangedNode = (value: unknown): value is MappedNode =>
 const childNodesOf = (node: MappedNode, keys: readonly string[]): readonly MappedNode[] =>
   pipe(
     keys,
-    Arr.flatMap((key) => {
-      const child: unknown = Reflect.get(node, key);
-      return Arr.ensure(child);
-    }),
+    Arr.flatMap((key) =>
+      pipe(
+        Option.liftPredicate(node, Predicate.hasProperty(key)),
+        Option.match({ onNone: () => [], onSome: (found) => Arr.ensure(found[key]) }),
+      ),
+    ),
     Arr.filter(isRangedNode),
   );
 

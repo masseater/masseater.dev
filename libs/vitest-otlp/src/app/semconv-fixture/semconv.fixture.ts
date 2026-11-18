@@ -12,7 +12,7 @@ const telemetry = Otlp.layerFromConfig({ resource: { serviceName: "semconv-fixtu
   Layer.provide(FetchHttpClient.layer),
 );
 
-const exportSpan = (attributes: Readonly<Record<string, unknown>>): Promise<void> =>
+const expectSpanExported = (attributes: Readonly<Record<string, unknown>>): Promise<void> =>
   Effect.gen(function* spanExport() {
     const runtime = ManagedRuntime.make(telemetry);
     const context = yield* runtime.contextEffect;
@@ -21,6 +21,6 @@ const exportSpan = (attributes: Readonly<Record<string, unknown>>): Promise<void
     yield* waitForSpans({ where: (span) => span.name === SPAN_NAME });
   }).pipe(Effect.runPromise);
 
-test("conforming", () => exportSpan({ "http.response.status_code": HTTP_OK }));
+test("conforming", () => expectSpanExported({ "http.response.status_code": HTTP_OK }));
 
-test("violating", () => exportSpan({ "http.response.status_code": String(HTTP_OK) }));
+test("violating", () => expectSpanExported({ "http.response.status_code": String(HTTP_OK) }));
