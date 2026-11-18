@@ -1,6 +1,6 @@
 import { convertFileSrc } from "@tauri-apps/api/core";
 
-export type Signal = "traces" | "logs";
+type Signal = "traces" | "logs";
 
 const origin = (scheme: string): RegExp =>
   new RegExp(`^${RegExp.escape(convertFileSrc("", scheme))}`, "u");
