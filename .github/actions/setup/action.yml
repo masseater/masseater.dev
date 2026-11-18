@@ -37,6 +37,17 @@ runs:
               break
             fi
             echo "::warning::apt attempt $attempt ended with status $status"
+            # apt's mirror method fails over only when a mirror errors, not when it is slow,
+            # so the retry demotes the mirror tried first via the mirrorlist's priority metadata.
+            if [ "$attempt" -eq 1 ] && [ -f /etc/apt/apt-mirrors.txt ]; then
+              first="$(awk -F '\t' '$1 !~ /^(#|$)/ && match($0, /priority:[0-9]+/) { p = substr($0, RSTART + 9, RLENGTH - 9) + 0; if (uri == "" || p < best) { best = p; uri = $1 } } END { print uri }' /etc/apt/apt-mirrors.txt)"
+              if [ -n "$first" ]; then
+                echo "::warning::moving $first to the end of the apt mirror order for the retry"
+                awk -v uri="$first" 'BEGIN { FS = OFS = "\t" } $1 == uri { sub(/priority:[0-9]+/, "priority:999") } { print }' /etc/apt/apt-mirrors.txt |
+                  sudo tee /etc/apt/apt-mirrors.txt.new > /dev/null &&
+                  sudo mv /etc/apt/apt-mirrors.txt.new /etc/apt/apt-mirrors.txt
+              fi
+            fi
           done
           echo "$status" > "$RUNNER_TEMP/linux-packages.status"
         ) > "$RUNNER_TEMP/linux-packages.log" 2>&1 &
