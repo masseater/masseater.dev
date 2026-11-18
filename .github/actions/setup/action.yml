@@ -16,6 +16,9 @@ inputs:
   sccache:
     description: Whether Rust compiles through sccache, which fetches each crate's compiled output from the GitHub Actions cache only when a Rust task really runs
     default: "false"
+  telemetry:
+    description: Whether a job that installs the native tools starts the OpenTelemetry Collector, which writes what it receives over OTLP on 127.0.0.1:4318 and the CPU and memory of the runner to files that the telemetry-files action keeps
+    default: "false"
 runs:
   using: composite
   steps:
@@ -91,6 +94,13 @@ runs:
       with:
         fetch_from_github: false
         cache: ${{ inputs.cache }}
+    - if: ${{ inputs.native == 'true' && inputs.telemetry == 'true' }}
+      shell: bash
+      env:
+        OTEL_FILES: ${{ runner.temp }}/otel
+      run: |
+        mkdir -p "$OTEL_FILES"
+        nohup otelcol --config "$GITHUB_ACTION_PATH/otelcol.yaml" > "$OTEL_FILES/collector.log" 2>&1 &
     - if: ${{ inputs.native == 'true' }}
       shell: bash
       run: |

@@ -1,0 +1,22 @@
+name: telemetry-files
+description: Stop the OpenTelemetry Collector that setup started and keep its files and the run summary of vp as an artifact of this job
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      env:
+        OTEL_FILES: ${{ runner.temp }}/otel
+      run: |
+        if pid="$(pgrep -x otelcol)"; then
+          kill -INT "$pid"
+          tail --pid="$pid" -f /dev/null
+        else
+          echo "::warning::the OpenTelemetry Collector was not running, so its files may be incomplete"
+        fi
+        cp node_modules/.vite/task-cache/*/last-summary.json "$OTEL_FILES/vp-summary.json" ||
+          echo "::warning::vp left no run summary"
+    - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+      with:
+        name: telemetry-${{ github.job }}-${{ github.run_attempt }}
+        path: ${{ runner.temp }}/otel/
+        retention-days: 7
