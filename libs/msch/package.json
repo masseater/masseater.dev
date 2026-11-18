@@ -119,7 +119,7 @@
     "@r_masseater/textlint-rule-preset-ja": "workspace:*",
     "@r_masseater/vite-plus-adopt": "catalog:",
     "@r_masseater/wism": "workspace:*",
-    "@r_masseater/wism-fsd": "workspace:*",
+    "@r_masseater/wism-presets": "workspace:*",
     "@r_masseater/y8": "workspace:*",
     "@r_masseater/y8-presets": "workspace:*",
     "@shadcn/lint": "catalog:",

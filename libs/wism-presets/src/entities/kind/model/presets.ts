@@ -85,8 +85,3 @@ export const skill = (options: PresetOptions = {}): Kind => ({
     },
   ],
 });
-
-export const fsd = (options: PresetOptions = {}): readonly Kind[] => [
-  workspace(options),
-  rustCrate(options),
-];
