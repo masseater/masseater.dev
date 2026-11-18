@@ -1008,6 +1008,9 @@ catalogs:
     fallow:
       specifier: 3.43.1
       version: 3.43.1
+    fallow-similar-code:
+      specifier: 3.43.1
+      version: 3.43.1
     fallow-type-aware:
       specifier: 3.43.1
       version: 3.43.1
@@ -1074,6 +1077,9 @@ importers:
         specifier: catalog:stack
         version: 4.1.4
       fallow:
+        specifier: catalog:stack
+        version: 3.43.1
+      fallow-similar-code:
         specifier: catalog:stack
         version: 3.43.1
       fallow-type-aware:
@@ -7113,6 +7119,50 @@ packages:
     resolution: {integrity: sha512-awIS6cKK8JLbNQTun9hBTzQvdg4gTzx2QQLT2RuzSWi+ACCUwNsPSQlgM98pfqjVUt6wgUUolL2LVUuva4Yt6A==}
     cpu: [x64]
     os: [darwin]
+
+  '@fallow-cli/fallow-similar-code-darwin-arm64@3.43.1':
+    resolution: {integrity: sha512-BMK6ySH8RijcFR6pnoftcyon9boYtimJIj7UkbnHsALRUUM2TP51KPj12ct+prLwBffilkUkePUXMF1oTG2grA==}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@fallow-cli/fallow-similar-code-darwin-x64@3.43.1':
+    resolution: {integrity: sha512-1m1Tcj5NaxwUGoMCb88WbtE9SJ4sz8J/poXos1q+nkvBzRy0L8xxAka+m8lmHHUdFzYYL6m7P9tGuMgPNE0OQw==}
+    cpu: [x64]
+    os: [darwin]
+
+  '@fallow-cli/fallow-similar-code-linux-arm64-gnu@3.43.1':
+    resolution: {integrity: sha512-iZmOsIz5jT+yWWsqXfk/UOJYuvGdOKc551CwYgRp/z14jkoco9xVdhJEwMtULC+djT32u1tVoGfC22Ha9eQNow==}
+    cpu: [arm64]
+    os: [linux]
+    libc: [glibc]
+
+  '@fallow-cli/fallow-similar-code-linux-arm64-musl@3.43.1':
+    resolution: {integrity: sha512-2zipWgdIzD1CrP6w/LhOU4371f+oOH0jEBCQ5HgwltNGW/NnEFKXhoqUx+zR5+R5JZ3ju8/vDKl55ZAKhaX61A==}
+    cpu: [arm64]
+    os: [linux]
+    libc: [musl]
+
+  '@fallow-cli/fallow-similar-code-linux-x64-gnu@3.43.1':
+    resolution: {integrity: sha512-W/qKePR4Acb1qRis1ryZC2fqkjO0hFCCPP9r2fy1+5vyt/f3iMBGMFKZxrKcQr9TIOB5jaFVI93QySXZ6HtNdA==}
+    cpu: [x64]
+    os: [linux]
+    libc: [glibc]
+
+  '@fallow-cli/fallow-similar-code-linux-x64-musl@3.43.1':
+    resolution: {integrity: sha512-47sO6hOht0KZsH4jGyblV0eczvjdUKPlvtZUaHBYi4tVo8OYBQ31Z5WXEZIkzcWsMzs45IWMXHdQDhc4EBK4Sg==}
+    cpu: [x64]
+    os: [linux]
+    libc: [musl]
+
+  '@fallow-cli/fallow-similar-code-win32-arm64-msvc@3.43.1':
+    resolution: {integrity: sha512-DTyboBAjWqSQjEGz/1wzhs20HPjK3r2R8xaa3gfmA4cEuRjrzVbFiqwvExAZBoeFX5GELSMHkhs0s9FEnf6kIg==}
+    cpu: [arm64]
+    os: [win32]
+
+  '@fallow-cli/fallow-similar-code-win32-x64-msvc@3.43.1':
+    resolution: {integrity: sha512-8G6HoxY9ULWSV3rSM5uX74c/oYBHP5GTBjJy9VnxVUHDH7MeieWqWRobmmli8RDE5Aba1l6GC1Jp/chU6a+Alg==}
+    cpu: [x64]
+    os: [win32]
 
   '@fallow-cli/linux-arm64-gnu@3.43.1':
     resolution: {integrity: sha512-ye5wOqVC5xdbXjkPoP6pMwF55qwdnEoZQSbG0iEPlfjZBOfinX/2/5KD2Bk4FXvT+VRXoAVChE7jEh9ADTaeEA==}
@@ -13900,6 +13950,11 @@ packages:
   extend@3.0.2:
     resolution: {integrity: sha512-fjquC59cD7CyW6urNXK0FBufkZcoiGG80wTuPujX590cB5Ttln20E2UB4S/WARVqhXffZl2LNgS+gQdPIIim/g==}
 
+  fallow-similar-code@3.43.1:
+    resolution: {integrity: sha512-xkK8VXYStAd9MQFRVnLXAzBt4J7ZFxhQrSAKKtyVQEn2OQYij5qg26dCFoTDxnIsTtyK6JWJwZjturvBehqI+A==}
+    engines: {node: '>=22'}
+    hasBin: true
+
   fallow-type-aware@3.43.1:
     resolution: {integrity: sha512-X7EYSpzyh6g9/+xHh+SD280MccOaKZJwmHQtdGCOvJUopHMKyV8sYo67R7JAc/nHd7RrxOqsTct3OiFhUxwZuQ==}
     engines: {node: '>=20'}
@@ -19493,6 +19548,30 @@ snapshots:
     optional: true
 
   '@fallow-cli/darwin-x64@3.43.1':
+    optional: true
+
+  '@fallow-cli/fallow-similar-code-darwin-arm64@3.43.1':
+    optional: true
+
+  '@fallow-cli/fallow-similar-code-darwin-x64@3.43.1':
+    optional: true
+
+  '@fallow-cli/fallow-similar-code-linux-arm64-gnu@3.43.1':
+    optional: true
+
+  '@fallow-cli/fallow-similar-code-linux-arm64-musl@3.43.1':
+    optional: true
+
+  '@fallow-cli/fallow-similar-code-linux-x64-gnu@3.43.1':
+    optional: true
+
+  '@fallow-cli/fallow-similar-code-linux-x64-musl@3.43.1':
+    optional: true
+
+  '@fallow-cli/fallow-similar-code-win32-arm64-msvc@3.43.1':
+    optional: true
+
+  '@fallow-cli/fallow-similar-code-win32-x64-msvc@3.43.1':
     optional: true
 
   '@fallow-cli/linux-arm64-gnu@3.43.1':
@@ -26098,6 +26177,19 @@ snapshots:
       is-extendable: 1.0.1
 
   extend@3.0.2: {}
+
+  fallow-similar-code@3.43.1:
+    dependencies:
+      detect-libc: 2.1.2
+    optionalDependencies:
+      '@fallow-cli/fallow-similar-code-darwin-arm64': 3.43.1
+      '@fallow-cli/fallow-similar-code-darwin-x64': 3.43.1
+      '@fallow-cli/fallow-similar-code-linux-arm64-gnu': 3.43.1
+      '@fallow-cli/fallow-similar-code-linux-arm64-musl': 3.43.1
+      '@fallow-cli/fallow-similar-code-linux-x64-gnu': 3.43.1
+      '@fallow-cli/fallow-similar-code-linux-x64-musl': 3.43.1
+      '@fallow-cli/fallow-similar-code-win32-arm64-msvc': 3.43.1
+      '@fallow-cli/fallow-similar-code-win32-x64-msvc': 3.43.1
 
   fallow-type-aware@3.43.1:
     dependencies:

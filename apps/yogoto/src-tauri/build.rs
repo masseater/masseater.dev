@@ -6,6 +6,7 @@ const COMMANDS: &[&str] = &[
     "list_jobs",
     "import_song",
     "separate_song",
+    "analyze_song",
     "choose_audio_files",
     "mcp_access",
 ];
