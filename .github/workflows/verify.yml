@@ -26,6 +26,12 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+      - if: github.event_name != 'schedule'
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/pnpm/v12
+          key: pnpm-metadata-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: pnpm-metadata-
       - uses: $/.github/actions/setup
         with:
           session-path: "true"
@@ -69,6 +75,13 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+      - uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/pnpm/v12
+          key: pnpm-metadata-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: pnpm-metadata-
+      - id: pnpm-metadata-before
+        run: echo "files=$(find ~/.cache/pnpm/v12 -type f 2>/dev/null | wc -l)" >> "$GITHUB_OUTPUT"
       - uses: $/.github/actions/setup
         with:
           session-path: "true"
@@ -88,6 +101,14 @@ jobs:
         with:
           path: node_modules/.cache/msch
           key: msch-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}
+      - id: pnpm-metadata-after
+        if: always()
+        run: echo "files=$(find ~/.cache/pnpm/v12 -type f 2>/dev/null | wc -l)" >> "$GITHUB_OUTPUT"
+      - if: always() && steps.pnpm-metadata-after.outputs.files != steps.pnpm-metadata-before.outputs.files
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/pnpm/v12
+          key: pnpm-metadata-${{ github.run_id }}-${{ github.run_attempt }}
 
   autofix:
     needs: verify
