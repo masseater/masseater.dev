@@ -27,10 +27,14 @@ const failing = (
 });
 
 RuleTester.describe = (text, run): void => {
-  describe(text, run);
+  describe(text, () => {
+    run();
+  });
 };
 RuleTester.it = (text, run): void => {
-  it(text, run);
+  it(text, () => {
+    run();
+  });
 };
 
 const tester = new RuleTester({ languageOptions: { parserOptions: { lang: "ts" } } });

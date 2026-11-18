@@ -22,6 +22,7 @@ import {
   agentsTitle,
   agentsWorkspaceShape,
 } from "./agents-rules.ts";
+import { codePathExists } from "./code-path-rules.ts";
 import { readmeLength } from "./readme-rules.ts";
 
 const PLUGIN = "agents-md";
@@ -39,6 +40,7 @@ const EVERY: RuleSet = {
     "no-skill-names": noSkillNames,
     "no-shouting": noShouting,
     length: readmeLength,
+    "code-paths-exist": codePathExists,
   },
 };
 

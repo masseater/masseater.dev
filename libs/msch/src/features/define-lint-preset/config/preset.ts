@@ -21,6 +21,12 @@ import {
   shadcnRestyleContracts,
 } from "./lint.config.ts";
 import { readonlyParameterAllow } from "./readonly-types.config.ts";
+import {
+  flakeMaskingSyntax,
+  reflectProperties,
+  testDoubleSyntax,
+  testRules,
+} from "./test-rules.config.ts";
 
 type LintConfig = NonNullable<UserConfig["lint"]>;
 
@@ -77,6 +83,7 @@ const rules = {
   "import/prefer-default-export": "off",
   "import/group-exports": "off",
   "import/exports-last": "off",
+  ...testRules,
   "msch-lint/ecosystem-readers": "error",
   "msch-lint/inline-exports": "error",
   "msch-lint/ui-state-in-atoms": "error",
@@ -100,6 +107,7 @@ const rules = {
     "error",
     { ignoreInferredTypes: true, allow: readonlyParameterAllow },
   ],
+  "eslint/no-restricted-properties": ["error", ...reflectProperties],
   "eslint/no-duplicate-imports": ["error", { allowSeparateTypeImports: true }],
   "react/function-component-definition": [
     "error",
@@ -119,6 +127,17 @@ const overrides = [
     rules: { "import/no-default-export": "off" },
   },
   commandsOverride,
+  {
+    files: ["**/*.test.ts", "**/*.test.tsx", "**/*.test.support.ts", "**/vite.config.ts"],
+    rules: {
+      "eslint-js/no-restricted-syntax": [
+        "error",
+        ...cloudflareResourceSyntax,
+        ...flakeMaskingSyntax,
+        ...testDoubleSyntax,
+      ],
+    },
+  },
   {
     files: ["**/vite.config.ts"],
     rules: {
@@ -141,6 +160,7 @@ export const lint = {
     "react-perf",
     "jsx-a11y",
     "jsdoc",
+    "vitest",
     "promise",
     "node",
     "effecttsgo",

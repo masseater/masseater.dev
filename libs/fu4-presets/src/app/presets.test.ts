@@ -26,12 +26,10 @@ const reported = Effect.fn("reported")(function* reported(config: Fu4Config) {
   );
 });
 
-const scenario = (
-  name: string,
-  body: Effect.Effect<void, Fu4Error | PlatformError, FileSystem.FileSystem>,
-): void => {
-  test(name, () => services.runPromise(body));
-};
+const inServices =
+  (body: Effect.Effect<void, Fu4Error | PlatformError, FileSystem.FileSystem>) =>
+  (): Promise<void> =>
+    services.runPromise(body);
 
 test("turns on only the audits of the chosen zizmor concerns", () => {
   expect(ruleNames(zizmor({ concerns: ["references"] }))).toStrictEqual([
@@ -48,34 +46,40 @@ test("turns on every zizmor audit by default", () => {
   expect(ruleNames(zizmor())).toContain("zizmor/template-injection");
 });
 
-scenario(
+test(
   "passes zizmor options to the audits as settings",
-  Effect.gen(function* zizmorSettings() {
-    const rules = yield* reported(
-      zizmor({ online: false, rules: { "unpinned-uses": { disable: true } } }),
-    );
-    expect(rules).not.toContain("zizmor/unpinned-uses");
-  }),
+  inServices(
+    Effect.gen(function* zizmorSettings() {
+      const rules = yield* reported(
+        zizmor({ online: false, rules: { "unpinned-uses": { disable: true } } }),
+      );
+      expect(rules).not.toContain("zizmor/unpinned-uses");
+    }),
+  ),
 );
 
-scenario(
+test(
   "passes actionlint options to the rules as settings",
-  Effect.gen(function* actionlintSettings() {
-    const plain = yield* reported(actionlint());
-    const labelled = yield* reported(actionlint({ "self-hosted-runner": { labels: ["gpu"] } }));
-    expect(plain).toContain("actionlint/runner-label");
-    expect(labelled).not.toContain("actionlint/runner-label");
-  }),
+  inServices(
+    Effect.gen(function* actionlintSettings() {
+      const plain = yield* reported(actionlint());
+      const labelled = yield* reported(actionlint({ "self-hosted-runner": { labels: ["gpu"] } }));
+      expect(plain).toContain("actionlint/runner-label");
+      expect(labelled).not.toContain("actionlint/runner-label");
+    }),
+  ),
 );
 
-scenario(
+test(
   "runs actionlint and zizmor together in the recommended preset",
-  Effect.gen(function* together() {
-    const rules = yield* reported({
-      extends: [recommended()],
-      settings: { zizmor: { online: false } },
-    });
-    expect(rules).toContain("actionlint/runner-label");
-    expect(rules).toContain("zizmor/unpinned-uses");
-  }),
+  inServices(
+    Effect.gen(function* together() {
+      const rules = yield* reported({
+        extends: [recommended()],
+        settings: { zizmor: { online: false } },
+      });
+      expect(rules).toContain("actionlint/runner-label");
+      expect(rules).toContain("zizmor/unpinned-uses");
+    }),
+  ),
 );

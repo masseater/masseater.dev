@@ -24,7 +24,7 @@ export default defineConfig({
       { files: [...workspace.lint.deployEntries], rules: tracedRules },
       {
         files: ["apps/*/src/**/*.{ts,tsx}"],
-        excludeFiles: ["**/*.test.ts"],
+        excludeFiles: ["**/*.test.ts", "**/*.test.tsx", "**/*.test.support.ts"],
         rules: {
           "eslint-js/no-restricted-syntax": [
             "error",

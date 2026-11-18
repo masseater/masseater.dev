@@ -184,7 +184,9 @@ const expectSaved = Effect.fnUntraced(function* savedOnlyForOwner(
   const fs = yield* FileSystem.FileSystem;
   const path = yield* Path.Path;
   const saved = yield* loadCredentials(home);
-  expect(saved.pipe(Option.map((value) => value.refreshToken))).toEqual(Option.some(refreshToken));
+  expect(saved.pipe(Option.map((value) => value.refreshToken))).toStrictEqual(
+    Option.some(refreshToken),
+  );
   const info = yield* fs.stat(path.join(home, "oauth.json"));
   expect(info.mode % PERMISSION_RANGE).toBe(OWNER_ONLY);
 });
@@ -202,7 +204,7 @@ const signsIn = Effect.gen(function* signIn() {
   expect(credentials.accessToken).toBe("access-1");
   yield* expectSaved(home, "refresh-1");
   expect(auth.forms()).toContainEqual(expect.objectContaining({ resource: `${BASE}/mcp` }));
-  expect(auth.registrations()).toEqual([
+  expect(auth.registrations()).toStrictEqual([
     expect.stringMatching(/"redirect_uris":\["http:\/\/127\.0\.0\.1:\d+\/callback"\]/u),
   ]);
 }).pipe(Effect.scoped);
@@ -226,10 +228,10 @@ const refreshesNearExpiry = Effect.gen(function* refreshes() {
     Effect.provideService(HttpClient.HttpClient, auth.client),
   );
   const first = yield* fresh;
-  expect(accessOf(first)).toEqual(Option.some("access-r1"));
+  expect(accessOf(first)).toStrictEqual(Option.some("access-r1"));
   yield* expectSaved(home, "refresh-r1");
   const second = yield* fresh;
-  expect(accessOf(second)).toEqual(Option.some("access-r1"));
+  expect(accessOf(second)).toStrictEqual(Option.some("access-r1"));
 }).pipe(Effect.scoped);
 
 const anonymous = Effect.gen(function* withoutLogin() {

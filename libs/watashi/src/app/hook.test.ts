@@ -102,7 +102,7 @@ const masksSecrets = Effect.gen(function* masks() {
   expect(test.server.text(keyOf())).not.toContain(secret);
   const query = test.server.firstQuery(keyOf());
   const lineBytes = String(encoder.encode(line).length);
-  expect([query("redactions"), query("start"), query("end")]).toEqual([
+  expect([query("redactions"), query("start"), query("end")]).toStrictEqual([
     Option.some("1"),
     Option.some("0"),
     Option.some(lineBytes),
@@ -147,7 +147,7 @@ const addsMetadata = Effect.gen(function* metadata() {
   yield* append(test, lineOf("1"));
   yield* stop(test, { CLAUDE_CODE_REMOTE: "true", CLAUDE_CODE_REMOTE_SESSION_ID: "cse_1" });
   const query = test.server.firstQuery(keyOf());
-  expect([query("source"), query("cwd"), query("remoteSession")]).toEqual([
+  expect([query("source"), query("cwd"), query("remoteSession")]).toStrictEqual([
     Option.some("claude-code-cloud"),
     Option.some("/home/user"),
     Option.some("cse_1"),

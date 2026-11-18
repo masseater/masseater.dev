@@ -17,20 +17,21 @@ const pagesOf = (count: number): readonly PageHeaders[] =>
     })),
   );
 
+const FITTING_PAGES = 97;
+const EXCEEDING_PAGES = 98;
+
 test("ページのルールは文書の CSP を外してから自分の CSP を付ける", () => {
   expect(
     assetHeaders({ documentHeaders: { [CSP]: "default-src 'self'" }, pages: pagesOf(FIRST_PAGE) }),
   ).toContain(`/mosaic/1/\n  ! ${CSP}\n  ${CSP}: script-src 'sha256-1'\n`);
 });
 
-test.each([
-  { count: 97, throws: false },
-  { count: 98, throws: true },
-])("$count ページで 100 個のルールの上限を超える: $throws", ({ count, throws }) => {
-  const write = (): string => assetHeaders({ documentHeaders: {}, pages: pagesOf(count) });
-  if (throws) {
-    expect(write).toThrow(RangeError);
-  } else {
-    expect(write).not.toThrow();
-  }
+test("97 ページなら 100 個のルールの上限に収まる", () => {
+  expect(() => assetHeaders({ documentHeaders: {}, pages: pagesOf(FITTING_PAGES) })).not.toThrow();
+});
+
+test("98 ページで 100 個のルールの上限を超える", () => {
+  expect(() => assetHeaders({ documentHeaders: {}, pages: pagesOf(EXCEEDING_PAGES) })).toThrow(
+    RangeError,
+  );
 });

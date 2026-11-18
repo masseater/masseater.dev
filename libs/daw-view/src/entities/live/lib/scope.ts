@@ -1,4 +1,4 @@
-import { Option, Predicate, Schema } from "effect";
+import { Option, Predicate, Schema, pipe } from "effect";
 
 export interface ProcessorBase {
   readonly port: MessagePort;
@@ -21,12 +21,13 @@ const isRegistrar = (value: unknown): value is Registrar => Predicate.isFunction
 
 const globalOf =
   <Value>(guard: (value: unknown) => value is Value) =>
-  (key: string): Value => {
-    const value: unknown = Reflect.get(globalThis, key);
-    return Option.getOrThrowWith(Option.liftPredicate(value, guard), () =>
-      WorkletMissing.make({ global: key }),
+  (key: string): Value =>
+    pipe(
+      Option.liftPredicate(globalThis, Predicate.hasProperty(key)),
+      Option.map((scope) => scope[key]),
+      Option.filter(guard),
+      Option.getOrThrowWith(() => WorkletMissing.make({ global: key })),
     );
-  };
 
 export const processorBase = (): ProcessorClass => globalOf(isClass)("AudioWorkletProcessor");
 
