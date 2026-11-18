@@ -27,7 +27,7 @@ describe("watchUrl", () => {
   it("未登録の URL は開けない", () => {
     expect(
       watchUrl({
-        target: { videoId: "", url: "urn:medley-manager:unknown" },
+        target: { videoId: "", url: "urn:med-db:unknown" },
         start: Option.none(),
       }),
     ).toStrictEqual(Option.none());

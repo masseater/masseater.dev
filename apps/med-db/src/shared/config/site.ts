@@ -1,4 +1,4 @@
-export const SITE_HOST = "medley-manager.masseater.dev";
+export const SITE_HOST = "med-db.masseater.dev";
 
 export const SITE_ORIGIN = `https://${SITE_HOST}`;
 

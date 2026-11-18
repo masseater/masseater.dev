@@ -6,7 +6,7 @@ import type { ToolError } from "#/shared/api/index.ts";
 import { catalogDb } from "#/shared/db/index.server.ts";
 import { person, personAlias, song, songAlias, video } from "#/shared/db/index.ts";
 
-const UNKNOWN_URL = "urn:medley-manager:unknown";
+const UNKNOWN_URL = "urn:med-db:unknown";
 const STUB_NOTE = "パートの登録で作った。元動画の URL は未確認";
 
 type Row = Readonly<{ id: number }>;
