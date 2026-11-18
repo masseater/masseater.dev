@@ -6,4 +6,6 @@ Each song folder is `library/songs/<id>/` in the app's local data. It holds `son
 
 Do not put other people's songs, or stems made from them, in this repository or the installer.
 
+Each job is a span with a child span for each stage it reports, and the screen API calls are spans too. They go to the trace file that desktop-shell describes.
+
 The screens are served by tauri-plugin-localhost from a free port on `http://127.0.0.1`. When you add a command, also add it to `src-tauri/build.rs` and `capabilities/default.json`. To separate on an NVIDIA GPU, build with the `cuda` feature.

@@ -2,7 +2,10 @@ use std::sync::{Arc, Mutex, PoisonError};
 
 use media_notes::{fresh_id, now};
 
+mod trace;
+
 use crate::shared::protocol::{Job, JobKind, JobState};
+use trace::Traces;
 
 const KEPT: usize = 200;
 
@@ -10,7 +13,8 @@ pub type Notify = Arc<dyn Fn() + Send + Sync>;
 
 #[derive(Clone)]
 pub struct Jobs {
-    jobs: Arc<Mutex<Vec<Job>>>,
+    list: Arc<Mutex<Vec<Job>>>,
+    traces: Arc<Traces>,
     notify: Notify,
 }
 
@@ -18,14 +22,15 @@ impl Jobs {
     #[must_use]
     pub fn new(notify: Notify) -> Self {
         Self {
-            jobs: Arc::new(Mutex::new(Vec::new())),
+            list: Arc::new(Mutex::new(Vec::new())),
+            traces: Arc::new(Traces::default()),
             notify,
         }
     }
 
     fn change(&self, id: &str, edit: impl FnOnce(&mut Job)) {
         {
-            let mut jobs = self.jobs.lock().unwrap_or_else(PoisonError::into_inner);
+            let mut jobs = self.list.lock().unwrap_or_else(PoisonError::into_inner);
             if let Some(job) = jobs.iter_mut().find(|job| job.id == id) {
                 edit(job);
             }
@@ -46,8 +51,9 @@ impl Jobs {
             started_at: now(),
         };
         let id = job.id.clone();
+        self.traces.open(&id, kind, label);
         {
-            let mut jobs = self.jobs.lock().unwrap_or_else(PoisonError::into_inner);
+            let mut jobs = self.list.lock().unwrap_or_else(PoisonError::into_inner);
             jobs.insert(0, job);
             jobs.truncate(KEPT);
         }
@@ -56,6 +62,7 @@ impl Jobs {
     }
 
     pub fn progress(&self, id: &str, progress: f64, message: &str) {
+        self.traces.stage(id, message);
         self.change(id, |job| {
             job.state = JobState::Running;
             job.progress = progress;
@@ -64,6 +71,7 @@ impl Jobs {
     }
 
     pub fn finish(&self, id: &str, song_id: &str) {
+        self.traces.close(id, None);
         self.change(id, |job| {
             job.state = JobState::Done;
             job.progress = 1.0;
@@ -73,6 +81,7 @@ impl Jobs {
     }
 
     pub fn fail(&self, id: &str, message: &str) {
+        self.traces.close(id, Some(message));
         self.change(id, |job| {
             job.state = JobState::Failed;
             message.clone_into(&mut job.message);
@@ -85,7 +94,7 @@ impl Jobs {
 
     #[must_use]
     pub fn list(&self) -> Vec<Job> {
-        self.jobs
+        self.list
             .lock()
             .unwrap_or_else(PoisonError::into_inner)
             .clone()
