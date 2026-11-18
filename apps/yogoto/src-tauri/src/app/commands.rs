@@ -4,7 +4,9 @@ use tauri_plugin_dialog::DialogExt;
 
 use super::workshop::Workshop;
 use crate::entities::model::{MODELS, model_info};
-use crate::shared::protocol::{ImportRequest, Job, ModelInfo, SeparateRequest, Song};
+use crate::shared::protocol::{
+    AnalyzeRequest, ImportRequest, Job, ModelInfo, SeparateRequest, Song,
+};
 
 type Answer<T> = Result<T, Failure>;
 
@@ -61,6 +63,19 @@ pub async fn separate_song(
         .get(&request.song_id)?
         .ok_or_else(|| Failure::new("song not found"))?;
     workshop.separate(&song, &request.model)
+}
+
+#[tauri::command]
+#[specta::specta]
+pub async fn analyze_song(
+    workshop: State<'_, Workshop>,
+    request: AnalyzeRequest,
+) -> Answer<String> {
+    let song = workshop
+        .library
+        .get(&request.song_id)?
+        .ok_or_else(|| Failure::new("song not found"))?;
+    workshop.analyze(&song)
 }
 
 #[tauri::command]

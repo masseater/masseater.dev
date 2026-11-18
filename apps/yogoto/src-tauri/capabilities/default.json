@@ -15,6 +15,7 @@
     "allow-list-jobs",
     "allow-import-song",
     "allow-separate-song",
+    "allow-analyze-song",
     "allow-choose-audio-files",
     "allow-mcp-access"
   ]

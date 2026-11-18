@@ -1,5 +1,6 @@
 /** @internal */
 export {
+  analyzeSong,
   chooseAudioFiles,
   fetchJobs,
   fetchModels,
