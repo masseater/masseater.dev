@@ -1,0 +1,20 @@
+{
+  "name": "work-metrics",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Reads how work flows from the records that GitHub, Cloudflare and git already keep: PR time to merge, Cloudflare usage per resource and hand fixes after PLaMo.",
+  "type": "module",
+  "imports": {
+    "#/*": "./src/*",
+    "#package.json": "./package.json"
+  },
+  "dependencies": {
+    "@distilled.cloud/github": "catalog:",
+    "@masseater.dev/node-main": "workspace:*",
+    "effect": "catalog:stack"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "vite-plus": "catalog:stack"
+  }
+}

@@ -1,4 +1,4 @@
-import { Array as Arr, Effect, Option, Result, Schema, pipe } from "effect";
+import { Array as Arr, Effect, Metric, Option, Result, Schema, pipe } from "effect";
 import { resolveConfigFromFile } from "vite-plus";
 
 import type { Problem, RuleName } from "./problem.ts";
@@ -13,6 +13,26 @@ class SectionConfigUnreadable extends taggedError<
 
 const CONFIG_FILE = "vite.config.ts";
 const FIRST = 1;
+const ONE = 1;
+
+const diagnostics = Metric.counter("lint.diagnostics", {
+  description: "Diagnostics that each lint rule reported, before msch keeps only the errors",
+});
+
+const countDiagnostics = (check: string, found: readonly Linted[]): Effect.Effect<void> =>
+  Effect.forEach(
+    found,
+    (diagnostic) =>
+      Metric.update(
+        Metric.withAttributes(diagnostics, {
+          "lint.check": check,
+          "lint.rule": diagnostic.rule,
+          "lint.severity": diagnostic.severity,
+        }),
+        ONE,
+      ),
+    { concurrency: 1, discard: true },
+  );
 
 export interface Linted {
   readonly path: string;
@@ -84,6 +104,10 @@ export const checkSection =
       const linted = yield* Effect.result(
         check.lint({ root, files: listed, projectFiles, config }),
       );
+      yield* Result.match(linted, {
+        onFailure: () => Effect.void,
+        onSuccess: (found) => countDiagnostics(check.name, found),
+      });
       return Result.match(linted, {
         onFailure: (failure) => failureAt(configFile, check.rule, failure.message),
         onSuccess: (found) =>
