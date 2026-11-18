@@ -29,6 +29,7 @@ pub fn run() -> tauri::Result<()> {
                 show_main(app);
             },
         ))
+        .plugin(desktop_shell::telemetry_plugin())
         .manage(Engine {
             phase: watch::Sender::new(Phase::Idle),
             process: Arc::new(Mutex::new(Process::Idle)),

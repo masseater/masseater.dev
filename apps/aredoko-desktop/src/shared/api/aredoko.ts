@@ -13,21 +13,10 @@ import type {
   SourceKind,
   Status,
 } from "@masseater.dev/aredoko-protocol";
+import { endpointOf } from "@masseater.dev/desktop-telemetry";
 import { convertFileSrc } from "@tauri-apps/api/core";
 import { appLocalDataDir, join } from "@tauri-apps/api/path";
-import {
-  Array,
-  ConfigProvider,
-  Duration,
-  Effect,
-  Layer,
-  ManagedRuntime,
-  Option,
-  Predicate,
-  Record,
-  Schema,
-  pipe,
-} from "effect";
+import { Array, Duration, Effect, Layer, ManagedRuntime, Option, Schema, pipe } from "effect";
 import { FetchHttpClient, HttpClient } from "effect/http";
 import { OtlpSerialization, OtlpTracer } from "effect/observability";
 
@@ -61,16 +50,13 @@ const serverUrlLayer = Layer.effect(
   }),
 );
 
-const SERVICE_NAME = "aredoko-desktop";
+const SERVICE_NAME = "aredoko-desktop-screen";
 
-const viteEnv = pipe(import.meta.env, Record.filter(Predicate.isString));
-
-const configLayer = ConfigProvider.layer(ConfigProvider.fromEnv({ env: viteEnv }));
-
-const tracingLayer = OtlpTracer.layerFromConfig({ resource: { serviceName: SERVICE_NAME } }).pipe(
-  Layer.provide(OtlpSerialization.layerJson),
-  Layer.provide(configLayer),
-);
+const tracingLayer = Layer.unwrap(
+  Effect.sync(() =>
+    OtlpTracer.layer({ url: endpointOf("traces"), resource: { serviceName: SERVICE_NAME } }),
+  ),
+).pipe(Layer.provide(OtlpSerialization.layerJson));
 
 const clientLayer = aredokoClientLayer.pipe(Layer.provide(serverUrlLayer));
 

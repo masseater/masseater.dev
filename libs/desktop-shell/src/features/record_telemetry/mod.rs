@@ -14,18 +14,19 @@ use tauri::{AppHandle, Manager, RunEvent, Runtime};
 use tracing_subscriber::Layer;
 use tracing_subscriber::filter::{LevelFilter, Targets};
 use tracing_subscriber::layer::SubscriberExt;
-use tracing_subscriber::util::SubscriberInitExt;
 
 use appender::Appender;
 
 const FOLDER: &str = "telemetry";
 const SCHEME: &str = "otlp";
-const TRACES_PATH: &str = "/v1/traces";
+const TRACES: &str = "traces";
+const LOGS: &str = "logs";
 const TRACED_CRATES: &[&str] = &["tauri", "tauri_runtime_wry"];
 
 struct Recording {
     provider: SdkTracerProvider,
-    screen: Appender,
+    screen_traces: Appender,
+    screen_logs: Appender,
 }
 
 fn provider(appender: Appender, service: &str) -> SdkTracerProvider {
@@ -52,11 +53,22 @@ where
 }
 
 fn recording(dir: &Path, service: &str) -> std::io::Result<Recording> {
-    let appender = Appender::open(dir)?;
+    let traces = Appender::open(dir, TRACES)?;
     Ok(Recording {
-        provider: provider(appender.clone(), service),
-        screen: appender,
+        provider: provider(traces.clone(), service),
+        screen_traces: traces,
+        screen_logs: Appender::open(dir, LOGS)?,
     })
+}
+
+impl Recording {
+    fn screen(&self, path: &str) -> Option<&Appender> {
+        match path.strip_prefix("/v1/")? {
+            TRACES => Some(&self.screen_traces),
+            LOGS => Some(&self.screen_logs),
+            _ => None,
+        }
+    }
 }
 
 fn start<R: Runtime>(app: &AppHandle<R>) -> Result<(), Box<dyn Error>> {
@@ -64,9 +76,9 @@ fn start<R: Runtime>(app: &AppHandle<R>) -> Result<(), Box<dyn Error>> {
         &app.path().app_log_dir()?.join(FOLDER),
         &app.config().identifier,
     )?;
-    tracing_subscriber::registry()
-        .with(spans(&recording.provider))
-        .try_init()?;
+    tracing::subscriber::set_global_default(
+        tracing_subscriber::registry().with(spans(&recording.provider)),
+    )?;
     app.manage(recording);
     Ok(())
 }
@@ -75,16 +87,19 @@ fn record<R: Runtime>(app: &AppHandle<R>, request: &Request<Vec<u8>>) -> StatusC
     if request.method() == Method::OPTIONS {
         return StatusCode::NO_CONTENT;
     }
-    if request.method() != Method::POST || request.uri().path() != TRACES_PATH {
+    if request.method() != Method::POST {
         return StatusCode::NOT_FOUND;
     }
     let Some(recording) = app.try_state::<Recording>() else {
         return StatusCode::SERVICE_UNAVAILABLE;
     };
-    let Ok(spans) = serde_json::from_slice::<serde_json::Value>(request.body()) else {
+    let Some(appender) = recording.screen(request.uri().path()) else {
+        return StatusCode::NOT_FOUND;
+    };
+    let Ok(batch) = serde_json::from_slice::<serde_json::Value>(request.body()) else {
         return StatusCode::BAD_REQUEST;
     };
-    match recording.screen.line(&spans) {
+    match appender.line(&batch) {
         Ok(()) => StatusCode::OK,
         Err(_) => StatusCode::INTERNAL_SERVER_ERROR,
     }
@@ -141,7 +156,8 @@ mod tests {
         });
         recording.provider.force_flush().unwrap();
         recording
-            .screen
+            .screen("/v1/traces")
+            .unwrap()
             .line(&serde_json::json!({ "resourceSpans": [] }))
             .unwrap();
         let written = fs::read_to_string(dir.path().join("traces.jsonl")).unwrap();
@@ -149,5 +165,20 @@ mod tests {
         assert_eq!(lines.len(), 2);
         assert!(lines[0].contains("\"job\"") && lines[0].contains("ipc::request::handle"));
         assert!(lines[0].contains("app.test") && !lines[0].contains("noise"));
+    }
+
+    #[test]
+    fn keeps_screen_logs_apart_from_traces_and_refuses_other_paths() {
+        let dir = tempfile::tempdir().unwrap();
+        let recording = recording(dir.path(), "app.test").unwrap();
+        recording
+            .screen("/v1/logs")
+            .unwrap()
+            .line(&serde_json::json!({ "resourceLogs": [] }))
+            .unwrap();
+        let written = fs::read_to_string(dir.path().join("logs.jsonl")).unwrap();
+        assert_eq!(written, "{\"resourceLogs\":[]}\n");
+        assert!(recording.screen("/v1/metrics").is_none());
+        assert!(recording.screen("/logs").is_none());
     }
 }

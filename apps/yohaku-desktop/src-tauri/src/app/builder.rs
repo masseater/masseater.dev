@@ -110,6 +110,7 @@ pub fn run() -> tauri::Result<()> {
             .rotation_strategy(RotationStrategy::KeepSome(LOG_FILES_KEPT))
             .build(),
     )
+    .plugin(desktop_shell::telemetry_plugin())
     .plugin(desktop_shell::state_plugin())
     .plugin(desktop_shell::browser_keys_plugin())
     .plugin(tauri_plugin_opener::init())

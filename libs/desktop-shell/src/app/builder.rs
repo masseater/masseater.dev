@@ -1,6 +1,6 @@
 use tauri::{Builder, Wry};
 
-use crate::features::record_traces::telemetry_plugin;
+use crate::features::record_telemetry::telemetry_plugin;
 use crate::features::serve_screen::served;
 use crate::shared::ui::{browser_keys_plugin, japanese_menu, show, state_plugin};
 

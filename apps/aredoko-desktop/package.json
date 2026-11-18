@@ -10,6 +10,7 @@
   "dependencies": {
     "@effect/atom-react": "catalog:stack",
     "@masseater.dev/aredoko-protocol": "workspace:*",
+    "@masseater.dev/desktop-telemetry": "workspace:*",
     "@masseater.dev/ui": "workspace:*",
     "@pixiv/three-vrm": "catalog:",
     "@tanstack/react-query": "catalog:stack",

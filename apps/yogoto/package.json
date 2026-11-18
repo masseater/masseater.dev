@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@effect/atom-react": "catalog:stack",
+    "@masseater.dev/desktop-telemetry": "workspace:*",
     "@masseater.dev/media-notes-protocol": "workspace:*",
     "@masseater.dev/media-notes-ui": "workspace:*",
     "@masseater.dev/ui": "workspace:*",
