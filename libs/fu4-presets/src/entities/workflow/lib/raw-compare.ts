@@ -5,7 +5,7 @@ import { quote } from "#/shared/text/index.ts";
 
 import { containsExpression } from "./expression-text.ts";
 
-type Compare = (left: RawValue) => (right: RawValue) => boolean;
+export type Compare = (left: RawValue) => (right: RawValue) => boolean;
 
 const sameProps = (
   compare: Compare,

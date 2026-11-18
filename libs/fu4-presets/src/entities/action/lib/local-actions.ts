@@ -15,7 +15,7 @@ export interface LocalAction {
   readonly cached: boolean;
 }
 
-type Loaded = Option.Option<Result.Result<LocalAction, string>>;
+export type Loaded = Option.Option<Result.Result<LocalAction, string>>;
 
 const FILES: readonly string[] = ["action.yaml", "action.yml"];
 const PARENT = "..";

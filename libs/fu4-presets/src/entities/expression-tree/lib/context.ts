@@ -1,8 +1,6 @@
-import { Array as Arr, Option, Result, String as Str, pipe } from "effect";
+import { Array as Arr, Option, String as Str, pipe } from "effect";
 
 import type { ContextExpr, Expr } from "#/entities/expression-tree/model/types.ts";
-
-import { parseExpression } from "./parser.ts";
 
 const PATTERN = /^[A-Za-z0-9_-]+(?:\.(?:[A-Za-z0-9_-]+|\*))*$/u;
 const PAIR = 2;
@@ -10,13 +8,6 @@ const HEAD = 0;
 const TAIL = 1;
 
 type Comparison = "child" | "match";
-
-export const contextOf = (raw: string): Option.Option<ContextExpr> =>
-  pipe(
-    Result.getSuccess(parseExpression(raw)),
-    Option.map((spanned) => spanned.expr),
-    Option.filter((expr): expr is ContextExpr => expr.type === "context"),
-  );
 
 export const isPattern = (pattern: string): boolean => PATTERN.test(pattern);
 

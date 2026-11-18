@@ -134,14 +134,6 @@ export const normalJobsOf = (workflow: WorkflowInput): readonly NormalJob[] =>
     return [];
   });
 
-export const reusableJobsOf = (workflow: WorkflowInput): readonly ReusableJob[] =>
-  Arr.flatMap(jobsOf(workflow), (job) => {
-    if (job.type === "reusable") {
-      return [job.job];
-    }
-    return [];
-  });
-
 export const effectivePermissions = (job: NormalJob | ReusableJob): Permissions => {
   if (job.model.permissions.type === "base" && job.model.permissions.base === "default") {
     return job.workflow.model.permissions;

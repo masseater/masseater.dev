@@ -2,7 +2,7 @@ import { Array as Arr, Option, pipe } from "effect";
 
 type Status = "new" | "active" | "finished";
 type Edge = readonly [number, number];
-type Graph = readonly (readonly number[])[];
+export type Graph = readonly (readonly number[])[];
 
 export interface Cycle {
   readonly from: number;

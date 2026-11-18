@@ -37,11 +37,6 @@ export const queryExact =
       ),
     );
 
-export const queryExists =
-  (document: Document) =>
-  (route: Route): boolean =>
-    Result.isSuccess(resolveRoute(document)(route));
-
 const pairOrParent = (structural: SyntaxNode): SyntaxNode => {
   if (isPair(structural)) {
     return structural;

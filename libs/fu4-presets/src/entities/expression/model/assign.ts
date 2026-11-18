@@ -2,7 +2,7 @@ import { Array as Arr, Option, Record as Rec, pipe } from "effect";
 
 import type { ExprType, ObjectType, Props } from "./types.ts";
 
-type Assignable = (type: ExprType) => (other: ExprType) => boolean;
+export type Assignable = (type: ExprType) => (other: ExprType) => boolean;
 
 const allOf =
   (props: Props) =>

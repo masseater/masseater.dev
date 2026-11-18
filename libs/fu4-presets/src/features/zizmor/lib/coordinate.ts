@@ -51,8 +51,6 @@ export const lessThan = (raw: string): ControlExpr => ({
   version: Option.getOrThrow(parseVersion(raw)),
 });
 
-export const coordinatePattern = (coordinate: Coordinate): UsesPattern => coordinate.pattern;
-
 const usageFrom = (result: ControlEvaluation): Option.Option<Usage> => {
   if (result.verdict === "satisfied") {
     return Option.some({ type: "enabled", origins: result.origins });

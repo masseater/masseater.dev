@@ -3,7 +3,7 @@ import type { Option } from "effect";
 import type { Expr } from "#/entities/expression/model/ast.ts";
 import type { ExprType } from "#/entities/expression/model/types.ts";
 
-export interface Env {
+export interface TypeEnv {
   readonly vars: Readonly<Record<string, ExprType>>;
   readonly contexts: readonly string[];
   readonly special: readonly string[];
@@ -11,7 +11,7 @@ export interface Env {
 }
 
 export interface Scope {
-  readonly env: Env;
+  readonly env: TypeEnv;
   readonly fail: (expr: Expr, message: string) => void;
   readonly check: (expr: Expr) => ExprType;
 }

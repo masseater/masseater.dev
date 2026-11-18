@@ -12,7 +12,7 @@ export interface Lexed {
   readonly error?: ExprError;
 }
 
-interface Unexpected {
+export interface Unexpected {
   readonly at: Cursor;
   readonly place: string;
   readonly expected: string;

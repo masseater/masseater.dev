@@ -14,8 +14,8 @@ import {
 import type { Sink } from "#/shared/yaml/decoder.ts";
 import { isNull, pairsOf, valueAt } from "#/shared/yaml/index.ts";
 
-type Inputs = Readonly<Record<string, CallInput>>;
-type Secrets = Readonly<Record<string, CallSecret>>;
+export type Inputs = Readonly<Record<string, CallInput>>;
+export type Secrets = Readonly<Record<string, CallSecret>>;
 
 const KINDS: Readonly<Record<string, CallInputKind>> = {
   boolean: "boolean",

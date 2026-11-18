@@ -14,7 +14,7 @@ export interface ZizmorSettings {
   readonly githubHost: string;
 }
 
-type Parsed = Result.Result<ZizmorSettings, string>;
+export type ParsedSettings = Result.Result<ZizmorSettings, string>;
 
 export const PERSONAS: readonly Persona[] = ["auditor", "pedantic", "regular"];
 export const SEVERITIES: readonly Severity[] = ["informational", "low", "medium", "high"];
@@ -33,9 +33,9 @@ const decodeSettings = Schema.decodeUnknownResult(RawSettings);
 
 const NO_SETTINGS = {};
 
-const cache = new WeakMap<object, Parsed>();
+const cache = new WeakMap<object, ParsedSettings>();
 
-const withConfig = (raw: typeof RawSettings.Type): Parsed =>
+const withConfig = (raw: typeof RawSettings.Type): ParsedSettings =>
   pipe(
     loadConfig(raw.rules),
     Result.map((config) => ({
@@ -48,20 +48,20 @@ const withConfig = (raw: typeof RawSettings.Type): Parsed =>
     })),
   );
 
-const parse = (raw: object): Parsed =>
+const parse = (raw: object): ParsedSettings =>
   pipe(
     decodeSettings(raw),
     Result.mapError((issue) => `invalid zizmor setting: ${issue.message}`),
     Result.flatMap(withConfig),
   );
 
-const cached = (value: object): Parsed => {
+const cached = (value: object): ParsedSettings => {
   const parsed = parse(value);
   cache.set(value, parsed);
   return parsed;
 };
 
-export const settingsOf = (settings: Readonly<Record<string, unknown>>): Parsed => {
+export const settingsOf = (settings: Readonly<Record<string, unknown>>): ParsedSettings => {
   const value = pipe(
     Option.fromNullishOr(settings["zizmor"]),
     Option.filter(Predicate.isObject),

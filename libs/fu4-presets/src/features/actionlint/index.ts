@@ -7,7 +7,7 @@ import { syntaxCheck } from "./rules/syntax-check.ts";
 import { TRIGGER_RULES } from "./rules/trigger-rules.ts";
 import { WORKFLOW_RULES } from "./rules/workflow-rules.ts";
 
-export const actionlint = definePlugin({
+export const actionlintPlugin = definePlugin({
   rules: {
     "syntax-check": syntaxCheck,
     ...WORKFLOW_RULES,

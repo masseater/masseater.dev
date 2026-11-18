@@ -6,19 +6,12 @@ const SEQUENCES = new Set(["block_sequence", "flow_sequence"]);
 const PAIRS = new Set(["block_mapping_pair", "flow_pair"]);
 const CONTAINERS = new Set(["block_node", "flow_node"]);
 const QUOTED = new Set(["single_quote_scalar", "double_quote_scalar"]);
-const SCALARS = new Set([
-  "plain_scalar",
-  "single_quote_scalar",
-  "double_quote_scalar",
-  "block_scalar",
-]);
 
 export const isMapping = (node: SyntaxNode): boolean => MAPPINGS.has(node.type);
 export const isSequence = (node: SyntaxNode): boolean => SEQUENCES.has(node.type);
 export const isPair = (node: SyntaxNode): boolean => PAIRS.has(node.type);
 export const isContainer = (node: SyntaxNode): boolean => CONTAINERS.has(node.type);
 export const isQuoted = (node: SyntaxNode): boolean => QUOTED.has(node.type);
-export const isScalar = (node: SyntaxNode): boolean => SCALARS.has(node.type);
 export const isAnchor = (node: SyntaxNode): boolean => node.type === "anchor";
 export const isAlias = (node: SyntaxNode): boolean => node.type === "alias";
 export const isComment = (node: SyntaxNode): boolean => node.type === "comment";

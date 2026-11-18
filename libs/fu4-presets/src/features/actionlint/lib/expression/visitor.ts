@@ -24,7 +24,7 @@ const EMPTY_VARS: Vars = {
 
 const JOB_RESET = { matrix: Option.none(), steps: Option.none(), needs: Option.none() } as const;
 
-interface Target {
+export interface Target {
   readonly fail: Fail;
   readonly context: RuleContext;
 }

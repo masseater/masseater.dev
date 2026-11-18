@@ -20,7 +20,7 @@ import type {
 
 import { parsePattern, patternKey } from "./uses.ts";
 
-type Parsed<Value> = Result.Result<Value, string>;
+export type ParsedConfig<Value> = Result.Result<Value, string>;
 
 type Mapping = Readonly<Record<string, unknown>>;
 
@@ -67,7 +67,7 @@ type Decode<Value> = (input: unknown) => Result.Result<Value, Schema.SchemaError
 
 const messageOf = (issue: Schema.SchemaError): string => issue.message;
 
-const positiveOf = (text: Option.Option<string>): Parsed<Option.Option<number>> =>
+const positiveOf = (text: Option.Option<string>): ParsedConfig<Option.Option<number>> =>
   Option.match(text, {
     onNone: () => Result.succeed(Option.none()),
     onSome: (each) =>
@@ -78,7 +78,7 @@ const positiveOf = (text: Option.Option<string>): Parsed<Option.Option<number>> 
       ),
   });
 
-const ignoreRule = (value: string): Parsed<IgnoreRule> => {
+const ignoreRule = (value: string): ParsedConfig<IgnoreRule> => {
   const parts = Str.split(":")(value);
   const positions = Arr.takeRight(Arr.drop(parts, ONE_BASED), POSITION_PARTS);
   const filename = Arr.join(Arr.dropRight(parts, positions.length), ":");
@@ -93,7 +93,7 @@ const ignoreRule = (value: string): Parsed<IgnoreRule> => {
   });
 };
 
-const ruleOf = (raw: typeof RawRule.Type): Parsed<RuleConfig> =>
+const ruleOf = (raw: typeof RawRule.Type): ParsedConfig<RuleConfig> =>
   pipe(
     raw.ignore ?? [],
     Arr.map(ignoreRule),
@@ -109,7 +109,7 @@ const ruleOf = (raw: typeof RawRule.Type): Parsed<RuleConfig> =>
     })),
   );
 
-const ruleEntry = ([ident, raw]: readonly [string, typeof RawRule.Type]): Parsed<
+const ruleEntry = ([ident, raw]: readonly [string, typeof RawRule.Type]): ParsedConfig<
   readonly [string, RuleConfig]
 > =>
   pipe(
@@ -119,7 +119,7 @@ const ruleEntry = ([ident, raw]: readonly [string, typeof RawRule.Type]): Parsed
 
 const decodeRules = Schema.decodeUnknownResult(RawRules, STRICT);
 
-const rulesOf = (raw: unknown): Parsed<ReadonlyMap<string, RuleConfig>> =>
+const rulesOf = (raw: unknown): ParsedConfig<ReadonlyMap<string, RuleConfig>> =>
   pipe(
     decodeRules(raw),
     Result.mapError(messageOf),
@@ -130,8 +130,8 @@ const rulesOf = (raw: unknown): Parsed<ReadonlyMap<string, RuleConfig>> =>
 
 const settingOf =
   <Raw, Value>(decode: Decode<Raw>, fallback: () => Value) =>
-  (finish: (decoded: Raw) => Parsed<Value>) =>
-  (config: Option.Option<Mapping>): Parsed<Value> =>
+  (finish: (decoded: Raw) => ParsedConfig<Value>) =>
+  (config: Option.Option<Mapping>): ParsedConfig<Value> =>
     Option.match(config, {
       onNone: () => Result.succeed(fallback()),
       onSome: (each) => pipe(decode(each), Result.mapError(messageOf), Result.flatMap(finish)),
@@ -146,7 +146,7 @@ const cooldownOf = settingOf(
 
 const patternsOf =
   (type: "allow" | "deny") =>
-  (list: readonly string[]): Parsed<Config["forbiddenUses"]> =>
+  (list: readonly string[]): ParsedConfig<Config["forbiddenUses"]> =>
     pipe(
       list,
       Arr.map(parsePattern),
@@ -169,13 +169,13 @@ const allowOf = settingOf(
   noStrings,
 )((each) => Result.succeed(each.allow ?? []));
 
-const secretsOf = (config: Option.Option<Mapping>): Parsed<ReadonlySet<string>> =>
+const secretsOf = (config: Option.Option<Mapping>): ParsedConfig<ReadonlySet<string>> =>
   pipe(
     allowOf(config),
     Result.map((list) => new Set([...pipe(list, Arr.map(Str.toLowerCase)), "github_token"])),
   );
 
-const knownVulnerableOf = (config: Option.Option<Mapping>): Parsed<ReadonlySet<string>> =>
+const knownVulnerableOf = (config: Option.Option<Mapping>): ParsedConfig<ReadonlySet<string>> =>
   pipe(
     allowOf(config),
     Result.map((list) => new Set(list)),
@@ -186,7 +186,7 @@ const runnersOf = settingOf(
   (): readonly [ReadonlySet<string>, ReadonlySet<string>] => [new Set(), new Set()],
 )((each) => Result.succeed([new Set(each["deny-runners"]), new Set(each["allow-groups"])]));
 
-const policyEntry = ([text, policy]: readonly [string, UsesPolicy]): Parsed<PolicyEntry> =>
+const policyEntry = ([text, policy]: readonly [string, UsesPolicy]): ParsedConfig<PolicyEntry> =>
   pipe(
     parsePattern(text),
     Result.flatMap((pattern) => {
@@ -232,7 +232,7 @@ const unpinnedOf = settingOf(
   (): Readonly<Record<string, UsesPolicy>> => ({}),
 )((each) => Result.succeed(each.policies ?? {}));
 
-const policiesOf = (config: Option.Option<Mapping>): Parsed<UnpinnedUsesPolicies> =>
+const policiesOf = (config: Option.Option<Mapping>): ParsedConfig<UnpinnedUsesPolicies> =>
   pipe(
     unpinnedOf(config),
     Result.flatMap((policies) => Result.all(pipe(Rec.toEntries(policies), Arr.map(policyEntry)))),
@@ -247,7 +247,7 @@ const configOf =
       Option.flatMap((rule) => rule.config),
     );
 
-const withRules = (rules: ReadonlyMap<string, RuleConfig>): Parsed<Config> => {
+const withRules = (rules: ReadonlyMap<string, RuleConfig>): ParsedConfig<Config> => {
   const of = configOf(rules);
   const settings = {
     cooldownDays: cooldownOf(of("dependabot-cooldown")),
@@ -268,5 +268,5 @@ const withRules = (rules: ReadonlyMap<string, RuleConfig>): Parsed<Config> => {
   );
 };
 
-export const loadConfig = (raw: unknown): Parsed<Config> =>
+export const loadConfig = (raw: unknown): ParsedConfig<Config> =>
   pipe(rulesOf(raw), Result.flatMap(withRules));

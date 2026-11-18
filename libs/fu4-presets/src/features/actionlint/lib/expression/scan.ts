@@ -65,7 +65,7 @@ export const checkNode =
     return Option.liftPredicate(checked.type, () => Arr.isReadonlyArrayEmpty(checked.errors));
   };
 
-interface Semantics {
+export interface Semantics {
   readonly type: Option.Option<ExprType>;
   readonly offset: number;
 }

@@ -10,7 +10,7 @@ import shells from "#/shared/data/shells.json" with { type: "json" };
 import { quote, sortedQuotes } from "#/shared/text/index.ts";
 import type { Text } from "#/shared/yaml/index.ts";
 
-type Platform = "any" | "unix" | "windows";
+export type Platform = "any" | "unix" | "windows";
 
 const SHELLS: Readonly<Record<"unix" | "windows", readonly string[]>> = shells;
 const AVAILABLE: Readonly<Record<Platform, readonly string[]>> = {

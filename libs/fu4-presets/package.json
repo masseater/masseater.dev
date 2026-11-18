@@ -47,13 +47,13 @@
     "prepublishOnly": "vp run build"
   },
   "dependencies": {
-    "@effect/platform-node": "catalog:",
-    "minimatch": "catalog:"
+    "@effect/platform-node": "catalog:"
   },
   "devDependencies": {
     "@r_masseater/fu4": "workspace:*",
     "@types/node": "catalog:",
     "effect": "catalog:stack",
+    "minimatch": "catalog:",
     "vite-plus": "catalog:stack",
     "yaml": "catalog:"
   },

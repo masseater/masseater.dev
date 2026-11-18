@@ -32,7 +32,7 @@ const givenType = (typed: readonly Typed[], value: Text): ExprType => {
   return STRING;
 };
 
-interface Call {
+export interface Call {
   readonly env: ExprEnv;
   readonly uses: Text;
   readonly declared: Readonly<Record<string, CallInput>>;

@@ -26,7 +26,7 @@ export interface UsesTarget {
 
 type Uses = ReusableJob["model"]["uses"];
 
-type Check = (target: UsesTarget, context: AuditContext) => Produced;
+export type Check = (target: UsesTarget, context: AuditContext) => Produced;
 
 interface Written {
   readonly key: string;

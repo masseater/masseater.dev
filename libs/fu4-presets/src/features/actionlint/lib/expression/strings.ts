@@ -79,7 +79,7 @@ export const checkOne =
     return Option.map(Arr.last(typed.value), (last) => last.type);
   };
 
-interface Expected {
+export interface Expected {
   readonly what: string;
   readonly name: string;
   readonly kinds: readonly string[];

@@ -37,7 +37,7 @@ const widthOf = (text: string): number => {
   return column;
 };
 
-interface At {
+export interface At {
   readonly state: State;
   readonly code: CodeName;
 }

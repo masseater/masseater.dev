@@ -15,7 +15,7 @@ const rulesOf = (audits: readonly Audit[]): Plugin["rules"] =>
     ),
   );
 
-export const zizmor = definePlugin({ rules: rulesOf(AUDITS) });
+export const zizmorPlugin = definePlugin({ rules: rulesOf(AUDITS) });
 
 const identsOf = (audits: readonly Audit[]): readonly string[] =>
   pipe(

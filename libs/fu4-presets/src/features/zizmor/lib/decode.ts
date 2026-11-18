@@ -157,15 +157,6 @@ export const defaulted =
       onSome: decoder,
     });
 
-export const nullable =
-  <Value>(decoder: Decoder<Value>): Decoder<Option.Option<Value>> =>
-  (node) => {
-    if (isNull(node)) {
-      return Result.succeed(Option.none());
-    }
-    return Result.map(decoder(node), Option.some);
-  };
-
 export const untagged =
   <Value>(...decoders: readonly Decoder<Value>[]): Decoder<Value> =>
   (node) =>

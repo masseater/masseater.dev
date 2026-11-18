@@ -1,12 +1,18 @@
 import { lintText } from "@r_masseater/fu4";
 import type { Diagnostic, Fu4Error } from "@r_masseater/fu4";
-import { Array as Arr, ConfigProvider, Effect, Option, Record as Rec, pipe } from "effect";
+import {
+  Array as Arr,
+  ConfigProvider,
+  Effect,
+  Option,
+  Record as Rec,
+  String as Str,
+  pipe,
+} from "effect";
 import { FetchHttpClient } from "effect/http";
 
 import { zizmor } from "#/app/presets.ts";
 import type { ZizmorOptions } from "#/app/presets.ts";
-import { encodePackets } from "#/shared/git-protocol/index.ts";
-import type { Packet } from "#/shared/git-protocol/index.ts";
 
 export const TAGGED = "1111111111111111111111111111111111111111";
 export const BRANCH_HEAD = "2222222222222222222222222222222222222222";
@@ -19,7 +25,9 @@ export const NEVER = 0;
 export const UPLOAD_PACK = "POST github.com/actions/checkout.git/git-upload-pack";
 export const COMPARE_MAIN = `GET api.github.com/repos/actions/checkout/compare/refs/heads/main...${ORPHAN}`;
 
-const FLUSH: Packet = { type: "flush" };
+const FLUSH = "0000";
+const HEADER = 4;
+const HEX = 16;
 
 export type Respond = () => Response;
 
@@ -48,18 +56,18 @@ export const json =
   () =>
     Response.json(body);
 
-export const refLine = ([oid, name]: RefLine): Packet => ({
-  type: "data",
-  data: `${oid} ${name}\n`,
-});
+const pktLine = (data: string): string =>
+  `${Str.padStart(HEADER, "0")((data.length + HEADER).toString(HEX))}${data}`;
 
-const packetsOf = (refs: readonly RefLine[]): readonly Packet[] =>
-  pipe(refs, Arr.map(refLine), Arr.append(FLUSH));
+const refLine = ([oid, name]: RefLine): string => pktLine(`${oid} ${name}\n`);
+
+const packetsOf = (refs: readonly RefLine[]): string =>
+  pipe(refs, Arr.map(refLine), Arr.append(FLUSH), Arr.join(""));
 
 export const refsBody =
   (refs: readonly RefLine[]): Respond =>
   () =>
-    new Response(encodePackets(packetsOf(refs)));
+    new Response(packetsOf(refs));
 
 export const BASE_REFS: readonly RefLine[] = [
   [TAGGED, "refs/tags/v4.2.0"],

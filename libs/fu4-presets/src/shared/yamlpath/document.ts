@@ -7,7 +7,7 @@ const NONE = 0;
 const NAME_START = 1;
 const encoder = new TextEncoder();
 
-interface Anchor {
+export interface Anchor {
   readonly name: string;
   readonly start: number;
   readonly target: SyntaxNode;

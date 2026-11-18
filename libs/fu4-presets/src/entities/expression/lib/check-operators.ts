@@ -7,7 +7,7 @@ import { quote } from "#/shared/text/index.ts";
 
 import type { Scope } from "./scope.ts";
 
-interface Binary<Op> {
+export interface Binary<Op> {
   readonly op: Op;
   readonly left: Expr;
   readonly right: Expr;
@@ -18,21 +18,22 @@ const CONTAINER = new Set(["object", "array"]);
 const ORDERED = new Set(["any", "number", "string"]);
 const UNORDERED_RIGHT = new Set(["null", "bool", "object", "array"]);
 const EQUALITY = new Set(["==", "!="]);
+const LOOSE = new Set(["any", "null"]);
 
 const equalable = (left: ExprType, right: ExprType): boolean => {
-  if (left.kind === "any" || left.kind === "null") {
+  if (LOOSE.has(left.kind)) {
     return true;
   }
   if (SCALAR.has(left.kind)) {
     return !CONTAINER.has(right.kind);
   }
   if (left.kind === "object") {
-    return right.kind === "object" || right.kind === "null" || right.kind === "any";
+    return right.kind === "object" || LOOSE.has(right.kind);
   }
   if (right.kind === "array" && left.kind === "array") {
     return equalable(left.elem, right.elem);
   }
-  return right.kind === "null" || right.kind === "any";
+  return LOOSE.has(right.kind);
 };
 
 const comparable = (op: CompareOp, left: ExprType, right: ExprType): boolean => {

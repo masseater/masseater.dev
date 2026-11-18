@@ -249,8 +249,6 @@ export const refSlug = (ref: RepoRef): Option.Option<Slug> => {
 
 export const isCommitRef = (gitRef: string): boolean => COMMIT.test(gitRef);
 
-export const refIsCommit = (ref: RepoRef): boolean => isCommitRef(refGitRef(ref));
-
 export const commitRef = (ref: RepoRef): Option.Option<string> =>
   Option.liftPredicate(refGitRef(ref), isCommitRef);
 

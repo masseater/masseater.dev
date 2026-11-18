@@ -8,7 +8,7 @@ import { quote } from "#/shared/text/index.ts";
 import { checkConfigVariable } from "./check-config-variable.ts";
 import type { Scope } from "./scope.ts";
 
-interface Deref {
+export interface Deref {
   readonly expr: Expr;
   readonly receiver: Expr;
   readonly property: string;

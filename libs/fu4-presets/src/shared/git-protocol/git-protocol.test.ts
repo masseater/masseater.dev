@@ -1,8 +1,9 @@
 import { Result } from "effect";
 import { expect, test } from "vite-plus/test";
 
-import { decodePackets, encodePackets, lsRefsRequest, parseLsRefs } from "./index.ts";
-import type { Packet } from "./index.ts";
+import { lsRefsRequest, parseLsRefs } from "./index.ts";
+import { decodePackets, encodePackets } from "./pkt-line.ts";
+import type { Packet } from "./pkt-line.ts";
 
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();

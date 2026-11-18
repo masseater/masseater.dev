@@ -1,8 +1,8 @@
 import type { Fu4Config, Plugin } from "@r_masseater/fu4";
 import { Array as Arr, Record as Rec, pipe } from "effect";
 
-import { actionlint as actionlintPlugin } from "#/features/actionlint/index.ts";
-import { ZIZMOR_CONCERNS, zizmor as zizmorPlugin } from "#/features/zizmor/index.ts";
+import { actionlintPlugin } from "#/features/actionlint/index.ts";
+import { ZIZMOR_CONCERNS, zizmorPlugin } from "#/features/zizmor/index.ts";
 import type { Concern, Confidence, Persona, Severity } from "#/features/zizmor/index.ts";
 
 export interface ActionlintOptions {

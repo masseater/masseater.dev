@@ -10,13 +10,13 @@ import type { Text } from "#/shared/yaml/index.ts";
 import { checkInputs } from "./action-inputs.ts";
 import { checkMetadata } from "./action-metadata.ts";
 
-export interface Env {
+export interface LocalActionEnv {
   readonly fail: Fail;
   readonly project: Project;
 }
 
 export const checkLocal =
-  (env: Env) =>
+  (env: LocalActionEnv) =>
   (uses: Text, exec: ExecAction): void => {
     for (const found of Option.toArray(findAction(env.project)(uses.value))) {
       if (Result.isFailure(found)) {

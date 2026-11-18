@@ -15,7 +15,7 @@ import type { Sink } from "#/shared/yaml/decoder.ts";
 import { isNull, pairsOf, valueAt } from "#/shared/yaml/index.ts";
 import type { Pair } from "#/shared/yaml/index.ts";
 
-type Inputs = Readonly<Record<string, ActionInput>>;
+export type Inputs = Readonly<Record<string, ActionInput>>;
 
 interface Fields {
   readonly required: boolean;

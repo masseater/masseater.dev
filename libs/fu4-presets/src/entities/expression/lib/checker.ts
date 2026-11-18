@@ -9,7 +9,7 @@ import type { ExprType, ObjectType } from "#/entities/expression/model/types.ts"
 import { workflowKey } from "./availability.ts";
 import { checkExpr } from "./check.ts";
 import { documented } from "./contexts.ts";
-import type { Env, Scope } from "./scope.ts";
+import type { TypeEnv, Scope } from "./scope.ts";
 import { untrusted } from "./untrusted.ts";
 import type { Untrusted } from "./untrusted.ts";
 
@@ -79,7 +79,7 @@ const withEventInputs = (github: ExprType, type: ObjectType): ExprType => {
   return objectOf({ ...github.props, event: updated })(github.mapped);
 };
 
-const run = (env: Env, tracker: Option.Option<Untrusted>, expr: Expr): Checked => {
+const run = (env: TypeEnv, tracker: Option.Option<Untrusted>, expr: Expr): Checked => {
   const errors: ExprError[] = [];
   const scope: Scope = {
     env,
@@ -104,7 +104,7 @@ const run = (env: Env, tracker: Option.Option<Untrusted>, expr: Expr): Checked =
 };
 
 export const checkerOf = (options: CheckerOptions): Checker => {
-  let env: Env = { vars: GLOBALS, contexts: [], special: [], configVars: options.configVars };
+  let env: TypeEnv = { vars: GLOBALS, contexts: [], special: [], configVars: options.configVars };
   const setVar = (name: string, type: ExprType): void => {
     env = { ...env, vars: { ...env.vars, [name]: type } };
   };

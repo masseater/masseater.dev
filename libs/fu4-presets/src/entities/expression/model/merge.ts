@@ -3,7 +3,7 @@ import { Array as Arr, Option, Record as Rec, pipe } from "effect";
 import { ANY, STRING, arrayOf, isLoose, objectOf, sortedNames } from "./types.ts";
 import type { ArrayType, ExprType, ObjectType } from "./types.ts";
 
-type Merge = (type: ExprType) => (other: ExprType) => ExprType;
+export type Merge = (type: ExprType) => (other: ExprType) => ExprType;
 
 const STRINGY: Readonly<Record<string, readonly string[]>> = {
   number: ["string"],

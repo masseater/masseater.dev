@@ -23,7 +23,7 @@ export type ExprType =
   | ObjectType
   | ArrayType;
 
-type Describe = (type: ExprType) => string;
+export type Describe = (type: ExprType) => string;
 
 export const ANY: ExprType = { kind: "any" };
 export const NULL: ExprType = { kind: "null" };
