@@ -2,7 +2,7 @@ import { defineConfig } from "vite-plus";
 
 export default defineConfig({
   msch: {
-    publish: { installSize: "0 B" },
+    publish: { installSize: "72 MB" },
     lint: {
       overrides: [
         {
@@ -23,7 +23,7 @@ export default defineConfig({
   },
   run: {
     tasks: {
-      test: "vp test run",
+      test: { command: "vp test run", dependsOn: [{ task: "native", from: "dependencies" }] },
       build: "vp pack",
     },
   },

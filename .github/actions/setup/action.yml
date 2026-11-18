@@ -4,18 +4,28 @@ inputs:
   cache:
     description: Whether setup-vp restores its cache
     default: "true"
+  session-path:
+    description: Whether to move the checkout to /home/user/<repository>, where cloud sessions check out, and mount it back at the workspace before the install, so that the one install runs under the paths that cache keys hold and still hard links from the package store
+    default: "false"
   native:
-    description: Whether to install the mise tools, the apt packages and the Rust build cache that only verify needs
+    description: Whether to install the mise tools and the apt packages that only verify needs, with the apt packages installing in the background while the other steps run
     default: "true"
-  rust-cache-key:
-    description: A Rust build cache key that jobs share instead of the key of each job
-    default: ""
-  save-rust-cache:
-    description: Whether to save the Rust build cache, even when the job fails or is cancelled
+  rust-cache:
+    description: Whether a job that installs the native tools also restores and saves the Rust build cache
     default: "true"
 runs:
   using: composite
   steps:
+    - if: ${{ inputs.native == 'true' }}
+      shell: bash
+      run: |
+        cp "$GITHUB_ACTION_PATH/linux-packages.txt" "$RUNNER_TEMP/linux-packages.txt"
+        (
+          status=0
+          { sudo apt-get update && xargs -a "$RUNNER_TEMP/linux-packages.txt" sudo apt-get install -y; } || status="$?"
+          echo "$status" > "$RUNNER_TEMP/linux-packages.status"
+        ) > "$RUNNER_TEMP/linux-packages.log" 2>&1 &
+        echo "$!" > "$RUNNER_TEMP/linux-packages.pid"
     - if: ${{ env.TAKUMI_GUARD_TOKEN != '' }}
       shell: bash
       env:
@@ -29,8 +39,20 @@ runs:
     - uses: voidzero-dev/setup-vp@cab1ab9eaff52d4857875f4f2c016e36af8f2c76 # v1.22.0
       with:
         cache: ${{ inputs.cache }}
-        run-install: |
-          - args: ['--frozen-lockfile']
+        run-install: false
+    - shell: bash
+      env:
+        SESSION_PATH: ${{ inputs.session-path }}
+      run: |
+        if [ "$SESSION_PATH" = true ]; then
+          root="/home/user/${GITHUB_REPOSITORY#*/}"
+          sudo mkdir -p "${root%/*}"
+          sudo mv "$GITHUB_WORKSPACE" "$root"
+          mkdir "$GITHUB_WORKSPACE"
+          sudo mount --bind "$root" "$GITHUB_WORKSPACE"
+          cd "$root"
+        fi
+        vp install --frozen-lockfile
     - if: ${{ steps.lockfile-verified.outputs.cache-hit != 'true' }}
       uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
       with:
@@ -45,12 +67,14 @@ runs:
         cache: ${{ inputs.cache }}
     - if: ${{ inputs.native == 'true' }}
       shell: bash
-      run: sudo apt-get update && xargs -a "$GITHUB_ACTION_PATH/linux-packages.txt" sudo apt-get install -y
-    - if: ${{ inputs.native == 'true' }}
+      run: |
+        tail --pid="$(cat "$RUNNER_TEMP/linux-packages.pid")" -s 0.2 -f /dev/null
+        cat "$RUNNER_TEMP/linux-packages.log"
+        status="$(cat "$RUNNER_TEMP/linux-packages.status")"
+        exit "$status"
+    - if: ${{ inputs.native == 'true' && inputs.rust-cache == 'true' }}
       uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
       with:
-        shared-key: ${{ inputs.rust-cache-key }}
-        save-if: ${{ inputs.save-rust-cache == 'true' }}
         cache-on-failure: "true"
         workspaces: |
           .

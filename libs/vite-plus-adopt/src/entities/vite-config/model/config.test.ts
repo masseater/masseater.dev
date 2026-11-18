@@ -24,13 +24,13 @@ const readsACustomSection = Effect.gen(function* readsACustomSection() {
 
 const failsWhenTheSectionIsMissing = Effect.gen(function* failsWhenTheSectionIsMissing() {
   const root = yield* directoryWith({ "vite.config.ts": CONFIG });
-  const exit = yield* Effect.exit(loadSection(root, "betterleaks"));
+  const exit = yield* Effect.exit(loadSection(root, "h56m"));
   assertTrue(Exit.isFailure(exit));
 });
 
 const failsWithoutAConfigFile = Effect.gen(function* failsWithoutAConfigFile() {
   const root = yield* directoryWith({ "package.json": "{}" });
-  const exit = yield* Effect.exit(loadSection(root, "betterleaks"));
+  const exit = yield* Effect.exit(loadSection(root, "h56m"));
   assertTrue(Exit.isFailure(exit));
 });
 

@@ -1,1 +1,1 @@
-export { betterleaksCheck, scanStagedSecrets } from "./model/secret-checks.ts";
+export { h56mCheck, scanStagedSecrets } from "./model/secret-checks.ts";

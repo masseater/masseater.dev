@@ -11,6 +11,12 @@ const DEPENDENCY_SETS = { telemetry: ["@opentelemetry/sdk-trace-base"] };
 
 const WORKSPACE = "packages:\n  - apps/*\n  - libs/*\n";
 const MANIFEST = `{ "name": "web", "imports": { "#/*": "./src/*" } }`;
+const VITE_CACHES = [
+  { pattern: "!**/node_modules/.vite", base: "workspace" },
+  { pattern: "!**/node_modules/.vite/**", base: "workspace" },
+  { pattern: "!**/node_modules/.vite-temp", base: "workspace" },
+  { pattern: "!**/node_modules/.vite-temp/**", base: "workspace" },
+];
 const SHADCN = `{ "aliases": { "ui": "#/shared/ui" } }`;
 
 const settingsOf = Effect.fn("settingsOf")(function* settingsOf(
@@ -50,7 +56,7 @@ const readsLiteralSettings = Effect.gen(function* readsLiteralSettings() {
   });
   expect(settings).toStrictEqual({
     members: ["apps/web", "libs/own"],
-    ignoredDirectories: [],
+    ignoredDirectories: VITE_CACHES,
     lint: {
       ignorePatterns: ["apps/web/upstream/**", "!apps/web/upstream/keep.ts"],
       overrides: [
@@ -137,6 +143,7 @@ const listsMembersAndIgnoredDirectories = Effect.gen(function* listsMembersAndIg
   expect(settings.ignoredDirectories).toStrictEqual([
     { pattern: "!**/dist", base: "workspace" },
     { pattern: "!**/dist/**", base: "workspace" },
+    ...VITE_CACHES,
   ]);
 });
 

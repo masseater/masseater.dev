@@ -20,8 +20,8 @@ import type { FakeSecret, Placement } from "#/shared/lib/fake-secrets.test.suppo
 import { encodeJson, isJsonArray, isObject, parseLines } from "#/shared/lib/json-lines.ts";
 import type { Json } from "#/shared/lib/json-lines.ts";
 
-import { betterleaksDetector, resolveBetterleaks } from "./betterleaks.ts";
-import type { Detector } from "./betterleaks.ts";
+import { secretDetector } from "./detector.ts";
+import type { Detector } from "./detector.ts";
 import { maskWith } from "./mask.ts";
 
 type Finding = Effect.Success<ReturnType<Detector>>[number];
@@ -34,7 +34,7 @@ const REPEATED = 3;
 const NONE = 0;
 const ONE = 1;
 
-const realDetector = resolveBetterleaks(Option.none()).pipe(Effect.flatMap(betterleaksDetector));
+const realDetector = secretDetector;
 
 const stringsOf = (value: Json): readonly string[] => {
   if (typeof value === "string") {
@@ -237,7 +237,7 @@ const masksPlainLines = Effect.gen(function* plainText() {
   expect(masked.text).toBe("plain [REDACTED:fake] line\n");
 });
 
-layer(nodeServices)("mask with betterleaks", (it) => {
+layer(nodeServices)("mask with h56m", (it) => {
   for (const placement of PLACEMENTS) {
     it.effect(`removes every secret from a ${placement.name}`, () => masksEverySecret(placement));
   }

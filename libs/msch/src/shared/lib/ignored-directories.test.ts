@@ -22,12 +22,16 @@ const excludesIgnoredDirectories = Effect.gen(function* excludesIgnoredDirectori
     { pattern: "!apps/game/**/.godot/**", base: "workspace" },
     { pattern: "!apps/game/out", base: "workspace" },
     { pattern: "!apps/game/out/**", base: "workspace" },
+    { pattern: "!**/node_modules/.vite", base: "workspace" },
+    { pattern: "!**/node_modules/.vite/**", base: "workspace" },
+    { pattern: "!**/node_modules/.vite-temp", base: "workspace" },
+    { pattern: "!**/node_modules/.vite-temp/**", base: "workspace" },
   ]);
 });
 
 layer(fixtureLayer)("ignored directories", (it) => {
   it.effect(
-    "turns the directories each .gitignore names into exclusions of the directory and its contents and keeps any that hold listed files",
+    "turns the directories each .gitignore names and the cache directories of Vite into exclusions of the directory and its contents and keeps any that hold listed files",
     () => excludesIgnoredDirectories,
   );
 });

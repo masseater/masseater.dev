@@ -2,7 +2,7 @@
 name: repository-config
 description: >
   Use when creating or changing the root vite.config.ts of a repository that uses @r_masseater/msch:
-  repositoryConfig, workspaceSettings, the lint preset and its rule sets, extra root tasks, Betterleaks
+  repositoryConfig, workspaceSettings, the lint preset and its rule sets, extra root tasks, h56m
   allowances and textlint words. Not for settings that apply to one workspace only.
 metadata:
   type: core
@@ -51,7 +51,7 @@ The root `vite.config.ts` builds the whole configuration with `repositoryConfig`
 ## What repositoryConfig returns
 
 It returns `lint`, `fmt`, `staged`, `test` and `run`.
-It also returns the vite-plus-adopt sections `commitlint`, `dependencyRules`, `betterleaks` and `textlint`.
+It also returns the vite-plus-adopt sections `commitlint`, `dependencyRules`, `h56m` and `textlint`.
 The `wism` section declares the layout of workspaces, crates and skills.
 
 wism checks the layout and imports of every member workspace, Rust crate and skill.
@@ -60,6 +60,8 @@ A task added to `run.tasks` is therefore verified without listing it anywhere.
 The root `check` and `test` tasks run through `msch-changed`.
 It passes them only the workspaces whose files, dependencies or installed packages changed since the last pass.
 It records passes under `node_modules/.cache/msch/changed`; delete that directory to check everything again.
+`msch` checks the pnpm overrides again only when a file that pnpm resolves from changed since they last passed.
+It records that pass under `node_modules/.cache/msch/overrides`; delete that directory to check them again.
 The lint overrides already relax the rules for shadcn/ui components, public entries and deploy entries.
 They also apply `decisionTestRules` to `*.test.ts`.
 
@@ -69,7 +71,7 @@ They also apply `decisionTestRules` to `*.test.ts`.
 | ----------- | --------------------------------------------------------------------------------------------------------------------------- |
 | `workspace` | The result of `workspaceSettings`                                                                                           |
 | `overrides` | Extra oxlint overrides for the repository                                                                                   |
-| `secrets`   | `lines` and `paths` regular expressions that Betterleaks accepts as public                                                  |
+| `secrets`   | `lines` and `paths` regular expressions that h56m accepts as public                                                         |
 | `textlint`  | `ignores`, `kanji` words allowed past the kanji run limit, `technicalWriting` and `rules` settings, `filters` and `sources` |
 | `run`       | Extra root tasks as `{ name: command }`                                                                                     |
 

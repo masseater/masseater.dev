@@ -14,7 +14,7 @@ import { WatashiFailed } from "#/shared/lib/errors.ts";
 import type { JsonError } from "#/shared/lib/errors.ts";
 import { gzip } from "#/shared/lib/gzip.ts";
 
-import type { Detector } from "./betterleaks.ts";
+import type { Detector } from "./detector.ts";
 import { maskWith } from "./mask.ts";
 import { saveOffset, savedOffset } from "./offsets.ts";
 import { MAX_CHUNK_BYTES, readChunk } from "./transcript.ts";

@@ -1,8 +1,10 @@
 import { Array as Arr, Effect, Stdio, Stream, pipe } from "effect";
 import { ChildProcess, ChildProcessSpawner } from "effect/process";
 
-import { keepOnly, recordsOf } from "./records.ts";
-import type { Records } from "./records.ts";
+import { keepOnly } from "#/shared/lib/pass-records.ts";
+import type { Records } from "#/shared/lib/pass-records.ts";
+
+import { recordsOf } from "./records.ts";
 import { unitsOf } from "./units.ts";
 import type { Unit } from "./units.ts";
 

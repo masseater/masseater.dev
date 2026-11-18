@@ -1,0 +1,34 @@
+import { otlp } from "@r_masseater/vitest-otlp";
+import { defineConfig } from "vite-plus";
+
+export default defineConfig({
+  run: {
+    tasks: {
+      verify: { command: [], dependsOn: ["test", "build"] },
+      native: {
+        command: "node bin/extract.ts",
+        cache: {
+          input: [{ pattern: "Cargo.lock", base: "workspace" }, "bin/extract.ts"],
+          output: ["presets/**", "THIRD-PARTY-NOTICES.txt"],
+        },
+      },
+      build: { command: "vp pack", dependsOn: ["native"] },
+      test: {
+        command: "vp test run",
+        dependsOn: ["native", { task: "native", from: "dependencies" }],
+      },
+    },
+  },
+  pack: {
+    entry: { index: "src/app/index.ts" },
+    platform: "node",
+    sourcemap: true,
+    dts: { generator: "tsgo" },
+    publint: { strict: true },
+  },
+  plugins: [otlp()],
+  test: {
+    include: ["src/**/*.test.ts"],
+    testTimeout: 120_000,
+  },
+});

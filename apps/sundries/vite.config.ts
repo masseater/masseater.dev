@@ -1,14 +1,16 @@
-import { ownerSiteRun } from "@masseater.dev/cloudflare-account/owner-site-run";
-import { defineConfig, mergeConfig } from "vite-plus";
+import { alchemyTasks, deployTo } from "@masseater.dev/cloudflare-account/run-tasks";
+import { defineConfig } from "vite-plus";
 
-export default defineConfig(
-  mergeConfig(
-    {
-      run: ownerSiteRun,
-      test: { include: ["src/**/*.test.ts"] },
+export default defineConfig({
+  run: {
+    tasks: {
+      ...alchemyTasks,
+      retire: {
+        command: "DOCKER_BIN=podman alchemy destroy alchemy.retired.ts --stage prod --yes",
+        cache: false,
+      },
+      "deploy:production": { ...deployTo("prod"), dependsOn: ["retire"] },
     },
-    {
-      run: { tasks: { "deploy:production": { dependsOn: ["plamo-translate#deploy:production"] } } },
-    },
-  ),
-);
+  },
+  test: { include: ["src/**/*.test.ts"] },
+});

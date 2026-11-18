@@ -10,6 +10,7 @@ const ROOT = ".";
 const ANYWHERE = "**/";
 const READ_CONCURRENCY = 16;
 const DIRECTORY_ENTRY = /^(?<anchor>\/?)(?<name>[^!#/].*)\/$/u;
+const TOOL_DIRECTORIES = ["**/node_modules/.vite", "**/node_modules/.vite-temp"];
 
 export interface IgnoredDirectory {
   readonly pattern: string;
@@ -76,7 +77,7 @@ export const collectIgnoredDirectories = Effect.fn("collectIgnoredDirectories")(
       concurrency: READ_CONCURRENCY,
     });
     return pipe(
-      Arr.getSomes(kept),
+      Arr.dedupe([...Arr.getSomes(kept), ...TOOL_DIRECTORIES]),
       Arr.flatMap((glob): readonly IgnoredDirectory[] => [
         { pattern: `${NEGATION}${glob}`, base: "workspace" },
         { pattern: `${NEGATION}${glob}${CONTENTS}`, base: "workspace" },

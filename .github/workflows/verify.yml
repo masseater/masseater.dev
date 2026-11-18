@@ -29,15 +29,15 @@ jobs:
           persist-credentials: false
       - uses: $/.github/actions/setup
         with:
-          rust-cache-key: session-path
-          save-rust-cache: "false"
+          session-path: "true"
+          rust-cache: "false"
       - if: github.event_name != 'schedule'
         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: node_modules/.cache/msch
           key: msch-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}
           restore-keys: msch-
-      - uses: masseater/typescript-template/.github/actions/verify@e80c641e7847e5482f3b043368726580dfd1cc40
+      - uses: masseater/typescript-template/.github/actions/verify@5fbdf9423d0e5debb5d59bc6d59bfec624343aff
         with:
           github-token: ${{ github.token }}
           full-history: "true"
@@ -71,13 +71,14 @@ jobs:
           persist-credentials: false
       - uses: $/.github/actions/setup
         with:
-          rust-cache-key: session-path
+          session-path: "true"
+          rust-cache: "false"
       - uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: node_modules/.cache/msch
           key: msch-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}
           restore-keys: msch-
-      - uses: masseater/typescript-template/.github/actions/verify@e80c641e7847e5482f3b043368726580dfd1cc40
+      - uses: masseater/typescript-template/.github/actions/verify@5fbdf9423d0e5debb5d59bc6d59bfec624343aff
         with:
           github-token: ${{ github.token }}
           full-history: "true"
@@ -188,6 +189,6 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: masseater/typescript-template/.github/actions/ci-telemetry@e80c641e7847e5482f3b043368726580dfd1cc40
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@5fbdf9423d0e5debb5d59bc6d59bfec624343aff
         with:
           github-token: ${{ github.token }}
