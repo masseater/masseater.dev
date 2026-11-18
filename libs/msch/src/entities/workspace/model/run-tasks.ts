@@ -21,7 +21,7 @@ const decodeTaskObject = Schema.decodeUnknownOption(TaskObject);
 
 export type RunTask = typeof TaskProperty.Type;
 
-interface RunTasks {
+export interface RunTasks {
   readonly file: string;
   readonly source: string;
   readonly tasks: readonly RunTask[];
