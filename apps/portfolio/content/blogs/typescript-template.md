@@ -1,28 +1,28 @@
 ---
-title: "typescript-template の中身（2026年10月24日時点）"
-description: "Cloudflare で動く TypeScript アプリ向けの GitHub テンプレート typescript-template v0.0.10 の構成と仕組み。"
+title: "typescript-template の内容（2026年10月24日時点）"
+description: "Cloudflare上で動作するTypeScriptアプリ向けGitHubテンプレート「typescript-template v0.0.10」の構造と仕組み。"
 tags: ["TypeScript", "Cloudflare", "Claude Code"]
 published: true
 ---
 
-GitHub テンプレート [typescript-template](https://github.com/masseater/typescript-template) を公開している。Cloudflare で動く TypeScript の Web アプリを、検査・CI・デプロイ・AI エージェントとの作業の決まりがそろった状態から始めるためのものである。新しいリポジトリを作るたびに lint や CI やデプロイを組み直す手間をなくすために作った。[テンプレートのままのアプリ](https://typescript-template-web-production-ntesuocc46gilfjl.masseater.workers.dev)も動いている。
+GitHubテンプレート [typescript-template](https://github.com/masseater/typescript-template) を公開している。これは、チェック、CI、デプロイ、およびAIエージェントとの連携ルールがすでに整備された状態から、Cloudflare上で動作するTypeScript製Webアプリを立ち上げるためのものである。新しいリポジトリを作成するたびに、リントやCI、デプロイを再構築する手間を省くためにこれを作った。[テンプレートそのままのアプリ](https://typescript-template-web-production-ntesuocc46gilfjl.masseater.workers.dev)も動作している。
 
-このテンプレートは、コードを書くのは主に AI エージェントだという前提で組んでいる。人間が決めるのは、何を使い、何を禁止し、何を検査するかである。何が入っていて、それぞれどう動いているかを順に紹介する。内容は 2026年10月24日時点の v0.0.10 のものである。
+このテンプレートは、コードを書くのは主にAIエージェントであるという前提で構築されている。何を使うか、何を禁止するか、何をチェックするかは、人が決めることだ。何が入っているのか、各パーツがどのように動作するのかを順に紹介する。内容は2026年10月24日時点のv0.0.10のものである。
 
-## アプリの構成
+## アプリの構造
 
-| 役割                           | 使うもの                        |
-| ------------------------------ | ------------------------------- |
-| 画面                           | TanStack Start                  |
-| API                            | Elysia                          |
-| データベース                   | Cloudflare D1 を Drizzle で扱う |
-| 認証                           | better-auth                     |
-| UI                             | shadcn/ui                       |
-| UI 状態                        | effect-atom                     |
-| サーバー状態                   | TanStack Query                  |
-| 検証・日時・ログ・トレーシング | Effect                          |
+| 役割                                 | 何に使うか                   |
+| ------------------------------------ | ---------------------------- |
+| 画面                                 | TanStack Start               |
+| API                                  | Elysia                       |
+| データベース                         | Cloudflare D1, Drizzleで処理 |
+| 認証                                 | better-auth                  |
+| UI                                   | shadcn/ui                    |
+| UI状態                               | effect-atom                  |
+| サーバーの状態                       | TanStack Query               |
+| バリデーション、日付、ログ、トレース | Effect                       |
 
-API は Elysia で書く。`src/app/routes/api.$.ts` が `/api/*` を Elysia のルーターへ渡し、各スライスは自分のルートをそこへ足す。クライアント側は Elysia のクライアントである Eden の型から TanStack Query のクエリを作るので、API の型を書き写す場所がない。SSR 中は `createIsomorphicFn` でルートの `handle` を直接呼び、自分自身へ HTTP を往復させない[^structure]。
+APIはElysiaで書かれている。`src/app/routes/api.$.ts` は `/api/*` を Elysia ルーターに渡し、各スライスがそこに独自のルートを追加する。クライアント側では、TanStack QueryのクエリはElysiaのクライアントであるEdenの型から構築されるため、API型を手作業でコピーする箇所はない。SSR 中、`createIsomorphicFn` はルートの `handle` を直接呼び出すため、アプリは自身への HTTP ラウンドトリップを行わない[^structure]。
 
 ```ts
 const client = createIsomorphicFn()
@@ -32,25 +32,25 @@ const client = createIsomorphicFn()
 const todoQueries = createQueries<TodoRoutes>(client());
 ```
 
-`serverClient` は Eden の `treaty` に独自の `fetcher` を渡し、受け取った `Request` を Elysia アプリの `handle` にそのまま渡す。`browserClient` は同じ `treaty` を自分のオリジンに向ける。どちらも型は `TodoRoutes` から取るので、クエリの引数と戻り値はルート定義を変えれば追従する。
+`serverClient` は独自の `fetcher` を Eden の `treaty` に渡し、受け取った `Request` を Elysia アプリの `handle` に直接渡す。`browserClient` は、自身のオリジンにおいて同一の `treaty` を指す。どちらも `TodoRoutes` から型を取っているため、ルート定義が変更された際にクエリの引数と戻り値がそれに追従する。
 
-D1 のスキーマは `*.table.ts` に書き、`vp run db:generate` でマイグレーションを生成する。better-auth のテーブルも `vp run auth:generate` で生成し、手で書かない。UI 状態とサーバー状態は別のライブラリに分け、どちらが持つ値かを曖昧にしない。検証、日時、ログ、トレーシングは Effect に寄せ、用途ごとに別のライブラリを足さない。アプリの中は Feature-Sliced Design で切り、使われる場所の近くに置いて、再利用されるまで切り出さない。
+D1スキーマは`*.table.ts`で記述されており、マイグレーションは`vp run db:generate`で生成される。better-authのテーブルも`vp run auth:generate`で生成され、手動で記述されるものではない。UI状態とサーバー状態は別々のライブラリに分かれているため、どちらが値を保持しているかについて曖昧さがない。検証、日付、ログ、トレースはEffectに集約されており、用途ごとに個別のライブラリが追加されることはない。アプリの内部はFeature-Sliced Designで切り出されており、コードは使用される箇所の近くに配置され、再利用されるまで切り出されない。
 
-## インフラ
+## インフラストラクチャ
 
-Cloudflare のリソースは [Alchemy](https://alchemy.run) でコードとして定義し、wrangler は使わない。`alchemy.run.ts` が D1 と Worker を定義し、`vp exec alchemy deploy --stage production` でデプロイする。リソース名はすべて `src/app/app-name.ts` の `APP_NAME` から組み立て、別の名前が混ざらないことをテストで確かめている[^alchemy]。
+Cloudflareのリソースは[Alchemy](https://alchemy.run)を用いたコードとして定義されており、wranglerは使用されていない。`alchemy.run.ts` で D1 と Worker を定義し、`vp exec alchemy deploy --stage production` でデプロイする。すべてのリソース名は `src/app/app-name.ts` の `APP_NAME` から構築されており、テストの結果、他の名前が混在していないことが確認されている[^alchemy]。
 
-本番の Worker には最初から守りと記録が付いている。独自ドメインのゾーンを持つリポジトリでは、脆弱性スキャナが探る典型的なパスの一覧から WAF のカスタムルールを生成する。生成されるのは次のような式である。
+本番用のWorkerには、最初から保護と記録機能が備わっている。カスタムドメインのゾーンを持つリポジトリでは、脆弱性スキャナーが調査する典型的なパスのリストからWAFカスタムルールが生成される。生成された式は次のようになっている。
 
 ```text
 (lower(http.request.uri.path) contains "/wp-admin" or ...) and not <ハニーポットのパス>
 ```
 
-ハニーポットに残したパスは遮断せず、専用の Worker が受ける。この Worker はパス、接続元 IP、国、ASN、User-Agent を Analytics Engine に 1 行書いて 404 を返すだけで、どこから何を探られたかが後から集計できる。すべての Worker に `logpush: true` を付け、ログを外に残す[^edge-guard]。Workers Paid プランが前提である。
+ハニーポットとして残されたパスはブロックされず、専用のWorkerが受け取る。このWorkerは、Analytics Engineにパス、送信元IP、国、ASN、User-Agentを含む1行のみを書き込み、404を返すため、後でどこから何をプローブしたかを集計できる。すべての Worker は `logpush: true` であるため、ログは外部に保持される[^edge-guard]。Workers Paidプランを前提としている。
 
-## 検査
+## チェック
 
-検査は `vp run verify` の 1 コマンドで全部走る。verify は `vite.config.ts` のタスクで、`dependsOn` に並べた検査を先に動かし、最後に `vp check` を実行する。
+すべてのチェックは、`vp run verify` という1つのコマンドで実行される。verify は `vite.config.ts` 内のタスクで、まず `dependsOn` に記載されたチェックを実行し、最後に `vp check` を実行する。
 
 ```ts
 verify: {
@@ -60,17 +60,17 @@ verify: {
 },
 ```
 
-ここに入るのは、型検査と lint、テスト、依存のバージョン一致、Markdown の文章検査、Renovate 設定の検証である[^verify]。さらに GitHub Actions のワークフロー自体の検査、Feature-Sliced Design の構造検査、Drizzle のスキーマとマイグレーションの一致が続く。dead code と未使用依存の検出、脆弱性のある依存の監査もここにある。`vp run` は入力ファイルと環境変数からキャッシュするので、変更のない検査は再実行されない。Markdown の文章検査には、日本語の技術文書向けのルールと、AI が書いた文章にありがちな表現を検出するルールが入っている。
+ここに入れるのは、型チェックとリント、テスト、依存関係のバージョン照合、Markdownの文章チェック、Renovate設定のバリデーションだ[^verify]。続いて、GitHub Actionsのワークフロー自体のチェック、Feature-Sliced Designの構造的チェック、およびDrizzleスキーマがマイグレーションと一致しているかを確認する。デッドコードや未使用の依存関係の検出、脆弱な依存関係の監査もここにある。`vp run` は入力ファイルや環境変数に基づいてキャッシュを行うため、変更のないチェックは再度実行されない。Markdownの文章チェックには、日本語の技術文書に関するルールや、AIが記述したテキストで頻出する表現を検出するルールが含まれている。
 
-lint の方針は次の表のとおりである。
+リントポリシーは以下の通りである。
 
-| 方針                                              | 仕組み                                                                                                                                                   |
-| ------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 使うライブラリの公式ルールをすべて error で入れる | oxlint の JS プラグイン機構で ESLint 用プラグインを読み込み、各プラグインの `rules` を列挙して全部 `error` にする                                        |
-| 採用しなかったライブラリの import を禁止する      | 「理由 → 代わりに禁止するパッケージ名」の対応表から `no-restricted-imports` の設定を生成する。import した時点で違反になり、理由が表示される[^restricted] |
-| AST で判定できない決まりは LLM に判定させる       | 自作の [oxlint-plugin-decision](https://www.npmjs.com/package/@r_masseater/oxlint-plugin-decision) が、ファイル単位で LLM に判定を求める[^decision]      |
+| ポリシー                                                       | 仕組み                                                                                                                                                         |
+| -------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 使用しているライブラリの公式ルールをすべてエラーとして出力せよ | oxlintのJSプラグイン機構でESLintプラグインを読み込み、各プラグインの`rules`を列挙して、すべて`error`にする。                                                   |
+| 採用されなかったライブラリの持ち込み禁止                       | 「理由 → 禁止するパッケージ名」のテーブルから `no-restricted-imports` 設定を生成する。1つインポートするとその場で違反となり、その理由が表示される[^restricted] |
+| ASTからは判定できないルールをLLMに判定させる                   | 自作の [oxlint-plugin-decision](https://www.npmjs.com/package/@r_masseater/oxlint-plugin-decision) では、LLMにファイルごとの判定を依頼している[^decision]      |
 
-1 つ目は、プラグインの `rules` オブジェクトのキーを列挙するだけの関数で実現している。
+1つ目は、プラグインの `rules` オブジェクトのキーを単に列挙する関数で実装されている。
 
 ```ts
 const allRulesOf = (prefix: string, plugin: Readonly<{ rules: object }>): Rules =>
@@ -83,9 +83,9 @@ rules: {
 },
 ```
 
-recommended の一覧を写すのではなく、プラグインが持つルールを全部有効にするので、プラグインの更新で足されたルールも自動で入る。oxlint 自体のカテゴリは nursery まで `error` にし、`denyWarnings` で warning を 1 件も残さない。
+推奨リストをコピーするのではなく、プラグインが持つすべてのルールを有効にするため、プラグインのアップデートで追加されたルールが自動的に適用される。oxlint自身のカテゴリはnurseryまで一貫して `error` に設定されており、`denyWarnings` は警告を1つも残さない。
 
-2 つ目の対応表は、たとえば次の形である。
+2つ目の表は、例えばこんな感じだ。
 
 ```ts
 const requiredStack = {
@@ -94,9 +94,9 @@ const requiredStack = {
 };
 ```
 
-この表から `paths` と `patterns` を組み立てて ESLint の `no-restricted-imports` に渡す。エージェントが zod を import すると、「Effect だけで扱う」という理由が lint のメッセージとして返る。CLAUDE.md に「zod は使わない」と書くより確実に止まる。
+この表から、`paths` と `patterns` が構築され、ESLint の `no-restricted-imports` に渡される。エージェントが zod をインポートすると、「Effect だけで扱う」という理由が lint メッセージとして返ってくる。これは CLAUDE.md に「zod は使わない」と書くよりも確実に止める。
 
-3 つ目の LLM 判定は、oxlint の JS プラグインとして動く。ルールは英語の yes/no の問いと、違反時のメッセージ、確信度の閾値で定義する。
+3つ目のLLM判定は、oxlintのJSプラグインとして動作する。ルールは、英語によるはい/いいえ形式の質問、違反時のメッセージ、および信頼度の閾値によって定義される。
 
 ```ts
 defineDecisionRule({
@@ -109,15 +109,15 @@ defineDecisionRule({
 });
 ```
 
-ファイルごとに問いを OpenRouter 経由のモデルに投げ、閾値を超えた確信度のときだけ違反にする。判定結果はファイル内容をキーにキャッシュし、CI でも `actions/cache` で引き継ぐので、変更のないファイルに同じ問いを投げ直さない。LLM が lint を担うと、判定がぶれないかという不安がある。そこで、確信できるものだけを違反とし、閾値を下げて取りこぼしを拾いにいかないと決めている。ルール化の前に、正解の分かる違反例と非違反例で判定できるかを確かめる。
+質問はOpenRouterを通じてファイルごとにモデルへ送信され、信頼度が閾値を超えた場合にのみ違反となる。判定結果はファイル内容をキーとしてキャッシュされ、CIでも `actions/cache` で引き継がれるため、変更のないファイルに対しては同じ質問が再送されることはない。LLMがリントを引き受けると、その判断が揺らぐのではないかという懸念がある。そこで、確信が持てるものだけを違反とし、見落としを検知するために閾値を下げないことに決めた。何かをルールとする前に、答えが分かっている違反例と違反していない例で判定できるかを確認する。
 
-コード内コメントは `eslint-plugin-no-comments` で禁止し、許すのは lint の disable 指示だけである。その disable 指示も、不要になったものは `reportUnusedDisableDirectives` で error になる。「なぜ」はコミットメッセージに書く[^docs]。コードを読めば分かることを書かない、という方針の延長で、説明が古くなる場所を減らしている。
+コード内のコメントは `eslint-plugin-no-comments` で禁止されており、許可されるのはリント無効化ディレクティブのみである。そうした無効化ディレクティブであっても、不要になれば `reportUnusedDisableDirectives` によってエラーになる。「なぜ」はコミットメッセージに記載する[^docs]。コードを読んでわかることは書かないという方針の延長で、説明が陳腐化する箇所を減らしている。
 
-## CI とデプロイ
+## CIとデプロイ
 
-PR ごとの CI はない。main に push されると verify ワークフローが走り、通ればそのまま本番にデプロイされる。動作は本番で確かめる、という順序である[^workflow]。
+PRごとにCIはない。mainがプッシュされるとverifyワークフローが実行され、パスすればそのまま本番にデプロイされる。本番環境で挙動がチェックされるという順番だ[^workflow]。
 
-verify ジョブは、push された範囲のコミットメッセージを commitlint で確かめ、gitleaks で秘密情報の混入を見てから、`vp run verify` を動かす。deploy ジョブは verify の成功を待ち、その時点でも自分のコミットが main の先頭であるときだけ `alchemy deploy` を実行する。連続で push されたときに古いコミットが後からデプロイされるのを防ぐためである。
+verifyジョブは、pushされた範囲のコミットメッセージをcommitlintでチェックし、gitleaksでリークされたシークレットを探し、その後`vp run verify`を実行する。デプロイジョブは検証の成功を待ち、その時点で自身のコミットが依然として main のヘッドである場合にのみ `alchemy deploy` を実行する。これにより、プッシュが連続する場合に、古いコミットが後からデプロイされるのを防ぐことができる。
 
 ```yaml
 - id: head
@@ -130,40 +130,40 @@ verify ジョブは、push された範囲のコミットメッセージを comm
   run: vp exec alchemy deploy --stage production --yes
 ```
 
-GitHub の concurrency 設定で古い run を取り消す方法もあるが、verify が通ったコミットを取り消さずに残しておきたいので、デプロイの直前に先頭かどうかを見る形にしている。
+GitHubの並行処理設定で古い実行をキャンセルするやり方もあるが、通ったコミットはキャンセルせずに検証として残しておきたいので、デプロイ直前にそのコミットがheadかどうかを確認する。
 
-デプロイしたあとの本番も計測する。
+本番環境もデプロイ後に計測する。
 
-| 計測                       | いつ             | 仕組み                                                                                                                                              |
-| -------------------------- | ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Lighthouse の Web Vitals   | デプロイ直後     | `tools/web-vitals` が本番 URL と、同じオリジンのリンクを押した遷移を user flow で測る。LCP・INP・CLS のどれかが合格点に届かなければジョブが失敗する |
-| ZAP のベースラインスキャン | 週に 1 回        | `zaproxy/action-baseline` を本番に当てる。警告も含めて直し、誤検知だけを `rules.tsv` に書く                                                         |
-| CI のジョブごとの所要時間  | ワークフローごと | 最後のジョブがジョブとステップの時間を自前の Worker に送る。Worker は GitHub の OIDC トークンで送り元を確かめ、Workers Logs に残す                  |
+| 測定                    | タイミング           | 仕組み                                                                                                                                                                                                                  |
+| ----------------------- | -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Lighthouse Web Vitals   | デプロイ直後         | `tools/web-vitals` は、ユーザーフローにおける同一オリジンリンクのクリックによってトリガーされるプロダクションURLとナビゲーションを測定する。LCP、INP、またはCLSのいずれかが合格点に達していない場合、ジョブは失敗する。 |
+| ZAPベースラインスキャン | 週に1回              | `zaproxy/action-baseline` を本番環境で実行する。警告を含めすべて修正され、`rules.tsv`には誤検知のみが書き込まれる。                                                                                                     |
+| 各CIジョブに要した時間  | 各ワークフローごとに | 最後のジョブは、ジョブの時刻と手順を自分のWorkerに送信する。WorkerはGitHubのOIDCトークンで送信元を確認し、Workers Logsに記録する。                                                                                      |
 
-verify が失敗すると autofix ジョブが起動し、失敗した run の ID とブランチとコミットを渡して autofix ワークフローを呼ぶ。autofix はそのコミットがまだブランチの先頭であることを確かめる。main での失敗なら修正用のブランチを切り、[claude-code-action](https://github.com/anthropics/claude-code-action) で Claude を動かす。プロンプトは、失敗ログを `gh run view --log-failed` で読んで lint を弱めずに根本原因を直し、`vp run verify` が通るまで繰り返してコミットするよう指示する。コミットができていれば push し、修正用ブランチなら draft の PR を開く。依存の更新は Renovate が automerge し、リリースは release-please が切る[^automation]。人間が定期的に手を動かす箇所をなくしている。
+検証に失敗すると、autofixジョブが起動してautofixワークフローを呼び出し、失敗した実行のID、ブランチ、およびコミットを渡す。autofixは、コミットが引き続きブランチのheadであることを確認する。失敗が main にある場合は、修正用のブランチを切り、[claude-code-action](https://github.com/anthropics/claude-code-action) で Claude を実行する。プロンプトでは、`gh run view --log-failed` で失敗ログを読み込み、リントを弱めずに根本原因を修正して `vp run verify` がパスするまでこれを繰り返し、コミットするように指示されている。コミットが行われた場合はプッシュし、fixブランチの場合はドラフトPRを開く。依存関係の更新はRenovateが自動マージし、リリースはrelease-pleaseがカットする[^automation]。日常的に手作業で行わなければならない作業がなくなる。
 
-## AI エージェントとの作業の決まり
+## AIエージェントを扱う際のルール
 
-CLAUDE.md の最上位原則は、何かを強制・推奨したいときの手段の選び方である[^principle]。
+CLAUDE.md の最上位の原則は、何かを強制したり推奨したりしたい場合の手段をどう選ぶかである[^principle]。
 
-1. ライブラリ公式の統合手段（lint ルール、skill、plugin、CLI など）
-2. それを実現している既存のライブラリやツール
-3. 方針を提言しているブログ・issue・discussion
-4. 自作
+1. ライブラリの公式な統合手段（リントルール、スキル、プラグイン、CLIなど）
+2. それを実現する既存のライブラリやツール
+3. 方針を提示するブログ、イシュー、ディスカッション
+4. 自作する
 
-自作は最後である。あわせて、検査を通すための設定の無効化や簡易化、閾値の引き下げ、抑止ディレクティブの使用を禁じている。エージェントに任せると最初に起きるのが「lint を off にして通す」だからである。
+自作は最後だ。また、チェックを通過させるための設定の無効化や簡略化、閾値の引き下げ、抑制ディレクティブの使用も禁止している。エージェントに任せると真っ先に起こるのが「リントをオフにして通らせる」ことだからだ。
 
-この決まりは文章で書くだけでなく、Claude Code のフックで機械的に守らせる[^hooks]。フックは `.claude/settings.json` に登録した小さなスクリプトで、すべて Effect で書いてある。
+これらのルールはテキストで記述されているだけでなく、Claude Codeのフック[^hooks]によって機械的に強制されている。フックは `.claude/settings.json` に登録された小さなスクリプトで、すべて Effect で記述されている。
 
-| タイミング          | 動くもの                                                                                                                                              |
-| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| セッション開始時    | 依存をインストールする。テンプレートの新しいリリースがあれば知らせる                                                                                  |
-| Bash を実行する直前 | コマンドをシェル構文として解析し、`env` や `bash -c` の奥にあっても pnpm の直接実行なら拒否して、`vp` での書き方を返す                                |
-| ファイル編集後      | 編集したワークスペースに対して fallow を `--changed-since HEAD` で走らせ、dead code や未使用依存が出れば差し戻す                                      |
-| 作業終了時          | `vp run verify` を走らせ、失敗したら終了を止める。エージェントはログを見て作業を続ける                                                                |
-| 作業終了時          | 4 つの審査エージェントが `git diff` を読む。検査の緩和、自作の正当性、Feature-Sliced Design のコロケーション、Web 標準の使い方をそれぞれ 1 つずつ見る |
+| タイミング           | 何が動作するか                                                                                                                                                                                             |
+| -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| セッション開始時に   | 依存関係をインストールする。テンプレートの新リリースがあった際に通知する                                                                                                                                   |
+| Bashを実行する直前   | コマンドをシェル構文として解析し、pnpm を直接実行すると、`env` や `bash -c` の深いところまで入っていても拒否し、`vp` での書き方を返す。                                                                    |
+| ファイルを編集した後 | 編集中のワークスペースで `--changed-since HEAD` を指定してfallowを実行し、デッドコードや未使用の依存関係が現れた場合は戻す。                                                                               |
+| 作業の終わりに       | `vp run verify` を実行し、失敗した場合は終了を停止する。エージェントはログを読み込み、作業を続ける。                                                                                                       |
+| 作業の終わりに       | 4人のレビュアーエージェントが `git diff` を読み取る。それぞれが重視しているのは、チェックの緩和、自前で構築する根拠、フィーチャースライシング設計によるコロケーション、そしてウェブ標準の活用という1点だ。 |
 
-終了を止めるフックは、verify の結果を見て Claude Code が解釈する JSON を標準出力に書くだけである。
+終了を阻止するフックは、検証結果のみを参照し、Claude Codeが標準出力として解釈するJSONを書き出す。
 
 ```ts
 runHook(
@@ -179,17 +179,17 @@ runHook(
 );
 ```
 
-`decision` が `block` だと Claude Code は応答を終えられず、`reason` がそのままエージェントへの次の入力になる。失敗ログの末尾を渡しているので、エージェントは何が壊れたかを読んでそのまま直しに向かう。
+`decision` が `block` の場合、Claude Code は応答を完了できず、`reason` がそのままエージェントの次の入力となる。失敗ログの末尾が渡されるため、エージェントは何が壊れたかを読み取って、そのまま修正に移る。
 
-審査エージェントは Claude Code のフックの `agent` 型で、プロンプトと判定材料（`git status`、`git diff HEAD`、`git log main..HEAD -p`）を渡す。問題があれば `ok: false` と直し方を返し、それがエージェント本人に差し戻される。
+レビュアーエージェントは、プロンプトと判定材料（`git status`、`git diff HEAD`、`git log main..HEAD -p`）が与えられた際の `agent` 型の Claude Code フックである。問題がある場合は、`ok: false` とその修正方法を返し、それがエージェント自体に返される。
 
-さらに `/loop` という自己改善ループがある[^loop]。中身は 3 行の手順である。使っているライブラリとツールについて、まだ適用していないより厳しい検査手段を最上位原則の順で探す。見つけたら、意図的な違反で失敗し、戻すと通ることを確かめてから足す。セッションの最初に引数なしで起動する決まりなので、テンプレートは配った時点で止まらず、使うたびに厳しくなる。
+`/loop`[^loop] という自己改善ループもある。その内容は3行の手順書である。使用しているライブラリやツールについては、最上位の原則に従って、まだ適用されていないより厳格なチェック手段を探すこと。見つけたら、意図的な違反で失敗し、それが元に戻ればパスすることを確認した上で、追加する。セッションの開始時に引数なしで起動する決まりであり、これによりテンプレートが配布された時点で終了せず、使用するたびにより厳格になる。
 
 ## テンプレートの更新を取り込む
 
-テンプレートから作ったリポジトリは、元のテンプレートが更新されても放置されがちである。ここでは release-please でテンプレートにバージョンを切り、派生リポジトリ側のセッション開始フックが差分を取り込む手順を出す[^release]。
+テンプレートから作成されたリポジトリは、元のテンプレートが更新されても放置されがちだ。ここでは、release-pleaseがテンプレートのバージョンをカットし、派生リポジトリ側のセッション開始フックが差分を取り込む手順を提示している[^release]。
 
-フックは `.github/release-please/manifest.json` から自分が取り込んでいるバージョンを読み、GitHub API でテンプレートの最新リリースを取る。差があれば、新しいリリースがあることと変更点を最初の応答で知らせるよう、エージェントへの指示を Claude Code の `additionalContext` として返す。取り込むと答えたときの手順もそこに書いてある。
+フックは `.github/release-please/manifest.json` から取得したバージョンを読み込み、GitHub API経由でテンプレートの最新リリースを取得する。差異がある場合は、Claude Code の `additionalContext` としてエージェントに指示を返し、最初のレスポンスで新リリースがあったことと変更点を報告するよう伝える。それを受け取りたいと回答した場合の手順もそこに書かれている。
 
 ```sh
 git fetch --no-tags https://github.com/masseater/typescript-template.git \
@@ -197,11 +197,11 @@ git fetch --no-tags https://github.com/masseater/typescript-template.git \
 git diff refs/template/v0.0.9 refs/template/v0.0.10 | git apply --3way
 ```
 
-2 つのタグの差分だけを 3-way で当てるので、派生リポジトリ側の変更とぶつかった箇所だけが衝突として残る。衝突を解消し、`vp install` と `vp run verify` を通してコミットするところまでエージェントが進める。
+2つのタグの差分のみを3ウェイマージで適用するため、派生リポジトリ側の変更と衝突する箇所のみがコンフリクトとして残る。エージェントは競合の解消、`vp install` と `vp run verify` の通過、コミットへと進む。
 
 ## 関連
 
-public リポジトリで開発する意義は[別の記事](/blogs/public-repo-development)に、public にすると無料になるものは[OSS 向け無償プランのまとめ](/blogs/oss-free-plans)に書いた。Effect を全面採用する理由は[AIにコードを書かせるならEffectを全面採用する](/blogs/effect-for-ai)にある。
+公開リポジトリで開発することの意義については[別の記事](/blogs/public-repo-development)で、公開すると無料になるものについては[OSSの無料プランまとめ](/blogs/oss-free-plans)で書いた。至る所でEffectを採用する理由は、[AIにコードを書かせるなら、あらゆる場面でEffectを採用せよ](/blogs/effect-for-ai)にある。
 
 [^structure]: [CLAUDE.md](https://github.com/masseater/typescript-template/blob/main/CLAUDE.md) の「構成」「配置」「その他」と [apps/web/src/shared/api](https://github.com/masseater/typescript-template/tree/main/apps/web/src/shared/api)
 
