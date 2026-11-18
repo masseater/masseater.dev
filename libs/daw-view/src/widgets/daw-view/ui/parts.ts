@@ -46,8 +46,8 @@ export const partsOf =
       roll: rollPanel(),
     };
     root.classList.add(...ROOT);
-    const parent: ParentNode = root;
-    parent.append(
+    root.replaceChildren(
+      ...root.childNodes,
       parts.header.node,
       parts.deck.node,
       parts.tracks.node,
