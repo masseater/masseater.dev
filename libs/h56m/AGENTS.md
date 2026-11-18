@@ -2,7 +2,8 @@
 
 This workspace is a secret scanner. The core is written in Rust (`native/core`) and called from TypeScript through the napi addon (`native/node`). Settings go in the `h56m` key of vite.config.ts.
 
-- Take the matching engine from kingfisher-rules and kingfisher-scanner as dependencies. Do not copy their code or rules into this workspace.
+- The matching engine in `native/core` follows the semantics of Betterleaks: the rule tests of Betterleaks pass against it, and its findings on encoded text match Betterleaks. Keep it that way when changing the scanner, the expression functions, the search windows or the decoders. Do not add rules here.
+- Update `THIRD-PARTY-NOTICES.txt` by hand when code or data from another project comes in.
 - The engine has no rules of its own. Do not add rules or default settings here; add them to `@r_masseater/h56m-presets`.
 - Do not add live validation that sends secrets to services.
 - Do not write real secrets, even in tests. Build test tokens by joining parts so that no source holds the whole value.

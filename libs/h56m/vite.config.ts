@@ -15,18 +15,10 @@ export default defineConfig({
           "cargo fmt -p h56m-core -p h56m-node --check && cargo clippy -p h56m-core -p h56m-node --all-targets --locked -- -D warnings && cargo test -p h56m-core --release --locked",
         cache: { input: [...CARGO_INPUTS], output: [] },
       },
-      notices: {
-        command: "node bin/notices.ts",
-        cache: {
-          input: [{ pattern: "Cargo.lock", base: "workspace" }],
-          output: ["THIRD-PARTY-NOTICES.txt"],
-        },
-      },
       ...addonTasks({
         command: "node bin/build-native.ts",
         inputs: CARGO_INPUTS,
         locked: [...LOCKED.input, ...DERIVATION_READS],
-        buildAfter: ["notices"],
       }),
     },
   },
