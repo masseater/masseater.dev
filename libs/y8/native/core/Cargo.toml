@@ -9,14 +9,14 @@ publish = false
 
 [dependencies]
 agnix-core = "=0.61.0"
-pulldown-cmark = { version = "0.13.6", default-features = false }
-rayon = "1"
-regex = "1"
-serde = { version = "1", features = ["derive"] }
-serde_json = "1"
-tracing = "0.1"
-unicode-width = "0.2.3"
+pulldown-cmark = { version = "=0.13.6", default-features = false }
+rayon = "=1.12.0"
+regex = "=1.13.1"
+serde = { version = "=1.0.229", features = ["derive"] }
+serde_json = "=1.0.154"
+tracing = "=0.1.44"
+unicode-width = "=0.2.3"
 
-lindera = { version = "6.2.0", default-features = false, features = ["embed-ipadic"] }
+lindera = { version = "=6.2.0", default-features = false, features = ["embed-ipadic"] }
 [lints]
 workspace = true
