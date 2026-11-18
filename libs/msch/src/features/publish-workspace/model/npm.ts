@@ -18,6 +18,7 @@ import { manifestIn } from "./manifest.ts";
 import type { Manifest } from "./manifest.ts";
 import { nativeFields, nativeFileOf, nativeReadme } from "./platforms.ts";
 import type { NativePackage } from "./platforms.ts";
+import { widenRangesEnv } from "./widened-ranges.ts";
 
 const TARBALL = "package.tgz";
 const NPM_DIR = "npm";
@@ -156,7 +157,13 @@ const pack = Effect.fn("publish.pack")(function* pack(directory: string) {
   const path = yield* Path.Path;
   const temporary = yield* fileSystem.makeTempDirectoryScoped();
   const tarball = path.join(temporary, TARBALL);
-  yield* mustSucceed({ command: "vp", args: ["pm", "pack", "--out", tarball], cwd: directory });
+  const env = yield* widenRangesEnv(temporary);
+  yield* mustSucceed({
+    command: "vp",
+    args: ["pm", "pack", "--out", tarball],
+    env,
+    cwd: directory,
+  });
   return tarball;
 });
 

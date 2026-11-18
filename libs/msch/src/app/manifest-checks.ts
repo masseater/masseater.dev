@@ -1,5 +1,6 @@
 import { Array as Arr, Effect } from "effect";
 
+import { checkExactVersions } from "#/features/check-exact-versions/index.ts";
 import { checkPackageScope } from "#/features/check-package-scope/index.ts";
 import { checkNodeVersion } from "#/features/check-runtime-version/index.ts";
 import { checkUnusedWorkspaces } from "#/features/check-unused-workspaces/index.ts";
@@ -7,7 +8,12 @@ import { checkUnusedWorkspaces } from "#/features/check-unused-workspaces/index.
 /** @internal */
 export const checkManifests = Effect.fn("checkManifests")(function* checkManifests(root: string) {
   const found = yield* Effect.all(
-    [checkNodeVersion(root), checkPackageScope(root), checkUnusedWorkspaces(root)],
+    [
+      checkNodeVersion(root),
+      checkPackageScope(root),
+      checkUnusedWorkspaces(root),
+      checkExactVersions(root),
+    ],
     { concurrency: "unbounded" },
   );
   return Arr.flatten(found);
