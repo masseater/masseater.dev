@@ -2,6 +2,7 @@
   "name": "@masseater.dev/nimado",
   "version": "0.0.0",
   "private": true,
+  "description": "nimado data paths and settings shared by the collector and the site.",
   "type": "module",
   "imports": {
     "#/*": "./src/*"

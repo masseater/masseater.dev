@@ -2,6 +2,7 @@
   "name": "task-cache",
   "version": "0.0.0",
   "private": true,
+  "description": "task-cache.masseater.dev, the Vite Task remote cache shared by CI and cloud sessions.",
   "type": "module",
   "imports": {
     "#/*": "./src/*"

@@ -2,6 +2,7 @@
   "name": "cloudflare-logs",
   "version": "0.0.0",
   "private": true,
+  "description": "Reads the run logs of Cloudflare Workers.",
   "type": "module",
   "dependencies": {
     "@distilled.cloud/cloudflare": "catalog:stack",

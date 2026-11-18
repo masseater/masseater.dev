@@ -2,6 +2,7 @@
   "name": "@masseater.dev/roformer",
   "version": "0.0.0",
   "private": true,
+  "description": "Rust library that runs BS-RoFormer source separation models from community PyTorch checkpoints without conversion.",
   "type": "module",
   "devDependencies": {
     "@r_masseater/msch": "workspace:*",

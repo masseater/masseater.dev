@@ -2,6 +2,7 @@
   "name": "@masseater.dev/repository-ci",
   "version": "0.0.0",
   "private": true,
+  "description": "Vite+ tasks main's verify job uses for Actions caches, failed-deploy Issues, the stacks to deploy and the zenn branch.",
   "type": "module",
   "dependencies": {
     "@masseater.dev/github-workflow": "workspace:*",

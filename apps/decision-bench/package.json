@@ -2,6 +2,7 @@
   "name": "decision-bench",
   "version": "0.0.0",
   "private": true,
+  "description": "masseater.dev/decision-bench page showing how each Japanese decision model scored on the benchmark.",
   "type": "module",
   "imports": {
     "#/*": "./src/*"

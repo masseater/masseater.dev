@@ -2,6 +2,7 @@
   "name": "@masseater.dev/watashi-protocol",
   "version": "0.0.0",
   "private": true,
+  "description": "API shapes shared by watashi-mcp and its commands.",
   "type": "module",
   "imports": {
     "#/*": "./src/*"

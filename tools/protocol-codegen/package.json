@@ -2,6 +2,7 @@
   "name": "protocol-codegen",
   "version": "0.0.0",
   "private": true,
+  "description": "Generates the C# and Rust types of aredoko and sts2 from Effect Schema types.",
   "type": "module",
   "imports": {
     "#/*": "./src/*"

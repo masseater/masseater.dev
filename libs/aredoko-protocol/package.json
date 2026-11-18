@@ -2,6 +2,7 @@
   "name": "@masseater.dev/aredoko-protocol",
   "version": "0.0.0",
   "private": true,
+  "description": "Effect Schema types shared by the parts of aredoko; the C# and Rust types are generated from them.",
   "type": "module",
   "imports": {
     "#/*": "./src/*"
