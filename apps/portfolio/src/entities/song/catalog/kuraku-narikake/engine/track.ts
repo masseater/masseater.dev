@@ -1,7 +1,6 @@
+import { packed } from "@masseater.dev/fumx-studio/studio/stem";
+import type { Stem } from "@masseater.dev/fumx-studio/studio/stem";
 import { Array as Arr, Option, Schema, pipe } from "effect";
-
-import { packed } from "#/entities/song/lib/studio/stem.ts";
-import type { Stem } from "#/entities/song/lib/studio/stem.ts";
 
 import { chained } from "./chain.ts";
 import { cutUp } from "./cut-ups.ts";

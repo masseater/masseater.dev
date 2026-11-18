@@ -1,8 +1,8 @@
 import type { RenderSession, Song } from "@masseater.dev/daw-view";
+import { sheetOf } from "@masseater.dev/fumx-studio/daw/take";
 import { Effect } from "effect";
 
 import { dawSongOf } from "#/entities/song/model/daw.ts";
-import { sheetOf } from "#/entities/song/model/take.ts";
 
 import { openedOn } from "./engine/opened.ts";
 import { mixedDown } from "./mixdown.ts";

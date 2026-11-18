@@ -1,8 +1,8 @@
+import { SAMPLE_RATE } from "@masseater.dev/fumx-studio/dsp/number";
+import type { Point } from "@masseater.dev/fumx-studio/dsp/shape";
 import { Predicate } from "effect";
 
 import patterns from "#/entities/song/catalog/life-is-but-a/score/patterns.json";
-import { SAMPLE_RATE } from "#/entities/song/lib/dsp/number.ts";
-import type { Point } from "#/entities/song/lib/dsp/shape.ts";
 
 import { entryOf } from "./context.ts";
 import type { Life } from "./context.ts";

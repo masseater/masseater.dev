@@ -1,9 +1,8 @@
+import type { Label } from "@masseater.dev/fumx-studio/studio/placement";
+import type { Studio } from "@masseater.dev/fumx-studio/studio/studio";
+import type { Grid } from "@masseater.dev/fumx-studio/studio/timing";
 import { Schema } from "effect";
 import type { Option } from "effect";
-
-import type { Label } from "#/entities/song/lib/studio/placement.ts";
-import type { Studio } from "#/entities/song/lib/studio/studio.ts";
-import type { Grid } from "#/entities/song/lib/studio/timing.ts";
 
 import type { Rack } from "./rack.ts";
 

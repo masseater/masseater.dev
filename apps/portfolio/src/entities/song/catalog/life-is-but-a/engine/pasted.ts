@@ -1,12 +1,11 @@
+import { semitoneRatio } from "@masseater.dev/fumx-studio/dsp/number";
+import { fade, resample } from "@masseater.dev/fumx-studio/dsp/sampling";
+import { stretch } from "@masseater.dev/fumx-studio/dsp/stretch";
+import { fieldOf } from "@masseater.dev/fumx-studio/studio/field";
+import { secondsOf, timeOf } from "@masseater.dev/fumx-studio/studio/moment";
+import type { Length } from "@masseater.dev/fumx-studio/studio/moment";
+import type { Source } from "@masseater.dev/fumx-studio/studio/paste";
 import { Match, Predicate } from "effect";
-
-import { semitoneRatio } from "#/entities/song/lib/dsp/number.ts";
-import { fade, resample } from "#/entities/song/lib/dsp/sampling.ts";
-import { stretch } from "#/entities/song/lib/dsp/stretch.ts";
-import { fieldOf } from "#/entities/song/lib/studio/field.ts";
-import { secondsOf, timeOf } from "#/entities/song/lib/studio/moment.ts";
-import type { Length } from "#/entities/song/lib/studio/moment.ts";
-import type { Source } from "#/entities/song/lib/studio/paste.ts";
 
 import type { Life } from "./context.ts";
 import type { Event } from "./score-schema.ts";

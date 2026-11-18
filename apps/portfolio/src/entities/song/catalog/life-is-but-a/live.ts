@@ -1,8 +1,8 @@
 import type { LiveMix, Rendered as Mixed, Take, Tape } from "@masseater.dev/daw-view";
+import { withLive } from "@masseater.dev/fumx-studio/daw/mixdown";
 import { Option, pipe } from "effect";
 
 import { workletIn } from "#/entities/song/model/daw.ts";
-import { withLive } from "#/entities/song/model/mixdown.ts";
 
 import type { Sink } from "./engine/context.ts";
 import type { LiveInit } from "./engine/player.ts";

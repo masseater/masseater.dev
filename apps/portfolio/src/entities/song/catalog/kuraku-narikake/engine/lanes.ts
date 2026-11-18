@@ -1,9 +1,8 @@
+import type { Bus } from "@masseater.dev/fumx-studio/studio/bus";
+import { secondsOf, timeOf } from "@masseater.dev/fumx-studio/studio/moment";
+import type { Placement } from "@masseater.dev/fumx-studio/studio/placement";
+import type { Grid } from "@masseater.dev/fumx-studio/studio/timing";
 import { Option } from "effect";
-
-import type { Bus } from "#/entities/song/lib/studio/bus.ts";
-import { secondsOf, timeOf } from "#/entities/song/lib/studio/moment.ts";
-import type { Placement } from "#/entities/song/lib/studio/placement.ts";
-import type { Grid } from "#/entities/song/lib/studio/timing.ts";
 
 import type { Kuraku } from "./kuraku.ts";
 import type { Clip } from "./score-schema.ts";

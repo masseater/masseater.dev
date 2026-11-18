@@ -1,4 +1,4 @@
-import { SAMPLE_RATE } from "#/entities/song/lib/dsp/number.ts";
+import { SAMPLE_RATE } from "@masseater.dev/fumx-studio/dsp/number";
 
 const ONE = 1;
 const TWO = 2;

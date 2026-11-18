@@ -1,11 +1,10 @@
+import { biquad } from "@masseater.dev/fumx-studio/dsp/biquad";
+import { SVF, svf } from "@masseater.dev/fumx-studio/dsp/filter";
+import type { Cutoff } from "@masseater.dev/fumx-studio/dsp/filter";
+import { SAMPLE_RATE } from "@masseater.dev/fumx-studio/dsp/number";
+import { drive } from "@masseater.dev/fumx-studio/dsp/shape";
+import type { ChannelEdit } from "@masseater.dev/fumx-studio/studio/activity";
 import { Array as Arr, Match, pipe } from "effect";
-
-import { biquad } from "#/entities/song/lib/dsp/biquad.ts";
-import { SVF, svf } from "#/entities/song/lib/dsp/filter.ts";
-import type { Cutoff } from "#/entities/song/lib/dsp/filter.ts";
-import { SAMPLE_RATE } from "#/entities/song/lib/dsp/number.ts";
-import { drive } from "#/entities/song/lib/dsp/shape.ts";
-import type { ChannelEdit } from "#/entities/song/lib/studio/activity.ts";
 
 import type { Curves } from "./kuraku.ts";
 import type { Filter } from "./score-schema.ts";

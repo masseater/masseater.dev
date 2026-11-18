@@ -1,7 +1,7 @@
-import { biquad } from "#/entities/song/lib/dsp/biquad.ts";
-import { SVF, svf } from "#/entities/song/lib/dsp/filter.ts";
-import { drive } from "#/entities/song/lib/dsp/shape.ts";
-import type { Bus } from "#/entities/song/lib/studio/bus.ts";
+import { biquad } from "@masseater.dev/fumx-studio/dsp/biquad";
+import { SVF, svf } from "@masseater.dev/fumx-studio/dsp/filter";
+import { drive } from "@masseater.dev/fumx-studio/dsp/shape";
+import type { Bus } from "@masseater.dev/fumx-studio/studio/bus";
 
 import type { Life } from "./context.ts";
 import { LEVEL } from "./levels.ts";

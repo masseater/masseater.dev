@@ -1,0 +1,28 @@
+{
+  "name": "@masseater.dev/fumx-studio",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Renders a .fumx song in the browser into per-track stems and a mastered mix for daw-view, with the DSP every song shares.",
+  "type": "module",
+  "imports": {
+    "#/*": "./src/*"
+  },
+  "exports": {
+    ".": "./src/app/index.ts",
+    "./worklet": "./src/app/worklet.ts",
+    "./daw/*": "./src/shared/lib/daw/*.ts",
+    "./dsp/*": "./src/shared/lib/dsp/*.ts",
+    "./live/*": "./src/shared/lib/live/*.ts",
+    "./studio/*": "./src/shared/lib/studio/*.ts"
+  },
+  "dependencies": {
+    "@masseater.dev/daw-view": "workspace:*",
+    "@r_masseater/fumx-parser": "workspace:*",
+    "effect": "catalog:stack",
+    "tonal": "catalog:"
+  },
+  "devDependencies": {
+    "typescript": "catalog:stack",
+    "vite-plus": "catalog:stack"
+  }
+}

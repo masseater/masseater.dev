@@ -1,8 +1,7 @@
 import type { MixPlayer, PlayerSetup } from "@masseater.dev/daw-view/worklet";
+import { targetsOf } from "@masseater.dev/fumx-studio/live/targets";
+import { transportOf } from "@masseater.dev/fumx-studio/live/transport";
 import { Option, Schema, pipe } from "effect";
-
-import { targetsOf } from "#/entities/song/lib/live/targets.ts";
-import { transportOf } from "#/entities/song/lib/live/transport.ts";
 
 import { CurvesSchema, coreOf, curvesFor, positionOf, seek } from "./core-state.ts";
 import { processed } from "./core.ts";

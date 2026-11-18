@@ -1,6 +1,6 @@
-import type { Impulse } from "#/entities/song/lib/dsp/convolve-pair.ts";
-import { SVF, svf } from "#/entities/song/lib/dsp/filter.ts";
-import { resample } from "#/entities/song/lib/dsp/sampling.ts";
+import type { Impulse } from "@masseater.dev/fumx-studio/dsp/convolve-pair";
+import { SVF, svf } from "@masseater.dev/fumx-studio/dsp/filter";
+import { resample } from "@masseater.dev/fumx-studio/dsp/sampling";
 
 const PLATE_TAIL = 2048;
 const HALL_TAIL = 4096;

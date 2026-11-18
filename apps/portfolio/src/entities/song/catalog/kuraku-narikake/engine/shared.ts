@@ -1,13 +1,12 @@
+import type { Impulse } from "@masseater.dev/fumx-studio/dsp/convolve-pair";
+import { SAMPLE_RATE } from "@masseater.dev/fumx-studio/dsp/number";
+import { timeOf } from "@masseater.dev/fumx-studio/studio/moment";
+import type { At } from "@masseater.dev/fumx-studio/studio/moment";
+import { gated } from "@masseater.dev/fumx-studio/studio/send";
+import type { GateMode, Window } from "@masseater.dev/fumx-studio/studio/send";
+import type { Studio } from "@masseater.dev/fumx-studio/studio/studio";
+import type { Grid } from "@masseater.dev/fumx-studio/studio/timing";
 import { Array as Arr, pipe } from "effect";
-
-import type { Impulse } from "#/entities/song/lib/dsp/convolve-pair.ts";
-import { SAMPLE_RATE } from "#/entities/song/lib/dsp/number.ts";
-import { timeOf } from "#/entities/song/lib/studio/moment.ts";
-import type { At } from "#/entities/song/lib/studio/moment.ts";
-import { gated } from "#/entities/song/lib/studio/send.ts";
-import type { GateMode, Window } from "#/entities/song/lib/studio/send.ts";
-import type { Studio } from "#/entities/song/lib/studio/studio.ts";
-import type { Grid } from "#/entities/song/lib/studio/timing.ts";
 
 import { hallOf, plateOf } from "./impulses.ts";
 import type { Curves } from "./kuraku.ts";
