@@ -1,8 +1,7 @@
+import { SAMPLE_RATE, decibels } from "@masseater.dev/fumx-studio/dsp/number";
+import type { Blocks } from "@masseater.dev/fumx-studio/live/tape";
+import { onePole, smoothingOf } from "@masseater.dev/fumx-studio/studio/dynamics";
 import { Array as Arr, Schema, pipe } from "effect";
-
-import { SAMPLE_RATE, decibels } from "#/entities/song/lib/dsp/number.ts";
-import type { Blocks } from "#/entities/song/lib/live/tape.ts";
-import { onePole, smoothingOf } from "#/entities/song/lib/studio/dynamics.ts";
 
 import { designed } from "./coefficients.ts";
 import type { Coefficients } from "./coefficients.ts";

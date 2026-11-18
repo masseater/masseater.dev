@@ -1,8 +1,7 @@
+import { trackAdded } from "@masseater.dev/fumx-studio/live/tape";
+import { slide } from "@masseater.dev/fumx-studio/live/targets";
+import type { Targets } from "@masseater.dev/fumx-studio/live/targets";
 import { Array as Arr, pipe } from "effect";
-
-import { trackAdded } from "#/entities/song/lib/live/tape.ts";
-import { slide } from "#/entities/song/lib/live/targets.ts";
-import type { Targets } from "#/entities/song/lib/live/targets.ts";
 
 import type { Core } from "./core-state.ts";
 import { positionOf } from "./core-state.ts";

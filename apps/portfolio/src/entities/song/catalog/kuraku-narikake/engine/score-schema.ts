@@ -1,6 +1,5 @@
+import { AtSchema, LengthSchema } from "@masseater.dev/fumx-studio/studio/moment";
 import { Schema } from "effect";
-
-import { AtSchema, LengthSchema } from "#/entities/song/lib/studio/moment.ts";
 
 const Text = Schema.String;
 const maybe = Schema.optionalKey;

@@ -1,6 +1,8 @@
 import type { Song as DawSong } from "@masseater.dev/daw-view";
-import { Array as Arr, Option, Order, Record as Rec, String as Str, pipe } from "effect";
+import type { Song as FumxSong } from "@r_masseater/fumx-parser";
+import { Array as Arr, Effect, Option, Order, Record as Rec, String as Str, pipe } from "effect";
 
+import { dawSongOfFumx } from "./fumx.ts";
 import type { Song, Work } from "./song.ts";
 
 const SLUG = 2;
@@ -14,6 +16,8 @@ const thumbnails = import.meta.glob<string>("../catalog/*/thumb.webp", {
 });
 
 const recordings = import.meta.glob<DawSong>("../catalog/*/recording.ts", { import: "song" });
+
+const fumxSongs = import.meta.glob<FumxSong>("../catalog/*/song.fumx", { import: "song" });
 
 const slugOf = (path: string): Option.Option<string> => Arr.get(Str.split(path, "/"), SLUG);
 
@@ -33,9 +37,20 @@ const bySlug = <Value>(found: Readonly<Record<string, Value>>): ReadonlyMap<stri
 
 const thumbnailBySlug = bySlug(thumbnails);
 const recordingBySlug = bySlug(recordings);
+const fumxBySlug = bySlug(fumxSongs);
+const workBySlug = bySlug(works);
+
+const fumxRecordingOf = (slug: string): Option.Option<() => Promise<DawSong>> =>
+  Option.flatMap(Option.fromUndefinedOr(fumxBySlug.get(slug)), (load) =>
+    Option.map(
+      Option.fromUndefinedOr(workBySlug.get(slug)),
+      (work) => () =>
+        Effect.runPromise(Effect.map(Effect.promise(load), dawSongOfFumx({ slug, work }))),
+    ),
+  );
 
 export const songs: readonly Song[] = pipe(
-  [...bySlug(works)],
+  [...workBySlug],
   Arr.flatMap(([slug, work]) =>
     pipe(
       Option.fromUndefinedOr(thumbnailBySlug.get(slug)),
@@ -50,4 +65,4 @@ export const songOf = (slug: string): Option.Option<Song> =>
   Arr.findFirst(songs, (song) => song.slug === slug);
 
 export const recordingOf = (slug: string): Option.Option<() => Promise<DawSong>> =>
-  Option.fromUndefinedOr(recordingBySlug.get(slug));
+  Option.orElse(Option.fromUndefinedOr(recordingBySlug.get(slug)), () => fumxRecordingOf(slug));

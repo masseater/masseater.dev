@@ -1,7 +1,7 @@
+import { scoreOf } from "@masseater.dev/fumx-studio/studio/score";
 import { Match } from "effect";
 
 import arrangement from "#/entities/song/catalog/life-is-but-a/score/arrangement.json";
-import { scoreOf } from "#/entities/song/lib/studio/score.ts";
 
 import type { Life } from "./context.ts";
 import { rhythmEvents } from "./rhythm-events.ts";

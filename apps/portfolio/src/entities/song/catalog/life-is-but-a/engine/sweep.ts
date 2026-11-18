@@ -1,4 +1,4 @@
-import { SAMPLE_RATE, orDefault } from "#/entities/song/lib/dsp/number.ts";
+import { SAMPLE_RATE, orDefault } from "@masseater.dev/fumx-studio/dsp/number";
 
 import type { BassNote } from "./bass.ts";
 import type { Life } from "./context.ts";
