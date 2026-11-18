@@ -1,11 +1,11 @@
 import { mustSucceed } from "@masseater.dev/github-workflow";
-import { Boolean as Bool, Effect, FileSystem, Path, Schema, String as Str } from "effect";
+import { Boolean as Bool, Effect, FileSystem, Path, String as Str } from "effect";
 
-import { manifestIn } from "#/shared/lib/manifest.ts";
+import { buildOf } from "#/shared/lib/host.ts";
+import type { Host } from "#/shared/lib/host.ts";
 import type { UpstreamPins } from "#/shared/lib/manifest.ts";
 import { patchesOf } from "#/shared/lib/patches.ts";
 import type { Patch } from "#/shared/lib/patches.ts";
-import { executableOf, targetOf } from "#/shared/lib/target.ts";
 
 const EFFECT_REPOSITORY = "https://github.com/Effect-TS/tsgo.git";
 const TSRS_REPOSITORY = "https://github.com/oxc-project/tsrs.git";
@@ -13,21 +13,8 @@ const EFFECT_PATCHES = "_patches/tsrs";
 const OUR_PATCHES = "patches";
 const TOOLCHAIN = "rust-toolchain.toml";
 const TAG_PREFIX = "v";
-const BINARY = "tsrs";
+const TSRS = "tsrs";
 const FEATURES = "cli,tsrs_cli/noembed";
-
-const taggedError = Schema.TaggedError;
-
-class UnsupportedPlatform extends taggedError<
-  UnsupportedPlatform,
-  { readonly brand: unique symbol }
->()("UnsupportedPlatform", { message: Schema.String }) {}
-
-export interface Host {
-  readonly directory: string;
-  readonly platform: string;
-  readonly arch: string;
-}
 
 interface Checkout {
   readonly directory: string;
@@ -109,56 +96,36 @@ const baseOf = Effect.fn("baseOf")(function* baseOf(work: string, target: string
 });
 
 interface Packed {
-  readonly checkout: Checkout;
-  readonly target: string;
-  readonly executable: string;
   readonly built: string;
   readonly contents: string;
+  readonly output: string;
+  readonly executable: string;
 }
 
-const pack = Effect.fn("pack")(function* pack({
-  checkout,
-  target,
-  executable,
-  built,
-  contents,
-}: Packed) {
+const place = Effect.fn("place")(function* place({ built, contents, output, executable }: Packed) {
   const fileSystem = yield* FileSystem.FileSystem;
   const path = yield* Path.Path;
   yield* fileSystem.remove(path.join(contents, "package.json"));
   yield* fileSystem.copyFile(path.join(built, executable), path.join(contents, executable));
-  const native = path.join(checkout.directory, "native");
-  yield* fileSystem.makeDirectory(native, { recursive: true });
-  yield* mustSucceed({
-    command: "tar",
-    args: ["-czf", path.join(native, `${BINARY}.${target}.tgz`), "-C", contents, "."],
-  });
+  yield* fileSystem.remove(output, { recursive: true, force: true });
+  yield* fileSystem.copy(contents, output);
 });
 
 const checkoutFor = Effect.fn("checkoutFor")(function* checkoutFor(directory: string) {
   const fileSystem = yield* FileSystem.FileSystem;
   const path = yield* Path.Path;
-  const work = yield* fileSystem.makeTempDirectory({ prefix: "tsrs-effect-" });
+  const work = yield* fileSystem.makeTempDirectoryScoped({ prefix: "tsrs-effect-" });
   const effect = path.join(work, "tsgo");
-  return { directory, work, effect, tsrs: path.join(effect, BINARY) } satisfies Checkout;
+  return { directory, work, effect, tsrs: path.join(effect, TSRS) } satisfies Checkout;
 });
 
 /** @internal */
-export const buildPackage = Effect.fn("buildPackage")(function* buildPackage({
-  directory,
-  platform,
-  arch,
-}: Host) {
-  const manifest = yield* manifestIn(directory);
-  const target = yield* Effect.fromOption(targetOf(manifest.native.targets)(platform, arch)).pipe(
-    Effect.mapError(() =>
-      UnsupportedPlatform.make({ message: `no target for ${platform}-${arch}` }),
-    ),
-  );
-  const checkout = yield* checkoutFor(directory);
-  yield* checkOut(checkout, manifest.upstream);
-  yield* applyPatches(checkout, manifest.upstream);
+export const buildTsrs = Effect.fn("buildTsrs")(function* buildTsrs(host: Host) {
+  const { upstream, target, output, executable } = yield* buildOf(host);
+  const checkout = yield* checkoutFor(host.directory);
+  yield* checkOut(checkout, upstream);
+  yield* applyPatches(checkout, upstream);
   const built = yield* compile(checkout);
-  const contents = yield* baseOf(checkout.work, target, manifest.upstream.tsrs);
-  yield* pack({ checkout, target, executable: executableOf(BINARY)(platform), built, contents });
-});
+  const contents = yield* baseOf(checkout.work, target, upstream.tsrs);
+  yield* place({ built, contents, output, executable });
+}, Effect.scoped);

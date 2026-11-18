@@ -4,11 +4,10 @@ const Upstream = Schema.Struct({
   effect: Schema.String,
   tsrs: Schema.String,
   skip: Schema.Array(Schema.String),
+  targets: Schema.Array(Schema.String),
 });
 
-const Native = Schema.Struct({ targets: Schema.Array(Schema.String) });
-
-const PackageJson = Schema.Struct({ upstream: Upstream, native: Native });
+const PackageJson = Schema.Struct({ upstream: Upstream });
 
 const Manifest = Schema.fromJsonString(PackageJson);
 

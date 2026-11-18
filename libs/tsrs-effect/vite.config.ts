@@ -5,8 +5,14 @@ export default defineConfig({
   run: {
     tasks: {
       test: { command: "vp test run", cache: LOCKED },
-      build: { command: [], dependsOn: ["test"] },
-      native: { command: "node bin/build.ts", cache: false },
+      native: {
+        command: "node bin/build.ts",
+        cache: {
+          input: ["package.json", "bin/build.ts", "patches/**", "src/**"],
+          output: ["native/**"],
+          env: ["OS"],
+        },
+      },
     },
   },
   test: {

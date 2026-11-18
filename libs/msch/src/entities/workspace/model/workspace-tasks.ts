@@ -37,33 +37,20 @@ export const hasVerifyTask = Effect.fn("hasVerifyTask")(function* hasVerifyTask(
   return Option.exists(config, isVerified);
 });
 
-const distributesArchive = (manifest: Manifest): boolean =>
-  pipe(
-    Option.fromUndefinedOr(manifest.native),
-    Option.flatMap((native) => Option.fromUndefinedOr(native.archive)),
-    Option.getOrElse(() => false),
-  );
-
-const namedTasks =
-  (program: unknown, manifest: Manifest) =>
-  (name: string): WorkspaceTasks => ({
-    verify: Arr.getSomes([
-      Option.liftPredicate(`${name}#verify`, () => definesTask(VERIFY_TASK)(program)),
-      Option.liftPredicate(`${name}#test`, () => definesTask(TEST_TASK)(program)),
-    ]),
-    native: Arr.filter(
-      [`${name}#native`],
-      () => definesTask(NATIVE_TASK)(program) && !distributesArchive(manifest),
-    ),
-  });
-
 export const tasksOf =
   (manifest: Option.Option<Manifest>) =>
   (program: unknown): WorkspaceTasks =>
     pipe(
       manifest,
-      Option.flatMap((found) =>
-        Option.map(Option.fromUndefinedOr(found.name), namedTasks(program, found)),
-      ),
-      Option.getOrElse(() => NO_TASKS),
+      Option.flatMap((found) => Option.fromUndefinedOr(found.name)),
+      Option.match({
+        onNone: () => NO_TASKS,
+        onSome: (name) => ({
+          verify: Arr.getSomes([
+            Option.liftPredicate(`${name}#verify`, () => definesTask(VERIFY_TASK)(program)),
+            Option.liftPredicate(`${name}#test`, () => definesTask(TEST_TASK)(program)),
+          ]),
+          native: Arr.filter([`${name}#native`], () => definesTask(NATIVE_TASK)(program)),
+        }),
+      }),
     );
