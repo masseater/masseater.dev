@@ -1,3 +1,4 @@
+import { LOCKED } from "@r_masseater/msch/locked-inputs";
 import type { CheckPackageOptions, CheckResult } from "@r_masseater/vite-plus-adopt/attw";
 import {
   Effect,
@@ -242,9 +243,9 @@ export default defineConfig({
       verify: { command: [], dependsOn: ["test", "size"] },
       build: {
         command: "vp pack",
-        cache: { input: [{ auto: true }, "!.fixtures", "!.fixtures/**"] },
+        cache: { input: [...LOCKED.input, "!.fixtures", "!.fixtures/**"] },
       },
-      test: { command: "vp test run", dependsOn: ["build"] },
+      test: { command: "vp test run", dependsOn: ["build"], cache: LOCKED },
       size: { command: "size-limit", dependsOn: ["build"] },
     },
   },
