@@ -18,6 +18,7 @@ import { nameOf, workspace } from "./lib/changes.ts";
 import type { Tasks } from "./lib/changes.ts";
 
 const FINALLY = ":finally";
+const DEPLOY = ":deploy";
 const ITEMS = ":items";
 const ITEMS_OUTPUT = "items=";
 const NO_ITEM = "";
@@ -28,6 +29,7 @@ const Entry = Schema.Struct({
   directory: Schema.String,
   item: Schema.String,
   finally: Schema.Boolean,
+  deploy: Schema.Boolean,
 });
 
 const Entries = Schema.fromJsonString(Schema.Array(Entry));
@@ -95,6 +97,7 @@ const entriesOf = Effect.fn("entriesOf")(function* entriesOf(
     directory,
     item,
     finally: defines(directory, `${task}${FINALLY}`),
+    deploy: defines(directory, `${task}${DEPLOY}`),
   });
   if (defines(directory, `${task}${ITEMS}`)) {
     const items = yield* Effect.scoped(itemsOf(root, directory, task));
