@@ -27,6 +27,7 @@ fn builder() -> Builder<tauri::Wry> {
             commands::list_jobs,
             commands::import_song,
             commands::separate_song,
+            commands::analyze_song,
             commands::choose_audio_files,
             media_notes::mcp_access,
         ])
