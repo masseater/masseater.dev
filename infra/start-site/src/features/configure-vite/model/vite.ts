@@ -44,6 +44,7 @@ export const startSiteConfig = ({
         destroy: { command: "alchemy destroy", cache: false },
       },
     },
+    preview: { host: "127.0.0.1" },
     environments: { client: { build: { outDir: `dist/client${basePath}` } } },
     test: {
       projects: [
