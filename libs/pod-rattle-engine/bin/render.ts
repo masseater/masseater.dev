@@ -1,4 +1,5 @@
-import { NodeRuntime, NodeServices } from "@effect/platform-node";
+import { runMain } from "@effect/platform-node/NodeRuntime";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { Array as Arr, Effect, FileSystem, Layer, Schema, pipe } from "effect";
 import type { PlatformError } from "effect/PlatformError";
 
@@ -101,8 +102,8 @@ const program = Effect.gen(function* renderReference() {
   yield* Effect.forEach(scenarios, write(fileSystem), { concurrency: 1, discard: true });
 });
 
-NodeRuntime.runMain(
-  Layer.build(NodeServices.layer).pipe(
+runMain(
+  Layer.build(nodeServices).pipe(
     Effect.flatMap((context) =>
       Effect.provideContext(
         program.pipe(Effect.withSpan("pod-rattle-engine.parity.render")),

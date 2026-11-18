@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { expect, layer } from "@effect/vitest";
 import {
   Array as Arr,
@@ -66,7 +66,7 @@ const mutated =
     return { ...valid, points };
   };
 
-layer(NodeServices.layer)("conformance", (it) => {
+layer(nodeServices)("conformance", (it) => {
   it.effect("the conformance crate compiles the Rust generated from the fixture schemas", () =>
     Effect.gen(function* body() {
       const source = yield* effect2rs({

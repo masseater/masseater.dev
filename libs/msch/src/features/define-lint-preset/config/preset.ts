@@ -84,6 +84,7 @@ const rules = {
   "msch-lint/inline-exports": "error",
   "msch-lint/ui-state-in-atoms": "error",
   "msch-lint/no-hand-written-sql": "error",
+  "msch-lint/platform-node-by-module": "error",
   "msch-lint/typed-calls-not-reflect": "error",
   "react/react-in-jsx-scope": "off",
   "eslint/no-undef": "off",
@@ -123,6 +124,10 @@ const overrides = [
     rules: { "import/no-default-export": "off" },
   },
   commandsOverride,
+  {
+    files: ["**/bin/**"],
+    rules: { "baseline-js/use-baseline": "off" },
+  },
   {
     files: ["**/*.test.ts", "**/*.test.tsx", "**/*.test.support.ts", "**/vite.config.ts"],
     rules: {

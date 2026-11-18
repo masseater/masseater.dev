@@ -1,4 +1,5 @@
-import { NodeRuntime, NodeServices } from "@effect/platform-node";
+import { runMain } from "@effect/platform-node/NodeRuntime";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import {
   Array as Arr,
   Effect,
@@ -120,9 +121,9 @@ const program = Effect.gen(function* collectExamples() {
   );
 });
 
-const services = Layer.mergeAll(NodeServices.layer, FetchHttpClient.layer);
+const services = Layer.mergeAll(nodeServices, FetchHttpClient.layer);
 
-NodeRuntime.runMain(
+runMain(
   Layer.build(services).pipe(
     Effect.flatMap((context) => Effect.provideContext(program, context)),
     Effect.scoped,

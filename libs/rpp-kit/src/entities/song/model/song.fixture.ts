@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import {
   Array as Arr,
   Effect,
@@ -29,7 +29,7 @@ const Truth = Schema.fromJsonString(Schema.Array(TruthTrack));
 
 type Played = typeof TruthNote.Type;
 
-const runtime = ManagedRuntime.make(NodeServices.layer);
+const runtime = ManagedRuntime.make(nodeServices);
 
 const readFixture = Effect.fn("readFixture")(function* readFixture(name: string) {
   const fileSystem = yield* FileSystem.FileSystem;

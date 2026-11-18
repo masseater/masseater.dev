@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { layer } from "@effect/vitest";
 import { assertInclude, deepStrictEqual, strictEqual } from "@effect/vitest/utils";
 import { Array as Arr, Effect, Option, Order, Schema, String as Str, pipe } from "effect";
@@ -167,7 +167,7 @@ const cachedOnSecondRun = Effect.scoped(
   }),
 );
 
-layer(NodeServices.layer, { excludeTestServices: true })("explain mode", (it) => {
+layer(nodeServices, { excludeTestServices: true })("explain mode", (it) => {
   it.effect(
     "prints nothing extra unless it is turned on",
     () => withMock(silentByDefault),

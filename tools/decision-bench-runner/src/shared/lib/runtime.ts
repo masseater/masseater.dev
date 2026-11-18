@@ -1,4 +1,5 @@
-import { NodeRuntime, NodeServices } from "@effect/platform-node";
+import { runMain } from "@effect/platform-node/NodeRuntime";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import {
   Context,
   Duration,
@@ -203,7 +204,7 @@ const makeOpus = Effect.gen(function* makeOpus() {
 
 const benchLayer = Layer.effect(Opus, makeOpus).pipe(
   Layer.provideMerge(Layer.effect(BenchStore, makeStore)),
-  Layer.provideMerge(NodeServices.layer),
+  Layer.provideMerge(nodeServices),
 );
 
 /** @internal */
@@ -214,7 +215,7 @@ export const runBench = <Failure>(
     Opus | BenchStore | FileSystem.FileSystem | Path.Path | Scope.Scope
   >,
 ): void => {
-  NodeRuntime.runMain(
+  runMain(
     Layer.build(benchLayer).pipe(
       Effect.flatMap((context) => Effect.provideContext(program, context)),
       Effect.scoped,

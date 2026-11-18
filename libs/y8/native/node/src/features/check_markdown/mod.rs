@@ -25,12 +25,13 @@ pub struct LintOptions {
     pub traceparent: Option<String>,
     pub root: Option<String>,
     pub plugins: Option<Vec<PluginOptions>>,
+    pub cache_dir: Option<String>,
 }
 
 #[napi(object)]
 pub struct FileOutput {
     pub path: String,
-    pub diagnostics: Value,
+    pub diagnostics: String,
     pub plugin_diagnostics: Option<Value>,
     pub source: Option<Buffer>,
 }
@@ -42,12 +43,16 @@ pub struct PluginOptions {
     pub rules: HashMap<String, String>,
 }
 
-fn linter(config: Option<Value>, inline: Option<bool>) -> Linter {
-    let config = match config {
+fn linter(options: &mut LintOptions) -> Linter {
+    let config = match options.config.take() {
         Some(Value::Object(map)) => map,
         _ => Map::new(),
     };
-    Linter::new(config, inline.unwrap_or(true))
+    let linter = Linter::new(config, options.inline_config.unwrap_or(true));
+    match options.cache_dir.as_deref() {
+        Some(directory) => linter.with_cache(std::path::Path::new(directory)),
+        None => linter,
+    }
 }
 
 fn plugin_findings(plugins: &Plugins, inputs: &[Input]) -> Result<Vec<Value>> {
@@ -88,14 +93,14 @@ fn transfer_of(options: &LintOptions) -> Transfer {
     }
 }
 
-fn to_value(value: &[y8_core::Diagnostic]) -> Result<Value> {
-    serde_json::to_value(value).map_err(|error| napi::Error::from_reason(error.to_string()))
+fn to_json(value: &[y8_core::Diagnostic]) -> Result<String> {
+    serde_json::to_string(value).map_err(|error| napi::Error::from_reason(error.to_string()))
 }
 
 fn run(inputs: &[Input], mut options: LintOptions) -> Result<Vec<FileOutput>> {
     let transfer = transfer_of(&options);
     let plugins = plugins_of(&mut options);
-    let linter = linter(options.config, options.inline_config);
+    let linter = linter(&mut options);
     let results = linter.lint_all(inputs, transfer);
     let mut found = match &plugins {
         Some(plugins) => plugin_findings(plugins, inputs)?,
@@ -107,7 +112,7 @@ fn run(inputs: &[Input], mut options: LintOptions) -> Result<Vec<FileOutput>> {
         .into_iter()
         .map(|result| {
             Ok(FileOutput {
-                diagnostics: to_value(&result.diagnostics)?,
+                diagnostics: to_json(&result.diagnostics)?,
                 plugin_diagnostics: found.next(),
                 source: result.transfer.map(Buffer::from),
                 path: result.path,

@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { expect, layer } from "@effect/vitest";
 import { Array, Effect, Number as Numbers, Option, Path, Schema, pipe } from "effect";
 import sharp from "sharp";
@@ -93,7 +93,7 @@ const cornerOf = (glb: Uint8Array): Effect.Effect<readonly number[]> =>
       ),
   );
 
-layer(NodeServices.layer)("blendPreview", (it) => {
+layer(nodeServices)("blendPreview", (it) => {
   it.effect("reads the thumbnail Blender saved in a compressed .blend", () =>
     Effect.gen(function* test() {
       const fixture = yield* fixturePath;

@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import type { Diagnostic, Fu4Error } from "@r_masseater/fu4";
 import { Array as Arr, Effect, FileSystem, ManagedRuntime, String as Str } from "effect";
 import type { PlatformError } from "effect/PlatformError";
@@ -25,7 +25,7 @@ import {
 } from "./zizmor-online.test.support.ts";
 import type { Routes, Run, Server } from "./zizmor-online.test.support.ts";
 
-const services = ManagedRuntime.make(NodeServices.layer);
+const services = ManagedRuntime.make(nodeServices);
 afterAll(() => services.dispose());
 
 type Failure = Fu4Error | PlatformError;

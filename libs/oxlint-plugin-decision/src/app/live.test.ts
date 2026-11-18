@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { layer } from "@effect/vitest";
 import { deepStrictEqual, strictEqual } from "@effect/vitest/utils";
 import {
@@ -184,7 +184,7 @@ const probabilitiesLive = Effect.gen(function* test() {
   strictEqual(lines.length, EXAMPLE_MATCHES);
 });
 
-layer(NodeServices.layer, { excludeTestServices: true })("the live decision model APIs", (it) => {
+layer(nodeServices, { excludeTestServices: true })("the live decision model APIs", (it) => {
   it.effect(
     "reports exactly the example's violations without a provider failure",
     () => answersLive,

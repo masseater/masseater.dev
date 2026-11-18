@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import {
   Array as Arr,
   Effect,
@@ -23,7 +23,7 @@ import {
 } from "./index.ts";
 import type { Diagnostic, Fu4Config, Fu4Error, RuleContext } from "./index.ts";
 
-const services = ManagedRuntime.make(NodeServices.layer);
+const services = ManagedRuntime.make(nodeServices);
 afterAll(() => services.dispose());
 
 const WORKFLOW = ".github/workflows/ci.yml";

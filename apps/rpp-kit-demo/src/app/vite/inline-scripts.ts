@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { Array as Arr, Effect, FileSystem, Layer, Option, Path, String as Str, pipe } from "effect";
 import type { Plugin } from "vite-plus";
 
@@ -43,7 +43,7 @@ const externalizeAll = Effect.fn("externalizeAll")(function* externalizeAll(
 
 const runInNode = (root: string, target: Target): Promise<void> =>
   Effect.runPromise(
-    Layer.build(NodeServices.layer).pipe(
+    Layer.build(nodeServices).pipe(
       Effect.flatMap((context) => Effect.provideContext(externalizeAll(root, target), context)),
       Effect.scoped,
     ),

@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { ModelApi, readFragments } from "@r_masseater/ocr-decide";
 import {
   Context,
@@ -150,4 +150,4 @@ const makeReader = Effect.gen(function* makeReader() {
   });
 });
 
-export const readerLayer = Layer.effect(Reader, makeReader).pipe(Layer.provide(NodeServices.layer));
+export const readerLayer = Layer.effect(Reader, makeReader).pipe(Layer.provide(nodeServices));

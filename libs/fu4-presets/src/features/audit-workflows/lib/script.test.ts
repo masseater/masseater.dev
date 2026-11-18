@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { defineRule, lintText } from "@r_masseater/fu4";
 import type { RuleContext } from "@r_masseater/fu4";
 import { Array as Arr, Effect, ManagedRuntime, Option, Result, Schema, pipe } from "effect";
@@ -17,7 +17,7 @@ import {
 
 import RAW_CASES from "./fixtures/script-cases.json" with { type: "json" };
 
-const services = ManagedRuntime.make(NodeServices.layer);
+const services = ManagedRuntime.make(nodeServices);
 afterAll(() => services.dispose());
 
 const parsers: ScriptParser[] = [];

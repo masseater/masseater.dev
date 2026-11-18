@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-import { NodeRuntime, NodeServices } from "@effect/platform-node";
+import { runMain } from "@effect/platform-node/NodeRuntime";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { Array as Arr, Effect, FileSystem, Layer, Path, pipe } from "effect";
 import { Command, Flag } from "effect/cli";
 import { pageSlug, pageHashes } from "security-headers/static";
@@ -49,8 +50,8 @@ const command = Command.make(
 
 const program = Command.run(command, { version: pkg.version });
 
-NodeRuntime.runMain(
-  Layer.build(NodeServices.layer).pipe(
+runMain(
+  Layer.build(nodeServices).pipe(
     Effect.flatMap((context) => Effect.provideContext(program, context)),
     Effect.scoped,
   ),

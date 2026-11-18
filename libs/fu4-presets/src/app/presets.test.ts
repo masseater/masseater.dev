@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { lintText } from "@r_masseater/fu4";
 import type { Fu4Config, Fu4Error } from "@r_masseater/fu4";
 import { Array as Arr, Effect, FileSystem, ManagedRuntime, Record as Rec, pipe } from "effect";
@@ -7,7 +7,7 @@ import { afterAll, expect, test } from "vite-plus/test";
 
 import { actionlint, recommended, zizmor } from "./presets.ts";
 
-const services = ManagedRuntime.make(NodeServices.layer);
+const services = ManagedRuntime.make(nodeServices);
 afterAll(() => services.dispose());
 
 const UNPINNED =

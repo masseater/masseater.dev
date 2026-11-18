@@ -93,6 +93,7 @@ export interface Y8Config {
   readonly rules?: Readonly<Record<string, RuleEntry>>;
   readonly ignores?: readonly string[];
   readonly inlineConfig?: boolean;
+  readonly cache?: boolean;
   readonly overrides?: readonly Override[];
 }
 
