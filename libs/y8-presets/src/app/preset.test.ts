@@ -1,6 +1,6 @@
 import { NodeServices } from "@effect/platform-node";
 import { lint } from "@r_masseater/y8";
-import type { Diagnostic, Y8Error } from "@r_masseater/y8";
+import type { Diagnostic, Y8Config, Y8Error } from "@r_masseater/y8";
 import {
   Array as Arr,
   Effect,
@@ -14,13 +14,23 @@ import {
 import type { PlatformError } from "effect/PlatformError";
 import { afterAll, expect, test } from "vite-plus/test";
 
-import { docsPreset } from "./index.ts";
+import { readme, recommended } from "./index.ts";
 
 const services = ManagedRuntime.make(NodeServices.layer);
 afterAll(() => services.dispose());
 
+const RECOMMENDED: Y8Config = recommended({
+  agents: {
+    sections: [["Tech stack"], ["Commands"], ["Rules"]],
+    commands: ["Commands"],
+    stack: ["Tech stack"],
+  },
+  skills: { purpose: ["Purpose"], skillNames: { index: "index" } },
+});
+
 const lintRepository = (
   files: Readonly<Record<string, string>>,
+  config: Y8Config = RECOMMENDED,
 ): Effect.Effect<
   readonly Diagnostic[],
   Y8Error | PlatformError,
@@ -39,14 +49,7 @@ const lintRepository = (
       root,
       files: markdown,
       projectFiles: Rec.keys(files),
-      config: docsPreset({
-        agents: {
-          sections: [["Tech stack"], ["Commands"], ["Rules"]],
-          commands: ["Commands"],
-          stack: ["Tech stack"],
-        },
-        skills: { purpose: ["Purpose"], skillNames: { index: "index" } },
-      }),
+      config,
     });
   }).pipe(Effect.scoped);
 
@@ -77,39 +80,61 @@ test("documents that follow the preset pass", () =>
     expect(errorsOf(diagnostics)).toStrictEqual([]);
   }).pipe(services.runPromise));
 
+const FAILING: Readonly<Record<string, string>> = {
+  "package.json": PACKAGE,
+  "README.md":
+    "# demo\n\nOne. Two. Three.\n\n## Features\n\n[guide](docs/guide.md)\n\n[missing](nothing.md)\n",
+  "docs/guide.md": "# Guide\n",
+  "AGENTS.md": "Plain text with no title.\n\n## Testing\n\nRun tests.\n",
+  "pkg/AGENTS.md":
+    "# pkg\n\nThe pkg workspace.\n\n## Notes\n\nUse the `other-skill` skill.\n\nテストを書く。\n",
+  "skills/demo/SKILL.md":
+    "---\nname: Demo\ndescription: I help you.\n---\n\n# demo\n\n## When to use\n\nAlways.\n",
+  "skills/other-skill/SKILL.md":
+    "---\nname: other-skill\ndescription: Another skill.\n---\n\n# other-skill\n\n## Purpose\n\nAnother.\n",
+};
+
 test("each file kind gets its own rules", () =>
   Effect.gen(function* failing() {
-    const diagnostics = yield* lintRepository({
-      "package.json": PACKAGE,
-      "README.md":
-        "# demo\n\nOne. Two. Three.\n\n## Features\n\n[guide](docs/guide.md)\n\n[missing](nothing.md)\n",
-      "docs/guide.md": "# Guide\n",
-      "AGENTS.md": "Plain text with no title.\n\n## Testing\n\nRun tests.\n",
-      "pkg/AGENTS.md":
-        "# pkg\n\nThe pkg workspace.\n\n## Notes\n\nUse the `other-skill` skill.\n\nテストを書く。\n",
-      "skills/demo/SKILL.md":
-        "---\nname: Demo\ndescription: I help you.\n---\n\n# demo\n\n## When to use\n\nAlways.\n",
-      "skills/other-skill/SKILL.md":
-        "---\nname: other-skill\ndescription: Another skill.\n---\n\n# other-skill\n\n## Purpose\n\nAnother.\n",
-    });
+    const diagnostics = yield* lintRepository(FAILING);
     expect(errorsOf(diagnostics)).toStrictEqual([
       "AGENTS.md markdownlint/MD041",
-      "AGENTS.md docs/agents-title",
-      "AGENTS.md docs/agents-sections",
-      "AGENTS.md docs/agents-skill-owned",
-      "README.md docs/readme-title",
-      "README.md docs/readme-summary",
-      "README.md docs/readme-usage",
-      "README.md docs/readme-agent-skills",
-      "README.md docs/readme-no-feature-list",
-      "README.md docs/readme-no-unshipped-links",
+      "AGENTS.md agents-md/title",
+      "AGENTS.md agents-md/sections",
+      "AGENTS.md agents-md/skill-owned",
+      "README.md readme/title",
+      "README.md readme/summary",
+      "README.md readme/usage",
+      "README.md readme/agent-skills",
+      "README.md readme/no-feature-list",
+      "README.md readme/no-unshipped-links",
       "README.md docs/link-target-exists",
-      "pkg/AGENTS.md docs/agents-workspace-shape",
-      "pkg/AGENTS.md docs/agents-no-skill-names",
-      "pkg/AGENTS.md docs/agents-english",
-      "skills/demo/SKILL.md docs/skill-title",
-      "skills/demo/SKILL.md docs/skill-purpose-first",
-      "skills/demo/SKILL.md docs/skill-description-person",
-      "skills/demo/SKILL.md docs/skill-no-when-section",
+      "pkg/AGENTS.md agents-md/workspace-shape",
+      "pkg/AGENTS.md agents-md/no-skill-names",
+      "pkg/AGENTS.md agents-md/english",
+      "skills/demo/SKILL.md skill-md/title",
+      "skills/demo/SKILL.md skill-md/purpose-first",
+      "skills/demo/SKILL.md skill-md/description-person",
+      "skills/demo/SKILL.md agnix/AS-004",
+      "skills/demo/SKILL.md agnix/AS-017",
+      "skills/demo/SKILL.md skill-md/no-when-section",
+    ]);
+  }).pipe(services.runPromise));
+
+test("a config that extends one preset gets only the rules of that concern", () =>
+  Effect.gen(function* single() {
+    const diagnostics = yield* lintRepository(FAILING, { extends: [readme()] });
+    expect(
+      pipe(
+        errorsOf(diagnostics),
+        Arr.filter((line) => !Str.includes("markdownlint/")(line)),
+      ),
+    ).toStrictEqual([
+      "README.md readme/title",
+      "README.md readme/summary",
+      "README.md readme/usage",
+      "README.md readme/agent-skills",
+      "README.md readme/no-feature-list",
+      "README.md readme/no-unshipped-links",
     ]);
   }).pipe(services.runPromise));

@@ -269,3 +269,16 @@ test("a built-in plugin reports under the name it is registered with, at the con
       ),
     ).toStrictEqual(["warn"]);
   }).pipe(services.runPromise));
+
+test("a config takes the rules and overrides of the configs it extends, its own rules winning", () =>
+  Effect.gen(function* extended() {
+    const loud: Y8Config = { rules: { "markdownlint/MD009": "error" } };
+    const docs: Y8Config = {
+      overrides: [{ files: ["docs/**"], rules: { "markdownlint/MD009": "warn" } }],
+    };
+    const diagnostics = yield* lintFiles(
+      { "doc.md": DOCUMENT, "docs/doc.md": DOCUMENT },
+      { extends: [loud, docs], rules: { "markdownlint/MD009": "off" } },
+    );
+    expect(rulesOf(diagnostics)).toStrictEqual(["docs/doc.md markdownlint/MD009"]);
+  }).pipe(services.runPromise));

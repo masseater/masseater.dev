@@ -1,11 +1,10 @@
-import { agnix } from "@r_masseater/y8";
 import type { RuleEntry, Y8Config } from "@r_masseater/y8";
-import { docsPreset } from "@r_masseater/y8-docs";
-import type { DocsPresetOptions } from "@r_masseater/y8-docs";
+import { recommended } from "@r_masseater/y8-presets";
+import type { RecommendedOptions } from "@r_masseater/y8-presets";
 
 const INDEX_SKILL = "masseater-ecosystem";
 
-const MASSEATER_DOCS: DocsPresetOptions = {
+const MASSEATER_DOCS: RecommendedOptions = {
   agents: {
     sections: [["Tech stack"], ["Commands"], ["Rules"]],
     commands: ["Commands"],
@@ -26,20 +25,18 @@ const MARKDOWN_IGNORES = [
 export interface MarkdownOptions {
   readonly ignores?: readonly string[];
   readonly rules?: Readonly<Record<string, RuleEntry>>;
-  readonly docs?: DocsPresetOptions;
+  readonly docs?: RecommendedOptions;
 }
 
-export const markdownOf = ({ ignores = [], rules = {}, docs = {} }: MarkdownOptions): Y8Config => {
-  const preset = docsPreset({
-    ...MASSEATER_DOCS,
-    ...docs,
-    agents: { ...MASSEATER_DOCS.agents, ...docs.agents },
-    skills: { ...MASSEATER_DOCS.skills, ...docs.skills },
-  });
-  return {
-    ...preset,
-    plugins: { ...preset.plugins, agnix },
-    rules: { ...preset.rules, "agnix/XP-001": "off", ...rules },
-    ignores: [...MARKDOWN_IGNORES, ...ignores],
-  };
-};
+export const markdownOf = ({ ignores = [], rules = {}, docs = {} }: MarkdownOptions): Y8Config => ({
+  extends: [
+    recommended({
+      ...MASSEATER_DOCS,
+      ...docs,
+      agents: { ...MASSEATER_DOCS.agents, ...docs.agents },
+      skills: { ...MASSEATER_DOCS.skills, ...docs.skills },
+    }),
+  ],
+  rules: { "agnix/XP-001": "off", ...rules },
+  ignores: [...MARKDOWN_IGNORES, ...ignores],
+});
