@@ -61,7 +61,18 @@ const shirushiRust = Effect.gen(function* shirushiRust() {
   return output;
 });
 
+const yogotoRust = Effect.gen(function* yogotoRust() {
+  const definitions = yield* Effect.promise(() => import("@masseater.dev/yogoto-protocol"));
+  const output: RustOutput = {
+    output: "../../apps/yogoto/src-tauri/src/shared/protocol.rs",
+    header: HEADER,
+    derive: DESKTOP_DERIVE,
+    definitions,
+  };
+  return output;
+});
+
 export const rustOutputs = Effect.all(
-  [Effect.succeed(aredokoRust), yohakuRust, mediaNotesRust, shirushiRust],
+  [Effect.succeed(aredokoRust), yohakuRust, mediaNotesRust, shirushiRust, yogotoRust],
   { concurrency: 1 },
 );
