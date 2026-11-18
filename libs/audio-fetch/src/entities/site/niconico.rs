@@ -28,16 +28,13 @@ pub struct Watch {
 }
 
 fn available(domand: &Value, kind: &str) -> Vec<Value> {
-    domand[kind]
-        .as_array()
-        .map(|formats| {
-            formats
-                .iter()
-                .filter(|format| format["isAvailable"].as_bool() == Some(true))
-                .cloned()
-                .collect()
-        })
-        .unwrap_or_default()
+    domand[kind].as_array().map_or_default(|formats| {
+        formats
+            .iter()
+            .filter(|format| format["isAvailable"].as_bool() == Some(true))
+            .cloned()
+            .collect()
+    })
 }
 
 fn quality(format: &Value) -> i64 {
