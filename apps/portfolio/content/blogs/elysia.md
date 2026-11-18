@@ -1,17 +1,17 @@
 ---
-title: "Elysia: using the server's type definitions as the client's types"
-description: "How Eden Treaty gives you client types from Elysia's route definitions, shown with sample code and tsc output. It also covers validation, plugins and running on Cloudflare Workers."
+title: "Elysia: サーバーの型定義をクライアントの型として使用する"
+description: "「Eden Treaty」では、Elysiaのルート定義からクライアントタイプを取得し、サンプルコードとtsc出力で示している。また、バリデーションやプラグイン、Cloudflare Workersでの運用についても解説している。"
 tags: ["Elysia", "TypeScript", "Bun"]
 published: true
 ---
 
-When you write a client for a REST API, you prepare the response types either by copying them by hand from the server's code or by generating code from OpenAPI. Either way, they become stale the moment the server changes. In [Elysia](https://elysiajs.com/), just importing the type of the server's `app` on the client side gives you the types of paths, parameters, bodies and responses for each status, without code generation[^eden-overview].
+REST API のクライアントを書く際は、サーバーのコードから手作業でコピーするか、OpenAPI からコードを生成してレスポンスタイプを用意する。いずれにせよ、サーバーが変わった途端に古くなってしまう。[Elysia](https://elysiajs.com/)では、クライアント側でサーバーの`app`の型をインポートするだけで、コード生成なしに各ステータスのパス、パラメータ、ボディ、レスポンスの型を取得できる[^eden-overview]。
 
-Elysia is a backend framework designed for Bun, but because it conforms to [WinterTC](https://wintertc.org/), it also runs on Node.js, Deno and Cloudflare Workers through adapters[^elysia-at-glance].
+ElysiaはBun向けに設計されたバックエンドフレームワークだが、[WinterTC](https://wintertc.org/)に準拠しているため、アダプター[^elysia-at-glance]を介してNode.js、Deno、Cloudflare Workersでも動作する。
 
-## The server
+## サーバー
 
-We define a GET that returns one user and a POST that creates one.
+1人のユーザーを返すGETと、1人を作成するPOSTを定義する。
 
 ```ts
 // server.ts
@@ -51,13 +51,13 @@ export const app = new Elysia({ prefix: "/api" })
 export type App = typeof app;
 ```
 
-`t` is [TypeBox](https://github.com/sinclairzx81/typebox), bundled with Elysia, and the schemas written here are used both for validation at run time and for typing `params.id` and `body.name` inside the handlers[^elysia-validation]. `:id` is a string in the URL, but because `t.Number()` is specified, the handler receives the value converted to a number. A value returned with `status(404, ...)` is recorded as a response type separate from 200.
+`t` は Elysia に同梱されている [TypeBox](https://github.com/sinclairzx81/typebox) で、ここで記述したスキーマは実行時のバリデーションと、ハンドラ内での `params.id` や `body.name` の型付けの両方に使用される[^elysia-validation]。`:id` は URL 内の文字列だが、`t.Number()` が指定されているため、ハンドラは数値に変換された値を受け取る。`status(404, ...)` で返される値は、200とは別のレスポンスタイプとして記録される。
 
-The final `export type App = typeof app` is all the information passed to the client side.
+最後の `export type App = typeof app` は、クライアント側に渡されたすべての情報である。
 
-## The client
+## クライアント
 
-Pass the `App` type to [Eden Treaty](https://elysiajs.com/eden/treaty/overview.html).
+`App` 型を [Eden Treaty](https://elysiajs.com/eden/treaty/overview.html) に渡す。
 
 ```ts
 // client.ts
@@ -77,9 +77,9 @@ if (error) {
 await api.api.users.post({ name: "bob" });
 ```
 
-`api.api.users({ id: 1 }).get()` is a call that maps the path `/api/users/:id` directly onto a chain of properties, and it returns a pair of `{ data, error }`[^eden-overview]. In the branch where `error` exists, `error.status` is narrowed to `404` and `error.value` to `{ message: string }`, and in the `data` branch the type of the 200 schema applies.
+`api.api.users({ id: 1 }).get()` は、パス `/api/users/:id` をプロパティの連鎖に直接マッピングする呼び出しであり、`{ data, error }`[^eden-overview] のペアを返す。`error` が存在するブランチでは `error.status` が `404` に、`error.value` が `{ message: string }` に絞り込まれ、`data` ブランチでは 200 スキーマの型が適用される。
 
-References to properties that do not exist and typos in body keys are both caught at compile time.
+存在しないプロパティへの参照とbodyキーの型ミスは、いずれもコンパイル時に検出される。
 
 ```text
 $ tsc
@@ -87,11 +87,11 @@ client.ts(12,20): error TS2339: Property 'email' does not exist on type '{ id: n
 client.ts(15,28): error TS2353: Object literal may only specify known properties, and 'nmae' does not exist in type '{ name: string; }'.
 ```
 
-If you add `email` to the `response` schema on the server side, the first error disappears without changing the client.
+サーバー側の `response` スキーマに `email` を追加すると、クライアントを変更することなく最初のエラーが消える。
 
-## Calling without going through HTTP
+## HTTPを介さない呼び出し
 
-You can also pass an Elysia instance to `treaty` instead of a URL. In this case fetch is not used, and `app.handle(request)` is called directly inside. Tests no longer need to start a server, and calling the server's own API during SSR does not cause an HTTP round trip.
+URLの代わりに Elysia インスタンスを `treaty` に渡すこともできる。このケースでは fetch は使用されず、内部で直接 `app.handle(request)` が呼び出されている。テストはサーバーを起動する必要がなくなり、SSR時にサーバー自身のAPIを呼び出してもHTTPラウンドトリップが発生しない。
 
 ```ts
 import { app } from "./server";
@@ -104,7 +104,7 @@ const invalid = await api.api.users.post({ name: "" });
 console.log(invalid.status, invalid.error?.value);
 ```
 
-A request that violates `minLength: 1` gets a 422, which includes which property violated what.
+`minLength: 1` に違反するリクエストには 422 が返される。これには、どのプロパティが何に違反したかが含まれる。
 
 ```text
 422 {
@@ -118,22 +118,22 @@ A request that violates `minLength: 1` gets a 422, which includes which property
 }
 ```
 
-## Validators other than TypeBox
+## TypeBox以外のバリデータ
 
-Because Elysia supports [Standard Schema](https://standardschema.dev/), you can specify Zod, Valibot, Effect Schema or ArkType schemas directly in `body` and `params` instead of `t`. You can even mix different libraries in the `body` and `query` of a single route[^elysia-1-4-supersymmetry]. For validators that cannot output JSON Schema, there is a path that generates the OpenAPI schema from TypeScript types[^elysia-1-4-supersymmetry].
+Elysiaは[Standard Schema](https://standardschema.dev/)に対応しているため、`t`の代わりに`body`と`params`でZod、Valibot、Effect Schema、またはArkTypeスキーマを直接指定できる。単一のルートの `body` と `query` で異なるライブラリを混在させることさえできる[^elysia-1-4-supersymmetry]。JSON Schema を出力できないバリデータには、TypeScript の型から OpenAPI スキーマを生成するパスがある[^elysia-1-4-supersymmetry]。
 
-## Plugins
+## プラグイン
 
-A group of routes is defined as a separate `Elysia` instance and brought into the parent with `.use()`. The plugin's routes are merged into the parent's type, so exporting the `App` type from the single root is enough. Lifecycle hooks (such as `onBeforeHandle`) are confined to their own instance by default; specifying `scoped` extends them to the parent, and specifying `global` extends them to everything[^elysia-plugin].
+ルートのグループは個別の `Elysia` インスタンスとして定義され、`.use()` で親に組み込まれる。プラグインのルートは親の型にマージされているので、単一ルートから `App` 型をエクスポートすれば十分だ。ライフサイクルフック（`onBeforeHandle` など）はデフォルトで自身のインスタンスに限定されており、`scoped` を指定すると親に拡張され、`global` を指定するとすべてに拡張される[^elysia-plugin]。
 
 ```ts
 const todos = new Elysia({ prefix: "/todos" }).get("/", () => [...]);
 const app = new Elysia().use(todos);
 ```
 
-## Running on Cloudflare Workers
+## Cloudflare Workersで動作中
 
-Specify `CloudflareAdapter` from `elysia/adapter/cloudflare-worker`. AoT compilation works as it is[^elysia-integration-with-cloudflare-worker].
+`elysia/adapter/cloudflare-worker` から `CloudflareAdapter` を指定する。AoTのコンパイルはそのまま動作する[^elysia-integration-with-cloudflare-worker]。
 
 ```ts
 import { Elysia } from "elysia";
@@ -144,7 +144,7 @@ export default new Elysia({ adapter: CloudflareAdapter })
   .compile();
 ```
 
-Workers have no `fs`, so `Elysia.file`, the Static plugin and OpenAPI Type Gen cannot be used. Inline values such as `.get('/', 'Hello')`, which create a Response before startup, also cause errors[^elysia-integration-with-cloudflare-worker]. This adapter is treated as experimental[^elysia-integration-with-cloudflare-worker].
+ワーカーには `fs` がないため、`Elysia.file`、Static プラグイン、および OpenAPI Type Gen は利用できない。起動前に Response を作成する `.get('/', 'Hello')` のようなインライン値もエラーの原因となる[^elysia-integration-with-cloudflare-worker]。このアダプターは実験的なものとして扱われる[^elysia-integration-with-cloudflare-worker]。
 
 [^eden-overview]: Eden - Overview. https://elysiajs.com/eden/overview.html
 

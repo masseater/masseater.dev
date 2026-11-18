@@ -1,27 +1,27 @@
 ---
-title: "Alchemy: putting infrastructure definitions and the code that uses them in one TypeScript program"
-description: "An example of defining a Worker with a D1 binding in Alchemy where referencing a binding that is not in the Stack stops at tsc, a Worker written with Effect, and how state and stages work."
+title: "Alchemy: インフラストラクチャの定義と、それを使用するコードを1つのTypeScriptプログラムにまとめる"
+description: "AlchemyでD1バインディングを持つWorkerを定義し、Stackにないバインディングへの参照がtscで止まる例、Effectで記述したWorker、およびステートとステージの仕組みについて。"
 tags: ["Alchemy", "Cloudflare", "Effect"]
 published: true
 ---
 
-In [Terraform](https://developer.hashicorp.com/terraform) and [Pulumi](https://www.pulumi.com/), the definition that creates a D1 database and the code of the Worker that reads that D1 live in separate files, and the only thing connecting them is the binding name `DB`. Whether `env.DB` really exists on the Worker side is not known until you deploy and run it. In [Alchemy](https://alchemy.run/), the definition and its use are placed in the same TypeScript program, and whether a binding exists and what type it has can be checked at compile time[^alchemy-what-is-alchemy].
+[Terraform](https://developer.hashicorp.com/terraform) や [Pulumi](https://www.pulumi.com/) では、D1 データベースを作成する定義と、その D1 を読み込む Worker のコードは別々のファイルに存在し、両者をつないでいるのはバインディング名 `DB` だけである。`env.DB` が Worker 側に本当に存在するかどうかは、デプロイして実行してみるまで分からない。[Alchemy](https://alchemy.run/)では、定義とその用途は同じTypeScriptプログラム内に配置されており、バインディングの有無や種類はコンパイル時に確認できる[^alchemy-what-is-alchemy]。
 
-The IaC engine itself is written in TypeScript, and providers are imported and run as they are. Unlike Pulumi and Terraform, there is no layer that bridges providers into a Go engine[^alchemy-compare]. The current version on npm is 2.0.0-beta.84, so it is still in beta[^npm-alchemy-www-npmjs-com-package-alchemy].
+IaCエンジン自体はTypeScriptで記述されており、プロバイダーはそのままインポートして実行される。PulumiやTerraformとは異なり、プロバイダーをGoエンジンに橋渡しするレイヤーは存在しない[^alchemy-compare]。npm上の現行バージョンは2.0.0-beta.84なので、まだベータ版である[^npm-alchemy-www-npmjs-com-package-alchemy]。
 
-| Aspect          | Alchemy                                                                                  | Pulumi, Terraform, SST, CDK                                          |
-| --------------- | ---------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| Engine          | TypeScript. Providers are imported and run directly                                      | Providers are bridged into a Go engine                               |
-| Language        | TypeScript and [Effect](https://effect.website/)                                         | Pulumi supports multiple languages, Terraform uses HCL               |
-| Testing         | Deploying a real stack, running tests and tearing it down, all from `bun test` or Vitest | Nothing equivalent                                                   |
-| Permissions     | Derived from the bindings the code uses                                                  | SST grants them with links, Pulumi and Terraform do not enforce them |
-| Running locally | Emulation with `alchemy dev`                                                             | None                                                                 |
+| 側面             | 錬金術                                                                                       | Pulumi, Terraform, SST, CDK                                      |
+| ---------------- | -------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| エンジン         | TypeScript。プロバイダーはインポートされ、直接実行される                                     | プロバイダーはGoエンジンにブリッジされる                         |
+| 言語             | TypeScriptと[Effect](https://effect.website/)                                                | Pulumiは複数の言語に対応しており、TerraformはHCLを使用している。 |
+| テスト           | 実際のスタックをデプロイし、テストを実行して取り壊す。すべて `bun test` または Vitest から。 | 同等のものなし                                                   |
+| 権限             | コードが使用するバインディングに由来する                                                     | SSTはリンクを付与するが、PulumiやTerraformはそれらを強制しない。 |
+| ローカルで実行中 | `alchemy dev` によるエミュレーション                                                         | なし                                                             |
 
-The source is the official comparison page[^alchemy-compare].
+ソースは公式の比較ページ[^alchemy-compare]だ。
 
-## Writing a Stack
+## スタックの記述
 
-A program starts from the `Stack` in `alchemy.run.ts`. You pass it a name, the provider and state settings, and a body written with `Effect.gen`, and create resources inside the body with `yield*`[^alchemy-getting-started]. Here we define a D1 database and a Worker that receives it as a binding.
+プログラムは `alchemy.run.ts` の `Stack` から開始する。名前、プロバイダーとステートの設定、そして `Effect.gen` で記述したボディを渡し、ボディ内に `yield*`[^alchemy-getting-started] でリソースを作成する。ここでは、D1データベースと、それをバインディングとして受け取るWorkerを定義する。
 
 ```ts
 // alchemy.run.ts
@@ -50,11 +50,11 @@ export default Stack(
 );
 ```
 
-The SQL in the directory given by `migrations` is applied in numbered order on every deploy, and files that have already been applied are skipped[^alchemy-cloudflare-d1]. The object returned by the body of the Stack is treated as output, and the CLI shows it after the deploy[^alchemy-getting-started].
+`migrations` で指定されたディレクトリ内のSQLは、デプロイごとに番号順に適用され、既に適用済みのファイルはスキップされる[^alchemy-cloudflare-d1]。Stackの本体が返すオブジェクトが出力として扱われ、CLIではdeploy[^alchemy-getting-started]の後にそれが表示される。
 
-## The Worker receives the type of env
+## Workerはenvの型を受け取る
 
-`InferEnv<typeof api>` is a type that maps each resource passed to `env: { DB }` to its runtime type. A D1 database becomes `D1Database`, and an R2 bucket becomes `R2Bucket`[^alchemy-cloudflare-workers]. The Worker's code receives `env` with this type.
+`InferEnv<typeof api>` は、`env: { DB }` に渡される各リソースをそのランタイム型にマッピングする型である。D1データベースは`D1Database`になり、R2バケットは`R2Bucket`になる[^alchemy-cloudflare-workers]。作業者のコードはこの型の `env` を受け取る。
 
 ```ts
 // worker.ts
@@ -69,18 +69,18 @@ export default {
 };
 ```
 
-The KV namespace `CACHE` is not bound in the Stack. Type checking in this state stops before the deploy.
+KV名前空間 `CACHE` はスタックにバインドされていない。この状態での型チェックは、デプロイ前に停止する。
 
 ```text
 $ tsc
 worker.ts(6,30): error TS2339: Property 'CACHE' does not exist on type '{ readonly DB: D1Database; }'.
 ```
 
-The type of `env` consists only of `{ readonly DB: D1Database }`, and bindings that are not written in the Stack are treated as nonexistent. If you want to use `env.CACHE` on the Worker side, the only way is to add a `KV.Namespace` on the Stack side and pass it to `env`, so the definition and its use cannot drift apart.
+`env` の型は `{ readonly DB: D1Database }` のみであり、Stack に記述されていないバインディングは存在しないものとして扱われる。Worker側で `env.CACHE` を使いたいなら、Stack側で `KV.Namespace` を追加して `env` に渡すしかなく、定義と用途が乖離しないようにする。
 
-## Written with Effect, bindings become Layers
+## エフェクトを込めて記述すれば、バインディングはレイヤーになる
 
-Besides the `async fetch` above, there is also a style in which the Worker itself is written with Effect and receives bindings with `yield*`.
+上記の `async fetch` 以外にも、Worker 自体を Effect で記述し、`yield*` でバインディングを受け取るスタイルもある。
 
 ```ts
 import * as Cloudflare from "alchemy/Cloudflare";
@@ -109,24 +109,24 @@ export default Cloudflare.Worker(
 );
 ```
 
-`ReadWriteBucket(Uploads)` is a contract that says "this Worker reads and writes Uploads." The `ReadWriteBucketBinding` Layer implements that contract as a Cloudflare binding[^alchemy-what-is-alchemy]. Because the contract and the implementation are separate, the handler can be pointed at a different storage just by swapping the Layer, without changing the handler. If you switch to `ReadBucket`, the write methods disappear from the client's type[^alchemy-cloudflare-workers].
+`ReadWriteBucket(Uploads)` は、「この Worker は Uploads を読み書きする」という契約だ。`ReadWriteBucketBinding` レイヤーは、そのコントラクトを Cloudflare バインディングとして実装している[^alchemy-what-is-alchemy]。コントラクトと実装が分離されているため、ハンドラを変更することなく、Layerを入れ替えるだけで別のストレージをハンドラとして指定できる。`ReadBucket` に切り替えると、クライアントの type[^alchemy-cloudflare-workers] から書き込みメソッドが消える。
 
 ```text
 $ tsc
 worker.ts(6,17): error TS2339: Property 'put' does not exist on type 'ReadBucketClient'.
 ```
 
-On AWS, the same mechanism generates an IAM statement for each binding that targets only one resource, so there is no need to write policies by hand[^alchemy-what-is-alchemy]. If you provide a Layer meant only for Workers to a Lambda Function, it becomes a type error because the Lambda side has no `WorkerEnvironment`[^alchemy-binding].
+AWSでは、同じ仕組みで1つのリソースのみを対象とするバインディングごとにIAMステートメントを生成するため、ポリシーを手書きする必要がない[^alchemy-what-is-alchemy]。Worker専用のLayerをLambda関数に渡すと、Lambda側に`WorkerEnvironment`[^alchemy-binding]がないため型エラーになる。
 
-## State and stages
+## 状態と段階
 
-The input, output, ID and status of each resource are saved as state, and are used on the next deploy to compute the difference from the code. By default they are written to the `.alchemy/` directory, so add it to `.gitignore`. To share state within a team, choose `Cloudflare.state()`, and a Worker that uses a Durable Object and SQLite is deployed automatically on the first run as the place to keep state. In CI, prepare it in advance with `alchemy state bootstrap`[^alchemy-state-store].
+各リソースの入力、出力、ID、およびステータスは状態として保存され、次回のデプロイ時にコードとの差分を算出するために使用される。デフォルトでは `.alchemy/` ディレクトリに書き込まれるため、`.gitignore` に追加すること。チーム内で状態を共有するには、`Cloudflare.state()` を選択し、Durable Object と SQLite を使用する Worker を初回実行時に自動的に配置して状態を保持する。CIでは、`alchemy state bootstrap`[^alchemy-state-store]で事前に準備しておく。
 
-A stage is an independent copy of the stack, and a deploy always targets exactly one stage. The default for `alchemy deploy` is `live_$USER`, the default for `alchemy dev` is `dev_$USER`, and you can also specify one explicitly, as in `--stage production`. Because the stage is included in the physical resource names, environments for each developer, each PR and production can be created from the same program without interfering with each other[^alchemy-stages].
+ステージはスタックの独立したコピーであり、デプロイは常にちょうど1つのステージを対象とする。`alchemy deploy` のデフォルトは `live_$USER`、`alchemy dev` のデフォルトは `dev_$USER` で、`--stage production` のように明示的に指定することもできる。ステージが物理リソース名に含まれているため、各開発者の環境、各PR、本番環境を、互いに干渉することなく同一のプログラムから作成できる[^alchemy-stages]。
 
-## Commands
+## コマンド
 
-`alchemy deploy` shows a plan and applies it after confirmation. Credentials are saved in a profile in `~/.alchemy/profiles.json`, so no environment variables need to be set[^alchemy-getting-started]. `alchemy dev` watches for file changes and redeploys, creating resources in the cloud while running the Worker in a local runtime. Even if applying fails, dev does not stop, and it deploys again once you fix the code and save[^alchemy-cli-dev]. `alchemy destroy` deletes the resources of a stage.
+`alchemy deploy` はプランを表示し、確認後に適用する。認証情報は `~/.alchemy/profiles.json` のプロファイルに保存されるため、環境変数を設定する必要はない[^alchemy-getting-started]。`alchemy dev` はファイルの変更を監視して再デプロイを行い、ローカルランタイムで Worker を実行しながらクラウド上にリソースを作成する。適用に失敗しても dev は停止せず、コードを修正して save[^alchemy-cli-dev] すれば再度デプロイされる。`alchemy destroy` はステージのリソースを削除する。
 
 [^alchemy-what-is-alchemy]: Alchemy - What is Alchemy. https://alchemy.run/what-is-alchemy
 

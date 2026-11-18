@@ -1,26 +1,26 @@
 ---
-title: "Vite+: bringing lint, formatting, testing and task running into the vp command"
-description: "Examples of how Vite+ gathers settings into vite.config.ts, lints with Oxlint, caches with Vite Task, manages Node.js and package manager versions, and runs Git hooks."
+title: "Vite+: リント、フォーマット、テスト、タスクをvpコマンドに統合"
+description: "Vite+が設定をvite.config.tsに収集し、Oxlintでリントを行い、Vite Taskでキャッシュし、Node.jsやパッケージマネージャーのバージョンを管理し、Gitフックを実行する例。"
 tags: ["Vite+", "TypeScript", "ツールチェーン"]
 published: true
 ---
 
-A TypeScript repository holds [ESLint](https://eslint.org/), [Prettier](https://prettier.io/), [Vitest](https://vitest.dev/), [lint-staged](https://github.com/lint-staged/lint-staged), a Node.js version manager and a task runner side by side, each with its own configuration file. In [Vite+](https://viteplus.dev/), these are brought together into a single command, `vp`, and a single configuration file, `vite.config.ts`[^vite-guide-getting-started]. It is developed by [VoidZero](https://voidzero.dev/) and released under the MIT license[^announcing-vite-1-0]. It is not a successor to Vite but a layer for calling Vite, Vitest, Oxc and [Rolldown](https://rolldown.rs/) from a single command[^announcing-vite-1-0].
+TypeScriptのリポジトリには、[ESLint](https://eslint.org/)、[Prettier](https://prettier.io/)、[Vitest](https://vitest.dev/)、[lint-staged](https://github.com/lint-staged/lint-staged)、Node.jsのバージョンマネージャー、そしてタスクランナーが共存しており、それぞれに独自の設定ファイルが用意されている。[Vite+](https://viteplus.dev/)では、これらが `vp` という単一のコマンドと、`vite.config.ts`[^vite-guide-getting-started] という単一の設定ファイルにまとめられている。[VoidZero](https://voidzero.dev/)によって開発され、MITライセンス[^announcing-vite-1-0]で公開されている。Viteの後継ではなく、単一のコマンドでVite、Vitest、Oxc、および[Rolldown](https://rolldown.rs/)を呼び出すためのレイヤーである[^announcing-vite-1-0]。
 
-| Command                         | What runs inside                                                                                                  |
-| ------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| `vp dev`、`vp build`            | Vite 8 and Rolldown                                                                                               |
-| `vp check`、`vp lint`、`vp fmt` | [Oxlint](https://oxc.rs/docs/guide/usage/linter.html) and [Oxfmt](https://oxc.rs/docs/guide/usage/formatter.html) |
-| `vp test`                       | Vitest                                                                                                            |
-| `vp pack`                       | [tsdown](https://tsdown.dev/)                                                                                     |
-| `vp run`                        | Vite Task                                                                                                         |
-| `vp install`、`vp add`、`vp pm` | The detected package manager                                                                                      |
-| `vp env`                        | Version management for Node.js and the package manager                                                            |
-| `vp hooks`、`vp staged`         | Git hooks                                                                                                         |
+| コマンド                        | 内部で動作するもの                                                                                                   |
+| ------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `vp dev`、`vp build`            | Vite 8 と Rolldown                                                                                                   |
+| `vp check`、`vp lint`、`vp fmt` | [Oxlint](https://oxc.rs/docs/guide/usage/linter.html) および [Oxfmt](https://oxc.rs/docs/guide/usage/formatter.html) |
+| `vp test`                       | Vitest                                                                                                               |
+| `vp pack`                       | [tsdown](https://tsdown.dev/)                                                                                        |
+| `vp run`                        | Vite Task                                                                                                            |
+| `vp install`、`vp add`、`vp pm` | 検出されたパッケージマネージャー                                                                                     |
+| `vp env`                        | Node.js のバージョン管理とパッケージマネージャー                                                                     |
+| `vp hooks`、`vp staged`         | Gitフック                                                                                                            |
 
-## Settings are gathered into vite.config.ts
+## 設定は vite.config.ts にまとめられている。
 
-If you import `defineConfig` from `vite-plus`, you can write the `lint`, `fmt`, `test`, `run` and `staged` keys in the same file as Vite's `server` and `build`[^vite-configuring-vite]. `.eslintrc`, `.prettierrc`, `vitest.config.ts` and `.lintstagedrc` are no longer needed.
+`vite-plus` から `defineConfig` をインポートすれば、`lint`、`fmt`、`test`、`run`、`staged` キーを Vite の `server` や `build`[^vite-configuring-vite] と同じファイルに記述できる。`.eslintrc`、`.prettierrc`、`vitest.config.ts`、`.lintstagedrc`は不要になった。
 
 ```ts
 import { defineConfig } from "vite-plus";
@@ -43,7 +43,7 @@ export default defineConfig({
 
 ## Lint
 
-`vp lint` is actually Oxlint, and rules are specified with ESLint-compatible names.
+`vp lint` は実際には Oxlint であり、ルールは ESLint 互換の名前で指定される。
 
 ```ts
 // src/bad.ts
@@ -60,13 +60,13 @@ src/bad.ts:2:3: error eslint(no-debugger): `debugger` statement is not allowed
 src/bad.ts:3:12: error eslint(eqeqeq): Expected === and instead saw ==
 ```
 
-Enabling `typeAware` and `typeCheck` in `lint.options` switches to checks that use type information. Per-file exceptions go in `lint.overrides`[^vite-lint-config].
+`lint.options` で `typeAware` と `typeCheck` を有効にすると、型情報を用いたチェックに切り替わる。ファイルごとの例外は `lint.overrides`[^vite-lint-config] に記述する。
 
 ## Vite Task
 
-`vp run <name>` can run both the scripts in `package.json` and the tasks defined in `run.tasks`. The difference is caching: tasks in `run.tasks` are cached by default, while scripts are cached only when `--cache` is given[^vite-run].
+`vp run <name>` は、`package.json` 内のスクリプトと `run.tasks` で定義されたタスクの両方を実行できる。違いはキャッシュだ。`run.tasks` のタスクはデフォルトでキャッシュされるが、スクリプトは `--cache` を指定したときのみキャッシュされる[^vite-run]。
 
-In the settings above, `gen` reads `src/words.txt` and writes `out/count.json`, and `report` reads it. The first time, both run.
+上記の設定では、`gen` は `src/words.txt` を読み込み `out/count.json` を書き込み、`report` はそれを読み込む。1回目は両方とも動く。
 
 ```text
 $ vp run report
@@ -79,7 +79,7 @@ report: {"count":3}
 vp run: 0/2 cache hit (0%), 2/2 successful.
 ```
 
-If you run it again without changing anything, the commands are not run, and the saved output is replayed.
+何も変更せずに再度実行すると、コマンドは実行されず、保存された出力が再生成される。
 
 ```text
 $ vp run report
@@ -92,7 +92,7 @@ report: {"count":3}
 vp run: 2/2 cache hit (100%), 2/2 successful, 88ms saved.
 ```
 
-If you add a line to `src/words.txt`, it shows, with the reason, which file's change invalidated the cache.
+`src/words.txt` に1行追加すると、どのファイルの変更でキャッシュが無効化されたかという理由とともに表示される。
 
 ```text
 $ vp run report
@@ -103,24 +103,24 @@ $ node report.mjs ○ cache miss: 'out/count.json' modified, executing
 report: {"count":4}
 ```
 
-The settings do not list `src/words.txt` as an input. This works because the files read, the paths checked for existence and the directories listed while a task runs are recorded and used for the next cache decision[^vite-task-caching]. The `out/**` written in `cache.output` is restored on a cache hit, so `report` can read what `gen` produced.
+設定には `src/words.txt` が入力として記載されていない。これは、タスク実行中に読み込まれたファイル、存在確認されたパス、および列挙されたディレクトリが記録され、次のキャッシュ判定に利用されるためである[^vite-task-caching]。`cache.output` で記述された `out/**` はキャッシュヒット時に復元されるため、`report` は `gen` が生成したものを読み取ることができる。
 
-Only reads of environment variables cannot be recorded from the run, so you write the ones to include in the cache key in `cache.env`, and the ones to pass to the task without including them in the key in `cache.untrackedEnv`[^vite-task-caching]. In `dependsOn`, you can also specify tasks of other packages in the form `package#task`, and `vp run -r <task>` runs the whole workspace in dependency order[^vite-run].
+環境変数の読み取り値のみは実行時に記録できないため、キャッシュキーに含めるものは `cache.env` に、キーに含めずにタスクに渡すものは `cache.untrackedEnv` に記述する[^vite-task-caching]。`dependsOn` では、`package#task` という形式で他のパッケージのタスクを指定することもでき、`vp run -r <task>` を実行すると、ワークスペース全体を依存関係の順に実行する[^vite-run]。
 
-## Version management for Node.js and the package manager
+## Node.js のバージョン管理とパッケージマネージャー
 
-`vp env` manages the versions of the Node.js runtime and the package manager. The Node.js version is decided by looking for `.node-version`, `devEngines.runtime`, `engines.node` and `.nvmrc`, starting from the nearest directory. Archives fetched from nodejs.org are verified with a PGP signature and SHA-256[^vite-environment]. The package manager is detected from `packageManager`, `devEngines.packageManager` and the lockfile, in that order, and if none of them exists, it becomes pnpm[^vite-package-management]. `vp install` and `vp add` are converted into the commands of the detected package manager, so the commands you type are the same in a pnpm repository and in an npm repository.
+`vp env` は Node.js ランタイムとパッケージマネージャーのバージョンを管理する。Node.jsのバージョンは、最も近いディレクトリから `.node-version`、`devEngines.runtime`、`engines.node`、`.nvmrc` を探すことで決定する。nodejs.orgから取得したアーカイブは、PGP署名とSHA-256[^vite-environment]で検証されている。パッケージマネージャーは `packageManager`、`devEngines.packageManager`、ロックファイルの順に検出され、いずれも存在しない場合は pnpm[^vite-package-management] となる。`vp install` と `vp add` は検出されたパッケージマネージャーのコマンドに変換されるため、入力したコマンドは pnpm リポジトリでも npm リポジトリでも同一になる。
 
 ## Git hooks
 
-Running `vp config` installs a Git hook dispatcher. Scripts such as `.vite-hooks/pre-commit` are committed to the repository, and the generated files are placed under `.vite-hooks/_` and ignored[^vite-commit-hooks]. `vp staged` bundles lint-staged 17, and checks only the staged files according to the `staged` key in the settings[^vite-commit-hooks].
+`vp config` を実行すると、Gitフックディスパッチャーがインストールされる。`.vite-hooks/pre-commit` などのスクリプトはリポジトリにコミットされ、生成されたファイルは `.vite-hooks/_` 配下に置かれ、無視される[^vite-commit-hooks]。`vp staged` は lint-staged 17 をバンドルし、設定の `staged` キーに従ってステージ済みファイルのみをチェックする[^vite-commit-hooks]。
 
 ```sh
 # .vite-hooks/pre-commit
 vp staged
 ```
 
-You can disable them per clone with `vp hooks disable`, and setting `VP_GIT_HOOKS=0` temporarily stops all hooks[^vite-commit-hooks].
+クローンごとに `vp hooks disable` で無効化でき、`VP_GIT_HOOKS=0` と設定すればすべてのフックが一時的に停止する[^vite-commit-hooks]。
 
 [^vite-guide-getting-started]: Vite+ Guide - Getting Started. https://viteplus.dev/guide/
 
