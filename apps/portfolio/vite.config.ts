@@ -1,4 +1,5 @@
 import { alchemyTasks, d1Tasks } from "@masseater.dev/cloudflare-account/run-tasks";
+import { LOCKED } from "@r_masseater/msch/locked-inputs";
 import { defineConfig } from "vite-plus";
 
 import { portfolioPlugins } from "./src/app/vite/plugins.ts";
@@ -50,7 +51,7 @@ export default defineConfig({
         command: "alchemy deploy --config alchemy.zone.ts --stage prod --yes",
         cache: false,
       },
-      build: "vp build && sequoia inject",
+      build: { command: "vp build && sequoia inject", cache: LOCKED },
       ...d1Tasks,
       "standard-site": { command: "vpx bin/standard-site.ts && sequoia publish", cache: false },
       "technique-examples": { command: "vpx bin/technique-examples.ts", cache: false },

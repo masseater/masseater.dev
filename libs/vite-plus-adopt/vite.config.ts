@@ -1,3 +1,4 @@
+import { LOCKED } from "@r_masseater/msch/locked-inputs";
 import { Array as Arr, Effect, Function, Option, Record as Rec, String as Str, pipe } from "effect";
 import { defineConfig } from "vite-plus";
 
@@ -177,8 +178,12 @@ export default defineConfig({
   run: {
     tasks: {
       verify: { command: [], dependsOn: ["test", "size"] },
-      build: { command: "vp pack", dependsOn: [{ task: "build", from: "dependencies" }] },
-      test: { command: "vp test run", dependsOn: ["build"] },
+      build: {
+        command: "vp pack",
+        dependsOn: [{ task: "build", from: "dependencies" }],
+        cache: LOCKED,
+      },
+      test: { command: "vp test run", dependsOn: ["build"], cache: LOCKED },
       size: { command: "size-limit", dependsOn: ["build"] },
     },
   },
