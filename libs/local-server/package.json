@@ -2,6 +2,7 @@
   "name": "@masseater.dev/local-server",
   "version": "0.0.0",
   "private": true,
+  "description": "Address and token discovery for apps talking to a server on the same PC.",
   "type": "module",
   "imports": {
     "#/*": "./src/*"

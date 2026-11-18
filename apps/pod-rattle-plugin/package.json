@@ -2,6 +2,7 @@
   "name": "@masseater.dev/pod-rattle",
   "version": "0.0.10",
   "private": true,
+  "description": "VST3 and CLAP audio plugin build of the Pod Rattle instrument.",
   "type": "module",
   "devDependencies": {
     "@masseater.dev/component-release": "workspace:*",

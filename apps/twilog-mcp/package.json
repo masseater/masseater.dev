@@ -2,6 +2,7 @@
   "name": "twilog-mcp",
   "version": "0.0.0",
   "private": true,
+  "description": "MCP server twilog.masseater.dev/mcp that searches the owner's X accounts on Twilog.",
   "type": "module",
   "imports": {
     "#/*": "./src/*"
