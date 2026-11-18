@@ -1,5 +1,6 @@
 import { Array as Arr, Option, Predicate, pipe } from "effect";
 
+import { flattenConfig } from "#/entities/rule/index.ts";
 import type { Y8Config } from "#/shared/config/index.ts";
 
 const MARKDOWN = "*.md";
@@ -10,7 +11,7 @@ const hasSection = (value: unknown): value is { readonly y8: Y8Config } =>
 export const y8Section = (config: unknown): Y8Config =>
   pipe(
     Option.liftPredicate(config, hasSection),
-    Option.map((value) => value.y8),
+    Option.map((value) => flattenConfig(value.y8)),
     Option.getOrElse((): Y8Config => ({})),
   );
 
