@@ -1,46 +1,43 @@
 ---
-title: "Claiming new npm names from a cloud container"
-description: "A new npm package name cannot be published through Trusted Publishing until the package exists. This post records how eight names were reserved from a Claude Code cloud container with the owner's web 2FA approvals, and what failed before it worked."
-tags: ["npm", "Trusted Publishing", "GitHub Actions", "Claude Code"]
-published: true
+title: "クラウドコンテナから新しいnpm名を申請する" description: "新しいnpmパッケージ名は、パッケージが存在するまでTrusted Publishingを通じて公開できない。本記事では、所有者のWeb 2FA承認を得てClaude Codeのクラウドコンテナから8つの名称を予約し、それが機能する前に失敗した経緯を記録する。" tags: ["npm", "Trusted Publishing", "GitHub Actions", "Claude Code"] published: true
 ---
 
-Every package in masseater.dev is published by `publish.yml`, a GitHub Actions workflow that I dispatch by hand with the workspace to publish. It authenticates to npm with Trusted Publishing (OIDC), so the repository holds no npm token. This works only for names that already exist on npm. On 2026-11-18, eight new names were needed at once: `@r_masseater/fu4-presets`, `fumx-parser`, `h56m`, `h56m-linux-x64-gnu`, `h56m-win32-x64-msvc`, `h56m-presets`, `wism-presets` and `y8-presets`. msch, the convention checker, depends on most of them, so msch could not be installed from npm until they were out.
+masseater.dev のすべてのパッケージは、ワークスペースで手動でディスパッチして公開する GitHub Actions ワークフローである `publish.yml` によって公開されている。これは Trusted Publishing (OIDC) を用いて npm と認証を行うため、リポジトリに npm トークンは保持されない。この仕組みは、npm 上に既に存在する名前にのみ適用される。2026-11-18 時点で、`@r_masseater/fu4-presets`、`fumx-parser`、`h56m`、`h56m-linux-x64-gnu`、`h56m-win32-x64-msvc`、`h56m-presets`、`wism-presets`、`y8-presets` の 8 つの新しい名前が一斉に必要となった。規約チェッカーである msch はこれらの大半に依存しているため、それらがリリースされるまで msch を npm からインストールすることはできなかった。
 
-## Why a new name needs the owner
+## なぜ新しい名前に所有者が必要なのか
 
-npm lets you configure a trusted publisher only for a package that already exists[^npm-trust]. So the first version of a new name cannot come from the OIDC workflow. Configuring trust also requires 2FA on the account, and npm does not accept granular access tokens that bypass 2FA for trust commands[^npm-trust]. The token that CI can reach gets E404 when it tries to create a new name.
+npmでは、既に存在するパッケージに対してのみ信頼できるパブリッシャーを設定できる[^npm-trust]。そのため、新しい名前の最初のバージョンをOIDCワークフローから取得することはできない。信頼設定にはアカウントの2FAも必要であり、npmは信頼コマンドの2FAをバイパスするきめ細かなアクセストークンを受け付けない[^npm-trust]。CIが到達可能なトークンは、新しい名前を作成しようとするとE404となる。
 
-That leaves one step that only the owner can do: approve a 2FA prompt for each write. The plan was to do everything else from the container:
+残るは、オーナーにしかできない1つのステップ――書き込みごとに2FAプロンプトを承認することだ。それ以外のすべてはコンテナ側で処理する計画だった：
 
-1. Log in with `npm login --auth-type=web` and have the owner approve the login link.
-2. Publish a placeholder version `0.0.0` of each name. It contains only a `package.json` (MIT license, repository URL) and a README saying that the version only reserves the name.
-3. Run `npm trust github <name> --file publish.yml --repository masseater/masseater.dev --environment npm --yes` for each name.
-4. Bump the real versions in a pull request and dispatch `publish.yml`.
+1. `npm login --auth-type=web` でログインし、オーナーにログインリンクを承認してもらう。
+2. 各名称のプレースホルダー版 `0.0.0` を公開する。これには `package.json`（MITライセンス、リポジトリURL）と、バージョンが名称のみを保持することを示す README のみを含める。
+3. 各名前に対して `npm trust github <name> --file publish.yml --repository masseater/masseater.dev --environment npm --yes` を実行する。
+4. プルリクエストで本番版を更新し、`publish.yml` をディスパッチする。
 
-Steps 2 and 3 each need one approval per package, so eight names cost one login plus sixteen approvals.
+ステップ2と3はそれぞれパッケージごとに1件の承認が必要であるため、8名分の名前にはログイン1回分と16件の承認が必要となる。
 
-## What npm web authentication does
+## npmのWeb認証の機能
 
-When npm needs 2FA through the browser, the registry answers the write with 401 and a body holding two URLs. `authUrl` is the page the owner opens. `doneUrl` is polled by the CLI. It returns 202 while the owner has not approved yet, 200 with a one-time token once they have, and 404 after about five minutes, when the request expires. The CLI then repeats the write with that token as the OTP. The 401 body includes these URLs only when the request carries the header `npm-auth-type: web`.
+npmがブラウザ経由で2FAを必要とする場合、レジストリは401レスポンスと2つのURLを含むボディで書き込みを応答する。`authUrl`はオーナーが開くページである。`doneUrl`はCLIによってポーリングされる。オーナーがまだ承認していない場合は202を、承認済みの場合はワンタイムトークンと共に200を、そしてリクエストが期限切れとなる約5分後に404を返す。その後、CLIはそのトークンをOTPとして書き込みを繰り返す。401ボディにこれらのURLが含まれるのは、リクエストに`npm-auth-type: web`ヘッダーが含まれている場合に限られる。
 
-## What failed
+## 何が失敗したか
 
-The first login used `npm login --auth-type=web` with stdin closed. Without a terminal, npm fell back to a `Username:` prompt and never printed a link. Wrapping it in `script` to give it a pseudo-terminal printed the link, and the login was approved, but the `script` process kept running at 90% CPU after npm had exited, and the saved token was lost with it.
+初回ログインでは、標準入力を閉じた状態で `npm login --auth-type=web` を使用した。ターミナルがない状態で、npm は `Username:` プロンプトに戻り、リンクを一度も出力しなかった。これを `script` でラップして擬似ターミナル化したところ、リンクが出力され、ログインが承認された。しかし、npm が終了した後も `script` プロセスは CPU 使用率 90% のまま動作し続け、保存済みのトークンもそれと共に失われた。
 
-The login that worked used a small Node.js script instead of the CLI. It POSTs to `https://registry.npmjs.org/-/v1/login`, prints `loginUrl`, and polls `doneUrl` every 300 ms over a single keep-alive connection (`https.Agent` with `maxSockets: 1`). When the poll returns 200, it writes the token to a temporary npmrc with mode 600.
+正常に動作したログインでは、CLIではなく小規模なNode.jsスクリプトが使用された。`https://registry.npmjs.org/-/v1/login` にPOSTし、`loginUrl` を出力し、単一のkeep-alive接続（`https.Agent` かつ `maxSockets: 1`）を介して300msごとに `doneUrl` をポーリングする。ポーリングの結果が200を返すと、トークンをモード600の一時的なnpmrcに書き込む。
 
-For the placeholders, I first ran eight `npm publish` processes in parallel under `script`, collected the eight `authUrl`s from their output, and posted them together. All eight expired. The debug log of each process showed the same thing: 96 polls answered with 202, then one 404. npm never saw an approval. The second set of eight did exactly the same.
+プレースホルダーについては、まず `script` 配下で 8 つの `npm publish` プロセスを並列に実行し、その出力から 8 つの `authUrl` を収集してまとめて投稿した。8 つすべてが期限切れとなった。各プロセスのデバッグログには同様の結果が表示されていた。96 件のポーリングで 202 が返され、その後 1 件の 404 が返された。npm は一度も承認を検知しなかった。2 つ目の 8 件のセットでも、全く同じ結果となった。
 
-An earlier session had found that this container changes its egress IP from one connection to the next, and that `doneUrl` returns 403 to an IP other than the one that started the request. This time no poll returned 403, so the logs do not show that problem. They only show that no approval reached npm before the links expired. I did not find out whether the owner's approvals were lost somewhere or never made.
+前回のセッションでは、このコンテナが接続ごとにエグレスIPを変更しており、`doneUrl` がリクエストを開始したIPとは別のIPに対して 403 を返すことが判明した。今回はポーリングで 403 が返されなかったため、ログにその問題は記録されていない。記録されているのは、リンクの有効期限が切れる前に npm への承認が得られなかったことだけである。オーナーの承認がどこかで失われたのか、あるいは一度も行われなかったのかは確認できていない。
 
-## What worked
+## うまくいったこと
 
-The third and fourth attempts did the writes with npm's own libraries, but outside the CLI. One Node.js process per package loads `libnpmpublish` and `npm-registry-fetch` from the global npm install and passes them `authType: "web"` and `maxSockets: 1`. The process sends the publish, catches the 401, prints `authUrl`, polls `doneUrl` once a second on its single connection, and repeats the publish with the token when the poll returns 200.
+3回目と4回目の試行では、npm独自のライブラリを用いてCLI外で書き込みを行った。1つのパッケージにつき1つのNode.jsプロセスが、グローバルのnpm installから`libnpmpublish`と`npm-registry-fetch`を読み込み、`authType: "web"`と`maxSockets: 1`を渡す。このプロセスはパブリッシュを送信し、401をキャッチして`authUrl`を出力し、単一の接続に対して1回ずつ`doneUrl`をポーリングし、ポーリングの結果が200になった時点でトークンを用いてパブリッシュを繰り返す。
 
-The third set expired like the first two. The fourth set, sent at 03:46 UTC, went through: all eight placeholders were published within about two minutes. The owner had ticked "don't ask again for 5 minutes" on the approval page, but each write still produced its own link.
+3つ目のセットも、最初の2つと同様に期限が切れた。UTC 03:46に送信された4つ目のセットは、8つのプレースホルダーすべてが約2分以内に公開された。所有者は承認ページで「5分間、再度問い合わせない」にチェックを入れていたが、それでも各書き込みによって個別のリンクが生成された。
 
-Trust used the same pattern. `npm trust` POSTs to `/-/package/<name>/trust` with a body like this one:
+Trustは同じパターンを使用した。`npm trust`は、次のようなボディで`/-/package/<name>/trust`にPOSTする：
 
 ```json
 [
@@ -56,14 +53,14 @@ Trust used the same pattern. `npm trust` POSTs to `/-/package/<name>/trust` with
 ]
 ```
 
-The `permissions` field is required. The CLI fills it from `--allow-publish`, and at least one permission flag must be given[^npm-trust]. A watcher script started the trust request for each name as soon as the registry returned 200 for that package, because trust fails on a name the registry does not show yet. The placeholder for `fumx-parser` took about four minutes to appear, so its trust link came last. Two of the trust links expired and were sent again.
+`permissions` フィールドは必須である。CLI は `--allow-publish` でこのフィールドを補完し、少なくとも1つの権限フラグを指定する必要がある[^npm-trust]。レジストリがそのパッケージに対して 200 を返した時点で、ウォッチャースクリプトは各名前の信頼リクエストを開始した。レジストリがまだ表示していない名前では信頼が失敗するためである。`fumx-parser` のプレースホルダーが表示されるまで約4分かかったため、信頼リンクは最後に表示された。2つの信頼リンクが期限切れとなり、再送された。
 
-After the last approval, the npm session was logged out and the temporary npmrc was deleted. Then `publish.yml` published `y8-presets`, `wism-presets`, `fumx-parser`, `h56m-presets` and `h56m` through OIDC, followed by msch.
+最終承認後、npmセッションがログアウトされ、一時的なnpmrcが削除された。その後、`publish.yml`が`y8-presets`、`wism-presets`、`fumx-parser`、`h56m-presets`、および`h56m`をOIDC経由で公開し、続いてmschが公開された。
 
-## What to change
+## 変更事項
 
-Most of the cost was the number of approvals. Each new name costs two, and per-OS native packages such as `h56m-linux-x64-gnu` multiply the names. Fewer new names means fewer approvals, for example by shipping native binaries inside the main package, or by grouping presets into one package per tool as was done here.
+コストの大部分は承認数によるものだった。新しい名前1つにつき2件の費用がかかり、`h56m-linux-x64-gnu`のようなOS固有のパッケージでは、名前の数がそれに乗じられる。新しい名前の数が少なければ、例えばメインパッケージ内にネイティブバイナリを同梱したり、今回のようにプリセットをツールごとに1つのパッケージにまとめたりすることで、承認数を減らすことができる。
 
-The single-connection publisher and trust script should replace the CLI calls in the repository's name-claiming tool, so the next claim does not start with the CLI path that failed.
+シングルコネクションのパブリッシャーおよびトラストスクリプトは、リポジトリの名前指定ツールにおけるCLI呼び出しを置き換えるべきであり、これにより次のクレームが失敗したCLIパスから開始されないようにする。
 
-[^npm-trust]: [npm trust](https://docs.npmjs.com/cli/v11/commands/npm-trust), npm Docs, checked on 2026-11-18.
+[^npm-trust]: [npm trust](https://docs.npmjs.com/cli/v11/commands/npm-trust), npm Docs, 2026-11-18に確認済み。
