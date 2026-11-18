@@ -78,7 +78,11 @@ export const hidden = (location: SymbolicLocation): SymbolicLocation => ({
 
 const commentOf =
   (document: Document) =>
-  (node: SyntaxNode): Comment => ({ raw: node.text, start: pointOf(document)(node.start) });
+  (node: SyntaxNode): Comment => ({
+    raw: node.text,
+    start: pointOf(document)(node.start),
+    offset: node.start,
+  });
 
 const concrete =
   (document: Document) =>
@@ -175,7 +179,11 @@ const lineComment =
     const line = Str.trimEnd(Str.slice(start, next - NEWLINE)(document.text));
     return pipe(
       Option.fromNullishOr(ANY_COMMENT.exec(line)),
-      Option.map((match) => ({ raw: match[WHOLE], start: pointOf(document)(start + match.index) })),
+      Option.map((match) => ({
+        raw: match[WHOLE],
+        start: pointOf(document)(start + match.index),
+        offset: start + match.index,
+      })),
       Option.toArray,
     );
   };

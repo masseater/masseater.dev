@@ -1,13 +1,16 @@
 import { defineRule } from "@r_masseater/fu4";
 import type { RuleContext } from "@r_masseater/fu4";
-import { Option, Result, Schema, String as Str } from "effect";
+import { Effect, Option, Result, Schema, String as Str } from "effect";
 
 import { AUDITS } from "#/features/zizmor/concerns/index.ts";
 import { primaryLocation } from "#/features/zizmor/lib/finding.ts";
 import { inputOf } from "#/features/zizmor/lib/input.ts";
 import { findingsOf } from "#/features/zizmor/lib/run.ts";
 import { settingsOf } from "#/features/zizmor/lib/settings.ts";
+import type { ZizmorSettings } from "#/features/zizmor/lib/settings.ts";
+import type { Audit } from "#/features/zizmor/model/audit.ts";
 import type { Finding } from "#/features/zizmor/model/finding.ts";
+import type { AuditInput } from "#/features/zizmor/model/input.ts";
 
 export const ExpectedFinding = Schema.Struct({
   ident: Schema.String,
@@ -27,6 +30,7 @@ const ProbeMessage = Schema.fromJsonString(
 
 const ONE_BASED = 1;
 const FIRST = 1;
+const SEQUENTIAL = { concurrency: 1 } as const;
 
 const titled = (word: string): string => Str.capitalize(word);
 
@@ -49,6 +53,26 @@ const encodeMessage = (message: typeof ProbeMessage.Type): string =>
 export const expectedOf = (message: string): Expected =>
   Result.getOrThrow(Schema.decodeResult(ProbeMessage)(message)).finding;
 
+const reportedBy =
+  (context: RuleContext, audit: Audit) =>
+  (findings: readonly Finding[]): void => {
+    for (const [index, found] of findings.entries()) {
+      const message = encodeMessage({ audit: audit.ident, index, finding: rendered(found) });
+      context.report({ line: FIRST, column: FIRST, message });
+    }
+  };
+
+const reportAll =
+  (context: RuleContext, settings: ZizmorSettings, input: AuditInput) =>
+  (audit: Audit): Effect.Effect<void> =>
+    findingsOf(audit)({
+      input,
+      settings,
+      project: context.project,
+      parseScript: context.parseScript,
+      github: Option.none(),
+    }).pipe(Effect.map(reportedBy(context, audit)));
+
 export const probe = defineRule({
   meta: {
     description: "Runs every ported zizmor audit",
@@ -57,21 +81,12 @@ export const probe = defineRule({
   check: (context: RuleContext) => {
     const settings = settingsOf(context.settings);
     if (Result.isFailure(settings)) {
-      return;
+      return Effect.void;
     }
-    for (const input of Option.toArray(inputOf(context.kind)(context.filename)(context.source))) {
-      for (const audit of AUDITS) {
-        const findings = findingsOf(audit)({
-          input,
-          settings: settings.success,
-          project: context.project,
-          parseScript: context.parseScript,
-        });
-        for (const [index, found] of findings.entries()) {
-          const message = encodeMessage({ audit: audit.ident, index, finding: rendered(found) });
-          context.report({ line: FIRST, column: FIRST, message });
-        }
-      }
-    }
+    return Effect.forEach(
+      Option.toArray(inputOf(context.kind)(context.filename)(context.source)),
+      (input) => Effect.forEach(AUDITS, reportAll(context, settings.success, input), SEQUENTIAL),
+      SEQUENTIAL,
+    );
   },
 });

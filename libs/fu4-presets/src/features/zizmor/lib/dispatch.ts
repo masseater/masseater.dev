@@ -1,6 +1,6 @@
 import { Array as Arr, Match, Option, pipe } from "effect";
 
-import type { Audit, AuditContext, Drafts } from "#/features/zizmor/model/audit.ts";
+import type { Audit, AuditContext, Produced } from "#/features/zizmor/model/audit.ts";
 import type {
   ActionInput,
   AuditInput,
@@ -8,14 +8,16 @@ import type {
   PreCommitConfigInput,
   WorkflowInput,
 } from "#/features/zizmor/model/input.ts";
+import type { StepView } from "#/features/zizmor/model/step.ts";
 
 import { compositeSteps } from "./action.ts";
+import { combined, producedBy } from "./produced.ts";
 import { stepView, stepsOf } from "./workflow-steps.ts";
 import { jobsOf } from "./workflow.ts";
 
-type Handler<Input> = (input: Input, context: AuditContext) => Drafts;
+type Handler<Input> = (input: Input, context: AuditContext) => Produced;
 
-const none = (): Drafts => [];
+const none = (): Produced => [];
 
 const orElse =
   <Input>(handler: Handler<Input> | undefined, fallback: Handler<Input>): Handler<Input> =>
@@ -28,23 +30,23 @@ const orElse =
 export const defaultNormalJob =
   (audit: Audit) =>
   (job: NormalJob) =>
-  (context: AuditContext): Drafts =>
+  (context: AuditContext): Produced =>
     pipe(
       stepsOf(job),
-      Arr.flatMap((each) => orElse(audit.step, none)(stepView(each), context)),
+      producedBy((each) => orElse(audit.step, none)(stepView(each), context)),
     );
 
 export const defaultWorkflow =
   (audit: Audit) =>
   (workflow: WorkflowInput) =>
-  (context: AuditContext): Drafts => {
+  (context: AuditContext): Produced => {
     const normal = orElse(audit.normalJob, (job: NormalJob) =>
       defaultNormalJob(audit)(job)(context),
     );
     const reusable = orElse(audit.reusableJob, none);
     return pipe(
       jobsOf(workflow),
-      Arr.flatMap((job) => {
+      producedBy((job) => {
         if (job.type === "normal") {
           return normal(job.job, context);
         }
@@ -58,33 +60,35 @@ const dockerOf = (audit: Audit): Handler<ActionInput> => orElse(audit.dockerActi
 export const defaultAction =
   (audit: Audit) =>
   (action: ActionInput) =>
-  (context: AuditContext): Drafts => {
+  (context: AuditContext): Produced => {
     const composite = orElse(audit.compositeStep, none);
-    const steps = Option.getOrElse(compositeSteps(action), () => []);
+    const steps = Option.getOrElse(compositeSteps(action), (): readonly StepView[] => []);
     const docker = Arr.filter([action], (each) => each.model.runs.type === "docker");
-    return [
-      ...pipe(
+    return combined([
+      pipe(
         docker,
-        Arr.flatMap((each) => dockerOf(audit)(each, context)),
+        producedBy((each) => dockerOf(audit)(each, context)),
       ),
-      ...pipe(
+      pipe(
         steps,
-        Arr.flatMap((step) => composite(step, context)),
+        producedBy((step) => composite(step, context)),
       ),
-    ];
+    ]);
   };
 
 const defaultPreCommit =
   (audit: Audit): Handler<PreCommitConfigInput> =>
   (config, context) => {
     const repo = orElse(audit.preCommitRepo, none);
-    return pipe(
-      config.model.repos,
-      Arr.flatMap((model, index) => repo({ index, model, input: config }, context)),
+    return combined(
+      pipe(
+        config.model.repos,
+        Arr.map((model, index) => repo({ index, model, input: config }, context)),
+      ),
     );
   };
 
-const structured = (audit: Audit, context: AuditContext): ((input: AuditInput) => Drafts) =>
+const structured = (audit: Audit, context: AuditContext): ((input: AuditInput) => Produced) =>
   Match.type<AuditInput>().pipe(
     Match.discriminatorsExhaustive("kind")({
       workflow: (input) =>
@@ -107,7 +111,5 @@ const structured = (audit: Audit, context: AuditContext): ((input: AuditInput) =
 export const runAudit =
   (audit: Audit) =>
   (input: AuditInput) =>
-  (context: AuditContext): Drafts => [
-    ...structured(audit, context)(input),
-    ...orElse(audit.raw, none)(input, context),
-  ];
+  (context: AuditContext): Produced =>
+    combined([structured(audit, context)(input), orElse(audit.raw, none)(input, context)]);

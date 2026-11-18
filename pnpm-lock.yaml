@@ -3623,13 +3623,13 @@ importers:
 
   libs/fu4-presets:
     dependencies:
+      '@effect/platform-node':
+        specifier: 'catalog:'
+        version: 4.1.4(effect@4.1.4)(redis@6.2.1(@opentelemetry/api@1.10.0))
       minimatch:
         specifier: 'catalog:'
         version: 11.0.8
     devDependencies:
-      '@effect/platform-node':
-        specifier: 'catalog:'
-        version: 4.1.4(effect@4.1.4)(redis@6.2.1(@opentelemetry/api@1.10.0))
       '@r_masseater/fu4':
         specifier: workspace:*
         version: link:../fu4

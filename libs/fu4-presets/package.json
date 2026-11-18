@@ -47,10 +47,10 @@
     "prepublishOnly": "vp run build"
   },
   "dependencies": {
+    "@effect/platform-node": "catalog:",
     "minimatch": "catalog:"
   },
   "devDependencies": {
-    "@effect/platform-node": "catalog:",
     "@r_masseater/fu4": "workspace:*",
     "@types/node": "catalog:",
     "effect": "catalog:stack",

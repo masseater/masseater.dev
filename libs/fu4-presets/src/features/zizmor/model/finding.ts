@@ -25,6 +25,7 @@ export interface SymbolicLocation {
 export interface Comment {
   readonly raw: string;
   readonly start: Point;
+  readonly offset: number;
 }
 
 export interface ConcreteFeature {

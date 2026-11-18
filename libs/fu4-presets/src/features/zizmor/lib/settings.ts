@@ -11,6 +11,7 @@ export interface ZizmorSettings {
   readonly minSeverity: Option.Option<Severity>;
   readonly minConfidence: Option.Option<Confidence>;
   readonly online: boolean;
+  readonly githubHost: string;
 }
 
 type Parsed = Result.Result<ZizmorSettings, string>;
@@ -25,6 +26,7 @@ const RawSettings = Schema.Struct({
   minSeverity: Schema.optionalKey(Schema.Literals(SEVERITIES)),
   minConfidence: Schema.optionalKey(Schema.Literals(CONFIDENCES)),
   online: Schema.optionalKey(Schema.Unknown),
+  githubHost: Schema.optionalKey(Schema.String),
 });
 
 const decodeSettings = Schema.decodeUnknownResult(RawSettings);
@@ -42,6 +44,7 @@ const withConfig = (raw: typeof RawSettings.Type): Parsed =>
       minSeverity: Option.fromNullishOr(raw.minSeverity),
       minConfidence: Option.fromNullishOr(raw.minConfidence),
       online: raw.online !== false,
+      githubHost: raw.githubHost ?? "github.com",
     })),
   );
 

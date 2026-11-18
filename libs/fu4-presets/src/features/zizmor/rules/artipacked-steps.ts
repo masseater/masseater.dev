@@ -15,15 +15,19 @@ const isUpload = usesMatches("actions/upload-artifact");
 
 export interface Checkout {
   readonly step: StepView;
+  readonly uses: RepositoryUses;
   readonly persona: Persona;
   readonly modern: Option.Option<boolean>;
 }
+
+export const isModernTag = (tag: string): Option.Option<boolean> =>
+  Option.map(parseVersion(tag), (version) => isAtLeast(V6)(version));
 
 const isModern = (uses: RepositoryUses): Option.Option<boolean> => {
   if (isCommitRef(uses.gitRef)) {
     return Option.none();
   }
-  return Option.map(parseVersion(uses.gitRef), (version) => isAtLeast(V6)(version));
+  return isModernTag(uses.gitRef);
 };
 
 const splitPatterns = (patterns: string): readonly string[] =>
@@ -66,14 +70,15 @@ export const checkoutOf = (view: StepView): readonly Checkout[] => {
   ) {
     return [];
   }
-  const modern = isModern(body.uses);
+  const { uses } = body;
+  const modern = isModern(uses);
   const value = Option.map(
     Option.fromNullishOr(body.with.value.get("persist-credentials")),
     displayEnv,
   );
   return pipe(
     personaOf(value),
-    Option.map((level): Checkout => ({ step: view, persona: level, modern })),
+    Option.map((level): Checkout => ({ step: view, uses, persona: level, modern })),
     Option.toArray,
   );
 };

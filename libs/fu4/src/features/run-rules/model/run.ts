@@ -23,7 +23,7 @@ export interface FileInput {
   readonly parseScript: (language: ScriptLanguage, text: string) => Source;
 }
 
-const SEQUENTIAL = { concurrency: 1 } as const;
+const CONCURRENT = { concurrency: "unbounded" } as const;
 
 const appliesTo =
   (kind: InputKind) =>
@@ -80,6 +80,6 @@ const runRule =
 
 export const runFile = Effect.fn("fu4.runFile")(function* runFile(input: FileInput) {
   const active = pipe(input.rules, Arr.filter(appliesTo(input.kind)));
-  const results = yield* Effect.forEach(active, runRule(input), SEQUENTIAL);
+  const results = yield* Effect.forEach(active, runRule(input), CONCURRENT);
   return Arr.flatten(results);
 });

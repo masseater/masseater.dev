@@ -29,7 +29,7 @@ export interface LintTextInput {
   readonly config?: Fu4Config;
 }
 
-const SEQUENTIAL = { concurrency: 1 } as const;
+const CONCURRENT = { concurrency: "unbounded" } as const;
 
 const projectOf = (root: string, addon: Native): Project => {
   const parsed = new Map<string, Option.Option<Source>>();
@@ -92,7 +92,7 @@ export const lint = Effect.fn("fu4.lint")(function* lint(input: LintInput) {
       project,
       parseScript: scriptParser(addon),
     });
-  const results = yield* Effect.forEach(parsed, lintOne, SEQUENTIAL);
+  const results = yield* Effect.forEach(parsed, lintOne, CONCURRENT);
   return ordered(Arr.flatten(results));
 });
 

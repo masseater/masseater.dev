@@ -5,12 +5,14 @@ import type { Audit } from "#/features/zizmor/model/audit.ts";
 import { CONFIG } from "./config.ts";
 import { CREDENTIALS } from "./credentials.ts";
 import { INJECTION } from "./injection.ts";
+import { REFERENCES } from "./references.ts";
 import { SUPPLY_CHAIN } from "./supply-chain.ts";
 import { WORKFLOW } from "./workflow.ts";
 
 export const CONCERNS = {
   injection: INJECTION,
   "supply-chain": SUPPLY_CHAIN,
+  references: REFERENCES,
   credentials: CREDENTIALS,
   workflow: WORKFLOW,
   config: CONFIG,
