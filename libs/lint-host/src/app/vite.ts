@@ -10,6 +10,7 @@ export type CacheInput =
 export interface AddonBuildTask {
   readonly command: string;
   readonly inputs: readonly CacheInput[];
+  readonly locked: readonly CacheInput[];
   readonly untrackedEnv?: readonly string[];
   readonly buildAfter?: readonly string[];
 }
@@ -17,6 +18,7 @@ export interface AddonBuildTask {
 export const addonTasks = ({
   command,
   inputs,
+  locked,
   untrackedEnv = [],
   buildAfter = [],
 }: AddonBuildTask): Tasks => ({
@@ -31,6 +33,7 @@ export const addonTasks = ({
   build: {
     command: "vp pack",
     dependsOn: ["native", ...buildAfter, { task: "build", from: "dependencies" }],
+    cache: { input: [...locked] },
   },
-  test: { command: "vp test run", dependsOn: ["native"] },
+  test: { command: "vp test run", dependsOn: ["native"], cache: { input: [...locked] } },
 });

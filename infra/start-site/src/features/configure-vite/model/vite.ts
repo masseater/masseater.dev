@@ -7,10 +7,16 @@ import { Option } from "effect";
 import { defineConfig } from "vite-plus";
 import type { UserConfig } from "vite-plus";
 
+export type BuildInput =
+  | string
+  | { readonly pattern: string; readonly base: "workspace" }
+  | { readonly auto: true };
+
 export interface SiteOptions {
   readonly basePath: string;
   readonly searchIndexOrigin: Option.Option<string>;
   readonly assetHeaderArgs: string;
+  readonly locked: readonly BuildInput[];
 }
 
 const SITEMAP_FILE = "sitemap.xml";
@@ -19,6 +25,7 @@ export const startSiteConfig = ({
   basePath,
   searchIndexOrigin,
   assetHeaderArgs,
+  locked,
 }: SiteOptions): UserConfig =>
   defineConfig({
     base: `${basePath}/`,
@@ -27,6 +34,7 @@ export const startSiteConfig = ({
         dev: { command: "alchemy dev", cache: false },
         build: {
           command: `vp build && write-asset-headers ${assetHeaderArgs}`,
+          cache: { input: [...locked] },
         },
         deploy: { command: "alchemy deploy", cache: false },
         "deploy:production": {

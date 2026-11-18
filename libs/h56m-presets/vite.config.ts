@@ -1,3 +1,4 @@
+import { LOCKED } from "@r_masseater/msch/locked-inputs";
 import { otlp } from "@r_masseater/vitest-otlp";
 import { defineConfig } from "vite-plus";
 
@@ -12,10 +13,11 @@ export default defineConfig({
           output: ["presets/**", "THIRD-PARTY-NOTICES.txt"],
         },
       },
-      build: { command: "vp pack", dependsOn: ["native"] },
+      build: { command: "vp pack", dependsOn: ["native"], cache: LOCKED },
       test: {
         command: "vp test run",
-        dependsOn: ["native", { task: "native", from: "dependencies" }],
+        dependsOn: ["native", "@r_masseater/h56m#native"],
+        cache: LOCKED,
       },
     },
   },
