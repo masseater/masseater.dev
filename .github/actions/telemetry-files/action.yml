@@ -1,5 +1,5 @@
 name: telemetry-files
-description: Stop the OpenTelemetry Collector that setup started and keep its files and the run summary of vp as an artifact of this job
+description: Record the processes that are still alive and what each one waits on, stop the OpenTelemetry Collector that setup started, and keep its files and the run summary of vp as an artifact of this job
 runs:
   using: composite
   steps:
@@ -7,6 +7,13 @@ runs:
       env:
         OTEL_FILES: ${{ runner.temp }}/otel
       run: |
+        mkdir -p "$OTEL_FILES"
+        ps -eo pid,ppid,etimes,stat,pcpu,wchan:32,args --forest --width 240 > "$OTEL_FILES/processes.txt"
+        for pid in $(pgrep -u "$(id -u)"); do
+          echo "== $pid $(cat "/proc/$pid/comm" 2>/dev/null)"
+          sudo cat "/proc/$pid/syscall" 2>/dev/null
+          sudo ls -l "/proc/$pid/fd" 2>/dev/null
+        done > "$OTEL_FILES/blocked.txt" || true
         if pid="$(pgrep -x otelcol)"; then
           kill -INT "$pid"
           tail --pid="$pid" -f /dev/null

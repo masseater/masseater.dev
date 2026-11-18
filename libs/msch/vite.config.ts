@@ -51,6 +51,7 @@ export default defineConfig({
     publint: { strict: true },
   },
   test: {
+    isolate: false,
     testTimeout: 30_000,
     server: {
       deps: {
