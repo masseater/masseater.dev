@@ -1,144 +1,425 @@
 ---
-title: "AI時代のリントプリセット"
-description: "2026年11月18日時点における、コーディングエージェントが頻繁に利用するショートカットを禁止するリントルールプリセットの調査"
+title: "Lint presets for the AI era"
+description: "A catalog of about 230 lint rule sets and checkers that ban shortcuts coding agents often take, as of November 18, 2026."
 tags: ["静的解析", "ソフトウェア開発", "大規模言語モデル", "2026年のソフトウェア"]
 published: true
 infobox:
-  - label: "調査日"
-    value: "2026年11月18日"
-  - label: "主なエンジン"
-    value: "Oxlint、ESLint、Biome、textlint、Vale"
-  - label: "代表例"
-    value: "landmines、anti-slop、eslint-plugin-vibe-proof、agnix"
+  - label: "Surveyed on"
+    value: "November 18, 2026"
+  - label: "Entries"
+    value: "About 230"
+  - label: "Main engines"
+    value: "Oxlint, ESLint, Biome, textlint, Vale"
 ---
 
-AI時代のリントプリセットは、コーディングエージェントがリポジトリの大部分を記述していることを前提としたリントルールセットのことである。人間のチームは、誰も破らないルールを書き留めてこなかった。一方、エージェントはチェックを通過するように最適化するため、ルールを破ることが多い。例えば、エージェントはテスト対象のコードをモックし、パスするまで不安定なテストを再試行する。また、グリーンチェックを得るために `eslint-disable` を追加する。こうしたプリセットは、こうした習慣をリントエラーへと変える。本記事では、2026年11月18日時点で存在するプリセットを列挙する。
+Lint presets for the AI era are lint rule sets that assume coding agents write much of a repository. Human teams never wrote some rules down, because nobody would break them. Agents break them often, because they optimize for passing checks. For example, an agent mocks the code under test. It retries a flaky test until it passes. It adds `eslint-disable` to get a green check. These presets turn such habits into lint errors. This article lists the presets that exist as of November 18, 2026.
 
-こうしたプリセットの多くは、「AIっぽく聞こえる」テキストは探さない。レビュアーが目視で捕捉した安価なショートカットを探す。エージェントがコードの大部分を記述する場合、すべての行を読み込むレビュアーはルールのみとなる。landminesは、エージェントが「グリーンチェック向けに最適化する」[^landmines]と述べている。eslint-plugin-vibe-proofは、コンテキストが圧縮された後にエージェントがスキルを忘れてしまうと指摘する。同プラグインは、決定論的なリンターこそが残るフィードバックループであると主張している[^vibe-proof]。agent-slop-lintは、古いデフォルト設定は1日100行程度を書く人間を前提としているとしている[^agent-slop-lint]。
+Most of these presets do not look for text that "sounds like AI". They look for cheap shortcuts that reviewers used to catch by eye. When agents write most of the code, a rule is the only reviewer that reads every line. landmines says that agents "optimise for green checks"[^landmines]. eslint-plugin-vibe-proof says that agents forget skills after the context is compacted. It argues that a deterministic linter is the feedback loop that remains[^vibe-proof]. agent-slop-lint says that old defaults assume a human who writes about 100 lines a day[^agent-slop-lint].
 
-## 共通の特徴
+## Method
 
-エラーメッセージは、エージェントに問題の解決方法を伝える。landmines、enforced-architecture、@shadcn/lintはいずれもこのような形式でメッセージを記述する[^landmines][^enforced-architecture][^shadcn-lint]。これにより、エージェントは他のファイルを読まずに問題を修正できる。
+The survey searched GitHub repositories and the npm registry on November 18, 2026. The GitHub search used about 40 queries, such as "slop lint", "agentic linter" and "agents.md linter". It covered repositories created since January 2025 with at least 5 stars. The npm search used about 30 queries and keywords, such as `oxlint-plugin`, `ai-slop` and `textlint-rule-preset`. The two searches returned about 800 candidates.
 
-多くのプリセットは既存の違反を許容するが、その数は減らす方向にしか動かせない。landminesは、ファイルごとに許容される違反数を正確にカウントする[^landmines]。カウント数よりも違反数が少ないファイルを報告するため、リストは縮小されるのみとなる。agent-lintはリポジトリにベースラインファイルを保持し、`agent-lint ratchet`コマンドはそれを厳格化するのみである[^agent-lint]。
+The catalog keeps tools that check code, text or configuration with fixed rules. It leaves out agent skills and prompts that only ask a model to write better. It also leaves out detectors that guess whether a model wrote a text. Tools that run their rules through a model are listed in a separate section. Star counts and weekly npm downloads are the values on November 18, 2026. A dash means that the value is not known.
 
-プリセットでは、ルールをバイパスする方法も禁止されている。eslint-plugin-vibe-proof は、理由のない `eslint-disable` コメントを禁止する[^vibe-proof]。Suppress Ratchet は、プルリクエストによって追加される抑制コメントをカウントする[^suppress-ratchet]。
+The catalog has about 230 entries. About 200 are in the tables below. About 25 are copies or bundles of anti-slop, and 7 run their rules through a model.
 
-一部のプリセットは、パッケージとしてではなくコピー用のコードとして提供される。anti-slopにはnpmパッケージ[^anti-slop]が存在しない。ユーザーはエージェントスキルを用いて、そのルールをリポジトリにコピーする。enforced-architectureは、エージェントが読み取り、別のスタックに適応させるカタログである[^enforced-architecture]。
+## Common traits
 
-ほとんどの新規プリセットはOxlintで動作する。そのうちのいくつかは、ESLint、Oxlint、rslintでも変更なく動作する[^no-comment-slop][^ai-guard]。
+The error message tells the agent how to fix the problem. landmines, enforced-architecture and @shadcn/lint all write messages this way[^landmines][^enforced-architecture][^shadcn-lint]. The agent can then fix the problem without reading other files.
 
-## コード
+Many presets allow existing violations but only let their number go down. landmines takes an exact count of allowed violations for each file[^landmines]. agent-lint keeps a baseline file in the repository, and its `ratchet` command only tightens it[^agent-lint].
 
-以下の表にコードプリセットを記載する。星の数は2026年11月18日時点のものである。
+The presets also ban the ways around a rule. eslint-plugin-vibe-proof bans `eslint-disable` comments that give no reason[^vibe-proof]. Suppress Ratchet counts the suppression comments that a pull request adds[^suppress-ratchet].
 
-| プリセット                                                                                 | エンジン                    | ルール数    | ライセンス | 作成日     | スター |
-| ------------------------------------------------------------------------------------------ | --------------------------- | ----------- | ---------- | ---------- | ------ |
-| [landmines](https://github.com/interfere-inc/landmines)                                    | Oxlint                      | 10          | MIT        | 2026-10-28 | 277    |
-| [eslint-plugin-ai-guard](https://github.com/ai-guard-dev/eslint-plugin-ai-guard)           | ESLint, Oxlint              | 27          | MIT        | 2026-04-08 | 20     |
-| [agent-lint](https://github.com/MartinCastroAlvarez/agent-lint)                            | ruff, mypy, ESLint, semgrep | AL201-AL302 | MIT        | 2026-10-23 | 0      |
-| [Suppress Ratchet](https://github.com/motchalini-llc/suppress-ratchet)                     | GitHub Actions              | -           | -          | -          | -      |
-| [anti-slop](https://github.com/dmmulroy/anti-slop)                                         | Oxlint                      | 18 + 5      | MIT        | 2026-08-12 | 6,159  |
-| [biome-anti-slop](https://github.com/arberbr/biome-anti-slop)                              | Biome                       | 18 + 5      | MIT        | 2026-11-02 | 0      |
-| [oxlint-anti-slop](https://github.com/emilioSp/oxlint-anti-slop)                           | Oxlint                      | 11          | MIT        | 2026-09-30 | 1      |
-| [oxc-config-ai-guardrails](https://github.com/matteoantoci/oxc-config-ai-guardrails)       | Oxlint                      | 59 + 16 + 4 | MIT        | 2026-07-31 | 0      |
-| [eslint-plugin-vibe-proof](https://github.com/SukkaW/eslint-plugin-vibe-proof)             | ESLint                      | -           | MIT        | 2026-07-26 | 15     |
-| [eslint-plugin-llm-core](https://github.com/pertrai1/eslint-plugin-llm-core)               | ESLint                      | -           | MIT        | 2026-04-01 | 14     |
-| [eslint-plugin-no-comment-slop](https://github.com/jantimon/eslint-plugin-no-comment-slop) | ESLint, Oxlint, rslint      | 12          | MIT        | 2026-07-30 | 13     |
-| [windbag](https://github.com/scale-venture-partners/windbag)                               | CLI                         | 6           | MIT        | 2026-08-05 | 26     |
-| [enforced-architecture](https://github.com/GLips/enforced-architecture)                    | Oxlint                      | 67          | -          | 2026-02-19 | 11     |
-| [agent-slop-lint](https://github.com/JordanGunn/agent-slop-lint)                           | CLI                         | 25          | Apache-2.0 | 2026-04-11 | 44     |
-| [KarpeSlop](https://github.com/CodeDeficient/KarpeSlop)                                    | CLI                         | -           | MIT        | 2025-11-29 | 39     |
-| [oxlint-plugin-complexity](https://github.com/itaymendel/oxlint-plugin-complexity)         | Oxlint                      | 1           | MIT        | 2025-12-25 | 52     |
-| [@shadcn/lint](https://github.com/shadcn-ui/lint)                                          | ESLint, Oxlint              | -           | MIT        | 2026-09-02 | 3,368  |
-| [renderlint](https://github.com/ngocanhnckh/renderlint)                                    | CLI                         | -           | MIT        | 2026-10-25 | 639    |
+Some presets are shipped as code to copy instead of as packages. anti-slop has no npm package of its own[^anti-slop]. Users copy its rules into their repository with an agent skill.
 
-### テスト
+## Tests and weakened checks
 
-landminesは、Interfere[^landmines]が提供するOxlintプラグイン群である。そのテスト用プラグインは、`no-test-doubles` でテスト対象コードのモックを禁止する。また、`no-fixed-sleep` で固定時間のスリープを禁止する。`no-flake-masking` は、テストの再試行やタイムアウトの引き上げを禁止する。`strict-msw` は、ハンドラがカバーしていないリクエストに対してMSWが失敗することを要求する。その他のプラグインは、散文のコメントを禁止し、テストファイル名とその配置に関するルールを設定する。Oxlint 1.81以降が必要である。一部のユーザーからは、`no-test-doubles` が外部サービスのフェイクも禁止しているとの報告がある[^landmines-adoption]。
+These tools stop an agent from making a check pass without fixing the code. landmines bans mocks of the code under test, fixed sleeps and test retries[^landmines]. Other tools compare a change with its base. They report deleted tests, removed assertions, new suppression comments and loosened settings. agent-lint and the Ratchet actions work this way[^agent-lint][^suppress-ratchet].
 
-eslint-plugin-ai-guard には、4つのプリセットに27個の ESLint ルールが用意されている[^ai-guard]。その CLI コマンド `ai-guard integrity` は、チェックを弱める変更を検出する。具体例としては、新規抑制、テストのスキップ、カバレッジ設定の引き下げなどが挙げられる。また、存在しない npm パッケージ名や、タイポスクワッティングと思われるものをブロックする。CI では、27個のルールすべてが Oxlint で同一の結果を示すことが確認されている。
+| Name                                                                             | Engine         | Created    | License    | Stars | Weekly npm downloads |
+| -------------------------------------------------------------------------------- | -------------- | ---------- | ---------- | ----- | -------------------- |
+| [landmines](https://github.com/interfere-inc/landmines)                          | Oxlint         | 2026-10-28 | MIT        | 311   | -                    |
+| [procoder](https://github.com/azrtydxb/procoder)                                 | CLI            | 2026-08-16 | Apache-2.0 | 212   | -                    |
+| [repopilot](https://github.com/MykytaStel/repopilot)                             | CLI            | 2026-05-01 | Apache-2.0 | 24    | -                    |
+| [eslint-plugin-ai-guard](https://github.com/ai-guard-dev/eslint-plugin-ai-guard) | ESLint, Oxlint | 2026-04-08 | MIT        | 20    | -                    |
+| [slopbrake](https://github.com/GreyforgeLabs/slopbrake)                          | CLI            | 2026-09-26 | MIT        | 14    | -                    |
+| [deployproof](https://github.com/SVSPraveen/deployproof)                         | CLI            | 2026-08-27 | MIT        | 13    | -                    |
+| [red-green-mode](https://github.com/hidevinliu/red-green-mode)                   | CLI            | 2026-08-01 | MIT        | 11    | -                    |
+| [agent-roast](https://github.com/Nari-Ab/agent-roast)                            | CLI            | 2026-10-04 | MIT        | 11    | -                    |
+| [dxkit](https://github.com/vyuh-labs/dxkit)                                      | CLI            | 2026-04-06 | MIT        | 10    | -                    |
+| [ward-ai](https://github.com/RicardoRB/ward-ai)                                  | CLI            | 2026-10-08 | Apache-2.0 | 10    | -                    |
+| [hadome](https://github.com/rerorets/hadome)                                     | CLI            | 2026-11-03 | MIT        | 5     | -                    |
+| [Synapse-Hub](https://github.com/TeeVee98/Synapse-Hub)                           | CLI            | 2026-10-29 | -          | 2     | -                    |
+| [slopsieve](https://github.com/princejain756/slopsieve)                          | CLI            | 2026-10-15 | MIT        | 0     | 36                   |
+| [diffslop](https://github.com/AdilSiddiquiHQ/diffslop)                           | CLI            | 2026-10-29 | MIT        | 0     | 35                   |
+| [agent-lint](https://github.com/MartinCastroAlvarez/agent-lint)                  | CLI            | 2026-10-23 | MIT        | 0     | -                    |
+| [suppress-ratchet](https://github.com/motchalini-llc/suppress-ratchet)           | GitHub Actions | 2026-07-01 | MIT        | 0     | -                    |
 
-agent-lint は、プロジェクトですでに使用されているリンターを実行する[^agent-lint]。その結果をベースラインと比較し、新しい指摘があれば失敗する。また、変更内容を git ベースと比較する。追加された抑制、スキップされたテスト、削除されたテスト、およびアサーションが削除されたテストを報告する。さらに、緩和されたリンター設定も報告する。
+## Types and evidence
 
-Ratchet ファミリーは、依存関係のない 3 つの GitHub Actions である[^suppress-ratchet]。Type Ratchet は新しい `any` 型をブロックする。Test Ratchet は `it.skip` と `.only` をブロックする。Suppress Ratchet は新しい `eslint-disable` と `biome-ignore` コメントをブロックする。
+anti-slop is a set of Oxlint rules by Dillon Mulroy[^anti-slop]. Its rules reject type assertions that have no evidence. They also reject `unknown` and `object` in function contracts. Other projects in this group port these rules to Biome, ESLint or Python. Some add rules for Effect.
 
-### 型
+| Name                                                                                      | Engine         | Created    | License | Stars | Weekly npm downloads |
+| ----------------------------------------------------------------------------------------- | -------------- | ---------- | ------- | ----- | -------------------- |
+| [anti-slop](https://github.com/dmmulroy/anti-slop)                                        | Oxlint         | 2026-08-12 | MIT     | 6,164 | -                    |
+| [ai-deslop](https://github.com/maharshi365/deslop)                                        | Oxlint         | 2026-09-13 | -       | 72    | 13,223               |
+| [anti-slop-py](https://github.com/TinyFrontier/anti-slop-py)                              | Python         | 2026-08-23 | MIT     | 10    | -                    |
+| [anti-slop-py](https://github.com/infoslack/anti-slop-py)                                 | Python         | 2026-08-22 | MIT     | 7     | -                    |
+| [oxslop](https://github.com/Romariin/oxslop)                                              | Oxlint         | 2026-09-22 | -       | 2     | 495                  |
+| [oxlint-plugin-solzero](https://github.com/SolZeroAI/oxlint-plugin-solzero)               | Oxlint         | 2026-10-27 | MIT     | 1     | 732                  |
+| [@jliocsar/begone-slop](https://github.com/jliocsar/begone-slop)                          | Oxlint         | 2026-08-13 | -       | 1     | 409                  |
+| [oxlint-anti-slop](https://github.com/emilioSp/oxlint-anti-slop)                          | Oxlint         | 2026-09-30 | MIT     | 1     | -                    |
+| [@aranlucas/oxforge](https://github.com/aranlucas/oxforge)                                | Oxlint         | 2026-10-13 | MIT     | 0     | 528                  |
+| [@yousufrasheed/eslint-plugin-antislop](https://github.com/YousufRasheed/eslint-antislop) | ESLint         | 2026-08-18 | MIT     | 0     | 268                  |
+| [biome-anti-slop](https://github.com/arberbr/biome-anti-slop)                             | Biome          | 2026-11-02 | MIT     | 0     | -                    |
+| [@seanmozeik/de-clank](https://www.npmjs.com/package/@seanmozeik/de-clank)                | Oxlint         | -          | -       | -     | 4,095                |
+| [@byarcadia-app/anti-slop](https://www.npmjs.com/package/@byarcadia-app/anti-slop)        | Oxlint         | -          | -       | -     | 755                  |
+| [biome-anti-slop](https://www.npmjs.com/package/biome-anti-slop)                          | Biome          | -          | -       | -     | 595                  |
+| [@spacemansh/anti-slop](https://www.npmjs.com/package/@spacemansh/anti-slop)              | ESLint, Oxlint | -          | -       | -     | 65                   |
+| [biome-plugin-anti-slop](https://www.npmjs.com/package/biome-plugin-anti-slop)            | Biome          | -          | -       | -     | 10                   |
 
-anti-slopは、Dillon Mulroy[^anti-slop]によるOxlintルールのセットである。このルールは、根拠のない型アサーションを却下する。また、関数コントラクトにおける`unknown`および`object`も却下する。Effectコードにはさらに5つのルールが適用される。これらでは、手動での`_tag`チェックではなく、`Match`およびタグ付きコンストラクタが必要となる。biome-anti-slopは、同じルールをBiomeプラグインに移植している[^biome-anti-slop]。その作者は、BiomeプラグインAPIがパッチリリースで変わる可能性があると警告している。oxlint-anti-slopは、同様の目的を持つ11個のOxlintルールからなる別のセットである[^oxlint-anti-slop]。
+Many packages copy anti-slop or bundle it in a shared config. The table below lists them by name.
 
-oxc-config-ai-guardrails は独自のルールを追加しない[^ai-guardrails]。Oxlint が既に備えているルールに基づき、厳格な制限を設ける。ファイルは 200 行まで、関数は 50 行まで記述できる。関数は 3 つのパラメータを指定でき、ブロックは 1 階層までしかネストできない。
+| Package                                                                                                          |
+| ---------------------------------------------------------------------------------------------------------------- |
+| [@fisch0920/oxlint-plugin-anti-slop](https://www.npmjs.com/package/@fisch0920/oxlint-plugin-anti-slop)           |
+| [@kamaal111/oxlint-plugin-anti-slop](https://www.npmjs.com/package/@kamaal111/oxlint-plugin-anti-slop)           |
+| [@sha256_nulled/oxlint-plugin-anti-slop](https://www.npmjs.com/package/@sha256_nulled/oxlint-plugin-anti-slop)   |
+| [@aranlucas/oxlint-plugin-anti-slop](https://www.npmjs.com/package/@aranlucas/oxlint-plugin-anti-slop)           |
+| [@miladk/dmmulroy-anti-slop](https://www.npmjs.com/package/@miladk/dmmulroy-anti-slop)                           |
+| [@victor-software-house/anti-slop](https://www.npmjs.com/package/@victor-software-house/anti-slop)               |
+| [@iam4x/oxlint-plugin-anti-slop](https://www.npmjs.com/package/@iam4x/oxlint-plugin-anti-slop)                   |
+| [@adriandmitroca/oxlint-plugin-anti-slop](https://www.npmjs.com/package/@adriandmitroca/oxlint-plugin-anti-slop) |
+| [@sematico/anti-slop](https://www.npmjs.com/package/@sematico/anti-slop)                                         |
+| [@buildkitgg/oxlint-plugin-anti-slop](https://www.npmjs.com/package/@buildkitgg/oxlint-plugin-anti-slop)         |
+| [antislop-plugin](https://www.npmjs.com/package/antislop-plugin)                                                 |
+| [oxlint-plugin-anti-slop](https://www.npmjs.com/package/oxlint-plugin-anti-slop)                                 |
+| [@try-works/dsh-anti-slop](https://www.npmjs.com/package/@try-works/dsh-anti-slop)                               |
+| [shoemaker-oxlint-plugins](https://www.npmjs.com/package/shoemaker-oxlint-plugins)                               |
+| [@propsoch/oxlint-anti-slop-web](https://www.npmjs.com/package/@propsoch/oxlint-anti-slop-web)                   |
+| [@antelopejs/tooling-configs](https://www.npmjs.com/package/@antelopejs/tooling-configs)                         |
+| [@imapps/oxc-config](https://www.npmjs.com/package/@imapps/oxc-config)                                           |
+| [@buildkitgg/oxlint-config](https://www.npmjs.com/package/@buildkitgg/oxlint-config)                             |
+| [@saifulapm/oxc-config](https://www.npmjs.com/package/@saifulapm/oxc-config)                                     |
+| [@r1-dev/code-style](https://www.npmjs.com/package/@r1-dev/code-style)                                           |
+| [@butshouldwe/oxlint-config](https://www.npmjs.com/package/@butshouldwe/oxlint-config)                           |
+| [@kiranaide/oxlint-kit](https://www.npmjs.com/package/@kiranaide/oxlint-kit)                                     |
+| [@siim-m/config](https://www.npmjs.com/package/@siim-m/config)                                                   |
+| [@iimmpact-sdn-bhd/oxlint](https://www.npmjs.com/package/@iimmpact-sdn-bhd/oxlint)                               |
+| [@raintree-technology/trellis](https://www.npmjs.com/package/@raintree-technology/trellis)                       |
+| [antislop-skillset](https://www.npmjs.com/package/antislop-skillset)                                             |
 
-### 慣用句とコメント
+## General code rules
 
-eslint-plugin-vibe-proof は、エージェントが繰り返す低速または長いイディオムを対象とする[^vibe-proof]。一例として、`.filter()` の呼び出しに続いて `.map()` を呼び出すケースが挙げられる。別の例としては、呼び出しのたびに生成される正規表現がある。4つのプリセットは重複しないため、ユーザーはこれらを組み合わせることができる。eslint-plugin-llm-core は、エージェントにルールのガイダンスを提供するMCPサーバーを追加する[^llm-core]。
+This is the largest group. Its rules cover many patterns at once. Examples are dead code, swallowed errors, `as any` casts, leftover `console.log` calls and placeholder bodies. Some are ESLint or Oxlint plugins. Others are CLIs that give a repository a score. Ultracite and eslint-plugin-no-mistakes have the most weekly downloads in this group.
 
-eslint-plugin-no-comment-slop には、コメントに関する12のルールがある[^no-comment-slop]。`no-jargon`は「robust」や「seamlessly」といった単語をフラグ付けする。`no-banner-comment`は装飾的な区切り線をフラグ付けする。windbag は Rust で書かれたプリコミット リンターである[^windbag]。現在のコードではなく、変更内容を記述するコメントをフラグ付けする。そのルールは、チケット番号、過去の挙動、およびヘッジワードを検出する。
+| Name                                                                                         | Engine                | Created    | License | Stars | Weekly npm downloads |
+| -------------------------------------------------------------------------------------------- | --------------------- | ---------- | ------- | ----- | -------------------- |
+| [ultracite](https://github.com/haydenbleasel/ultracite)                                      | Oxlint, Biome, ESLint | 2022-03-18 | MIT     | 3,373 | 2,144,134            |
+| [aislop](https://github.com/scanaislop/aislop)                                               | CLI                   | 2026-03-06 | MIT     | 749   | 29,564               |
+| [eslint-plugin-slop](https://github.com/antfu/eslint-plugin-slop)                            | ESLint                | 2026-09-02 | MIT     | 128   | -                    |
+| [vibecop](https://github.com/bhvbhushan/vibecop)                                             | CLI                   | 2026-04-01 | MIT     | 57    | -                    |
+| [KarpeSlop](https://github.com/CodeDeficient/KarpeSlop)                                      | CLI                   | 2025-11-29 | MIT     | 39    | -                    |
+| [grain](https://github.com/mmartoccia/grain)                                                 | CLI                   | 2026-03-04 | MIT     | 34    | -                    |
+| [rigour](https://github.com/rigour-labs/rigour)                                              | CLI                   | 2026-01-04 | MIT     | 29    | -                    |
+| [@yuvrajangadsingh/vibecheck](https://github.com/yuvrajangadsingh/vibecheck)                 | ESLint                | 2026-02-26 | -       | 27    | 626                  |
+| [slopcheck-deslop](https://github.com/godagoo/slopcheck-deslop)                              | CLI                   | 2026-08-25 | MIT     | 18    | -                    |
+| [antislop](https://github.com/skew202/antislop)                                              | CLI                   | 2025-12-31 | -       | 17    | -                    |
+| [slop-police](https://github.com/kubk/slop-police)                                           | CLI                   | 2026-10-22 | MIT     | 15    | 2,587                |
+| [eslint-plugin-vibe-proof](https://github.com/SukkaW/eslint-plugin-vibe-proof)               | ESLint                | 2026-07-26 | MIT     | 15    | -                    |
+| [prodlint](https://github.com/prodlint/prodlint)                                             | CLI                   | 2026-02-16 | MIT     | 15    | -                    |
+| [eslint-plugin-llm-core](https://github.com/pertrai1/eslint-plugin-llm-core)                 | ESLint                | 2026-04-01 | MIT     | 14    | -                    |
+| [lipstyk](https://github.com/styrene-lab/lipstyk)                                            | CLI                   | 2026-04-25 | MIT     | 13    | -                    |
+| [eslint-plugin-no-mistakes](https://github.com/jonathanong/no-mistakes)                      | ESLint, Oxlint        | 2026-05-11 | MIT     | 12    | 114,857              |
+| [@sshkeda/check](https://github.com/sshkeda/check)                                           | CLI                   | 2026-10-31 | MIT     | 12    | 2,066                |
+| [@geoql/oxlint-plugin-vue-doctor, nuxt-doctor](https://github.com/geoql/doctor)              | Oxlint, ESLint        | 2026-05-28 | MIT     | 7     | 4,237                |
+| [eslint-plugin-human-first](https://github.com/olistic/eslint-plugin-human-first)            | ESLint                | 2026-02-13 | -       | 6     | 1,484                |
+| [realitygate](https://github.com/usmanmanii/realitygate)                                     | CLI                   | 2026-10-19 | MIT     | 5     | -                    |
+| [eslint-plugin-deslop](https://github.com/ahxar/eslint-plugin-deslop)                        | ESLint                | 2026-01-20 | MIT     | 3     | 6,778                |
+| [@alexcodeplace/slopgate](https://github.com/alexcodeplace/slopgate)                         | CLI                   | 2026-06-10 | MIT     | 3     | 1,392                |
+| [eslint-plugin-ai-guardrails](https://github.com/isaacnewton123/eslint-plugin-ai-guardrails) | ESLint                | 2026-05-06 | MIT     | 3     | 200                  |
+| [@sloplint/cli](https://github.com/mattbaconz/sloplint)                                      | CLI                   | 2026-10-15 | MIT     | 3     | 63                   |
+| [slopscore](https://github.com/Vinay-O/slopscore)                                            | CLI                   | 2026-06-29 | MIT     | 3     | 63                   |
+| [slopmop](https://github.com/zico-io/mop)                                                    | ESLint                | 2026-10-08 | MIT     | 1     | 2,175                |
+| [lintmax](https://github.com/1qh/lintmax)                                                    | CLI                   | 2026-03-06 | -       | 1     | 425                  |
+| [eslint-plugin-anti-slop](https://github.com/jakyeamos/eslint-plugin-anti-slop)              | ESLint                | 2026-06-22 | MIT     | 1     | 262                  |
+| [eslint-plugin-ai-agent-standards](https://github.com/vlkalex/ai-agent-coding-standards)     | ESLint                | 2026-05-29 | MIT     | 1     | 141                  |
+| [stopslop](https://github.com/BaryshevRS/stopslop)                                           | CLI                   | 2026-07-13 | MIT     | 1     | 61                   |
+| [@rocharm/tsaudit](https://github.com/r0charm/tsaudit)                                       | Oxlint                | 2026-11-07 | MIT     | 0     | 675                  |
+| [ts-slop](https://github.com/AugurCognito/ts_slop)                                           | ESLint                | 2026-07-06 | MIT     | 0     | 579                  |
+| [sloplint-cli](https://github.com/Talha-2/sloplint)                                          | CLI                   | 2026-11-12 | MIT     | 0     | 293                  |
+| [@slop-lab/qg](https://github.com/slop-lab/quality-gate)                                     | CLI                   | 2026-07-04 | MIT     | 0     | 51                   |
+| [oxc-config-ai-guardrails](https://github.com/matteoantoci/oxc-config-ai-guardrails)         | Oxlint                | 2026-07-31 | MIT     | 0     | -                    |
+| [oxlint-better](https://www.npmjs.com/package/oxlint-better)                                 | Oxlint                | -          | -       | -     | 1,252                |
+| [unslop](https://www.npmjs.com/package/unslop)                                               | CLI                   | -          | -       | -     | 738                  |
+| [eslint-plugin-ai-rules](https://www.npmjs.com/package/eslint-plugin-ai-rules)               | ESLint                | -          | -       | -     | 689                  |
+| [leancheck](https://www.npmjs.com/package/leancheck)                                         | CLI                   | -          | -       | -     | 55                   |
+| [@methiu/raigal](https://www.npmjs.com/package/@methiu/raigal)                               | CLI                   | -          | -       | -     | 48                   |
 
-### 構造
+## Other languages
 
-enforced-architectureは、11のカテゴリからなるルールのカタログである[^enforced-architecture]。主要なカテゴリは、境界、型、配置である。TanStack Start、Drizzle、Oxlintを対象としている。そのREADMEでは、エージェントに他のスタック向けのルールを書き直すよう求めている。
+Some rule sets target languages other than JavaScript. ex_slop adds Credo checks for Elixir. sloppy adds 34 rules for PHP. Several tools check Python code.
 
-agent-slop-lintは、25種類のルール[^agent-slop-lint]を用いて多くの言語のコードをチェックする。これらのルールは、複雑度、重複、およびマジックナンバーを測定する。また、クラス名と重複する名前を検出するものもある。KarpeSlopは、TypeScriptコードにノイズ、嘘、魂という3つの軸でスコアを付与する[^karpeslop]。npmレジストリとインポートを照合し、存在しないパッケージを検出する。oxlint-plugin-complexityは、Oxlintにサイクロマティック複雑度と認知的複雑度を追加する[^complexity]。
+| Name                                                                 | Engine  | Created    | License    | Stars | Weekly npm downloads |
+| -------------------------------------------------------------------- | ------- | ---------- | ---------- | ----- | -------------------- |
+| [sloppy](https://github.com/Heyosseus/sloppy)                        | PHPStan | 2026-09-10 | MIT        | 231   | -                    |
+| [ex_slop](https://github.com/elixir-vibe/ex_slop)                    | Credo   | 2026-03-07 | MIT        | 176   | -                    |
+| [AI-SLOP-Detector](https://github.com/flamehaven01/AI-SLOP-Detector) | Python  | 2026-01-08 | MIT        | 120   | -                    |
+| [sloppylint](https://github.com/rsionnach/sloppylint)                | Python  | 2025-12-05 | -          | 91    | -                    |
+| [agent-slop-lint](https://github.com/JordanGunn/agent-slop-lint)     | Python  | 2026-04-11 | Apache-2.0 | 44    | -                    |
+| [ComposeLintAI](https://github.com/TechsOneAi/ComposeLintAI)         | Kotlin  | 2026-09-24 | Apache-2.0 | 36    | -                    |
+| [thai-lint](https://github.com/be-wise-be-kind/thai-lint)            | Python  | 2025-10-07 | MIT        | 25    | -                    |
+| [slopcop](https://github.com/cm2435/slopcop)                         | Python  | 2026-04-06 | MIT        | 11    | -                    |
 
-### ユーザーインターフェース
+## Comments
 
-@shadcn/lint は、Tailwind のデザインシステムにおけるコンポーネントのスタイルを確認する[^shadcn-lint]。ユーザーは、各コンポーネントがどのクラスを受け付けるかを指定する。すると、エラーメッセージがユーザー自身のコンポーネントのサイズやバリアントを提案する。renderlint は、ブラウザで各ページを複数の幅で開く[^renderlint]。切り詰められたテキスト、低コントラスト、および要素の重なりを報告する。
+These tools flag comments that repeat the code or narrate the change. eslint-plugin-no-comment-slop has 12 rules for comments[^no-comment-slop]. windbag flags ticket numbers, past behavior and hedging words in comments[^windbag].
 
-## 文章とMarkdown
+| Name                                                                                             | Engine                 | Created    | License    | Stars | Weekly npm downloads |
+| ------------------------------------------------------------------------------------------------ | ---------------------- | ---------- | ---------- | ----- | -------------------- |
+| [windbag](https://github.com/scale-venture-partners/windbag)                                     | CLI                    | 2026-08-05 | MIT        | 26    | -                    |
+| [eslint-plugin-no-comment-slop](https://github.com/jantimon/eslint-plugin-no-comment-slop)       | ESLint, Oxlint, rslint | 2026-07-30 | MIT        | 13    | -                    |
+| [stop-ai-slop](https://github.com/WhiteBite/stop-ai-slop)                                        | CLI                    | 2026-09-23 | MIT        | 7     | 269                  |
+| [comment-checker](https://github.com/systemfsoftware/comment-checker)                            | Claude Code hook       | 2026-08-12 | Apache-2.0 | 6     | -                    |
+| [@dannote/sloplint](https://github.com/dannote/sloplint)                                         | CLI                    | 2026-02-04 | MIT        | 4     | 29                   |
+| [@vasilvestre/opencode-comment-checker](https://github.com/vasilvestre/opencode-comment-checker) | OpenCode plugin        | 2026-10-30 | MIT        | 0     | 53                   |
 
-| プリセット                                                                                        | エンジン | 言語 | ライセンス | 作成日     | スター |
-| ------------------------------------------------------------------------------------------------- | -------- | ---- | ---------- | ---------- | ------ |
-| [textlint-rule-preset-ai-writing](https://github.com/textlint-ja/textlint-rule-preset-ai-writing) | textlint | ja   | MIT        | 2025-06-16 | 1,164  |
-| [textlint-rule-preset-ai-words-ja](https://github.com/p1ass/textlint-rule-preset-ai-words-ja)     | textlint | ja   | MIT        | 2026-09-12 | 131    |
-| [slopless](https://github.com/berelevant-ai/slopless)                                             | textlint | en   | MIT        | 2026-05-16 | 342    |
-| [vale-llm-slop](https://github.com/Syntaf/vale-llm-slop)                                          | Vale     | en   | -          | 2026-07-31 | 31     |
-| [seiso](https://github.com/scarletkc/seiso)                                                       | CLI      | -    | MIT        | 2026-09-27 | 196    |
+## Hallucinated packages
 
-textlint-rule-preset-ai-writingは、AI[^ai-writing]が生成した日本語テキストに共通する構造を検出する。例として、太字のリスト見出しやコロンなどが挙げられる。そのルールは、文言ではなく構造を制限することにある。textlint-rule-preset-ai-words-jaは、こうしたテキストに共通する単語を形態素解析[^ai-words-ja]によって検出する。その多くは、英語から単語単位で翻訳された動詞である。
+Agents sometimes import packages that do not exist. An attacker can publish a package with such a name. This attack is called slopsquatting. These tools check package names against the registries before install.
 
-sloplessは英語のMarkdownをチェックする[^slopless]。そのルールは「let me be honest」や「at the end of the day」といった表現を検出する。vale-llm-slopには2種類のValeスタイル[^vale-llm-slop]がある。`Slop`はバズワードや空虚な賛辞を阻止する。`STE`は、シンプルな技術英語向けのASD-STE100規格に基づいたルールを適用する。
+| Name                                                                               | Engine | Created    | License    | Stars | Weekly npm downloads |
+| ---------------------------------------------------------------------------------- | ------ | ---------- | ---------- | ----- | -------------------- |
+| [open-code-review](https://github.com/raye-deng/open-code-review)                  | CLI    | 2026-03-04 | -          | 41    | -                    |
+| [sloppy-joe](https://github.com/brennhill/sloppy-joe)                              | CLI    | 2026-03-21 | Apache-2.0 | 34    | -                    |
+| [relais](https://github.com/Paskod121/relais)                                      | CLI    | 2026-10-22 | MIT        | 15    | -                    |
+| [slopcheck](https://github.com/mattschaller/slopcheck)                             | CLI    | 2026-03-08 | MIT        | 11    | -                    |
+| [dep-hallucinator](https://github.com/serhanwbahar/dep-hallucinator)               | CLI    | 2025-06-18 | MIT        | 9     | -                    |
+| [slopspotter](https://github.com/conranpearce/slopspotter)                         | CLI    | 2026-04-25 | MIT        | 6     | -                    |
+| [slop-deps](https://github.com/viditx/slop-deps)                                   | CLI    | 2026-10-26 | MIT        | 1     | 344                  |
+| [@topaisaas/agentpr-guard](https://www.npmjs.com/package/@topaisaas/agentpr-guard) | CLI    | -          | -          | -     | 17                   |
 
-seisoは、リポジトリ内のMarkdownドキュメントに関する1つの規約を定めている[^seiso]。各ドキュメントは、ハウツーやリファレンスなど、1つの種類を宣言する。各ファクトには1つのホームがある。長く残るページでは、バージョンなど頻繁に変わる値を記録してはならない。
+## Structure and architecture
 
-## エージェントの設定
+These tools check where code lives and how it depends on other code. enforced-architecture is a catalog of rules in 11 categories[^enforced-architecture]. Its README asks agents to rewrite the rules for other stacks.
 
-| プリセット                                                 | 対象                                       | ライセンス      | 作成日     | スター |
-| ---------------------------------------------------------- | ------------------------------------------ | --------------- | ---------- | ------ |
-| [agnix](https://github.com/agent-sh/agnix)                 | CLAUDE.md, AGENTS.md, SKILL.md, hooks, MCP | MIT, Apache-2.0 | 2026-01-30 | 487    |
-| [ctxlint](https://github.com/YawLabs/ctxlint)              | CLAUDE.md, AGENTS.md, MCP                  | MIT             | 2026-04-05 | 12     |
-| [driftlint](https://github.com/alifurkangokce/driftlint)   | CLAUDE.md, AGENTS.md, SKILL.md             | MIT             | 2026-08-11 | 61     |
-| [agents-lint](https://github.com/giacomo/agents-lint)      | CLAUDE.md, AGENTS.md, MEMORY.md            | -               | 2026-02-27 | 16     |
-| [skill-check](https://github.com/thedaviddias/skill-check) | SKILL.md                                   | MIT             | 2026-02-20 | 194    |
-| [LintLang](https://github.com/hermes-labs-ai/lintlang)     | MCP                                        | Apache-2.0      | 2026-02-28 | 147    |
+| Name                                                                               | Engine | Created    | License | Stars | Weekly npm downloads |
+| ---------------------------------------------------------------------------------- | ------ | ---------- | ------- | ----- | -------------------- |
+| [oxlint-plugin-complexity](https://github.com/itaymendel/oxlint-plugin-complexity) | Oxlint | 2025-12-25 | MIT     | 52    | -                    |
+| [dictator](https://github.com/seuros/dictator)                                     | CLI    | 2025-12-03 | -       | 28    | -                    |
+| [deslop](https://github.com/Ivy-Apps/deslop)                                       | CLI    | 2025-12-14 | MIT     | 19    | -                    |
+| [enforced-architecture](https://github.com/GLips/enforced-architecture)            | Oxlint | 2026-02-19 | -       | 11    | -                    |
+| [slopbuckets](https://github.com/NicolasCaous/slopbuckets)                         | CLI    | 2026-10-04 | MIT     | 2     | 1,049                |
+| [slopbrick](https://github.com/usebrick/platform)                                  | CLI    | 2026-06-26 | MIT     | 1     | 41                   |
+| [clonesieve](https://www.npmjs.com/package/clonesieve)                             | CLI    | -          | -       | -     | 357                  |
 
-agnixは、エージェント設定用のリンターおよび言語サーバーである[^agnix]。ctxlint、driftlint、agents-lintは、コードと照合してコンテキストファイルをチェックする[^ctxlint][^driftlint][^agents-lint]。これらは、既に存在しないパスや動作しなくなったコマンドを報告する。また、ctxlintはファイルが使用するトークン数もカウントする。skill-checkは、各`SKILL.md`ファイルに0から100までのスコアを付与する[^skill-check]。LintLangは、ツールの説明やシステムプロンプトをチェックする[^lintlang]。例えば、説明がモデルにどちらを使用すべきか指示していない2つのツールを報告する。
+## User interfaces
 
-## リントルールに該当しない関連プロジェクト
+These tools check UI code or the rendered page. @shadcn/lint checks how components in a Tailwind design system are styled[^shadcn-lint]. renderlint opens each page in a browser at several widths[^renderlint]. Others look for visual habits of generated pages, such as purple gradients.
 
-「AI slop」に対抗する有名なプロジェクトの一部は、エージェントスキルやプロンプトである。stop-ai-slopは、エージェントにコードやドキュメントからスロップを除去させるスキルである[^stop-ai-slop]。同スキルはリンターのパートナーを自称している。stop-slopとno-ai-slopは散文向けのスキルで、スター数はそれぞれ19,031件と13,601件である。これらのスキルはモデル内で動作するため、実行ごとに結果は変わりうる。
+| Name                                                                   | Engine         | Created    | License    | Stars | Weekly npm downloads |
+| ---------------------------------------------------------------------- | -------------- | ---------- | ---------- | ----- | -------------------- |
+| [lint](https://github.com/shadcn-ui/lint)                              | ESLint, Oxlint | 2026-09-02 | MIT        | 3,368 | -                    |
+| [renderlint](https://github.com/ngocanhnckh/renderlint)                | Browser        | 2026-10-25 | MIT        | 641   | -                    |
+| [ui-craft-detect](https://github.com/educlopez/ui-craft)               | CLI            | 2026-03-19 | MIT        | 465   | 678                  |
+| [ai-design-check](https://github.com/enmerasoftware/ai-design-check)   | CLI            | 2026-10-28 | MIT        | 252   | -                    |
+| [ux-skill](https://github.com/Laith0003/ux-skill)                      | CLI            | 2026-05-24 | MIT        | 105   | -                    |
+| [@gessobuild/anti-slop](https://github.com/Gesso-Build/skills)         | CLI            | 2026-07-28 | MIT        | 94    | 131                  |
+| [montology](https://github.com/shinyobjectz/montology)                 | CLI            | 2026-08-10 | Apache-2.0 | 61    | -                    |
+| [unslop](https://github.com/avivgerz-hue/unslop)                       | CLI            | 2026-11-07 | MIT        | 54    | -                    |
+| [slop-detect](https://github.com/ravidsrk/slop-detect)                 | Browser        | 2026-05-26 | MIT        | 21    | 354                  |
+| [ui-animation-polish](https://github.com/hasanify/ui-animation-polish) | CLI            | 2026-11-06 | MIT        | 17    | -                    |
+| [oversight-lint](https://github.com/rachelslurs/storybook-oversight)   | CLI            | 2026-07-12 | MIT        | 15    | 4,106                |
+| [aislopmeter](https://github.com/omergocmen/aislopmeter)               | CLI            | 2026-10-17 | MIT        | 12    | 59                   |
+| [pixelslop](https://github.com/gabelul/pixelslop)                      | Browser        | 2026-03-20 | Apache-2.0 | 10    | 41                   |
+| [eslint-plugin-agentlint](https://github.com/ratikkoka/agentlint)      | ESLint         | 2026-02-14 | MIT        | 0     | 2,156                |
+| [uislop](https://github.com/princejain756/uislop)                      | CLI            | 2026-11-05 | MIT        | 0     | 383                  |
+| [squint-test](https://github.com/AbhinavGGarg/Squint)                  | Browser        | 2026-11-02 | -          | 0     | 50                   |
 
-alintはESLintに似ているが、言語モデルがルールを実行する[^alint]。UltraciteはOxlint、Biome、ESLint向けのプリセットで、設定不要である[^ultracite]。エージェント開発用のリンターとして位置づけられている。
+## Japanese prose
 
-## 2026年の動向
+textlint-rule-preset-ai-writing finds structures that are common in Japanese text written by AI[^ai-writing]. Examples are bold list headings and colons. textlint-rule-preset-ai-words-ja finds words that are common in such text with morphological analysis[^ai-words-ja].
 
-これらのプロジェクトの多くは新規である。上記のプロジェクトの3分の1以上は、2026年8月以降に作成された。landmines、renderlint、agent-lint、biome-anti-slopは10月と11月に登場した。Oxlint用のJSプラグインにより、Rustなしでルールを安価に公開できるようになった。
+| Name                                                                                                | Engine   | Created    | License | Stars | Weekly npm downloads |
+| --------------------------------------------------------------------------------------------------- | -------- | ---------- | ------- | ----- | -------------------- |
+| [textlint-rule-preset-ai-writing](https://github.com/textlint-ja/textlint-rule-preset-ai-writing)   | textlint | 2025-06-16 | MIT     | 1,164 | -                    |
+| [textlint-rule-preset-ai-words-ja](https://github.com/p1ass/textlint-rule-preset-ai-words-ja)       | textlint | 2026-09-12 | MIT     | 131   | -                    |
+| [ux-writing-dead-cliche](https://github.com/BoxPistols/ux-writing-dead-cliche)                      | textlint | 2026-08-28 | MIT     | 1     | -                    |
+| [textlint-rule-preset-ja-no-ai-slop](https://github.com/kubosho/textlint-rule-preset-ja-no-ai-slop) | textlint | 2026-09-26 | MIT     | 0     | 194                  |
 
-ルールは現在、文言だけでなくエビデンスもチェックする。文章のルールには、依然として「delve」などの単語が記載されている。コードルールは、テストが実際のコードを実行するかどうかを確認する。型アサーションに理由があるかどうかを確認する。設定ルールは、コンテキストファイルがコードと一致するかどうかを確認する。これらのチェックはいずれもモデルを必要としないため、あらゆる編集時に実行できる。
+## English prose
 
-## masseater.dev での利用
+This is the second largest group. Most tools match lists of words and phrases, such as "delve". Some also check sentence structure. Many give the text a score and fail CI above a limit.
 
-masseater.dev は msch を通じてチェックを行う。独自のリンターには、Markdown 用の y8、構造化用の wism、GitHub Actions 用の fu4、シークレット用の h56m がある。上記のアイデアの一部はすでに網羅されている。msch はコードコメントを禁止しており、y8 は agnix を組み込みプラグインとして動作させている。
+| Name                                                                                          | Engine   | Created    | License    | Stars | Weekly npm downloads |
+| --------------------------------------------------------------------------------------------- | -------- | ---------- | ---------- | ----- | -------------------- |
+| [SlopMonster](https://github.com/ItsssssJack/SlopMonster)                                     | CLI      | 2026-08-29 | MIT        | 1,291 | -                    |
+| [sloptrim](https://github.com/seyedehsanhadi/sloptrim)                                        | CLI      | 2026-08-13 | Apache-2.0 | 425   | -                    |
+| [slopless](https://github.com/berelevant-ai/slopless)                                         | textlint | 2026-05-16 | MIT        | 342   | -                    |
+| [seiso](https://github.com/scarletkc/seiso)                                                   | CLI      | 2026-09-27 | MIT        | 196   | -                    |
+| [vale-ai-tells](https://github.com/tbhb/vale-ai-tells)                                        | Vale     | 2025-12-02 | MIT        | 135   | -                    |
+| [humanizer-lint](https://github.com/yanstd888/humanizer-lint)                                 | CLI      | 2026-10-30 | MIT        | 119   | -                    |
+| [ai-slop-detector](https://github.com/FeedHive/ai-slop-detector)                              | CLI      | 2026-10-12 | MIT        | 111   | -                    |
+| [contextlint](https://github.com/nozomi-koborinai/contextlint)                                | CLI      | 2026-03-04 | Apache-2.0 | 47    | -                    |
+| [snifftest](https://github.com/DanRWilloughby/snifftest)                                      | CLI      | 2026-09-17 | MIT        | 38    | -                    |
+| [vale-llm-slop](https://github.com/Syntaf/vale-llm-slop)                                      | Vale     | 2026-07-31 | -          | 31    | -                    |
+| [cadence-deslop](https://github.com/wuisabel-gif/Cadence)                                     | CLI      | 2026-06-19 | MIT        | 29    | 592                  |
+| [no-slop](https://github.com/Byk3y/no-slop)                                                   | CLI      | 2026-04-08 | MIT        | 16    | -                    |
+| [textlint-rule-preset-ste-ai](https://github.com/Jamie-BitFlight/textlint-rule-preset-ste-ai) | textlint | 2026-07-26 | MIT        | 15    | -                    |
+| [simple-english](https://github.com/TonyCTHsu/simple-english)                                 | CLI      | 2026-09-27 | MIT        | 14    | -                    |
+| [writehuman](https://github.com/arslanrakh/write-human)                                       | CLI      | 2026-10-02 | MIT        | 13    | 244                  |
+| [slopvac](https://github.com/slopvac/slopvac)                                                 | CLI      | 2026-07-27 | Apache-2.0 | 13    | -                    |
+| [ai-slop-detect](https://github.com/antydizajn/ai-slop-detect)                                | CLI      | 2026-06-02 | MIT        | 9     | -                    |
+| [wsc](https://github.com/theserverlessdev/wsc)                                                | CLI      | 2025-03-06 | MIT        | 9     | -                    |
+| [voices](https://github.com/jdkato/voices)                                                    | Vale     | 2026-08-31 | MIT        | 7     | -                    |
+| [writinglint](https://github.com/NikhilVerma/writinglint)                                     | CLI      | 2026-07-07 | MIT        | 7     | -                    |
+| [ste-lint](https://github.com/johnsaigle/ste-lint)                                            | CLI      | 2026-08-05 | MIT        | 6     | -                    |
+| [slophound](https://github.com/JosXa/slophound)                                               | CLI      | 2026-09-05 | MIT        | 6     | -                    |
+| [zero-slop](https://github.com/trefeon/zero-slop)                                             | CLI      | 2026-08-18 | MIT        | 6     | -                    |
+| [slop-chop-wasm](https://github.com/dcadolph/slop-chop)                                       | CLI      | 2026-06-25 | MIT        | 5     | 95                   |
+| [slop](https://github.com/bheijden/slop)                                                      | CLI      | 2026-08-28 | Apache-2.0 | 5     | -                    |
+| [plain-english](https://github.com/nordscope-fi/plain-english)                                | CLI      | 2026-08-06 | MIT        | 4     | 169                  |
+| [style-doctor](https://github.com/baronunread/style-doctor)                                   | CLI      | 2026-08-28 | MIT        | 1     | 913                  |
+| [shibbo](https://github.com/xvr2e7/shibbo)                                                    | CLI      | 2026-11-08 | MIT        | 1     | 531                  |
+| [@kcgdz/sloplint](https://github.com/kcgdz/sloplint)                                          | CLI      | 2026-10-31 | MIT        | 1     | 48                   |
+| [llm-slop-detector](https://github.com/mandakan/llm-slop-detector)                            | CLI      | 2026-04-23 | MIT        | 1     | 27                   |
+| [unslop-ci](https://github.com/cj-vana/unslop-ci)                                             | CLI      | 2026-07-11 | -          | 1     | 12                   |
+| [readme-unslop](https://github.com/HiegBr/readme-unslop)                                      | CLI      | 2026-11-01 | MIT        | 0     | 355                  |
+| [@alokraj68/plainspoken](https://github.com/alokraj68/craftkit)                               | CLI      | 2026-08-11 | MIT        | 0     | 55                   |
+| [@askeleven/bot-tells](https://github.com/askeleven/bot-tells)                                | CLI      | 2026-10-17 | MIT        | 0     | 49                   |
+| [sepia-lint](https://github.com/zhaomo08/sepia-lint)                                          | CLI      | 2026-09-02 | MIT        | 0     | 13                   |
+| [ai-slop-linter](https://www.npmjs.com/package/ai-slop-linter)                                | CLI      | -          | -          | -     | 104                  |
+| [dontreadme-cli](https://www.npmjs.com/package/dontreadme-cli)                                | CLI      | -          | -          | -     | 12                   |
 
-mschは、landminesのテストルールやanti-slopの型ルールを採用できる。また、eslint-plugin-vibe-proofがそうしているように、理由のない抑制コメントも禁止できる。プルリクエストがリントやテスト設定を緩めていないかを確認するチェックもmschに適している。ai-guardやagent-lintにはそのようなチェック機能が備わっている。
+## Prose in other languages
 
-wism-presetsは、テストファイルの名前や場所に関するlandminesのルールを取り込むことができる。y8-presetsは、ctxlintやdriftlintと同様に、`AGENTS.md`内のパスやコマンドが存在するかを確認できる。また、各ファクトに1つのホームが存在するというseisoルールも取り込める。独自の日本語textlintプリセットでは、textlint-rule-preset-ai-writingの構造ルールを取り込むことができる。fu4-presetsは、ワークフローの変更によってリントやテストステップが削除されないかを確認できる。
+These tools target French, Spanish, German, Korean or Chinese. Some of them also check English.
 
-## 関連記事
+| Name                                                                   | Engine | Created    | License  | Stars | Weekly npm downloads |
+| ---------------------------------------------------------------------- | ------ | ---------- | -------- | ----- | -------------------- |
+| [zhtw-mcp](https://github.com/sysprog21/zhtw-mcp)                      | CLI    | 2026-03-10 | MIT      | 511   | -                    |
+| [llmlint](https://github.com/notnotype/llmlint)                        | CLI    | 2026-06-30 | AGPL-3.0 | 13    | -                    |
+| [slopcheck-fr](https://github.com/tns-research/slopcheck-fr)           | CLI    | 2026-10-10 | MIT      | 12    | -                    |
+| [slop-radar](https://github.com/renefichtmueller/slop-radar)           | CLI    | 2026-03-19 | MIT      | 10    | 14                   |
+| [slop-gate](https://github.com/hwajongpark/slop-gate)                  | CLI    | 2026-05-29 | MIT      | 5     | 42                   |
+| [ai-slop-detector](https://github.com/liuxiaobai8868/ai-slop-detector) | CLI    | 2026-06-03 | MIT      | 5     | -                    |
+| [@e1i0/human](https://github.com/e1i0r/human)                          | CLI    | 2026-09-15 | -        | 1     | 16                   |
+| [slopfix](https://github.com/Zwarmex/slopfix)                          | CLI    | 2026-10-25 | MIT      | 0     | 42                   |
+| [buvard](https://www.npmjs.com/package/buvard)                         | CLI    | -          | -        | -     | 736                  |
+
+## Agent configuration
+
+These tools check the files that agents read. agnix is a linter and language server for agent configuration[^agnix]. ctxlint, driftlint and agents-lint check context files against the code[^ctxlint][^driftlint][^agents-lint]. They report paths that no longer exist and commands that no longer work. Many other tools check only `SKILL.md` files.
+
+| Name                                                                           | Engine   | Created    | License    | Stars | Weekly npm downloads |
+| ------------------------------------------------------------------------------ | -------- | ---------- | ---------- | ----- | -------------------- |
+| [agnix](https://github.com/agent-sh/agnix)                                     | CLI, LSP | 2026-01-30 | Apache-2.0 | 487   | -                    |
+| [skill-check](https://github.com/thedaviddias/skill-check)                     | CLI      | 2026-02-20 | MIT        | 194   | -                    |
+| [lintlang](https://github.com/hermes-labs-ai/lintlang)                         | CLI      | 2026-02-28 | Apache-2.0 | 147   | -                    |
+| [SkillMD](https://github.com/skillmds/SkillMD)                                 | CLI      | 2026-08-25 | MIT        | 147   | -                    |
+| [agentlinter](https://github.com/seojoonkim/agentlinter)                       | CLI      | 2026-02-05 | -          | 83    | -                    |
+| [driftlint](https://github.com/alifurkangokce/driftlint)                       | CLI      | 2026-08-11 | MIT        | 61    | -                    |
+| [agentskill-kit](https://github.com/Lethe044/agentskill-kit)                   | CLI      | 2026-03-14 | MIT        | 51    | -                    |
+| [agents-md-cookbook](https://github.com/Taiizor/agents-md-cookbook)            | CLI      | 2026-06-14 | MIT        | 29    | -                    |
+| [doodle](https://github.com/krishyaid-coder/doodle)                            | CLI      | 2026-06-20 | MIT        | 26    | -                    |
+| [@carlrannaberg/cclint](https://github.com/carlrannaberg/cclint)               | CLI      | 2025-08-21 | -          | 22    | 3,461                |
+| [agents-contract](https://github.com/AntoGA/agents-contract)                   | CLI      | 2026-10-19 | MIT        | 20    | -                    |
+| [schliff](https://github.com/Zandereins/schliff)                               | CLI      | 2026-03-19 | MIT        | 18    | -                    |
+| [pulser](https://github.com/TheStack-ai/pulser)                                | CLI      | 2026-03-18 | MIT        | 18    | -                    |
+| [agents-lint](https://github.com/giacomo/agents-lint)                          | CLI      | 2026-02-27 | -          | 16    | -                    |
+| [claudelint](https://github.com/pdugan20/claudelint)                           | CLI      | 2026-02-08 | MIT        | 16    | -                    |
+| [skill-lint](https://github.com/himself65/skill-lint)                          | CLI      | 2026-04-01 | MIT        | 16    | -                    |
+| [nori-lint](https://github.com/tilework-tech/nori-lint)                        | CLI      | 2026-01-30 | Apache-2.0 | 15    | -                    |
+| [agentconfig-doctor](https://github.com/vasikmansuri/agentconfig-doctor)       | CLI      | 2026-10-14 | MIT        | 13    | -                    |
+| [ctxlint](https://github.com/YawLabs/ctxlint)                                  | CLI      | 2026-04-05 | MIT        | 12    | -                    |
+| [cclint](https://github.com/felixgeelhaar/cclint)                              | CLI      | 2025-07-20 | MIT        | 12    | -                    |
+| [cursor-doctor](https://github.com/nedcodes-ok/cursor-doctor)                  | CLI      | 2026-02-17 | MIT        | 10    | -                    |
+| [lintai](https://github.com/777genius/lintai)                                  | CLI      | 2026-03-26 | -          | 10    | -                    |
+| [skill-tools](https://github.com/skill-tools/skill-tools)                      | CLI      | 2026-02-10 | Apache-2.0 | 9     | -                    |
+| [instrlint](https://github.com/jed1978/instrlint)                              | CLI      | 2026-04-05 | MIT        | 8     | -                    |
+| [skillscheck](https://github.com/Swival/skillscheck)                           | CLI      | 2026-03-11 | MIT        | 8     | -                    |
+| [dogent](https://github.com/yegor256/dogent)                                   | CLI      | 2026-06-11 | MIT        | 8     | -                    |
+| [skillci](https://github.com/kabirnarang39/skillci)                            | CLI      | 2026-07-21 | Apache-2.0 | 8     | -                    |
+| [ai-context-kit](https://github.com/ofershap/ai-context-kit)                   | CLI      | 2026-03-04 | MIT        | 8     | -                    |
+| [skillcheck](https://github.com/Sagargupta16/skillcheck)                       | CLI      | 2026-07-06 | MIT        | 5     | -                    |
+| [claude-config-auditor](https://github.com/emreyildirim/claude-config-auditor) | CLI      | 2026-05-18 | MIT        | 5     | -                    |
+
+## MCP tool schemas
+
+These tools check the tool definitions of MCP servers.
+
+| Name                                                          | Engine | Created    | License    | Stars | Weekly npm downloads |
+| ------------------------------------------------------------- | ------ | ---------- | ---------- | ----- | -------------------- |
+| [mcp-assert](https://github.com/blackwell-systems/mcp-assert) | CLI    | 2026-04-23 | MIT        | 26    | -                    |
+| [mcp-tef](https://github.com/StacklokLabs/mcp-tef)            | CLI    | 2025-12-11 | Apache-2.0 | 13    | -                    |
+| [mcp-lint](https://github.com/robert19001-cmyk/mcp-lint)      | CLI    | 2026-03-25 | MIT        | 1     | 1,195                |
+
+## Linters that use a model
+
+Some tools look like linters but run each rule through a model. alint is an ESLint-like CLI that sends its rules to a model through an OpenAI-compatible API[^alint]. Others use Jev, a decision model from TypeSafe AI.
+
+| Name                                                                       | Model                 |
+| -------------------------------------------------------------------------- | --------------------- |
+| [alint](https://github.com/alint-dev/alint)                                | OpenAI-compatible API |
+| [jev-pref](https://github.com/doeixd/jev-pref)                             | Jev                   |
+| [taste-lint](https://github.com/mblode/taste-lint)                         | Jev                   |
+| [slop-grader](https://github.com/lukstei/slop-grader)                      | Jev                   |
+| [pi-jev-anti-slop](https://www.npmjs.com/package/pi-jev-anti-slop)         | Jev                   |
+| [lint-claude](https://github.com/vtemian/lint-claude)                      | Claude                |
+| [@agimon-ai/vibe-lint](https://www.npmjs.com/package/@agimon-ai/vibe-lint) | LLM                   |
+
+## Related projects that are not lint rules
+
+Many well-known projects against "AI slop" are agent skills or prompts. Examples are stop-ai-slop, stop-slop, no-ai-slop, impeccable and taste-skill. stop-slop and no-ai-slop had 19,031 and 13,601 stars on November 18, 2026. These skills run inside a model, so their results can differ from run to run. The catalog does not list them.
+
+## Trends in 2026
+
+Most of these tools are new. Of the entries with a known creation date, about 44% were created in or after August 2026. October 2026 alone added 30 entries. JS plugins for Oxlint made it cheap to publish rules without Rust. Most entries are still standalone CLIs, which run on any language.
+
+The rules now check evidence as well as wording. Prose rules still list words such as "delve". Code rules check whether a test runs the real code. They check whether a type assertion has a reason. Configuration rules check whether a context file matches the code. None of these checks needs a model, so they can run on every edit.
+
+## Related articles
 
 - [Oxlint](/sloppedia/oxlint)
 - [fallow](/sloppedia/fallow)
-- [モジュール境界ツール](/sloppedia/module-boundary-tools)
-- [AIスロップ](/sloppedia/ai-slop)
+- [Module boundary tools](/sloppedia/module-boundary-tools)
+- [decision model](/sloppedia/decision-model)
+- [AI slop](/sloppedia/ai-slop)
 
-[^landmines]: interfere-inc, "[landmines](https://github.com/interfere-inc/landmines)". 2026年11月18日閲覧。[^landmines-adoption]: K-Mistele, "[feat: enable four @interfere/landmines testing rules](https://github.com/K-Mistele/anti-slop/pull/9)". 2026年11月18日閲覧。[^vibe-proof]: SukkaW, "[eslint-plugin-vibe-proof](https://github.com/SukkaW/eslint-plugin-vibe-proof)". 2026年11月18日閲覧。[^agent-slop-lint]: JordanGunn, "[agent-slop-lint](https://github.com/JordanGunn/agent-slop-lint)". 2026年11月18日閲覧。[^enforced-architecture]: GLips, "[enforced-architecture](https://github.com/GLips/enforced-architecture)". 2026年11月18日閲覧。[^shadcn-lint]: shadcn-ui, "[@shadcn/lint](https://github.com/shadcn-ui/lint)". 2026年11月18日閲覧。[^agent-lint]: MartinCastroAlvarez, "[agent-lint](https://github.com/MartinCastroAlvarez/agent-lint)". 2026年11月18日閲覧。[^suppress-ratchet]: motchalini-llc, "[Suppress Ratchet](https://github.com/motchalini-llc/suppress-ratchet)". 2026年11月18日閲覧。[^anti-slop]: dmmulroy, "[anti-slop](https://github.com/dmmulroy/anti-slop)". 2026年11月18日閲覧。[^no-comment-slop]: jantimon, "[eslint-plugin-no-comment-slop](https://github.com/jantimon/eslint-plugin-no-comment-slop)". 2026年11月18日閲覧。[^ai-guard]: ai-guard-dev, "[eslint-plugin-ai-guard](https://github.com/ai-guard-dev/eslint-plugin-ai-guard)". 2026年11月18日閲覧。[^biome-anti-slop]: arberbr, "[biome-anti-slop](https://github.com/arberbr/biome-anti-slop)". 2026年11月18日閲覧。[^oxlint-anti-slop]: emilioSp, "[oxlint-anti-slop](https://github.com/emilioSp/oxlint-anti-slop)". 2026年11月18日閲覧。[^ai-guardrails]: matteoantoci, "[oxc-config-ai-guardrails](https://github.com/matteoantoci/oxc-config-ai-guardrails)". 2026年11月18日閲覧。[^llm-core]: pertrai1, "[eslint-plugin-llm-core](https://github.com/pertrai1/eslint-plugin-llm-core)". 2026年11月18日閲覧。[^windbag]: scale-venture-partners, "[windbag](https://github.com/scale-venture-partners/windbag)". 2026年11月18日閲覧。[^karpeslop]: CodeDeficient, "[KarpeSlop](https://github.com/CodeDeficient/KarpeSlop)". 2026年11月18日閲覧。[^complexity]: itaymendel, "[oxlint-plugin-complexity](https://github.com/itaymendel/oxlint-plugin-complexity)". 2026年11月18日閲覧。[^renderlint]: ngocanhnckh, "[renderlint](https://github.com/ngocanhnckh/renderlint)". 2026年11月18日閲覧。[^ai-writing]: textlint-ja, "[textlint-rule-preset-ai-writing](https://github.com/textlint-ja/textlint-rule-preset-ai-writing)". 2026年11月18日閲覧。[^ai-words-ja]: p1ass, "[textlint-rule-preset-ai-words-ja](https://github.com/p1ass/textlint-rule-preset-ai-words-ja)". 2026年11月18日閲覧。[^slopless]: berelevant-ai, "[slopless](https://github.com/berelevant-ai/slopless)". 2026年11月18日閲覧。[^vale-llm-slop]: Syntaf, "[vale-llm-slop](https://github.com/Syntaf/vale-llm-slop)". 2026年11月18日閲覧。[^seiso]: scarletkc, "[seiso](https://github.com/scarletkc/seiso)". 2026年11月18日閲覧。[^agnix]: agent-sh, "[agnix](https://github.com/agent-sh/agnix)". 2026年11月18日閲覧。[^ctxlint]: YawLabs, "[ctxlint](https://github.com/YawLabs/ctxlint)". 2026年11月18日閲覧。[^driftlint]: alifurkangokce, "[driftlint](https://github.com/alifurkangokce/driftlint)". 2026年11月18日閲覧。[^agents-lint]: giacomo, "[agents-lint](https://github.com/giacomo/agents-lint)". 2026年11月18日閲覧。[^skill-check]: thedaviddias, "[skill-check](https://github.com/thedaviddias/skill-check)". 2026年11月18日閲覧。[^lintlang]: hermes-labs-ai, "[LintLang](https://github.com/hermes-labs-ai/lintlang)". 2026年11月18日閲覧。[^stop-ai-slop]: kirankunapuli, "[stop-ai-slop](https://github.com/kirankunapuli/stop-ai-slop)". 2026年11月18日閲覧。[^alint]: alint-dev, "[alint](https://github.com/alint-dev/alint)". 2026年11月18日閲覧。[^ultracite]: Ultracite, "[Ultracite](https://www.ultracite.ai/)". 2026年11月18日閲覧。
+[^landmines]: interfere-inc, "[landmines](https://github.com/interfere-inc/landmines)". Accessed November 18, 2026.
+
+[^vibe-proof]: SukkaW, "[eslint-plugin-vibe-proof](https://github.com/SukkaW/eslint-plugin-vibe-proof)". Accessed November 18, 2026.
+
+[^agent-slop-lint]: JordanGunn, "[agent-slop-lint](https://github.com/JordanGunn/agent-slop-lint)". Accessed November 18, 2026.
+
+[^enforced-architecture]: GLips, "[enforced-architecture](https://github.com/GLips/enforced-architecture)". Accessed November 18, 2026.
+
+[^shadcn-lint]: shadcn-ui, "[@shadcn/lint](https://github.com/shadcn-ui/lint)". Accessed November 18, 2026.
+
+[^agent-lint]: MartinCastroAlvarez, "[agent-lint](https://github.com/MartinCastroAlvarez/agent-lint)". Accessed November 18, 2026.
+
+[^suppress-ratchet]: motchalini-llc, "[Suppress Ratchet](https://github.com/motchalini-llc/suppress-ratchet)". Accessed November 18, 2026.
+
+[^anti-slop]: dmmulroy, "[anti-slop](https://github.com/dmmulroy/anti-slop)". Accessed November 18, 2026.
+
+[^no-comment-slop]: jantimon, "[eslint-plugin-no-comment-slop](https://github.com/jantimon/eslint-plugin-no-comment-slop)". Accessed November 18, 2026.
+
+[^windbag]: scale-venture-partners, "[windbag](https://github.com/scale-venture-partners/windbag)". Accessed November 18, 2026.
+
+[^renderlint]: ngocanhnckh, "[renderlint](https://github.com/ngocanhnckh/renderlint)". Accessed November 18, 2026.
+
+[^ai-writing]: textlint-ja, "[textlint-rule-preset-ai-writing](https://github.com/textlint-ja/textlint-rule-preset-ai-writing)". Accessed November 18, 2026.
+
+[^ai-words-ja]: p1ass, "[textlint-rule-preset-ai-words-ja](https://github.com/p1ass/textlint-rule-preset-ai-words-ja)". Accessed November 18, 2026.
+
+[^agnix]: agent-sh, "[agnix](https://github.com/agent-sh/agnix)". Accessed November 18, 2026.
+
+[^ctxlint]: YawLabs, "[ctxlint](https://github.com/YawLabs/ctxlint)". Accessed November 18, 2026.
+
+[^driftlint]: alifurkangokce, "[driftlint](https://github.com/alifurkangokce/driftlint)". Accessed November 18, 2026.
+
+[^agents-lint]: giacomo, "[agents-lint](https://github.com/giacomo/agents-lint)". Accessed November 18, 2026.
+
+[^alint]: alint-dev, "[alint](https://github.com/alint-dev/alint)". Accessed November 18, 2026.
