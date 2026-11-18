@@ -1,16 +1,17 @@
 {
-  "name": "@r_masseater/y8-docs",
+  "name": "@r_masseater/y8-presets",
   "version": "0.1.0",
-  "description": "y8 rules for README.md, AGENTS.md and SKILL.md, with a preset that applies each to its own files.",
+  "description": "The official y8 rule presets, one per concern: README.md, AGENTS.md, SKILL.md, shared document checks, Markdown style and agent config.",
   "keywords": [
     "agents-md",
     "markdown",
+    "preset",
     "readme",
     "skill-md",
     "tanstack-intent",
     "y8"
   ],
-  "homepage": "https://github.com/masseater/masseater.dev/tree/main/libs/y8-docs#readme",
+  "homepage": "https://github.com/masseater/masseater.dev/tree/main/libs/y8-presets#readme",
   "bugs": {
     "url": "https://github.com/masseater/masseater.dev/issues"
   },
@@ -18,12 +19,12 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/masseater/masseater.dev.git",
-    "directory": "libs/y8-docs"
+    "directory": "libs/y8-presets"
   },
   "files": [
     "LICENSE",
     "dist",
-    "skills/lint-docs"
+    "skills/apply-presets"
   ],
   "type": "module",
   "imports": {
