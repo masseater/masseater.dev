@@ -33,6 +33,7 @@ export default defineConfig({
     entry: {
       cli: "bin/msch.ts",
       changed: "bin/msch-changed.ts",
+      exits: "bin/msch-exits.ts",
       publish: "bin/msch-publish.ts",
       "cargo-inputs": "src/features/derive-cargo-inputs/index.ts",
       "locked-inputs": "src/features/derive-locked-inputs/index.ts",
