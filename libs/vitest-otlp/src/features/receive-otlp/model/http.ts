@@ -1,5 +1,5 @@
 import type { Message } from "@bufbuild/protobuf";
-import { NodeHttpServer } from "@effect/platform-node";
+import { layerTest } from "@effect/platform-node/NodeHttpServer";
 import type { Scope } from "effect";
 import { Array, Context, Effect, Layer, Option, String, pipe } from "effect";
 import type { HttpServerError } from "effect/http";
@@ -96,7 +96,7 @@ const exportRequest = (
   );
 
 export const serveHttp = (store: Store): Effect.Effect<string, never, Scope.Scope> =>
-  Layer.build(NodeHttpServer.layerTest).pipe(
+  Layer.build(layerTest).pipe(
     Effect.orDie,
     Effect.map(Context.get(HttpServer.HttpServer)),
     Effect.tap((server) => server.serve(exportRequest(store))),
