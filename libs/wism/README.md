@@ -7,12 +7,12 @@ The engine of a structure and dependency linter for TypeScript, Rust and Markdow
 
 A Rust addon reads every import, `use` path and Markdown link of the files git tracks into one
 graph. Rules are TypeScript plugins that check that graph, so a rule package runs on every OS
-without its own native build. `@r_masseater/wism-fsd` holds the Feature-Sliced Design rules.
+without its own native build. `@r_masseater/wism-presets` holds the official presets.
 
 ```ts
 import "@r_masseater/wism/vite";
 import { definePlugin, defineRule } from "@r_masseater/wism";
-import { fsdPreset, skill, workspace } from "@r_masseater/wism-fsd";
+import { skill, structure, workspace } from "@r_masseater/wism-presets";
 import { defineConfig } from "vite-plus";
 
 const noSharedToApp = defineRule({
@@ -26,16 +26,16 @@ const noSharedToApp = defineRule({
   },
 });
 
-const structure = fsdPreset({ kinds: [workspace({ paths: ["libs/*"] }), skill()] });
+const layout = structure({ kinds: [workspace({ paths: ["libs/*"] }), skill()] });
 
 export default defineConfig({
   wism: {
-    ...structure,
+    ...layout,
     plugins: {
-      ...structure.plugins,
+      ...layout.plugins,
       local: definePlugin({ rules: { "no-shared-to-app": noSharedToApp } }),
     },
-    rules: { ...structure.rules, "local/no-shared-to-app": "error" },
+    rules: { ...layout.rules, "local/no-shared-to-app": "error" },
     ignores: ["**/fixtures/**"],
   },
 });

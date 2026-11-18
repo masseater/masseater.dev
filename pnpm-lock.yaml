@@ -1603,7 +1603,7 @@ importers:
         specifier: catalog:stack
         version: 1.7.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(oxlint-tsgolint@7.0.2007)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
 
-  apps/medley-manager:
+  apps/med-db:
     dependencies:
       '@alchemy.run/cloudflare':
         specifier: catalog:stack
@@ -4023,15 +4023,15 @@ importers:
       '@r_masseater/wism':
         specifier: workspace:*
         version: link:../wism
-      '@r_masseater/wism-fsd':
+      '@r_masseater/wism-presets':
         specifier: workspace:*
-        version: link:../wism-fsd
+        version: link:../wism-presets
       '@r_masseater/y8':
         specifier: workspace:*
         version: link:../y8
-      '@r_masseater/y8-docs':
+      '@r_masseater/y8-presets':
         specifier: workspace:*
-        version: link:../y8-docs
+        version: link:../y8-presets
       '@shadcn/lint':
         specifier: 'catalog:'
         version: 0.2.5(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))
@@ -4981,7 +4981,7 @@ importers:
         specifier: catalog:stack
         version: 1.7.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(oxlint-tsgolint@7.0.2007)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
 
-  libs/wism-fsd:
+  libs/wism-presets:
     dependencies:
       minimatch:
         specifier: 'catalog:'
@@ -5088,7 +5088,7 @@ importers:
         specifier: catalog:stack
         version: 1.7.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(oxlint-tsgolint@7.0.2007)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
 
-  libs/y8-docs:
+  libs/y8-presets:
     dependencies:
       minimatch:
         specifier: 'catalog:'

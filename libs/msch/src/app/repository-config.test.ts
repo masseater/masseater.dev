@@ -35,7 +35,7 @@ const placementRule = (): Option.Option<Rule> =>
   pipe(
     Option.fromNullishOr(config.wism),
     Option.flatMap(({ plugins }) => Option.fromNullishOr(plugins)),
-    Option.flatMap(Rec.get("fsd")),
+    Option.flatMap(Rec.get("structure")),
     Option.flatMap(({ rules }) => Option.fromNullishOr(rules)),
     Option.flatMap(Rec.get("placement")),
   );
@@ -104,7 +104,7 @@ describe("repositoryConfig", () => {
       "tools/x/package.json",
       "tools/x/stray.ts",
     ]);
-    expect(config).toHaveProperty(["wism", "rules", "fsd/placement"], "error");
+    expect(config).toHaveProperty(["wism", "rules", "structure/placement"], "error");
     expect(reported).toStrictEqual(["apps/web/stray.ts"]);
   });
 
