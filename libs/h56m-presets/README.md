@@ -3,9 +3,9 @@
 Rule presets for the [h56m](https://www.npmjs.com/package/@r_masseater/h56m) secret scanner.
 h56m ships no rules of its own, so a project extends one of these files.
 
-| Export        | Rules                                                                                                                   |
-| ------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| `betterleaks` | The default configuration of [Betterleaks](https://github.com/betterleaks/betterleaks), taken from Kingfisher's archive |
+| Export        | Rules                                                                                                      |
+| ------------- | ---------------------------------------------------------------------------------------------------------- |
+| `betterleaks` | The default configuration of [Betterleaks](https://github.com/betterleaks/betterleaks), at a pinned commit |
 
 ```ts
 import "@r_masseater/h56m/vite";
