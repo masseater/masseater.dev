@@ -223,7 +223,7 @@ catalog:
   "@commitlint/types": 21.2.3
   "@loaderkit/resolve": 1.0.6
   "@textlint/config-loader": 16.0.0
-  "@textlint/kernel": 15.8.0
+  "@textlint/kernel": 16.0.0
   "@textlint/utils": 15.8.0
   cjs-module-lexer: 2.3.0
   markdownlint: 0.42.1

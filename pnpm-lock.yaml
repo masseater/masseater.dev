@@ -474,8 +474,8 @@ catalogs:
       specifier: 16.0.0
       version: 16.0.0
     '@textlint/kernel':
-      specifier: 15.8.0
-      version: 15.8.0
+      specifier: 16.0.0
+      version: 16.0.0
     '@textlint/types':
       specifier: 15.8.0
       version: 15.8.0
@@ -4726,7 +4726,7 @@ importers:
         version: 16.0.0
       '@textlint/kernel':
         specifier: 'catalog:'
-        version: 15.8.0(supports-color@10.2.2)
+        version: 16.0.0(supports-color@10.2.2)
       '@textlint/types':
         specifier: 'catalog:'
         version: 15.8.0
@@ -4854,7 +4854,7 @@ importers:
         version: 16.0.0(supports-color@10.2.2)
       '@textlint/kernel':
         specifier: 'catalog:'
-        version: 15.8.0(supports-color@10.2.2)
+        version: 16.0.0(supports-color@10.2.2)
       '@textlint/utils':
         specifier: 'catalog:'
         version: 15.8.0
