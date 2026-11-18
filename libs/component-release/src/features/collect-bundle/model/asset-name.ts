@@ -1,4 +1,15 @@
-import { Effect, FileSystem, Option, Path, Schema, String as Str, pipe } from "effect";
+import {
+  Effect,
+  FileSystem,
+  Function as Fn,
+  Option,
+  Path,
+  Schema,
+  String as Str,
+  pipe,
+} from "effect";
+
+const DATA_FIRST_ARITY = 2;
 
 const Manifest = Schema.fromJsonString(
   Schema.Struct({ name: Schema.String, version: Schema.String }),
@@ -22,10 +33,13 @@ export const releaseOf = Effect.fn("collect.release")(function* releaseOf(direct
 });
 
 /** @internal */
-export const assetName = (release: Release, file: string): Option.Option<string> => {
+export const assetName: {
+  (file: string): (release: Release) => Option.Option<string>;
+  (release: Release, file: string): Option.Option<string>;
+} = Fn.dual(DATA_FIRST_ARITY, (release: Release, file: string): Option.Option<string> => {
   const marker = `_${release.version}_`;
   return pipe(
     Str.indexOf(marker)(file),
     Option.map((at) => `${release.name}${Str.slice(at)(file)}`),
   );
-};
+});
