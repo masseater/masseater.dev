@@ -5,6 +5,7 @@ import type { Problem, RuleName } from "#/shared/lib/problem.ts";
 import { RepositoryFiles } from "#/shared/lib/repository-files.ts";
 
 import { memberWorkspaces } from "./member-sources.ts";
+import { shadcnAliasProblems } from "./shadcn-ui-alias.ts";
 
 const ALIAS_RULE: RuleName = "source-alias";
 const FIRST = 1;
@@ -71,8 +72,13 @@ export const checkSourceAliases = Effect.fn("checkSourceAliases")(function* chec
   root: string,
 ) {
   const workspaces = yield* memberWorkspaces(root);
-  const aliases = yield* Effect.forEach(workspaces, (workspace) => aliasProblems(root, workspace), {
-    concurrency: 1,
-  });
-  return Arr.flatten(aliases);
+  const found = yield* Effect.forEach(
+    workspaces,
+    (workspace) =>
+      Effect.all([aliasProblems(root, workspace), shadcnAliasProblems(root, workspace)], {
+        concurrency: 1,
+      }),
+    { concurrency: 1 },
+  );
+  return pipe(found, Arr.flatten, Arr.flatten);
 });
