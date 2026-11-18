@@ -6,12 +6,12 @@
 
 ## Use
 
-Replace the tsrs platform packages with the ones from this package in `pnpm-workspace.yaml`:
+Replace the tsrs platform packages with the ones from this package in `pnpm-workspace.yaml`. `<version>` is this package's version, such as `7.1.0-beta.tsrs2.effect.0.70.0`.
 
 ```yaml
 overrides:
-  "@tsrs/linux-x64-gnu": npm:@r_masseater/tsrs-effect-linux-x64-gnu@7.1.0-beta.tsrs2.effect.0.70.0
-  "@tsrs/win32-x64-msvc": npm:@r_masseater/tsrs-effect-win32-x64-msvc@7.1.0-beta.tsrs2.effect.0.70.0
+  "@tsrs/linux-x64-gnu": npm:@r_masseater/tsrs-effect-linux-x64-gnu@<version>
+  "@tsrs/win32-x64-msvc": npm:@r_masseater/tsrs-effect-win32-x64-msvc@<version>
 ```
 
 Then `vp check` and `vp lint` report the `effecttsgo` rules without `effect-tsgo --tsrs-lint`. Keep `effect-tsgo patch --oxlint`, which adds the `effecttsgo` plugin to Oxlint.
@@ -23,6 +23,10 @@ The version names both upstreams: `7.1.0-beta.tsrs2.effect.0.70.0` is tsrs `7.1.
 `bin/build.ts` clones Effect-TS/tsgo and tsrs at the tags in `package.json` (`upstream`), applies Effect's tsrs patches in order, replaces a patch with the one of the same name in `patches/` where Effect's no longer applies, skips the patches listed in `upstream.skip`, and builds the `tsrs` binary with `cargo build --release`. Each platform package holds that binary and the files of the matching `@tsrs` platform package.
 
 Only Linux x64 (glibc) and Windows x64 are built.
+
+## Agent skills
+
+The package ships TanStack Intent skills for coding agents. Load one with `vp exec intent load @r_masseater/tsrs-effect#<skill>`.
 
 ## License
 

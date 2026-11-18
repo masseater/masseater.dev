@@ -4,6 +4,7 @@
   "description": "tsrs, the Rust port of TypeScript 7, built with the Effect language service, for the tsrs versions that @effect/tsgo does not ship yet. Each per-platform package replaces the matching @tsrs platform package.",
   "keywords": [
     "effect",
+    "tanstack-intent",
     "tsrs",
     "typescript"
   ],
@@ -18,7 +19,8 @@
     "directory": "libs/tsrs-effect"
   },
   "files": [
-    "LICENSE"
+    "LICENSE",
+    "skills/swap-in-effect-tsrs"
   ],
   "type": "module",
   "imports": {
