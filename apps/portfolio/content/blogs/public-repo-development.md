@@ -1,89 +1,89 @@
 ---
-title: "Developing a public service in a public repository"
-description: "What hiding code protects is small, and in an era when AI builds clones, it is even smaller. The cheapest way for an individual developer to show trustworthiness is to develop in a public repository, but the many eyes do not reach an individual's repository, so safety has to come from piling up free automated checks."
+title: "公開リポジトリで公開サービスを開発する"
+description: "隠れているコードが守るものは小さく、AIがクローンを作る時代にはさらに小さい。個人開発者が信頼性を示す最も安価な方法は、公開リポジトリで開発することだが、多くの目が個人のリポジトリまで届くわけではないため、安全性は無料の自動チェックを積み重ねることで確保しなければならない。"
 tags: ["GitHub", "OSS", "セキュリティ"]
 published: true
 ---
 
-Bitwarden, a password management service, publishes all of its source code on GitHub, from the server to the clients and the browser extensions[^bitwarden]. Although it holds its users' passwords, far from hiding its code, it makes the fact that the code is public a selling point. Services that publish their code in the same way and still work as businesses are common and close at hand: GitLab, Sentry, Plausible, Cal.com, Signal and more.
+パスワード管理サービスのBitwardenは、サーバーからクライアント、ブラウザ拡張機能に至るまで、すべてのソースコードをGitHubで公開している[^bitwarden]。ユーザーのパスワードを保持してはいるが、コードを隠すどころか、コードが公開されている点を売りにしている。同様にコードを公開しつつ、ビジネスとして機能するサービスは一般的で、身近な存在だ。GitLab、Sentry、Plausible、Cal.com、Signalなどがその例である。
 
-Even so, when it comes to building a public service yourself, there is hesitation about making the repository public. The worries can be sorted into two. One is the worry that publishing the source gives attackers clues, and the other is the worry that it will be copied as it is and the business will not work. In this post, after examining these two in turn, I write about what you gain by publishing, the downsides that come from publishing, and what should be kept separate from the code.
+それでも、自分で公開サービスを構築するとなると、リポジトリを公開することへの躊躇がある。悩みは2つに分けられる。一つは、ソースを公開することで攻撃者に手がかりを与えてしまう懸念であり、もう一つは、そのままコピーされてビジネスが成り立たなくなる懸念である。この記事では、これら2つを順番に検討した上で、公開することで得られるもの、公開することで生じるデメリット、そしてコードと分けておくべきものについて書く。
 
-## Code being visible and a system being broken are different things
+## コードが見えることとシステムが動作しないことは別物だ
 
-In cryptography, the principle that a system should be secure even if everything about how it works is known, as long as the key does not leak, has been known since the 19th century. It is called Kerckhoffs's principle[^kerckhoffs], and modern cryptography such as AES and TLS is designed with the specifications and implementations made public. Bank communications are not broken because what supports their security is not the secrecy of the mechanism but the secrecy of the keys.
+暗号学において、鍵が漏洩しない限り、仕組みのすべてが分かっていてもシステムは安全であるという原則は、19世紀から知られている。これはケルクホフスの原理[^kerckhoffs]と呼ばれ、AESやTLSといった現代の暗号は、仕様や実装が公開される形で設計されている。銀行通信が破綻しているのは、そのセキュリティを支えるのが仕組みの秘匿性ではなく、鍵の秘匿性だからである。
 
-The same goes for a service's code: what has to be protected is not the code but the API keys and authentication tokens, the database connection details, the signing keys and the access rights to production. Even when developing in a private repository, these should properly be managed separately from the code. In other words, feeling safe because the code is hidden cannot be told apart from a state where a vulnerability already exists and simply has not been found yet. Looking back at the data breaches of the past few years, most of the causes were not that code was read but were concentrated on leaked credentials and misconfigurations.
+サービスのコードについても同様だ。保護すべきはコードではなく、APIキーや認証トークン、データベース接続の詳細、署名キー、そして本番環境へのアクセス権限である。プライベートリポジトリで開発する場合でも、これらはコードとは別に適切に管理すべきである。つまり、コードが隠されているから安全だという感覚は、脆弱性が既に存在し、単に見つかっていないという状態からは判別できない。ここ数年のデータ漏洩を振り返ると、その原因の多くはコードが読み取られたことではなく、認証情報の漏洩や設定ミスに集中していた。
 
-Developing in a public repository forces this separation from the start. Secrets go out into environment variables or a secret manager and are never mixed into commits. It looks like extra work, but it means getting right from the start the design that is most expensive to fix later. GitHub's secret scanning runs for free on public repositories, and AWS or Stripe keys that slip into a commit are detected within minutes, reported to their issuers and revoked[^secret-scanning]. The worry about being attacked is a problem of design and operation, not a problem of publishing itself.
+公開リポジトリで開発すると、最初からこの分離が強制される。シークレットは環境変数やシークレットマネージャーに出力され、コミットに混在することはない。手間はかかりそうだが、最初から後で修正するのが最もコストのかかる設計を引き受けることになる。GitHubのシークレットスキャンは公開リポジトリで無料で実行され、コミットに紛れ込んだAWSやStripeのキーは数分以内に検出され、発行元に報告されて取り消される[^secret-scanning]。攻撃を受ける懸念は、設計や運用の問題であり、公開自体の問題ではない。
 
-## Some things cannot be taken away even if the code is copied
+## コードをコピーしても取り外せないものがある
 
-Copying the code does not carry away the users and their data, the domain and recognition in search, the history of continued operation, or the track record of dealing with bugs. Most of a service's value is on this side. GitLab's code is entirely public[^gitlab], but there is no example of someone forking it and making it succeed as a competing service. Plausible publishes its code under the AGPL[^plausible] while continuing its business with paid hosting. What users pay for is not the code but having someone take on the work of running it themselves. For individual developers in particular, the risk of ending without anyone knowing about it before it is ever imitated is far greater than the risk of being imitated.
+コードをコピーしても、ユーザーやそのデータ、検索におけるドメインや認知度、運用継続の履歴、あるいはバグ対応の実績が失われることはない。サービスの価値の大部分はここにある。GitLabのコードは完全に公開されているが[^gitlab]、誰かがそれをフォークして競合サービスとして成功させた例はない。Plausibleは、有料ホスティングで事業を継続しながら、AGPL[^plausible]の下でコードを公開している。ユーザーが支払うのはコードではなく、自らその実行を担う人がいることだ。特に個人開発者にとっては、模倣される前に誰にも知られずに終わってしまうリスクの方が、模倣されるリスクよりもはるかに大きい。
 
-Moreover, now in 2026, even if the code is hidden, once the screens and behavior are shown, an AI agent can build something that is the same for users in a few hours. Over the past few years, keeping things closed has almost entirely lost its effect of preventing imitation. That ideas and appearances can be cloned right away means, conversely, that no place where users can see a difference remains in the appearance. What remains is the inside, and only showing that the mechanism is solid by publishing even the internal code is something the clones cannot imitate. To imitate it, they would have to publish too, and then it could no longer be called a clone.
+さらに、2026年の今では、コードが隠されていても、画面や挙動が表示されれば、AIエージェントは数時間でユーザーにとって同様のものを構築できる。ここ数年、クローズドにしておくことで、模倣を防ぐ効果はほぼ完全に失われてしまった。アイデアや見た目をすぐにクローンできるということは、逆に言えば、ユーザーが違いを確認できる箇所が見た目に一切残らないということだ。残るは中身であり、内部コードまで公開して仕組みが堅牢であることを示すだけでは、クローンは模倣できない。それを模倣するには、彼らも公開しなければならず、そうなればもはやクローンとは呼べなくなる。
 
-## What you gain by publishing
+## 公開することで得られるもの
 
-If what hiding protects was small to begin with and is even smaller now, then publishing is the better deal if there is anything at all to gain from it. What you gain comes in several layers.
+そもそも何を隠すことが保護対象なのかが小さかったし、今はさらに小さいのであれば、得られるものが少しでもあるなら、公開する方が得策だ。得られるものは幾重にも重なっている。
 
-### Trust can only be shown on the inside
+### 信頼は内側でしか示せない
 
-Anyone can build the same appearance, so the only place users can find a difference is the inside. Anyone can write in a privacy policy that they do not share data with third parties, but a state where you can check in the code where data is sent is something different from that text. For an individual developer without a company's name behind them, this becomes almost the only way to gain trust. Bitwarden probably makes publishing its code a selling point because, for users choosing whom to trust with their passwords, this ability to verify is what they want most.
+誰でも同じ見た目に構築できるため、ユーザーが違いを見つけられるのは内部だけだ。プライバシーポリシーには第三者とデータを共有しないという内容は誰でも書けるが、データが送信される箇所をコード上で確認できる状態は、そうした文章とは別のものだ。社名を後ろ盾としない個人開発者にとって、これが信頼を得るためのほぼ唯一の手段となる。Bitwardenがコードの公開をセールスポイントにしているのは、パスワードを誰に預けるかを選ぶユーザーにとって、この検証機能こそが最も求められているものだからだろう。
 
-### The one who checks is AI, not people
+### チェックするのはAIであって、人間ではない
 
-Users ask AI "how does this service handle my data," and the AI reads the public repository directly and answers based on the code. Even users who cannot read code receive the difference of whether it is public as a difference in the quality of the answer. The same is true when I develop with AI: passing a single link conveys the context. Public code is being read by machines even if no person reads it.
+ユーザーがAIに「このサービスはデータをどう扱うのか」と問いかけ、AIは公開リポジトリを直接読み込んでコードに基づいて回答する。コードが読めないユーザーであっても、公開されているか否かの差を回答の質の差として受け取る。AIで開発する場合も同様だ。単一のリンクを渡すだけで文脈が伝わる。公開コードは、誰も読まなくても機械に読み取られる。
 
-### Track record and continuity
+### 実績と継続性
 
-It also becomes the author's own track record. For the person evaluating, a running service with its code and commit history carries more information than writing on a résumé that you developed and operated a service. It also secures the continuity of the service. Even if the author steps away, there is a way for it to survive through a fork, and because users know this, they can trust a service made by an individual with their data.
+著者自身の実績にもなる。評価者にとって、コードやコミット履歴が記載された稼働中のサービスは、サービスを開発・運用した旨を履歴書に書くよりも多くの情報を含んでいる。また、サービスの継続性も確保する。たとえ作者が身を引いたとしても、フォークによって生き残る道があり、ユーザーはそれを知っているため、個人が作成したサービスを自身のデータと共に信頼できる。
 
-It also becomes a window for receiving bug reports, translation PRs and contact from security researchers. However, the amount that reaches an individual's repository is small, and expecting too much here is dangerous. I touch on this point next.
+また、バグ報告や翻訳PR、セキュリティ研究者からの連絡を受け取る窓口にもなる。しかし、個人のリポジトリに届く量は少なく、ここで多くを期待するのは危険だ。次にこの点について触れる。
 
-### Costs go down
+### コストが下がる
 
-On a practical note, many GitHub features are free for public repositories.
+実用的な話をすると、GitHubの多くの機能は公開リポジトリであれば無料で利用できる。
 
-| Feature                           | public                           | private                                                          |
-| --------------------------------- | -------------------------------- | ---------------------------------------------------------------- |
-| GitHub Actions                    | Free with no limit on usage time | Up to 2,000 minutes a month. Overage is billed[^actions-billing] |
-| CodeQL                            | Free                             | GitHub Advanced Security (paid)[^ghas]                           |
-| secret scanning / push protection | Free                             | GitHub Advanced Security (paid)                                  |
-| Dependabot                        | Free                             | Free                                                             |
-| private vulnerability reporting   | Free                             | Not available                                                    |
-| GitHub Pages                      | Free                             | Requires a paid plan                                             |
+| 機能                                | 公開                     | 非公開                                                |
+| ----------------------------------- | ------------------------ | ----------------------------------------------------- |
+| GitHub Actions                      | 無料かつ利用時間制限なし | 月に最大2,000分。超過分は請求される[^actions-billing] |
+| CodeQL                              | 無料                     | GitHub Advanced Security（有料）[^ghas]               |
+| シークレットスキャン / プッシュ保護 | 無料                     | GitHub Advanced Security（有料）                      |
+| Dependabot                          | 無料                     | 無料                                                  |
+| 非公開の脆弱性報告                  | 無料                     | 利用不可                                              |
+| GitHub Pages                        | 無料                     | 有料プランが必要                                      |
 
-Quite a few SaaS products, such as Sentry, Vercel, 1Password and JetBrains, offer free plans for OSS.
+Sentry、Vercel、1Password、JetBrainsなど、かなり多くのSaaS製品がOSS向けの無料プランを提供している。
 
-This cost difference used to be something you did not have to care about. But once you leave development to AI agents, the number of commits and CI runs grows to dozens of times what it was when people wrote the code. Agents run tests to check whether their changes are correct, so CI is no longer an accessory to development but the substance of development itself. For GitHub, the growth of public repositories is valuable in itself, so it makes CI for public repositories free. Developers can ride on that interest. Which SaaS products offer what for free to OSS will be covered in a separate post.
+このコスト差は、以前は気にする必要のないことだった。だが、開発をAIエージェントに任せると、コミットやCIの実行回数は、人間がコードを書いた頃の数十倍にまで膨れ上がる。エージェントは変更内容が正しいかを確認するテストを実行するため、CIはもはや開発の補助的な手段ではなく、開発そのものの中核となっている。GitHubにとって、公開リポジトリの成長自体が価値があるため、公開リポジトリのCIは無料になる。開発者はその関心を追い風にできる。どのSaaS製品がOSS向けに何を無料で提供しているかについては、別の記事で取り上げる。
 
-## The downside: the "many eyes" do not reach an individual's repository
+## デメリット：「多くの目」が個人のリポジトリに届かない
 
-There is a common belief that OSS is safe. It holds only when there is a cycle in which, because many people use it, vulnerabilities are found, reported and fixed. That cycle works for the Linux kernel and OpenSSL, but not for an individual's public repository. Because nobody reads it.
+OSSは安全だという通説がある。多くの人が利用することで脆弱性が発見され、報告され、修正されるというサイクルがある場合にのみ保持される。そのサイクルはLinuxカーネルやOpenSSLでは機能するが、個人の公開リポジトリでは機能しない。誰も読まないからだ。
 
-Even if you put code that obviously allows SQL injection in public, a good-faith report will almost never come. Even in OpenSSL, which many people use, Heartbleed sat in the public code unnoticed for two years[^heartbleed]. A repository nobody reads is readable, but not read.
+SQLインジェクションを許容することが明らかなコードを公開したとしても、誠実な報告が届くことはほぼない。多くの人が利用しているOpenSSLでさえ、Heartbleedは2年間、公のコードの中に気づかれないまま眠っていた[^heartbleed]。誰も読まないリポジトリは読めるが、読まれない。
 
-On the other hand, attackers do read. More precisely, not people but scanners read. Crawling public repositories on GitHub exhaustively and looking for known vulnerable patterns is something anyone can do now. What I wrote earlier, that hiding does not protect you, is correct, but it does not mean showing is the same; the difference appears in how long it takes to be found. The eyes of good will do not reach you, but the scanners of ill will do. This asymmetry is the biggest downside of an individual developing in public.
+一方で、攻撃者は読み取る。より正確に言えば、人間ではなくスキャナーが読み取る。GitHub上の公開リポジトリを隅々まで探索し、既知の脆弱性のあるパターンを探すことは、今や誰にでもできることだ。さっき書いた、隠すことは自分を守らないというのは正しいが、見せることまで同じというわけではなく、見つかるまでにかかる時間に違いが出る。善意の目は届かないが、悪意のスキャナーは届く。この非対称性こそが、個人が公開で開発する上での最大のデメリットだ。
 
-What fills the gap is again machines: instead of human eyes, you pile up automated checks that run for free on public repositories. Besides GitHub's CodeQL, Dependabot and secret scanning, there are several SaaS products open for free to OSS, such as Snyk, Semgrep, Socket, Trivy and Aikido. Many of them are paid or limited for private repositories, so the risk created by publishing is offset by tools you can use precisely because you publish. The safety of an individual's public repository is built on this piling up, not on a community, and it is better not to expect from the start that someone will look at it.
+その穴を埋めるのは、やはり機械だ。人間の目の代わりに、公開リポジトリで無料で動作する自動チェックを積み上げていく。GitHubのCodeQL、Dependabot、シークレットスキャン以外にも、Snyk、Semgrep、Socket、Trivy、Aikidoなど、OSS向けに無料で公開されているSaaS製品がいくつかある。その多くは有料かプライベートリポジトリ向けの限定版であるため、公開に伴うリスクは、公開するからこそ使えるツールによって相殺される。個人の公開リポジトリの安全性は、コミュニティではなくこうした蓄積の上に成り立っているものであり、最初から誰かが閲覧することを期待しない方がいい。
 
-## Accidents caused by publishing itself come in four kinds
+## 公開自体が原因で起こる事故には4つの種類がある
 
-1. Leaking secrets. Do not commit .env files or authentication tokens. A key that has entered the history remains even after you delete it, so if it leaks, deal with it by revoking it, not by deleting it. If you enable push protection in secret scanning, pushes containing secrets are rejected on the spot.
-2. Licenses. If you do not want the code resold as a SaaS as it is, use the AGPL; if you want it to be used widely, use MIT or Apache 2.0. Without a license, nobody can legally use it even if it is public. The service name and logo are separate from the code and are protected under trademark thinking.
-3. Handling a discovered vulnerability. Do not accept reports in public Issues. Enable GitHub's private vulnerability reporting[^pvr] and show the contact point in SECURITY.md. The moment you push a fix, the diff becomes public, and the diff points straight at the location of the vulnerability, so push only after deploying to production.
-4. The burden of responding. Even if Issues and PRs come, you do not need to respond to all of them. It is enough to write in the README that it is a personal project and responses are not guaranteed.
+1. 秘密が漏れている。.envファイルや認証トークンをコミットしないでください。履歴に入ったキーは削除しても残るので、漏洩したら削除ではなく取り消しで対処すること。シークレットスキャンでプッシュ保護を有効にすると、シークレットを含むプッシュはその場で拒否される。
+2. ライセンス。コードをそのままSaaSとして再販されたくないならAGPLを、広く利用してほしいならMITやApache 2.0を使おう。ライセンスがなければ、公開されていても誰も合法的に利用できない。サービス名およびロゴはコードとは別であり、商標権として保護されている。
+3. 発見された脆弱性への対応。公開Issueで報告を受け付けないでください。GitHubの非公開脆弱性報告機能を有効にし[^pvr]、SECURITY.mdに連絡先箇所を表示する。修正をプッシュした瞬間に差分が公開され、差分は脆弱性の箇所を真っ直ぐ指し示すため、本番環境にデプロイした後にプッシュすること。
+4. 回答の負担。IssueやPRが来ても、すべてに返信する必要はない。READMEに個人プロジェクトである旨を記載すれば十分であり、回答の保証はない。
 
-Publishing Terraform or Kubernetes manifests makes the whole infrastructure configuration visible, but that in itself is not a vulnerability. If it bothers you, you can split just that part into a separate repository. None of the things listed here are about whether to publish the code; they are about what to keep separate from the code.
+TerraformやKubernetesのマニフェストを公開するとインフラ構成全体が可視化されるが、それ自体は脆弱性ではない。気になるなら、その部分だけを別のリポジトリに分けてもいい。ここに挙げられている内容は、コードを公開するかどうかに関するものではなく、コードとは別に保持しておくべきものについてである。
 
-## Separating the parts you do not publish
+## 公開しない部分を分ける
 
-What is better left unpublished is limited to things that get circumvented once they are known: the logic for detecting abuse, the thresholds for spam detection, the specific numbers for rate limits, exceptions in pricing calculations, the parts related to contracts with business partners, and so on. These are put out as settings in environment variables, or split into a small private repository or a private package. It is the same idea as Sentry and GitLab separating their commercial features into separate directories or separate licenses. As a result of the separation, the setup settles into 90% of the code being public and the rest being settings and secrets. This setup is how things should be even without making them public, and making them public means nothing other than making it impossible to put off that design.
+公開しない方がいいのは、判明すれば回避されるようなことに限られる。悪用検知のロジック、スパム検知の閾値、レート制限の具体的な数値、料金計算の例外、取引先との契約に関する部分などだ。これらは環境変数の設定として出力されるか、小規模なプライベートリポジトリやプライベートパッケージに分割される。SentryやGitLabが商用機能を個別のディレクトリやライセンスに分けているのと同じ考え方だ。分離の結果、構成はコードの90%を公開し、残りを設定とシークレットとする形になる。この構成は、公開しなくてもあるべき姿であり、公開するということは、その設計を後回しにできなくする以外に意味はない。
 
-## Safe to show, and trusted because it is shown
+## 表示しても安全で、表示されるため信頼できる
 
-Back to the question at the start. A service that holds passwords shows all of its code because its design is safe to show. At the same time, it is trusted precisely because it shows its code. These two are two sides of the same thing. In an era when AI writes code, the scarcity of code itself goes down. What remains is the trust of "who runs it, for what, and how." The cheapest way to show that is to develop in a public repository.
+冒頭の質問に戻る。パスワードを保持するサービスは、その設計上表示しても安全であるため、すべてのコードを公開している。同時に、コードを提示しているからこそ信頼される。この2つは同じものの表裏だ。AIがコードを書く時代には、コード自体の希少性は低下する。残るのは、「誰が、何のために、どのように動かすのか」という信頼だ。それを示す最も安価な方法は、公開リポジトリで開発することだ。
 
 [^bitwarden]: [Bitwarden の GitHub organization](https://github.com/bitwarden)
 
