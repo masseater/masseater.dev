@@ -1,36 +1,33 @@
 ---
-title: "What do I gain by relying on a library?"
-description: "With AI writing my code, I have started to doubt what a library gives me that building it myself does not. Its real value is a record of failures from many environments and upkeep as the world changes. For tools optimized for one person, that value is small inside my own environment and large at the boundaries with the outside world."
-tags: ["AI", "Libraries", "Development"]
-published: true
+title: 「ライブラリを活用することで何が得られるか？」 description: 「AIにコードを書かせることで、自分でビルドすれば得られないものをライブラリがもたらしてくれるのではないかと疑問に思うようになった。その真の価値は、多くの環境における失敗の記録と、世界の変化に伴うメンテナンスにある。一人の人間向けに最適化されたツールにとって、その価値は自身の環境内では小さく、外部世界との境界においては大きくなる。」 tags: ["AI", "ライブラリ", "開発"] published: true
 ---
 
-I have started to wonder what I actually gain by relying on a library instead of building the thing myself. I already rebuild linters and checks for my own use, and I wrote the reasons in [Building everything myself](/blogs/build-everything-myself). This post is not about those tools. It is about a doubt that has grown since then, and where it has led me so far.
+自分で自作するのではなく、ライブラリに頼ることで実際に何が得られるのか、疑問に思い始めている。自分用のリンターやチェック機能はすでに自前で作り直しているし、その理由については [すべてを自作する](/blogs/build-everything-myself) に書いた。この記事はそうしたツールについてのものではない。それ以来募った疑問について、そしてそれが今に至るまで私をどこへ導いたかについて書いたものだ。
 
-## A few maintainers against all of the knowledge
+## 知識のすべてに反対する少数のメンテナー
 
-The usual reason to use a library is that its maintainers know the problem better than I do. That reason gets weaker when AI writes the code. An AI model is, in effect, a collection of the knowledge and experience that exists in the world, including what those maintainers wrote in their code, their issues and their documentation. A library is made by a few people, sometimes a few dozen. Having several people involved does not make me expect them to know more than that collection.
+ライブラリを利用する一般的な理由は、メンテナーが私よりもその問題に精通しているからだ。AIがコードを書くと、その理由は薄れる。AIモデルとは実質的に、メンテナーがコードに記述した内容や問題点、ドキュメントを含め、世界に存在する知識や経験の集合体である。ライブラリは少数の人々、時には数十人の手によって作られる。複数の人が関わっているからといって、彼らがその集合体以上の知識を持っているとは期待できない。
 
-So if a library is a package of knowledge, I do not see why I should prefer it to code written for my case by something that has read all of it.
+つまり、ライブラリが知識のパッケージであるなら、そのすべてを読み込んだ人が自分のケースに合わせて書いたコードよりも、なぜそちらを優先すべきなのかわからない。
 
-## What a library holds besides knowledge
+## ライブラリが知識以外に保持しているもの
 
-When I look closer, knowledge is not the main thing a library offers. A popular library has run in a great many real environments, and its code carries the record of how it failed there: the platform that behaved differently, the input nobody expected, the version of a dependency that changed under it. That record is not in the documentation, and it is not something a model can derive by reasoning. It exists because many people ran the code and reported what broke.
+詳しく見てみると、ライブラリが提供する主な価値は知識ではない。代表的なライブラリは数多くの実際の環境で動作しており、そのコードには、そこでどのように失敗したかという記録が刻まれている。つまり、挙動が異なっていたプラットフォーム、誰も想定していなかった入力、そしてその下で変更された依存関係のバージョンなどだ。その記録はドキュメントには記載されておらず、モデルが推論によって導き出せるものでもない。それは、多くの人々がコードを実行し、何が壊れたかを報告したからこそ存在するのである。
 
-The second thing is upkeep. The world around a library keeps changing, and the maintainers follow it, so the library keeps working without my noticing.
+二つ目はメンテナンスだ。ライブラリを取り巻く環境は絶えず変化し、メンテナーもそれに合わせているため、気づかないうちにライブラリが動作し続けている。
 
-## For one person, the environment is fixed
+## 一人の場合、環境は固定される。
 
-These two things matter in proportion to how many different environments the code has to survive. A library has to work for everyone who installs it, so the failures of thousands of environments are its whole value. My tools have to work for me. They run in my repositories, on my machines and in my CI, and that set changes rarely and only when I change it. Most of the failures that a library has collected come from environments I will never be in.
+これら2点は、コードが生き残らなければならないさまざまな環境の数に比例して重要となる。ライブラリはインストールするすべての人にとって機能しなければならないため、数千もの環境の失敗こそがその価値のすべてとなる。私のツールは、私にとって機能しなければならない。それらはリポジトリや自身のマシン、そしてCI上で動作し、設定変更は滅多に行われず、しかも変更を加えた時にのみ行われる。ライブラリが蓄積した失敗の大半は、私が決して身を置くことのない環境に起因するものだ。
 
-The failures that do happen in my environment I find by measuring, as I wrote in [Measure everything](/blogs/measure-everything). A tool of my own reports its spans, its tests assert on what it actually exported, and a fix comes with the number that justified it. That replaces, for my one environment, the bug reports that a library gets from its many users.
+私の環境で実際に発生する不具合は、[Measure everything](/blogs/measure-everything)で書いた通り、計測することで突き止めている。自前のツールがその範囲を報告し、テストでは実際に何がエクスポートされたかを検証し、修正策にはそれを正当化する数値が添えられている。これにより、私の環境一つにおいては、バグレポートがライブラリが多くのユーザーから得ている情報に取って代わっている。
 
-If the goal is to optimize for one person, building it for myself may be the better choice, not just an acceptable one. The fit to my case is complete, the update cycle is mine, and the main advantage of the library does not apply.
+一人用の最適化が目的であれば、単に許容できる選択肢としてではなく、自分用に構築する方がより良い選択かもしれない。私のケースへの適合性は十分であり、更新サイクルも私次第であるため、ライブラリの主な利点は当てはまらない。
 
-## Except at the boundaries
+## 境界を除き
 
-The exception is where my code meets an outside world that changes on its own schedule. Cryptography and security change when a new attack is found. External protocols and APIs change when their owners decide. File formats of an ecosystem, such as a lockfile or a package manifest, change with the tools that write them. My environment being fixed does not help here, because the change comes from outside it, and I would have to notice it before it breaks me. This is the case where upkeep by people who watch that world full time is worth the most, and it is why I never hand-parse an ecosystem's formats in my repositories.
+例外となるのは、私のコードが独自のスケジュールで変化する外部世界と接触する場合だ。新たな攻撃が発見されると、暗号技術やセキュリティが変化する。外部プロトコルやAPIは、所有者の判断で変更される。ロックファイルやパッケージマニフェストといったエコシステムのファイル形式は、それを記述するツールによって変わる。環境が修正されても、外部からの変更であるため、自分を破綻させる前にそれに気づけなければならず、ここでは役に立たない。こうしたケースこそ、その世界を常時監視している人々によるメンテナンスが最も価値を発揮する場面であり、だからこそ私はリポジトリ内でエコシステムの形式を手作業でパースすることは決してない。
 
-## Where I am now
+## 現在地
 
-The line I draw today is to build the inside myself and to use libraries at the boundaries. I do not consider this settled. Libraries still bring things I have not weighed here, and the balance may move again as models improve. For now, when I reach for a library, I ask whether the code sits at a boundary with the outside world. If it does not, I build it myself.
+今日描くラインは、内部を自前で構築し、境界でライブラリを利用することだ。これは確定したものではないと考えている。ライブラリは依然として、ここで検討していない要素をもたらしており、モデルの向上に伴い、再びバランスが変わるかもしれない。今のところ、ライブラリを手に取る際は、そのコードが外部世界との境界にあるかどうかを確認している。そうでなければ、自前で構築する。

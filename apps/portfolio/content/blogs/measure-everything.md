@@ -1,25 +1,22 @@
 ---
-title: "Measure everything"
-description: "Traces and OpenTelemetry metrics are the starting point, not the goal. I measure before I fix, test that telemetry leaves the process, measure the build and the bill, check that every fact someone will ask for later is recorded, and turn each fixed bug into a measurement that would have caught it."
-tags: ["OpenTelemetry", "Measurement", "CI", "Cloudflare"]
-published: true
+title: "すべてを測定する" description: "TracesおよびOpenTelemetryメトリクスは出発点であり、ゴールではない。修正前に測定を行い、テレメトリがプロセスから抜けていることをテストし、ビルドと請求書を測定し、後で誰かが求めるあらゆる事実が記録されているかを確認し、修正したバグを、本来であれば検出できたはずの測定値へと変換する。" tags: ["OpenTelemetry", "Measurement", "CI", "Cloudflare"] published: true
 ---
 
-Every Worker I deploy sends traces and logs, and every Effect program wraps its work in spans that go out over OTLP. That part is assumed here. Most of my code is written by AI agents, and an agent cannot see what the code does in production. It fills the gap with a guess, and a step later the guess looks the same as a fact. Traces alone do not stop this. What stops it is a set of habits that go further than instrumentation, and this post is about those habits.
+デプロイするすべてのWorkerはトレースとログを送信し、すべてのEffectプログラムはOTLP経由で送信されるスパンで作業をラップしている。ここではその部分は前提としている。コードの大部分はAIエージェントによって記述されており、エージェントは本番環境でコードが何をしているかを把握することはできない。エージェントが推測で穴を埋め、一歩後にはその推測が事実と同じに見えるようになる。トレースだけではこれを防げない。問題は、インストルメンテーションの域を超えた一連の習慣であり、本記事ではそれらの習慣について述べる。
 
-## Measure before the fix
+## 修正前に測定する
 
-On November 3, 2026, I let an agent fix a broken connection to my MCP portal. It made one guessed fix after another without any way to read what the portal was doing. Since then, the first step of any fix is to make production readable: check that the Worker's logs and traces actually arrive, and add instrumentation if they do not. The hypothesis and the value that would confirm it are written down before the measurement, and the change is judged only by the result. Numbers that come from a laptop or a test only show that the measurement works. They are not a reason for a decision.
+2026年11月3日、MCPポータルの切断された接続をエージェントに修正させた。エージェントは、ポータルが何を行っているのかを読み取る術もなく、推測による修正を次々と行った。それ以来、あらゆる修正の第一歩は、本番環境でも読み取り可能にすることだ。作業者のログやトレースが実際に届いているかを確認し、届いていない場合はインストルメンテーションを追加する。仮説とそれを証明する値は測定前に記録され、変更は結果のみで判断される。ノートPCやテストから得られる数値は、測定が機能していることを示すに過ぎない。それらは判断の根拠にはならない。
 
-## Test that the telemetry leaves the process
+## テレメトリがプロセスから抜けることを検証する
 
-Instrumentation that silently stops exporting is a regression, and nothing notices it unless a test does. [vitest-otlp](/blogs/vitest-otlp) starts an OTLP receiver for each test file and points the OpenTelemetry SDK at it, so a test asserts on the spans that actually crossed the network. With `semconv: true`, the exported telemetry is also checked by OpenTelemetry Weaver's live-check against the semantic conventions, and the test run fails on a violation.
+エクスポートをサイレントに停止させるインストルメンテーションは退行であり、テストで検知されない限り、何も検知されない。[vitest-otlp](/blogs/vitest-otlp)は、各テストファイルに対してOTLPレシーバーを起動してOpenTelemetry SDKを向けるため、テストは実際にネットワークを横断したスパンに対してアサーションを行う。`semconv: true` を指定すると、エクスポートされたテレメトリはOpenTelemetry Weaverによるセマンティック規約とのライブチェックでも検証され、違反があった場合にはテスト実行が失敗する。
 
-## Measure the build
+## ビルドを計測する
 
-My monorepo's `vp run verify` is measured with the same spans as production code. The spans showed that each `vp` process spent 2.9 seconds reading the root configuration, and that the cache of a msch check put absolute paths into its keys, so a change to any file of msch made the whole cache cold. Both were invisible from the total time alone.
+私のモノレポの `vp run verify` は、本番環境のコードと同じスパンで計測されている。スパンの結果、各 `vp` プロセスがルート設定の読み込みに 2.9 秒を費やしており、また msch チェックのキャッシュがキーに絶対パスを格納していたため、msch の任意のファイルを変更するとキャッシュ全体がコールド状態になった。いずれも総時間だけを見れば、これらは検知できなかった。
 
-The CI itself is checked by a scheduled task every morning. It reads the duration of the last week of runs on main and treats a state where most successful runs take more than 10 minutes as an anomaly. On November 17 the verify runs took 37 to 50 minutes. Each fix since then has been judged by a number:
+CI自体は、毎朝スケジュールされたタスクによってチェックされる。メインでの直近1週間の実行期間を読み取り、成功した実行の多くが10分を超えた状態を異常として処理する。11月17日の検証実行には37〜50分かかった。それ以降の各修正は、数値によって判定されている：
 
 | Change                               | Before                 | After                              |
 | ------------------------------------ | ---------------------- | ---------------------------------- |
@@ -28,28 +25,28 @@ The CI itself is checked by a scheduled task every morning. It reads the duratio
 | sccache in CI, Rust hit rate         | 0 % (first run)        | 95 % (2,006 hits, 101 misses)      |
 | Remote task cache in a fresh session | No hits                | 55 of 138 tasks hit, 1,949 s saved |
 
-The sccache change was adopted on the condition that it would be removed if the measured effect on main was small. A cache that does not hit is only cost, so the hit rate is the number that decides whether it stays.
+sccacheの変更は、mainへの測定効果が小さかった場合に削除されるという条件の下で採用された。ヒットしないキャッシュは単なるコストであるため、ヒット率は、それが残留するかどうかを決定する数値となる。
 
-## Measure the bill
+## 請求書の金額を測定する
 
-Cloudflare bills by usage, and an AI model call costs money each time it runs. Every call goes through AI Gateway with metadata naming the tool, the repository and the context, so a cost can be traced to its caller. In steady state, my decision lint made 4,477 requests a day, 72 % of them cache hits, for $0.74 a day, about $0.0006 per file. On November 15, before the cache worked, the same lint cost $5.41 in one day.
+Cloudflareは使用量に応じて課金され、AIモデルの呼び出しには実行のたびに費用がかかる。すべての呼び出しはAI Gatewayを経由し、ツール、リポジトリ、コンテキストのメタデータが付与されるため、コストを呼び出し元まで遡って追跡できる。定常状態では、私のdecision lintは1日あたり4,477件のリクエストを行い、その72%がキャッシュヒットで、1日あたり0.74ドル、1ファイルあたり約0.0006ドルだった。キャッシュが機能する前の11月15日には、同じlintのコストが1日で5.41ドルかかった。
 
-Attribution is not enough if some calls skip the place that records them. On November 17 I compared the model inference counts from Workers AI with the request counts from AI Gateway, model by model. The difference led to two callers that bypassed the gateway, and both were moved behind it, where a daily spend limit caps them. A scheduled task reads the account's usage every day and checks it against the included usage of the Workers Paid plan.
+一部の呼び出しが記録元をスキップしていては、アトリビューションだけでは不十分だ。11月17日、Workers AIのモデル推論回数とAI Gatewayのリクエスト回数を、モデルごとに比較した。その結果、ゲートウェイをバイパスする呼び出し元が2件見つかり、いずれもその背後に移動し、1日あたりの支出上限によって制限されていた。スケジュール済みタスクは毎日アカウントの利用状況を読み取り、Workers Paidプランに含まれる利用量と照合する。
 
-## Record what will be asked later
+## 後で問われる内容を記録しておく
 
-The question comes after the data. Nobody decides in advance what to record for an investigation that has not happened, so logging stays at the platform's defaults: requests without a caller, logs that expire before the invoice arrives, and a gateway that some calls go around. For each question that someone may ask later, such as who caused a cost or an error and since when, I check four things on the running system and not in its configuration. The event is recorded without sampling it away. The record names its caller in a field that can be filtered. The store keeps it at least until the question is asked, which for costs means past the next invoice. And every call reaches the place that records it, which is shown by comparing it with an independent count such as the invoice. Each answer is proven by running the query that answers it on today's data.
+質問はデータの後に提示される。未実施の調査において何を記録するかを事前に決定する者はいないため、ロギングはプラットフォームのデフォルト設定のままとなる。すなわち、発信者のないリクエスト、請求書が届く前に期限が切れるログ、そして一部の呼び出しが回ってくるゲートウェイである。誰がいつコストやエラーを引き起こしたかなど、後から誰かが尋ねる可能性のある各質問について、私は設定ではなく稼働中のシステム上で4つの項目を確認する。イベントはサンプリングして削除されることなく記録される。レコードには、フィルタリング可能なフィールドで発信者名が付与される。ストアは少なくとも質問が投げかけられるまで記録を保持し、コストの場合は次の請求書の後までとなる。そして、すべての呼び出しは記録元に到達し、それは請求書のような独立したカウントと比較されることで示される。各回答は、当日のデータに基づいて回答するクエリを実行することで証明される。
 
-## Turn each fix into a measurement
+## 各修正を測定値に変換する
 
-When a PR fixes a bug, the bug is treated as solved, and the missing measurement that should have reported it first stays missing. So I read fixed PRs and ask which measurement would have prevented the bug or caught it earlier. The first review found that 5xx responses and exceptions in production, such as a 503 from one app, a 500 from the owner sign-in and errors in the credential broker login, had gone unrecorded until I hit them myself. Every Worker now turns on Cloudflare's Workers Issues, which groups errors without anyone having to watch. The second review found build failures that only appeared at deploy time, so the verify of those apps now depends on their build.
+PRでバグが修正されると、そのバグは解決済みとして扱われ、本来であれば最初に報告されるべきだった不足していた計測値はそのまま欠落したままとなる。そこで私は修正済みのPRを読み、どの計測値があればバグを防げたのか、あるいはより早い段階で検知できたのかを確認している。最初のレビューでは、本番環境での5xxレスポンスや例外（あるアプリからの503、オーナーサインインからの500、クレデンシャルブローカーログイン時のエラーなど）が、自分で確認するまで記録されていなかったことが判明した。現在、すべてのWorkerでCloudflareのWorkers Issuesが有効になっており、誰でも監視することなくエラーをグループ化できる。2回目のレビューでは、デプロイ時にしか発生しなかったビルド失敗が見つかったため、それらのアプリの検証はビルド結果に依存するようになった。
 
-## Measure the agents
+## エージェントを計測する
 
-The agents' own work is measured too. On November 17, about 40 threads started and 194 PRs were merged across my repositories. An hourly audit thread counts the stalled threads, the merges it pushed through and the threads it consolidated, and over 24 runs it found 23 stalls. Without those counts, I would know only that many things happened, not where the work waited.
+エージェント自身の作業量も計測されている。11月17日には、約40本のスレッドが立ち上がり、私のリポジトリ間で194件のPRがマージされた。1時間ごとの監査スレッドでは、停滞したスレッド、プッシュしたマージ、および集約したスレッドをカウントしており、24回以上の実行で23件の停滞が確認された。こうしたカウントがなければ、作業がどこで止まっていたかではなく、単に多くの事象が発生したということしか分からなかっただろう。
 
-## What comes next
+## 次に行うこと
 
-Some measurements still have nowhere to go. The CI sends only job and step durations, so the spans of a msch run in CI are lost, and I read them only when I run it in a session. The other direction is to let the measurement drive the agent instead of only judging it afterwards. The OpenTelemetry project recently described an agent team that instruments GenAI frameworks with Weaver's live-check as the gate: a violation sends the work back to the coding agent, and a clean run moves on to a soak test[^otel-agent-harness]. The same loop fits my checks. A rule in msch, a test in vitest-otlp or a budget in CI is a measurement that an agent cannot argue with, and the more of them there are, the less of my code depends on a guess.
+一部の計測値には、まだ行き先が決まっていないものがある。CIはジョブとステップの所要時間しか送信しないため、CIで実行したmschのスパンが失われ、セッションで実行した時にのみそれらを読み取ることになる。もう一つの方向性は、後から判定するのではなく、計測値そのものにエージェントを駆動させることだ。OpenTelemetryプロジェクトでは最近、Weaverのlive-checkをゲートとしてGenAIフレームワークを計測するエージェントチームについて述べられている。違反があれば作業はコーディングエージェントに返送され、クリーンな実行後はsoakテスト[^otel-agent-harness]へと進む。このループは私のチェックにも当てはまる。mschのルール、vitest-otlpのテスト、あるいはCIの予算は、エージェントが反論できない計測値であり、こうしたものが増えれば増えるほど、私のコードが推測に頼ることは少なくなる。
 
-[^otel-agent-harness]: [Building an Agent Harness for OTel Instrumentation with GenAI Semantic Conventions and Weaver, OpenTelemetry Blog](https://opentelemetry.io/blog/2026/agent-harness-genai-instrumentation/)
+[^otel-agent-harness]: [生成AIセマンティック規約とWeaverを用いたOTel Instrumentation向けエージェントハーネスの構築, OpenTelemetry Blog](https://opentelemetry.io/blog/2026/agent-harness-genai-instrumentation/)
