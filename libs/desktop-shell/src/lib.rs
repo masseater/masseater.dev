@@ -11,5 +11,6 @@ pub use features::serve_tools::{
 };
 pub use shared::lib::HOST;
 pub use shared::ui::{
-    browser_keys_plugin, japanese_menu, paint_like_the_page, remembered, show, state_plugin,
+    browser_keys_plugin, japanese_menu, log_plugin, paint_like_the_page, remembered, show,
+    state_plugin,
 };
