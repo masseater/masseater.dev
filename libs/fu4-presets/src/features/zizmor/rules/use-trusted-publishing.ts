@@ -31,8 +31,7 @@ const meta = {
   desc: "prefer trusted publishing for authentication",
 } as const;
 
-const USES_MANUAL_CREDENTIAL =
-  "uses a manually-configured credential instead of Trusted Publishing";
+const MANUAL_LOGIN_NOTE = "uses a manually-configured credential instead of Trusted Publishing";
 
 const PYTHON_INDICES = ["https://upload.pypi.org/legacy/", "https://test.pypi.org/legacy/"];
 const RUBY_INDICES = ["https://rubygems.org"];
@@ -156,7 +155,7 @@ const actionFindings = (step: StepView): Drafts =>
           confidence("high"),
           at(hidden(step.location)),
           atPath(step.location, primary, withKeys("uses"), annotated("this step")),
-          atPath(step.location, primary, withKeys(...keys), annotated(USES_MANUAL_CREDENTIAL)),
+          atPath(step.location, primary, withKeys(...keys), annotated(MANUAL_LOGIN_NOTE)),
         ),
       ];
     }),
