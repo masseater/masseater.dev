@@ -1,14 +1,14 @@
 ---
-title: "lockfile の作り直しはバージョンアップである"
-description: "Renovate の更新 PR は怖がって自動マージしないのに、lockfile を消して npm install し直した差分は誰も読まずにコミットしている。"
+title: "Regenerating a lockfile is a version upgrade"
+description: "Teams are afraid to auto-merge Renovate's update PRs, yet they commit the diff from deleting the lockfile and running npm install again without anyone reading it."
 tags: ["開発", "ポエム"]
 published: true
 ---
 
-依存のバージョンアップを自動でマージしているチームはあまり見かけない。Renovate を入れても PR は人が読んでからマージする決まりになっていて、メジャーはもちろんパッチでさえ「何が壊れるか分からないから」と溜まっていく。その同じチームが、lockfile がコンフリクトしたら消して `npm install` し直し、出てきた差分をそのままコミットしている。
+I do not see many teams that merge dependency upgrades automatically. Even with Renovate installed, the rule is that a person reads each PR before merging, and not only major versions but even patches pile up because "we don't know what will break." The same teams, when the lockfile has a conflict, delete it, run `npm install` again, and commit the resulting diff as it is.
 
-lockfile を作り直すと、package.json の `^` や `~` の範囲に収まる最新版が、推移的な依存まで含めたすべての依存に入る。これは Renovate が 1 本ずつ出してくる PR を全部まとめて、changelog も読まずにマージしたのと同じことだ。
+Regenerating the lockfile puts in the latest versions that fit the `^` and `~` ranges in package.json, for every dependency including transitive ones. This is the same as taking all the PRs Renovate sends one by one, bundling them together, and merging them without reading the changelogs.
 
-`npm install` が勝手に lockfile を書き換えるわけではない。今の npm は、lockfile の版が package.json の範囲に収まっていれば lockfile の版をそのまま入れると[ドキュメント](https://docs.npmjs.com/cli/commands/npm-install)に書いてある。書き換わるのは、package.json を変えたとき、新しいパッケージを足して推移的な依存を解決し直したとき、lockfile を消したときである。どれも日常的にやっていて、そのたびに範囲内のバージョンアップが起きている。
+`npm install` does not rewrite the lockfile on its own. The [documentation](https://docs.npmjs.com/cli/commands/npm-install) says that the current npm installs the versions in the lockfile as they are, as long as they fit the ranges in package.json. It gets rewritten when you change package.json, when you add a new package and transitive dependencies are resolved again, and when you delete the lockfile. All of these are things we do every day, and each time, upgrades within the ranges happen.
 
-それなら Renovate の PR も同じ扱いでいいはずである。`^` を書いた時点で、範囲内の更新は受け入れると宣言している。怖がっているのは「バージョンアップ」という名前の付いた変更だけで、名前の付いていない変更は毎日受け入れている。
+Then Renovate's PRs should be treated the same way. Writing `^` already declares that updates within the range are accepted. What we are afraid of is only the changes that carry the name "version upgrade," while we accept the changes without that name every day.

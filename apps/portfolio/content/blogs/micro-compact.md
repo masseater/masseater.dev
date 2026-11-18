@@ -1,50 +1,50 @@
 ---
-title: "人間は読みながら要約する"
-description: "人間は文書を、読みながら自分の解釈に要約して次へ進む。言い回しは消えて要旨だけが残るので、文書は要約が作りやすい単位で区切って書く必要がある。読解と記憶の研究から、この前提と書き方への含意を整理する。"
+title: "People summarize as they read"
+description: "People read a document by summarizing it into their own interpretation as they go and moving on. The wording disappears and only the gist remains, so documents need to be divided into units that are easy to summarize. Drawing on research on reading comprehension and memory, this post sorts out this premise and what it implies for how to write."
 tags: ["認知", "文章", "AI"]
 published: true
 stage: idea
 ---
 
-このブログの記事も、ドキュメントも多くを AI に書かせている。そのときに困るのが AI と人間では文章の読み方がまるで違うことである。
+I have AI write many of the posts on this blog and many of my documents. What troubles me then is that AI and people read text in completely different ways.
 
-AI は渡された文書を全部保持したまま読める。人間は違う。人間は読みながらその都度自分の解釈に要約して要約だけを持って次へ進む。私はこの小さな圧縮を繰り返す読み方をマイクロコンパクトと呼んでいる。文書の書き方はこの違いを前提にしないと成り立たない。
+AI can read a document while holding all of it. People are different. People summarize into their own interpretation each time as they read, and move on holding only the summary. I call this way of reading, which repeats small compressions, micro-compaction. How documents are written does not work unless it assumes this difference.
 
-## 読みながら要約する仕組み
+## How summarizing while reading works
 
-読みながらの要約は読解研究ではマクロ規則としてモデル化されている。van Dijk と Kintsch は読み手が命題の列に削除、一般化、構成を繰り返し適用して文章の要旨を作るとした[^kintsch-vandijk-1978]。読み手は全文を保持しない。畳んだ要旨を保持し、細部は順に手放していく。
+Summarizing while reading has been modeled in reading research as macrorules. van Dijk and Kintsch proposed that readers build the gist of a text by repeatedly applying deletion, generalization and construction to a sequence of propositions[^kintsch-vandijk-1978]. Readers do not hold the whole text. They hold the folded gist and let go of details one after another.
 
-要旨が本文の側に用意されていないと、読み手は自分で作る。Brown と Day は要約を作る規則の中に主題文がない場合の発明を加えた[^brown-day-1983]。段落の冒頭に要旨がないと読み手は主題を発明し、その主題は書き手の意図とずれうる。段落ごとに要旨を先に置くのは読み手の発明を書き手の意図の側へ寄せるためである。
+If the gist is not provided in the text, readers make one themselves. Brown and Day added, among the rules for making summaries, invention when there is no topic sentence[^brown-day-1983]. If there is no gist at the start of a paragraph, readers invent a topic, and that topic can drift from what the writer intended. Putting the gist first in each paragraph pulls the reader's invention toward the writer's intent.
 
-## 残るのは要旨だけ
+## Only the gist remains
 
-言い回しは理解が済んだ直後から消えていく。Sachs の実験では意味が同じで言い回しだけが違う文を読み手は元の文だと誤認した。間に挟む文章が増えるほど、誤認も増えた[^sachs-1967]。逐語的な痕跡は要旨の痕跡より速く減衰するという二重痕跡理論も同じ方向を示している[^fuzzy-trace]。
+The wording begins to disappear right after understanding is complete. In Sachs's experiment, readers mistook sentences with the same meaning but different wording for the original sentence. The more text was inserted in between, the more these mistakes increased[^sachs-1967]. Fuzzy-trace theory, which holds that verbatim traces decay faster than gist traces, points in the same direction[^fuzzy-trace].
 
-だから定義や数値のような細部が後の判断に要る文書では、読み手の記憶に頼る設計は成り立たない。細部は使う場所の近くに置き直す。逆に一度だけ正しく伝わればよい部分では要旨が正しく畳まれることに資源を割くべきである。
+So in documents where details such as definitions and numbers are needed for later judgments, a design that relies on the reader's memory does not work. Place the details again near where they are used. Conversely, for parts that only need to get across correctly once, resources should go into making sure the gist is folded correctly.
 
-## 枠組みの置き場所
+## Where to put the framework
 
-文脈は読む前に渡さないと効かない。Bransford と Johnson の実験では曖昧な手順文でも内容を示す絵を読み前に見た群は、理解と再生がほぼ2倍になった。読み後に見た群は見なかった群と変わらなかった[^bransford-johnson-1972]。
+Context does not work unless it is given before reading. In Bransford and Johnson's experiment, even with an ambiguous procedural text, the group that saw a picture showing the content before reading nearly doubled in comprehension and recall. The group that saw it after reading was no different from the group that did not see it at all[^bransford-johnson-1972].
 
-冒頭に目的と対象を置くのはこのためである。読み手は枠組みを使って読みながら理解を組み立てる。末尾のまとめで初めて文脈を渡す構成は、読みながらの理解を助けない。
+This is why the purpose and the subject go at the start. Readers use the framework to build their understanding as they read. A structure that gives the context for the first time in a summary at the end does not help understanding while reading.
 
-## 区切りと見出し
+## Divisions and headings
 
-区切りの大きさは数では決められない。Miller の 7±2 は絶対判断と即時記憶についての概数で本人も修辞的な見積もりと位置づけていた[^miller-1956]。Cowan の再評価では中心的な容量は 4±1 チャンク程度とされる[^cowan-2001]。ただしこの数も文書を何個に区切るべきかを決める定数にはならない。チャンクの大きさは読み手の知識で変わるためである。効くのは数ではなく読み手の知識で 1 つのまとまりとして成立する単位に切ることである。
+The size of divisions cannot be decided by a number. Miller's 7±2 is an approximate figure about absolute judgment and immediate memory, and Miller himself positioned it as a rhetorical estimate[^miller-1956]. In Cowan's reassessment, the central capacity is put at about 4±1 chunks[^cowan-2001]. But this number is not a constant that decides how many parts a document should be divided into either. This is because the size of a chunk changes with the reader's knowledge. What works is not a number but cutting into units that hold together as one piece given the reader's knowledge.
 
-見出しは読み手の要約そのものになる。見出しのあるテキストでは話題の記憶が良くなり、要約にも残りやすくなる[^lorch-1996][^lorch-2001]。逆に内容とずれた見出しは読み手の理解を歪める[^kozminsky-1977]。一部の節にだけ見出しを付けると、見出しのない話題は読み手の要約から落ちやすい。見出しは付ける範囲と粒度をそろえて初めて地図になる。
+Headings become the reader's summary itself. In texts with headings, memory of the topics improves, and they are more likely to remain in summaries[^lorch-1996][^lorch-2001]. Conversely, headings that do not match the content distort the reader's understanding[^kozminsky-1977]. If only some sections get headings, topics without headings tend to drop out of the reader's summary. Headings become a map only when the range and granularity they cover are made consistent.
 
-## 浅い読みの前提
+## The premise of shallow reading
 
-読み手は全文を均等には処理しない。熟練した読み手でも語の約30% は注視されずに読み飛ばされる[^rayner-1998]。理解は課題に足りる深さで止まることがある[^ferreira-patson-2007]。
+Readers do not process all of a text evenly. Even skilled readers skip about 30% of words without fixating on them[^rayner-1998]. Understanding can stop at a depth that is enough for the task[^ferreira-patson-2007].
 
-例外や禁止のような重要な制約を本文の流れに埋めると、この浅い処理で流される。制約は流れから切り出して箇条書きや独立した段落に置く。受動態や二重否定のようなもっともらしい誤解に引っ張られやすい文型を避けるのも同じ理由である。
+If important constraints such as exceptions and prohibitions are buried in the flow of the text, they get swept away by this shallow processing. Cut constraints out of the flow and put them in bullet points or separate paragraphs. Avoiding sentence patterns that easily pull readers into plausible misunderstandings, such as the passive voice and double negatives, is for the same reason.
 
-## 戻って引ける文書
+## Documents you can go back and look up
 
-文書は、覚えさせるものではなく戻って引くものである。人間は内部の保持の限界を外部に書き出すことで日常的に補っている[^risko-gilbert-2016]。
+A document is not something to memorize but something to go back to and look up. People routinely make up for the limits of what they can hold internally by writing things down externally[^risko-gilbert-2016].
 
-読み手がどうせ要約して次へ進むのなら、書き手の仕事は 2 つになる。その要約が正しく作られる単位を用意することと、細部に戻って引ける形を保つことである。AI に書かせる文章ほど、この前提が要る。AI は全部を保持したまま書けるので、前提を渡さなければ、人間に読める単位で区切る理由を持たない。
+If readers are going to summarize and move on anyway, the writer's job comes down to two things. Providing units in which that summary is made correctly, and keeping a form in which readers can go back and look up the details. The more text is written by AI, the more this premise is needed. AI can write while holding everything, so unless it is given the premise, it has no reason to divide text into units people can read.
 
 [^kintsch-vandijk-1978]: Kintsch & van Dijk (1978) Toward a model of text comprehension and production. _Psychological Review_, 85(5), 363–394.
 
@@ -52,7 +52,7 @@ AI は渡された文書を全部保持したまま読める。人間は違う�
 
 [^sachs-1967]: Sachs (1967) Recognition memory for syntactic and semantic aspects of connected discourse. _Perception & Psychophysics_, 2(9), 437–442. [DOI: 10.3758/BF03208784](https://doi.org/10.3758/BF03208784)
 
-[^fuzzy-trace]: Reyna & Brainerd (1995) Fuzzy-trace theory: An interim synthesis. _Learning and Individual Differences_, 7(1), 1–75. 系統的レビューは [PMC8677658](https://pmc.ncbi.nlm.nih.gov/articles/PMC8677658/) を参照。
+[^fuzzy-trace]: Reyna & Brainerd (1995) Fuzzy-trace theory: An interim synthesis. _Learning and Individual Differences_, 7(1), 1–75. For a systematic review, see [PMC8677658](https://pmc.ncbi.nlm.nih.gov/articles/PMC8677658/).
 
 [^bransford-johnson-1972]: Bransford & Johnson (1972) Contextual prerequisites for understanding: Some investigations of comprehension and recall. _Journal of Verbal Learning and Verbal Behavior_, 11(6), 717–726.
 

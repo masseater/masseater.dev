@@ -1,16 +1,16 @@
 ---
-title: "AIが書いたブログでもいい"
-description: "主張が一貫していて、書き手の経験や感覚が入っているなら、AIが書いた文章でもいい。個人の主張を読むとき、内容が興味深ければ文体が壊れていても読む。"
+title: "A blog written by AI is fine"
+description: "If the argument is consistent and the writer's experience and feelings are in it, text written by AI is fine. When I read someone's personal argument, I keep reading even if the style is broken, as long as the content is interesting."
 tags: ["AI", "ブログ", "ポエム"]
 published: true
 ---
 
-このブログの記事は、ほぼ全部 Claude に書かせている。
+I have Claude write almost every post on this blog.
 
-主張が一貫していて、書き手の経験や感覚が入っているなら、AI が書いた文章でもいいと僕は考えている。
+I think text written by AI is fine, as long as the argument is consistent and the writer's experience and feelings are in it.
 
-小説なら文体も作品のうちだが、個人の主張を読むときに文体はそこまで気にならない。見ているのは、その人が何を言いたいのかと、何をしてきて何を感じたのかである。内容が興味深ければ、文体が壊れていても最後まで読む。あなたもブログを読むとき、文体まで気にしているだろうか。
+In a novel, the style is part of the work, but when I read someone's personal argument, I do not care that much about the style. What I look at is what that person wants to say, and what they have done and felt. If the content is interesting, I read to the end even if the style is broken. When you read a blog, do you care about the style too?
 
-主張がぶれていたり経験が入っていなかったりする文章は、AI が書いても人が書いても読む価値が無い。
+Text whose argument wavers or that has no experience in it is not worth reading, whether AI wrote it or a person did.
 
-AI 由来の文体が付くことは認める。読点の位置や文末のそろい方には、直させても癖が残る。それでも内容が興味深ければ、読む側はその癖ごと読む。
+I admit that AI leaves its own style. Habits remain in where the commas go and how sentence endings line up, even after I have them fixed. Still, if the content is interesting, readers read it habits and all.
