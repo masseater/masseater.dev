@@ -1,4 +1,4 @@
-import { patch, postJson } from "@masseater.dev/github-workflow";
+import { post, postJson } from "@masseater.dev/github-workflow";
 import { runMain } from "@masseater.dev/node-main";
 import {
   Array as Arr,
@@ -9,7 +9,6 @@ import {
   Option,
   Path,
   Record as Rec,
-  Ref,
   Schedule,
   Schema,
   Stream,
@@ -26,6 +25,8 @@ const REPOSITORY = "masseater/masseater.dev";
 const PLACEHOLDER_VERSION = "0.0.0";
 const SUCCESS = 0;
 const TTY_SECONDS = 3600;
+const APPROVAL_MINUTES = 5;
+const APPROVAL_WINDOW = Duration.minutes(APPROVAL_MINUTES);
 const ATTEMPTS = 6;
 const VISIBLE_ATTEMPTS = 20;
 const VISIBLE_SECONDS = 15;
@@ -58,7 +59,6 @@ interface Candidate {
 interface Session {
   readonly directory: string;
   readonly issue: number;
-  readonly lines: Ref.Ref<readonly string[]>;
 }
 
 const candidatesOf = Effect.fn("candidatesOf")(function* candidatesOf(text: string) {
@@ -133,11 +133,12 @@ const openIssue = Effect.fn("openIssue")(function* openIssue(names: readonly str
 
 const note = Effect.fn("note")(function* note(session: Session, text: string) {
   yield* Console.log(text);
-  const lines = yield* Ref.updateAndGet(session.lines, Arr.append(`- ${text}`));
-  yield* patch({
-    path: `issues/${String(session.issue)}`,
-    body: { body: Arr.join(lines, "\n") },
-  }).pipe(Effect.catch((error) => Console.error(`could not update the issue: ${String(error)}`)));
+  yield* post({
+    path: `issues/${String(session.issue)}/comments`,
+    body: { body: text },
+  }).pipe(
+    Effect.catch((error) => Console.error(`could not comment on the issue: ${String(error)}`)),
+  );
 });
 
 const announce = Effect.fn("announce")(function* announce(
@@ -193,7 +194,13 @@ const approved = Effect.fn("approved")(function* approved(
   label: string,
   args: readonly string[],
 ) {
-  yield* runApproved(session, label, args).pipe(Effect.retry({ times: ATTEMPTS }));
+  yield* runApproved(session, label, args).pipe(
+    Effect.timeoutOrElse({
+      duration: APPROVAL_WINDOW,
+      orElse: () => ClaimFailed.make({ message: `${label} was not approved in time` }),
+    }),
+    Effect.retry({ times: ATTEMPTS }),
+  );
 });
 
 const writePlaceholder = Effect.fn("writePlaceholder")(function* writePlaceholder(
@@ -267,19 +274,13 @@ const claimMissing = Effect.fn("claimMissing")(function* claimMissing(
   yield* Console.log(`claiming ${Arr.join(names, ", ")}`);
   const directory = yield* fileSystem.makeTempDirectoryScoped();
   const issue = yield* openIssue(names);
-  const lines = yield* Ref.make<readonly string[]>(
-    pipe(
-      names,
-      Arr.map((name) => `- ${name}`),
-    ),
-  );
-  const session: Session = { directory, issue, lines };
+  const session: Session = { directory, issue };
   yield* approved(session, "login", ["login", "--auth-type=web", "--registry", REGISTRY]);
   yield* Effect.forEach(missing, (candidate) => claim(session, candidate), {
     concurrency: 1,
     discard: true,
   });
-  yield* patch({ path: `issues/${String(issue)}`, body: { state: "closed" } });
+  yield* note(session, "every name is claimed");
 });
 
 const claimAll = Effect.fn("claimAll")(function* claimAll() {
