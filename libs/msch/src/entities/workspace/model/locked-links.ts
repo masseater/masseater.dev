@@ -2,8 +2,8 @@ import { Array as Arr, Effect, Option, Record as Rec, String as Str, pipe } from
 
 import { RepositoryFiles } from "#/shared/lib/repository-files.ts";
 
+import type { ResolvedDependencies } from "./locked-graph.ts";
 import { wantedLockfile } from "./locked-packages.ts";
-import type { WantedLockfile } from "./locked-packages.ts";
 
 const LINK = "link:";
 
@@ -12,11 +12,9 @@ export interface WorkspaceLink {
   readonly to: string;
 }
 
-type ProjectSnapshot = WantedLockfile["importers"][keyof WantedLockfile["importers"]];
-
-type ResolvedDependencies = Readonly<NonNullable<ProjectSnapshot["dependencies"]>>;
-
-const linkedPaths = (sections: readonly (ResolvedDependencies | undefined)[]): readonly string[] =>
+export const linkedPaths = (
+  sections: readonly (ResolvedDependencies | undefined)[],
+): readonly string[] =>
   pipe(
     sections,
     Arr.flatMap((resolved) => Rec.values(resolved ?? {})),

@@ -1,5 +1,6 @@
 import { addonTasks } from "@masseater.dev/lint-host/vite";
 import { cargoInputs } from "@r_masseater/msch/cargo-inputs";
+import { LOCKED } from "@r_masseater/msch/locked-inputs";
 import { otlp } from "@r_masseater/vitest-otlp";
 import { defineConfig } from "vite-plus";
 
@@ -14,7 +15,11 @@ export default defineConfig({
           "cargo fmt -p wism-core -p wism-node --check && cargo clippy -p wism-core -p wism-node --all-targets --locked -- -D warnings && cargo test -p wism-core --locked",
         cache: { input: [...CARGO_INPUTS], output: [] },
       },
-      ...addonTasks({ command: "node bin/build-native.ts", inputs: CARGO_INPUTS }),
+      ...addonTasks({
+        command: "node bin/build-native.ts",
+        inputs: CARGO_INPUTS,
+        locked: LOCKED.input,
+      }),
     },
   },
   pack: {

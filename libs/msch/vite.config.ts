@@ -1,8 +1,9 @@
+import { LOCKED } from "@r_masseater/msch/locked-inputs";
 import { ignoredDirectories } from "@r_masseater/msch/workspace-settings";
 import { otlp } from "@r_masseater/vitest-otlp";
 import { defineConfig } from "vite-plus";
 
-const inputs = [{ auto: true }, ...(await ignoredDirectories(`${import.meta.dirname}/../..`))];
+const inputs = [...LOCKED.input, ...(await ignoredDirectories(`${import.meta.dirname}/../..`))];
 
 export default defineConfig({
   msch: {
@@ -34,6 +35,7 @@ export default defineConfig({
       changed: "bin/msch-changed.ts",
       publish: "bin/msch-publish.ts",
       "cargo-inputs": "src/features/derive-cargo-inputs/index.ts",
+      "locked-inputs": "src/features/derive-locked-inputs/index.ts",
       config: "src/app/repository-config.ts",
       oxlint: "src/app/oxlint.ts",
       lint: "src/features/define-lint-preset/index.ts",

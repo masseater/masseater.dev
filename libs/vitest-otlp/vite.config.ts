@@ -1,3 +1,4 @@
+import { LOCKED } from "@r_masseater/msch/locked-inputs";
 import { defineConfig } from "vite-plus";
 
 import { otlp } from "./src/app/index.ts";
@@ -25,8 +26,8 @@ export default defineConfig({
   },
   run: {
     tasks: {
-      test: "vp test run",
-      build: "vp pack",
+      test: { command: "vp test run", cache: LOCKED },
+      build: { command: "vp pack", cache: LOCKED },
       generate: { command: "buf generate", cache: false },
     },
   },

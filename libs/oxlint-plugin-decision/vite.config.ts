@@ -1,3 +1,4 @@
+import { LOCKED } from "@r_masseater/msch/locked-inputs";
 import { defineConfig } from "vite-plus";
 
 export default defineConfig({
@@ -30,8 +31,12 @@ export default defineConfig({
   run: {
     tasks: {
       verify: { command: [], dependsOn: ["test"] },
-      build: "vp pack",
-      test: { command: "vp test run --exclude='src/**/*live.test.ts'", dependsOn: ["build"] },
+      build: { command: "vp pack", cache: LOCKED },
+      test: {
+        command: "vp test run --exclude='src/**/*live.test.ts'",
+        dependsOn: ["build"],
+        cache: LOCKED,
+      },
       "test:live": { command: "vp test run live.test", dependsOn: ["build"], cache: false },
     },
   },
