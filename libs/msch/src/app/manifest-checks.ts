@@ -1,5 +1,6 @@
 import { Array as Arr, Effect } from "effect";
 
+import { checkEffectDiagnostics } from "#/features/check-effect-diagnostics/index.ts";
 import { checkExactVersions } from "#/features/check-exact-versions/index.ts";
 import { checkPackageScope } from "#/features/check-package-scope/index.ts";
 import { checkNodeVersion } from "#/features/check-runtime-version/index.ts";
@@ -19,6 +20,7 @@ export const checkManifests = Effect.fn("checkManifests")(function* checkManifes
       checkExactVersions(root),
       checkUpstreamExits(root),
       checkScatteredDeviations(root),
+      checkEffectDiagnostics(root),
     ],
     { concurrency: "unbounded" },
   );
