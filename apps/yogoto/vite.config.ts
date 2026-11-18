@@ -12,7 +12,7 @@ export default defineConfig({
         input: await cargoInputs({ directory: import.meta.dirname }),
       }),
       verify: { command: [], dependsOn: ["cargo"] },
-      ...tauriReleaseTasks("yogoto"),
+      ...tauriReleaseTasks(),
       "release:windows": {
         command:
           "with-cuda --version 13.4.3 --compute-cap 80 --msvc 14.44 --runtime src-tauri/cuda -- tauri build --features cuda --config src-tauri/tauri.release.conf.json --bundles nsis && bundle-collect nsis",
