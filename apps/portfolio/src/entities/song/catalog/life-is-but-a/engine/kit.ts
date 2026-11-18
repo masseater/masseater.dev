@@ -1,5 +1,5 @@
-import { SAMPLE_RATE, orDefault, semitoneRatio } from "#/entities/song/lib/dsp/number.ts";
-import type { Placement } from "#/entities/song/lib/studio/placement.ts";
+import { SAMPLE_RATE, orDefault, semitoneRatio } from "@masseater.dev/fumx-studio/dsp/number";
+import type { Placement } from "@masseater.dev/fumx-studio/studio/placement";
 
 import type { Life } from "./context.ts";
 import type { Struck } from "./drums.ts";

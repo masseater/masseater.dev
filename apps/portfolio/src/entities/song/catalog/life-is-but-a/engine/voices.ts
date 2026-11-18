@@ -1,8 +1,8 @@
-import { orDefault, semitoneRatio } from "#/entities/song/lib/dsp/number.ts";
-import type { Point } from "#/entities/song/lib/dsp/shape.ts";
-import { fieldOf } from "#/entities/song/lib/studio/field.ts";
-import type { Source } from "#/entities/song/lib/studio/paste.ts";
-import type { Placement } from "#/entities/song/lib/studio/placement.ts";
+import { orDefault, semitoneRatio } from "@masseater.dev/fumx-studio/dsp/number";
+import type { Point } from "@masseater.dev/fumx-studio/dsp/shape";
+import { fieldOf } from "@masseater.dev/fumx-studio/studio/field";
+import type { Source } from "@masseater.dev/fumx-studio/studio/paste";
+import type { Placement } from "@masseater.dev/fumx-studio/studio/placement";
 
 import { entryOf } from "./context.ts";
 import type { Life } from "./context.ts";

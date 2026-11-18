@@ -1,7 +1,6 @@
+import type { Stage } from "@masseater.dev/fumx-studio/studio/breathe";
+import type { Bus } from "@masseater.dev/fumx-studio/studio/bus";
 import type { Effect } from "effect";
-
-import type { Stage } from "#/entities/song/lib/studio/breathe.ts";
-import type { Bus } from "#/entities/song/lib/studio/bus.ts";
 
 import type { Life } from "./context.ts";
 import { playStage } from "./score.ts";

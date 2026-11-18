@@ -1,5 +1,5 @@
-import { secondsOf, timeOf } from "#/entities/song/lib/studio/moment.ts";
-import type { At, Length } from "#/entities/song/lib/studio/moment.ts";
+import { secondsOf, timeOf } from "@masseater.dev/fumx-studio/studio/moment";
+import type { At, Length } from "@masseater.dev/fumx-studio/studio/moment";
 
 import { choir } from "./choir.ts";
 import type { Life } from "./context.ts";
