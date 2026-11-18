@@ -182,6 +182,19 @@ const strayProblemsOf: From<
     ),
   );
 
+export const argumentsOf: From<readonly PluginArgument[], readonly Argument[]> = (given) =>
+  pipe(
+    given,
+    Arr.flatMap((argument) =>
+      pipe(
+        literalValue(argument.value),
+        Option.flatMap((value) => pluginValueOf(value)),
+        Option.map((value) => ({ name: argument.name, value })),
+        Option.toArray,
+      ),
+    ),
+  );
+
 export const pluginUseOf: From<PluginUseNode, Compiled<PluginUse>> = (use) =>
   pipe(
     Option.fromNullishOr(use.plugin.ref),

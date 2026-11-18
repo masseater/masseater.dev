@@ -10,6 +10,8 @@ import type {
 } from "#generated/langium/ast.ts";
 
 import {
+  argsOf,
+  bendOf,
   everyOf,
   fadeOf,
   misplacedOnEdit,
@@ -89,7 +91,9 @@ const hitOf =
           velocity: velocityOf(attributes),
           releaseVelocity: releaseVelocityOf(attributes),
           tie: tieOf(attributes),
+          bend: bendOf(attributes),
           params: paramsOf(attributes),
+          args: argsOf(attributes),
         },
       ],
       problems: misplacedOnHit(attributes),

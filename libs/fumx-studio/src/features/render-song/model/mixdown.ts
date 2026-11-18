@@ -1,6 +1,7 @@
 import type { Mixer } from "@r_masseater/fumx-parser";
 
 import { decibels } from "#/shared/lib/dsp/number.ts";
+import type { PlayedTrack } from "#/shared/lib/plugin/plugin.ts";
 import { busOf } from "#/shared/lib/studio/bus.ts";
 import type { Bus } from "#/shared/lib/studio/bus.ts";
 import { mixInto } from "#/shared/lib/studio/mixing.ts";
@@ -11,9 +12,7 @@ import { routesOf } from "./routes.ts";
 const NONE = 0;
 const ONE = 1;
 
-export interface Stem {
-  readonly name: string;
-  readonly bus: Bus;
+export interface Stem extends PlayedTrack {
   readonly mixer: Mixer;
 }
 

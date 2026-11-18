@@ -3,7 +3,7 @@ import type { AstNode } from "langium";
 
 import type { Edit, Lyric, PlayParam } from "#/entities/song/index.ts";
 import { ticksOf } from "#/shared/lib/ticks.ts";
-import { countOf, millisecondsOf, semitonesOf, shareOf } from "#/shared/lib/units.ts";
+import { countOf, millisecondsOf, secondsOf, semitonesOf, shareOf } from "#/shared/lib/units.ts";
 import {
   isArticulation,
   isBend,
@@ -16,11 +16,13 @@ import {
   isReleaseVelocity,
   isTie,
   isVelocity,
+  isWith,
 } from "#generated/langium/ast.ts";
 import type { Attribute } from "#generated/langium/ast.ts";
 
 import type { NoteFields } from "./items.ts";
 import { playParamOf } from "./params.ts";
+import { argumentsOf } from "./plugins.ts";
 import { problemAt } from "./problem.ts";
 import type { From, Problem } from "./problem.ts";
 
@@ -40,6 +42,19 @@ export const nudgeOf: From<Attributes, number> = (attributes) =>
     onNone: () => NONE,
     onSome: (nudge) => millisecondsOf(nudge.time),
   });
+
+export const nudgeSecondsOf: From<Attributes, number> = (attributes) =>
+  Option.match(Arr.findFirst(attributes, isNudge), {
+    onNone: () => NONE,
+    onSome: (nudge) => secondsOf(nudge.time),
+  });
+
+export const argsOf: From<Attributes, NoteFields["args"]> = (attributes) =>
+  pipe(
+    attributes,
+    Arr.filter(isWith),
+    Arr.flatMap((given) => argumentsOf(given.arguments)),
+  );
 
 export const paramsOf: From<Attributes, readonly PlayParam[]> = (attributes) =>
   pipe(attributes, Arr.filter(isPlayParam), Arr.map(playParamOf));
@@ -74,6 +89,7 @@ export const misplacedOnHit = misplacedOf(
   (attribute) =>
     isTie(attribute) ||
     isReleaseVelocity(attribute) ||
+    isBend(attribute) ||
     (!isNoteOnly(attribute) && !isEditOnly(attribute)),
   "この音",
 );
@@ -109,7 +125,7 @@ const gateOf: From<Attributes, number> = (attributes) =>
     onSome: (gate) => shareOf(gate.amount),
   });
 
-const bendOf: From<Attributes, NoteFields["bend"]> = (attributes) =>
+export const bendOf: From<Attributes, NoteFields["bend"]> = (attributes) =>
   Option.match(Arr.findFirst(attributes, isBend), {
     onNone: () => [],
     onSome: (bend) =>
@@ -117,6 +133,7 @@ const bendOf: From<Attributes, NoteFields["bend"]> = (attributes) =>
         bend.points,
         Arr.map((point) => ({
           milliseconds: millisecondsOf(point.at),
+          seconds: secondsOf(point.at),
           semitones: semitonesOf(point.amount),
         })),
       ),
@@ -133,6 +150,7 @@ export const noteFieldsOf: From<Attributes, NoteFields> = (attributes) => ({
   lyric: lyricOf(attributes),
   bend: bendOf(attributes),
   params: paramsOf(attributes),
+  args: argsOf(attributes),
   tie: tieOf(attributes),
 });
 

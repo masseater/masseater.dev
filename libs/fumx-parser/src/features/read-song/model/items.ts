@@ -13,13 +13,14 @@ export interface Placed {
   readonly offset: number;
   readonly length: number;
   readonly nudgeMilliseconds: number;
+  readonly nudgeSeconds: number;
   readonly sourceLine: number;
   readonly sourceColumn: number;
 }
 
 export type NoteFields = Pick<
   Note,
-  "velocity" | "releaseVelocity" | "gate" | "articulation" | "lyric" | "bend" | "params"
+  "velocity" | "releaseVelocity" | "gate" | "articulation" | "lyric" | "bend" | "params" | "args"
 > & { readonly tie: Option.Option<AstNode> };
 
 export type NoteItem = Placed &
@@ -29,7 +30,7 @@ export type NoteItem = Placed &
 export type Item =
   | NoteItem
   | (Placed &
-      Pick<Hit, "voice" | "velocity" | "releaseVelocity" | "params"> & {
+      Pick<Hit, "voice" | "velocity" | "releaseVelocity" | "bend" | "params" | "args"> & {
         readonly kind: "hit";
         readonly tie: Option.Option<AstNode>;
       })

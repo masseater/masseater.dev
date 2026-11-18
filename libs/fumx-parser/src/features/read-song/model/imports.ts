@@ -118,7 +118,15 @@ const rebased: From<From<string, string>, From<Shared, Shared>> = (fix) => (shar
         ...kit,
         voices: pipe(
           kit.voices,
-          Arr.map((voice) => ({ ...voice, path: fix(voice.path) })),
+          Arr.map((voice) =>
+            Option.match(voice.plugin, {
+              onNone: () => ({ ...voice, path: fix(voice.path) }),
+              onSome: (use) => ({
+                ...voice,
+                plugin: Option.some({ ...use, module: fix(use.module) }),
+              }),
+            }),
+          ),
         ),
       })),
     ),

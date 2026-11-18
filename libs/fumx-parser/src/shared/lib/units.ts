@@ -4,24 +4,51 @@ import { Note } from "tonal";
 import { groupsOf } from "./groups.ts";
 
 const KILO = 1000;
-const HUNDRED = 100;
 const START = 0;
 const PITCH = /^(?<name>[A-G](?:##|#|bb|b)?-?\d)(?<cents>[+-]\d+)?c?$/u;
 const RATIO = /^(?<left>[\d.]+):(?<right>[\d.]+)$/u;
 
+const DECIMAL = /^(?<sign>[+-]?)(?<whole>\d+)(?:\.(?<fraction>\d+))?$/u;
+const ZERO = "0";
+
+const textBefore =
+  (suffix: string) =>
+  (text: string): string =>
+    Str.slice(START, Str.length(text) - Str.length(suffix))(text);
+
 const amountBefore =
   (suffix: string) =>
   (text: string): number =>
-    Number(Str.slice(START, Str.length(text) - Str.length(suffix))(text));
+    Number(textBefore(suffix)(text));
+
+const pointMoved =
+  (places: number) =>
+  (text: string): number =>
+    pipe(
+      groupsOf(DECIMAL)(text),
+      Option.map(({ sign = "", whole = ZERO, fraction = "" }) => {
+        const digits = `${whole}${fraction}`;
+        const point = Str.length(whole) - places;
+        if (point <= START) {
+          return Number(`${sign}0.${Str.repeat(-point)(ZERO)}${digits}`);
+        }
+        return Number(`${sign}${Str.slice(START, point)(digits)}.${Str.slice(point)(digits)}`);
+      }),
+      Option.getOrElse(() => Number.NaN),
+    );
+
+const MILLI_PLACES = 3;
+const PERCENT_PLACES = 2;
 
 export const millisecondsOf = amountBefore("ms");
+export const secondsOf = (text: string): number => pointMoved(MILLI_PLACES)(textBefore("ms")(text));
 export const decibelsOf = amountBefore("dB");
 export const semitonesOf = amountBefore("st");
 export const bpmOf = amountBefore("bpm");
 export const barsOf = amountBefore("bar");
 export const countOf = (text: string): number => Number(Str.slice(Str.length("x"))(text));
 export const percentOf = amountBefore("%");
-export const shareOf = (text: string): number => percentOf(text) / HUNDRED;
+export const shareOf = (text: string): number => pointMoved(PERCENT_PLACES)(textBefore("%")(text));
 
 export const hertzOf = (text: string): number => {
   if (Str.endsWith("kHz")(text)) {

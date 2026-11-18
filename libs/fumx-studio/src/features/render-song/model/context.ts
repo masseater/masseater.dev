@@ -1,12 +1,13 @@
+import type { Plugins, Samples } from "#/shared/lib/plugin/plugin.ts";
 import type { Bus } from "#/shared/lib/studio/bus.ts";
 import type { Ledger } from "#/shared/lib/studio/placement.ts";
 
-import type { Samples } from "./desk.ts";
 import type { Timing } from "./placements.ts";
 import type { Rack } from "./rack.ts";
 
 export interface Session {
   readonly samples: Samples;
+  readonly plugins: Plugins;
   readonly log: Ledger;
   readonly progress: (share: number, label: string) => void;
 }
