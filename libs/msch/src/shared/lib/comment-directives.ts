@@ -1,8 +1,6 @@
 export const COMMENT_DIRECTIVES: readonly string[] = [
   "oxlint-disable",
   "oxlint-enable",
-  "eslint-disable",
-  "eslint-enable",
   "textlint-disable",
   "textlint-enable",
   String.raw`\* @internal \*?$`,
