@@ -9,7 +9,7 @@ runs:
   using: composite
   steps:
     - name: true-positive-1
-      uses: asdf-vm/actions/setup@v3.0.2
+      uses: asdf-vm/actions/setup@v3
 
     - name: true-positive-2
       uses: asdf-vm/actions/setup@main

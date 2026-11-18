@@ -1,7 +1,8 @@
-import type { Song } from "@r_masseater/fumx-parser";
-import { TICKS_PER_WHOLE } from "@r_masseater/fumx-parser";
 import { Array as Arr, Option, Order, Schema, pipe } from "effect";
 import { Chord } from "tonal";
+
+import type { Song } from "#/entities/song/index.ts";
+import { TICKS_PER_WHOLE } from "#/shared/lib/ticks.ts";
 
 import { overlapOf, positionOf, soundingsOf } from "./sounding.ts";
 import type { Sounding, Span } from "./sounding.ts";

@@ -21,7 +21,6 @@ jobs:
       id-token: write
     concurrency:
       group: verify-${{ github.ref }}
-      cancel-in-progress: true
     env:
       OTEL_TRACES_EXPORTER: otlp
       OTEL_EXPORTER_OTLP_ENDPOINT: http://127.0.0.1:4318
@@ -48,6 +47,7 @@ jobs:
           key: msch-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}
           restore-keys: msch-
       - uses: masseater/typescript-template/.github/actions/verify@5fbdf9423d0e5debb5d59bc6d59bfec624343aff
+        timeout-minutes: 30
         with:
           github-token: ${{ github.token }}
           full-history: "true"
@@ -166,8 +166,7 @@ jobs:
     permissions:
       actions: read
       contents: read
-      id-token: write
     steps:
-      - uses: masseater/typescript-template/.github/actions/ci-telemetry@5fbdf9423d0e5debb5d59bc6d59bfec624343aff
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@21e1352dbfeb4ac2e2f46aa277f01be5cd89906e
         with:
           github-token: ${{ github.token }}

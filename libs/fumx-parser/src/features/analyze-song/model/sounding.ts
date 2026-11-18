@@ -1,7 +1,8 @@
-import type { Role, Song } from "@r_masseater/fumx-parser";
-import { fractionOf } from "@r_masseater/fumx-parser";
 import { Array as Arr, Option, pipe } from "effect";
 import { Note as TonalNote } from "tonal";
+
+import type { Role, Song } from "#/entities/song/index.ts";
+import { fractionOf } from "#/shared/lib/ticks.ts";
 
 const NONE = 0;
 const FIRST = 1;
@@ -13,6 +14,9 @@ export interface Span {
 
 export interface Sounding extends Span {
   readonly track: string;
+  readonly line: number;
+  readonly column: number;
+  readonly bar: number;
   readonly role: Option.Option<Role>;
   readonly midi: number;
   readonly pitchClass: string;
@@ -36,11 +40,14 @@ export const soundingsOf = (song: Song): readonly Sounding[] => {
         Arr.findFirst((track) => track.name === note.track),
         Option.map((track) => ({
           track: note.track,
+          line: note.sourceLine,
+          column: note.sourceColumn,
+          bar: note.bar,
           role: track.role,
           midi: note.midi,
           pitchClass: TonalNote.pitchClass(TonalNote.fromMidi(note.midi)),
           start: note.start,
-          end: note.start + note.length,
+          end: note.start + Math.round(note.length * note.gate),
         })),
         Option.toArray,
       ),
