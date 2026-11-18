@@ -47,10 +47,27 @@ const globOf =
     );
   };
 
+const contentsOf = (glob: string): string => `:(glob)${glob}${CONTENTS}`;
+
 const keptGlob = Effect.fn("keptGlob")(function* keptGlob(root: string, glob: string) {
   const files = yield* RepositoryFiles;
-  const listed = yield* files.matchingFiles(root, [`:(glob)${glob}/**`]);
+  const listed = yield* files.matchingFiles(root, [contentsOf(glob)]);
   return Option.some(glob).pipe(Option.filter(() => Arr.isReadonlyArrayEmpty(listed)));
+});
+
+const keptGlobs = Effect.fn("keptGlobs")(function* keptGlobs(
+  root: string,
+  candidates: readonly string[],
+) {
+  const files = yield* RepositoryFiles;
+  const listed = yield* files.matchingFiles(root, pipe(candidates, Arr.map(contentsOf)));
+  if (Arr.isReadonlyArrayEmpty(listed)) {
+    return candidates;
+  }
+  const kept = yield* Effect.forEach(candidates, (glob) => keptGlob(root, glob), {
+    concurrency: READ_CONCURRENCY,
+  });
+  return Arr.getSomes(kept);
 });
 
 const globsIn = Effect.fn("globsIn")(function* globsIn(root: string, file: string) {
@@ -72,12 +89,9 @@ export const collectIgnoredDirectories = Effect.fn("collectIgnoredDirectories")(
     const globs = yield* Effect.forEach(ignoreFiles, (file) => globsIn(root, file), {
       concurrency: 1,
     });
-    const candidates = Arr.dedupe(Arr.flatten(globs));
-    const kept = yield* Effect.forEach(candidates, (glob) => keptGlob(root, glob), {
-      concurrency: READ_CONCURRENCY,
-    });
+    const kept = yield* keptGlobs(root, Arr.dedupe(Arr.flatten(globs)));
     return pipe(
-      Arr.dedupe([...Arr.getSomes(kept), ...TOOL_DIRECTORIES]),
+      Arr.dedupe([...kept, ...TOOL_DIRECTORIES]),
       Arr.flatMap((glob): readonly IgnoredDirectory[] => [
         { pattern: `${NEGATION}${glob}`, base: "workspace" },
         { pattern: `${NEGATION}${glob}${CONTENTS}`, base: "workspace" },
