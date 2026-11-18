@@ -85,12 +85,26 @@ const flagsRenovateSettings = Effect.gen(function* flagsRenovateSettings() {
       ),
     ),
   ).toStrictEqual([
+    "renovate.json:1 renovate-msch-preset",
     "renovate.json:2 renovate-platform-automerge",
     "renovate.json:4 renovate-version-cap",
   ]);
 });
 
+const acceptsPreset = Effect.gen(function* acceptsPreset() {
+  const root = yield* gitRepositoryWith({
+    "renovate.json": lines([
+      "{",
+      '  "extends": ["github>masseater/masseater.dev//libs/msch/renovate"]',
+      "}",
+    ]),
+  });
+  const problems = yield* checkRenovateSettings(root);
+  expect(problems).toStrictEqual([]);
+});
+
 layer(fixtureLayer)("version downgrade", (it) => {
   it.effect("flags versions lower than the base commit's", () => flagsDowngrades);
   it.effect("flags Renovate caps and turned-off platform automerge", () => flagsRenovateSettings);
+  it.effect("accepts a Renovate config that extends the msch preset", () => acceptsPreset);
 });

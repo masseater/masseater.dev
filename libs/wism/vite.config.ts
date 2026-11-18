@@ -1,5 +1,5 @@
 import { addonTasks } from "@masseater.dev/lint-host/vite";
-import { cargoInputs } from "@r_masseater/msch/cargo-inputs";
+import { DERIVATION_READS, cargoInputs } from "@r_masseater/msch/cargo-inputs";
 import { LOCKED } from "@r_masseater/msch/locked-inputs";
 import { otlp } from "@r_masseater/vitest-otlp";
 import { defineConfig } from "vite-plus";
@@ -18,7 +18,7 @@ export default defineConfig({
       ...addonTasks({
         command: "node bin/build-native.ts",
         inputs: CARGO_INPUTS,
-        locked: LOCKED.input,
+        locked: [...LOCKED.input, ...DERIVATION_READS],
       }),
     },
   },

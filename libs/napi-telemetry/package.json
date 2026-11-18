@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "devDependencies": {
+    "@r_masseater/msch": "workspace:*",
     "vite-plus": "catalog:stack"
   }
 }
