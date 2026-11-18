@@ -10,7 +10,7 @@ const ROOT = ".";
 const ANYWHERE = "**/";
 const READ_CONCURRENCY = 16;
 const DIRECTORY_ENTRY = /^(?<anchor>\/?)(?<name>[^!#/].*)\/$/u;
-const TOOL_DIRECTORIES = ["**/node_modules/.vite", "**/node_modules/.vite-temp"];
+const TOOL_DIRECTORIES = ["**/node_modules/.vite*"];
 const WILDCARD = /[*?[]/u;
 
 export interface IgnoredDirectory {
@@ -52,7 +52,7 @@ const contentsOf = (glob: string): string => `:(glob)${glob}${CONTENTS}`;
 
 const keptGlob = Effect.fn("keptGlob")(function* keptGlob(root: string, glob: string) {
   const files = yield* RepositoryFiles;
-  const listed = yield* files.matchingFiles(root, [contentsOf(glob)]);
+  const listed = yield* files.trackedFiles(root, [contentsOf(glob)]);
   return Option.some(glob).pipe(Option.filter(() => Arr.isReadonlyArrayEmpty(listed)));
 });
 
@@ -61,7 +61,7 @@ const keptGlobs = Effect.fn("keptGlobs")(function* keptGlobs(
   candidates: readonly string[],
 ) {
   const files = yield* RepositoryFiles;
-  const listed = yield* files.matchingFiles(root, pipe(candidates, Arr.map(contentsOf)));
+  const listed = yield* files.trackedFiles(root, pipe(candidates, Arr.map(contentsOf)));
   if (Arr.isReadonlyArrayEmpty(listed)) {
     return candidates;
   }
@@ -85,7 +85,7 @@ const globsIn = Effect.fn("globsIn")(function* globsIn(root: string, file: strin
 
 const ignoredGlobs = Effect.fn("ignoredGlobs")(function* ignoredGlobs(root: string) {
   const files = yield* RepositoryFiles;
-  const ignoreFiles = yield* files.matchingFiles(root, [IGNORE_FILES]);
+  const ignoreFiles = yield* files.trackedFiles(root, [IGNORE_FILES]);
   const globs = yield* Effect.forEach(ignoreFiles, (file) => globsIn(root, file), {
     concurrency: 1,
   });
@@ -151,7 +151,7 @@ const placedGlobs = Effect.fn("placedGlobs")(function* placedGlobs(
     Arr.flatMap((glob) => Option.toArray(placementOf(glob))),
     Arr.map(({ parent }) => contentsOf(`${ANYWHERE}${Arr.join(parent, SEPARATOR)}`)),
   );
-  const listed = yield* files.matchingFiles(root, Arr.dedupe(parents));
+  const listed = yield* files.trackedFiles(root, Arr.dedupe(parents));
   return pipe(
     globs,
     Arr.flatMap((glob) =>
