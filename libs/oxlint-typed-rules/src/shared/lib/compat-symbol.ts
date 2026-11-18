@@ -34,12 +34,9 @@ export class CompatSymbol implements LegacySymbol {
   }
 
   public static intern(project: Project, native: NativeSymbol): CompatSymbol {
-    return Option.fromNullishOr(CompatSymbol.#interned.get(native)).pipe(
-      Option.getOrElse(() => {
-        const created = new CompatSymbol(project, native);
-        CompatSymbol.#interned.set(native, created);
-        return created;
-      }),
+    return CompatSymbol.#interned.getOrInsertComputed(
+      native,
+      () => new CompatSymbol(project, native),
     );
   }
 

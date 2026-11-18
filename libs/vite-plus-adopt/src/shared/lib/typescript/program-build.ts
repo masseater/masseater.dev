@@ -122,8 +122,7 @@ const createFlagStore = (): Pick<FileRegistry, "hasFlag" | "setFlag"> => {
       Option.fromNullishOr(flags.get(toPath(fileName))).pipe(Option.exists((own) => own.has(flag))),
     setFlag: (fileName, flag, value) => {
       const path = toPath(fileName);
-      const own = flags.get(path) ?? new Set<FileFlag>();
-      flags.set(path, own);
+      const own = flags.getOrInsertComputed(path, () => new Set<FileFlag>());
       if (value) {
         own.add(flag);
         return;

@@ -95,8 +95,7 @@ const createResultTables = (): ResultTables => {
         Option.flatMap((table) => Option.fromNullishOr(table.get(inner))),
       ),
     tableFor: (outer) => {
-      const table = tables.get(outer) ?? new Map<string, ResolutionResult>();
-      tables.set(outer, table);
+      const table = tables.getOrInsertComputed(outer, () => new Map<string, ResolutionResult>());
       return table;
     },
   };

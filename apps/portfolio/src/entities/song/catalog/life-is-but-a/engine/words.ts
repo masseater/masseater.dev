@@ -107,12 +107,9 @@ export const wordOf =
   (life: Life) =>
   (word: Word): Float32Array => {
     const key = keyOf(word);
-    const cached = life.words.get(key);
-    if (Predicate.isNotUndefined(cached)) {
-      return cached;
-    }
-    const shaped = fade(FADE)(stretched(word, sungOf(life, word)));
-    life.labelled(shaped, { name: labelOf(word), midi: word.key });
-    life.words.set(key, shaped);
-    return shaped;
+    return life.words.getOrInsertComputed(key, () => {
+      const shaped = fade(FADE)(stretched(word, sungOf(life, word)));
+      life.labelled(shaped, { name: labelOf(word), midi: word.key });
+      return shaped;
+    });
   };

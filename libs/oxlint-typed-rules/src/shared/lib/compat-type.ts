@@ -100,13 +100,7 @@ export class CompatType implements LegacyType {
   }
 
   public static intern(project: Project, native: NativeType): CompatType {
-    return Option.fromNullishOr(CompatType.#interned.get(native)).pipe(
-      Option.getOrElse(() => {
-        const created = new CompatType(project, native);
-        CompatType.#interned.set(native, created);
-        return created;
-      }),
-    );
+    return CompatType.#interned.getOrInsertComputed(native, () => new CompatType(project, native));
   }
 
   public static optional(project: Project, native: NativeType | undefined): CompatType | undefined {
