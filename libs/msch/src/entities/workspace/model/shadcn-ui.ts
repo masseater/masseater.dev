@@ -1,8 +1,10 @@
 import { Array as Arr, Effect, Option, Record as Rec, Schema, String as Str, pipe } from "effect";
 
-import { prefixed, withoutRelative } from "#/entities/workspace/index.ts";
 import { RepositoryFiles } from "#/shared/lib/repository-files.ts";
 
+import { prefixed, withoutRelative } from "./workspace-patterns.ts";
+
+const SHADCN_FILE = "components.json";
 const MANIFEST_FILE = "package.json";
 const WILDCARD = "*";
 const EVERYTHING = "/**";
@@ -35,10 +37,19 @@ const resolvedAlias = (
 ): Option.Option<string> =>
   pipe(Rec.toEntries(imports), Arr.findFirst(importTarget(alias)), Option.map(withoutRelative));
 
-export const shadcnUiIn = Effect.fn("shadcnUiIn")(function* shadcnUiIn(root: string, name: string) {
+export type ShadcnUi = Readonly<{
+  file: string;
+  alias: string;
+  target: Option.Option<string>;
+}>;
+
+export const shadcnUiOf = Effect.fn("shadcnUiOf")(function* shadcnUiOf(
+  root: string,
+  directory: string,
+) {
   const files = yield* RepositoryFiles;
-  const directory = files.dirname(name);
-  const configText = yield* files.readFile(files.join(root, name));
+  const file = files.join(root, directory, SHADCN_FILE);
+  const configText = yield* files.readFile(file);
   const manifestText = yield* files.readFile(files.join(root, directory, MANIFEST_FILE));
   const imports = pipe(
     manifestText,
@@ -48,13 +59,27 @@ export const shadcnUiIn = Effect.fn("shadcnUiIn")(function* shadcnUiIn(root: str
   return pipe(
     configText,
     Option.flatMap(decodeShadcnConfig),
-    Option.map(({ aliases }) =>
-      pipe(
+    Option.map(({ aliases }): ShadcnUi => ({
+      file,
+      alias: aliases.ui,
+      target: pipe(
         imports,
         Option.flatMap((map) => resolvedAlias(map, aliases.ui)),
-        Option.getOrElse(() => aliases.ui),
       ),
+    })),
+  );
+});
+
+export const shadcnUiIn = Effect.fn("shadcnUiIn")(function* shadcnUiIn(
+  root: string,
+  directory: string,
+) {
+  const found = yield* shadcnUiOf(root, directory);
+  return pipe(
+    found,
+    Option.map(
+      ({ alias, target }) =>
+        `${prefixed(directory)(Option.getOrElse(target, () => alias))}${EVERYTHING}`,
     ),
-    Option.map((target) => `${prefixed(directory)(target)}${EVERYTHING}`),
   );
 });
