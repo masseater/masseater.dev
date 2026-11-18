@@ -1,4 +1,4 @@
-import { Ruleset, Zone, providers, state } from "@alchemy.run/cloudflare";
+import { DNS, Ruleset, Zone, providers, state } from "@alchemy.run/cloudflare";
 import { aiGateway } from "@masseater.dev/cloudflare-account/ai-gateway";
 import { spendLimitProvider, spendLimits } from "@masseater.dev/cloudflare-account/spend-limits";
 import { Stack } from "alchemy";
@@ -21,6 +21,23 @@ const CLOUDFLARE_RESPONSE_HEADERS = {
   "Content-Security-Policy":
     "default-src 'none'; style-src 'self'; img-src 'self' data:; base-uri 'none'; form-action 'none'; frame-ancestors 'none'",
 } as const;
+
+const LEGACY_MED_DB_HOST = "medley-manager.masseater.dev";
+
+const HOST_REDIRECT_RULES: Ruleset.Rule[] = [
+  {
+    description: "Redirect medley-manager to med-db",
+    expression: `http.host eq "${LEGACY_MED_DB_HOST}"`,
+    action: "redirect",
+    actionParameters: {
+      fromValue: {
+        statusCode: 301,
+        targetUrl: { expression: 'concat("https://med-db.masseater.dev", http.request.uri.path)' },
+        preserveQueryString: true,
+      },
+    },
+  },
+];
 
 const stack: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: string }> = Stack(
   `${PREFIX}zone`,
@@ -47,26 +64,18 @@ const stack: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: s
         },
       ],
     });
+    yield* DNS.Record("MedleyManagerRedirectHost", {
+      zoneId: owned.zoneId,
+      name: LEGACY_MED_DB_HOST,
+      type: "AAAA",
+      content: "100::",
+      proxied: true,
+    });
     yield* Ruleset.Ruleset("HostRedirects", {
       zone: owned,
       name: `${PREFIX}host-redirects`,
       phase: "http_request_dynamic_redirect",
-      rules: [
-        {
-          description: "Redirect medley-manager to med-db",
-          expression: 'http.host eq "medley-manager.masseater.dev"',
-          action: "redirect",
-          actionParameters: {
-            fromValue: {
-              statusCode: 301,
-              targetUrl: {
-                expression: 'concat("https://med-db.masseater.dev", http.request.uri.path)',
-              },
-              preserveQueryString: true,
-            },
-          },
-        },
-      ],
+      rules: HOST_REDIRECT_RULES,
     });
   }),
 );
