@@ -1,0 +1,12 @@
+{
+  "name": "kogane",
+  "description": "Suggests existing workspaces of the current pnpm monorepo that match each prompt",
+  "version": "0.1.0",
+  "author": {
+    "name": "masseater",
+    "url": "https://github.com/masseater"
+  },
+  "homepage": "https://github.com/masseater/masseater.dev/tree/main/libs/kogane#readme",
+  "repository": "https://github.com/masseater/masseater.dev",
+  "license": "MIT"
+}

@@ -1,0 +1,58 @@
+{
+  "name": "@r_masseater/kogane",
+  "version": "0.1.0",
+  "description": "Claude Code plugin that suggests existing workspaces of the current pnpm monorepo for each prompt, ranked with EmbeddingGemma 2 on the user's machine.",
+  "keywords": [
+    "claude-code",
+    "embeddinggemma",
+    "monorepo",
+    "pnpm",
+    "tanstack-intent"
+  ],
+  "homepage": "https://github.com/masseater/masseater.dev/tree/main/libs/kogane#readme",
+  "bugs": {
+    "url": "https://github.com/masseater/masseater.dev/issues"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/masseater/masseater.dev.git",
+    "directory": "libs/kogane"
+  },
+  "bin": {
+    "kogane": "./dist/main.mjs"
+  },
+  "files": [
+    ".claude-plugin",
+    "dist",
+    "hooks",
+    "skills/suggest-workspaces"
+  ],
+  "type": "module",
+  "imports": {
+    "#package.json": "./package.json",
+    "#/*": "./src/*"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "scripts": {
+    "prepublishOnly": "vp run build"
+  },
+  "dependencies": {
+    "@huggingface/transformers": "catalog:stack"
+  },
+  "devDependencies": {
+    "@effect/platform-node": "catalog:",
+    "@masseater.dev/local-server": "workspace:*",
+    "@pnpm/workspace.projects-reader": "catalog:",
+    "@pnpm/workspace.workspace-manifest-reader": "catalog:",
+    "@types/node": "catalog:",
+    "effect": "catalog:stack",
+    "vite-plus": "catalog:stack"
+  },
+  "engines": {
+    "node": "v26.13.1"
+  }
+}

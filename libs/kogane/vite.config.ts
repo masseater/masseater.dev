@@ -1,0 +1,15 @@
+import { LOCKED } from "@r_masseater/msch/locked-inputs";
+import { defineConfig } from "vite-plus";
+
+export default defineConfig({
+  pack: {
+    entry: { main: "src/app/main.ts" },
+    platform: "node",
+    publint: { strict: true },
+  },
+  run: {
+    tasks: {
+      build: { command: "vp pack", cache: LOCKED },
+    },
+  },
+});

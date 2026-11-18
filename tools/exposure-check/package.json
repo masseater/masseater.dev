@@ -2,6 +2,7 @@
   "name": "exposure-check",
   "version": "0.0.0",
   "private": true,
+  "description": "Hourly check that what sits behind Cloudflare Access and private repositories cannot be reached from outside.",
   "type": "module",
   "imports": {
     "#/*": "./src/*"

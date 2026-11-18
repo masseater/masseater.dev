@@ -2,6 +2,7 @@
   "name": "@masseater.dev/yogoto-protocol",
   "version": "0.0.0",
   "private": true,
+  "description": "Types exchanged between yogoto's screens and its Tauri side, and the song.json shape; Rust types are generated from them.",
   "type": "module",
   "exports": {
     ".": "./src/entities/song/index.ts"

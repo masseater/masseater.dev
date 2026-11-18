@@ -1,0 +1,17 @@
+{
+  "description": "kogane plugin hooks",
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node",
+            "args": ["${CLAUDE_PLUGIN_ROOT}/dist/main.mjs", "hook"],
+            "timeout": 15
+          }
+        ]
+      }
+    ]
+  }
+}

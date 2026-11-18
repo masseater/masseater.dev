@@ -2,6 +2,7 @@
   "name": "@masseater.dev/repositories",
   "version": "0.0.0",
   "private": true,
+  "description": "Manages the owner's GitHub account and repositories, and the broker that hands tokens to CI and agents.",
   "type": "module",
   "imports": {
     "#/*": "./src/*"

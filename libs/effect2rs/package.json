@@ -2,6 +2,7 @@
   "name": "@masseater.dev/effect2rs",
   "version": "0.0.0",
   "private": true,
+  "description": "Generates serde Rust types from Effect Schema by walking SchemaRepresentation.",
   "keywords": [
     "tanstack-intent"
   ],
