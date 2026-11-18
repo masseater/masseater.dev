@@ -1,6 +1,6 @@
 {
   "name": "@r_masseater/fumx-parser",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Reads .fumx, a text format for music, into a typed song value with notes, hits, controllers and tempo placed in time, so tools can lint musical rules.",
   "keywords": [
     "fumx",
@@ -32,6 +32,7 @@
   },
   "exports": {
     ".": "./src/app/index.ts",
+    "./analysis": "./src/app/analysis.ts",
     "./language": "./src/app/language.ts",
     "./package.json": "./package.json"
   },
@@ -40,6 +41,10 @@
       ".": {
         "types": "./dist/index.d.ts",
         "default": "./dist/index.js"
+      },
+      "./analysis": {
+        "types": "./dist/analysis.d.ts",
+        "default": "./dist/analysis.js"
       },
       "./language": {
         "types": "./dist/language.d.ts",
