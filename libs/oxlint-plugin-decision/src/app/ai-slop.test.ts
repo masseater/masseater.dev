@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { layer } from "@effect/vitest";
 import { assertInclude, deepStrictEqual, strictEqual } from "@effect/vitest/utils";
 import {
@@ -172,7 +172,7 @@ const loadsEntry = Effect.scoped(
   }),
 );
 
-layer(NodeServices.layer, { excludeTestServices: true })("the ai-slop rules", (it) => {
+layer(nodeServices, { excludeTestServices: true })("the ai-slop rules", (it) => {
   it.effect("ask only about the functions each rule's select picks", () => askedWhere, TIMEOUT);
   it.effect("dist/ai-slop.mjs loads as an oxlint plugin", () => loadsEntry, TIMEOUT);
 });

@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { layer } from "@effect/vitest";
 import { assertInclude, deepStrictEqual, strictEqual } from "@effect/vitest/utils";
 import { Array as Arr, Effect, FileSystem, Layer, Option, Path, Record as Rec, pipe } from "effect";
@@ -188,7 +188,7 @@ const asksOnlyTheAddedRule = Effect.scoped(
   }),
 );
 
-layer(NodeServices.layer, { excludeTestServices: true })("the cloudflare provider", (it) => {
+layer(nodeServices, { excludeTestServices: true })("the cloudflare provider", (it) => {
   it.effect("reports a yes answer", () => withCloudflare(reportsYes), TIMEOUT);
   it.effect(
     "asks the Workers AI decision model directly",

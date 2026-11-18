@@ -1,4 +1,5 @@
-import { NodeRuntime, NodeServices } from "@effect/platform-node";
+import { runMain } from "@effect/platform-node/NodeRuntime";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { Effect, FileSystem, Layer, Option, Schema, String as Str, pipe } from "effect";
 
 const PAGE = "../../apps/labs/pages/pod-rattle/index.html";
@@ -38,8 +39,8 @@ const program = Effect.gen(function* extractEngine() {
   yield* fileSystem.writeFileString(OUTPUT, `${engine}\nexport { createEngine };\n`);
 });
 
-NodeRuntime.runMain(
-  Layer.build(NodeServices.layer).pipe(
+runMain(
+  Layer.build(nodeServices).pipe(
     Effect.flatMap((context) =>
       Effect.provideContext(
         program.pipe(Effect.withSpan("pod-rattle-engine.parity.extract")),

@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { expect, layer } from "@effect/vitest";
 import { Effect, Record, Schema, Stream } from "effect";
 import { ChildProcess, ChildProcessSpawner } from "effect/process";
@@ -61,7 +61,7 @@ const cases = {
   exactly: { Exactly },
 };
 
-layer(NodeServices.layer)("rustfmt", (it) => {
+layer(nodeServices)("rustfmt", (it) => {
   it.effect.each(Record.toEntries(cases))(
     "%s is already formatted the way rustfmt formats it",
     ([, definitions]) =>

@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { lintText } from "@r_masseater/fu4";
 import type { Diagnostic } from "@r_masseater/fu4";
 import {
@@ -25,7 +25,7 @@ import type { Outcome } from "./actionlint-harness.test.support.ts";
 import { projectConfigOf } from "./actionlint-projects.test.support.ts";
 import type { ProjectConfig } from "./actionlint-projects.test.support.ts";
 
-const services = ManagedRuntime.make(NodeServices.layer);
+const services = ManagedRuntime.make(nodeServices);
 afterAll(() => services.dispose());
 
 const WORKFLOW = /\.ya?ml$/u;

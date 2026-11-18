@@ -1,4 +1,5 @@
-import { NodeHttpServer, NodeServices } from "@effect/platform-node";
+import { layerTest } from "@effect/platform-node/NodeHttpServer";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { Effect, FileSystem, Layer, Path, Record as Rec, Stream } from "effect";
 import { HttpRouter, HttpServer, HttpServerRequest, HttpServerResponse } from "effect/http";
 import { ChildProcess } from "effect/process";
@@ -49,8 +50,8 @@ const routes = HttpRouter.serve(
 
 /** @internal */
 export const ClientLayer = routes.pipe(
-  Layer.provideMerge(NodeHttpServer.layerTest),
-  Layer.provideMerge(NodeServices.layer),
+  Layer.provideMerge(layerTest),
+  Layer.provideMerge(nodeServices),
 );
 
 /** @internal */

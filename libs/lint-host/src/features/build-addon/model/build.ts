@@ -1,5 +1,5 @@
-import { NodeServices } from "@effect/platform-node";
 import { runMain } from "@effect/platform-node/NodeRuntime";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { Effect, FileSystem, Path, Record as Rec, Schema, String as Str } from "effect";
 import { ChildProcess, ChildProcessSpawner } from "effect/process";
 
@@ -62,5 +62,5 @@ const build = Effect.fn("buildAddon")(function* build(options: AddonBuild) {
 });
 
 export const buildAddon = (options: AddonBuild): void => {
-  runMain(build(options).pipe(Effect.provide(NodeServices.layer)));
+  runMain(build(options).pipe(Effect.provide(nodeServices)));
 };

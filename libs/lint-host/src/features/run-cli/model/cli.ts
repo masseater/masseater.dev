@@ -1,5 +1,5 @@
-import { NodeServices } from "@effect/platform-node";
 import { runMain } from "@effect/platform-node/NodeRuntime";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import {
   Array as Arr,
   Console,
@@ -175,10 +175,14 @@ const mainOf = <Config, Found extends Reported, Failure>(
     const root = process.cwd();
     const config = yield* readSectionIn(cli, root);
     const patterns = process.argv.slice(ARGUMENTS_START);
-    const files = yield* trackedFiles(root, cli.pathspecs(requestOf(config, patterns))).pipe(
-      Effect.withSpan(`${cli.name}.files`),
+    const pathspecs = cli.pathspecs(requestOf(config, patterns));
+    const { files, projectFiles } = yield* Effect.all(
+      {
+        files: trackedFiles(root, pathspecs).pipe(Effect.withSpan(`${cli.name}.files`)),
+        projectFiles: trackedFiles(root, []).pipe(Effect.withSpan(`${cli.name}.project`)),
+      },
+      { concurrency: "unbounded" },
     );
-    const projectFiles = yield* trackedFiles(root, []).pipe(Effect.withSpan(`${cli.name}.project`));
     const read = yield* readerIn(root, cli.failWith);
     const found = yield* cli.lint({ root, files, projectFiles, config, read });
     yield* printAll(found, cli.format);
@@ -203,7 +207,7 @@ const runTraced = <Failure>(
   const services = Otlp.layerFromConfig({ resource: { serviceName: name } }).pipe(
     Layer.provide(OtlpSerialization.layerJson),
     Layer.provide(FetchHttpClient.layer),
-    Layer.provideMerge(NodeServices.layer),
+    Layer.provideMerge(nodeServices),
   );
   runMain(program.pipe(Effect.provide(services)));
 };

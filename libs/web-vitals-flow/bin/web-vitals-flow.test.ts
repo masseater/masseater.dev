@@ -1,4 +1,5 @@
-import { NodeHttpServer, NodeServices } from "@effect/platform-node";
+import { layerTest } from "@effect/platform-node/NodeHttpServer";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { waitForSpans } from "@r_masseater/vitest-otlp";
 import type { ReceivedSpan } from "@r_masseater/vitest-otlp";
 import type { PlatformError } from "effect";
@@ -18,7 +19,7 @@ import { HttpServer, HttpServerRequest, HttpServerResponse } from "effect/http";
 import { ChildProcess, ChildProcessSpawner } from "effect/process";
 import { afterAll, expect, test } from "vite-plus/test";
 
-const services = ManagedRuntime.make(NodeServices.layer);
+const services = ManagedRuntime.make(nodeServices);
 afterAll(() => services.dispose());
 
 const HTTP_NOT_FOUND = 404;
@@ -51,7 +52,7 @@ const page = HttpServerRequest.HttpServerRequest.pipe(
   ),
 );
 
-const serveSite = Layer.build(NodeHttpServer.layerTest).pipe(
+const serveSite = Layer.build(layerTest).pipe(
   Effect.orDie,
   Effect.map(Context.get(HttpServer.HttpServer)),
   Effect.tap((server) => server.serve(page)),

@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { expect, layer } from "@effect/vitest";
 import { TextReader, Uint8ArrayWriter, ZipWriter } from "@zip.js/zip.js";
 import { Array, Effect, FileSystem, Option, Order, Path, Record, pipe } from "effect";
@@ -63,7 +63,7 @@ const makeZip = Effect.gen(function* makeZip() {
   return yield* Effect.promise(() => writer.close());
 });
 
-layer(NodeServices.layer, { excludeTestServices: true })("intake", (it) => {
+layer(nodeServices, { excludeTestServices: true })("intake", (it) => {
   it.effect("copies dropped packages and the packages inside a zip into the library", () =>
     Effect.gen(function* copiesDropped() {
       const fileSystem = yield* FileSystem.FileSystem;
@@ -113,7 +113,7 @@ layer(NodeServices.layer, { excludeTestServices: true })("intake", (it) => {
   );
 });
 
-layer(NodeServices.layer, { excludeTestServices: true })(
+layer(nodeServices, { excludeTestServices: true })(
   "intake of a package with a taken name and size",
   (it) => {
     it.effect("名前と大きさが同じでも中身の違うパッケージは両方残す", () =>
@@ -139,7 +139,7 @@ layer(NodeServices.layer, { excludeTestServices: true })(
   },
 );
 
-layer(NodeServices.layer, { excludeTestServices: true })(
+layer(nodeServices, { excludeTestServices: true })(
   "intake of a zip with a taken name and size",
   (it) => {
     it.effect("zip の中のパッケージも、名前と大きさが同じで中身の違うものは両方残す", () =>
@@ -185,7 +185,7 @@ const makeEscapingZip = Effect.gen(function* makeEscapingZip() {
   return yield* Effect.promise(() => writer.close());
 });
 
-layer(NodeServices.layer, { excludeTestServices: true })("intake of an escaping zip", (it) => {
+layer(nodeServices, { excludeTestServices: true })("intake of an escaping zip", (it) => {
   it.effect("展開先の外を指す項目を持つ zip は取り込みに失敗し、何も書かない", () =>
     Effect.gen(function* rejectsEscaping() {
       const fileSystem = yield* FileSystem.FileSystem;
@@ -208,7 +208,7 @@ layer(NodeServices.layer, { excludeTestServices: true })("intake of an escaping 
   );
 });
 
-layer(NodeServices.layer, { excludeTestServices: true })("intake of loose files", (it) => {
+layer(nodeServices, { excludeTestServices: true })("intake of loose files", (it) => {
   it.effect("copies loose models with their materials and keeps the folder layout", () =>
     Effect.gen(function* copiesLoose() {
       const fileSystem = yield* FileSystem.FileSystem;

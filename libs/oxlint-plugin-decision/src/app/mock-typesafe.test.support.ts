@@ -1,4 +1,4 @@
-import { NodeHttpServer } from "@effect/platform-node";
+import { layerTest } from "@effect/platform-node/NodeHttpServer";
 import { Context, Effect, Layer, Option, Record as Rec, Ref, Schema, String as Str } from "effect";
 import { HttpRouter, HttpServer, HttpServerRequest, HttpServerResponse } from "effect/http";
 import type { HttpServerError } from "effect/http";
@@ -117,7 +117,7 @@ const routes = Layer.unwrap(
 /** @internal */
 export const MockTypesafeLayer = routes.pipe(
   Layer.provideMerge(MockLive),
-  Layer.provideMerge(NodeHttpServer.layerTest),
+  Layer.provideMerge(layerTest),
 );
 
 /** @internal */

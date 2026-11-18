@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { layer } from "@effect/vitest";
 import { deepStrictEqual } from "@effect/vitest/utils";
 import type { DecisionRule } from "@r_masseater/oxlint-plugin-decision";
@@ -92,7 +92,7 @@ const presetLive = (
     }),
   );
 
-layer(NodeServices.layer, { excludeTestServices: true })("the presets on Span-01 Lite", (it) => {
+layer(nodeServices, { excludeTestServices: true })("the presets on Span-01 Lite", (it) => {
   it.effect(
     "recommended reports exactly the risky lines of the example",
     () => presetLive("recommended"),

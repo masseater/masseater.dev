@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { layer } from "@effect/vitest";
 import { assertInclude, deepStrictEqual, strictEqual } from "@effect/vitest/utils";
 import { Array as Arr, Effect, FileSystem, Option, Path, String as Str, pipe } from "effect";
@@ -141,7 +141,7 @@ const skipsOutsideCi = Effect.gen(function* test() {
   deepStrictEqual(decisionLines(run), []);
 });
 
-layer(NodeServices.layer, { excludeTestServices: true })("the example project", (it) => {
+layer(nodeServices, { excludeTestServices: true })("the example project", (it) => {
   it.effect("reports each rule the model answered yes to", () => withMock(reportsYes), TIMEOUT);
   it.effect(
     "sends one request per file with the key and default model",

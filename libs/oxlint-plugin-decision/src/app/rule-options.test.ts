@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { layer } from "@effect/vitest";
 import { assertInclude, deepStrictEqual, strictEqual } from "@effect/vitest/utils";
 import { Array as Arr, Effect, Order, String as Str, pipe } from "effect";
@@ -67,7 +67,7 @@ const badRuleOptions = Effect.gen(function* test() {
   assertInclude(outputOf(run), "model must be a decision model");
 });
 
-layer(NodeServices.layer)("rule options in the oxlint config", (it) => {
+layer(nodeServices)("rule options in the oxlint config", (it) => {
   it.effect(
     "override one rule's model and keep the others on the plugin model",
     () => withMock(perRuleModel),

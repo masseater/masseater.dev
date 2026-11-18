@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { layer } from "@effect/vitest";
 import { assertInclude, deepStrictEqual, strictEqual } from "@effect/vitest/utils";
 import { Effect, String as Str } from "effect";
@@ -63,7 +63,7 @@ const explainsTheFailure = Effect.gen(function* test() {
   assertInclude(run.stderr, '"reported":false');
 });
 
-layer(NodeServices.layer, { excludeTestServices: true })("a failed decision request", (it) => {
+layer(nodeServices, { excludeTestServices: true })("a failed decision request", (it) => {
   it.effect("warns and lets the run pass", () => withMock(warnsAndPasses), TIMEOUT);
   it.effect("fails the run in CI when ci is fail", () => withMock(failsInCi), TIMEOUT);
   it.effect(

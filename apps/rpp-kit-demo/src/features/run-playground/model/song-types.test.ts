@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { wasmURL } from "@typescript/typescript-wasip1-wasm";
 import {
   Array as Arr,
@@ -128,7 +128,7 @@ const run = (): Promise<void> =>
           cache.push(result);
         }),
       ),
-      Effect.provide(NodeServices.layer),
+      Effect.provide(nodeServices),
     ),
   );
 

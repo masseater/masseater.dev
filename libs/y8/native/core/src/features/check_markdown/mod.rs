@@ -1,9 +1,11 @@
+mod cache;
 mod config;
 #[cfg(test)]
 mod conformance;
 mod rule;
 mod rules;
 
+pub use cache::ResultCache;
 pub use config::Severity;
 pub use rule::{Rule, RuleMeta};
 pub use rules::builtin as builtin_rules;
@@ -52,6 +54,7 @@ pub struct Linter {
     names: Names,
     config: Map<String, Value>,
     inline: bool,
+    cache: Option<ResultCache>,
 }
 
 pub struct Input {
@@ -69,16 +72,19 @@ impl Linter {
             names,
             config,
             inline,
+            cache: None,
         }
     }
 
     #[must_use]
-    pub fn lint(&self, path: &str, raw: &str, transfer: Transfer) -> FileResult {
-        let _file = info_span!("y8.file", "code.file.path" = path).entered();
-        let source = info_span!("y8.read_source").in_scope(|| Source::new(raw));
-        let tree = info_span!("y8.parse").in_scope(|| Tree::parse(&source.text, source.body_start));
+    pub fn with_cache(mut self, directory: &std::path::Path) -> Self {
+        self.cache = Some(ResultCache::new(directory, &self.config, self.inline));
+        self
+    }
+
+    fn check(&self, source: &Source, tree: &Tree) -> Vec<(usize, Diagnostic)> {
         let plan = config::plan(
-            &source,
+            source,
             &self.names,
             self.rules.len(),
             &self.config,
@@ -97,8 +103,8 @@ impl Linter {
             let outcome = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
                 rule.check(
                     &Context {
-                        source: &source,
-                        tree: &tree,
+                        source,
+                        tree,
                         options: &setting.options,
                         cache: &cache,
                     },
@@ -116,18 +122,55 @@ impl Linter {
                     .findings
                     .into_iter()
                     .filter(|finding| plan.enabled(index, finding.line))
-                    .map(|finding| Diagnostic {
-                        line: finding.line + 1,
-                        rule_names: meta.names.to_vec(),
-                        description: meta.description,
-                        detail: finding.detail,
-                        context: finding.context.filter(|c| !c.is_empty()),
-                        range: finding.range,
-                        severity: setting.severity,
+                    .map(|finding| {
+                        (
+                            index,
+                            Diagnostic {
+                                line: finding.line + 1,
+                                rule_names: meta.names.to_vec(),
+                                description: meta.description,
+                                detail: finding.detail,
+                                context: finding.context.filter(|c| !c.is_empty()),
+                                range: finding.range,
+                                severity: setting.severity,
+                            },
+                        )
                     }),
             );
         }
-        diagnostics.sort_by_key(|d| d.line);
+        diagnostics.sort_by_key(|(_, d)| d.line);
+        diagnostics
+    }
+
+    #[must_use]
+    pub fn lint(&self, path: &str, raw: &str, transfer: Transfer) -> FileResult {
+        let _file = info_span!("y8.file", "code.file.path" = path).entered();
+        let cached = self.cache.as_ref().and_then(|cache| {
+            info_span!("y8.cache.load").in_scope(|| cache.load(path, raw, &self.rules))
+        });
+        if transfer == Transfer::Nothing
+            && let Some(diagnostics) = cached
+        {
+            return FileResult {
+                path: path.to_owned(),
+                diagnostics,
+                transfer: None,
+            };
+        }
+        let source = info_span!("y8.read_source").in_scope(|| Source::new(raw));
+        let tree = info_span!("y8.parse").in_scope(|| Tree::parse(&source.text, source.body_start));
+        let diagnostics = if let Some(diagnostics) = cached {
+            diagnostics
+        } else {
+            let found = self.check(&source, &tree);
+            if let Some(cache) = &self.cache {
+                info_span!("y8.cache.store").in_scope(|| cache.store(path, raw, &found));
+            }
+            found
+                .into_iter()
+                .map(|(_, diagnostic)| diagnostic)
+                .collect()
+        };
         FileResult {
             path: path.to_owned(),
             diagnostics,

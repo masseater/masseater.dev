@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { SummarySchema } from "@ocr-decide/measurements/schema";
 import {
   CUTOFF,
@@ -97,6 +97,4 @@ const makeResults = Effect.gen(function* makeResults() {
   });
 });
 
-export const resultsLayer = Layer.effect(Results, makeResults).pipe(
-  Layer.provide(NodeServices.layer),
-);
+export const resultsLayer = Layer.effect(Results, makeResults).pipe(Layer.provide(nodeServices));
