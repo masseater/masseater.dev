@@ -71,6 +71,13 @@ jobs:
           JOB_INDEX: ${{ strategy.job-index }}
           GH_TOKEN: ${{ github.token }}
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+      - if: matrix.package.deploy
+        uses: masseater/typescript-template/.github/actions/credentials@5fbdf9423d0e5debb5d59bc6d59bfec624343aff
+      - if: matrix.package.deploy
+        run: vp run --filter "./$DIRECTORY" daily:deploy
+        env:
+          DIRECTORY: ${{ matrix.package.directory }}
+          ITEM: ${{ matrix.package.item }}
       - if: ${{ !cancelled() && matrix.package.finally }}
         run: vp run --filter "./$DIRECTORY" daily:finally
         env:
