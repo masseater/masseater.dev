@@ -16,22 +16,22 @@ sources:
 # lint-structure
 
 wism is an engine. It reads the import graph of the files git tracks and runs the TypeScript rules
-that plugins give it. It reports nothing on its own: add a plugin such as `@r_masseater/wism-fsd`.
+that plugins give it. It reports nothing on its own: add a plugin such as `@r_masseater/wism-presets`.
 
 ## Setup
 
 ```sh
-vp add -D @r_masseater/wism @r_masseater/wism-fsd
+vp add -D @r_masseater/wism @r_masseater/wism-presets
 ```
 
 ```ts
 import "@r_masseater/wism/vite";
-import { fsdPreset, rustCrate, skill, workspace } from "@r_masseater/wism-fsd";
+import { rustCrate, skill, structure, workspace } from "@r_masseater/wism-presets";
 import { defineConfig } from "vite-plus";
 
 export default defineConfig({
   wism: {
-    ...fsdPreset({ kinds: [workspace({ paths: ["apps/*", "libs/*"] }), rustCrate(), skill()] }),
+    ...structure({ kinds: [workspace({ paths: ["apps/*", "libs/*"] }), rustCrate(), skill()] }),
     ignores: ["**/fixtures/**"],
   },
 });
