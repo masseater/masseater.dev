@@ -50,7 +50,7 @@ export default Stack(
 );
 ```
 
-`migrations` で指定されたディレクトリ内のSQLは、デプロイごとに番号順に適用され、既に適用済みのファイルはスキップされる[^alchemy-cloudflare-d1]。Stackの本体が返すオブジェクトが出力として扱われ、CLIではデプロイ[^alchemy-getting-started]の後にそれが表示される。
+`migrations` で指定されたディレクトリ内のSQLは、デプロイのたびに番号順で適用され、既に適用済みのファイルはスキップされる[^alchemy-cloudflare-d1]。Stackの本体が返すオブジェクトは出力として扱われ、CLIではデプロイ[^alchemy-getting-started]の後にそれが表示される。
 
 ## Workerはenvの型を受け取る
 
@@ -122,7 +122,7 @@ AWSでは、同じ仕組みで1つのリソースのみを対象とするバイ�
 
 各リソースの入力、出力、ID、およびステータスは状態として保存され、次回のデプロイ時にコードとの差分を算出するために使用される。デフォルトでは `.alchemy/` ディレクトリに書き込まれるため、`.gitignore` に追加すること。チーム内で状態を共有するには、`Cloudflare.state()` を選択し、Durable Object と SQLite を使用する Worker を初回実行時に自動的に配置して状態を保持する。CIでは、`alchemy state bootstrap`[^alchemy-state-store]で事前に準備しておく。
 
-ステージはスタックの独立したコピーであり、デプロイは常にちょうど1つのステージを対象とする。`alchemy deploy` のデフォルトは `live_$USER`、`alchemy dev` のデフォルトは `dev_$USER` で、`--stage production` のように明示的に指定することもできる。ステージが物理リソース名に含まれているため、各開発者の環境、各PR、本番環境を、互いに干渉することなく同一のプログラムから作成できる[^alchemy-stages]。
+ステージはスタックの独立したコピーであり、デプロイは常にちょうど1つのステージを対象とする。`alchemy deploy` のデフォルトは `live_$USER`、`alchemy dev` のデフォルトは `dev_$USER` で、`--stage production` と明示して指定もできる。ステージが物理リソース名に含まれているため、各開発者の環境、各PR、本番環境を、互いに干渉することなく同一のプログラムから作成できる[^alchemy-stages]。
 
 ## コマンド
 

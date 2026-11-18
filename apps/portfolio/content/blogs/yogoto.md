@@ -5,7 +5,7 @@ tags: ["Rust", "音楽", "yogoto"]
 published: true
 ---
 
-yogotoは、曲を管理するために作っているデスクトップアプリだ。YouTubeやニコニコ、SoundCloudのリンク、あるいは自身の端末にある音声ファイルを渡すと、元の音声を再エンコードせずに保存される。次に、BS-RoFormerモデルを用いてステムに分割し、ビート、バー、キーを解析する。アプリは `127.0.0.1` でMCPサーバーを稼働させており、AIはそこから曲のインポートや分離を行い、結果を読み取るよう指示できる。コードは masseater.dev の [apps/yogoto](https://github.com/masseater/masseater.dev/tree/main/apps/yogoto) にある。
+yogotoは、曲を管理するために作っているデスクトップアプリだ。YouTubeやニコニコ、SoundCloudのリンク、あるいは自身の端末にある音声ファイルを渡すと、元の音声を再エンコードせずに保存される。次に、BS-RoFormerモデルを用いてステムに分割し、ビート、バー、キーを解析する。アプリは `127.0.0.1` でMCPサーバーを稼働させており、AIはそこから曲のインポートや分離をし、結果を読み取るよう指示できる。コードは masseater.dev の [apps/yogoto](https://github.com/masseater/masseater.dev/tree/main/apps/yogoto) にある。
 
 アプリ全体がRustで書かれており、Pythonは使用していない。モデルの推論、音声のダウンロード、および音声のデコードは、通常Pythonエコシステムで扱われていた部分だった。このメモには、それぞれを置き換える際に学んだことが記録されている。
 

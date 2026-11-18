@@ -5,7 +5,7 @@ tags: ["fallow", "TypeScript", "静的解析"]
 published: true
 ---
 
-TypeScriptのプロジェクトにおいて、どこからもインポートされていないファイルや、一度も使用されていないエクスポート、そして `package.json` に残されているが一度もインポートされていない依存関係を探す際の一般的な方法は、[knip](https://knip.dev/) を使うことだった。用途ごとに別々のツールが必要だった：コピペされた関数を検出する [jscpd](https://github.com/kucherenko/jscpd)、CSSをチェックする [stylelint](https://stylelint.io/) などだ。[fallow](https://fallow.tools/)は、これらのチェックをRustで書かれた単一のバイナリに集約する解析ツールであり、パースには[Oxc](https://oxc.rs/)を使用している[^fallow-readme]。Node.js プロセスを起動しないため、next.js モノレポ（20,558 ファイル）内で未使用のコードを検出する処理は 2.95 秒で完了する[^fallow-readme]。
+TypeScriptのプロジェクトで、どこからもインポートされていないファイルや一度も使用されていないエクスポートを探す一般的な方法は、[knip](https://knip.dev/) を使うことだった。`package.json` に残されているが一度もインポートされていない依存関係も同じだ。用途ごとに別々のツールが必要だった：コピペされた関数を検出する [jscpd](https://github.com/kucherenko/jscpd)、CSSをチェックする [stylelint](https://stylelint.io/) などだ。[fallow](https://fallow.tools/)は、これらのチェックをRustで書かれた単一のバイナリに集約する解析ツールであり、パースには[Oxc](https://oxc.rs/)を使用している[^fallow-readme]。Node.js プロセスを起動しないため、next.js モノレポ（20,558 ファイル）内で未使用のコードを検出する処理は 2.95 秒で完了する[^fallow-readme]。
 
 ## 検出できること
 
@@ -102,7 +102,7 @@ export const formatPriceUsd = (n: number) => `${n.toFixed(2)} USD`;
 
 既存のコードベースには、多くの場合、すでに数百もの未使用のエクスポートが存在する。すべて修正されるまでCIを赤いままにはしておけないため、`fallow audit`はベースブランチからのdiffで変更されたファイルのみをチェックし、判定はその変更によって新たに生じた問題のみに基づいて行われる[^fallow-readme]。
 
-フィーチャーブランチに `tax.ts` を追加し、そこから `withTax` のみを使用して監査を実行する。
+フィーチャーブランチに `tax.ts` を追加し、そこから `withTax` のみを使用して監査する。
 
 ```text
 $ fallow audit --base main

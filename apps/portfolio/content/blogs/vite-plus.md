@@ -105,7 +105,7 @@ report: {"count":4}
 
 設定には `src/words.txt` が入力として記載されていない。これは、タスク実行中に読み込まれたファイル、存在確認されたパス、および列挙されたディレクトリが記録され、次のキャッシュ判定に利用されるためである[^vite-task-caching]。`cache.output` で記述された `out/**` はキャッシュヒット時に復元されるため、`report` は `gen` が生成したものを読み取ることができる。
 
-環境変数の読み取り値のみは実行時に記録できないため、キャッシュキーに含めるものは `cache.env` に、キーに含めずにタスクに渡すものは `cache.untrackedEnv` に記述する[^vite-task-caching]。`dependsOn` では、`package#task` という形式で他のパッケージのタスクを指定することもでき、`vp run -r <task>` を実行すると、ワークスペース全体を依存関係の順に実行する[^vite-run]。
+環境変数の読み取り値のみは実行時に記録できないため、キャッシュキーに含めるものは `cache.env`、キーに含めずタスクへ渡すものは `cache.untrackedEnv` で指定する[^vite-task-caching]。`dependsOn` では、`package#task` という形式で他のパッケージのタスクも指定でき、`vp run -r <task>` を実行すると、ワークスペース全体を依存関係の順に実行する[^vite-run]。
 
 ## Node.js とパッケージマネージャーのバージョン管理
 

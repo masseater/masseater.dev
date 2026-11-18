@@ -111,11 +111,11 @@ catalog:
   zod: ^3.25.0
 ```
 
-カタログに移動した後、`syncpack update --dependency-types pnpmCatalog`[^syncpack-readme] を指定することで、カタログエントリのみを対象にバージョン更新を行うことができる。
+カタログに移動した後、`syncpack update --dependency-types pnpmCatalog`[^syncpack-readme] を指定することで、カタログエントリのみを対象にバージョンを更新できる。
 
 ## Semver Groupで範囲を記述する方法を決める
 
-Semver Groupsは、バージョンそのものではなく、`^`や`~`の付け方を決定する。本番環境の依存関係には固定、devDependencies には `~`、peerDependencies には `^` というように、依存関係の種類ごとに範囲を指定する。
+Semver Groupsは、バージョンそのものではなく、`^`や`~`の付け方を決定する。本番環境の依存関係には固定、devDependencies には `~`、peerDependencies には `^` というように、依存関係の種類ごとに範囲を指定する[^syncpack-semver-groups]。
 
 ```json
 {
