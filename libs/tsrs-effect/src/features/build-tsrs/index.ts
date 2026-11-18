@@ -1,1 +1,1 @@
-export { buildPackage } from "./model/build.ts";
+export { buildTsrs } from "./model/build.ts";

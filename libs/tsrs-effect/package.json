@@ -1,56 +1,33 @@
 {
-  "name": "@r_masseater/tsrs-effect",
-  "version": "7.1.0-beta.tsrs2.effect.0.70.0",
+  "name": "@masseater.dev/tsrs-effect",
+  "version": "0.0.0",
   "private": true,
-  "description": "tsrs, the Rust port of TypeScript 7, built with the Effect language service, for the tsrs versions that @effect/tsgo does not ship yet. Each per-platform package replaces the matching @tsrs platform package.",
-  "keywords": [
-    "effect",
-    "tanstack-intent",
-    "tsrs",
-    "typescript"
-  ],
-  "homepage": "https://github.com/masseater/masseater.dev/tree/main/libs/tsrs-effect#readme",
-  "bugs": {
-    "url": "https://github.com/masseater/masseater.dev/issues"
+  "description": "Builds tsrs with the Effect language service for the tsrs version Vite+ bundles, and runs commands with TSRS_BINARY pointed at that build.",
+  "bin": {
+    "tsrs-effect": "./bin/launch.ts"
   },
-  "license": "Apache-2.0 AND MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/masseater/masseater.dev.git",
-    "directory": "libs/tsrs-effect"
-  },
-  "files": [
-    "LICENSE",
-    "skills/swap-in-effect-tsrs"
-  ],
   "type": "module",
   "imports": {
     "#/*": "./src/*"
   },
-  "dependencies": {},
-  "devDependencies": {
+  "dependencies": {
     "@masseater.dev/github-workflow": "workspace:*",
     "@masseater.dev/node-main": "workspace:*",
+    "effect": "catalog:stack"
+  },
+  "devDependencies": {
     "@types/node": "catalog:",
-    "effect": "catalog:stack",
     "vite-plus": "catalog:stack"
-  },
-  "engines": {
-    "node": "v26.13.1"
-  },
-  "native": {
-    "binary": "tsrs",
-    "targets": [
-      "linux-x64-gnu",
-      "win32-x64-msvc"
-    ],
-    "archive": true
   },
   "upstream": {
     "effect": "@effect/tsgo@0.70.0",
     "tsrs": "v7.1.0-beta.tsrs2",
     "skip": [
       "160-bolt-extra-workload.patch"
+    ],
+    "targets": [
+      "linux-x64-gnu",
+      "win32-x64-msvc"
     ]
   }
 }
