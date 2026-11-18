@@ -18,6 +18,7 @@ tracing = "=0.1.44"
 
 tree-sitter = "=0.27.2"
 tree-sitter-bash = "=0.25.1"
+tree-sitter-yaml = "=0.7.2"
 github-actions-expressions = "=1.32.0"
 indexmap = "=2.14.2"
 github-actions-models = "=1.32.0"

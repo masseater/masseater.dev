@@ -1,0 +1,294 @@
+{
+  "concurrency": {
+    "contexts": ["github", "inputs", "vars"],
+    "functions": []
+  },
+  "env": {
+    "contexts": ["github", "inputs", "secrets", "vars"],
+    "functions": []
+  },
+  "jobs.<job_id>.cancel-timeout-minutes": {
+    "contexts": ["github", "inputs", "matrix", "needs", "strategy", "vars"],
+    "functions": []
+  },
+  "jobs.<job_id>.concurrency": {
+    "contexts": ["github", "inputs", "matrix", "needs", "strategy", "vars"],
+    "functions": []
+  },
+  "jobs.<job_id>.container": {
+    "contexts": ["github", "inputs", "matrix", "needs", "strategy", "vars"],
+    "functions": []
+  },
+  "jobs.<job_id>.container.credentials": {
+    "contexts": ["env", "github", "inputs", "matrix", "needs", "secrets", "strategy", "vars"],
+    "functions": []
+  },
+  "jobs.<job_id>.container.env.<env_id>": {
+    "contexts": [
+      "env",
+      "github",
+      "inputs",
+      "job",
+      "matrix",
+      "needs",
+      "runner",
+      "secrets",
+      "strategy",
+      "vars"
+    ],
+    "functions": []
+  },
+  "jobs.<job_id>.container.image": {
+    "contexts": ["github", "inputs", "matrix", "needs", "strategy", "vars"],
+    "functions": []
+  },
+  "jobs.<job_id>.continue-on-error": {
+    "contexts": ["github", "inputs", "matrix", "needs", "strategy", "vars"],
+    "functions": []
+  },
+  "jobs.<job_id>.defaults.run": {
+    "contexts": ["env", "github", "inputs", "matrix", "needs", "strategy", "vars"],
+    "functions": []
+  },
+  "jobs.<job_id>.env": {
+    "contexts": ["github", "inputs", "matrix", "needs", "secrets", "strategy", "vars"],
+    "functions": []
+  },
+  "jobs.<job_id>.environment": {
+    "contexts": ["github", "inputs", "matrix", "needs", "strategy", "vars"],
+    "functions": []
+  },
+  "jobs.<job_id>.environment.name": {
+    "contexts": ["github", "inputs", "matrix", "needs", "strategy", "vars"],
+    "functions": []
+  },
+  "jobs.<job_id>.environment.url": {
+    "contexts": [
+      "env",
+      "github",
+      "inputs",
+      "job",
+      "matrix",
+      "needs",
+      "runner",
+      "steps",
+      "strategy",
+      "vars"
+    ],
+    "functions": []
+  },
+  "jobs.<job_id>.if": {
+    "contexts": ["github", "inputs", "needs", "vars"],
+    "functions": ["always", "cancelled", "failure", "success"]
+  },
+  "jobs.<job_id>.name": {
+    "contexts": ["github", "inputs", "matrix", "needs", "strategy", "vars"],
+    "functions": []
+  },
+  "jobs.<job_id>.outputs.<output_id>": {
+    "contexts": [
+      "env",
+      "github",
+      "inputs",
+      "job",
+      "matrix",
+      "needs",
+      "runner",
+      "secrets",
+      "steps",
+      "strategy",
+      "vars"
+    ],
+    "functions": []
+  },
+  "jobs.<job_id>.runs-on": {
+    "contexts": ["github", "inputs", "matrix", "needs", "strategy", "vars"],
+    "functions": []
+  },
+  "jobs.<job_id>.secrets.<secret_id>": {
+    "contexts": ["github", "inputs", "matrix", "needs", "secrets", "strategy", "vars"],
+    "functions": []
+  },
+  "jobs.<job_id>.services": {
+    "contexts": ["github", "inputs", "matrix", "needs", "strategy", "vars"],
+    "functions": []
+  },
+  "jobs.<job_id>.services.<service_id>": {
+    "contexts": ["github", "inputs", "matrix", "needs", "strategy", "vars"],
+    "functions": []
+  },
+  "jobs.<job_id>.services.<service_id>.credentials": {
+    "contexts": ["env", "github", "inputs", "matrix", "needs", "secrets", "strategy", "vars"],
+    "functions": []
+  },
+  "jobs.<job_id>.services.<service_id>.env.<env_id>": {
+    "contexts": [
+      "env",
+      "github",
+      "inputs",
+      "job",
+      "matrix",
+      "needs",
+      "runner",
+      "secrets",
+      "strategy",
+      "vars"
+    ],
+    "functions": []
+  },
+  "jobs.<job_id>.snapshot.if": {
+    "contexts": ["github", "inputs", "matrix", "needs", "strategy", "vars"],
+    "functions": []
+  },
+  "jobs.<job_id>.steps.continue-on-error": {
+    "contexts": [
+      "env",
+      "github",
+      "inputs",
+      "job",
+      "matrix",
+      "needs",
+      "runner",
+      "secrets",
+      "steps",
+      "strategy",
+      "vars"
+    ],
+    "functions": ["hashfiles"]
+  },
+  "jobs.<job_id>.steps.env": {
+    "contexts": [
+      "env",
+      "github",
+      "inputs",
+      "job",
+      "matrix",
+      "needs",
+      "runner",
+      "secrets",
+      "steps",
+      "strategy",
+      "vars"
+    ],
+    "functions": ["hashfiles"]
+  },
+  "jobs.<job_id>.steps.if": {
+    "contexts": [
+      "env",
+      "github",
+      "inputs",
+      "job",
+      "matrix",
+      "needs",
+      "runner",
+      "steps",
+      "strategy",
+      "vars"
+    ],
+    "functions": ["always", "cancelled", "failure", "hashfiles", "success"]
+  },
+  "jobs.<job_id>.steps.name": {
+    "contexts": [
+      "env",
+      "github",
+      "inputs",
+      "job",
+      "matrix",
+      "needs",
+      "runner",
+      "secrets",
+      "steps",
+      "strategy",
+      "vars"
+    ],
+    "functions": ["hashfiles"]
+  },
+  "jobs.<job_id>.steps.run": {
+    "contexts": [
+      "env",
+      "github",
+      "inputs",
+      "job",
+      "matrix",
+      "needs",
+      "runner",
+      "secrets",
+      "steps",
+      "strategy",
+      "vars"
+    ],
+    "functions": ["hashfiles"]
+  },
+  "jobs.<job_id>.steps.timeout-minutes": {
+    "contexts": [
+      "env",
+      "github",
+      "inputs",
+      "job",
+      "matrix",
+      "needs",
+      "runner",
+      "secrets",
+      "steps",
+      "strategy",
+      "vars"
+    ],
+    "functions": ["hashfiles"]
+  },
+  "jobs.<job_id>.steps.with": {
+    "contexts": [
+      "env",
+      "github",
+      "inputs",
+      "job",
+      "matrix",
+      "needs",
+      "runner",
+      "secrets",
+      "steps",
+      "strategy",
+      "vars"
+    ],
+    "functions": ["hashfiles"]
+  },
+  "jobs.<job_id>.steps.working-directory": {
+    "contexts": [
+      "env",
+      "github",
+      "inputs",
+      "job",
+      "matrix",
+      "needs",
+      "runner",
+      "secrets",
+      "steps",
+      "strategy",
+      "vars"
+    ],
+    "functions": ["hashfiles"]
+  },
+  "jobs.<job_id>.strategy": {
+    "contexts": ["github", "inputs", "needs", "vars"],
+    "functions": []
+  },
+  "jobs.<job_id>.timeout-minutes": {
+    "contexts": ["github", "inputs", "matrix", "needs", "strategy", "vars"],
+    "functions": []
+  },
+  "jobs.<job_id>.with.<input_id>": {
+    "contexts": ["github", "inputs", "matrix", "needs", "strategy", "vars"],
+    "functions": []
+  },
+  "on.workflow_call.inputs.<inputs_id>.default": {
+    "contexts": ["github", "inputs", "vars"],
+    "functions": []
+  },
+  "on.workflow_call.outputs.<output_id>.value": {
+    "contexts": ["github", "inputs", "jobs", "vars"],
+    "functions": []
+  },
+  "run-name": {
+    "contexts": ["github", "inputs", "vars"],
+    "functions": []
+  }
+}

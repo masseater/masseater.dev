@@ -62,7 +62,8 @@
     "prepublishOnly": "vp run build"
   },
   "dependencies": {
-    "@effect/platform-node": "catalog:"
+    "@effect/platform-node": "catalog:",
+    "minimatch": "catalog:"
   },
   "devDependencies": {
     "@masseater.dev/lint-host": "workspace:*",

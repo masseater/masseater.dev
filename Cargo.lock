@@ -3398,6 +3398,7 @@ dependencies = [
  "tracing",
  "tree-sitter",
  "tree-sitter-bash",
+ "tree-sitter-yaml",
  "typomania",
  "ureq",
  "url",
