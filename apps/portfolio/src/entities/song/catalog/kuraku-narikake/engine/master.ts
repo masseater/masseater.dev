@@ -1,9 +1,8 @@
+import type { Block } from "@masseater.dev/fumx-studio/live/tape";
+import { reached } from "@masseater.dev/fumx-studio/studio/breathe";
+import type { Progressing } from "@masseater.dev/fumx-studio/studio/breathe";
+import { limitCurve } from "@masseater.dev/fumx-studio/studio/limiter";
 import { Array as Arr, Effect, pipe } from "effect";
-
-import type { Block } from "#/entities/song/lib/live/tape.ts";
-import { reached } from "#/entities/song/lib/studio/breathe.ts";
-import type { Progressing } from "#/entities/song/lib/studio/breathe.ts";
-import { limitCurve } from "#/entities/song/lib/studio/limiter.ts";
 
 import { coreOf, curvesFor } from "./core-state.ts";
 import type { Core, MasterCurves } from "./core-state.ts";

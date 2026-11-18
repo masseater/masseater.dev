@@ -1,4 +1,4 @@
-import { decibels } from "#/entities/song/lib/dsp/number.ts";
+import { decibels } from "@masseater.dev/fumx-studio/dsp/number";
 
 import { interpolated, kneed } from "./core-drums.ts";
 import type { Core, Smoothing } from "./core-state.ts";

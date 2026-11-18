@@ -1,10 +1,10 @@
+import { SAMPLE_RATE, orDefault, semitoneRatio } from "@masseater.dev/fumx-studio/dsp/number";
+import { fade, resample } from "@masseater.dev/fumx-studio/dsp/sampling";
+import { stretch } from "@masseater.dev/fumx-studio/dsp/stretch";
+import type { Stretching } from "@masseater.dev/fumx-studio/dsp/stretch";
 import { Array as Arr, Predicate } from "effect";
 
 import patterns from "#/entities/song/catalog/life-is-but-a/score/patterns.json";
-import { SAMPLE_RATE, orDefault, semitoneRatio } from "#/entities/song/lib/dsp/number.ts";
-import { fade, resample } from "#/entities/song/lib/dsp/sampling.ts";
-import { stretch } from "#/entities/song/lib/dsp/stretch.ts";
-import type { Stretching } from "#/entities/song/lib/dsp/stretch.ts";
 
 import type { Life } from "./context.ts";
 

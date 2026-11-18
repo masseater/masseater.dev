@@ -1,10 +1,9 @@
+import { convolvePair } from "@masseater.dev/fumx-studio/dsp/convolve-pair";
+import { SAMPLE_RATE } from "@masseater.dev/fumx-studio/dsp/number";
+import type { Bus } from "@masseater.dev/fumx-studio/studio/bus";
+import { onePole } from "@masseater.dev/fumx-studio/studio/dynamics";
+import { sent } from "@masseater.dev/fumx-studio/studio/send";
 import { Option, pipe } from "effect";
-
-import { convolvePair } from "#/entities/song/lib/dsp/convolve-pair.ts";
-import { SAMPLE_RATE } from "#/entities/song/lib/dsp/number.ts";
-import type { Bus } from "#/entities/song/lib/studio/bus.ts";
-import { onePole } from "#/entities/song/lib/studio/dynamics.ts";
-import { sent } from "#/entities/song/lib/studio/send.ts";
 
 import type { Kuraku } from "./kuraku.ts";
 import { MIX } from "./score.ts";

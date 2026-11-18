@@ -5,16 +5,16 @@ import viteReact from "@vitejs/plugin-react";
 import rsc from "@vitejs/plugin-rsc";
 import type { PluginOption } from "vite-plus";
 
-import mdx from "#/app/vite/markdown/mdx.config.ts";
 import { seikinTechniques } from "#/app/vite/seikin/seikin-techniques.ts";
 
 import { clientAssets } from "./client-assets.ts";
+import { formats } from "./formats.ts";
 import { pages, sitemap, withLastmod } from "./prerender.ts";
 
 export const portfolioPlugins = (): PluginOption[] => [
   devtools(),
   ...seikinTechniques(),
-  mdx,
+  ...formats(),
   tailwindcss(),
   ...clientAssets(),
   tanstackStart({

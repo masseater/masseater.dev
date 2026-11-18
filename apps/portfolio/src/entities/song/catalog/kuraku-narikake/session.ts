@@ -1,8 +1,8 @@
+import { SAMPLE_RATE } from "@masseater.dev/fumx-studio/dsp/number";
+import { SampleTableSchema } from "@masseater.dev/fumx-studio/studio/placement";
+import { scoreOf } from "@masseater.dev/fumx-studio/studio/score";
 import { Array as Arr, Record as Rec, pipe } from "effect";
 
-import { SAMPLE_RATE } from "#/entities/song/lib/dsp/number.ts";
-import { SampleTableSchema } from "#/entities/song/lib/studio/placement.ts";
-import { scoreOf } from "#/entities/song/lib/studio/score.ts";
 import { samplesIn } from "#/entities/song/model/daw.ts";
 import type { Recording } from "#/entities/song/model/daw.ts";
 
