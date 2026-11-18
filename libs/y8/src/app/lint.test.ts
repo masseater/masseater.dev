@@ -240,3 +240,32 @@ test("agnix checks agent files and its rules can be turned off by id", () =>
       ),
     ).toStrictEqual([]);
   }).pipe(services.runPromise));
+
+test("a built-in plugin reports under the name it is registered with, at the configured severity", () =>
+  Effect.gen(function* registered() {
+    const files = { "skills/demo/SKILL.md": SKILL };
+    const found = yield* lintFiles(files, { plugins: { agents: agnix } });
+    const ids = pipe(
+      found,
+      Arr.map(({ rule }) => rule),
+      Arr.filter(Str.startsWith("agents/")),
+      Arr.dedupe,
+    );
+    expect(ids).not.toStrictEqual([]);
+    const warned = yield* lintFiles(files, {
+      plugins: { agents: agnix },
+      rules: pipe(
+        ids,
+        Arr.map((id): readonly [string, RuleEntry] => [id, "warn"]),
+        Rec.fromEntries,
+      ),
+    });
+    expect(
+      pipe(
+        warned,
+        Arr.filter(({ rule }) => Str.startsWith("agents/")(rule)),
+        Arr.map(({ severity }) => severity),
+        Arr.dedupe,
+      ),
+    ).toStrictEqual(["warn"]);
+  }).pipe(services.runPromise));

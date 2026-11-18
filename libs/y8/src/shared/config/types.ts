@@ -74,10 +74,12 @@ export interface MarkdownlintRule {
   readonly [field: string]: unknown;
 }
 
+export type BuiltinPlugin = "agnix";
+
 export interface Plugin {
   readonly rules?: Readonly<Record<string, Rule>>;
   readonly markdownlintRules?: readonly MarkdownlintRule[];
-  readonly agentConfig?: boolean;
+  readonly builtin?: BuiltinPlugin;
 }
 
 export interface Override {

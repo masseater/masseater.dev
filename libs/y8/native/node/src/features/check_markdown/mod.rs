@@ -2,10 +2,11 @@ use napi::bindgen_prelude::{Buffer, Result};
 use napi_derive::napi;
 use rayon::prelude::*;
 use serde_json::{Map, Value, json};
+use std::collections::HashMap;
 use std::path::PathBuf;
 use tracing::info_span;
 
-use y8_core::{AgentChecker, Input, Linter, Transfer, builtin_rules};
+use y8_core::{Input, Linter, PluginConfig, Plugins, Transfer, builtin_rules};
 
 use napi_telemetry as telemetry;
 
@@ -22,21 +23,23 @@ pub struct LintOptions {
     pub keep_tree: Option<bool>,
     pub keep_source: Option<bool>,
     pub traceparent: Option<String>,
-    pub agnix: Option<AgnixOptions>,
+    pub root: Option<String>,
+    pub plugins: Option<Vec<PluginOptions>>,
 }
 
 #[napi(object)]
 pub struct FileOutput {
     pub path: String,
     pub diagnostics: Value,
-    pub agent_diagnostics: Option<Value>,
+    pub plugin_diagnostics: Option<Value>,
     pub source: Option<Buffer>,
 }
 
 #[napi(object)]
-pub struct AgnixOptions {
-    pub root: String,
-    pub disabled: Vec<String>,
+pub struct PluginOptions {
+    pub name: String,
+    pub prefix: String,
+    pub rules: HashMap<String, String>,
 }
 
 fn linter(config: Option<Value>, inline: Option<bool>) -> Linter {
@@ -47,19 +50,31 @@ fn linter(config: Option<Value>, inline: Option<bool>) -> Linter {
     Linter::new(config, inline.unwrap_or(true))
 }
 
-fn agent_findings(checker: Option<&AgentChecker>, inputs: &[Input]) -> Result<Vec<Value>> {
-    let Some(checker) = checker else {
-        return Ok(Vec::new());
-    };
+fn plugin_findings(plugins: &Plugins, inputs: &[Input]) -> Result<Vec<Value>> {
     let parent = tracing::Span::current();
     inputs
         .par_iter()
         .map(|input| {
             let _guard = parent.enter();
-            serde_json::to_value(checker.check(&input.path, &input.text))
+            serde_json::to_value(plugins.check(&input.path, &input.text))
                 .map_err(|error| napi::Error::from_reason(error.to_string()))
         })
         .collect()
+}
+
+fn plugins_of(options: &mut LintOptions) -> Option<Plugins> {
+    let configs: Vec<PluginConfig> = options
+        .plugins
+        .take()?
+        .into_iter()
+        .map(|plugin| PluginConfig {
+            name: plugin.name,
+            prefix: plugin.prefix,
+            rules: plugin.rules,
+        })
+        .collect();
+    let root = PathBuf::from(options.root.as_deref().unwrap_or("."));
+    (!configs.is_empty()).then(|| Plugins::new(&root, configs))
 }
 
 fn transfer_of(options: &LintOptions) -> Transfer {
@@ -77,22 +92,23 @@ fn to_value(value: &[y8_core::Diagnostic]) -> Result<Value> {
     serde_json::to_value(value).map_err(|error| napi::Error::from_reason(error.to_string()))
 }
 
-fn run(inputs: &[Input], options: LintOptions) -> Result<Vec<FileOutput>> {
+fn run(inputs: &[Input], mut options: LintOptions) -> Result<Vec<FileOutput>> {
     let transfer = transfer_of(&options);
-    let checker = options
-        .agnix
-        .as_ref()
-        .and_then(|agnix| AgentChecker::new(PathBuf::from(&agnix.root), &agnix.disabled));
+    let plugins = plugins_of(&mut options);
     let linter = linter(options.config, options.inline_config);
     let results = linter.lint_all(inputs, transfer);
-    let mut agents = agent_findings(checker.as_ref(), inputs)?.into_iter();
+    let mut found = match &plugins {
+        Some(plugins) => plugin_findings(plugins, inputs)?,
+        None => Vec::new(),
+    }
+    .into_iter();
     let _span = info_span!("y8.to_js", "y8.files" = results.len()).entered();
     results
         .into_iter()
         .map(|result| {
             Ok(FileOutput {
                 diagnostics: to_value(&result.diagnostics)?,
-                agent_diagnostics: agents.next(),
+                plugin_diagnostics: found.next(),
                 source: result.transfer.map(Buffer::from),
                 path: result.path,
             })
@@ -120,8 +136,9 @@ pub fn lint(files: Vec<FileInput>, options: LintOptions) -> Result<Vec<FileOutpu
 pub fn lint_paths(
     root: String,
     paths: Vec<String>,
-    options: LintOptions,
+    mut options: LintOptions,
 ) -> Result<Vec<FileOutput>> {
+    options.root.get_or_insert_with(|| root.clone());
     telemetry::init("y8", env!("CARGO_PKG_VERSION"));
     let span = info_span!("y8.lint_paths", "y8.files" = paths.len());
     telemetry::adopt(&span, options.traceparent.as_deref());

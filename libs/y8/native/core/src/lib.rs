@@ -1,7 +1,8 @@
+mod app;
 mod features;
 mod shared;
 
-pub use features::check_agent_config::{AgentChecker, AgentDiagnostic, AgentLevel};
+pub use app::plugins::{PluginConfig, PluginDiagnostic, PluginSeverity, Plugins};
 pub use features::check_markdown::{
     Diagnostic, FileResult, Input, Linter, Rule, RuleMeta, Severity, Transfer, builtin_rules,
 };
