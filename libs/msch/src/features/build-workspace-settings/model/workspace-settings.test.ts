@@ -72,7 +72,13 @@ const readsLiteralSettings = Effect.gen(function* readsLiteralSettings() {
       publicEntries: [],
       deployEntries: [],
     },
-    testProjects: ["apps/web"],
+    testProjects: [
+      {
+        extends: "apps/web/vite.config.ts",
+        root: "apps/web",
+        test: { name: "web", isolate: false },
+      },
+    ],
     tasks: { verify: ["own#test"], native: [] },
     devDependencies: {
       "apps/web: spans are sent from the SDK in tests": {
@@ -91,6 +97,27 @@ const readsTasks = Effect.gen(function* readsTasks() {
     "libs/other/vite.config.ts": `export default { run: { tasks: { build: { command: "vp pack" } } } };\n`,
   });
   expect(settings.tasks).toStrictEqual({ verify: ["own#verify"], native: [] });
+});
+
+const sharesTestWorkers = Effect.gen(function* sharesTestWorkers() {
+  const settings = yield* settingsOf({
+    "apps/shared/package.json": `{ "name": "shared" }`,
+    "apps/shared/vite.config.ts": `export default { test: { include: ["src/**/*.test.ts"] } };\n`,
+    "apps/isolated/package.json": `{ "name": "isolated" }`,
+    "apps/isolated/vite.config.ts": `export default { test: { isolate: true } };\n`,
+    "libs/bare/package.json": `{ "name": "bare" }`,
+    "libs/addon/package.json": `{ "name": "addon" }`,
+    "libs/addon/vite.config.ts": `import { addonTasks } from "./tasks.ts";\nexport default { run: { tasks: { verify: { command: [], dependsOn: ["test", "build"] }, ...addonTasks() } } };\n`,
+  });
+  expect(settings.testProjects).toStrictEqual([
+    "apps/isolated",
+    {
+      extends: "apps/shared/vite.config.ts",
+      root: "apps/shared",
+      test: { name: "shared", isolate: false },
+    },
+    { extends: false, root: "libs/bare", test: { name: "bare", isolate: false } },
+  ]);
 });
 
 const rejectsRunningCode = Effect.gen(function* rejectsRunningCode() {
@@ -157,6 +184,10 @@ layer(fixtureLayer)("workspace settings", (it) => {
   it.effect(
     "names the verify task of each workspace and the build of each workspace that exports dist",
     () => readsTasks,
+  );
+  it.effect(
+    "shares test workers between the files of a workspace unless its config sets test.isolate to true, and leaves out a workspace whose verify runs its own test task",
+    () => sharesTestWorkers,
   );
   it.effect("rejects msch settings that need the file to run", () => rejectsRunningCode);
   it.effect("rejects a set the root does not define", () => rejectsUnknownSets);

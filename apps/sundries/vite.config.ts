@@ -3,5 +3,5 @@ import { defineConfig } from "vite-plus";
 
 export default defineConfig({
   run: ownerSiteRun,
-  test: { include: ["src/**/*.test.ts"] },
+  test: { isolate: true, include: ["src/**/*.test.ts"] },
 });

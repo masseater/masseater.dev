@@ -3,7 +3,7 @@ import { resolveConfigFromFile } from "vite-plus";
 
 import type { Manifest } from "#/entities/package/@x/workspace.ts";
 
-import { nestedValues } from "./config-literal.ts";
+import { nestedValues, propertyValue, stringsIn } from "./config-literal.ts";
 import { settingsInvalid } from "./workspace-config-source.ts";
 
 export const VERIFY_TASK = ["tasks", "verify"] as const;
@@ -28,6 +28,18 @@ export const definesTask =
   (path: readonly [string, string]) =>
   (program: unknown): boolean =>
     Arr.isReadonlyArrayNonEmpty(nestedValues(path)(program));
+
+const TEST_TASK_NAME = "test";
+const DEPENDS_ON = "dependsOn";
+
+export const testsItself = (program: unknown): boolean =>
+  definesTask(TEST_TASK)(program) ||
+  pipe(
+    nestedValues(VERIFY_TASK)(program),
+    Arr.flatMap((verify) => Option.toArray(propertyValue(DEPENDS_ON)(verify))),
+    Arr.flatMap(stringsIn),
+    Arr.some(({ text }) => text === TEST_TASK_NAME),
+  );
 
 export const hasVerifyTask = Effect.fn("hasVerifyTask")(function* hasVerifyTask(file: string) {
   const config = yield* Effect.tryPromise({
