@@ -177,6 +177,12 @@
       "description": "Permission identifier",
       "oneOf": [
         {
+          "description": "Enables the analyze_song command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-analyze-song",
+          "markdownDescription": "Enables the analyze_song command without any pre-configured scope."
+        },
+        {
           "description": "Enables the choose_audio_files command without any pre-configured scope.",
           "type": "string",
           "const": "allow-choose-audio-files",
@@ -229,6 +235,12 @@
           "type": "string",
           "const": "allow-song-folder",
           "markdownDescription": "Enables the song_folder command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the analyze_song command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-analyze-song",
+          "markdownDescription": "Denies the analyze_song command without any pre-configured scope."
         },
         {
           "description": "Denies the choose_audio_files command without any pre-configured scope.",
