@@ -38,10 +38,53 @@ export default defineConfig(({ mode }) => ({
       ],
     },
     devDependencies: { "spans are sent from the SDK in tests": { use: ["telemetry"], dependencies: ["miniflare"] } },
+    dependencies: { "the screen is traced by the browser SDK": { use: ["telemetry"] } },
   },
   mode,
 }));
 `;
+
+const LITERAL_SETTINGS = {
+  members: ["apps/web", "libs/own"],
+  ignoredDirectories: VITE_CACHES,
+  lint: {
+    ignorePatterns: ["apps/web/upstream/**", "!apps/web/upstream/keep.ts"],
+    overrides: [
+      {
+        files: ["apps/web/worker/**/*.ts"],
+        excludeFiles: ["apps/web/**/*.test.ts"],
+        rules: { "eslint/no-console": ["error", { allow: ["warn"] }] },
+      },
+      {
+        files: ["apps/web/src/serve.ts"],
+        rules: { "import/no-nodejs-modules": ["error", { allow: ["node:http"] }] },
+      },
+    ],
+    shadcnUi: ["apps/web/src/shared/ui/**"],
+    publicEntries: [],
+    deployEntries: [],
+  },
+  testProjects: [
+    {
+      extends: "apps/web/vite.config.ts",
+      root: "apps/web",
+      test: { name: "web", isolate: false },
+    },
+  ],
+  tasks: { verify: ["own#test"], native: [] },
+  devDependencies: {
+    "apps/web: spans are sent from the SDK in tests": {
+      workspaces: ["apps/web"],
+      dependencies: ["@opentelemetry/sdk-trace-base", "miniflare"],
+    },
+  },
+  dependencies: {
+    "apps/web: the screen is traced by the browser SDK": {
+      workspaces: ["apps/web"],
+      dependencies: ["@opentelemetry/sdk-trace-base"],
+    },
+  },
+};
 
 const readsLiteralSettings = Effect.gen(function* readsLiteralSettings() {
   const settings = yield* settingsOf({
@@ -52,41 +95,7 @@ const readsLiteralSettings = Effect.gen(function* readsLiteralSettings() {
     "libs/own/vite.config.ts": `export default { run: { tasks: { test: "vp test run" } } };\n`,
     "libs/fixture/nested/vite.config.ts": `export default { msch: { lint: { ignorePatterns: ["x"] } } };\n`,
   });
-  expect(settings).toStrictEqual({
-    members: ["apps/web", "libs/own"],
-    ignoredDirectories: VITE_CACHES,
-    lint: {
-      ignorePatterns: ["apps/web/upstream/**", "!apps/web/upstream/keep.ts"],
-      overrides: [
-        {
-          files: ["apps/web/worker/**/*.ts"],
-          excludeFiles: ["apps/web/**/*.test.ts"],
-          rules: { "eslint/no-console": ["error", { allow: ["warn"] }] },
-        },
-        {
-          files: ["apps/web/src/serve.ts"],
-          rules: { "import/no-nodejs-modules": ["error", { allow: ["node:http"] }] },
-        },
-      ],
-      shadcnUi: ["apps/web/src/shared/ui/**"],
-      publicEntries: [],
-      deployEntries: [],
-    },
-    testProjects: [
-      {
-        extends: "apps/web/vite.config.ts",
-        root: "apps/web",
-        test: { name: "web", isolate: false },
-      },
-    ],
-    tasks: { verify: ["own#test"], native: [] },
-    devDependencies: {
-      "apps/web: spans are sent from the SDK in tests": {
-        workspaces: ["apps/web"],
-        dependencies: ["@opentelemetry/sdk-trace-base", "miniflare"],
-      },
-    },
-  });
+  expect(settings).toStrictEqual(LITERAL_SETTINGS);
 });
 
 const readsTasks = Effect.gen(function* readsTasks() {

@@ -101,12 +101,13 @@ pub fn run() -> tauri::Result<()> {
         },
     ))
     .plugin(desktop_shell::log_plugin())
+    .plugin(desktop_shell::telemetry_plugin())
     .plugin(desktop_shell::state_plugin())
     .plugin(desktop_shell::browser_keys_plugin())
     .plugin(tauri_plugin_opener::init())
     .plugin(tauri_plugin_dialog::init())
     .plugin(tauri_plugin_updater::Builder::new().build())
-    .invoke_handler(builder.invoke_handler())
+    .invoke_handler(desktop_shell::traced_commands(builder.invoke_handler()))
     .on_window_event(|window, event| {
         if window.label() != MAIN_WINDOW {
             return;

@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@effect/atom-react": "catalog:stack",
+    "@masseater.dev/desktop-telemetry": "workspace:*",
     "@masseater.dev/ui": "workspace:*",
     "@tanstack/react-query": "catalog:stack",
     "@tauri-apps/api": "catalog:",

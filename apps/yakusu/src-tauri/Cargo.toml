@@ -12,6 +12,7 @@ name = "yakusu"
 tauri-build = { version = "=2.7.4", features = [] }
 
 [dependencies]
+desktop-shell = { path = "../../../libs/desktop-shell" }
 dunce = "=1.0.5"
 futures-util = "=0.3.34"
 getrandom = "=0.4.3"
