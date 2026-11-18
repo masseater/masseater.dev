@@ -20,6 +20,8 @@ const AT_LEAST_ONE = 1;
 
 const SEPARATOR = "_";
 
+const SIGNATURE = ".sig";
+
 const Manifest = Schema.Struct({ name: Schema.String });
 
 const EXTENSIONS: Readonly<Record<string, string>> = {
@@ -43,7 +45,12 @@ const extensionOf = (kind: string): Effect.Effect<string> =>
 const bundled = Effect.fn("collect.bundled")(function* bundled(from: string, extension: string) {
   const fileSystem = yield* FileSystem.FileSystem;
   const names = yield* fileSystem.readDirectory(from);
-  const files = pipe(names, Arr.filter(Str.endsWith(extension)));
+  const files = pipe(
+    names,
+    Arr.filter(
+      (name) => Str.endsWith(extension)(name) || Str.endsWith(`${extension}${SIGNATURE}`)(name),
+    ),
+  );
   if (!Arr.isReadonlyArrayNonEmpty(files)) {
     return yield* Effect.die(`${from} has no ${extension}`);
   }
