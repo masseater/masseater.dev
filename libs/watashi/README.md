@@ -11,6 +11,14 @@ in and manages API tokens.
 It needs Node.js 26 or later. The package is one bundled file whose only
 runtime dependency is the native addon of h56m.
 
+## Agent skills
+
+Guidance for agents ships in the package as TanStack Intent skills. Load one with `vp exec intent load @r_masseater/watashi#<skill>`.
+
+| Skill                | When to use                                                           |
+| -------------------- | --------------------------------------------------------------------- |
+| `send-conversations` | Sending Claude Code transcripts to watashi with the CLI or the plugin |
+
 ## As a Claude Code plugin
 
 The package is also the Claude Code plugin `watashi` in the

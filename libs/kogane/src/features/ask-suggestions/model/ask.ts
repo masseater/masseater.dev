@@ -13,7 +13,7 @@ import {
   pipe,
 } from "effect";
 
-import type { Suggestion } from "#/shared/api/rpcs.ts";
+import type { Suggestion } from "#/shared/api/index.ts";
 import { IDLE_LIMIT, SERVER_FLAG } from "#/shared/config/index.ts";
 import { runDetached } from "#/shared/lib/detach.ts";
 

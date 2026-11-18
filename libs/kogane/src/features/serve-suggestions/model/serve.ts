@@ -4,7 +4,7 @@ import { Clock, DateTime, Duration, Effect, FileSystem, Layer, Path, Ref, Schedu
 import type { Rpc, RpcGroup } from "effect/rpc";
 import { RpcServer } from "effect/rpc";
 
-import { KoganeRpcs } from "#/shared/api/rpcs.ts";
+import { KoganeRpcs } from "#/shared/api/index.ts";
 import { IDLE_LIMIT } from "#/shared/config/index.ts";
 import { embedderLayer } from "#/shared/lib/embedder.ts";
 

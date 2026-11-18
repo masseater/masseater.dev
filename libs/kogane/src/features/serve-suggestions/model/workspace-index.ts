@@ -2,12 +2,12 @@ import { Array as Arr, Context, Effect, Layer, pipe } from "effect";
 import type { FileSystem, Path } from "effect";
 
 import { monorepoRoots, workspacesIn } from "#/entities/workspace/index.ts";
-import { rank } from "#/features/suggest-workspaces/index.ts";
-import type { Scored } from "#/features/suggest-workspaces/index.ts";
-import type { Suggestion } from "#/shared/api/rpcs.ts";
+import type { Suggestion } from "#/shared/api/index.ts";
 import { Embedder } from "#/shared/lib/embedder.ts";
 import type { EmbeddingFailed } from "#/shared/lib/embedding-failed.ts";
 
+import { rank } from "./rank.ts";
+import type { Scored } from "./rank.ts";
 import { vectorStore } from "./vector-store.ts";
 import type { Located } from "./vector-store.ts";
 

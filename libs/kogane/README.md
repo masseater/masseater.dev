@@ -6,7 +6,7 @@ On every prompt, the `UserPromptSubmit` hook compares the prompt with the `descr
 
 ```text
 kogane: these existing workspaces may already do what this prompt needs. Read their AGENTS.md or README before building something new or saying it does not exist.
-- @masseater.dev/effect2rs (/home/user/masseater.dev/libs/effect2rs): Generates serde Rust types from Effect Schema by walking SchemaRepresentation.
+- @masseater.dev/effect2rs (<repository>/libs/effect2rs): Generates serde Rust types from Effect Schema by walking SchemaRepresentation.
 ```
 
 Nothing leaves the machine. The prompt and the descriptions are embedded with [EmbeddingGemma 2](https://huggingface.co/onnx-community/embeddinggemma-2-ONNX) (q4, pinned revision) on the CPU.
@@ -19,6 +19,14 @@ The plugin is listed in the marketplace of [masseater/masseater.dev](https://git
 claude plugin marketplace add masseater/masseater.dev
 claude plugin install kogane@masseater-dev
 ```
+
+## Agent skills
+
+Guidance for agents ships in the package as TanStack Intent skills. Load one with `vp exec intent load @r_masseater/kogane#<skill>`.
+
+| Skill                | When to use                                                                                |
+| -------------------- | ------------------------------------------------------------------------------------------ |
+| `suggest-workspaces` | Acting on a `kogane:` suggestion, installing the plugin, or writing workspace descriptions |
 
 ## How it behaves
 

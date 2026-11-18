@@ -1,9 +1,10 @@
 import { Array as Arr, Effect, MutableHashMap, Option, pipe } from "effect";
 
 import type { Workspace } from "#/entities/workspace/index.ts";
-import type { Candidate } from "#/features/suggest-workspaces/index.ts";
 import type { Embedder, Vector } from "#/shared/lib/embedder.ts";
 import type { EmbeddingFailed } from "#/shared/lib/embedding-failed.ts";
+
+import type { Candidate } from "./rank.ts";
 
 export interface Located {
   readonly root: string;

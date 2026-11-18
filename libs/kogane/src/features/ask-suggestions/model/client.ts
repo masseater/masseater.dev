@@ -3,7 +3,7 @@ import { Context, Effect, FileSystem, Layer, Path } from "effect";
 import { RpcClient, RpcSerialization } from "effect/rpc";
 import { Socket } from "effect/socket";
 
-import { KoganeRpcs } from "#/shared/api/rpcs.ts";
+import { KoganeRpcs } from "#/shared/api/index.ts";
 
 /** @internal */
 export class KoganeClient extends Context.Service<KoganeClient>()(
