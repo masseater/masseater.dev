@@ -16,7 +16,7 @@ TypeScriptのプロジェクトにおいて、どこからもインポートさ�
 | `fallow health`                       | 複雑性のホットスポットと0〜100の健全性スコア                           |
 | `fallow architecture`、`fallow guard` | レイヤー間の依存関係の方向性の違反、および循環依存関係                 |
 | `fallow security`                     | エントリポイントからの到達可能性順のセキュリティ候補                   |
-| `fallow audit`                        | 変更されたファイルのみを対象としたパス、警告、または失敗判定           |
+| `fallow audit`                        | 変更されたファイルのみを対象としたpass、warn、failの判定               |
 
 引数なしで `fallow` を実行すると、デッドコード、重複、および複雑性チェックがまとめて実行される[^fallow-readme]。
 
@@ -100,7 +100,7 @@ export const formatPriceUsd = (n: number) => `${n.toFixed(2)} USD`;
 
 ## 変更された部分のみを判定する監査
 
-既存のコードベースには、多くの場合、すでに数百もの未使用のエクスポートが存在する。すべて修正されるまでCIをredに維持することはできないため、`fallow audit`はベースブランチからのdiffで変更されたファイルのみをチェックし、判定はその変更によって新たに生じた問題のみに基づいて行われる[^fallow-readme]。
+既存のコードベースには、多くの場合、すでに数百もの未使用のエクスポートが存在する。すべて修正されるまでCIを赤いままにはしておけないため、`fallow audit`はベースブランチからのdiffで変更されたファイルのみをチェックし、判定はその変更によって新たに生じた問題のみに基づいて行われる[^fallow-readme]。
 
 フィーチャーブランチに `tax.ts` を追加し、そこから `withTax` のみを使用して監査を実行する。
 
@@ -116,7 +116,7 @@ Audit scope: 2 changed files vs main (cf92e12..HEAD)
 ✗ dead code: 2 issues · 2 changed files (0.08s)
 ```
 
-mainに既にあった`legacy.ts`はレポートに含まれていない。既存の問題でも失敗させたいなら、`--gate all`[^fallow-readme]を追加して。
+mainに既にあった`legacy.ts`はレポートに含まれていない。既存の問題でも失敗させたいなら、`--gate all`[^fallow-readme]を追加する。
 
 ## AIエージェントのコミットを阻止するフック
 

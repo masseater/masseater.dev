@@ -9,13 +9,13 @@ published: true
 
 IaCエンジン自体はTypeScriptで記述されており、プロバイダーはそのままインポートして実行される。PulumiやTerraformとは異なり、プロバイダーをGoエンジンに橋渡しするレイヤーは存在しない[^alchemy-compare]。npm上の現行バージョンは2.0.0-beta.84なので、まだベータ版である[^npm-alchemy-www-npmjs-com-package-alchemy]。
 
-| 側面             | 錬金術                                                                                       | Pulumi, Terraform, SST, CDK                                      |
-| ---------------- | -------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
-| エンジン         | TypeScript。プロバイダーはインポートされ、直接実行される                                     | プロバイダーはGoエンジンにブリッジされる                         |
-| 言語             | TypeScriptと[Effect](https://effect.website/)                                                | Pulumiは複数の言語に対応しており、TerraformはHCLを使用している。 |
-| テスト           | 実際のスタックをデプロイし、テストを実行して取り壊す。すべて `bun test` または Vitest から。 | 同等のものなし                                                   |
-| 権限             | コードが使用するバインディングに由来する                                                     | SSTはリンクを付与するが、PulumiやTerraformはそれらを強制しない。 |
-| ローカルで実行中 | `alchemy dev` によるエミュレーション                                                         | なし                                                             |
+| 側面         | Alchemy                                                                                      | Pulumi, Terraform, SST, CDK                                      |
+| ------------ | -------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| エンジン     | TypeScript。プロバイダーはインポートされ、直接実行される                                     | プロバイダーはGoエンジンにブリッジされる                         |
+| 言語         | TypeScriptと[Effect](https://effect.website/)                                                | Pulumiは複数の言語に対応しており、TerraformはHCLを使用している。 |
+| テスト       | 実際のスタックをデプロイし、テストを実行して取り壊す。すべて `bun test` または Vitest から。 | 同等のものなし                                                   |
+| 権限         | コードが使用するバインディングに由来する                                                     | SSTはリンクを付与するが、PulumiやTerraformはそれらを強制しない。 |
+| 手元での実行 | `alchemy dev` によるエミュレーション                                                         | なし                                                             |
 
 ソースは公式の比較ページ[^alchemy-compare]だ。
 
@@ -50,11 +50,11 @@ export default Stack(
 );
 ```
 
-`migrations` で指定されたディレクトリ内のSQLは、デプロイごとに番号順に適用され、既に適用済みのファイルはスキップされる[^alchemy-cloudflare-d1]。Stackの本体が返すオブジェクトが出力として扱われ、CLIではdeploy[^alchemy-getting-started]の後にそれが表示される。
+`migrations` で指定されたディレクトリ内のSQLは、デプロイごとに番号順に適用され、既に適用済みのファイルはスキップされる[^alchemy-cloudflare-d1]。Stackの本体が返すオブジェクトが出力として扱われ、CLIではデプロイ[^alchemy-getting-started]の後にそれが表示される。
 
 ## Workerはenvの型を受け取る
 
-`InferEnv<typeof api>` は、`env: { DB }` に渡される各リソースをそのランタイム型にマッピングする型である。D1データベースは`D1Database`になり、R2バケットは`R2Bucket`になる[^alchemy-cloudflare-workers]。作業者のコードはこの型の `env` を受け取る。
+`InferEnv<typeof api>` は、`env: { DB }` に渡される各リソースをそのランタイム型にマッピングする型である。D1データベースは`D1Database`になり、R2バケットは`R2Bucket`になる[^alchemy-cloudflare-workers]。Workerのコードはこの型の `env` を受け取る。
 
 ```ts
 // worker.ts
@@ -78,7 +78,7 @@ worker.ts(6,30): error TS2339: Property 'CACHE' does not exist on type '{ readon
 
 `env` の型は `{ readonly DB: D1Database }` のみであり、Stack に記述されていないバインディングは存在しないものとして扱われる。Worker側で `env.CACHE` を使いたいなら、Stack側で `KV.Namespace` を追加して `env` に渡すしかなく、定義と用途が乖離しないようにする。
 
-## エフェクトを込めて記述すれば、バインディングはレイヤーになる
+## Effectで記述すれば、バインディングはレイヤーになる
 
 上記の `async fetch` 以外にも、Worker 自体を Effect で記述し、`yield*` でバインディングを受け取るスタイルもある。
 
@@ -109,7 +109,7 @@ export default Cloudflare.Worker(
 );
 ```
 
-`ReadWriteBucket(Uploads)` は、「この Worker は Uploads を読み書きする」という契約だ。`ReadWriteBucketBinding` レイヤーは、そのコントラクトを Cloudflare バインディングとして実装している[^alchemy-what-is-alchemy]。コントラクトと実装が分離されているため、ハンドラを変更することなく、Layerを入れ替えるだけで別のストレージをハンドラとして指定できる。`ReadBucket` に切り替えると、クライアントの type[^alchemy-cloudflare-workers] から書き込みメソッドが消える。
+`ReadWriteBucket(Uploads)` は、「この Worker は Uploads を読み書きする」という契約だ。`ReadWriteBucketBinding` レイヤーは、そのコントラクトを Cloudflare バインディングとして実装している[^alchemy-what-is-alchemy]。コントラクトと実装が分離されているため、ハンドラを変更することなく、Layerを入れ替えるだけでハンドラを別のストレージに向けられる。`ReadBucket` に切り替えると、クライアントの型[^alchemy-cloudflare-workers]から書き込みメソッドが消える。
 
 ```text
 $ tsc
@@ -118,7 +118,7 @@ worker.ts(6,17): error TS2339: Property 'put' does not exist on type 'ReadBucket
 
 AWSでは、同じ仕組みで1つのリソースのみを対象とするバインディングごとにIAMステートメントを生成するため、ポリシーを手書きする必要がない[^alchemy-what-is-alchemy]。Worker専用のLayerをLambda関数に渡すと、Lambda側に`WorkerEnvironment`[^alchemy-binding]がないため型エラーになる。
 
-## 状態と段階
+## ステートとステージ
 
 各リソースの入力、出力、ID、およびステータスは状態として保存され、次回のデプロイ時にコードとの差分を算出するために使用される。デフォルトでは `.alchemy/` ディレクトリに書き込まれるため、`.gitignore` に追加すること。チーム内で状態を共有するには、`Cloudflare.state()` を選択し、Durable Object と SQLite を使用する Worker を初回実行時に自動的に配置して状態を保持する。CIでは、`alchemy state bootstrap`[^alchemy-state-store]で事前に準備しておく。
 
@@ -126,7 +126,7 @@ AWSでは、同じ仕組みで1つのリソースのみを対象とするバイ�
 
 ## コマンド
 
-`alchemy deploy` はプランを表示し、確認後に適用する。認証情報は `~/.alchemy/profiles.json` のプロファイルに保存されるため、環境変数を設定する必要はない[^alchemy-getting-started]。`alchemy dev` はファイルの変更を監視して再デプロイを行い、ローカルランタイムで Worker を実行しながらクラウド上にリソースを作成する。適用に失敗しても dev は停止せず、コードを修正して save[^alchemy-cli-dev] すれば再度デプロイされる。`alchemy destroy` はステージのリソースを削除する。
+`alchemy deploy` はプランを表示し、確認後に適用する。認証情報は `~/.alchemy/profiles.json` のプロファイルに保存されるため、環境変数を設定する必要はない[^alchemy-getting-started]。`alchemy dev` はファイルの変更を監視して再デプロイを行い、ローカルランタイムで Worker を実行しながらクラウド上にリソースを作成する。適用に失敗しても dev は停止せず、コードを修正して保存[^alchemy-cli-dev]すれば再度デプロイされる。`alchemy destroy` はステージのリソースを削除する。
 
 [^alchemy-what-is-alchemy]: Alchemy - What is Alchemy. https://alchemy.run/what-is-alchemy
 

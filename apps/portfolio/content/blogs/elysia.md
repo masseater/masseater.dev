@@ -1,11 +1,11 @@
 ---
 title: "Elysia: サーバーの型定義をクライアントの型として使用する"
-description: "「Eden Treaty」では、Elysiaのルート定義からクライアントタイプを取得し、サンプルコードとtsc出力で示している。また、バリデーションやプラグイン、Cloudflare Workersでの運用についても解説している。"
+description: "Eden TreatyでElysiaのルート定義からクライアントの型を取得する仕組みを、サンプルコードとtscの出力で示す。また、バリデーションやプラグイン、Cloudflare Workersでの運用についても解説している。"
 tags: ["Elysia", "TypeScript", "Bun"]
 published: true
 ---
 
-REST API のクライアントを書く際は、サーバーのコードから手作業でコピーするか、OpenAPI からコードを生成してレスポンスタイプを用意する。いずれにせよ、サーバーが変わった途端に古くなってしまう。[Elysia](https://elysiajs.com/)では、クライアント側でサーバーの`app`の型をインポートするだけで、コード生成なしに各ステータスのパス、パラメータ、ボディ、レスポンスの型を取得できる[^eden-overview]。
+REST API のクライアントを書く際は、サーバーのコードから手作業でコピーするか、OpenAPI からコードを生成してレスポンスタイプを用意する。いずれにせよ、サーバーが変わった途端に古くなってしまう。[Elysia](https://elysiajs.com/)では、クライアント側でサーバーの`app`の型をインポートするだけで、コード生成なしにパス、パラメータ、ボディ、ステータスごとのレスポンスの型を取得できる[^eden-overview]。
 
 ElysiaはBun向けに設計されたバックエンドフレームワークだが、[WinterTC](https://wintertc.org/)に準拠しているため、アダプター[^elysia-at-glance]を介してNode.js、Deno、Cloudflare Workersでも動作する。
 
@@ -79,7 +79,7 @@ await api.api.users.post({ name: "bob" });
 
 `api.api.users({ id: 1 }).get()` は、パス `/api/users/:id` をプロパティの連鎖に直接マッピングする呼び出しであり、`{ data, error }`[^eden-overview] のペアを返す。`error` が存在するブランチでは `error.status` が `404` に、`error.value` が `{ message: string }` に絞り込まれ、`data` ブランチでは 200 スキーマの型が適用される。
 
-存在しないプロパティへの参照とbodyキーの型ミスは、いずれもコンパイル時に検出される。
+存在しないプロパティへの参照とbodyキーの打ち間違いは、いずれもコンパイル時に検出される。
 
 ```text
 $ tsc
@@ -124,14 +124,14 @@ Elysiaは[Standard Schema](https://standardschema.dev/)に対応しているた�
 
 ## プラグイン
 
-ルートのグループは個別の `Elysia` インスタンスとして定義され、`.use()` で親に組み込まれる。プラグインのルートは親の型にマージされているので、単一ルートから `App` 型をエクスポートすれば十分だ。ライフサイクルフック（`onBeforeHandle` など）はデフォルトで自身のインスタンスに限定されており、`scoped` を指定すると親に拡張され、`global` を指定するとすべてに拡張される[^elysia-plugin]。
+ルートのグループは個別の `Elysia` インスタンスとして定義され、`.use()` で親に組み込まれる。プラグインのルートは親の型にマージされているので、根のインスタンス1か所から `App` 型をエクスポートすれば十分だ。ライフサイクルフック（`onBeforeHandle` など）はデフォルトで自身のインスタンスに限定されており、`scoped` を指定すると親に拡張され、`global` を指定するとすべてに拡張される[^elysia-plugin]。
 
 ```ts
 const todos = new Elysia({ prefix: "/todos" }).get("/", () => [...]);
 const app = new Elysia().use(todos);
 ```
 
-## Cloudflare Workersで動作中
+## Cloudflare Workersでの実行
 
 `elysia/adapter/cloudflare-worker` から `CloudflareAdapter` を指定する。AoTのコンパイルはそのまま動作する[^elysia-integration-with-cloudflare-worker]。
 
@@ -144,7 +144,7 @@ export default new Elysia({ adapter: CloudflareAdapter })
   .compile();
 ```
 
-ワーカーには `fs` がないため、`Elysia.file`、Static プラグイン、および OpenAPI Type Gen は利用できない。起動前に Response を作成する `.get('/', 'Hello')` のようなインライン値もエラーの原因となる[^elysia-integration-with-cloudflare-worker]。このアダプターは実験的なものとして扱われる[^elysia-integration-with-cloudflare-worker]。
+Workersには `fs` がないため、`Elysia.file`、Static プラグイン、および OpenAPI Type Gen は利用できない。起動前に Response を作成する `.get('/', 'Hello')` のようなインライン値もエラーの原因となる[^elysia-integration-with-cloudflare-worker]。このアダプターは実験的なものとして扱われる[^elysia-integration-with-cloudflare-worker]。
 
 [^eden-overview]: Eden - Overview. https://elysiajs.com/eden/overview.html
 

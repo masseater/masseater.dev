@@ -15,10 +15,10 @@ TypeScriptのリポジトリには、[ESLint](https://eslint.org/)、[Prettier](
 | `vp pack`                       | [tsdown](https://tsdown.dev/)                                                                                        |
 | `vp run`                        | Vite Task                                                                                                            |
 | `vp install`、`vp add`、`vp pm` | 検出されたパッケージマネージャー                                                                                     |
-| `vp env`                        | Node.js のバージョン管理とパッケージマネージャー                                                                     |
+| `vp env`                        | Node.js とパッケージマネージャーのバージョン管理                                                                     |
 | `vp hooks`、`vp staged`         | Gitフック                                                                                                            |
 
-## 設定は vite.config.ts にまとめられている。
+## 設定は vite.config.ts にまとめられている
 
 `vite-plus` から `defineConfig` をインポートすれば、`lint`、`fmt`、`test`、`run`、`staged` キーを Vite の `server` や `build`[^vite-configuring-vite] と同じファイルに記述できる。`.eslintrc`、`.prettierrc`、`vitest.config.ts`、`.lintstagedrc`は不要になった。
 
@@ -79,7 +79,7 @@ report: {"count":3}
 vp run: 0/2 cache hit (0%), 2/2 successful.
 ```
 
-何も変更せずに再度実行すると、コマンドは実行されず、保存された出力が再生成される。
+何も変更せずに再度実行すると、コマンドは実行されず、保存された出力が再生される。
 
 ```text
 $ vp run report
@@ -107,7 +107,7 @@ report: {"count":4}
 
 環境変数の読み取り値のみは実行時に記録できないため、キャッシュキーに含めるものは `cache.env` に、キーに含めずにタスクに渡すものは `cache.untrackedEnv` に記述する[^vite-task-caching]。`dependsOn` では、`package#task` という形式で他のパッケージのタスクを指定することもでき、`vp run -r <task>` を実行すると、ワークスペース全体を依存関係の順に実行する[^vite-run]。
 
-## Node.js のバージョン管理とパッケージマネージャー
+## Node.js とパッケージマネージャーのバージョン管理
 
 `vp env` は Node.js ランタイムとパッケージマネージャーのバージョンを管理する。Node.jsのバージョンは、最も近いディレクトリから `.node-version`、`devEngines.runtime`、`engines.node`、`.nvmrc` を探すことで決定する。nodejs.orgから取得したアーカイブは、PGP署名とSHA-256[^vite-environment]で検証されている。パッケージマネージャーは `packageManager`、`devEngines.packageManager`、ロックファイルの順に検出され、いずれも存在しない場合は pnpm[^vite-package-management] となる。`vp install` と `vp add` は検出されたパッケージマネージャーのコマンドに変換されるため、入力したコマンドは pnpm リポジトリでも npm リポジトリでも同一になる。
 
