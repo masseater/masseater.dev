@@ -1,4 +1,5 @@
-import { NodeRuntime, NodeServices } from "@effect/platform-node";
+import { runMain } from "@effect/platform-node/NodeRuntime";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import {
   Array as Arr,
   Effect,
@@ -107,8 +108,8 @@ const program = Effect.gen(function* stageBlogs() {
   yield* Effect.logInfo("standard-site.staged").pipe(Effect.annotateLogs({ count }));
 });
 
-NodeRuntime.runMain(
-  Layer.build(NodeServices.layer).pipe(
+runMain(
+  Layer.build(nodeServices).pipe(
     Effect.flatMap((context) =>
       Effect.provideContext(program.pipe(Effect.withSpan("standard-site.stage")), context),
     ),

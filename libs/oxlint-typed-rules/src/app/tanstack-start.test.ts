@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { layer } from "@effect/vitest";
 import { Effect, FileSystem, Option, Record, pipe } from "effect";
 import type { Rule } from "vite-plus/lint/plugins";
@@ -114,7 +114,7 @@ const flagsAsyncClientComponents = runRuleTests((tester) => {
   });
 });
 
-layer(NodeServices.layer)("tanstack-start rules with type information", (it) => {
+layer(nodeServices)("tanstack-start rules with type information", (it) => {
   it.effect(
     "no-client-code-in-server-component flags hooks and handlers",
     () => flagsClientCodeInServerComponents,

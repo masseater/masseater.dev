@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { layer } from "@effect/vitest";
 import { assertInclude, deepStrictEqual, strictEqual } from "@effect/vitest/utils";
 import { Effect, Array as Arr, Record as Rec, String as Str, pipe } from "effect";
@@ -150,7 +150,7 @@ const refuses = ([, options, expected]: readonly [
     assertInclude(outputOf(run), expected);
   });
 
-layer(NodeServices.layer, { excludeTestServices: true })("plugin configuration", (it) => {
+layer(nodeServices, { excludeTestServices: true })("plugin configuration", (it) => {
   it.effect(
     "registers each rule under its own id and asks only for the enabled ones",
     () => withMock(registersRules),

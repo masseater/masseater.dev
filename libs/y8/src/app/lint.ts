@@ -1,5 +1,5 @@
 import { callAddon, present, sortByPosition, traceparent } from "@masseater.dev/lint-host";
-import { Array as Arr, Effect, Match, Option, pipe } from "effect";
+import { Array as Arr, Effect, Match, Option, Schema, pipe } from "effect";
 
 import {
   BUILTIN,
@@ -30,6 +30,8 @@ export interface LintInput {
   readonly projectFiles?: readonly string[];
   readonly config?: Y8Config;
 }
+
+const CACHE_DIRECTORY = "node_modules/.cache/y8";
 
 type RangeFields = Partial<{ readonly column: number; readonly length: number }>;
 
@@ -72,6 +74,9 @@ const nativeOptions = (
       ...present(parent, (value) => ({ traceparent: value })),
       root,
       plugins: resolved.builtins,
+      ...present(Option.liftPredicate(config.cache ?? true, Boolean), () => ({
+        cacheDir: `${root}/${CACHE_DIRECTORY}`,
+      })),
     })),
   );
 
@@ -100,8 +105,19 @@ const scriptedOne =
       Option.getOrElse((): readonly Diagnostic[] => []),
     );
 
+const decodeJson = Schema.decodeUnknownOption(Schema.fromJsonString(Schema.Unknown));
+
+const isDiagnostics = (value: unknown): value is readonly NativeDiagnostic[] => Arr.isArray(value);
+
+const nativeDiagnosticsOf = (result: NativeResult): readonly NativeDiagnostic[] =>
+  pipe(
+    decodeJson(result.diagnostics),
+    Option.filter(isDiagnostics),
+    Option.getOrElse((): readonly NativeDiagnostic[] => []),
+  );
+
 const builtinOf = (result: NativeResult): readonly Diagnostic[] =>
-  pipe(result.diagnostics, Arr.map(fromNative(result.path)));
+  pipe(nativeDiagnosticsOf(result), Arr.map(fromNative(result.path)));
 
 const checkPlugins = (config: Y8Config): Effect.Effect<void, Y8Error> =>
   Arr.match(unknownPlugins(config), {

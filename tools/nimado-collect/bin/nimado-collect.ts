@@ -1,5 +1,6 @@
 import { CredentialsFromEnv } from "@distilled.cloud/cloudflare/Credentials";
-import { NodeRuntime, NodeServices } from "@effect/platform-node";
+import { runMain } from "@effect/platform-node/NodeRuntime";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { Effect, Layer } from "effect";
 import { Command } from "effect/cli";
 import { FetchHttpClient } from "effect/http";
@@ -15,7 +16,7 @@ const tracing = OtlpTracer.layerFromConfig({
 
 const services = tracing.pipe(
   Layer.provideMerge(FetchHttpClient.layer),
-  Layer.provideMerge(NodeServices.layer),
+  Layer.provideMerge(nodeServices),
   Layer.provideMerge(CredentialsFromEnv),
 );
 
@@ -23,7 +24,7 @@ const command = Command.make("nimado-collect").pipe(
   Command.withSubcommands([dailyCommand, pruneCommand, saveCommand]),
 );
 
-NodeRuntime.runMain(
+runMain(
   Layer.build(services).pipe(
     Effect.flatMap((context) =>
       Effect.provideContext(Command.run(command, { version: pkg.version }), context),

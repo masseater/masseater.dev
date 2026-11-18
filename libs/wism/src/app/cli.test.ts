@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { waitForSpans } from "@r_masseater/vitest-otlp";
 import type { ReceivedSpan } from "@r_masseater/vitest-otlp";
 import {
@@ -22,7 +22,7 @@ const FAILED = 1;
 const CLI_TIMEOUT = 120_000;
 const MISPLACED_COUNT = 2;
 
-const services = ManagedRuntime.make(NodeServices.layer);
+const services = ManagedRuntime.make(nodeServices);
 afterAll(() => services.dispose());
 
 const PLUGIN = `{ rules: { "outside-src": { meta: { description: "Scripts sit in src/" }, check: ({ files, report }) => { for (const path of files) { if (path.endsWith(".ts") && !path.includes("/src/")) { report({ path, message: "sits outside src/." }); } } } } } }`;

@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import type { Scope } from "effect";
 import {
   Array,
@@ -203,7 +203,7 @@ const judge =
         ),
     });
 
-const runtime = ManagedRuntime.make(Layer.mergeAll(NodeServices.layer, FetchHttpClient.layer));
+const runtime = ManagedRuntime.make(Layer.mergeAll(nodeServices, FetchHttpClient.layer));
 
 type Teardown = () => Promise<void>;
 

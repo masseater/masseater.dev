@@ -68,7 +68,7 @@ export interface PluginOptions {
 
 export interface NativeResult {
   readonly path: string;
-  readonly diagnostics: readonly NativeDiagnostic[];
+  readonly diagnostics: string;
   readonly pluginDiagnostics?: readonly PluginDiagnostic[] | null;
   readonly source?: Uint8Array | null;
 }
@@ -81,6 +81,7 @@ export interface NativeOptions {
   readonly traceparent?: string;
   readonly root?: string;
   readonly plugins?: readonly PluginOptions[];
+  readonly cacheDir?: string;
 }
 
 export interface SourceFile {

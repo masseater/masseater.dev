@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { lintText } from "@r_masseater/fu4";
 import type { Fu4Config, InputKind } from "@r_masseater/fu4";
 import {
@@ -21,7 +21,7 @@ import { AUDITS } from "./concerns/index.ts";
 import { ExpectedFinding, expectedOf, probe } from "./conformance.test.support.ts";
 import type { Expected } from "./conformance.test.support.ts";
 
-const services = ManagedRuntime.make(NodeServices.layer);
+const services = ManagedRuntime.make(nodeServices);
 afterAll(() => services.dispose());
 
 const FIXTURES = "fixtures";

@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { layer } from "@effect/vitest";
 import { assertInclude, deepStrictEqual, strictEqual } from "@effect/vitest/utils";
 import { Array as Arr, Effect, Order, Record as Rec, String as Str, pipe } from "effect";
@@ -161,7 +161,7 @@ const refusesNonFunction = Effect.gen(function* test() {
   assertInclude(outputOf(run), "select");
 });
 
-layer(NodeServices.layer, { excludeTestServices: true })("choosing what to ask about", (it) => {
+layer(nodeServices, { excludeTestServices: true })("choosing what to ask about", (it) => {
   it.effect(
     "asks only about functions the selector picks by name",
     () => withMock(byName),

@@ -1,4 +1,4 @@
-import { NodeRuntime } from "@effect/platform-node";
+import { runMain } from "@effect/platform-node/NodeRuntime";
 import { Effect, Array as Arr, pipe } from "effect";
 
 import { outcomeOf, Results, resultsLayer } from "#/features/measure-documents/index.ts";
@@ -17,4 +17,4 @@ const rescore = Effect.gen(function* rescore() {
   });
 });
 
-NodeRuntime.runMain(rescore.pipe(provideAtEntry(resultsLayer)));
+runMain(rescore.pipe(provideAtEntry(resultsLayer)));

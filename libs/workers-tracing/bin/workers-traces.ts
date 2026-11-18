@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 import { CredentialsFromEnv } from "@distilled.cloud/cloudflare/Credentials";
 import { queryObservabilityTelemetry } from "@distilled.cloud/cloudflare/workers";
-import { NodeRuntime, NodeServices } from "@effect/platform-node";
+import { runMain } from "@effect/platform-node/NodeRuntime";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import packageJson from "@r_masseater/workers-tracing/package.json" with { type: "json" };
 import {
   Array as Arr,
@@ -178,9 +179,9 @@ const command = Command.make(
     }),
 );
 
-const services = Layer.mergeAll(CredentialsFromEnv, FetchHttpClient.layer, NodeServices.layer);
+const services = Layer.mergeAll(CredentialsFromEnv, FetchHttpClient.layer, nodeServices);
 
-NodeRuntime.runMain(
+runMain(
   Layer.build(services).pipe(
     Effect.flatMap((context) =>
       Effect.provideContext(Command.run(command, { version: packageJson.version }), context),

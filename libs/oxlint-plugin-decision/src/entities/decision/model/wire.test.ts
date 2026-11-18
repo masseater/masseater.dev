@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { layer } from "@effect/vitest";
 import { deepStrictEqual } from "@effect/vitest/utils";
 import { Array as Arr, Effect, Record as Rec, pipe } from "effect";
@@ -80,7 +80,7 @@ const mergesAnswers = Effect.sync(() => {
   deepStrictEqual(merged, { model: MODEL, answers: { s0: yes, s1: yes } });
 });
 
-layer(NodeServices.layer, { excludeTestServices: true })("wire requests", (it) => {
+layer(nodeServices, { excludeTestServices: true })("wire requests", (it) => {
   it.effect("sends one request per snippet", () => splitsBySnippet, TIMEOUT);
   it.effect("splits a file with more than 64 questions", () => chunksLargeRequests, TIMEOUT);
   it.effect("merges the answers of every request", () => mergesAnswers, TIMEOUT);
