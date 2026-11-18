@@ -1,3 +1,4 @@
+import { DEFAULT_READERS, readDocument } from "@r_masseater/injection-bisect";
 import type { Unreadable } from "@r_masseater/injection-bisect";
 import { Array as Arr, Option, pipe } from "effect";
 import { FileUp } from "lucide-react";
@@ -54,6 +55,7 @@ const useOpenFile = (): ((picked: Picked) => void) => {
           setText(text);
           setFormat(format);
         },
+        read: (input) => readDocument({ ...input, readers: DEFAULT_READERS }),
       }),
     [setOpening, setText, setFormat],
   );

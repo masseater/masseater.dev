@@ -153,7 +153,7 @@ export const directoryOf = (file: string): string =>
 export const joinPath = (...parts: readonly string[]): string =>
   pipe(parts, Arr.filter(Str.isNonEmpty), Arr.join(SEPARATOR));
 
-const normalized = (path: string): Option.Option<string> => {
+export const normalized = (path: string): Option.Option<string> => {
   const kept: string[] = [];
   for (const part of Str.split(path, SEPARATOR)) {
     if (part === PARENT) {

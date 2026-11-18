@@ -139,21 +139,21 @@ const keepsLines = Effect.gen(function* keepsLineOrder() {
       out,
       Arr.map((line) => Option.isSome(line.json)),
     ),
-  ).toEqual([
+  ).toStrictEqual([
     ...pipe(
       lines,
       Arr.map(() => true),
     ),
     false,
   ]);
-  expect(Arr.head(out).pipe(Option.map((line) => line.raw))).toEqual(Option.some(header));
+  expect(Arr.head(out).pipe(Option.map((line) => line.raw))).toStrictEqual(Option.some(header));
 }).pipe(Effect.scoped);
 
 const keepsNonSecrets = Effect.gen(function* keepsIdentifiers() {
   const detect = yield* realDetector;
   const input = `${yield* nonSecretLine}\n`;
   const masked = yield* maskWith(detect)(input);
-  expect(masked).toEqual({ text: input, redactions: NONE });
+  expect(masked).toStrictEqual({ text: input, redactions: NONE });
   expect(
     pipe(
       NON_SECRETS,
@@ -181,7 +181,7 @@ const redactsCrossingLine = Effect.gen(function* crossing() {
   const other = yield* encodeJson({ type: "assistant", uuid: "u2", message: "fine" });
   const masked = yield* maskWith(crossingDetector)(`${line}\n${other}\n`);
   const [first, second] = parseLines(masked.text);
-  expect(Option.flatMap(Option.fromNullishOr(first), (parsed) => parsed.json)).toEqual(
+  expect(Option.flatMap(Option.fromNullishOr(first), (parsed) => parsed.json)).toStrictEqual(
     Option.some({
       type: "watashi-redacted-line",
       originalType: "user",
@@ -189,7 +189,7 @@ const redactsCrossingLine = Effect.gen(function* crossing() {
       parentUuid: "u0",
     }),
   );
-  expect(Option.map(Option.fromNullishOr(second), (parsed) => parsed.raw)).toEqual(
+  expect(Option.map(Option.fromNullishOr(second), (parsed) => parsed.raw)).toStrictEqual(
     Option.some(other),
   );
 });

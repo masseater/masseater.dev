@@ -3,9 +3,13 @@ import { Effect, FileSystem, Layer, Path, Record as Rec, Stream } from "effect";
 import { HttpRouter, HttpServer, HttpServerRequest, HttpServerResponse } from "effect/http";
 import { ChildProcess } from "effect/process";
 
-import { CI_TOKEN, NAMESPACE } from "#/app/token.test.support.ts";
+import { CI_TOKEN, NAMESPACE, verifyToken } from "#/app/token.test.support.ts";
+import { TokenVerifier } from "#/features/admit-caller/index.ts";
 
-import { routed } from "./routes.ts";
+import { routed as served } from "./routes.ts";
+
+const routed = (request: Request): ReturnType<typeof served> =>
+  served(request).pipe(Effect.provideService(TokenVerifier, verifyToken));
 
 const TASK = "write";
 const OUTPUT = "out.txt";

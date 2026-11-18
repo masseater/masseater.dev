@@ -99,7 +99,7 @@ test("一度直って再び見つかったものは、24 時間を待たずに�
       yield* report(env, []);
       yield* report(env, [FOUND]);
       const requests = yield* Ref.get(sent);
-      expect(requests.length).toBe(TWICE);
+      expect(requests).toHaveLength(TWICE);
     }),
   ));
 

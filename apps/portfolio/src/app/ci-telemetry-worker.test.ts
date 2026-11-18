@@ -1,22 +1,16 @@
 import { OWNER_ID } from "@masseater.dev/repositories/github-oidc";
-import { Array as Arr, Effect, MutableRef, Option, Schema } from "effect";
-import { SignJWT, exportJWK, generateKeyPair } from "jose";
-import type { CryptoKey, JWK } from "jose";
-import { beforeAll, expect, test, vi } from "vite-plus/test";
+import { Effect, MutableRef, Option, Schema } from "effect";
+import { SignJWT, createLocalJWKSet, exportJWK, generateKeyPair } from "jose";
+import type { CryptoKey, JWK, JWTVerifyGetKey } from "jose";
+import { beforeAll, expect, test } from "vite-plus/test";
 
-import worker from "./ci-telemetry.ts";
+import { ciTelemetryWorker } from "./ci-telemetry-worker.ts";
 
 type Signer = Readonly<{ privateKey: CryptoKey; jwk: JWK }>;
 
-const { CI_TELEMETRY_AUDIENCE } = vi.hoisted(() => ({
-  CI_TELEMETRY_AUDIENCE: "masseater-dev-test-ci-telemetry",
-}));
-
-vi.mock("./app-name.ts", () => ({ CI_TELEMETRY_AUDIENCE }));
-
 const ISSUER = "https://token.actions.githubusercontent.com";
 
-const JWKS_URL = `${ISSUER}/.well-known/jwks`;
+const CI_TELEMETRY_AUDIENCE = "masseater-dev-test-ci-telemetry";
 
 const KEY_ID = "github-actions";
 
@@ -61,8 +55,6 @@ const PAYLOAD = {
 
 const trusted = MutableRef.make(Option.none<Signer>());
 
-const jwksRequests = MutableRef.make<readonly string[]>([]);
-
 const newSigner = Effect.promise(() => generateKeyPair(ALGORITHM)).pipe(
   Effect.flatMap(({ privateKey, publicKey }) =>
     Effect.promise(() => exportJWK(publicKey)).pipe(Effect.map((jwk) => ({ privateKey, jwk }))),
@@ -74,15 +66,14 @@ const trustedSigner = Effect.sync(() => MutableRef.get(trusted)).pipe(
   Effect.orDie,
 );
 
-const githubJwks = (url: string): Response => {
-  MutableRef.update(jwksRequests, Arr.append(url));
-  return Option.match(MutableRef.get(trusted), {
-    onNone: () => new Response("", { status: 503 }),
-    onSome: ({ jwk }) => Response.json({ keys: [{ ...jwk, kid: KEY_ID, alg: ALGORITHM }] }),
+const githubKeys: JWTVerifyGetKey = (header, token) =>
+  Option.match(MutableRef.get(trusted), {
+    onNone: () => Promise.reject(new Error("no GitHub key yet")),
+    onSome: ({ jwk }) =>
+      createLocalJWKSet({ keys: [{ ...jwk, kid: KEY_ID, alg: ALGORITHM }] })(header, token),
   });
-};
 
-vi.stubGlobal("fetch", (input: string) => Promise.resolve(githubJwks(input)));
+const worker = ciTelemetryWorker({ keys: githubKeys, audience: CI_TELEMETRY_AUDIENCE });
 
 beforeAll(() =>
   Effect.runPromise(
@@ -155,7 +146,6 @@ test("GitHub の鍵でない鍵で署名したトークンは 401 で断る", ()
       const token = yield* tokenFrom(newSigner, CLAIMS, CI_TELEMETRY_AUDIENCE);
       const status = yield* sendToken(token);
       expect(status).toBe(UNAUTHORIZED);
-      expect(MutableRef.get(jwksRequests)).toContain(JWKS_URL);
     }),
   ));
 

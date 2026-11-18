@@ -1,7 +1,7 @@
 import { OWNER_ID } from "@masseater.dev/repositories/github-oidc";
 import { Effect, Option, Schema, String as Str, pipe } from "effect";
 
-import { verifiedToken } from "#/features/admit-caller/api/token.ts";
+import { TokenVerifier } from "#/features/admit-caller/api/token.ts";
 import { malformed } from "#/shared/lib/malformed.ts";
 
 const DEFAULT_BRANCH = "refs/heads/main";
@@ -44,8 +44,9 @@ export const ciRunOf = Effect.fn("admitCaller.ciRunOf")(function* ciRunOf(
   request: Request,
   target: Target,
 ) {
+  const verify = yield* TokenVerifier;
   const verified = yield* Effect.tryPromise({
-    try: () => verifiedToken({ token: bearer(request), audience: target.audience }),
+    try: () => verify({ token: bearer(request), audience: target.audience }),
     catch: malformed,
   }).pipe(
     Effect.flatMap(({ payload }) => Schema.decodeUnknownEffect(Claims)(payload)),

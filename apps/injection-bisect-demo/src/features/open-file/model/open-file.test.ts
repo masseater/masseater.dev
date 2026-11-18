@@ -6,16 +6,19 @@ import type { Opening } from "#/entities/inspection/index.ts";
 import { MAX_CHARS } from "#/entities/inspection/index.ts";
 
 import { openerOf } from "./open-file.ts";
-import type { Picked } from "./open-file.ts";
-
-vi.mock("@r_masseater/injection-bisect", () => import("./injection-bisect.test.support.ts"));
+import type { Picked, Read } from "./open-file.ts";
 
 interface Probe {
   readonly opening: Mock<(opening: Opening) => void>;
   readonly draft: Mock<(draft: Readonly<{ text: string; format: string }>) => void>;
+  readonly read: Read;
 }
 
 const encoder = new TextEncoder();
+
+const decoder = new TextDecoder();
+
+const TEXT = "text";
 
 const SETTLED = "20 millis";
 
@@ -39,7 +42,11 @@ const detached = (): ArrayBuffer => {
   return buffer;
 };
 
-const probe = (): Probe => ({ opening: vi.fn(), draft: vi.fn() });
+const probe = (): Probe => ({
+  opening: vi.fn<(opening: Opening) => void>(),
+  draft: vi.fn<(draft: Readonly<{ text: string; format: string }>) => void>(),
+  read: ({ bytes }) => Effect.sync(() => ({ text: decoder.decode(bytes), format: TEXT })),
+});
 
 const statusesOf = (calls: readonly (readonly [Opening])[]): readonly string[] =>
   pipe(

@@ -12,5 +12,8 @@ export default mergeConfig(
     basePath: BASE_PATH,
     searchIndexOrigin: SEARCH_INDEX_ORIGIN,
   }),
-  { run: { tasks: { verify: { command: [], dependsOn: ["build"] } } } },
+  {
+    run: { tasks: { verify: { command: [], dependsOn: ["build"] } } },
+    test: { isolate: true },
+  },
 );
