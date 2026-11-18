@@ -20,7 +20,7 @@
       }
     ],
     "security": {
-      "csp": "default-src 'self'; script-src 'self' https://www.youtube.com https://s.ytimg.com https://w.soundcloud.com; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://w.soundcloud.com https://embed.nicovideo.jp; img-src 'self' data: https:; media-src 'self' asset: http://asset.localhost; style-src 'self' 'unsafe-inline'; font-src 'self' data:; connect-src 'self' ipc: http://ipc.localhost",
+      "csp": "default-src 'self'; script-src 'self' https://www.youtube.com https://s.ytimg.com https://w.soundcloud.com; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://w.soundcloud.com https://embed.nicovideo.jp; img-src 'self' data: https:; media-src 'self' asset: http://asset.localhost; style-src 'self' 'unsafe-inline'; font-src 'self' data:; connect-src 'self' ipc: http://ipc.localhost otlp: http://otlp.localhost",
       "assetProtocol": {
         "enable": true,
         "scope": []
@@ -44,6 +44,17 @@
       "nsis": {
         "installMode": "currentUser",
         "languages": ["Japanese"]
+      }
+    }
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDczMTQ0Q0JBODEwOTJGNTkKUldSWkx3bUJ1a3dVYzVoa0N3MHhDYUExeXlnWm1uUnUvUTl4RkxqeCthbWR4VkdnWjU2d0w5T0UK",
+      "endpoints": [
+        "https://github.com/masseater/masseater.dev/releases/download/shirushi-updater/latest.json"
+      ],
+      "windows": {
+        "installMode": "passive"
       }
     }
   }

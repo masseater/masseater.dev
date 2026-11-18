@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { expect, layer } from "@effect/vitest";
 import { Array, Effect, FileSystem, Layer, Option, Path, Schema, pipe } from "effect";
 import { SqlClient } from "effect/sql";
@@ -62,7 +62,7 @@ const indexInTemporaryFolder = Layer.unwrap(
     });
     return Layer.merge(databaseLayer.pipe(Layer.provide(settings)), embedderLayer);
   }),
-).pipe(Layer.provideMerge(NodeServices.layer));
+).pipe(Layer.provideMerge(nodeServices));
 
 const addSource = Effect.fn("addSource")(function* addFolderSource(files: readonly LooseFile[]) {
   const fileSystem = yield* FileSystem.FileSystem;

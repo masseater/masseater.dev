@@ -1,4 +1,5 @@
-import { NodeRuntime, NodeServices } from "@effect/platform-node";
+import { runMain } from "@effect/platform-node/NodeRuntime";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { Effect, FileSystem, Schema } from "effect";
 
 import { htmlOf, DocumentsSchema } from "#/entities/measurement/index.ts";
@@ -32,4 +33,4 @@ const render = Effect.gen(function* render() {
   );
 });
 
-NodeRuntime.runMain(render.pipe(provideAtEntry(NodeServices.layer)));
+runMain(render.pipe(provideAtEntry(nodeServices)));

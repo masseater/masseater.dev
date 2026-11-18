@@ -1,6 +1,6 @@
 import { createServer } from "node:http";
 
-import { NodeHttpServer } from "@effect/platform-node";
+import { make } from "@effect/platform-node/NodeHttpServer";
 import { Deferred, Effect, Option, Record as Rec } from "effect";
 import type { Scope } from "effect";
 import { HttpServer, HttpServerRequest, HttpServerResponse } from "effect/http";
@@ -62,7 +62,7 @@ export const listenForCode = (expectedState: string): Effect.Effect<Callback, ne
   Effect.gen(function* listen() {
     const code = yield* Deferred.make<string, WatashiFailed>();
     const server = yield* Effect.orDie(
-      NodeHttpServer.make(() => createServer(), { port: ANY_FREE_PORT, host: LOOPBACK }),
+      make(() => createServer(), { port: ANY_FREE_PORT, host: LOOPBACK }),
     );
     yield* server.serve(handlerOf(expectedState, code));
     return {

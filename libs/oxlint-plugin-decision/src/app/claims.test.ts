@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { layer } from "@effect/vitest";
 import { deepStrictEqual, strictEqual } from "@effect/vitest/utils";
 import {
@@ -161,7 +161,7 @@ const askedWhere = (preset: Preset): Effect.Effect<void, PlatformError, Services
     }),
   );
 
-layer(NodeServices.layer, { excludeTestServices: true })("the claim rules", (it) => {
+layer(nodeServices, { excludeTestServices: true })("the claim rules", (it) => {
   it.effect(
     "in strict ask only about the code each rule looks at",
     () => askedWhere("strict"),

@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { lint } from "@r_masseater/y8";
 import type { Diagnostic, Y8Config, Y8Error } from "@r_masseater/y8";
 import {
@@ -16,7 +16,7 @@ import { afterAll, expect, test } from "vite-plus/test";
 
 import { readme, recommended } from "./index.ts";
 
-const services = ManagedRuntime.make(NodeServices.layer);
+const services = ManagedRuntime.make(nodeServices);
 afterAll(() => services.dispose());
 
 const RECOMMENDED: Y8Config = recommended({
@@ -87,7 +87,8 @@ const FAILING: Readonly<Record<string, string>> = {
   "docs/guide.md": "# Guide\n",
   "AGENTS.md": "Plain text with no title.\n\n## Testing\n\nRun tests.\n",
   "pkg/AGENTS.md":
-    "# pkg\n\nThe pkg workspace.\n\n## Notes\n\nUse the `other-skill` skill.\n\nテストを書く。\n",
+    "# pkg\n\nThe pkg workspace.\n\n## Notes\n\nUse the `other-skill` skill. Edit `src/gone.ts`.\n\nテストを書く。\n",
+  "pkg/src/index.ts": "",
   "skills/demo/SKILL.md":
     "---\nname: Demo\ndescription: I help you.\n---\n\n# demo\n\n## When to use\n\nAlways.\n",
   "skills/other-skill/SKILL.md":
@@ -111,6 +112,7 @@ test("each file kind gets its own rules", () =>
       "README.md docs/link-target-exists",
       "pkg/AGENTS.md agents-md/workspace-shape",
       "pkg/AGENTS.md agents-md/no-skill-names",
+      "pkg/AGENTS.md agents-md/code-paths-exist",
       "pkg/AGENTS.md agents-md/english",
       "skills/demo/SKILL.md skill-md/title",
       "skills/demo/SKILL.md skill-md/purpose-first",

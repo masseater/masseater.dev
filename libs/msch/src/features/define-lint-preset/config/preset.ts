@@ -21,6 +21,7 @@ import {
   shadcnRestyleContracts,
 } from "./lint.config.ts";
 import { readonlyParameterAllow } from "./readonly-types.config.ts";
+import { flakeMaskingSyntax, testDoubleSyntax, testRules } from "./test-rules.config.ts";
 
 type LintConfig = NonNullable<UserConfig["lint"]>;
 
@@ -77,11 +78,15 @@ const rules = {
   "import/prefer-default-export": "off",
   "import/group-exports": "off",
   "import/exports-last": "off",
+  ...testRules,
   "msch-lint/ecosystem-readers": "error",
   "msch-lint/get-or-insert": "error",
+  "msch-lint/mcp-tool-layer": "error",
   "msch-lint/inline-exports": "error",
   "msch-lint/ui-state-in-atoms": "error",
   "msch-lint/no-hand-written-sql": "error",
+  "msch-lint/platform-node-by-module": "error",
+  "msch-lint/typed-calls-not-reflect": "error",
   "react/react-in-jsx-scope": "off",
   "eslint/no-undef": "off",
   "typescript/promise-function-async": "off",
@@ -121,6 +126,21 @@ const overrides = [
   },
   commandsOverride,
   {
+    files: ["**/bin/**"],
+    rules: { "baseline-js/use-baseline": "off" },
+  },
+  {
+    files: ["**/*.test.ts", "**/*.test.tsx", "**/*.test.support.ts", "**/vite.config.ts"],
+    rules: {
+      "eslint-js/no-restricted-syntax": [
+        "error",
+        ...cloudflareResourceSyntax,
+        ...flakeMaskingSyntax,
+        ...testDoubleSyntax,
+      ],
+    },
+  },
+  {
     files: ["**/vite.config.ts"],
     rules: {
       "eslint/max-lines": "off",
@@ -142,6 +162,7 @@ export const lint = {
     "react-perf",
     "jsx-a11y",
     "jsdoc",
+    "vitest",
     "promise",
     "node",
     "effecttsgo",

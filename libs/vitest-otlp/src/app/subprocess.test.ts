@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import type { PlatformError } from "effect";
 import { Effect, ManagedRuntime } from "effect";
 import { ChildProcess, ChildProcessSpawner } from "effect/process";
@@ -7,7 +7,7 @@ import { afterAll, expect, test } from "vite-plus/test";
 import type { ReadError, ReceivedSpan, TelemetryNotReceived } from "./index.ts";
 import { receiverAddress, waitForSpans } from "./index.ts";
 
-const services = ManagedRuntime.make(NodeServices.layer);
+const services = ManagedRuntime.make(nodeServices);
 afterAll(() => services.dispose());
 
 const CHILD_SCRIPT = `

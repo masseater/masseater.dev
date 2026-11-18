@@ -1,6 +1,8 @@
 import { Option, String as Str, pipe } from "effect";
 import { Base64Url } from "effect/encoding";
 
+import type { VerifyToken } from "#/features/admit-caller/index.ts";
+
 export const NAMESPACE = "repository";
 
 const FAR_FUTURE = 4_102_444_800;
@@ -20,14 +22,10 @@ const RUNS = new Map([
   [BRANCH_CI_TOKEN, { repository_visibility: "public", ref: "refs/heads/feature" }],
 ]);
 
-export const createRemoteJWKSet = (): string => "keys";
-
-export const jwtVerify = (
-  ...[token, , expected]: readonly [string, unknown, Readonly<{ audience: string }>]
-): Promise<Readonly<{ payload: unknown }>> => {
+export const verifyToken: VerifyToken = ({ token, audience }) => {
   const run = pipe(
     Option.fromNullishOr(RUNS.get(token)),
-    Option.filter(() => Str.endsWith(`/projects/${NAMESPACE}`)(expected.audience)),
+    Option.filter(() => Str.endsWith(`/projects/${NAMESPACE}`)(audience)),
   );
   return Option.match(run, {
     onNone: () => Promise.reject(new Error("invalid token")),

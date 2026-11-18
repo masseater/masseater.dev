@@ -28,6 +28,7 @@ pub fn run() -> tauri::Result<()> {
                 show_main(app);
             },
         ))
+        .plugin(desktop_shell::telemetry_plugin())
         .plugin(tauri_plugin_autostart::init(
             MacosLauncher::LaunchAgent,
             Some(vec![HIDDEN_FLAG]),

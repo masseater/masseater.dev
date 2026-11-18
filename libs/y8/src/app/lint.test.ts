@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import {
   Array as Arr,
   Effect,
@@ -25,7 +25,7 @@ import type {
   Y8Error,
 } from "./index.ts";
 
-const services = ManagedRuntime.make(NodeServices.layer);
+const services = ManagedRuntime.make(nodeServices);
 afterAll(() => services.dispose());
 
 const DOCUMENT = "# Title\n\n## Section\n\nSome text here.   \n";

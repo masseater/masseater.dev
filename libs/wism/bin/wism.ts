@@ -1,4 +1,8 @@
 #!/usr/bin/env node
-import { runCli } from "#/app/cli.ts";
+import { enableCompileCache } from "node:module";
+
+enableCompileCache();
+
+const { runCli } = await import("#/app/cli.ts");
 
 runCli();

@@ -344,6 +344,7 @@ dependencies = [
 name = "aredoko-desktop"
 version = "0.0.0"
 dependencies = [
+ "desktop-shell",
  "dunce",
  "tauri",
  "tauri-build",
@@ -2413,6 +2414,7 @@ dependencies = [
  "tauri-plugin-log",
  "tauri-plugin-prevent-default",
  "tauri-plugin-single-instance",
+ "tauri-plugin-updater",
  "tauri-plugin-window-state",
  "tempfile",
  "tokio",
@@ -14151,6 +14153,7 @@ name = "y8-core"
 version = "0.1.0"
 dependencies = [
  "agnix-core",
+ "blake3",
  "lindera",
  "pulldown-cmark",
  "rayon",
@@ -14179,6 +14182,7 @@ dependencies = [
 name = "yakusu"
 version = "0.1.5"
 dependencies = [
+ "desktop-shell",
  "dunce",
  "futures-util",
  "getrandom 0.4.3",
@@ -14194,7 +14198,7 @@ dependencies = [
 
 [[package]]
 name = "yogoto"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "audio-fetch",
  "audioadapter-buffers 5.2.0",

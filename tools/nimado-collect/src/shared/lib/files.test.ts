@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { Effect, Exit, FileSystem, Path, Schema, String as Str } from "effect";
 import { expect, it } from "vite-plus/test";
 
@@ -34,7 +34,7 @@ const inDirectory = <Value, Failure>(
       const fileSystem = yield* FileSystem.FileSystem;
       const directory = yield* fileSystem.makeTempDirectoryScoped();
       return yield* run(directory);
-    }).pipe(Effect.scoped, Effect.provide(NodeServices.layer)),
+    }).pipe(Effect.scoped, Effect.provide(nodeServices)),
   );
 
 it("書き込みが途中で止まっても、前のファイルを壊さない", () =>

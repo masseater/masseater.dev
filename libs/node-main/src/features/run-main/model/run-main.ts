@@ -1,16 +1,18 @@
-import { NodeRuntime, NodeServices } from "@effect/platform-node";
+import { runMain as nodeRuntimeRunMain } from "@effect/platform-node/NodeRuntime";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
+import type { NodeServices } from "@effect/platform-node/NodeServices";
 import { Effect, Layer } from "effect";
 import { FetchHttpClient } from "effect/http";
 import type { HttpClient } from "effect/http";
 import { OtlpSerialization, OtlpTracer } from "effect/observability";
 
-type Platform = NodeServices.NodeServices | HttpClient.HttpClient;
+type Platform = NodeServices | HttpClient.HttpClient;
 
 type Run<Provided> = <Success, Failure>(
   program: Effect.Effect<Success, Failure, Platform | Provided>,
 ) => void;
 
-const platform = Layer.mergeAll(NodeServices.layer, FetchHttpClient.layer);
+const platform = Layer.mergeAll(nodeServices, FetchHttpClient.layer);
 
 const runWithTracingAnd =
   <Provided, LayerFailure>({
@@ -26,7 +28,7 @@ const runWithTracingAnd =
       Layer.provide(FetchHttpClient.layer),
     );
     const provided = Layer.provideMerge(services, platform);
-    NodeRuntime.runMain(
+    nodeRuntimeRunMain(
       Layer.build(Layer.mergeAll(tracing, provided)).pipe(
         Effect.flatMap((context) => Effect.provideContext(program, context)),
         Effect.scoped,

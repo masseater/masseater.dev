@@ -93,7 +93,7 @@ pub fn run() -> tauri::Result<()> {
         window: "main",
         port,
     })
-    .invoke_handler(builder.invoke_handler())
+    .invoke_handler(desktop_shell::traced_commands(builder.invoke_handler()))
     .setup(move |app| setup(app, port))
     .run(tauri::generate_context!())
 }

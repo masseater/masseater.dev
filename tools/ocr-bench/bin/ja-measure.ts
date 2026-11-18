@@ -1,4 +1,4 @@
-import { NodeRuntime } from "@effect/platform-node";
+import { runMain } from "@effect/platform-node/NodeRuntime";
 import { PRODUCT_NAME, openRouter } from "@r_masseater/ocr-decide";
 import { Effect, Layer, Ref, Array as Arr, pipe } from "effect";
 
@@ -89,4 +89,4 @@ const services = Layer.mergeAll(
   resultsLayer,
 );
 
-NodeRuntime.runMain(measure.pipe(provideAtEntry(services)));
+runMain(measure.pipe(provideAtEntry(services)));

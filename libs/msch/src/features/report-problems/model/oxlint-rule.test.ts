@@ -16,11 +16,15 @@ const problem: Problem = {
   message: "The values ascending, descending restate a dependency type.",
 };
 
-RuleTester.describe = (text, body): void => {
-  describe(text, body);
+RuleTester.describe = (text, run): void => {
+  describe(text, () => {
+    run();
+  });
 };
-RuleTester.it = (text, body): void => {
-  it(text, body);
+RuleTester.it = (text, run): void => {
+  it(text, () => {
+    run();
+  });
 };
 
 new RuleTester({ cwd: CWD }).run("vocabulary", mschPlugin(() => [problem]).rules.vocabulary, {

@@ -1,6 +1,6 @@
 {
   "name": "yogoto",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "Desktop song manager that imports songs by link or file, separates stems with BS-RoFormer and serves the library over MCP.",
   "type": "module",
@@ -9,6 +9,8 @@
   },
   "dependencies": {
     "@effect/atom-react": "catalog:stack",
+    "@effect/opentelemetry": "catalog:",
+    "@masseater.dev/desktop-telemetry": "workspace:*",
     "@masseater.dev/media-notes-protocol": "workspace:*",
     "@masseater.dev/media-notes-ui": "workspace:*",
     "@masseater.dev/ui": "workspace:*",

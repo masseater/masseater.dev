@@ -24,7 +24,7 @@ export default defineConfig({
       { files: [...workspace.lint.deployEntries], rules: tracedRules },
       {
         files: ["apps/*/src/**/*.{ts,tsx}"],
-        excludeFiles: ["**/*.test.ts"],
+        excludeFiles: ["**/*.test.ts", "**/*.test.tsx", "**/*.test.support.ts"],
         rules: {
           "eslint-js/no-restricted-syntax": [
             "error",
@@ -36,7 +36,10 @@ export default defineConfig({
       },
     ],
     secrets: {
-      lines: [String.raw`\bOWNER_DISCORD_ID = "[0-9]{17,20}"`],
+      lines: [
+        String.raw`\bOWNER_DISCORD_ID = "[0-9]{17,20}"`,
+        String.raw`untrusted comment: minisign public key: [0-9A-F]{16}`,
+      ],
       paths: [
         String.raw`(^|/)fixtures/[^/]+\.tgz!`,
         String.raw`/fixtures/actionlint/`,
@@ -109,7 +112,7 @@ export default defineConfig({
       skills: ["modern-web-guidance"],
     },
     "masseater/skills": {
-      commit: "41bcbab7980ada35ade27a8e140d4f67722eaf24",
+      commit: "c9a1510277ba5448da3a0e09730ce03823ab25f8",
       root: "plugins/masseater-skills/skills",
       skills: "all",
     },
@@ -129,7 +132,7 @@ export default defineConfig({
       skills: ["systematic-debugging", "verification-before-completion"],
     },
     "philtzjp/skills": {
-      commit: "3cf41172166f2868bfcfe7a10e01a753e3cbcea0",
+      commit: "5e5ecfcc72301ee9e66e56b759d7e83b3c998344",
       root: ".agents/skills",
       skills: [
         "analytics",

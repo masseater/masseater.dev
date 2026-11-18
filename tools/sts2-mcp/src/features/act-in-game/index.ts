@@ -1,1 +1,1 @@
-export { act, screenshot, settle, state, waitReady } from "./api/bridge.ts";
+export { registerActTool } from "./api/act-tool.ts";

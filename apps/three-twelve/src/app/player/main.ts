@@ -8,7 +8,9 @@ import {
   joinVoiceChannel,
 } from "@discordjs/voice";
 import type { AudioPlayer, VoiceConnection } from "@discordjs/voice";
-import { NodeRuntime, NodeServices, NodeStream } from "@effect/platform-node";
+import { runMain } from "@effect/platform-node/NodeRuntime";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
+import { toReadable } from "@effect/platform-node/NodeStream";
 import { ChannelType, Client, Events, GatewayIntentBits } from "discord.js";
 import type { Guild } from "discord.js";
 import {
@@ -99,7 +101,7 @@ const playSong = Effect.fn("player.playSong")(function* playSong(connection: Voi
   const song = yield* Song;
   const player = createAudioPlayer();
   connection.subscribe(player);
-  const source = yield* NodeStream.toReadable(song);
+  const source = yield* toReadable(song);
   player.play(createAudioResource(source, { inputType: StreamType.OggOpus }));
   yield* untilStatus(player, AudioPlayerStatus.Playing, START_TIMEOUT);
   yield* untilStatus(player, AudioPlayerStatus.Idle, SONG_TIMEOUT);
@@ -155,11 +157,11 @@ const play = Effect.fn("player.play")(function* play() {
 });
 
 const services = Layer.mergeAll(
-  NodeServices.layer,
+  nodeServices,
   Logger.layer([Logger.withConsoleError(Logger.formatJson)]),
 );
 
-NodeRuntime.runMain(
+runMain(
   Layer.build(services).pipe(
     Effect.flatMap((context) => Effect.provideContext(play(), context)),
     Effect.scoped,

@@ -1,21 +1,32 @@
-import { Effect } from "effect";
+import { Effect, Option, Predicate, pipe } from "effect";
 import type { Scope } from "effect";
 
 import type { Mount, Player } from "#/shared/lib/player.ts";
 
 const LOADED = 1;
 
-const apiReady = (): boolean => "YT" in globalThis && Reflect.get(YT, "loaded") === LOADED;
+const isCallback = (value: unknown): value is () => void => Predicate.isFunction(value);
+
+const apiReady = (): boolean =>
+  "YT" in globalThis &&
+  pipe(
+    Option.liftPredicate(YT, Predicate.hasProperty("loaded")),
+    Option.exists(({ loaded }) => loaded === LOADED),
+  );
 
 const whenApiReady: Effect.Effect<void> = Effect.callback((resume) => {
   if (apiReady()) {
     resume(Effect.void);
     return;
   }
-  const previous: unknown = Reflect.get(globalThis, "onYouTubeIframeAPIReady");
+  const previous: unknown = pipe(
+    Option.liftPredicate(globalThis, Predicate.hasProperty("onYouTubeIframeAPIReady")),
+    Option.map((found) => found.onYouTubeIframeAPIReady),
+    Option.getOrUndefined,
+  );
   Reflect.set(globalThis, "onYouTubeIframeAPIReady", () => {
-    if (typeof previous === "function") {
-      Reflect.apply(previous, globalThis, []);
+    if (isCallback(previous)) {
+      previous();
     }
     resume(Effect.void);
   });

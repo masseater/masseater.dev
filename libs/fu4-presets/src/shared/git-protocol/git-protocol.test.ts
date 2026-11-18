@@ -34,14 +34,14 @@ test("round-trips packets", () => {
     { type: "flush" },
   ];
   const bytes = encodePackets(packets);
-  expect(Result.getOrThrow(decodePackets(bytes))).toEqual(packets);
+  expect(Result.getOrThrow(decodePackets(bytes))).toStrictEqual(packets);
 });
 
 test("rejects malformed packets", () => {
   expect(fails("zzzz")).toBe(true);
   expect(fails("0002")).toBe(true);
   expect(fails("0010abc")).toBe(true);
-  expect(decodedText("0009ERR x")).toEqual(Result.fail("in-band error: x"));
+  expect(decodedText("0009ERR x")).toStrictEqual(Result.fail("in-band error: x"));
 });
 
 test("asks for heads and tags with peeled objects", () => {
@@ -53,7 +53,7 @@ test("asks for heads and tags with peeled objects", () => {
 
 test("parses ls-refs lines and prefers peeled object ids", () => {
   const parsed = parseLsRefs(encoder.encode(LS_REFS));
-  expect(Result.getOrThrow(parsed)).toEqual([
+  expect(Result.getOrThrow(parsed)).toStrictEqual([
     { name: "HEAD", oid: "ac7cfa9fb7b5d6c417847e49e375aae20819a06f" },
     { name: "refs/heads/main", oid: "ac7cfa9fb7b5d6c417847e49e375aae20819a06f" },
     { name: "refs/tags/v1", oid: "3fdd4fca8fc76b254cefefca92381c41b28d1f0d" },

@@ -48,7 +48,7 @@ export const startSiteConfig = ({
     environments: { client: { build: { outDir: `dist/client${basePath}` } } },
     test: {
       projects: [
-        { extends: true, test: { name: "app", include: ["src/**/*.test.{ts,tsx}"] } },
+        { extends: false, test: { name: "app", include: ["src/**/*.test.{ts,tsx}"] } },
         { extends: false, test: { name: "alchemy", include: ["*.test.ts"] } },
       ],
     },

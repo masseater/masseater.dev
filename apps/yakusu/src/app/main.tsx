@@ -1,3 +1,4 @@
+import { startScreenTelemetry } from "@masseater.dev/desktop-telemetry";
 import { followColorScheme } from "@masseater.dev/ui/color-scheme";
 import { QueryClient } from "@tanstack/react-query";
 import { StrictMode } from "react";
@@ -7,6 +8,8 @@ import { TranslatorPage } from "#/pages/translator/index.ts";
 import { tauriEngine } from "#/shared/api/index.ts";
 
 import { Providers } from "./state.tsx";
+
+startScreenTelemetry("yakusu-screen");
 
 followColorScheme();
 

@@ -99,7 +99,7 @@ jobs:
       - uses: $/.github/actions/setup
         with:
           native: "false"
-      - uses: jdx/mise-action@d5574b52816a478f9d4e6529a3f6ff17a8a36785 # v5.2.8
+      - uses: jdx/mise-action@236a21c3b91f5db6d4e174b348674a0f0caac06d # v5.2.9
         with:
           fetch_from_github: false
       - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
@@ -242,6 +242,6 @@ jobs:
       actions: read
       contents: read
     steps:
-      - uses: masseater/typescript-template/.github/actions/ci-telemetry@21e1352dbfeb4ac2e2f46aa277f01be5cd89906e
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@c116d175574f2f6917e2aa39caf83a141ef4bd94
         with:
           github-token: ${{ github.token }}

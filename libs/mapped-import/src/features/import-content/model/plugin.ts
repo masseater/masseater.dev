@@ -1,4 +1,4 @@
-import { NodeServices } from "@effect/platform-node";
+import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { Effect, FileSystem, ManagedRuntime, Option, String as Str, pipe } from "effect";
 import type { Plugin } from "vite-plus";
 
@@ -41,7 +41,7 @@ const writeIfChanged = Effect.fn("writeIfChanged")(function* writeIfChanged(
   }
 });
 
-const runtime = ManagedRuntime.make(NodeServices.layer);
+const runtime = ManagedRuntime.make(nodeServices);
 
 export const contentImport = ({ name, extension, load }: ContentImport): Plugin => {
   const pattern = extensionPattern(extension);

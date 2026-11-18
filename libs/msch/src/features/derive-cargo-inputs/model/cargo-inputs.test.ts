@@ -53,8 +53,10 @@ const decodeWorkspace = Schema.decodeUnknownEffect(Schema.fromJsonString(CargoWo
 const patternsOf = (inputs: readonly CargoInput[]): readonly string[] =>
   pipe(
     inputs,
-    Arr.filter((input) => "pattern" in input),
-    Arr.map((input) => Reflect.get(input, "pattern")),
+    Arr.filter(
+      (input): input is Extract<CargoInput, { readonly pattern: string }> => "pattern" in input,
+    ),
+    Arr.map(({ pattern }) => pattern),
     Arr.filter(Predicate.isString),
   );
 
