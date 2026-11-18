@@ -24,6 +24,7 @@ const SKIPPED = "pyflakes";
 const WORKFLOW = /\.ya?ml$/u;
 const GROUPS = ["err", "examples", "ok"];
 const PASSING = "ok";
+const SHELLCHECK = "shellcheck";
 const SEQUENTIAL = { concurrency: 1 } as const;
 
 const here = Effect.gen(function* here() {
@@ -66,7 +67,13 @@ const compare = Effect.fn("compare")(function* compare(dir: string, group: strin
     config: presets.actionlint,
   });
   const want = yield* expectedIn(dir, group, stem);
-  return { id: `${group}/${stem}`, want, have: pipe(found, Arr.map(shown)) } satisfies Outcome;
+  const shellchecked = group === PASSING || Str.includes(SHELLCHECK)(stem);
+  const have = pipe(
+    found,
+    Arr.filter((diagnostic) => shellchecked || diagnostic.rule !== `${PREFIX}${SHELLCHECK}`),
+    Arr.map(shown),
+  );
+  return { id: `${group}/${stem}`, want, have } satisfies Outcome;
 });
 
 const groupOutcomes = Effect.fn("groupOutcomes")(function* groupOutcomes(
