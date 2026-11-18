@@ -9,7 +9,7 @@ use serde::{Deserialize, Serialize};
 
 use super::workshop::Workshop;
 use crate::entities::model::{MODELS, model_info};
-use crate::shared::protocol::{Origin, Song};
+use crate::shared::protocol::{Analysis, KeySpan, Origin, Song};
 
 pub const PORT: u16 = 47_240;
 
@@ -72,12 +72,26 @@ struct SourceBrief {
 }
 
 #[derive(Serialize)]
+struct BarBrief {
+    start: f64,
+    beats: i64,
+    bpm: f64,
+}
+
+#[derive(Serialize)]
+struct AnalysisBrief {
+    bars: Vec<BarBrief>,
+    keys: Vec<KeySpan>,
+}
+
+#[derive(Serialize)]
 struct SongBrief {
     id: String,
     title: String,
     artist: String,
     sources: Vec<SourceBrief>,
     separations: Vec<SeparationBrief>,
+    analysis: Option<AnalysisBrief>,
 }
 
 fn origin_text(origin: &Origin) -> String {
@@ -91,6 +105,44 @@ fn seconds(frames: i64, sample_rate: i64) -> f64 {
     let frames = u32::try_from(frames).map_or(f64::MAX, f64::from);
     let rate = u32::try_from(sample_rate).map_or(1.0, f64::from);
     frames / rate
+}
+
+fn beat_at(analysis: &Analysis, index: i64) -> Option<f64> {
+    usize::try_from(index)
+        .ok()
+        .and_then(|index| analysis.beats.get(index).copied())
+}
+
+fn analysis_brief(analysis: &Analysis) -> AnalysisBrief {
+    let bars = analysis
+        .bars
+        .iter()
+        .filter_map(|bar| {
+            let start = beat_at(analysis, bar.beat)?;
+            let end = beat_at(analysis, bar.beat + bar.beats)
+                .or_else(|| beat_at(analysis, bar.beat + bar.beats - 1))?;
+            let spanned = if beat_at(analysis, bar.beat + bar.beats).is_some() {
+                bar.beats
+            } else {
+                bar.beats - 1
+            };
+            let seconds = end - start;
+            let bpm = if seconds > 0.0 {
+                60.0 * f64::from(i32::try_from(spanned).unwrap_or(0)) / seconds
+            } else {
+                0.0
+            };
+            Some(BarBrief {
+                start,
+                beats: bar.beats,
+                bpm: (bpm * 10.0).round() / 10.0,
+            })
+        })
+        .collect();
+    AnalysisBrief {
+        bars,
+        keys: analysis.keys.clone(),
+    }
 }
 
 fn brief_of(workshop: &Workshop, song: Song) -> SongBrief {
@@ -127,6 +179,7 @@ fn brief_of(workshop: &Workshop, song: Song) -> SongBrief {
                     .collect(),
             })
             .collect(),
+        analysis: song.analysis.as_ref().map(analysis_brief),
         id: song.id,
         title: song.title,
         artist: song.artist,
@@ -202,6 +255,19 @@ impl Tools {
     }
 
     #[tool(
+        description = "曲の拍・小節・キーを解析し直す。取り込んだ曲は自動で解析されるので、分離し直した後などに使う。返す job の id は list_jobs で進み具合を確かめる。"
+    )]
+    async fn analyze_song(
+        &self,
+        Parameters(input): Parameters<SongInput>,
+    ) -> Result<CallToolResult, ErrorData> {
+        let outcome = self
+            .song(&input.id)
+            .and_then(|song| self.serving.workshop.analyze(&song));
+        Ok(answer(outcome))
+    }
+
+    #[tool(
         description = "取り込みと分離の job を新しい順に返す。state は queued・running・done・failed で、failed なら message に理由がある。done の job の song_id で list_songs や get_song を引く。",
         annotations(read_only_hint = true)
     )]
@@ -210,7 +276,7 @@ impl Tools {
     }
 
     #[tool(
-        description = "ライブラリの曲を新しい順に返す。各曲の元の音声と、分離した stem の FLAC の絶対パスを含む。stem は元の音声と同じ長さ・同じサンプル位置にそろっている。",
+        description = "ライブラリの曲を新しい順に返す。各曲の元の音声と、分離した stem の FLAC の絶対パスを含む。stem は元の音声と同じ長さ・同じサンプル位置にそろっている。analysis には小節ごとの開始秒・拍数・BPM と、小節番号で表したキーの区間が入る。",
         annotations(read_only_hint = true)
     )]
     async fn list_songs(

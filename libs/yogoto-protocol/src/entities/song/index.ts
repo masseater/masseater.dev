@@ -1,5 +1,8 @@
 export {
+  AnalysisSchema,
+  BarSchema,
   FileOriginSchema,
+  KeySpanSchema,
   OriginSchema,
   SONG_MANIFEST,
   SeparationSchema,
@@ -8,8 +11,18 @@ export {
   StemFileSchema,
   UrlOriginSchema,
 } from "./model/song.ts";
-export type { Origin, Separation, Song, SongSource, StemFile } from "./model/song.ts";
+export type {
+  Analysis,
+  Bar,
+  KeySpan,
+  Origin,
+  Separation,
+  Song,
+  SongSource,
+  StemFile,
+} from "./model/song.ts";
 export {
+  AnalyzeRequestSchema,
   ImportRequestSchema,
   JobKindSchema,
   JobSchema,
@@ -18,6 +31,7 @@ export {
   SeparateRequestSchema,
 } from "./model/job.ts";
 export type {
+  AnalyzeRequest,
   ImportRequest,
   Job,
   JobKind,

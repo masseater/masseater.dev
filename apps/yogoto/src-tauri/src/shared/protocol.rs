@@ -7,6 +7,43 @@ use specta::Type;
 pub const SONG_MANIFEST: &str = "song.json";
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Type, JsonSchema)]
+pub struct Bar {
+    #[specta(type = specta_typescript::Number)]
+    pub beat: i64,
+    #[specta(type = specta_typescript::Number)]
+    pub beats: i64,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Type, JsonSchema)]
+pub struct KeySpan {
+    #[specta(type = specta_typescript::Number)]
+    pub bar: i64,
+    #[specta(type = specta_typescript::Number)]
+    pub bars: i64,
+    pub key: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Type, JsonSchema)]
+#[serde(rename_all = "camelCase")]
+pub struct Analysis {
+    pub source: String,
+    pub separation: Option<String>,
+    pub beat_model: String,
+    pub key_model: String,
+    pub beats: Vec<f64>,
+    pub bars: Vec<Bar>,
+    pub keys: Vec<KeySpan>,
+    #[specta(type = specta_typescript::Number)]
+    pub created_at: i64,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Type, JsonSchema)]
+#[serde(rename_all = "camelCase")]
+pub struct AnalyzeRequest {
+    pub song_id: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Type, JsonSchema)]
 pub struct FileOrigin {
     pub kind: String,
     pub name: String,
@@ -23,6 +60,7 @@ pub struct ImportRequest {
 pub enum JobKind {
     Import,
     Separate,
+    Analyze,
 }
 
 impl JobKind {
@@ -31,6 +69,7 @@ impl JobKind {
         match self {
             Self::Import => "import",
             Self::Separate => "separate",
+            Self::Analyze => "analyze",
         }
     }
 
@@ -39,6 +78,7 @@ impl JobKind {
         match value {
             "import" => Some(Self::Import),
             "separate" => Some(Self::Separate),
+            "analyze" => Some(Self::Analyze),
             _ => None,
         }
     }
@@ -155,7 +195,7 @@ pub struct SongSource {
     pub added_at: i64,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Type, JsonSchema)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Type, JsonSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct Song {
     pub id: String,
@@ -166,4 +206,5 @@ pub struct Song {
     pub primary: String,
     pub sources: Vec<SongSource>,
     pub separations: Vec<Separation>,
+    pub analysis: Option<Analysis>,
 }
