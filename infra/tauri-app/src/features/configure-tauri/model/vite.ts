@@ -24,6 +24,7 @@ const WINDOWS_INSTALLER =
 
 export const tauriReleaseTasks = (): NonNullable<NonNullable<UserConfig["run"]>["tasks"]> => ({
   "release:windows": { command: WINDOWS_INSTALLER, cache: false },
+  "updater-key": { command: "updater-key", cache: false },
 });
 
 export const tauriAppConfig = ({
