@@ -1,6 +1,7 @@
 import { mustSucceed } from "@masseater.dev/github-workflow";
 import {
   Array as Arr,
+  Boolean as Bool,
   Console,
   Effect,
   FileSystem,
@@ -69,6 +70,21 @@ const keptFields = Effect.fn("publish.keptFields")(function* keptFields(director
   );
 });
 
+const placeNative = Effect.fn("publish.placeNative")(function* placeNative(
+  from: string,
+  target: string,
+  native: NativePackage,
+) {
+  const fileSystem = yield* FileSystem.FileSystem;
+  const path = yield* Path.Path;
+  const file = nativeFileOf(native);
+  const source = path.join(from, file);
+  return yield* Bool.match(native.archive, {
+    onFalse: () => fileSystem.copyFile(source, path.join(target, file)),
+    onTrue: () => mustSucceed({ command: "tar", args: ["-xzf", source, "-C", target] }),
+  });
+});
+
 const writeNative = Effect.fn("publish.writeNative")(function* writeNative(
   directory: string,
   native: NativePackage,
@@ -77,9 +93,8 @@ const writeNative = Effect.fn("publish.writeNative")(function* writeNative(
   const path = yield* Path.Path;
   const kept = yield* keptFields(directory);
   const target = path.resolve(directory, NPM_DIR, native.target);
-  const file = nativeFileOf(native);
   yield* fileSystem.makeDirectory(target, { recursive: true });
-  yield* fileSystem.copyFile(path.join(directory, NATIVE_DIR, file), path.join(target, file));
+  yield* placeNative(path.join(directory, NATIVE_DIR), target, native);
   const text = yield* Schema.encodeEffect(PackageJson)({ ...kept, ...nativeFields(native) });
   yield* Effect.all(
     [
@@ -139,11 +154,17 @@ const publishNatives = Effect.fn("publish.publishNatives")(function* publishNati
   if (Predicate.isUndefined(manifest.native)) {
     return;
   }
-  const { binary, targets } = manifest.native;
+  const { binary, targets, archive = false } = manifest.native;
   const written = yield* Effect.forEach(
     targets,
     (target) =>
-      writeNative(directory, { name: manifest.name, version: manifest.version, binary, target }),
+      writeNative(directory, {
+        name: manifest.name,
+        version: manifest.version,
+        binary,
+        target,
+        archive,
+      }),
     { concurrency: 1 },
   );
   const names = yield* Effect.forEach(written, (target) => publishNative(target, env), {
