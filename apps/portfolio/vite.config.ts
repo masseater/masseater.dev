@@ -2,7 +2,7 @@ import { alchemyTasks, d1Tasks } from "@masseater.dev/cloudflare-account/run-tas
 import { LOCKED } from "@r_masseater/msch/locked-inputs";
 import { defineConfig } from "vite-plus";
 
-import { portfolioPlugins } from "./src/app/vite/plugins.ts";
+import { portfolioPlugins, workerPlugins } from "./src/app/vite/plugins.ts";
 
 export default defineConfig({
   msch: {
@@ -60,4 +60,5 @@ export default defineConfig({
   preview: { host: "127.0.0.1" },
   test: { include: ["src/**/*.test.{ts,tsx}"] },
   plugins: portfolioPlugins(),
+  worker: { format: "es", plugins: workerPlugins },
 });

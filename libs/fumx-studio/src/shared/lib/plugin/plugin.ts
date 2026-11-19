@@ -5,6 +5,7 @@ import type { Effect, Option, Scope } from "effect";
 import type { Lane } from "#/shared/lib/daw/view.ts";
 import type { Bus } from "#/shared/lib/studio/bus.ts";
 import type { Ledger, Placement } from "#/shared/lib/studio/placement.ts";
+import type { Stem } from "#/shared/lib/studio/stem.ts";
 
 export type Samples = Readonly<Record<string, Float32Array>>;
 
@@ -48,6 +49,9 @@ export interface MixRequest {
   readonly args: readonly PluginArgument[];
   readonly log: Ledger;
   readonly progress: (share: number, label: string) => void;
+  readonly parts: (
+    keys: readonly string[],
+  ) => (done: (key: string, stem: Stem) => void) => Effect.Effect<void>;
 }
 
 export interface GainStage {
@@ -82,6 +86,7 @@ export interface Mix {
 export interface MixPlugin {
   readonly kind: "mix";
   readonly mix: (request: MixRequest) => Effect.Effect<Mix, never, Scope.Scope>;
+  readonly part?: (request: MixRequest) => (key: string) => Stem;
 }
 
 export type FumxPlugin = InstrumentPlugin | MixPlugin;

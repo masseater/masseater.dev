@@ -7,14 +7,14 @@ import { deckFor } from "./mix/deck.ts";
 import { kurakuOf } from "./mix/kuraku.ts";
 import { liveOf } from "./mix/live.ts";
 import { deckMastered } from "./mix/master.ts";
-import { renderTracks } from "./mix/tracks.ts";
+import { renderTracks, trackPart } from "./mix/tracks.ts";
 
 const mixed = Effect.fn("kuraku.mix")(function* mixed(request: MixRequest) {
   const kuraku = kurakuOf(request);
   editsLogged(kuraku);
   const { frames } = kuraku;
   const held = yield* deckFor(frames);
-  yield* renderTracks({ kuraku, held, progress: request.progress });
+  yield* renderTracks({ request, held });
   const out = yield* deckMastered({
     frames,
     drums: held.drums,
@@ -32,4 +32,4 @@ const mixed = Effect.fn("kuraku.mix")(function* mixed(request: MixRequest) {
   return mix;
 });
 
-export const plugin: MixPlugin = { kind: "mix", mix: mixed };
+export const plugin: MixPlugin = { kind: "mix", mix: mixed, part: trackPart };
