@@ -348,8 +348,8 @@ catalogs:
       specifier: 22.0.1
       version: 22.0.1
     '@openrouter/sdk':
-      specifier: 1.5.104
-      version: 1.5.104
+      specifier: 1.5.105
+      version: 1.5.105
     '@opentelemetry/api':
       specifier: 1.10.0
       version: 1.10.0
@@ -417,8 +417,8 @@ catalogs:
       specifier: 0.10.2
       version: 0.10.2
     '@remotion/eslint-plugin':
-      specifier: 4.0.543
-      version: 4.0.543
+      specifier: 4.0.544
+      version: 4.0.544
     '@resvg/resvg-js':
       specifier: 2.6.2
       version: 2.6.2
@@ -4550,7 +4550,7 @@ importers:
         version: 0.10.2(@voidzero-dev/vite-plus-core@8.3.8000(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(effect@4.1.4)(supports-color@10.2.2)(typescript@7.1.0-beta)(vite-plus@1.7.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.6(@types/node@26.6.6)(@voidzero-dev/vite-plus-core@8.3.8000(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2007)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))
       '@remotion/eslint-plugin':
         specifier: 'catalog:'
-        version: 4.0.543(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))
+        version: 4.0.544(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))
       '@size-limit/file':
         specifier: 'catalog:'
         version: 14.3.0(size-limit@14.3.0)
@@ -5485,7 +5485,7 @@ importers:
         version: 4.1.4(effect@4.1.4)(redis@6.2.1(@opentelemetry/api@1.10.0))
       '@openrouter/sdk':
         specifier: 'catalog:'
-        version: 1.5.104
+        version: 1.5.105
       bench-summary:
         specifier: workspace:*
         version: link:../../libs/bench-summary
@@ -8316,8 +8316,8 @@ packages:
   '@open-draft/until@3.0.1':
     resolution: {integrity: sha512-s7/9ELP4aP9YZtW7RJaa0Xf3RISaRH9+EFN18FtykJYRHGNrl8f9ymvoNXzjhrjmftFvkQudtuDU9RYhk0xs3A==}
 
-  '@openrouter/sdk@1.5.104':
-    resolution: {integrity: sha512-xn6WQHOTuPyZdddzEcYYP4gZ64/Lm4ScKzG1KB531QxCj6N/sXtCOwwezedXqEbN6rAh1vU/B/tTk7QTEcG1PQ==}
+  '@openrouter/sdk@1.5.105':
+    resolution: {integrity: sha512-heTzxciSpOK8K4IkVpJ+vXCNp33DljwdJ+cn4V7GVFOva18b3UpBAV6jgt3FlrD1kdUcsZs/Z0gZOyq0lgek8g==}
 
   '@opentelemetry/api@1.10.0':
     resolution: {integrity: sha512-lMkyes8iHrG+mk6WH7X70MdCLI2RS0FwNBY1PyQ8UemaijE2m5mv5A0Niy3HtbYTFrgkUEQjFMXmSAk2hQDuPQ==}
@@ -10336,8 +10336,8 @@ packages:
       react-redux:
         optional: true
 
-  '@remotion/eslint-plugin@4.0.543':
-    resolution: {integrity: sha512-GNdKn8tPvJI2BljFiADdbpPL5iWI5Es8hIC991LhfMupd92ajhxL9IMcUeZPDa0Am6w+V08fSDK7OAuZI59H+Q==}
+  '@remotion/eslint-plugin@4.0.544':
+    resolution: {integrity: sha512-VNvubAyI8xZVpXcMjdNg0Ag7QLBJ5VWcPZrCjnl1DCVDJyfg9ksw4NGJB0EWJQm5sgHZ8ZsLDvWbmurYDRha6g==}
     peerDependencies:
       eslint: '>=7.0.0'
 
@@ -20944,7 +20944,7 @@ snapshots:
 
   '@open-draft/until@3.0.1': {}
 
-  '@openrouter/sdk@1.5.104':
+  '@openrouter/sdk@1.5.105':
     dependencies:
       zod: 4.6.7
 
@@ -22889,7 +22889,7 @@ snapshots:
       react: 19.3.1
       react-redux: 9.3.1(@types/react@19.3.0)(react@19.3.1)(redux@5.0.1)
 
-  '@remotion/eslint-plugin@4.0.543(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))':
+  '@remotion/eslint-plugin@4.0.544(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))':
     dependencies:
       eslint: 10.15.0(jiti@2.7.0)(supports-color@10.2.2)
 
