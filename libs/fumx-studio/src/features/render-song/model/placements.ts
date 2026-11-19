@@ -158,6 +158,14 @@ const voicesOf =
 const midiOf = (midi: Option.Option<number>): Placement =>
   Option.match(midi, { onNone: () => ({}), onSome: (given) => ({ midi: given }) });
 
+const instrumentIn =
+  (voicing: Voicing) =>
+  (use: PluginUse): Option.Option<InstrumentPlugin> =>
+    pipe(
+      Option.fromUndefinedOr(voicing.plugins[use.module]),
+      Option.filter((plugin): plugin is InstrumentPlugin => plugin.kind === "instrument"),
+    );
+
 const soundOf =
   (voicing: Voicing) =>
   (hit: Hit) =>
@@ -166,8 +174,7 @@ const soundOf =
       onNone: () => Option.some([voice.path, "", {}] as const),
       onSome: (use) =>
         pipe(
-          Option.fromUndefinedOr(voicing.plugins[use.module]),
-          Option.filter((plugin): plugin is InstrumentPlugin => plugin.kind === "instrument"),
+          instrumentIn(voicing)(use),
           Option.map((plugin) => {
             const sound = plugin.voice({
               pitch: Option.none(),
@@ -238,8 +245,7 @@ const voicedPlaced =
   (use: PluginUse) =>
   (note: Note): Option.Option<Placed> =>
     pipe(
-      Option.fromUndefinedOr(voicing.plugins[use.module]),
-      Option.filter((plugin): plugin is InstrumentPlugin => plugin.kind === "instrument"),
+      instrumentIn(voicing)(use),
       Option.map((plugin) => {
         const voice = plugin.voice({
           pitch: Option.some(note.midi + note.cents / CENTS_PER_SEMITONE),
