@@ -52,7 +52,7 @@ const program = Effect.gen(function* () {
 
 Ties are already joined: a note tied over a bar line is one note.
 
-Notes and hits carry `args`, the values a `with { … }` attribute passes to plugins, and `nudgeSeconds`. Times and shares written as decimals (`nudge 0.4ms`, `pan -35%`) are read as the double that the decimal names, so `seconds` is exact rather than `milliseconds * 0.001`.
+Notes and hits carry `args`, the values a `with { … }` attribute passes to plugins, and `nudgeSeconds`. Times and shares written as decimals (`nudge 0.4ms`, `pan -35%`) are read as the double that the decimal names, so `seconds` is exact rather than `milliseconds * 0.001`. `vel` stays between 0 and 1; `amp` multiplies the level linearly and may go above 1.
 
 Times are ticks. `TICKS_PER_WHOLE` ticks make a whole note, and `fractionOf(ticks)` prints `"3/8"`. Compare with ticks, not with fractions.
 

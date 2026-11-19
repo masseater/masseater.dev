@@ -60,10 +60,11 @@ Zone:
     path=STRING 'root' root=PITCH;
 
 PlayParam:
-    Semi | Rate | Length | Attack | Release | Decay | Offset | Highpass | Lowpass | Gain | Pan | Drive | Send | Reverse;
+    Semi | Rate | Amp | Length | Attack | Release | Decay | Offset | Highpass | Lowpass | Gain | Pan | Drive | Send | Reverse;
 
 Semi: 'semi' amount=SEMITONES;
 Rate: 'rate' amount=NUMBER;
+Amp: 'amp' amount=NUMBER;
 Length: 'length' time=MILLISECONDS;
 Attack: 'attack' time=MILLISECONDS;
 Release: 'release' time=MILLISECONDS;
@@ -75,7 +76,7 @@ Gain: 'gain' amount=DECIBELS;
 Pan: 'pan' amount=PERCENT;
 Drive: 'drive' amount=NUMBER;
 Send: 'send' bus=[Bus:Name] amount=PERCENT;
-Reverse: reverse?='reverse';
+Reverse: reverse?='reverse' ('from' from=MILLISECONDS)?;
 
 Bus:
     'bus' name=Name Mixer ('fx' fx=FxChain)? sends+=Send*;
@@ -310,7 +311,7 @@ Every: 'every' slice=FRACTION count=COUNT?;
 With: 'with' '{' arguments+=PluginArgument* '}';
 
 Name returns string:
-    ID | 'melody' | 'countermelody' | 'bass' | 'harmony' | 'drums' | 'texture' | 'delay' | 'reverb' | 'chorus' | 'comp' | 'limit' | 'width' | 'phaser' | 'tremolo' | 'drive' | 'gain' | 'pan' | 'sample' | 'release' | 'attack' | 'decay' | 'offset' | 'length' | 'mix' | 'base' | 'from' | 'to' | 'q' | 'ir' | 'predelay' | 'feedback' | 'pingpong' | 'lookahead' | 'makeup' | 'semi' | 'highpass' | 'lowpass' | 'slice' | 'slices' | 'onsets' | 'root' | 'hold' | 'depth' | 'by' | 'over' | 'curve' | 'linear' | 'exp' | 'every' | 'fade' | 'nudge' | 'bend' | 'lyric' | 'gate' | 'vel' | 'tie' | 'staccato' | 'legato' | 'accent' | 'reverse' | 'audio' | 'kit' | 'instrument' | 'track' | 'bus' | 'duck' | 'groove' | 'swing' | 'multisample' | 'song' | 'bar' | 'meter' | 'tempo' | 'section' | 'mark' | 'automate' | 'fx' | 'send' | 'role' | 'mono-below' | 'volume' | 'plugin' | 'number' | 'pitch' | 'duration' | 'decibels' | 'percent' | 'hertz' | 'time' | 'semitones' | 'string' | 'bool' | 'cc' | 'pressure' | 'program' | 'off' | 'rate' | 'into' | 'mono' | 'tail' | 'with';
+    ID | 'melody' | 'countermelody' | 'bass' | 'harmony' | 'drums' | 'texture' | 'delay' | 'reverb' | 'chorus' | 'comp' | 'limit' | 'width' | 'phaser' | 'tremolo' | 'drive' | 'gain' | 'pan' | 'sample' | 'release' | 'attack' | 'decay' | 'offset' | 'length' | 'mix' | 'base' | 'from' | 'to' | 'q' | 'ir' | 'predelay' | 'feedback' | 'pingpong' | 'lookahead' | 'makeup' | 'semi' | 'highpass' | 'lowpass' | 'slice' | 'slices' | 'onsets' | 'root' | 'hold' | 'depth' | 'by' | 'over' | 'curve' | 'linear' | 'exp' | 'every' | 'fade' | 'nudge' | 'bend' | 'lyric' | 'gate' | 'vel' | 'tie' | 'staccato' | 'legato' | 'accent' | 'reverse' | 'audio' | 'kit' | 'instrument' | 'track' | 'bus' | 'duck' | 'groove' | 'swing' | 'multisample' | 'song' | 'bar' | 'meter' | 'tempo' | 'section' | 'mark' | 'automate' | 'fx' | 'send' | 'role' | 'mono-below' | 'volume' | 'plugin' | 'number' | 'pitch' | 'duration' | 'decibels' | 'percent' | 'hertz' | 'time' | 'semitones' | 'string' | 'bool' | 'cc' | 'pressure' | 'program' | 'off' | 'rate' | 'into' | 'mono' | 'tail' | 'with' | 'amp';
 
 hidden terminal WS: /\s+/;
 hidden terminal ML_COMMENT: /\/\*[\s\S]*?\*\//;
