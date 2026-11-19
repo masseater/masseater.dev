@@ -51,7 +51,7 @@ export const initialScope = (): Scope => ({
   ),
 });
 
-const merge = (left: Status, right: Status): Status => {
+const joinStatus = (left: Status, right: Status): Status => {
   if (left === "empty") {
     return right;
   }
@@ -77,7 +77,7 @@ const append = (left: Status, right: Status): Status => {
 export const mergeAll = (statuses: readonly Status[]): Status => {
   let merged: Status = "empty";
   for (const status of statuses) {
-    merged = merge(merged, status);
+    merged = joinStatus(merged, status);
   }
   return merged;
 };
@@ -116,7 +116,7 @@ export const valueOf =
 const joinScopes = (left: Scope, right: Scope): Scope => {
   const statuses = new Map<string, Status>();
   for (const name of new Set([...left.statuses.keys(), ...right.statuses.keys()])) {
-    statuses.set(name, merge(statusOf(name)(left), statusOf(name)(right)));
+    statuses.set(name, joinStatus(statusOf(name)(left), statusOf(name)(right)));
   }
   return { statuses };
 };
