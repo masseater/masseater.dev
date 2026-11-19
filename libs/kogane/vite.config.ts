@@ -9,6 +9,7 @@ export default defineConfig({
   },
   run: {
     tasks: {
+      test: { command: "vp test run", cache: LOCKED },
       build: { command: "vp pack", cache: LOCKED },
     },
   },
