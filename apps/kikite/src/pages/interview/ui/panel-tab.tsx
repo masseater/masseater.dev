@@ -9,9 +9,10 @@ import type { PanelLabel } from "./panels.ts";
 const NONE = 0;
 
 export const PanelTab = ({
+  tabsId,
   panel,
   count,
-}: Readonly<{ panel: PanelLabel; count: number }>): ReactNode => {
+}: Readonly<{ tabsId: string; panel: PanelLabel; count: number }>): ReactNode => {
   const selected = usePanel() === panel.id;
   const setPanel = useSetPanel();
   const select = useCallback(() => {
@@ -21,10 +22,11 @@ export const PanelTab = ({
     <button
       type="button"
       role="tab"
+      id={`${tabsId}-${panel.id}`}
       aria-selected={selected}
       className={cn(
         "text-muted-foreground flex-auto border-b-2 border-transparent px-1 py-2 text-sm whitespace-nowrap",
-        selected && "border-foreground text-foreground font-semibold",
+        selected && "border-foreground text-foreground",
       )}
       onClick={select}
     >

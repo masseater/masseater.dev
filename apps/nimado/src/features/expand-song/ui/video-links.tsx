@@ -14,7 +14,7 @@ export const VideoLinks = ({
   base: string;
   videos: readonly (typeof Video.Type)[];
 }>): ReactNode => (
-  <ul className="flex flex-col gap-1">
+  <ul className="flex flex-col gap-1" role="list">
     {pipe(
       videos,
       Arr.map((video) => (

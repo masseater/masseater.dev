@@ -12,6 +12,7 @@ import {
 } from "#/entities/inspection/index.ts";
 import type { Focus, Piece } from "#/entities/inspection/index.ts";
 import type { InspectState } from "#/features/run-inspection/index.ts";
+import { COPY } from "#/shared/config/index.ts";
 
 import { HighlightTextarea } from "./highlight-textarea.tsx";
 import { ANSWER_CLASS, TONE_CLASS } from "./tone.ts";
@@ -34,7 +35,7 @@ export const OverlaidText = ({ state }: Readonly<{ state: InspectState }>): Reac
     [setText],
   );
   return (
-    <HighlightTextarea maxLength={MAX_CHARS} value={text} onChange={edit}>
+    <HighlightTextarea label={COPY.text} maxLength={MAX_CHARS} value={text} onChange={edit}>
       {pipe(
         overlayOf(text, state, focus),
         Arr.map((piece) => (

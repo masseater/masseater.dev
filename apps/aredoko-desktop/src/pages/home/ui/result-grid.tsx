@@ -7,7 +7,7 @@ import { ResultTile } from "./result-tile.tsx";
 export const ResultGrid = ({
   results,
 }: Readonly<{ results: readonly (typeof SearchResult.Type)[] }>): ReactNode => (
-  <ul className="grid grid-cols-3 gap-4 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8">
+  <ul className="grid grid-cols-3 gap-4 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8" role="list">
     {pipe(
       results,
       Array.map((result) => <ResultTile key={result.assetId} result={result} />),

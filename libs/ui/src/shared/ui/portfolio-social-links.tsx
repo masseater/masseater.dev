@@ -5,7 +5,7 @@ import { nameTransition } from "#/shared/lib/name-transition.ts";
 import { portfolio } from "#/shared/lib/portfolio.ts";
 
 export const PortfolioSocialLinks = (): ReactNode => (
-  <ul className="flex justify-end sm:gap-x-4">
+  <ul className="flex justify-end sm:gap-x-4" role="list">
     {pipe(
       portfolio.links,
       Arr.map(({ label, href }) => (

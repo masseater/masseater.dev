@@ -1016,8 +1016,8 @@
           const lv = fg ? 6 : dp === 0 ? 4 : 5,
             wd = Math.max(3, size * (fg ? 0.05 : 0.075));
           const halves = [
-            [A.concat(mid.slice().reverse()), 1],
-            [B.concat(mid.slice().reverse()), -1],
+            [A.concat(mid.toReversed()), 1],
+            [B.concat(mid.toReversed()), -1],
           ];
           for (const [poly, sg] of halves) {
             const col = sg === sl ? cA : cB,
@@ -1037,7 +1037,7 @@
               );
           }
           commit(lv);
-          const out = A.concat(B.slice().reverse()),
+          const out = A.concat(B.toReversed()),
             la = Math.atan2(P0[1] - cy, P0[0] - cx);
           if (dp > 0) {
             for (const [poly, sg] of halves) {

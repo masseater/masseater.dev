@@ -19,7 +19,7 @@ export const SongsPage = (): ReactNode => {
       <div className="max-w-xl">
         <KeywordForm action="/songs" label="曲名・アーティスト・別表記" keyword={keyword} />
       </div>
-      <SongsTable />
+      <SongsTable label={TITLE} />
     </div>
   );
 };

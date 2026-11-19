@@ -13,7 +13,7 @@ const SHOWN = 6;
 
 export const ProjectsCard = (): ReactNode => (
   <Section title={TITLE}>
-    <ul aria-label={TITLE} className="divide-border divide-y">
+    <ul aria-label={TITLE} className="divide-border divide-y" role="list">
       {pipe(
         useProjects(),
         Arr.sortWith((project) => sortKey(project.updatedAt), Order.flip(Order.String)),

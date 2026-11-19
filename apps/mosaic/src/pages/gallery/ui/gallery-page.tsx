@@ -8,7 +8,7 @@ import { GalleryIntro } from "./gallery-intro.tsx";
 export const GalleryPage = (): ReactNode => (
   <main className="mx-auto flex max-w-xl flex-col gap-6 p-8">
     <GalleryIntro />
-    <ul className="flex flex-col gap-2">
+    <ul className="flex flex-col gap-2" role="list">
       {pipe(
         CHARACTERS,
         Array.map((character) => (

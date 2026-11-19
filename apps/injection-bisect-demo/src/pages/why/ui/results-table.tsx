@@ -3,11 +3,13 @@ import type { ReactNode } from "react";
 import { ResultsBody } from "./results-body.tsx";
 import { ResultsHead } from "./results-head.tsx";
 
-export const ResultsTable = (): ReactNode => (
-  <div className="overflow-x-auto rounded-lg border">
+const FOCUSABLE = 0;
+
+export const ResultsTable = ({ label }: Readonly<{ label: string }>): ReactNode => (
+  <section aria-label={label} className="overflow-x-auto rounded-lg border" tabIndex={FOCUSABLE}>
     <table className="w-full text-sm">
       <ResultsHead />
       <ResultsBody />
     </table>
-  </div>
+  </section>
 );

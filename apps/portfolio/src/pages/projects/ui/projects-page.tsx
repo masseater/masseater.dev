@@ -21,7 +21,10 @@ export const ProjectsPage = (): ReactNode => {
     <div className="xl:collection-columns flex flex-col gap-8 xl:grid xl:items-start" data-wide>
       <h1 className="sr-only">{sectionMeta.projects.title}</h1>
       <TagFilter activeTag={activeTag} counts={counts} onSelect={select} />
-      <ul className="border-foreground/10 min-w-0 border-b xl:col-start-2 xl:row-start-1">
+      <ul
+        className="border-foreground/10 min-w-0 border-b xl:col-start-2 xl:row-start-1"
+        role="list"
+      >
         {pipe(
           withTag(activeTag)(projects),
           Arr.map((project) => <ProjectItem key={project.href} project={project} />),

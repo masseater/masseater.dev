@@ -7,6 +7,6 @@ import { Section } from "./section.tsx";
 
 export const Results = (): ReactNode => (
   <Section title={COPY.results.title}>
-    <ResultsTable />
+    <ResultsTable label={COPY.results.title} />
   </Section>
 );

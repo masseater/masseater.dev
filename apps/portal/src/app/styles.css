@@ -103,6 +103,7 @@
   }
   html {
     overflow-y: scroll;
+    scroll-padding-top: calc(var(--spacing) * 14);
   }
   body {
     @apply bg-background text-foreground font-sans antialiased;
@@ -112,6 +113,7 @@
 @layer base {
   [data-sidebar-resizing] {
     cursor: col-resize;
+    -webkit-user-select: none;
     user-select: none;
   }
   [data-sidebar-resizing] [data-slot^="sidebar"] {

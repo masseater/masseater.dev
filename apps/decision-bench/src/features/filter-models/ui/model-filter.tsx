@@ -21,7 +21,7 @@ export const ModelFilter = (): ReactNode => {
   const handleQueryChange = useQueryChange();
   const handleScopeChange = useScopeChange();
   return (
-    <section
+    <search
       aria-label="モデルの絞り込み"
       className="bg-background sticky top-0 flex flex-wrap items-center gap-3 py-2"
     >
@@ -39,6 +39,6 @@ export const ModelFilter = (): ReactNode => {
         <ToggleGroupItem value="top">{`上位 ${TOP_COUNT}`}</ToggleGroupItem>
         <ToggleGroupItem value="all">{`すべて（${TOTAL}）`}</ToggleGroupItem>
       </ToggleGroup>
-    </section>
+    </search>
   );
 };

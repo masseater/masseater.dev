@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 
 import { techniqueList } from "#/entities/technique/index.ts";
 import type { Technique } from "#/entities/technique/index.ts";
-import { NEXT_LABEL, PREVIOUS_LABEL } from "#/pages/seikin-technique/model/copy.ts";
+import { NEXT_LABEL, PAGER_LABEL, PREVIOUS_LABEL } from "#/pages/seikin-technique/model/copy.ts";
 
 import { PagerLink } from "./pager-link.tsx";
 
@@ -18,7 +18,7 @@ const neighbor = (slug: string, offset: number): Option.Option<Technique> =>
   );
 
 export const TechniquePager = ({ slug }: Readonly<{ slug: string }>): ReactNode => (
-  <nav className="flex justify-between gap-4 border-t pt-6">
+  <nav aria-label={PAGER_LABEL} className="flex justify-between gap-4 border-t pt-6">
     <PagerLink label={PREVIOUS_LABEL} technique={neighbor(slug, PREVIOUS)} />
     <PagerLink label={NEXT_LABEL} technique={neighbor(slug, NEXT)} />
   </nav>

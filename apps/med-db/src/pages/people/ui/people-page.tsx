@@ -19,7 +19,7 @@ export const PeoplePage = (): ReactNode => {
       <div className="max-w-xl">
         <KeywordForm action="/people" label="名前・別名義" keyword={keyword} />
       </div>
-      <PeopleTable />
+      <PeopleTable label={TITLE} />
     </div>
   );
 };

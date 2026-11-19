@@ -63,10 +63,12 @@
     transition: font-variation-settings 0.6s var(--ease);
   }
 
-  @scope (.stage:not([data-pointer])) to (.stage) {
-    .stage-letter {
-      animation: stage-wave 6s ease-in-out infinite;
-      animation-delay: calc(var(--i) * 0.2s - 6s);
+  @media (prefers-reduced-motion: no-preference) {
+    @scope (.stage:not([data-pointer])) to (.stage) {
+      .stage-letter {
+        animation: stage-wave 6s ease-in-out infinite;
+        animation-delay: calc(var(--i) * 0.2s - 6s);
+      }
     }
   }
 
@@ -93,21 +95,10 @@
 
   @media (prefers-reduced-motion: reduce) {
     .stage-backdrop,
-    .stage-spotlight,
     .stage-title,
-    .stage-letter,
-    .stage:not([data-pointer]) .stage-letter {
-      animation: stage-wave 6s ease-in-out infinite;
-      animation-delay: calc(var(--i) * 0.2s - 6s);
-    }
-
     .stage-links {
       transition: none;
       transform: none;
-    }
-
-    .stage-letter {
-      animation: none;
     }
 
     .stage-backdrop canvas {
@@ -183,8 +174,10 @@
   }
 }
 
-@view-transition {
-  navigation: auto;
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition {
+    navigation: auto;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

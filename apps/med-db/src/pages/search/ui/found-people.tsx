@@ -11,7 +11,7 @@ export const FoundPeople = (): ReactNode => {
   return (
     <section className="flex flex-col gap-4">
       <SectionHeading title="担当者" count={people.length} />
-      <ul className="flex flex-wrap gap-2">
+      <ul className="flex flex-wrap gap-2" role="list">
         {pipe(
           people,
           Array.map((person) => <PersonPill key={person.id} person={person} />),

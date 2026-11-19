@@ -8,6 +8,7 @@ export const Choice = ({
   onChoose,
 }: Readonly<{ chosen: boolean; label: string; onChoose: () => void }>): ReactNode => (
   <button
+    aria-pressed={chosen}
     className={cn(
       "flex w-full break-inside-avoid items-center gap-2 rounded-md px-3 py-2 text-left text-sm hover:bg-accent",
       chosen && "text-highlight",

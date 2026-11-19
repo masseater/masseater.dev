@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 export type Note = Readonly<{ icon: ReactNode; text: string }>;
 
 export const NoteList = ({ notes }: Readonly<{ notes: readonly Note[] }>): ReactNode => (
-  <ul className="text-muted-foreground flex flex-col gap-1.5 text-sm">
+  <ul className="text-muted-foreground flex flex-col gap-1.5 text-sm" role="list">
     {pipe(
       notes,
       Arr.map(({ icon, text }) => (

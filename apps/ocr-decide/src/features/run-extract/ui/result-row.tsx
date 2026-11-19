@@ -5,7 +5,10 @@ export const ResultRow = ({
   value,
 }: Readonly<{ label: string; value: string }>): ReactNode => (
   <tr className="border-t">
-    <th className="text-muted-foreground px-3 py-2 text-left font-normal whitespace-nowrap">
+    <th
+      scope="row"
+      className="text-muted-foreground px-3 py-2 text-left font-normal whitespace-nowrap"
+    >
       {label}
     </th>
     <td className="px-3 py-2">{value}</td>

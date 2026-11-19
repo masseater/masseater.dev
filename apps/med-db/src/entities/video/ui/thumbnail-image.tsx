@@ -3,17 +3,28 @@ import type { ReactNode } from "react";
 
 const PLAY_MARK = "▶";
 
-export const ThumbnailImage = ({ src }: Readonly<{ src: string | null }>): ReactNode =>
+const LOADING = {
+  lcp: { loading: "eager", fetchPriority: "high" },
+  lazy: { loading: "lazy", fetchPriority: "auto" },
+} as const;
+
+export type ThumbnailPriority = keyof typeof LOADING;
+
+export const ThumbnailImage = ({
+  src,
+  priority,
+}: Readonly<{ src: string | null; priority: ThumbnailPriority }>): ReactNode =>
   Option.match(Option.fromNullOr(src), {
     onNone: () => <span aria-hidden="true">{PLAY_MARK}</span>,
     onSome: (url) => (
       <img
         src={url}
         alt=""
-        loading="lazy"
+        loading={LOADING[priority].loading}
+        fetchPriority={LOADING[priority].fetchPriority}
         decoding="async"
         referrerPolicy="no-referrer"
-        className="size-full object-cover transition-transform duration-300 group-hover:scale-105"
+        className="size-full object-cover transition-transform duration-300 motion-safe:group-hover:scale-105"
       />
     ),
   });
