@@ -136,6 +136,7 @@
     "eslint-plugin-no-comments": "catalog:",
     "eslint-plugin-react-hooks": "catalog:",
     "htmlparser2": "catalog:",
+    "modern-web-guidance": "catalog:",
     "oxlint-plugin-eslint": "catalog:",
     "semver": "catalog:",
     "sql-parser-cst": "catalog:",
