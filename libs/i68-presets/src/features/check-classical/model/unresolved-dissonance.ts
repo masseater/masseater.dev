@@ -4,7 +4,7 @@ import { defineRule } from "@r_masseater/i68";
 import type { Rule } from "@r_masseater/i68";
 import { Array as Arr, Option, Record as Rec, pipe } from "effect";
 
-import { nameOf, pitchClassOf } from "#/shared/lib/pitch.ts";
+import { pitchClassOf } from "#/shared/lib/pitch.ts";
 import {
   MELODIC,
   hasRole,
@@ -74,7 +74,7 @@ const checkNote =
       report(`${String(note.line)}:${String(note.start)}`, {
         line: note.line,
         column: note.column,
-        message: `${nameOf(note.midi)} in ${note.track} is dissonant against the bass and does not step down`,
+        message: `${note.spelling} in ${note.track} is dissonant against the bass and does not step down`,
         detail: "Move the next note down a step",
       });
     }

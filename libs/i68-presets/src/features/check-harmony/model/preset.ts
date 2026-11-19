@@ -7,7 +7,7 @@ import { lowIntervalLimit } from "./low-interval-limit.ts";
 import { semitoneClash } from "./semitone-clash.ts";
 import { voiceJump } from "./voice-jump.ts";
 
-export const voicingPlugin: Plugin = definePlugin({
+export const harmonyPlugin: Plugin = definePlugin({
   rules: {
     "semitone-clash": semitoneClash,
     "low-interval-limit": lowIntervalLimit,
@@ -17,13 +17,13 @@ export const voicingPlugin: Plugin = definePlugin({
   },
 });
 
-export const voicing = (): I68Config => ({
-  plugins: { voicing: voicingPlugin },
+export const harmony = (): I68Config => ({
+  plugins: { harmony: harmonyPlugin },
   rules: {
-    "voicing/semitone-clash": "warn",
-    "voicing/low-interval-limit": "warn",
-    "voicing/crowded-low-mids": "warn",
-    "voicing/chord-above-melody": "warn",
-    "voicing/voice-jump": "warn",
+    "harmony/semitone-clash": "warn",
+    "harmony/low-interval-limit": "warn",
+    "harmony/crowded-low-mids": "warn",
+    "harmony/chord-above-melody": "warn",
+    "harmony/voice-jump": "warn",
   },
 });

@@ -200,3 +200,25 @@ it.effect("reports automation of a parameter the target does not have", () =>
     expect(unit).toStrictEqual(["pan は % で書きます"]);
   }),
 );
+
+const writtenNotes = (text: string): Effect.Effect<readonly string[]> =>
+  Effect.map(validSong(text), (song) =>
+    pipe(
+      onTrack("keys")(song.notes),
+      Arr.map((note) => `${String(note.sourceColumn)} ${note.spelling}`),
+    ),
+  );
+
+it.effect("keeps each note's spelling as written", () =>
+  Effect.gen(function* spelling() {
+    const notes = yield* writtenNotes(withLine("keys: D#4 1/4, Eb4 1/4, Cb4 1/4, B##3 1/4"));
+    expect(notes).toStrictEqual(["7 D#4", "16 Eb4", "25 Cb4", "34 B##3"]);
+  }),
+);
+
+it.effect("places each note of a chord at its own column", () =>
+  Effect.gen(function* chordColumns() {
+    const notes = yield* writtenNotes(withLine("keys: C4 1/2, [E4 G#4 B4] 1/2"));
+    expect(notes).toStrictEqual(["7 C4", "16 E4", "19 G#4", "23 B4"]);
+  }),
+);

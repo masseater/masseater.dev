@@ -16,30 +16,30 @@ export default defineConfig({
 });
 ```
 
-Pick the presets that match how you write, or take `pop` and `voicing` together with `recommended()`. Every rule warns rather than fails.
+Pick the presets that match how you write, or take `pop` and `harmony` together with `recommended()`. Every rule warns rather than fails.
 
 ## pop
 
 For songs with a lead vocal. `pop({ ranges, maxLeap, breathSeconds })`.
 
-| Rule              | What it catches                                                                 | How to fix it                                                           |
-| ----------------- | ------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
-| `pop/out-of-key`  | A note outside both the key the section implies and the chord under it          | Move it a semitone, or ignore the line if the borrowed note is intended |
-| `pop/part-range`  | A note outside its part's range (melody C3-C6, bass E1-C4 unless set per track) | Move the phrase an octave, or set `ranges`                              |
-| `pop/melody-leap` | A melody jump over an octave                                                    | Make it smaller, or step back the other way right after it              |
-| `pop/breath`      | A sung line longer than 8 seconds without a rest                                | Put a short rest in the phrase                                          |
+| Rule              | What it catches                                                                                                            | How to fix it                                                           |
+| ----------------- | -------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| `pop/out-of-key`  | A note outside both the key the section implies and the chord under it, except a short chromatic passing or neighbour note | Move it a semitone, or ignore the line if the borrowed note is intended |
+| `pop/part-range`  | A note outside its part's range (melody C3-C6, bass E1-C4 unless set per track)                                            | Move the phrase an octave, or set `ranges`                              |
+| `pop/melody-leap` | A melody jump over an octave                                                                                               | Make it smaller, or step back the other way right after it              |
+| `pop/breath`      | A sung line longer than 8 seconds without a rest                                                                           | Put a short rest in the phrase                                          |
 
-## voicing
+## harmony
 
-Arranging rules for chords and parts sounding together. `voicing()`.
+How chords and parts sound together: voicing, spacing and clashes. `harmony()`.
 
-| Rule                         | What it catches                                                        | How to fix it                                             |
-| ---------------------------- | ---------------------------------------------------------------------- | --------------------------------------------------------- |
-| `voicing/semitone-clash`     | Two upper parts a minor 2nd or minor 9th apart                         | Move one of them to a chord note                          |
-| `voicing/low-interval-limit` | A close interval below the pitch where it turns muddy (a 3rd below C3) | Widen it or move the upper note up an octave              |
-| `voicing/crowded-low-mids`   | More than 3 notes at once between A2 and B3                            | Thin the chord or move notes out of that range            |
-| `voicing/chord-above-melody` | A harmony part above the lead melody                                   | Keep the chord below the melody                           |
-| `voicing/voice-jump`         | A chord voice that leaps more than a major 3rd into the next chord     | Keep shared notes and move each voice to the nearest note |
+| Rule                         | What it catches                                                                      | How to fix it                                             |
+| ---------------------------- | ------------------------------------------------------------------------------------ | --------------------------------------------------------- |
+| `harmony/semitone-clash`     | Two parts a minor 2nd or minor 9th apart, except a dominant's flat 9th over its bass | Move one of them to a chord note                          |
+| `harmony/low-interval-limit` | A close interval below the pitch where it turns muddy (a 3rd below C3)               | Widen it or move the upper note up an octave              |
+| `harmony/crowded-low-mids`   | More than 3 notes at once between A2 and B3                                          | Thin the chord or move notes out of that range            |
+| `harmony/chord-above-melody` | A harmony part above the lead melody                                                 | Keep the chord below the melody                           |
+| `harmony/voice-jump`         | A chord voice that leaps more than a major 3rd into the next chord                   | Keep shared notes and move each voice to the nearest note |
 
 ## classical
 
