@@ -2232,9 +2232,6 @@ importers:
       '@masseater.dev/fumx-studio':
         specifier: workspace:*
         version: link:../../libs/fumx-studio
-      '@masseater.dev/repositories':
-        specifier: workspace:*
-        version: link:../../infra/repositories
       '@masseater.dev/sloppedia':
         specifier: workspace:*
         version: link:../../libs/sloppedia
@@ -2283,9 +2280,6 @@ importers:
       feed:
         specifier: 'catalog:'
         version: 6.0.0
-      jose:
-        specifier: 'catalog:'
-        version: 6.2.18
       lucide-react:
         specifier: 'catalog:'
         version: 1.76.0(@types/react@19.3.0)(react@19.3.1)

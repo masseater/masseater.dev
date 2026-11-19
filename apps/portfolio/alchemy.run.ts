@@ -1,4 +1,4 @@
-import { D1, Website, Workers } from "@alchemy.run/cloudflare";
+import { D1, Website } from "@alchemy.run/cloudflare";
 import type { InferEnv } from "@alchemy.run/cloudflare";
 import { accountResources } from "@masseater.dev/cloudflare-account/account";
 import { edgeGuard } from "@masseater.dev/cloudflare-account/edge-guard";
@@ -8,7 +8,7 @@ import type { CompiledStack } from "alchemy";
 import { Effect, Hash, Option } from "effect";
 import type { ConfigError } from "effect/Config";
 
-import { APP_NAME, CI_TELEMETRY_AUDIENCE, requireAppPrefix } from "./src/app/app-name.ts";
+import { APP_NAME, requireAppPrefix } from "./src/app/app-name.ts";
 import { site } from "./src/shared/config/site.ts";
 
 const DOMAIN = new URL(site.url).hostname;
@@ -47,13 +47,6 @@ const web = Effect.gen(function* web() {
   });
 });
 
-const ciTelemetry = Workers.Worker("CiTelemetry", {
-  limits: { cpuMs: 300 },
-  name: CI_TELEMETRY_AUDIENCE,
-  main: "./src/app/ci-telemetry.ts",
-  logpush: true,
-});
-
 export type WebEnv = InferEnv<typeof web>;
 
 const stack: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: string }> = Stack(
@@ -68,7 +61,6 @@ const stack: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: s
       });
       yield* accountResources(APP_NAME);
     }
-    yield* ciTelemetry;
     yield* requireAppPrefix;
     return { url };
   }),
