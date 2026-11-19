@@ -1,7 +1,7 @@
-import { Option, Record as Rec, pipe } from "effect";
+import { Option, pipe } from "effect";
 
 import type { Expr } from "#/entities/expression/model/ast.ts";
-import { ANY, describe } from "#/entities/expression/model/types.ts";
+import { ANY, describe, propertyOf } from "#/entities/expression/model/types.ts";
 import type { ExprType, ObjectType } from "#/entities/expression/model/types.ts";
 import { quote } from "#/shared/text/index.ts";
 
@@ -24,8 +24,7 @@ const literalProperty = (scope: Scope, access: Access, object: ObjectType): Expr
   }
   const name = access.index.value;
   return pipe(
-    Rec.get(object.props, name),
-    Option.orElse(() => object.mapped),
+    propertyOf(name)(object),
     Option.getOrElse(() => {
       scope.fail(
         access.expr,

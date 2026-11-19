@@ -13,6 +13,7 @@ import {
 import { resolveConfigFromFile } from "vite-plus";
 
 import { COMMENT_DIRECTIVES } from "#/shared/lib/comment-directives.ts";
+import { problemInFile } from "#/shared/lib/problem.ts";
 import type { Problem, RuleName } from "#/shared/lib/problem.ts";
 import { RepositoryFiles } from "#/shared/lib/repository-files.ts";
 import { positionOf } from "#/shared/lib/text-position.ts";
@@ -26,8 +27,6 @@ const CONFIG_FILE = "vite.config.ts";
 const VENDORED_PATHSPEC = ":(attr:linguist-vendored)";
 const READ_CONCURRENCY = 64;
 const START = 0;
-const FIRST_LINE = 1;
-const FIRST_COLUMN = 1;
 
 const READERS: readonly (readonly [RegExp, Reader])[] = [
   [/\.(?:[cm]?jsx?)$/u, "javascript"],
@@ -142,14 +141,6 @@ const problemOf =
     message: MESSAGE,
   });
 
-const unreadableProblem = (file: string, message: string): Problem => ({
-  file,
-  line: FIRST_LINE,
-  column: FIRST_COLUMN,
-  rule: RULE,
-  message: `msch could not read the comments in this file: ${message}`,
-});
-
 const settingsOf = ({ msch, lint }: RootConfigType): RootSettings => ({
   allow: pipe(
     Option.fromUndefinedOr(msch),
@@ -236,7 +227,12 @@ export const checkComments = Effect.fn("checkComments")(function* checkComments(
           Effect.map(Arr.filter(kept)),
           Effect.map(Arr.map(toProblem)),
           Effect.catchTag("CommentsUnreadable", ({ message }) =>
-            Effect.succeed([unreadableProblem(file, message)]),
+            Effect.succeed([
+              problemInFile(RULE)(
+                file,
+                `msch could not read the comments in this file: ${message}`,
+              ),
+            ]),
           ),
         ),
     });

@@ -3,14 +3,14 @@ import { Array as Arr, Effect, Option, Predicate, Schema, String as Str, pipe } 
 import { MANIFEST_FILE } from "#/entities/package/index.ts";
 import { workspaceProjects } from "#/entities/workspace/index.ts";
 import type { WorkspaceProject } from "#/entities/workspace/index.ts";
-import type { Problem, RuleName } from "#/shared/lib/problem.ts";
+import { problemInFile } from "#/shared/lib/problem.ts";
+import type { RuleName } from "#/shared/lib/problem.ts";
 import { RepositoryFiles } from "#/shared/lib/repository-files.ts";
 
 const RULE: RuleName = "plugin-marketplace";
 const PLUGIN_DIRECTORY = ".claude-plugin";
 const PLUGIN_FILE = `${PLUGIN_DIRECTORY}/plugin.json`;
 const MARKETPLACE_FILE = `${PLUGIN_DIRECTORY}/marketplace.json`;
-const FIRST = 1;
 const INDENT = 2;
 
 const OwnerSchema = Schema.Struct({ name: Schema.String, url: Schema.optionalKey(Schema.String) });
@@ -76,13 +76,7 @@ const pluginIn = Effect.fn("pluginIn")(function* pluginIn(root: string, project:
   );
 });
 
-const problem = (file: string, message: string): Problem => ({
-  file,
-  line: FIRST,
-  column: FIRST,
-  rule: RULE,
-  message,
-});
+const problem = problemInFile(RULE);
 
 const pluginsIn = Effect.fn("pluginsIn")(function* pluginsIn(root: string) {
   const projects = yield* workspaceProjects(root);
