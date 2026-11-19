@@ -1,9 +1,9 @@
 import { ruleCases } from "#/shared/lib/rule-cases.test.support.ts";
 
-import { voicingPlugin } from "./preset.ts";
+import { harmonyPlugin } from "./preset.ts";
 
 ruleCases({
-  plugin: voicingPlugin,
+  plugin: harmonyPlugin,
   rule: "voice-jump",
   valid: [
     {

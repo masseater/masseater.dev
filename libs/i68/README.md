@@ -16,7 +16,7 @@ import { defineConfig } from "vite-plus";
 export default defineConfig({
   i68: {
     extends: [recommended({ ranges: { lead: ["A3", "E5"] } })],
-    rules: { "voicing/chord-above-melody": "off" },
+    rules: { "harmony/chord-above-melody": "off" },
   },
 });
 ```
@@ -57,7 +57,7 @@ When a passage breaks a rule on purpose, say so in the file, and write why after
 
 ```fumx
 lead: C5 1/2, F#5 1/2  // i68-ignore pop/out-of-key -- borrowed from the parallel minor
-// i68-ignore-next-line voicing/semitone-clash
+// i68-ignore-next-line harmony/semitone-clash
 pad: [B4 C5] 1/1
 // i68-disable pop/melody-leap -- the chorus jumps on purpose
 ...

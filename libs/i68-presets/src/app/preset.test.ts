@@ -3,7 +3,7 @@ import { format, lintText } from "@r_masseater/i68";
 import type { I68Config, I68Error } from "@r_masseater/i68";
 import { Array as Arr, Effect, pipe } from "effect";
 
-import { classical, pop, recommended, voicing } from "./index.ts";
+import { classical, harmony, pop, recommended } from "./index.ts";
 
 const PATH = "/song.fumx";
 
@@ -116,9 +116,9 @@ bar {
 );
 
 it.effect(
-  "voicing flags clashes, low intervals, crowded low mids and chords above the melody",
+  "harmony flags clashes, low intervals, crowded low mids and chords above the melody",
   () =>
-    Effect.gen(function* voicings() {
+    Effect.gen(function* harmonies() {
       const text = song(`bar meter 4/4 tempo 120bpm {
   lead: C5 1/1
   pad:  [B4 D5] 1/1
@@ -127,23 +127,23 @@ bar {
   pad:  [C3 D3 G3 A3] 1/1
   bass: C2 1/1
 }`);
-      const found = yield* rulesOf(text, voicing());
+      const found = yield* rulesOf(text, harmony());
       expect(Arr.dedupe(found)).toStrictEqual([
-        "voicing/semitone-clash",
-        "voicing/chord-above-melody",
-        "voicing/crowded-low-mids",
-        "voicing/low-interval-limit",
+        "harmony/semitone-clash",
+        "harmony/chord-above-melody",
+        "harmony/crowded-low-mids",
+        "harmony/low-interval-limit",
       ]);
     }),
 );
 
-it.effect("voicing flags chord voices that leap", () =>
+it.effect("harmony flags chord voices that leap", () =>
   Effect.gen(function* leaps() {
     const text = song(`bar meter 4/4 tempo 120bpm {
   pad: [C4 E4 G4] 1/2, [A4 C#5 E5] 1/2
 }`);
-    const found = yield* rulesOf(text, voicing());
-    expect(found).toStrictEqual(["voicing/voice-jump"]);
+    const found = yield* rulesOf(text, harmony());
+    expect(found).toStrictEqual(["harmony/voice-jump"]);
   }),
 );
 
