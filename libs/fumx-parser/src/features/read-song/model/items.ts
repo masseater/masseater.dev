@@ -25,7 +25,7 @@ export type NoteFields = Pick<
 
 export type NoteItem = Placed &
   NoteFields &
-  Pick<Note, "midi" | "cents"> & { readonly kind: "note" };
+  Pick<Note, "midi" | "cents" | "spelling"> & { readonly kind: "note" };
 
 export type Item =
   | NoteItem

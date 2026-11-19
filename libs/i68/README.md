@@ -16,7 +16,7 @@ import { defineConfig } from "vite-plus";
 export default defineConfig({
   i68: {
     extends: [recommended({ ranges: { lead: ["A3", "E5"] } })],
-    rules: { "voicing/chord-above-melody": "off" },
+    rules: { "harmony/chord-above-melody": "off" },
   },
 });
 ```
@@ -49,7 +49,7 @@ const noHighBass = defineRule({
 export const local = definePlugin({ rules: { "no-high-bass": noHighBass } });
 ```
 
-Register a plugin under a name in `plugins` and its rules become `<name>/<rule>`. A rule is on as an error unless `rules` sets it to `"warn"`, `"off"` or `["warn", { ...options }]`.
+Register a plugin under a name in `plugins` and its rules become `<name>/<rule>`. A rule is on as an error unless `rules` sets it to `"warn"`, `"off"` or `["warn", { ...options }]`. A later config that sets only the severity keeps the options an earlier one gave, as in ESLint. Naming a plugin or a rule that is not registered, or a rule that throws, stops the run with an error.
 
 ## Ignoring a finding
 
@@ -57,7 +57,7 @@ When a passage breaks a rule on purpose, say so in the file, and write why after
 
 ```fumx
 lead: C5 1/2, F#5 1/2  // i68-ignore pop/out-of-key -- borrowed from the parallel minor
-// i68-ignore-next-line voicing/semitone-clash
+// i68-ignore-next-line harmony/semitone-clash
 pad: [B4 C5] 1/1
 // i68-disable pop/melody-leap -- the chorus jumps on purpose
 ...
@@ -65,7 +65,7 @@ pad: [B4 C5] 1/1
 // i68-ignore-file classical/parallel-perfects
 ```
 
-`i68-disable` covers every line until the matching `i68-enable`, or to the end of the file. A comment without rule names covers every rule.
+Directives follow ESLint's: they start the comment, `//` or `/* */`, and separate rule names with commas. `i68-ignore` covers its own line, `i68-ignore-next-line` the line after it, and `i68-ignore-file` the whole file. `i68-disable` covers everything after it until the matching `i68-enable`, or to the end of the file. A comment without rule names covers every rule.
 
 ## Programmatic use
 

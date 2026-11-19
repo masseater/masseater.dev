@@ -55,6 +55,7 @@ const noteOf: From<PlacedNote, Note> = (placed) => {
   const {
     midi,
     cents,
+    spelling,
     velocity,
     releaseVelocity,
     gate,
@@ -68,6 +69,7 @@ const noteOf: From<PlacedNote, Note> = (placed) => {
     ...timedOf(placed),
     midi,
     cents,
+    spelling,
     velocity,
     releaseVelocity,
     gate,

@@ -31,8 +31,11 @@ const notesOf =
   (pitches: string): readonly Note[] =>
     pipe(
       Str.split(" ")(pitches),
-      Arr.map((pitch) => TonalNote.midi(pitch) ?? NONE),
-      Arr.map((midi) => ({
+      Arr.map((pitch) => ({
+        spelling: pitch,
+        midi: TonalNote.midi(pitch) ?? NONE,
+      })),
+      Arr.map(({ spelling, midi }) => ({
         track,
         line: NONE,
         sourceLine: NONE,
@@ -44,6 +47,7 @@ const notesOf =
         nudgeMilliseconds: NONE,
         nudgeSeconds: NONE,
         midi,
+        spelling,
         cents: NONE,
         velocity: FULL,
         releaseVelocity: Option.none(),

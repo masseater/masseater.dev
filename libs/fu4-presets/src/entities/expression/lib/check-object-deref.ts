@@ -1,7 +1,7 @@
-import { Option, Record as Rec, pipe } from "effect";
+import { Option, Record as Rec } from "effect";
 
 import type { Expr } from "#/entities/expression/model/ast.ts";
-import { ANY, describe, filteredOf } from "#/entities/expression/model/types.ts";
+import { ANY, describe, filteredOf, propertyOf } from "#/entities/expression/model/types.ts";
 import type { ArrayType, ExprType, ObjectType } from "#/entities/expression/model/types.ts";
 import { quote } from "#/shared/text/index.ts";
 
@@ -13,12 +13,6 @@ export interface Deref {
   readonly receiver: Expr;
   readonly property: string;
 }
-
-const propertyOf = (object: ObjectType, property: string): Option.Option<ExprType> =>
-  pipe(
-    Rec.get(object.props, property),
-    Option.orElse(() => object.mapped),
-  );
 
 const notObject = (scope: Scope, deref: Deref, type: ExprType): ExprType => {
   scope.fail(
@@ -47,7 +41,7 @@ const fromObject = (scope: Scope, deref: Deref, object: ObjectType): ExprType =>
 };
 
 const elementOf = (scope: Scope, deref: Deref, element: ObjectType): ExprType =>
-  Option.getOrElse(propertyOf(element, deref.property), () => {
+  Option.getOrElse(propertyOf(deref.property)(element), () => {
     scope.fail(
       deref.expr,
       `property ${quote(deref.property)} is not defined in object type ${describe(element)} as element of filtered array`,

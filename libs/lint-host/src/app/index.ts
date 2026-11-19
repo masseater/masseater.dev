@@ -1,4 +1,4 @@
-export { reportedSeverity, settingOf } from "#/entities/rule/index.ts";
+export { mergedRules, reportedSeverity, settingOf } from "#/entities/rule/index.ts";
 export type { RuleEntry, RuleOptions, Setting, Severity } from "#/entities/rule/index.ts";
 export { buildAddon } from "#/features/build-addon/index.ts";
 export type { AddonBuild } from "#/features/build-addon/index.ts";
