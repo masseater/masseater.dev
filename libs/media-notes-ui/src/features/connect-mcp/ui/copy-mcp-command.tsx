@@ -9,6 +9,9 @@ import { copyAtom } from "#/features/connect-mcp/model/access.ts";
 
 const LABEL = "MCP";
 const HINT = "Claude Code に追加するコマンドをコピー";
+const COPIED = "コピーしました";
+const FAILED = "コピーできませんでした";
+const SILENT = "";
 
 const iconOf = (done: boolean): ReactNode => {
   if (done) {
@@ -17,15 +20,30 @@ const iconOf = (done: boolean): ReactNode => {
   return <Copy aria-hidden="true" />;
 };
 
+const statusOf = (copied: AsyncResult.AsyncResult<void, unknown>): string => {
+  if (AsyncResult.isSuccess(copied)) {
+    return COPIED;
+  }
+  if (AsyncResult.isFailure(copied)) {
+    return FAILED;
+  }
+  return SILENT;
+};
+
 export const CopyMcpCommand = ({ name }: Readonly<{ name: string }>): ReactNode => {
   const [copied, copy] = useAtom(copyAtom);
   const click = useCallback(() => {
     copy(name);
   }, [copy, name]);
   return (
-    <Button variant="outline" title={HINT} onClick={click}>
-      {iconOf(AsyncResult.isSuccess(copied))}
-      {LABEL}
-    </Button>
+    <>
+      <Button variant="outline" title={HINT} onClick={click}>
+        {iconOf(AsyncResult.isSuccess(copied))}
+        {LABEL}
+      </Button>
+      <span role="status" className="sr-only">
+        {statusOf(copied)}
+      </span>
+    </>
   );
 };
