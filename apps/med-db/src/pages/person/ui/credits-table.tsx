@@ -10,10 +10,10 @@ import { CreditRow } from "./credit-row.tsx";
 
 const HEADINGS = ["動画", "No.", "曲", "担当"];
 
-export const CreditsTable = (): ReactNode => {
+export const CreditsTable = ({ label }: Readonly<{ label: string }>): ReactNode => {
   const { credits } = usePerson();
   return (
-    <Table>
+    <Table label={label}>
       <TableHeadings labels={HEADINGS} />
       <TableBody>
         {pipe(

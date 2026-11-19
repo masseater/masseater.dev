@@ -10,7 +10,9 @@ export const RunRow = ({
   columns,
 }: Readonly<{ run: Run; columns: readonly Column[] }>): ReactNode => (
   <tr className="border-t">
-    <th className="px-3 py-2 text-left font-normal">{wayOf(run)}</th>
+    <th scope="row" className="px-3 py-2 text-left font-normal">
+      {wayOf(run)}
+    </th>
     {pipe(
       columns,
       Arr.map(({ id, cell }) => (

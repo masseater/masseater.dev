@@ -4,7 +4,7 @@ import { ClaudeRoute } from "./claude-route.tsx";
 import { NoteRoute } from "./note-route.tsx";
 
 export const SettingRoutes = (): ReactNode => (
-  <ul className="text-muted-foreground flex flex-col gap-2 text-sm">
+  <ul className="text-muted-foreground flex flex-col gap-2 text-sm" role="list">
     <NoteRoute />
     <ClaudeRoute />
   </ul>

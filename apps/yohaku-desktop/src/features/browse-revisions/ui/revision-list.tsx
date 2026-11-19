@@ -15,7 +15,7 @@ export const RevisionList = ({ id }: Readonly<{ id: string }>): ReactNode => {
     return <p className="text-muted-foreground pb-3 pl-4 text-sm">{NOTHING_KEPT}</p>;
   }
   return (
-    <ol aria-label={LABEL} className="pb-2 pl-4">
+    <ol aria-label={LABEL} className="pb-2 pl-4" role="list">
       {pipe(
         revisions,
         Array.map((revision) => (

@@ -6,6 +6,7 @@ import { useTranslation } from "#/entities/translation/index.ts";
 import { useCopyText } from "#/features/copy-translation/model/copy.ts";
 
 import { CopyIcon } from "./copy-icon.tsx";
+import { CopyStatus } from "./copy-status.tsx";
 
 const LABEL = "翻訳をコピー";
 
@@ -21,14 +22,17 @@ export const CopyButton = (): ReactNode => {
     return false;
   }
   return (
-    <Button
-      aria-label={LABEL}
-      className="ml-auto rounded-full"
-      size="icon"
-      variant="ghost"
-      onClick={onClick}
-    >
-      <CopyIcon />
-    </Button>
+    <>
+      <Button
+        aria-label={LABEL}
+        className="ml-auto rounded-full"
+        size="icon"
+        variant="ghost"
+        onClick={onClick}
+      >
+        <CopyIcon />
+      </Button>
+      <CopyStatus />
+    </>
   );
 };

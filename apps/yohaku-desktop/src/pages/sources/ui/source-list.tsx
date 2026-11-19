@@ -6,7 +6,7 @@ import { useSources } from "#/entities/source/index.ts";
 import { SourceRow } from "./source-row.tsx";
 
 export const SourceList = ({ label }: Readonly<{ label: string }>): ReactNode => (
-  <ul aria-label={label}>
+  <ul aria-label={label} role="list">
     {pipe(
       useSources(),
       Array.map((source) => <SourceRow key={source.id} source={source} />),

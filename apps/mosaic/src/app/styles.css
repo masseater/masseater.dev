@@ -4,6 +4,25 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@theme {
+  --animate-cell-pulse-0: cell-pulse 1.2s linear 0s infinite;
+  --animate-cell-pulse-1: cell-pulse 1.2s linear 0.12s infinite;
+  --animate-cell-pulse-2: cell-pulse 1.2s linear 0.24s infinite;
+  --animate-cell-pulse-3: cell-pulse 1.2s linear 0.36s infinite;
+  --animate-cell-pulse-4: cell-pulse 1.2s linear 0.48s infinite;
+  --animate-cell-pulse-slow-0: cell-pulse 6s linear 0s infinite;
+  --animate-cell-pulse-slow-1: cell-pulse 6s linear 0.12s infinite;
+  --animate-cell-pulse-slow-2: cell-pulse 6s linear 0.24s infinite;
+  --animate-cell-pulse-slow-3: cell-pulse 6s linear 0.36s infinite;
+  --animate-cell-pulse-slow-4: cell-pulse 6s linear 0.48s infinite;
+
+  @keyframes cell-pulse {
+    50% {
+      opacity: 1;
+    }
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

@@ -284,6 +284,7 @@ catalog:
   hast-util-to-string: 3.0.1
   unist-util-visit: 5.2.0
   verovio: 6.4.1
+  modern-web-guidance: 1.0.1
   smol-toml: 1.9.1
 catalogs:
   stack:

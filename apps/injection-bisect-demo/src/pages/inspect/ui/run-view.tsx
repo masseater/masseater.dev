@@ -11,13 +11,14 @@ export const RunView = ({ state }: Readonly<{ state: InspectState }>): ReactNode
     return "";
   }
   if (state.status === "error") {
-    return <p className="text-destructive text-sm">{state.message}</p>;
+    return (
+      <p role="alert" className="text-destructive text-sm">
+        {state.message}
+      </p>
+    );
   }
   return (
-    <section
-      aria-live="polite"
-      className="flex min-w-0 flex-col gap-8 lg:sticky lg:top-0 lg:max-h-dvh lg:overflow-y-auto lg:py-4"
-    >
+    <section className="flex min-w-0 flex-col gap-8 lg:sticky lg:top-0 lg:max-h-dvh lg:overflow-y-auto lg:py-4">
       <RunSummary text={state.text} model={state.model} format={state.format} trace={state.trace} />
       <TraceView text={state.text} trace={state.trace} />
       <EventLog events={state.events} />

@@ -16,11 +16,11 @@ export const Sidebar = ({ children }: Readonly<{ children: ReactNode }>): ReactN
       data-state={state}
     >
       <div
-        className="w-sidebar group-data-[collapsible=icon]:w-sidebar-icon relative bg-transparent transition-all duration-200 ease-linear"
+        className="w-sidebar group-data-[collapsible=icon]:w-sidebar-icon relative bg-transparent motion-safe:transition-all motion-safe:duration-200 motion-safe:ease-linear"
         data-slot="sidebar-gap"
       />
       <div
-        className="w-sidebar group-data-[collapsible=icon]:w-sidebar-icon border-sidebar-border fixed inset-y-0 left-0 z-10 hidden h-svh border-r transition-all duration-200 ease-linear md:flex"
+        className="w-sidebar group-data-[collapsible=icon]:w-sidebar-icon border-sidebar-border fixed inset-y-0 left-0 z-10 hidden h-svh border-r motion-safe:transition-all motion-safe:duration-200 motion-safe:ease-linear md:flex"
         data-slot="sidebar-container"
       >
         <div className="bg-sidebar flex h-full w-full flex-col" data-slot="sidebar-inner">

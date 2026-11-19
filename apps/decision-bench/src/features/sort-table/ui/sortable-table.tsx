@@ -1,6 +1,7 @@
 "use client";
 
 import { Array as Arr, pipe } from "effect";
+import { useId } from "react";
 import type { ReactNode } from "react";
 
 import { sortRows, useSort } from "#/features/sort-table/model/sorting.ts";
@@ -32,10 +33,13 @@ export const SortableTable = <Row,>({
   colorOf: (row: Row) => string;
   columns: readonly TableColumn<Row>[];
 }>): ReactNode => {
+  const captionId = useId();
   const sorted = sortRows({ rows, sort: useSort(id), columns, labelOf });
   return (
-    <Table>
-      <TableCaption className="mt-0 mb-2 caption-top text-left">{caption}</TableCaption>
+    <Table labelledBy={captionId}>
+      <TableCaption className="mt-0 mb-2 caption-top text-left" id={captionId}>
+        {caption}
+      </TableCaption>
       <TableHeader>
         <SortHeaderRow table={id} label={label} columns={columns} />
       </TableHeader>

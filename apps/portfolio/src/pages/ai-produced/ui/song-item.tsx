@@ -3,8 +3,12 @@ import type { ReactNode } from "react";
 
 import { THUMBNAIL, summaryOf } from "#/entities/song/index.ts";
 import type { Song } from "#/entities/song/index.ts";
+import type { ImagePriority } from "#/shared/lib/index.ts";
 
-export const SongItem = ({ song }: Readonly<{ song: Song }>): ReactNode => (
+export const SongItem = ({
+  priority,
+  song,
+}: Readonly<{ priority: ImagePriority; song: Song }>): ReactNode => (
   <li>
     <Link
       className="group flex flex-wrap items-baseline gap-x-4 gap-y-3"
@@ -15,7 +19,9 @@ export const SongItem = ({ song }: Readonly<{ song: Song }>): ReactNode => (
         alt=""
         className="h-auto w-full"
         decoding="async"
+        fetchPriority={priority.fetchPriority}
         height={THUMBNAIL.height}
+        loading={priority.loading}
         src={song.thumbnail}
         width={THUMBNAIL.width}
       />

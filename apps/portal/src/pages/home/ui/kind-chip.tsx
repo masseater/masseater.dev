@@ -7,7 +7,7 @@ import type { ReactNode } from "react";
 import type { ActivityKind } from "#/pages/home/model/activity.ts";
 
 const CHIP =
-  "border-line-strong hover:bg-muted aria-[current=true]:bg-primary aria-[current=true]:border-primary aria-[current=true]:text-primary-foreground inline-flex h-8 items-center rounded-full border bg-white px-3 text-sm";
+  "border-line-strong hover:bg-muted aria-[current=true]:bg-primary aria-[current=true]:border-primary aria-[current=true]:text-primary-foreground inline-flex min-h-8 items-center rounded-full border bg-white px-3 text-sm";
 
 export const KindChip = ({
   current,

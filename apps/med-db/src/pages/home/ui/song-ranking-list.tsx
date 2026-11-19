@@ -13,7 +13,7 @@ const usesLabel = (count: number): string => `${count.toString()} 本`;
 export const SongRankingList = (): ReactNode => {
   const { data: songs } = useSuspenseQuery(songsQuery);
   return (
-    <ol className="flex flex-col divide-y">
+    <ol className="flex flex-col divide-y" role="list">
       {pipe(
         songs,
         Array.take(RANKING_LIMIT),

@@ -6,7 +6,11 @@ export type LegendItem = Readonly<{ label: string; swatch: string }>;
 const LABEL = "凡例";
 
 export const ChartLegend = ({ items }: Readonly<{ items: readonly LegendItem[] }>): ReactNode => (
-  <ul aria-label={LABEL} className="text-muted-foreground flex flex-wrap gap-x-4 gap-y-1 text-xs">
+  <ul
+    aria-label={LABEL}
+    className="text-muted-foreground flex flex-wrap gap-x-4 gap-y-1 text-xs"
+    role="list"
+  >
     {pipe(
       items,
       Arr.map((item) => (

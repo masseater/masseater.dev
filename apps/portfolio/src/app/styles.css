@@ -63,6 +63,11 @@
   margin-left: var(--radix-hover-card-trigger-width);
 }
 
+@utility skip-offscreen-stage {
+  content-visibility: auto;
+  contain-intrinsic-size: auto none auto 540px;
+}
+
 @utility site-header {
   height: var(--site-header-height);
   view-transition-name: site-header;

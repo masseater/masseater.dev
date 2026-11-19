@@ -32,7 +32,7 @@ export const EntryList = ({
     );
   }
   return (
-    <ul className="grid gap-x-8 sm:grid-cols-2 md:grid-cols-3">
+    <ul className="grid gap-x-8 sm:grid-cols-2 md:grid-cols-3" role="list">
       {pipe(
         entries,
         Array.map((entry) => (

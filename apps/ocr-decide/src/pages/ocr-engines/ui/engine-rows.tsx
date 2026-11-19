@@ -12,7 +12,9 @@ export const EngineRows = ({ columns }: Readonly<{ columns: readonly Column[] }>
         runs,
         Arr.map((run) => (
           <tr key={run.engine} className="border-t">
-            <th className="px-3 py-2 text-left font-normal whitespace-nowrap">{run.label}</th>
+            <th scope="row" className="px-3 py-2 text-left font-normal whitespace-nowrap">
+              {run.label}
+            </th>
             {pipe(
               columns,
               Arr.map(({ id, cell }) => (

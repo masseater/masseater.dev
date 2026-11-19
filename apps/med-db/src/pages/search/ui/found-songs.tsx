@@ -11,7 +11,7 @@ export const FoundSongs = (): ReactNode => {
   return (
     <section className="flex flex-col gap-4">
       <SectionHeading title="曲" count={songs.length} />
-      <ul className="flex flex-wrap gap-2">
+      <ul className="flex flex-wrap gap-2" role="list">
         {pipe(
           songs,
           Array.map((song) => <SongPill key={song.id} song={song} />),

@@ -14,7 +14,7 @@ export const SourceFacts = ({ source }: Readonly<{ source: typeof Source.Type }>
         <span className="min-w-0 grow truncate font-medium">{source.label}</span>
         <RevertButton source={source} />
       </div>
-      <ul aria-label={source.label} className="flex flex-col gap-1.5">
+      <ul aria-label={source.label} className="flex flex-col gap-1.5" role="list">
         {pipe(
           facts,
           Array.map((fact) => (

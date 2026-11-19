@@ -4,7 +4,7 @@ export const RowList = ({
   children,
   label,
 }: Readonly<{ children: ReactNode; label: string }>): ReactNode => (
-  <ul aria-label={label} className="divide-border min-w-0 divide-y">
+  <ul aria-label={label} className="divide-border min-w-0 divide-y" role="list">
     {children}
   </ul>
 );

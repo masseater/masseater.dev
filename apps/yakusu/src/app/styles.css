@@ -4,6 +4,7 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
+  color-scheme: light dark;
   --highlight: oklch(0.55 0.19 262);
 }
 

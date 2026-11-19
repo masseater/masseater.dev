@@ -2,7 +2,7 @@ import type { Tone } from "#/entities/inspection/index.ts";
 
 export const TONE_CLASS: Readonly<Record<Tone, string>> = {
   none: "",
-  pending: "rounded-sm bg-amber-400/30 animate-pulse",
+  pending: "rounded-sm bg-amber-400/30 motion-safe:animate-pulse",
   miss: "rounded-sm bg-sky-500/15",
   hit: "rounded-sm bg-destructive/20",
   injection: "rounded-sm bg-destructive/45",
@@ -13,7 +13,7 @@ export const ANSWER_CLASS =
 
 export const BAR_CLASS: Readonly<Record<Tone, string>> = {
   none: "fill-muted",
-  pending: "fill-amber-400 animate-pulse",
+  pending: "fill-amber-400 motion-safe:animate-pulse",
   miss: "fill-sky-500",
   hit: "fill-destructive",
   injection: "fill-destructive",

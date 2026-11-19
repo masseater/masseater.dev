@@ -11,5 +11,7 @@ export const LinkList = ({
   children,
   direction,
 }: Readonly<{ children: ReactNode; direction: Direction }>): ReactNode => (
-  <ul className={LIST_CLASS[direction]}>{children}</ul>
+  <ul className={LIST_CLASS[direction]} role="list">
+    {children}
+  </ul>
 );

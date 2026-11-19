@@ -1,17 +1,26 @@
+import { Array, Option, pipe } from "effect";
 import type { ReactNode } from "react";
 
 import { HEIGHT, WIDTH } from "./loading-cell-size.ts";
 
 const RADIUS = 1;
 const DIM = 0.15;
-const PULSE = "0.15;1;0.15";
-const DURATION = "1.2s";
+
+const STILL = "";
+
+const PULSES = [
+  "animate-cell-pulse-0 motion-reduce:animate-cell-pulse-slow-0",
+  "animate-cell-pulse-1 motion-reduce:animate-cell-pulse-slow-1",
+  "animate-cell-pulse-2 motion-reduce:animate-cell-pulse-slow-2",
+  "animate-cell-pulse-3 motion-reduce:animate-cell-pulse-slow-3",
+  "animate-cell-pulse-4 motion-reduce:animate-cell-pulse-slow-4",
+] as const;
 
 export const LoadingCell = ({
   left,
   top,
-  delay,
-}: Readonly<{ left: number; top: number; delay: string }>): ReactNode => (
+  step,
+}: Readonly<{ left: number; top: number; step: number }>): ReactNode => (
   <rect
     x={left}
     y={top}
@@ -20,13 +29,9 @@ export const LoadingCell = ({
     rx={RADIUS}
     fill="currentColor"
     opacity={DIM}
-  >
-    <animate
-      attributeName="opacity"
-      values={PULSE}
-      dur={DURATION}
-      begin={delay}
-      repeatCount="indefinite"
-    />
-  </rect>
+    className={pipe(
+      Array.get(PULSES, step),
+      Option.getOrElse(() => STILL),
+    )}
+  />
 );
