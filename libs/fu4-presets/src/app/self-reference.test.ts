@@ -11,7 +11,7 @@ import {
 } from "effect";
 import { afterAll, expect, test } from "vite-plus/test";
 
-import { actionlint } from "#/app/presets.ts";
+import { actionlint } from "./presets.ts";
 
 const services = ManagedRuntime.make(nodeServices);
 afterAll(() => services.dispose());
