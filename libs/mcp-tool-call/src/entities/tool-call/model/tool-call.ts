@@ -1,63 +1,33 @@
-import type {
-  CallToolResult,
-  StandardSchemaV1,
-  StandardSchemaWithJSON,
-} from "@modelcontextprotocol/server";
+import type { CallToolResult } from "@modelcontextprotocol/server";
 import { runner } from "@r_masseater/workers-tracing/effect";
-import { Array as Arr, Clock, Effect, Layer, Match, Option, Predicate, Schema, pipe } from "effect";
+import { Effect, Layer, Match, Option, Predicate, Schema } from "effect";
 
-import type { Caller } from "./caller.ts";
-import { compactInput } from "./compact-schema.ts";
+export const ERROR_TAG_META = "dev.masseater/error-tag";
 
-export type ToolCall = Readonly<{
-  tool: string;
-  caller: Caller;
-  project: string;
-  input: unknown;
-}>;
-
-export type MeteredTool<Value> = ToolCall & Readonly<{ count: (value: Value) => number }>;
-
-export type InputMeter = Omit<ToolCall, "input">;
+export const RESULT_COUNT_META = "dev.masseater/result-count";
 
 export type FailureText = Readonly<{ errorTag: string; text: string }>;
+
+export type Counted<Value> = Readonly<{ count: (value: Value) => number }>;
 
 type ToolOutcome =
   | Readonly<{ status: "ok"; resultCount: number; text: string }>
   | (FailureText & Readonly<{ status: "error" }>);
 
-type ToolMetrics = Readonly<{ errorTag: string; resultCount: number }>;
-
-export type Meter<Failure> = Readonly<{
-  dataset: () => AnalyticsEngineDataset;
-  describe: (failure: Failure) => FailureText;
-}>;
+export type Describe<Failure> = Readonly<{ describe: (failure: Failure) => FailureText }>;
 
 export type ToolRunner<Failure, Services> = <Value>(
-  call: MeteredTool<Value>,
+  counted: Counted<Value>,
 ) => (effect: Effect.Effect<Value, Failure, Services>) => Promise<CallToolResult>;
 
 export type ToolCalls<Failure> = Readonly<{
-  meteredInput: (
-    meter: InputMeter,
-  ) => <Input, Output>(
-    schema: StandardSchemaWithJSON<Input, Output>,
-  ) => StandardSchemaWithJSON<Input, Output>;
   runToolIn: <Services>(services: Layer.Layer<Services>) => ToolRunner<Failure, Services>;
   runTool: ToolRunner<Failure, never>;
 }>;
 
-const NO_ERROR = "";
-
-const NO_LATENCY = 0;
-
-const NO_RESULTS = 0;
-
 const ONE = 1;
 
 export const NO_PROJECT = "";
-
-const INVALID_INPUT = "InvalidInput";
 
 export const WRITE = { readOnlyHint: false, destructiveHint: false, openWorldHint: false };
 
@@ -70,36 +40,6 @@ export const one = (): number => ONE;
 export const encodeJson = (value: unknown): Effect.Effect<string> =>
   Schema.encodeUnknownEffect(Schema.fromJsonString(Schema.Unknown))(value).pipe(Effect.orDie);
 
-const byteLength = (text: string): number => new TextEncoder().encode(text).byteLength;
-
-const metricsOf = (outcome: ToolOutcome): ToolMetrics =>
-  Match.value(outcome).pipe(
-    Match.discriminatorsExhaustive("status")({
-      ok: ({ resultCount }) => ({ errorTag: NO_ERROR, resultCount }),
-      error: ({ errorTag }) => ({ errorTag, resultCount: NO_RESULTS }),
-    }),
-  );
-
-const toResult = (outcome: ToolOutcome): CallToolResult => ({
-  content: [{ type: "text", text: outcome.text }],
-  isError: outcome.status === "error",
-});
-
-const issueText = (issues: readonly StandardSchemaV1.Issue[]): string =>
-  pipe(
-    issues,
-    Arr.map((issue) => issue.message),
-    Arr.join("; "),
-  );
-
-const validation = <Input, Output>(
-  schema: StandardSchemaWithJSON<Input, Output>,
-  value: unknown,
-): Effect.Effect<StandardSchemaV1.Result<Output>> =>
-  Effect.promise(() => Promise.resolve(schema["~standard"].validate(value)));
-
-const runInput = runner(Layer.empty);
-
 const textOf = (value: unknown): Effect.Effect<string> =>
   Option.match(Option.liftPredicate(value, Predicate.isString), {
     onNone: () => encodeJson(value),
@@ -107,7 +47,7 @@ const textOf = (value: unknown): Effect.Effect<string> =>
   });
 
 const toOutcome =
-  <Failure>(describe: Meter<Failure>["describe"]) =>
+  <Failure>(describe: Describe<Failure>["describe"]) =>
   <Value>(count: (value: Value) => number) =>
   <Services>(
     effect: Effect.Effect<Value, Failure, Services>,
@@ -120,106 +60,30 @@ const toOutcome =
         ),
     });
 
-const record =
-  (dataset: Meter<unknown>["dataset"]) =>
-  (
-    { tool, caller, project, input }: ToolCall,
-    outcome: ToolOutcome,
-    latencyMs: number,
-  ): Effect.Effect<void> =>
-    encodeJson(input).pipe(
-      Effect.flatMap((encodedInput) => {
-        const { errorTag, resultCount } = metricsOf(outcome);
-        const inputBytes = byteLength(encodedInput);
-        const outputBytes = byteLength(outcome.text);
-        return Effect.sync(() => {
-          dataset().writeDataPoint({
-            indexes: [tool],
-            blobs: [tool, outcome.status, errorTag, caller.client, project, caller.userAgent],
-            doubles: [latencyMs, inputBytes, outputBytes, resultCount],
-          });
-        }).pipe(
-          Effect.andThen(Effect.logInfo("mcp tool call")),
-          Effect.annotateLogs({
-            event: "mcp_tool_call",
-            tool,
-            status: outcome.status,
-            errorTag,
-            client: caller.client,
-            userAgent: caller.userAgent,
-            project,
-            latencyMs,
-            inputBytes,
-            outputBytes,
-            resultCount,
-          }),
-        );
+const toResult = (outcome: ToolOutcome): CallToolResult =>
+  Match.value(outcome).pipe(
+    Match.discriminatorsExhaustive("status")({
+      ok: ({ text, resultCount }) => ({
+        content: [{ type: "text" as const, text }],
+        isError: false,
+        _meta: { [RESULT_COUNT_META]: resultCount },
       }),
-    );
-
-const recordRejected =
-  (dataset: Meter<unknown>["dataset"], meter: InputMeter, input: unknown) =>
-  <Output>(
-    result: StandardSchemaV1.Result<Output>,
-  ): Effect.Effect<StandardSchemaV1.Result<Output>> =>
-    Option.match(Option.fromNullishOr(result.issues), {
-      onNone: () => Effect.succeed(result),
-      onSome: (issues) =>
-        record(dataset)(
-          { ...meter, input },
-          { status: "error", errorTag: INVALID_INPUT, text: issueText(issues) },
-          NO_LATENCY,
-        ).pipe(Effect.as(result)),
-    });
-
-const checked =
-  (dataset: Meter<unknown>["dataset"], meter: InputMeter) =>
-  <Input, Output>(
-    schema: StandardSchemaWithJSON<Input, Output>,
-    value: unknown,
-  ): Effect.Effect<StandardSchemaV1.Result<Output>> =>
-    validation(schema, value).pipe(
-      Effect.flatMap(recordRejected(dataset, meter, value)),
-      Effect.withSpan(`mcp.tool.${meter.tool}.input`),
-    );
-
-const meteredInputOf =
-  (dataset: Meter<unknown>["dataset"]) =>
-  (meter: InputMeter) =>
-  <Input, Output>(
-    schema: StandardSchemaWithJSON<Input, Output>,
-  ): StandardSchemaWithJSON<Input, Output> =>
-    compactInput({
-      "~standard": {
-        ...schema["~standard"],
-        validate: (value) => runInput(checked(dataset, meter)(schema, value)),
-      },
-    });
+      error: ({ text, errorTag }) => ({
+        content: [{ type: "text" as const, text }],
+        isError: true,
+        _meta: { [ERROR_TAG_META]: errorTag },
+      }),
+    }),
+  );
 
 const runToolInOf =
-  <Failure>({ dataset, describe }: Meter<Failure>) =>
+  <Failure>({ describe }: Describe<Failure>) =>
   <Services>(services: Layer.Layer<Services>): ToolRunner<Failure, Services> =>
-  <Value>({ count, ...call }: MeteredTool<Value>) =>
+  <Value>({ count }: Counted<Value>) =>
   (effect: Effect.Effect<Value, Failure, Services>): Promise<CallToolResult> =>
-    runner(services)(
-      Effect.gen(function* meteredTool() {
-        const startedAt = yield* Clock.currentTimeMillis;
-        const outcome = yield* toOutcome(describe)(count)(effect);
-        const finishedAt = yield* Clock.currentTimeMillis;
-        yield* record(dataset)(call, outcome, finishedAt - startedAt);
-        return toResult(outcome);
-      }).pipe(
-        Effect.withSpan(`mcp.tool.${call.tool}`, {
-          attributes: { "mcp.client": call.caller.client, "mcp.project": call.project },
-        }),
-      ),
-    );
+    runner(services)(toOutcome(describe)(count)(effect).pipe(Effect.map(toResult)));
 
-export const toolCalls = <Failure>(meter: Meter<Failure>): ToolCalls<Failure> => {
-  const runToolIn = runToolInOf<Failure>(meter);
-  return {
-    meteredInput: meteredInputOf(meter.dataset),
-    runToolIn,
-    runTool: runToolIn(Layer.empty),
-  };
+export const toolCalls = <Failure>(describe: Describe<Failure>): ToolCalls<Failure> => {
+  const runToolIn = runToolInOf<Failure>(describe);
+  return { runToolIn, runTool: runToolIn(Layer.empty) };
 };

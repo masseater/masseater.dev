@@ -1,5 +1,6 @@
-import type { Caller } from "@masseater.dev/mcp-tool-call";
-import { McpServer } from "@modelcontextprotocol/server";
+import { MeteredMcpServer } from "@masseater.dev/mcp-tool-call";
+import type { McpServer } from "@modelcontextprotocol/server";
+import { env } from "cloudflare:workers";
 import { pipe } from "effect";
 
 import { registerBrokerTools } from "#/features/broker-credentials/index.ts";
@@ -11,12 +12,12 @@ import { SERVER_NAME } from "#/shared/config/index.ts";
 
 const SERVER_INFO = { name: SERVER_NAME, version: "0.0.0" };
 
-export const registerTools = (caller: Caller): McpServer =>
+export const registerTools = (): McpServer =>
   pipe(
-    new McpServer(SERVER_INFO),
-    registerSloppediaTools(caller),
-    registerAnalyticsTools(caller),
-    registerSlideTools(caller),
-    registerBrokerTools(caller),
-    registerClaudeRequestTools(caller),
+    new MeteredMcpServer(SERVER_INFO, env.TOOL_CALLS),
+    registerSloppediaTools,
+    registerAnalyticsTools,
+    registerSlideTools,
+    registerBrokerTools,
+    registerClaudeRequestTools,
   );

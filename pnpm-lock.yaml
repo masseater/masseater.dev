@@ -4150,6 +4150,9 @@ importers:
       '@effect/vitest':
         specifier: 'catalog:'
         version: 4.1.4(effect@4.1.4)(vitest@5.1.0)
+      '@modelcontextprotocol/client':
+        specifier: 'catalog:'
+        version: 2.4.0
       effect:
         specifier: catalog:stack
         version: 4.1.4

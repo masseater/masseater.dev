@@ -4,14 +4,13 @@ import { runner } from "@r_masseater/workers-tracing/effect";
 import { Effect, Logger } from "effect";
 import { createRemoteJWKSet } from "jose";
 
-import { callerOf } from "#/entities/tool-call/index.ts";
-import type { Caller } from "#/entities/tool-call/index.ts";
+import { authInfoOf } from "#/entities/tool-call/index.ts";
 import { certsUrl, verifyAccess } from "#/shared/lib/access.ts";
 
 export type AccessMcp = Readonly<{
   teamDomain: string;
   audience: string;
-  register: (caller: Caller) => McpServer;
+  register: () => McpServer;
 }>;
 
 const FORBIDDEN = 403;
@@ -20,14 +19,15 @@ const runLogged = runner(Logger.layer([Logger.withLeveledConsole(Logger.formatSt
 
 export const accessMcpEndpoint = ({ teamDomain, audience, register }: AccessMcp) => {
   const verifier = { keys: createRemoteJWKSet(certsUrl(teamDomain)), teamDomain, audience };
+  const handler = createMcpHandler(register);
   return (request: Request): Promise<Response> =>
     runLogged(
       verifyAccess(request, verifier).pipe(
         Effect.flatMap((claims) =>
           Effect.promise(() =>
-            createMcpHandler(() =>
-              register(callerOf({ request, azp: claims["azp"], clientId: claims["client_id"] })),
-            ).fetch(request),
+            handler.fetch(request, {
+              authInfo: authInfoOf({ azp: claims["azp"], clientId: claims["client_id"] }),
+            }),
           ),
         ),
         Effect.catchTag("AccessDenied", ({ reason }) =>

@@ -1,5 +1,5 @@
 import { expect, it } from "@effect/vitest";
-import type { Caller } from "@masseater.dev/mcp-tool-call";
+import { authInfoOf } from "@masseater.dev/mcp-tool-call";
 import { createMcpHandler } from "@modelcontextprotocol/server";
 import {
   Array as Arr,
@@ -25,9 +25,9 @@ type Args = Readonly<Record<string, unknown>>;
 
 type Called = Readonly<{ isError: boolean; text: string }>;
 
-const MUSE: Caller = { client: "muse", userAgent: "vitest" };
+const MUSE = "muse";
 
-const THREAD: Caller = { client: "claude-code", userAgent: "vitest" };
+const THREAD = "claude-code";
 
 const THREAD_URL = "https://claude.ai/code/project/p?thread=t";
 
@@ -81,7 +81,7 @@ const payloadOf = (text: string): string =>
     Option.getOrElse(() => text),
   );
 
-const call = (caller: Caller, name: string, args: Args): Effect.Effect<Called> =>
+const call = (client: string, name: string, args: Args): Effect.Effect<Called> =>
   Effect.gen(function* called() {
     const body = yield* encodeJson({
       jsonrpc: "2.0",
@@ -90,7 +90,9 @@ const call = (caller: Caller, name: string, args: Args): Effect.Effect<Called> =
       params: { name, arguments: args },
     });
     const response = yield* Effect.promise(() =>
-      createMcpHandler(() => registerTools(caller)).fetch(mcpRequest(body)),
+      createMcpHandler(registerTools).fetch(mcpRequest(body), {
+        authInfo: authInfoOf({ azp: client, clientId: undefined }),
+      }),
     );
     const text = yield* Effect.promise(() => response.text());
     const { result } = yield* decodeResult(payloadOf(text));
@@ -102,8 +104,8 @@ const call = (caller: Caller, name: string, args: Args): Effect.Effect<Called> =
     return { isError: result.isError ?? false, text: joined };
   }).pipe(Effect.orDie);
 
-const value = (caller: Caller, name: string, args: Args): Effect.Effect<unknown> =>
-  call(caller, name, args).pipe(
+const value = (client: string, name: string, args: Args): Effect.Effect<unknown> =>
+  call(client, name, args).pipe(
     Effect.flatMap(({ isError, text }) =>
       Bool.match(isError, {
         onTrue: () => Effect.die(text),

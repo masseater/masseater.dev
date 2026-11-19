@@ -1,21 +1,15 @@
 export {
+  ERROR_TAG_META,
   NO_PROJECT,
   OVERWRITE,
   READ_ONLY,
+  RESULT_COUNT_META,
   WRITE,
   encodeJson,
   one,
   toolCalls,
 } from "./model/tool-call.ts";
-export type {
-  FailureText,
-  InputMeter,
-  Meter,
-  MeteredTool,
-  ToolCall,
-  ToolCalls,
-  ToolRunner,
-} from "./model/tool-call.ts";
+export type { Counted, Describe, FailureText, ToolCalls, ToolRunner } from "./model/tool-call.ts";
 export { compactInput } from "./model/compact-schema.ts";
-export { callerOf } from "./model/caller.ts";
-export type { Caller, CallerSource } from "./model/caller.ts";
+export { authInfoOf, clientOf } from "./model/caller.ts";
+export type { CallContext, CallerClaims } from "./model/caller.ts";
