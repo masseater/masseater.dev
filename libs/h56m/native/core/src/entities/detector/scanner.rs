@@ -13,7 +13,6 @@ use super::span::{self, Guard, Plan, Span, Windows};
 use crate::shared::expr::{self, Expr, Scope, Value};
 use crate::shared::text;
 
-const MAX_DECODE_DEPTH: usize = 5;
 const ALLOW: [&str; 2] = ["betterleaks:allow", "gitleaks:allow"];
 
 struct Pattern {
@@ -130,6 +129,7 @@ pub struct Scanner {
     no_keyword: Vec<usize>,
     prefilter: Option<Expr>,
     filter: Option<Expr>,
+    max_decode_depth: usize,
 }
 
 struct Input<'a> {
@@ -258,6 +258,7 @@ impl Scanner {
             no_keyword,
             prefilter: expression(&config.prefilter, "prefilter")?,
             filter: expression(&config.filter, "global filter")?,
+            max_decode_depth: config.max_decode_depth,
         })
     }
 
@@ -281,7 +282,7 @@ impl Scanner {
         let mut hits: Vec<Hit> = Vec::new();
         let mut current = raw.to_owned();
         let mut segments: Vec<Rc<Segment>> = Vec::new();
-        for depth in 0..=MAX_DECODE_DEPTH {
+        for depth in 0..=self.max_decode_depth {
             let input = Input {
                 path,
                 raw,
@@ -291,7 +292,7 @@ impl Scanner {
                 attributes: &attributes,
             };
             self.pass(&input, depth, &mut hits)?;
-            if depth == MAX_DECODE_DEPTH {
+            if depth == self.max_decode_depth {
                 break;
             }
             let (next, next_segments) = codec::decode(&current, &segments);
@@ -357,12 +358,19 @@ impl Scanner {
         Ok(())
     }
 
+    fn overlap(&self, a: &Hit, b: &Hit) -> bool {
+        let located = |hit: &Hit| self.rules[hit.rule].regex.is_some();
+        located(a)
+            && located(b)
+            && a.start < b.end.max(b.start + 1)
+            && b.start < a.end.max(a.start + 1)
+    }
+
     fn suppressed(&self, hit: &Hit, prior: &[Hit]) -> bool {
         prior.iter().any(|owner| {
             let beats = |other: &Hit| {
                 other.rule_id != hit.rule_id
-                    && other.start_line <= hit.end_line
-                    && hit.start_line <= other.end_line
+                    && self.overlap(other, hit)
                     && other.secret.contains(&hit.secret)
                     && self.rules[other.rule].specificity > self.rules[hit.rule].specificity
             };
@@ -512,6 +520,7 @@ impl Scanner {
         let line_start = input.lines[start_line - 1];
         let line_end = raw[end..].find('\n').map_or(raw.len(), |n| end + n);
         let line = &raw[line_start..line_end];
+        let whole_line = &raw[line_start..raw.len().min(line_end + 1)];
         if ALLOW.iter().any(|sig| line.contains(sig)) {
             return None;
         }
@@ -550,10 +559,12 @@ impl Scanner {
             map.insert("match".to_owned(), Value::string(full));
             map.insert(
                 "line".to_owned(),
-                Value::string(decoded_line.as_deref().unwrap_or(line)),
+                Value::string(decoded_line.as_deref().unwrap_or(whole_line)),
             );
             map.insert("rule_id".to_owned(), Value::string(&rule.id));
             map.insert("description".to_owned(), Value::string(&rule.description));
+            map.insert("confidence".to_owned(), Value::string(&rule.confidence));
+            map.insert("context".to_owned(), Value::string(""));
             map.insert("fragment_raw".to_owned(), Value::string(current));
             map.insert("match_start_idx".to_owned(), Value::Int(ws as i64));
             map.insert("match_end_idx".to_owned(), Value::Int(we as i64));
