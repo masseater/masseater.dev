@@ -1,0 +1,16 @@
+SC2188:warning:2:1: This redirection doesn't have a command. Move to its command (or use 'true' as no-op)
+SC2188:warning:3:1: This redirection doesn't have a command. Move to its command (or use 'true' as no-op)
+SC2004:style:17:21: $/${} is unnecessary on arithmetic variables
+SC2004:style:17:37: $/${} is unnecessary on arithmetic variables
+SC2004:style:19:20: $/${} is unnecessary on arithmetic variables
+SC2004:style:19:35: $/${} is unnecessary on arithmetic variables
+SC2004:style:21:85: $/${} is unnecessary on arithmetic variables
+SC2004:style:21:94: $/${} is unnecessary on arithmetic variables
+SC2004:style:23:22: $/${} is unnecessary on arithmetic variables
+SC2004:style:23:39: $/${} is unnecessary on arithmetic variables
+SC2004:style:26:26: $/${} is unnecessary on arithmetic variables
+SC2004:style:26:37: $/${} is unnecessary on arithmetic variables
+SC2004:style:51:107: $/${} is unnecessary on arithmetic variables
+SC2004:style:51:122: $/${} is unnecessary on arithmetic variables
+SC2004:style:54:24: $/${} is unnecessary on arithmetic variables
+SC2004:style:54:41: $/${} is unnecessary on arithmetic variables
