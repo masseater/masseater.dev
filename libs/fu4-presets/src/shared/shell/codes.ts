@@ -65,6 +65,32 @@ export const CODES = {
     level: "warning",
     message: "This is interpreted as a command name ending with '.'. Double check syntax",
   },
+  singleQuotedExpression: {
+    number: 2016,
+    level: "info",
+    message: "Expressions don't expand in single quotes, use double quotes for that",
+  },
+  maskedReturn: {
+    number: 2155,
+    level: "warning",
+    message: "Declare and assign separately to avoid masking return values",
+  },
+  multipleAppends: {
+    number: 2129,
+    level: "style",
+    message: "Consider using { cmd1; cmd2; } >> file instead of individual redirects",
+  },
+  redirectedNowhere: {
+    number: 2188,
+    level: "warning",
+    message:
+      "This redirection doesn't have a command. Move to its command (or use 'true' as no-op)",
+  },
+  lsInPipeline: {
+    number: 2012,
+    level: "info",
+    message: "Use find instead of ls to better handle non-alphanumeric filenames",
+  },
 } as const satisfies Readonly<Record<string, Code>>;
 
 export type CodeName = keyof typeof CODES;

@@ -1,0 +1,8 @@
+nix-shell \
+  -I nixpkgs=./tools/nix/pkgs.nix \
+  --pure --keep SCCACHE_LOCAL_RW_MODE \
+  --arg withPerfetto _______________________________ \
+  --arg ccache '(import <nixpkgs> {}).sccache' \
+  --run '
+      make build-ci -j4 V=1 _________________________________________________________________________________________________
+  ' tools/nix/ci-shell.nix

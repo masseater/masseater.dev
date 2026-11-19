@@ -1,0 +1,1 @@
+n=$(stuff); exec {n}>&-;

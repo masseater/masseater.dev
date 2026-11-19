@@ -1,0 +1,7 @@
+UNDICI_VERSION=$(jq -r '.version' < deps/undici/src/package.json)
+echo "UNDICI_VERSION=v$UNDICI_VERSION" >> $GITHUB_ENV
+if [ "${UNDICI_VERSION%%.*}" -ge 7 ]; then
+  echo "UNDICI_WPT=current" >> $GITHUB_ENV
+else
+  echo "UNDICI_WPT=legacy" >> $GITHUB_ENV
+fi

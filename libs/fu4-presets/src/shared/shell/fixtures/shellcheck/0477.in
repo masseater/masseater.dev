@@ -1,0 +1,7 @@
+PR_URL=$(gh pr list --repo "$GITHUB_REPOSITORY" --head "$BRANCH_NAME" --state open \
+  --json url,commits,isCrossRepository \
+  --jq '[.[] | select(.isCrossRepository | not) | select(any(.commits[].authors[]; .email != "github-bot@iojs.org")) | .url] | join(" ")')
+if [ -n "$PR_URL" ]; then
+  echo "::notice::Skipping update, $PR_URL has commits not authored by the bot"
+  echo "hasNonBotCommits=true" >> "$GITHUB_OUTPUT"
+fi

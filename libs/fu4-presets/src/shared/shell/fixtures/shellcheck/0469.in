@@ -1,0 +1,1 @@
+nix-store --export "$(nix-build "$V8_DRV")" > libv8-aarch64-linux.nar

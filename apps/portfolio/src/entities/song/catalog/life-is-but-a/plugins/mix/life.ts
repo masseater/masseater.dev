@@ -1,15 +1,10 @@
 import { SAMPLE_RATE } from "@masseater.dev/fumx-studio/dsp/number";
+import { flagIn, numberIn, textIn } from "@masseater.dev/fumx-studio/plugin/args";
 import type { MixRequest, MixedStem, PlayedEvent } from "@masseater.dev/fumx-studio/plugin/plugin";
 import type { Bus } from "@masseater.dev/fumx-studio/studio/bus";
 import { studioOf } from "@masseater.dev/fumx-studio/studio/studio";
 import type { Session as StudioSession } from "@masseater.dev/fumx-studio/studio/studio";
 import { Array as Arr, Option, String as Str, pipe } from "effect";
-
-import {
-  flagIn,
-  numberIn,
-  textIn,
-} from "#/entities/song/catalog/life-is-but-a/plugins/lib/args.ts";
 
 import type { Life, Sink, Times } from "./context.ts";
 import { sweepOf } from "./sweep.ts";
@@ -64,7 +59,7 @@ const impulseOf =
 const busIn =
   (request: MixRequest) =>
   (name: string): Bus => {
-    const found = Option.fromUndefinedOr(request.buses.get(trackOf(name)));
+    const found = request.bus(trackOf(name));
     return Option.getOrThrowWith(found, () => new RangeError(`no track ${name}`));
   };
 

@@ -8,6 +8,8 @@ const VELOCITY = 0.855;
 const LENGTH_MILLISECONDS = 160.125;
 const LENGTH_SECONDS = 0.160125;
 const TAIL_SECONDS = 1.6;
+const REVERSED_FROM_SECONDS = 0.3604;
+const LOUDER = 1.25;
 
 const mixed = `song "mixed"
 
@@ -25,7 +27,7 @@ track drums-late kit studio into drums
 master tail 1600ms mix desk order "drums drums-late"
 bar meter 4/4 tempo 160bpm {
   drums: kick 1/4 vel 0.855 nudge 0.0000017ms length 160.125ms pan -35% rate 1.25 bend 0ms:0st 45ms:-2st, sung 3/4 with { key 70 mode "akai" duck true }
-  drums-late: kick 1/1 offset 0.4ms
+  drums-late: kick 1/1 vel 1 amp 1.25 offset 0.4ms reverse from 360.4ms
 }
 `;
 
@@ -103,6 +105,19 @@ it.effect("reads layered tracks, the tail and the master mix", () =>
       ["drums-late", false, Option.some("drums")],
     ]);
     expect(song.tailSeconds).toStrictEqual(Option.some(TAIL_SECONDS));
+    expect(
+      pipe(
+        song.hits,
+        Arr.findLast((hit) => hit.track === "drums-late"),
+        Option.map((hit) => hit.params),
+      ),
+    ).toStrictEqual(
+      Option.some([
+        { kind: "amp", ratio: LOUDER },
+        { kind: "offset", milliseconds: 0.4, seconds: 0.0004 },
+        { kind: "reverse", fromSeconds: Option.some(REVERSED_FROM_SECONDS) },
+      ]),
+    );
     expect(
       pipe(
         song.mix,

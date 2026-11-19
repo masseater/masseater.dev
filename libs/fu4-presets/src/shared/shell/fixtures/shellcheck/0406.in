@@ -1,0 +1,1 @@
+SKIP_XZ=1 make release-only

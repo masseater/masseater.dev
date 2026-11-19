@@ -1,0 +1,4 @@
+make test-wpt-report || true
+if [ -e out/wpt/wptreport.json ]; then
+  echo "WPT_REPORT=$(pwd)/out/wpt/wptreport.json" >> $GITHUB_ENV
+fi

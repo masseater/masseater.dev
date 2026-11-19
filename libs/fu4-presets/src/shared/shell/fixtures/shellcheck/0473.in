@@ -1,0 +1,1 @@
+echo "current_version=$(cat ./test/fixtures/tz-version.txt)" >> $GITHUB_ENV

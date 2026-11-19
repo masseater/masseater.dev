@@ -1,0 +1,32 @@
+nix-shell \
+  -I nixpkgs=./tools/nix/pkgs.nix \
+  --pure --keep CATEGORIES --keep FILTER --keep RUNS --keep LC_ALL --keep LANG \
+  --arg loadJSBuiltinsDynamically false \
+  --arg ccache 'null' \
+  --arg icu 'null' \
+  --arg sharedLibDeps '{}' \
+  --arg devTools '[]' \
+  --run '
+      set -o pipefail
+      read -r -a categories <<< "$CATEGORIES"
+      ./base_node benchmark/compare.js \
+        --filter "$FILTER" \
+        --runs "$RUNS" \
+        --old ./base_node --new ./node \
+        -- "${categories[@]}" \
+      | tee /dev/stderr \
+      > ____________________.csv
+      echo "> [!WARNING] "
+      echo "> Do not take GHA benchmark results as face value, always confirm them"
+      echo "> using a dedicated machine, e.g. Jenkins CI."
+      echo
+      echo "Benchmark results:"
+      echo
+      echo '"'"'```'"'"'
+      Rscript benchmark/compare.R < ____________________.csv
+      echo '"'"'```'"'"'
+      echo
+      echo "> [!WARNING] "
+      echo "> Do not take GHA benchmark results as face value, always confirm them"
+      echo "> using a dedicated machine, e.g. Jenkins CI."
+  ' | tee /dev/stderr >> "$GITHUB_STEP_SUMMARY"
