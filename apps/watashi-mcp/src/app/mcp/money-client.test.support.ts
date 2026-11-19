@@ -1,4 +1,4 @@
-import type { Caller } from "@masseater.dev/mcp-tool-call";
+import { authInfoOf } from "@masseater.dev/mcp-tool-call";
 import { McpServer, createMcpHandler } from "@modelcontextprotocol/server";
 import {
   Array as Arr,
@@ -20,8 +20,6 @@ export type Called = Readonly<{ isError: boolean; text: string }>;
 export type Tool = Readonly<{ name: string; fixed: Args }>;
 
 export type Decodable = Schema.ConstraintDecoder<unknown> & Schema.Constraint;
-
-const OWNER: Caller = { client: "claude-code", userAgent: "vitest" };
 
 const DATA_LINE = /^data: (?<json>.+)$/mu;
 
@@ -56,8 +54,10 @@ const payloadOf = (text: string): string =>
 
 const respond = (body: string): Promise<Response> =>
   createMcpHandler(() =>
-    pipe(new McpServer({ name: "watashi", version: "0.0.0" }), registerMoneyTools(OWNER)),
-  ).fetch(mcpRequest(body));
+    pipe(new McpServer({ name: "watashi", version: "0.0.0" }), registerMoneyTools),
+  ).fetch(mcpRequest(body), {
+    authInfo: authInfoOf({ azp: "claude-code" }),
+  });
 
 export const write = (op: string): Tool => ({ name: "money_write", fixed: { op } });
 
