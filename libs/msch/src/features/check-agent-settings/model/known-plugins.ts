@@ -1,13 +1,13 @@
 import { Array as Arr, Effect, Option, Record as Rec, Schema, String as Str, pipe } from "effect";
 
 import marketplace from "#/shared/config/masseater-marketplace.json" with { type: "json" };
+import { problemInFile } from "#/shared/lib/problem.ts";
 import type { Problem, RuleName } from "#/shared/lib/problem.ts";
 import { RepositoryFiles } from "#/shared/lib/repository-files.ts";
 import manifest from "#package.json" with { type: "json" };
 
 const RULE: RuleName = "known-plugins";
 const SETTINGS_FILE = ".claude/settings.json";
-const FIRST = 1;
 const GITHUB = "github";
 const REPOSITORY = /github\.com\/(?<repository>[\w.-]+\/[\w.-]+?)(?:\.git)?$/u;
 
@@ -38,13 +38,7 @@ const PLUGINS = pipe(
   Arr.map(({ name }) => `${name}@${MARKETPLACE}`),
 );
 
-const problem = (file: string, message: string): Problem => ({
-  file,
-  line: FIRST,
-  column: FIRST,
-  rule: RULE,
-  message,
-});
+const problem = problemInFile(RULE);
 
 const fromGithub = ({ source }: typeof KnownMarketplace.Type): boolean =>
   source.source === GITHUB && source.repo === REPOSITORY_NAME;

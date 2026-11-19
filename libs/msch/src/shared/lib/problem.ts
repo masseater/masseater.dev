@@ -21,6 +21,18 @@ export const ProblemList = Schema.Array(ProblemSchema);
 
 export const CANDIDATE_LIMIT = 3;
 
+const FIRST = 1;
+
+export const problemInFile =
+  (rule: RuleName) =>
+  (file: string, message: string): Problem => ({
+    file,
+    line: FIRST,
+    column: FIRST,
+    rule,
+    message,
+  });
+
 export interface Finding {
   readonly rule: RuleName;
   readonly message: string;
