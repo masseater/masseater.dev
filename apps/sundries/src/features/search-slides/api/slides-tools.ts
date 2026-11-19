@@ -1,11 +1,10 @@
-import type { Caller } from "@masseater.dev/mcp-tool-call";
-import { failedAt, NO_PROJECT, READ_ONLY } from "@masseater.dev/mcp-tool-call";
+import { failedAt, READ_ONLY, compactInput } from "@masseater.dev/mcp-tool-call";
 import type { McpServer } from "@modelcontextprotocol/server";
 import { runWorkersAi } from "@r_masseater/workers-tracing/workers-ai";
 import { env } from "cloudflare:workers";
 import { Array as Arr, Effect, Option, Order, Schema, pipe } from "effect";
 
-import { meteredInput, runTool } from "#/shared/api/index.ts";
+import { runTool } from "#/shared/api/index.ts";
 
 import { DEFAULT_SLIDE_LIMIT, DeckInput, SlideSearchInput } from "./slides-input.ts";
 
@@ -117,61 +116,36 @@ const getDeck = Effect.fn("getDeck")(function* getDeck(deck: string) {
   );
 });
 
-const registerSearch =
-  (caller: Caller) =>
-  (server: McpServer): McpServer => {
-    server.registerTool(
-      "search_slides",
-      {
-        description: "Search the owner's slide decks by meaning, one slide per result.",
-        inputSchema: meteredInput({ tool: "search_slides", caller, project: NO_PROJECT })(
-          SEARCH_SCHEMA,
-        ),
-        annotations: READ_ONLY,
-      },
-      (input) =>
-        searchSlides({
-          query: input.query,
-          limit: input.limit ?? DEFAULT_SLIDE_LIMIT,
-          deck: Option.fromNullishOr(input.deck),
-        }).pipe(
-          runTool({
-            tool: "search_slides",
-            caller,
-            project: NO_PROJECT,
-            input,
-            count: (slides) => slides.length,
-          }),
-        ),
-    );
-    return server;
-  };
+const registerSearch = (server: McpServer): McpServer => {
+  server.registerTool(
+    "search_slides",
+    {
+      description: "Search the owner's slide decks by meaning, one slide per result.",
+      inputSchema: compactInput(SEARCH_SCHEMA),
+      annotations: READ_ONLY,
+    },
+    (input) =>
+      searchSlides({
+        query: input.query,
+        limit: input.limit ?? DEFAULT_SLIDE_LIMIT,
+        deck: Option.fromNullishOr(input.deck),
+      }).pipe(runTool({ count: (slides) => slides.length })),
+  );
+  return server;
+};
 
-const registerGetDeck =
-  (caller: Caller) =>
-  (server: McpServer): McpServer => {
-    server.registerTool(
-      "get_deck",
-      {
-        description: "Return the text of every slide in a deck, in page order.",
-        inputSchema: meteredInput({ tool: "get_deck", caller, project: NO_PROJECT })(DECK_SCHEMA),
-        annotations: READ_ONLY,
-      },
-      (input) =>
-        getDeck(input.deck).pipe(
-          runTool({
-            tool: "get_deck",
-            caller,
-            project: NO_PROJECT,
-            input,
-            count: (slides) => slides.length,
-          }),
-        ),
-    );
-    return server;
-  };
+const registerGetDeck = (server: McpServer): McpServer => {
+  server.registerTool(
+    "get_deck",
+    {
+      description: "Return the text of every slide in a deck, in page order.",
+      inputSchema: compactInput(DECK_SCHEMA),
+      annotations: READ_ONLY,
+    },
+    (input) => getDeck(input.deck).pipe(runTool({ count: (slides) => slides.length })),
+  );
+  return server;
+};
 
-export const registerSlideTools =
-  (caller: Caller) =>
-  (server: McpServer): McpServer =>
-    pipe(server, registerSearch(caller), registerGetDeck(caller));
+export const registerSlideTools = (server: McpServer): McpServer =>
+  pipe(server, registerSearch, registerGetDeck);

@@ -1,11 +1,10 @@
-import type { Caller } from "@masseater.dev/mcp-tool-call";
-import { failedAt, NO_PROJECT, READ_ONLY, UpstreamFailed } from "@masseater.dev/mcp-tool-call";
+import { failedAt, READ_ONLY, UpstreamFailed, compactInput } from "@masseater.dev/mcp-tool-call";
 import type { McpServer } from "@modelcontextprotocol/server";
 import { env } from "cloudflare:workers";
 import { Array as Arr, DateTime, Effect, Option, Schema, String as Str, pipe } from "effect";
 import { FetchHttpClient, HttpClient, HttpClientRequest, HttpClientResponse } from "effect/http";
 
-import { meteredInput, runToolIn } from "#/shared/api/index.ts";
+import { runToolIn } from "#/shared/api/index.ts";
 
 import { AnalyticsInput, DEFAULT_DAYS } from "./analytics-input.ts";
 
@@ -136,31 +135,19 @@ const readReport = Effect.fn("readReport")(function* readReport(query: Query) {
 
 const runHttpTool = runToolIn(FetchHttpClient.layer);
 
-export const registerAnalyticsTools =
-  (caller: Caller) =>
-  (server: McpServer): McpServer => {
-    server.registerTool(
-      "read_web_analytics",
-      {
-        description: DESCRIPTION,
-        inputSchema: meteredInput({ tool: "read_web_analytics", caller, project: NO_PROJECT })(
-          INPUT_SCHEMA,
-        ),
-        annotations: READ_ONLY,
-      },
-      (input) =>
-        readReport({
-          path: Option.fromNullishOr(input.path),
-          days: input.days ?? DEFAULT_DAYS,
-        }).pipe(
-          runHttpTool({
-            tool: "read_web_analytics",
-            caller,
-            project: NO_PROJECT,
-            input,
-            count: (report) => report.byPath.length,
-          }),
-        ),
-    );
-    return server;
-  };
+export const registerAnalyticsTools = (server: McpServer): McpServer => {
+  server.registerTool(
+    "read_web_analytics",
+    {
+      description: DESCRIPTION,
+      inputSchema: compactInput(INPUT_SCHEMA),
+      annotations: READ_ONLY,
+    },
+    (input) =>
+      readReport({
+        path: Option.fromNullishOr(input.path),
+        days: input.days ?? DEFAULT_DAYS,
+      }).pipe(runHttpTool({ count: (report) => report.byPath.length })),
+  );
+  return server;
+};
