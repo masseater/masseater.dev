@@ -10,9 +10,4 @@ import { registerTools } from "./tools.server.ts";
 const handler = meteredMcpHandler(env.TOOL_CALLS)(registerTools);
 
 export const serveMcp = (request: Request): Promise<Response> =>
-  requireMcpAuth(
-    createAuth(),
-    (authorized, claims) =>
-      handler(authorized, { azp: claims["azp"], clientId: claims["client_id"] }),
-    { resource: MCP_URL },
-  )(request);
+  requireMcpAuth(createAuth(), handler, { resource: MCP_URL })(request);

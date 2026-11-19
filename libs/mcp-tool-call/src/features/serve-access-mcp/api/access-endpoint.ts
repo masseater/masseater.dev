@@ -23,11 +23,7 @@ export const accessMcpEndpoint = ({ teamDomain, audience, register, dataset }: A
   return (request: Request): Promise<Response> =>
     runLogged(
       verifyAccess(request, verifier).pipe(
-        Effect.flatMap((claims) =>
-          Effect.promise(() =>
-            fetch(request, { azp: claims["azp"], clientId: claims["client_id"] }),
-          ),
-        ),
+        Effect.flatMap((claims) => Effect.promise(() => fetch(request, claims))),
         Effect.catchTag("AccessDenied", ({ reason }) =>
           Effect.logWarning("access denied").pipe(
             Effect.annotateLogs({ event: "access_denied", reason }),

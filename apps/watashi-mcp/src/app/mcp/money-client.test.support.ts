@@ -56,7 +56,7 @@ const respond = (body: string): Promise<Response> =>
   createMcpHandler(() =>
     pipe(new McpServer({ name: "watashi", version: "0.0.0" }), registerMoneyTools),
   ).fetch(mcpRequest(body), {
-    authInfo: authInfoOf({ azp: "claude-code", clientId: "claude-code" }),
+    authInfo: authInfoOf({ azp: "claude-code" }),
   });
 
 export const write = (op: string): Tool => ({ name: "money_write", fixed: { op } });

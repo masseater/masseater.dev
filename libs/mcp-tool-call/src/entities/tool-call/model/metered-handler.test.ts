@@ -81,7 +81,7 @@ const pointsOf = (args: Readonly<Record<string, unknown>>): Effect.Effect<Called
       params: { name: "lookup", arguments: args },
     });
     const response = yield* Effect.promise(() =>
-      meteredMcpHandler(dataset)(server)(mcpRequest(body), { azp: CLIENT, clientId: CLIENT }),
+      meteredMcpHandler(dataset)(server)(mcpRequest(body), { azp: CLIENT }),
     );
     const text = yield* Effect.promise(() => response.text());
     return { text, points: written };
@@ -119,7 +119,7 @@ it.effect("tools/call でない要求は記録しない", () =>
     };
     const body = yield* encodeJson({ jsonrpc: "2.0", id: 1, method: "tools/list" });
     const response = yield* Effect.promise(() =>
-      meteredMcpHandler(dataset)(server)(mcpRequest(body), { azp: CLIENT, clientId: CLIENT }),
+      meteredMcpHandler(dataset)(server)(mcpRequest(body), { azp: CLIENT }),
     );
     expect(response.ok).toBe(true);
     expect(written).toStrictEqual([]);

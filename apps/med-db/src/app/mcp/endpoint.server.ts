@@ -10,9 +10,4 @@ import { buildServer } from "./build-server.server.ts";
 const handler = meteredMcpHandler(env.TOOL_CALLS)(buildServer);
 
 export const serveMcp = (request: Request): Promise<Response> =>
-  requireMcpAuth(
-    createAuth(),
-    (authorized, claims) =>
-      handler(authorized, { azp: claims["azp"], clientId: claims["client_id"] }),
-    { resource: MCP_URL },
-  )(request);
+  requireMcpAuth(createAuth(), handler, { resource: MCP_URL })(request);
