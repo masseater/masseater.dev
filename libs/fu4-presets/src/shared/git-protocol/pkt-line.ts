@@ -72,6 +72,9 @@ const packetAt =
       return dataAt(bytes, position)(length);
     });
 
+export const decodePacket = (bytes: Uint8Array): Result.Result<Packet, string> =>
+  Result.map(packetAt(bytes)(START), ([packet]) => packet);
+
 export const decodePackets = (bytes: Uint8Array): Result.Result<readonly Packet[], string> => {
   const packets: Packet[] = [];
   let position = START;
