@@ -21,8 +21,10 @@ const services = ManagedRuntime.make(nodeServices);
 afterAll(() => services.dispose());
 
 const CORPUS = "fixtures/shellcheck";
+const UPSTREAM = "fixtures/shellcheck-upstream";
 const SCRIPT = /\.in$/u;
 const MINIMUM_SCRIPTS = 300;
+const MINIMUM_UPSTREAM = 100;
 const SEQUENTIAL = { concurrency: 1 } as const;
 const IMPLEMENTED = new Set(
   pipe(
@@ -101,16 +103,28 @@ const differs = (outcome: {
   readonly have: readonly string[];
 }): boolean => !Arr.makeEquivalence(Str.Equivalence)(outcome.want, outcome.have);
 
+const corpusOutcomes = Effect.fn("corpusOutcomes")(function* corpusOutcomes(directory: string) {
+  const fileSystem = yield* FileSystem.FileSystem;
+  const path = yield* Path.Path;
+  const base = yield* here;
+  const dir = path.join(base, directory);
+  const entries = yield* fileSystem.readDirectory(dir);
+  const isScript = Str.endsWith(".in");
+  const scripts = sortedLines(pipe(entries, Arr.filter(isScript)));
+  const outcomes = yield* Effect.forEach(scripts, (name) => compare(dir, name), SEQUENTIAL);
+  return { scripts: scripts.length, differing: pipe(outcomes, Arr.filter(differs)) };
+});
+
 test("matches shellcheck on its recorded corpus", () =>
-  Effect.gen(function* corpus() {
-    const fileSystem = yield* FileSystem.FileSystem;
-    const path = yield* Path.Path;
-    const base = yield* here;
-    const dir = path.join(base, CORPUS);
-    const entries = yield* fileSystem.readDirectory(dir);
-    const isScript = Str.endsWith(".in");
-    const scripts = sortedLines(pipe(entries, Arr.filter(isScript)));
-    expect(scripts.length).toBeGreaterThan(MINIMUM_SCRIPTS);
-    const outcomes = yield* Effect.forEach(scripts, (name) => compare(dir, name), SEQUENTIAL);
-    expect(pipe(outcomes, Arr.filter(differs))).toStrictEqual([]);
+  Effect.gen(function* recordedCorpus() {
+    const { scripts, differing } = yield* corpusOutcomes(CORPUS);
+    expect(scripts).toBeGreaterThan(MINIMUM_SCRIPTS);
+    expect(differing).toStrictEqual([]);
+  }).pipe(services.runPromise));
+
+test("matches shellcheck on the scripts of its own unit tests", () =>
+  Effect.gen(function* upstream() {
+    const { scripts, differing } = yield* corpusOutcomes(UPSTREAM);
+    expect(scripts).toBeGreaterThan(MINIMUM_UPSTREAM);
+    expect(differing).toStrictEqual([]);
   }).pipe(services.runPromise));
