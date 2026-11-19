@@ -60,6 +60,7 @@
     "@types/node": "catalog:",
     "betterleaks": "github:betterleaks/betterleaks#e07e69ba6a441313529b3e72be43ffdcc62bdf86",
     "effect": "catalog:stack",
+    "smol-toml": "catalog:",
     "vite": "catalog:",
     "vite-plus": "catalog:stack"
   },
