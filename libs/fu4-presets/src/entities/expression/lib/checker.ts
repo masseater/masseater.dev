@@ -7,6 +7,7 @@ import { STRING, isStrict, mapOf, objectOf, strict } from "#/entities/expression
 import type { ExprType, ObjectType } from "#/entities/expression/model/types.ts";
 
 import { workflowKey } from "./availability.ts";
+import type { Availability } from "./availability.ts";
 import { checkExpr } from "./check.ts";
 import { documented } from "./contexts.ts";
 import type { TypeEnv, Scope } from "./scope.ts";
@@ -24,11 +25,13 @@ export interface CheckerOptions {
 }
 
 export interface Checker {
-  readonly setVar: (name: string, type: ObjectType) => void;
+  readonly setVar: (name: string, type: ExprType) => void;
+  readonly removeVar: (name: string) => void;
   readonly updateSecrets: (type: ObjectType) => void;
   readonly updateInputs: (type: ObjectType) => void;
   readonly updateDispatchInputs: (type: ObjectType) => void;
   readonly setWorkflowKey: (key: string) => void;
+  readonly setAvailability: (availability: Availability) => void;
   readonly check: (expr: Expr) => Checked;
 }
 
@@ -108,11 +111,17 @@ export const checkerOf = (options: CheckerOptions): Checker => {
   const setVar = (name: string, type: ExprType): void => {
     env = { ...env, vars: { ...env.vars, [name]: type } };
   };
+  const setAvailability = ({ contexts, functions }: Availability): void => {
+    env = { ...env, contexts, special: functions };
+  };
   const updateInputs = (type: ObjectType): void => {
     setVar("inputs", mergedInputs(Rec.get(env.vars, "inputs"), type));
   };
   return {
     setVar,
+    removeVar: (name) => {
+      env = { ...env, vars: Rec.remove(env.vars, name) };
+    },
     updateSecrets: (type) => {
       setVar("secrets", strict({ ...DEFAULT_SECRETS, ...type.props }));
     },
@@ -124,13 +133,11 @@ export const checkerOf = (options: CheckerOptions): Checker => {
       }
     },
     setWorkflowKey: (key) => {
-      const found = workflowKey(key);
-      env = {
-        ...env,
-        contexts: Option.match(found, { onNone: () => [], onSome: (each) => each.contexts }),
-        special: Option.match(found, { onNone: () => [], onSome: (each) => each.functions }),
-      };
+      setAvailability(
+        Option.getOrElse(workflowKey(key), (): Availability => ({ contexts: [], functions: [] })),
+      );
     },
+    setAvailability,
     check: (expr) =>
       run(
         env,
