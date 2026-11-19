@@ -9,6 +9,7 @@ import type {
   Severity,
   SymbolicLocation,
 } from "#/features/audit-workflows/model/finding.ts";
+import { characterColumnOf } from "#/shared/text/index.ts";
 import type { Document } from "#/shared/yamlpath/index.ts";
 
 import { commentIgnores, concretize } from "./location.ts";
@@ -139,3 +140,8 @@ export const message = (found: Finding): string => {
   });
   return `${withTip} (${Option.getOrElse(location.symbolic.link, () => found.url)})`;
 };
+
+export const primaryColumn =
+  (text: string) =>
+  (found: Finding): number =>
+    characterColumnOf(text)(primaryLocation(found).concrete.startOffset);

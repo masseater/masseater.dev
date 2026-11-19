@@ -1,0 +1,101 @@
+artipacked::test_fix_merges_into_existing_with_block#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+artipacked::test_fix_creates_block_when_missing#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+bot_conditions::test_fix_replace_actor#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+bot_conditions::test_fix_reusable_workflow_call#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+bot_conditions::test_fix_issue_comment_trigger#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+bot_conditions::test_fix_pull_request_review_trigger#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+bot_conditions::test_fix_nontrivial_condition#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+cache_poisoning::test_fix_cache_disable_opt_out_boolean#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+cache_poisoning::test_fix_cache_disable_opt_in_boolean#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+cache_poisoning::test_fix_setup_uv_compound_control#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+cache_poisoning::test_fix_cache_mode_write_workflow_level#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+cache_poisoning::test_fix_cache_mode_write_job_level#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+dependabot_cooldown::test_config_not_number#0 # checks the text zizmor prints for an invalid input or config, which fu4 reports as its own error
+dependabot_cooldown::test_invalid_config_zero_days#0 # checks the text zizmor prints for an invalid input or config, which fu4 reports as its own error
+dependabot_cooldown::test_invalid_config_negative_days#0 # checks the text zizmor prints for an invalid input or config, which fu4 reports as its own error
+dependabot_cooldown::test_fix_missing_cooldown#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+dependabot_cooldown::test_fix_missing_default_days#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+dependabot_cooldown::test_fix_insufficient_default_days#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+dependabot_cooldown::test_fix_multiple_updates#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+dependabot_execution::test_fix_allow_to_deny#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+forbidden_uses::test_config_invalid_pattern#0 # checks the text zizmor prints for an invalid input or config, which fu4 reports as its own error
+forbidden_uses::test_config_invalid_variant#0 # checks the text zizmor prints for an invalid input or config, which fu4 reports as its own error
+forbidden_uses::test_pre_commit#0 # builds a temporary repository with its own zizmor.yml
+github_env::test_issue_1333#0 # checks the text zizmor prints for an invalid input or config, which fu4 reports as its own error
+github_env::test_issue_2200#0 # checks the text zizmor prints for an invalid input or config, which fu4 reports as its own error
+impostor_commit::test_regular_persona#0 # queries GitHub; fu4 tests the online audits against recorded responses in src/app/zizmor-online.test.ts instead
+impostor_commit::test_peels_tag_sha_to_commit_sha#0 # queries GitHub; fu4 tests the online audits against recorded responses in src/app/zizmor-online.test.ts instead
+impostor_commit::test_pre_commit#0 # queries GitHub; fu4 tests the online audits against recorded responses in src/app/zizmor-online.test.ts instead
+insecure_commands::test_fix_job_level#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+insecure_commands::test_fix_workflow_level#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+known_vulnerable_actions::test_default_persona#0 # queries GitHub; fu4 tests the online audits against recorded responses in src/app/zizmor-online.test.ts instead
+known_vulnerable_actions::test_config_allow#0 # queries GitHub; fu4 tests the online audits against recorded responses in src/app/zizmor-online.test.ts instead
+known_vulnerable_actions::test_fix_version_pin#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+known_vulnerable_actions::test_fix_commit_pin#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+known_vulnerable_actions::test_fix_commit_pin_no_comment#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+obfuscation::test_fix_static_evaluation#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+obfuscation::test_fix_multiple_subexpressions#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+obfuscation::test_fix_uses_path_empty_components#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+obfuscation::test_fix_uses_path_dot#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+obfuscation::test_fix_uses_path_double_dot#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+ref_confusion::test_ref_confusion#0 # queries GitHub; fu4 tests the online audits against recorded responses in src/app/zizmor-online.test.ts instead
+ref_confusion::test_ref_confusion_pre_commit#0 # queries GitHub; fu4 tests the online audits against recorded responses in src/app/zizmor-online.test.ts instead
+ref_confusion::test_issue_518_repro#0 # queries GitHub; fu4 tests the online audits against recorded responses in src/app/zizmor-online.test.ts instead
+ref_version_mismatch::test_ref_version_mismatch#0 # queries GitHub; fu4 tests the online audits against recorded responses in src/app/zizmor-online.test.ts instead
+ref_version_mismatch::test_missing_version_comment_pedantic#0 # queries GitHub; fu4 tests the online audits against recorded responses in src/app/zizmor-online.test.ts instead
+ref_version_mismatch::test_nested_annotated_tags#0 # queries GitHub; fu4 tests the online audits against recorded responses in src/app/zizmor-online.test.ts instead
+ref_version_mismatch::test_issue_1853#0 # queries GitHub; fu4 tests the online audits against recorded responses in src/app/zizmor-online.test.ts instead
+ref_version_mismatch::test_issue_1869#0 # queries GitHub; fu4 tests the online audits against recorded responses in src/app/zizmor-online.test.ts instead
+ref_version_mismatch::test_issue_1899#0 # queries GitHub; fu4 tests the online audits against recorded responses in src/app/zizmor-online.test.ts instead
+ref_version_mismatch::test_issue_1938#0 # queries GitHub; fu4 tests the online audits against recorded responses in src/app/zizmor-online.test.ts instead
+ref_version_mismatch::test_issue_2039#0 # queries GitHub; fu4 tests the online audits against recorded responses in src/app/zizmor-online.test.ts instead
+ref_version_mismatch::test_issue_2165#0 # queries GitHub; fu4 tests the online audits against recorded responses in src/app/zizmor-online.test.ts instead
+ref_version_mismatch::test_issue_2321#0 # queries GitHub; fu4 tests the online audits against recorded responses in src/app/zizmor-online.test.ts instead
+ref_version_mismatch::test_issue_2324#0 # queries GitHub; fu4 tests the online audits against recorded responses in src/app/zizmor-online.test.ts instead
+ref_version_mismatch::test_issue_2393#0 # queries GitHub; fu4 tests the online audits against recorded responses in src/app/zizmor-online.test.ts instead
+ref_version_mismatch::test_fix_add_version_comment_composite_action#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+ref_version_mismatch::test_fix_add_version_comment_workflow#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+ref_version_mismatch::test_fix_version_comment_mismatch#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+ref_version_mismatch::test_fix_version_comment_mismatch_crlf#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+ref_version_mismatch::test_fix_version_comment_mismatch_bizarre_formatting#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+ref_version_mismatch::test_fix_version_comment_different_formats#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+ref_version_mismatch::test_fix_version_comment_nonexistent_ref#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+ref_version_mismatch::test_fix_reusable_workflow#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+secrets_outside_env::test_config_invalid_variant#0 # checks the text zizmor prints for an invalid input or config, which fu4 reports as its own error
+self_repository::test_fix#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+stale_action_refs::test_pedantic_persona#0 # queries GitHub; fu4 tests the online audits against recorded responses in src/app/zizmor-online.test.ts instead
+stale_action_refs::test_reusable_workflow#0 # queries GitHub; fu4 tests the online audits against recorded responses in src/app/zizmor-online.test.ts instead
+template_injection::test_fix_github_ref_name#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+template_injection::test_fix_github_actor#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+template_injection::test_fix_with_existing_env_name#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+template_injection::test_fix_multiple_expressions#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+template_injection::test_fix_duplicate_expressions#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+template_injection::test_fix_equivalent_expressions#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+template_injection::test_fix_no_env_overcorrection_issue_1052#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+template_injection::test_fix_bash_shell_full_path#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+template_injection::test_fix_cmd_shell#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+template_injection::test_fix_pwsd_shell#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+template_injection::test_fix_default_shell_ubuntu#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+template_injection::test_fix_default_shell_windows#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+template_injection::test_fix_cmd_shell_with_custom_env#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+template_injection::test_fix_unicode_in_script#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+unpinned_uses::test_invalid_wrong_policy_object#0 # checks the text zizmor prints for an invalid input or config, which fu4 reports as its own error
+unpinned_uses::test_invalid_policy_syntax_1#0 # checks the text zizmor prints for an invalid input or config, which fu4 reports as its own error
+unpinned_uses::test_invalid_policy_syntax_2#0 # checks the text zizmor prints for an invalid input or config, which fu4 reports as its own error
+unpinned_uses::test_invalid_policy_syntax_3#0 # checks the text zizmor prints for an invalid input or config, which fu4 reports as its own error
+unpinned_uses::test_invalid_policy_syntax_4#0 # checks the text zizmor prints for an invalid input or config, which fu4 reports as its own error
+unpinned_uses::test_invalid_policy_syntax_5#0 # checks the text zizmor prints for an invalid input or config, which fu4 reports as its own error
+unpinned_uses::test_invalid_policy_syntax_6#0 # checks the text zizmor prints for an invalid input or config, which fu4 reports as its own error
+unpinned_uses::test_honors_lockfile#0 # queries GitHub; fu4 tests the online audits against recorded responses in src/app/zizmor-online.test.ts instead
+unpinned_uses::test_honors_lockfile#1 # queries GitHub; fu4 tests the online audits against recorded responses in src/app/zizmor-online.test.ts instead
+unpinned_uses::test_fix#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+unpinned_uses::test_fix_crlf#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+unpinned_uses::test_fix_overwrites_comment#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+unpinned_uses::test_fix_bizarre_formatting#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+unpinned_uses::test_fix_preserves_subpath#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+unpinned_uses::test_fix_major_version_pins_to_full_version#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+unsound_condition::test_fix_simple_literal_block#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+unsound_condition::test_fix_folded_block#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+unsound_condition::test_fix_multiline_expression#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+unsound_condition::test_fix_complex_multiline_expression#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
+unsound_condition::test_fix_reusable_job#0 # fu4 has no auto-fix; the test checks the diff that --fix makes
