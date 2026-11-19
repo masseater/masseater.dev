@@ -47,8 +47,18 @@ export const tempoOf: From<TempoNode, Tempo> = (node) => ({
   ),
 });
 
+const LAST_BAR = 1;
+
 export const tempoAfter: From<Tempo, Tempo> = (tempo) =>
   Option.match(tempo.ramp, {
     onNone: () => tempo,
-    onSome: (ramp) => ({ bpm: ramp.bpm, ramp: Option.none() }),
+    onSome: (ramp): Tempo => {
+      if (ramp.bars <= LAST_BAR) {
+        return { bpm: ramp.bpm, ramp: Option.none() };
+      }
+      return {
+        bpm: tempo.bpm + (ramp.bpm - tempo.bpm) / ramp.bars,
+        ramp: Option.some({ bpm: ramp.bpm, bars: ramp.bars - LAST_BAR }),
+      };
+    },
   });

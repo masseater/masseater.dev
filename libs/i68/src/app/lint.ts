@@ -3,7 +3,7 @@ import { readSong } from "@r_masseater/fumx-parser";
 import type { SourceIssue } from "@r_masseater/fumx-parser";
 import { Array as Arr, Effect, pipe } from "effect";
 
-import { flattenConfig, resolve, unknownPlugins } from "#/entities/rule/index.ts";
+import { flattenConfig, resolve, unknownPlugins, unknownRules } from "#/entities/rule/index.ts";
 import type { ResolvedRule } from "#/entities/rule/index.ts";
 import { readSongFile } from "#/features/read-songs/index.ts";
 import type { Read, SongFile } from "#/features/read-songs/index.ts";
@@ -27,16 +27,22 @@ export interface TextInput {
   readonly config?: I68Config;
 }
 
-const checkPlugins = (config: I68Config): Effect.Effect<void, I68Error> =>
-  Arr.match(unknownPlugins(config), {
-    onEmpty: () => Effect.void,
-    onNonEmpty: (names) =>
-      Effect.fail(
-        I68Error.make({
-          message: `rules name plugins that are not configured: ${Arr.join(names, ", ")}`,
-        }),
-      ),
-  });
+const failIfAny =
+  (problem: string) =>
+  (names: readonly string[]): Effect.Effect<void, I68Error> =>
+    Arr.match(names, {
+      onEmpty: () => Effect.void,
+      onNonEmpty: (found) =>
+        Effect.fail(I68Error.make({ message: `${problem}: ${Arr.join(found, ", ")}` })),
+    });
+
+const UNKNOWN_PLUGINS = failIfAny("rules name plugins that are not configured");
+const UNKNOWN_RULES = failIfAny("rules name rules that their plugins do not have");
+
+const checkPlugins = (config: I68Config): Effect.Effect<void, I68Error> => {
+  const rules = UNKNOWN_RULES(unknownRules(config));
+  return UNKNOWN_PLUGINS(unknownPlugins(config)).pipe(Effect.andThen(rules));
+};
 
 const rulesOf = (
   config: I68Config | undefined,
@@ -62,11 +68,16 @@ const parseDiagnosticsOf =
 
 const lintFile =
   (rules: readonly ResolvedRule[]) =>
-  (song: SongFile): Effect.Effect<readonly Diagnostic[]> => {
+  (song: SongFile): Effect.Effect<readonly Diagnostic[], I68Error> => {
     if (song.source.status === "invalid") {
       return Effect.succeed(parseDiagnosticsOf(song.file)(song.source.issues));
     }
-    return runRules({ path: song.file, text: song.text, song: song.source.song, rules });
+    return runRules({
+      path: song.file,
+      comments: song.source.outline.comments,
+      song: song.source.song,
+      rules,
+    });
   };
 
 export const lint = Effect.fn("i68.lint")(function* lint(input: LintInput) {
@@ -100,6 +111,6 @@ const readerOf =
 export const lintText = Effect.fn("i68.lintText")(function* lintText(input: TextInput) {
   const rules = yield* rulesOf(input.config);
   const source = yield* readSong({ path: input.path, read: readerOf(input) });
-  const found = yield* lintFile(rules)({ file: input.path, text: input.text, source });
+  const found = yield* lintFile(rules)({ file: input.path, source });
   return sortByPosition<Diagnostic>(found);
 });

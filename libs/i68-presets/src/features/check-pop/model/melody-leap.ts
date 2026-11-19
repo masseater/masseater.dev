@@ -5,7 +5,6 @@ import type { Rule } from "@r_masseater/i68";
 import { Array as Arr, pipe } from "effect";
 
 import { numberOption } from "#/shared/lib/options.ts";
-import { nameOf } from "#/shared/lib/pitch.ts";
 import {
   MELODIC,
   hasRole,
@@ -27,7 +26,7 @@ const checkStep =
       report(`${String(next.line)}:${String(next.start)}`, {
         line: next.line,
         column: next.column,
-        message: `${next.track} leaps ${String(leap)} semitones from ${nameOf(previous.midi)} to ${nameOf(next.midi)}`,
+        message: `${next.track} leaps ${String(leap)} semitones from ${previous.spelling} to ${next.spelling}`,
         detail: "Make the jump smaller, or step back the other way right after it",
       });
     }
