@@ -59,7 +59,7 @@ const cases = [...seen.values()].map(({ test, ...rest }) => {
   counts.set(test, n + 1);
   return { id: `${test}#${n}`, ...rest };
 });
-const json = JSON.stringify(cases);
+const json = JSON.stringify(cases).replaceAll("\uFEFF", "\\uFEFF");
 fs.writeFileSync(out, json + "\n");
 console.log("cases", cases.length, "bytes", json.length, "unsupported", cases.filter((c) => c.unsupported.length).length);
 ```
