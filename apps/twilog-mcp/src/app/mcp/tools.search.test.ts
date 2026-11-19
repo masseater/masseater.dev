@@ -131,7 +131,7 @@ const callSearch = (
 const search = (args: Readonly<Record<string, unknown>>): Effect.Effect<typeof Result.Type> =>
   Effect.gen(function* searched() {
     const [clientSide, serverSide] = InMemoryTransport.createLinkedPair();
-    const server = registerTools({ client: "vitest", userAgent: "vitest" });
+    const server = registerTools();
     const client = new Client({ name: "vitest", version: "0.0.0" });
     yield* Effect.promise(() => server.connect(serverSide));
     yield* Effect.promise(() => client.connect(clientSide));
