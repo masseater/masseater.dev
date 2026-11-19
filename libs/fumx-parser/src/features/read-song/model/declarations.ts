@@ -3,7 +3,7 @@ import type { Predicate } from "effect";
 
 import type { Song, Track } from "#/entities/song/index.ts";
 import { ticksOf } from "#/shared/lib/ticks.ts";
-import { millisecondsOf, shareOf } from "#/shared/lib/units.ts";
+import { millisecondsOf, secondsOf, shareOf } from "#/shared/lib/units.ts";
 import {
   isBus,
   isDelay,
@@ -33,7 +33,7 @@ import type {
 import { instrumentOf } from "./instruments.ts";
 import { mixerOf } from "./mixer.ts";
 import { effectOf, playParamOf, sendOf } from "./params.ts";
-import { pluginsOf } from "./plugins.ts";
+import { pluginUseOf, pluginsOf } from "./plugins.ts";
 import { problemAt, problemsOf } from "./problem.ts";
 import type { Compiled, From, Problem } from "./problem.ts";
 
@@ -47,6 +47,8 @@ export type Declarations = Pick<
   | "tracks"
   | "ducks"
   | "master"
+  | "mix"
+  | "tailSeconds"
   | "plugins"
 >;
 
@@ -71,6 +73,11 @@ const trackSourceOf: From<TrackSource, Track["source"]> = (source) =>
 const trackOf: From<TrackNode, Track> = (node) => ({
   name: node.name,
   source: trackSourceOf(node.source),
+  into: pipe(
+    Option.fromNullishOr(node.into),
+    Option.map((target) => target.$refText),
+  ),
+  mono: node.mono,
   role: pipe(Option.fromNullishOr(node.role), Option.filter(isRole)),
   mixer: mixerOf(node),
   fx: effectsOf(node.fx),
@@ -194,7 +201,11 @@ const kitOf: From<Kit, Declarations["kits"][number]> = (kit) => ({
     kit.voices,
     Arr.map((voice) => ({
       name: voice.name,
-      path: voice.path,
+      path: voice.path ?? "",
+      plugin: pipe(
+        Option.fromNullishOr(voice.use),
+        Option.map((use) => pluginUseOf(use).value),
+      ),
       params: pipe(voice.params, Arr.map(playParamOf)),
     })),
   ),
@@ -206,6 +217,29 @@ const busOf: From<Bus, Declarations["buses"][number]> = (bus) => ({
   fx: effectsOf(bus.fx),
   sends: pipe(bus.sends, Arr.map(sendOf)),
 });
+
+const masterOf: From<
+  readonly Declaration[],
+  Pick<Declarations, "master" | "mix" | "tailSeconds">
+> = (declarations) => {
+  const masters = pipe(declarations, Arr.filter(isMaster));
+  return {
+    master: pipe(
+      masters,
+      Arr.flatMap((master) => effectsOf(master.fx)),
+    ),
+    mix: pipe(
+      masters,
+      Arr.findFirst((master) => Option.fromNullishOr(master.mix)),
+      Option.map((use) => pluginUseOf(use).value),
+    ),
+    tailSeconds: pipe(
+      masters,
+      Arr.findFirst((master) => Option.fromNullishOr(master.tail)),
+      Option.map(secondsOf),
+    ),
+  };
+};
 
 export const declarationsOf: From<readonly Declaration[], Compiled<Declarations>> = (
   declarations,
@@ -237,11 +271,7 @@ export const declarationsOf: From<readonly Declaration[], Compiled<Declarations>
         ducks,
         Arr.map((duck) => duck.value),
       ),
-      master: pipe(
-        declarations,
-        Arr.filter(isMaster),
-        Arr.flatMap((master) => effectsOf(master.fx)),
-      ),
+      ...masterOf(declarations),
       plugins: plugins.value,
     },
     problems: [

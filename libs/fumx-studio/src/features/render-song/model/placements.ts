@@ -1,14 +1,15 @@
-import type { Hit, Note, Slice, Song } from "@r_masseater/fumx-parser";
+import type { Hit, Note, PluginArgument, PluginUse, Slice, Song } from "@r_masseater/fumx-parser";
 import { Array as Arr, Option, pipe } from "effect";
 
 import type { Clock } from "#/entities/clock/index.ts";
 import { nudged } from "#/entities/clock/index.ts";
+import type { InstrumentPlugin, Plugins, Samples } from "#/shared/lib/plugin/plugin.ts";
+import type { Source } from "#/shared/lib/studio/paste.ts";
 import type { Placement } from "#/shared/lib/studio/placement.ts";
 
 import { placementOf, sendsOf } from "./params.ts";
 import type { Send } from "./params.ts";
 
-const MILLI = 1e-3;
 const CENTS_PER_SEMITONE = 100;
 
 export type SongTrack = Song["tracks"][number];
@@ -16,10 +17,12 @@ export type SongTrack = Song["tracks"][number];
 type Voice = Song["kits"][number]["voices"][number];
 
 export interface Placed {
-  readonly sample: string;
+  readonly source: Source;
+  readonly label: string;
   readonly time: number;
   readonly placement: Placement;
   readonly sends: readonly Send[];
+  readonly args: readonly PluginArgument[];
 }
 
 interface Zone {
@@ -30,6 +33,11 @@ interface Zone {
 export interface Timing {
   readonly clock: Clock;
   readonly song: Song;
+}
+
+export interface Voicing extends Timing {
+  readonly plugins: Plugins;
+  readonly samples: Samples;
 }
 
 const sourceZones = (source: Song["instruments"][number]["source"]): readonly Zone[] => {
@@ -84,15 +92,15 @@ const nearestZone =
 const spanOf =
   ({ clock }: Timing) =>
   (event: Note | Hit | Slice): readonly [number, number] => {
-    const time = nudged(clock.secondsAt(event.start))(event.nudgeMilliseconds);
-    const end = nudged(clock.secondsAt(event.start + event.length))(event.nudgeMilliseconds);
+    const time = nudged(clock.secondsAt(event.start))(event.nudgeSeconds);
+    const end = nudged(clock.secondsAt(event.start + event.length))(event.nudgeSeconds);
     return [time, end - time];
   };
 
-const bendOf = (note: Note): Placement =>
+const bendOf = (event: Note | Hit): Placement =>
   pipe(
-    note.bend,
-    Arr.map((point): readonly [number, number] => [point.milliseconds * MILLI, point.semitones]),
+    event.bend,
+    Arr.map((point): readonly [number, number] => [point.seconds, point.semitones]),
     Option.liftPredicate(Arr.isReadonlyArrayNonEmpty),
     Option.match({ onNone: () => ({}), onSome: (pitch) => ({ pitch }) }),
   );
@@ -110,10 +118,12 @@ const zonePlaced =
       ...bendOf(note),
     };
     return {
-      sample: zone.path,
+      source: zone.path,
+      label: "",
       time,
       placement: placementOf(note.params)(base),
       sends: sendsOf(note.params),
+      args: note.args,
     };
   };
 
@@ -145,34 +155,130 @@ const voicesOf =
     );
   };
 
-const voicePlaced =
-  (timing: Timing) =>
+const midiOf = (midi: Option.Option<number>): Placement =>
+  Option.match(midi, { onNone: () => ({}), onSome: (given) => ({ midi: given }) });
+
+const instrumentIn =
+  (voicing: Voicing) =>
+  (use: PluginUse): Option.Option<InstrumentPlugin> =>
+    pipe(
+      Option.fromUndefinedOr(voicing.plugins[use.module]),
+      Option.filter((plugin): plugin is InstrumentPlugin => plugin.kind === "instrument"),
+    );
+
+const soundOf =
+  (voicing: Voicing) =>
   (hit: Hit) =>
-  (voice: Voice): Placed => {
-    const [time] = spanOf(timing)(hit);
-    const params = [...voice.params, ...hit.params];
-    return {
-      sample: voice.path,
-      time,
-      placement: placementOf(params)({ gain: hit.velocity }),
-      sends: sendsOf(params),
-    };
-  };
+  (voice: Voice): Option.Option<readonly [Source, string, Placement]> =>
+    Option.match(voice.plugin, {
+      onNone: () => Option.some([voice.path, "", {}] as const),
+      onSome: (use) =>
+        pipe(
+          instrumentIn(voicing)(use),
+          Option.map((plugin) => {
+            const sound = plugin.voice({
+              pitch: Option.none(),
+              args: [...use.arguments, ...hit.args],
+              samples: voicing.samples,
+            });
+            return [sound.sound, sound.label, midiOf(sound.midi)] as const;
+          }),
+        ),
+    });
+
+const voicePlaced =
+  (voicing: Voicing) =>
+  (hit: Hit) =>
+  (voice: Voice): Option.Option<Placed> =>
+    Option.map(soundOf(voicing)(hit)(voice), ([source, label, pitched]) => {
+      const [time] = spanOf(voicing)(hit);
+      const params = [...voice.params, ...hit.params];
+      return {
+        source,
+        label,
+        time,
+        placement: placementOf(params)({ gain: hit.velocity, ...pitched, ...bendOf(hit) }),
+        sends: sendsOf(params),
+        args: hit.args,
+      };
+    });
 
 export const hitsPlaced =
-  (timing: Timing) =>
+  (voicing: Voicing) =>
   (track: SongTrack): readonly Placed[] => {
-    const voices = voicesOf(timing.song)(track);
+    const voices = voicesOf(voicing.song)(track);
     return pipe(
-      timing.song.hits,
+      voicing.song.hits,
       Arr.filter((hit) => hit.track === track.name),
       Arr.flatMap((hit) =>
         pipe(
           voices,
           Arr.findFirst((voice) => voice.name === hit.voice),
-          Option.map(voicePlaced(timing)(hit)),
+          Option.flatMap(voicePlaced(voicing)(hit)),
           Option.toArray,
         ),
       ),
     );
   };
+
+const pluginOf =
+  (song: Song) =>
+  (track: SongTrack): Option.Option<PluginUse> => {
+    if (track.source.kind !== "instrument") {
+      return Option.none();
+    }
+    const { instrument } = track.source;
+    return pipe(
+      song.instruments,
+      Arr.findFirst((each) => each.name === instrument),
+      Option.flatMap((found) => {
+        if (found.source.kind === "plugin") {
+          return Option.some(found.source);
+        }
+        return Option.none();
+      }),
+    );
+  };
+
+const voicedPlaced =
+  (voicing: Voicing) =>
+  (use: PluginUse) =>
+  (note: Note): Option.Option<Placed> =>
+    pipe(
+      instrumentIn(voicing)(use),
+      Option.map((plugin) => {
+        const voice = plugin.voice({
+          pitch: Option.some(note.midi + note.cents / CENTS_PER_SEMITONE),
+          args: [...use.arguments, ...note.args],
+          samples: voicing.samples,
+        });
+        const [time, length] = spanOf(voicing)(note);
+        const base: Placement = {
+          gain: note.velocity,
+          midi: note.midi,
+          duration: length * note.gate,
+          ...bendOf(note),
+        };
+        return {
+          source: voice.sound,
+          label: voice.label,
+          time,
+          placement: placementOf(note.params)(base),
+          sends: sendsOf(note.params),
+          args: note.args,
+        };
+      }),
+    );
+
+export const voicedNotesPlaced =
+  (voicing: Voicing) =>
+  (track: SongTrack): readonly Placed[] =>
+    Option.match(pluginOf(voicing.song)(track), {
+      onNone: () => [],
+      onSome: (use) =>
+        pipe(
+          voicing.song.notes,
+          Arr.filter((note) => note.track === track.name),
+          Arr.flatMap((note) => Option.toArray(voicedPlaced(voicing)(use)(note))),
+        ),
+    });

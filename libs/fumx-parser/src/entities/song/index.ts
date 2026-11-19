@@ -1,5 +1,5 @@
 export type { Edit, Hit, Lyric, Note, Slice } from "./model/events.ts";
-export type { Plugin, PluginUse, PluginValue } from "./model/plugin.ts";
+export type { Plugin, PluginArgument, PluginUse, PluginValue } from "./model/plugin.ts";
 export type { Effect, PlayParam } from "./model/sound.ts";
 export type {
   Amount,

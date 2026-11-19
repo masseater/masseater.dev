@@ -5,7 +5,6 @@ import { Array as Arr, Option, pipe } from "effect";
 const SECONDS_PER_MINUTE = 60;
 const QUARTERS_PER_WHOLE = 4;
 const TICKS_PER_QUARTER = TICKS_PER_WHOLE / QUARTERS_PER_WHOLE;
-const MILLI = 1e-3;
 const PAIR = 2;
 const NONE = 0;
 const ONE = 1;
@@ -139,5 +138,5 @@ export const clockOf = (song: Song): Clock => {
 
 export const nudged =
   (seconds: number) =>
-  (milliseconds: number): number =>
-    Math.max(NONE, seconds + milliseconds * MILLI);
+  (nudge: number): number =>
+    seconds + nudge;

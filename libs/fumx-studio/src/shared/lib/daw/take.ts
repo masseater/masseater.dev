@@ -54,7 +54,7 @@ const automationOf =
     high: lane.high,
     scale: scaleOf(lane),
     unit: unitOf(lane),
-    shade: name === shaded,
+    shade: name === shaded || lane.shade === true,
   });
 
 export const takeOf =

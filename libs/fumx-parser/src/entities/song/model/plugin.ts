@@ -44,10 +44,14 @@ export const PluginSchema = Schema.Struct({
 
 export type Plugin = typeof PluginSchema.Type;
 
+export const PluginArgumentSchema = Schema.Struct({ name: Name, value: PluginValueSchema });
+
+export type PluginArgument = typeof PluginArgumentSchema.Type;
+
 export const PluginUseSchema = kind("plugin")({
   plugin: Name,
   module: Schema.String,
-  arguments: Schema.Array(Schema.Struct({ name: Name, value: PluginValueSchema })),
+  arguments: Schema.Array(PluginArgumentSchema),
 });
 
 export type PluginUse = typeof PluginUseSchema.Type;

@@ -5,6 +5,14 @@ import type { Scope } from "effect";
 import type { LiveInit } from "#/features/play-song/index.ts";
 import type { Mastered } from "#/features/render-song/index.ts";
 import { tapeFor } from "#/shared/lib/daw/tape.ts";
+import type { Stage } from "#/shared/lib/plugin/plugin.ts";
+
+const buffersOf = (stage: Stage): readonly ArrayBuffer[] => {
+  if (stage.kind === "gain") {
+    return [stage.curve.buffer];
+  }
+  return [];
+};
 
 const liveOf =
   (worklet: string) =>
@@ -13,7 +21,6 @@ const liveOf =
     const init: LiveInit = {
       frames: mastered.frames,
       tracks: mastered.stems.length,
-      every: mastered.every,
       stages: mastered.stages,
     };
     return {
@@ -23,10 +30,7 @@ const liveOf =
       ),
       worklet,
       init,
-      transfer: pipe(
-        mastered.stages,
-        Arr.map((stage) => stage.buffer),
-      ),
+      transfer: pipe(mastered.stages, Arr.flatMap(buffersOf)),
       tape,
       mixers: Rec.fromEntries(
         pipe(
