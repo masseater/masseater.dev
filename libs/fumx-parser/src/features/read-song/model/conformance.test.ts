@@ -228,8 +228,8 @@ it.effect("reads lyrics, melismas and bends", () =>
       {
         lyric: Option.none(),
         bend: [
-          { milliseconds: 0, semitones: 0 },
-          { milliseconds: 100, semitones: 2 },
+          { milliseconds: 0, seconds: 0, semitones: 0 },
+          { milliseconds: 100, seconds: 0.1, semitones: 2 },
         ],
       },
     ]);
