@@ -4,6 +4,8 @@ import type { AstNode, CstNode } from "langium";
 
 import type { Song as SongNode } from "#generated/langium/ast.ts";
 
+import { commentsOf } from "./comments.ts";
+import type { SourceComment } from "./comments.ts";
 import { isNamed } from "./declarations.ts";
 import type { Named } from "./declarations.ts";
 import type { From } from "./problem.ts";
@@ -30,6 +32,7 @@ export interface Outline {
   readonly names: readonly NamedSpan[];
   readonly imports: readonly ImportSpan[];
   readonly files: readonly string[];
+  readonly comments: readonly SourceComment[];
 }
 
 export const emptyOutline: Outline = {
@@ -37,6 +40,7 @@ export const emptyOutline: Outline = {
   names: [],
   imports: [],
   files: [],
+  comments: [],
 };
 
 const spanOf: From<CstNode, Span> = (node) => ({ start: node.offset, end: node.end });
@@ -77,4 +81,5 @@ export const outlineOf: From<readonly string[], From<SongNode, Outline>> = (file
   names: namesOf(song),
   imports: importsOf(song),
   files,
+  comments: commentsOf(song),
 });

@@ -1,19 +1,29 @@
+import type { SourceComment } from "@r_masseater/fumx-parser";
 import { Array as Arr, Match, Option, String as Str, pipe } from "effect";
 
 const DIRECTIVE =
-  /\/\/\s*i68-(?<kind>ignore-next-line|ignore-file|ignore|disable|enable)(?<rules>[^\n\r]*)/u;
-const REASON = /\s--\s.*$|\s--$/u;
-const LINE_BREAK = /\r\n|\r|\n/u;
-const LIST = /[\s,]+/u;
-const FIRST_LINE = 1;
+  /^i68-(?<kind>ignore-next-line|ignore-file|ignore|disable|enable)(?:\s(?<rest>[\s\S]*))?$/u;
+const REASON = /\s-{2,}(?:\s|$)/u;
+const LINE_MARK = "//";
+const BLOCK_START = "/*";
+const BLOCK_END = "*/";
+const LIST = ",";
 const NEXT = 1;
+const LINE_START = 0;
 
 type Kind = "ignore" | "ignore-next-line" | "ignore-file" | "disable" | "enable";
 
 interface Directive {
   readonly line: number;
+  readonly column: number;
   readonly kind: Kind;
   readonly rules: readonly string[];
+}
+
+export interface Suppressed {
+  readonly line: number;
+  readonly column?: number;
+  readonly rule: string;
 }
 
 const kindOf = (text: string): Kind =>
@@ -25,25 +35,37 @@ const kindOf = (text: string): Kind =>
     Match.orElse((): Kind => "ignore"),
   );
 
-const groupOf =
-  (found: RegExpExecArray) =>
-  (name: string): string =>
-    pipe(
-      Option.fromNullishOr(found.groups),
-      Option.flatMap((groups) => Option.fromNullishOr(groups[name])),
-      Option.getOrElse(() => ""),
-    );
+const bodyOf = (text: string): string => {
+  if (Str.startsWith(BLOCK_START)(text)) {
+    return pipe(text, Str.slice(BLOCK_START.length), Str.replace(BLOCK_END, ""), Str.trim);
+  }
+  return pipe(text, Str.slice(LINE_MARK.length), Str.trim);
+};
 
-const rulesOf = (text: string): readonly string[] =>
-  pipe(Str.replace(REASON, "")(` ${text}`), Str.split(LIST), Arr.filter(Str.isNonEmpty));
+const rulesOf = (rest: string): readonly string[] =>
+  pipe(
+    Str.split(` ${rest}`, REASON),
+    Arr.head,
+    Option.getOrElse(() => ""),
+    Str.split(LIST),
+    Arr.map(Str.trim),
+    Arr.filter(Str.isNonEmpty),
+  );
 
-const directiveOf = (text: string, index: number): Option.Option<Directive> =>
+const groupsOf = (text: string): Option.Option<Partial<Record<string, string>>> =>
   pipe(
     Option.fromNullishOr(DIRECTIVE.exec(text)),
-    Option.map((found) => ({
-      line: index + FIRST_LINE,
-      kind: kindOf(groupOf(found)("kind")),
-      rules: rulesOf(groupOf(found)("rules")),
+    Option.flatMap((found) => Option.fromNullishOr(found.groups)),
+  );
+
+const directiveOf = (comment: SourceComment): Option.Option<Directive> =>
+  pipe(
+    groupsOf(bodyOf(comment.text)),
+    Option.map((groups) => ({
+      line: comment.line,
+      column: comment.column,
+      kind: kindOf(groups["kind"] ?? ""),
+      rules: rulesOf(groups["rest"] ?? ""),
     })),
   );
 
@@ -66,6 +88,12 @@ const coversLine =
       Match.orElse(() => false),
     );
 
+const isAfter =
+  (found: Suppressed) =>
+  (directive: Directive): boolean =>
+    directive.line < found.line ||
+    (directive.line === found.line && directive.column <= (found.column ?? LINE_START));
+
 const insideRange =
   (directives: readonly Directive[]) =>
   (found: Suppressed): boolean =>
@@ -73,18 +101,15 @@ const insideRange =
       directives,
       Arr.filter(
         (directive) =>
-          isRange(directive) && directive.line <= found.line && names(found.rule)(directive),
+          isRange(directive) && isAfter(found)(directive) && names(found.rule)(directive),
       ),
       Arr.last,
       Option.exists((directive) => directive.kind === "disable"),
     );
 
-export interface Suppressed {
-  readonly line: number;
-  readonly rule: string;
-}
-
-export const suppressionsOf = (text: string): ((found: Suppressed) => boolean) => {
-  const directives = pipe(Str.split(text, LINE_BREAK), Arr.map(directiveOf), Arr.getSomes);
+export const suppressionsOf = (
+  comments: readonly SourceComment[],
+): ((found: Suppressed) => boolean) => {
+  const directives = pipe(comments, Arr.map(directiveOf), Arr.getSomes);
   return (found) => pipe(directives, Arr.some(coversLine(found))) || insideRange(directives)(found);
 };

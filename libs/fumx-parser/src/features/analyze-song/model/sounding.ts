@@ -1,7 +1,7 @@
-import { Array as Arr, Option, pipe } from "effect";
+import { Array as Arr, Option, String as Str, pipe } from "effect";
 import { Note as TonalNote } from "tonal";
 
-import type { Role, Song } from "#/entities/song/index.ts";
+import type { Note, Role, Song } from "#/entities/song/index.ts";
 import { fractionOf } from "#/shared/lib/ticks.ts";
 
 const NONE = 0;
@@ -19,8 +19,19 @@ export interface Sounding extends Span {
   readonly bar: number;
   readonly role: Option.Option<Role>;
   readonly midi: number;
+  readonly spelling: string;
   readonly pitchClass: string;
 }
+
+const CENTS = /[+-]\d+c$/u;
+
+const pitchClassOf = (note: Note): string => {
+  const written = TonalNote.pitchClass(Str.replace(CENTS, "")(note.spelling));
+  if (Str.isNonEmpty(written)) {
+    return written;
+  }
+  return TonalNote.pitchClass(TonalNote.fromMidi(note.midi));
+};
 
 export const overlapOf =
   (left: Span) =>
@@ -45,7 +56,8 @@ export const soundingsOf = (song: Song): readonly Sounding[] => {
           bar: note.bar,
           role: track.role,
           midi: note.midi,
-          pitchClass: TonalNote.pitchClass(TonalNote.fromMidi(note.midi)),
+          spelling: note.spelling,
+          pitchClass: pitchClassOf(note),
           start: note.start,
           end: note.start + Math.round(note.length * note.gate),
         })),

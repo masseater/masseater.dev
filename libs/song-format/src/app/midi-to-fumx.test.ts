@@ -4,6 +4,12 @@ import { Effect, String as Str } from "effect";
 
 import { compareWithMidi, midiToFumx } from "#/features/convert-midi/index.ts";
 
+import {
+  EXTREME_NOTES,
+  OVERLAPPING_NOTES,
+  extremes,
+  overlapping,
+} from "./midi-edges.test.support.ts";
 import { everyElement } from "./midi-to-fumx.test.support.ts";
 import { convertMidiFile } from "./midi-to-fumx.ts";
 
@@ -53,5 +59,31 @@ it.effect("finds a difference between the .fumx and the MIDI file", () =>
     expect(comparison.matches).toBe(false);
     expect(comparison.controls.missing).toStrictEqual(["grand-piano-ch1 cc 64 16128000 127"]);
     expect(comparison.controls.extra).toStrictEqual(["grand-piano-ch1 cc 64 16128000 126"]);
+  }),
+);
+
+it.effect(
+  "reproduces the MIDI range, quintuplets, a note across a meter change and repeated notes",
+  () =>
+    Effect.gen(function* edges() {
+      const converted = yield* convertMidiFile({
+        bytes: extremes(),
+        title: "extremes",
+        path: PATH,
+      });
+      expect(converted.comparison.matches).toBe(true);
+      expect(converted.comparison.notes.expected).toBe(EXTREME_NOTES.length);
+    }),
+);
+
+it.effect("reproduces two overlapping notes of the same pitch on one channel", () =>
+  Effect.gen(function* overlap() {
+    const converted = yield* convertMidiFile({
+      bytes: overlapping(),
+      title: "overlap",
+      path: PATH,
+    });
+    expect(converted.comparison.matches).toBe(true);
+    expect(converted.comparison.notes.expected).toBe(OVERLAPPING_NOTES.length);
   }),
 );

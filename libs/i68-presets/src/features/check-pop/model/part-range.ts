@@ -3,7 +3,7 @@ import { defineRule } from "@r_masseater/i68";
 import type { Rule, RuleOptions } from "@r_masseater/i68";
 import { Array as Arr, Option, Predicate, Record as Rec, pipe } from "effect";
 
-import { midiOf, nameOf } from "#/shared/lib/pitch.ts";
+import { midiOf } from "#/shared/lib/pitch.ts";
 import { reporterOf } from "#/shared/lib/voices.ts";
 import type { Reporter } from "#/shared/lib/voices.ts";
 
@@ -20,6 +20,7 @@ export const DEFAULT_RANGES: Ranges = {
 interface Bounds {
   readonly low: number;
   readonly high: number;
+  readonly name: string;
 }
 
 const RANGE_LENGTH = 2;
@@ -28,13 +29,13 @@ const isRange = (value: unknown): value is Range =>
   Arr.isArray(value) && value.length === RANGE_LENGTH && pipe(value, Arr.every(Predicate.isString));
 
 const boundsOf = ([low, high]: Range): Option.Option<Bounds> =>
-  Option.all({ low: midiOf(low), high: midiOf(high) });
+  Option.all({ low: midiOf(low), high: midiOf(high), name: Option.some(`${low}-${high}`) });
 
 const configured = (options: RuleOptions): Readonly<Record<string, unknown>> =>
   pipe(
     Option.fromNullishOr(options["ranges"]),
     Option.filter(Predicate.isObject),
-    Option.map((value): Readonly<Record<string, unknown>> => ({ ...value })),
+    Option.map((value): Readonly<Record<string, unknown>> => ({ ...DEFAULT_RANGES, ...value })),
     Option.getOrElse((): Readonly<Record<string, unknown>> => DEFAULT_RANGES),
   );
 
@@ -74,7 +75,7 @@ const checkNote =
       report(`${String(sounding.line)}:${String(sounding.column)}`, {
         line: sounding.line,
         column: sounding.column,
-        message: `${nameOf(sounding.midi)} in ${sounding.track} is outside ${nameOf(bounds.low)}-${nameOf(bounds.high)}`,
+        message: `${sounding.spelling} in ${sounding.track} is outside ${bounds.name}`,
         detail: "Move the phrase an octave, or set the range of this track",
       });
     }

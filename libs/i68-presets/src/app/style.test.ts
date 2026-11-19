@@ -90,7 +90,7 @@ it.effect(
         Effect.map(Arr.map(format)),
       );
       expect(found).toStrictEqual([
-        "/song.fumx:12:8 warn style/rare-transition I → V is rare in test style (10%) [test style usually goes to IV (90%), V (10%)]",
+        "/song.fumx:12:9 warn style/rare-transition I → V is rare in test style (10%) [test style usually goes to IV (90%), V (10%)]",
       ]);
     }),
 );

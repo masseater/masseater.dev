@@ -8,7 +8,6 @@ const SEPARATOR = "/";
 
 export interface SongFile {
   readonly file: string;
-  readonly text: string;
   readonly source: SongSource;
 }
 
@@ -22,7 +21,6 @@ export interface ReadInput {
 
 export const readSongFile = Effect.fn("i68.read")(function* readSongFile(input: ReadInput) {
   const path = `${input.root}${SEPARATOR}${input.file}`;
-  const text = yield* input.read(path);
   const source = yield* readSong({ path, read: input.read });
-  return { file: input.file, text, source } satisfies SongFile;
+  return { file: input.file, source } satisfies SongFile;
 });

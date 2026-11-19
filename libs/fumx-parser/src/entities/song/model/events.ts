@@ -27,6 +27,7 @@ export const NoteSchema = Schema.Struct({
   ...timedFields,
   midi: Schema.Int,
   cents: Schema.Finite,
+  spelling: Schema.String,
   velocity: Share,
   releaseVelocity: Schema.OptionFromNullOr(Share),
   gate: Share,
