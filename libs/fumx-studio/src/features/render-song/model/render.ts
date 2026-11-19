@@ -28,7 +28,7 @@ const unplayedIn = (song: Song): Effect.Effect<void, Unplayable> =>
     }),
   );
 
-const contextOf =
+export const contextOf =
   (song: Song) =>
   (session: Session): Context => {
     const clock = clockOf(song);
