@@ -40,7 +40,7 @@ interface At {
   readonly event: EventBody;
 }
 
-interface NoteSpec {
+export interface NoteSpec {
   readonly at: number;
   readonly length: number;
   readonly pitch: number;
