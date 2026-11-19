@@ -6,7 +6,6 @@ import type { Rule } from "@r_masseater/i68";
 import { Array as Arr, Option, pipe } from "effect";
 
 import { numberOption } from "#/shared/lib/options.ts";
-import { namesOf } from "#/shared/lib/pitch.ts";
 import { hasRole, isPitched, reporterOf, soundingAt } from "#/shared/lib/voices.ts";
 import type { Reporter } from "#/shared/lib/voices.ts";
 
@@ -39,10 +38,11 @@ const crowdAt =
       Arr.dedupeWith((left, right) => left.track === right.track && left.midi === right.midi),
     );
 
-const midisOf = (notes: readonly Sounding[]): readonly number[] =>
+const spellingsOf = (notes: readonly Sounding[]): string =>
   pipe(
     notes,
-    Arr.map((note) => note.midi),
+    Arr.map((note) => note.spelling),
+    Arr.join(", "),
   );
 
 const checkBar =
@@ -58,7 +58,7 @@ const checkBar =
         report(String(bar.index), {
           line: first.line,
           column: first.column,
-          message: `${String(notes.length)} notes crowd the low mids in bar ${String(bar.index)}: ${namesOf(midisOf(notes))}`,
+          message: `${String(notes.length)} notes crowd the low mids in bar ${String(bar.index)}: ${spellingsOf(notes)}`,
           detail: "Thin the chord or move notes out of A2-B3",
         });
       }

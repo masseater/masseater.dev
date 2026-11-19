@@ -18,6 +18,8 @@ const LIMITS: Readonly<Record<string, number>> = {
   "9": 41,
   "10": 41,
   "11": 41,
+  "13": 40,
+  "14": 39,
 };
 
 const checkPair =
@@ -32,7 +34,7 @@ const checkPair =
         report(`${String(second.line)}:${String(low)}:${String(gap)}`, {
           line: second.line,
           column: second.column,
-          message: `${String(gap)} semitones between ${nameOf(first.midi)} (${first.track}) and ${nameOf(second.midi)} (${second.track}) is below its limit ${nameOf(limit)}`,
+          message: `${String(gap)} semitones between ${first.spelling} (${first.track}) and ${second.spelling} (${second.track}) is below its limit ${nameOf(limit)}`,
           detail: "Widen the interval or move the upper note up an octave",
         });
       }

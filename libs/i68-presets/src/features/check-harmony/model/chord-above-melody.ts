@@ -4,7 +4,6 @@ import type { Rule } from "@r_masseater/i68";
 import { Array as Arr, Option, pipe } from "effect";
 
 import { numberOption } from "#/shared/lib/options.ts";
-import { nameOf } from "#/shared/lib/pitch.ts";
 import { hasRole, overlappingPairs, reporterOf } from "#/shared/lib/voices.ts";
 import type { Pair, Reporter } from "#/shared/lib/voices.ts";
 
@@ -35,7 +34,7 @@ const checkPair =
         report(`${String(chord.line)}:${String(chord.column)}:${String(chord.bar)}`, {
           line: chord.line,
           column: chord.column,
-          message: `${nameOf(chord.midi)} in ${chord.track} sits ${where} the melody note ${nameOf(melody.midi)}`,
+          message: `${chord.spelling} in ${chord.track} sits ${where} the melody note ${melody.spelling}`,
           detail: "Keep the chord below the melody with some room between them",
         });
       }
