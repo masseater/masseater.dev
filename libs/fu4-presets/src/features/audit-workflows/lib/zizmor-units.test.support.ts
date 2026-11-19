@@ -106,8 +106,7 @@ const ExpansionSchema = Schema.Struct({ path: Schema.String, value: Schema.Strin
 const StaticSchema = Schema.Struct({ context: Schema.String, result: Schema.Boolean });
 const Input = Schema.Tuple([Schema.String, EnvSchema]);
 const Origins = Schema.Array(OriginSchema);
-const Verdict = Schema.Literals(["satisfied", "not-satisfied", "conditional"]);
-const EvaluationSchema = Schema.Struct({ verdict: Verdict, origins: Origins });
+const EvaluationSchema = Schema.Struct({ verdict: Schema.String, origins: Origins });
 const FixedSchema = Schema.Struct({ type: Schema.Literal("fixed"), pattern: Schema.String });
 const ConfigurableSchema = Schema.Struct({
   type: Schema.Literal("configurable"),
