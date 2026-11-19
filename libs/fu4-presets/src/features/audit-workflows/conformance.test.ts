@@ -1,6 +1,6 @@
 import { layer as nodeServices } from "@effect/platform-node/NodeServices";
 import { lintText } from "@r_masseater/fu4";
-import type { Fu4Config, InputKind } from "@r_masseater/fu4";
+import type { Fu4Config } from "@r_masseater/fu4";
 import {
   Array as Arr,
   Effect,
@@ -18,7 +18,7 @@ import { afterAll, expect, test } from "vite-plus/test";
 import { parse } from "yaml";
 
 import { AUDITS } from "./concerns/index.ts";
-import { ExpectedFinding, expectedOf, probe } from "./conformance.test.support.ts";
+import { ExpectedFinding, expectedOf, kindOf, probe } from "./conformance.test.support.ts";
 import type { Expected } from "./conformance.test.support.ts";
 
 const services = ManagedRuntime.make(nodeServices);
@@ -26,7 +26,6 @@ afterAll(() => services.dispose());
 
 const FIXTURES = "fixtures";
 const SEQUENTIAL = { concurrency: 1 } as const;
-const LAST = 1;
 const PORTED = new Set(
   pipe(
     AUDITS,
@@ -47,29 +46,6 @@ const keyOf = (entry: Expected): string =>
 
 const sorted = (entries: readonly Expected[]): readonly string[] =>
   Arr.sort(pipe(entries, Arr.map(keyOf)), Order.String);
-
-const baseName = (path: string): string =>
-  Option.getOrElse(Arr.last(Str.split("/")(path)), () => path);
-
-const parentName = (path: string): string =>
-  pipe(Str.split("/")(path), Arr.dropRight(LAST), Arr.join("/"));
-
-const kindOf = (path: string): InputKind => {
-  const base = baseName(path);
-  if (Str.endsWith(".github/workflows")(parentName(path))) {
-    return "workflow";
-  }
-  if (base === "action.yml" || base === "action.yaml") {
-    return "action";
-  }
-  if (base === "dependabot.yml" || base === "dependabot.yaml") {
-    return "dependabot";
-  }
-  if (Str.startsWith(".pre-commit-")(base)) {
-    return "pre-commit";
-  }
-  return "workflow";
-};
 
 const RulesFile = Schema.Struct({ rules: Schema.optional(Schema.Unknown) });
 

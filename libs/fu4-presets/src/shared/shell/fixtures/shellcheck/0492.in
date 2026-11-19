@@ -1,0 +1,7 @@
+new_version="$(
+  node -p 'require("./test/fixtures/wpt/versions.json")[process.argv[1]].commit' "$SUBSYSTEM"
+)"
+{
+  echo "long_version=$new_version"
+  echo "short_version=${new_version:0:10}"
+} >> "$GITHUB_ENV"

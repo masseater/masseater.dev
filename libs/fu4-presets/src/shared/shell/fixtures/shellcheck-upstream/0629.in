@@ -1,0 +1,1 @@
+f() { typeset -g x=$(false); }

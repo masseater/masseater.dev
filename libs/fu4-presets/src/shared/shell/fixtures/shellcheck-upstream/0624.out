@@ -1,0 +1,3 @@
+SC2034:warning:1:10: a appears unused. Verify use (or export if used externally)
+SC2155:warning:1:10: Declare and assign separately to avoid masking return values
+SC2006:style:1:13: Use $(...) notation instead of legacy backticks `...`

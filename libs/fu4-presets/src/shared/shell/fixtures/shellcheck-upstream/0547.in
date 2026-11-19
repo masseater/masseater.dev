@@ -1,0 +1,1 @@
+a='cow*.mp3'; echo "$a"

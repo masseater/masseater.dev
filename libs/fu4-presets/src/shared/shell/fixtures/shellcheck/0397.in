@@ -1,0 +1,1 @@
+NODE=$(command -v node) make doc-only

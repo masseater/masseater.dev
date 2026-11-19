@@ -1,0 +1,1 @@
+sed 's/$(echo cow)/bar/'

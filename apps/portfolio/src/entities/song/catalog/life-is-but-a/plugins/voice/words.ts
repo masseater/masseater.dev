@@ -2,11 +2,10 @@ import { SAMPLE_RATE, orDefault, semitoneRatio } from "@masseater.dev/fumx-studi
 import { fade, resample } from "@masseater.dev/fumx-studio/dsp/sampling";
 import { stretch } from "@masseater.dev/fumx-studio/dsp/stretch";
 import type { Stretching } from "@masseater.dev/fumx-studio/dsp/stretch";
+import { numberIn, textIn } from "@masseater.dev/fumx-studio/plugin/args";
 import type { Voice } from "@masseater.dev/fumx-studio/plugin/plugin";
 import type { PluginArgument } from "@r_masseater/fumx-parser";
 import { Option } from "effect";
-
-import { numberIn, textIn } from "#/entities/song/catalog/life-is-but-a/plugins/lib/args.ts";
 
 const NOTHING = 0;
 const ONE = 1;

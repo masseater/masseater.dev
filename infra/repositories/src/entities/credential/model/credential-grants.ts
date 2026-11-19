@@ -43,7 +43,7 @@ const EXPOSURE: Grant = {
 const PROFILES = {
   deploy: DEPLOY,
   transforms: extend({
-    account: ["AI Gateway Write", "Billing Write"],
+    account: ["AI Gateway Write", "Billing Write", "Notifications Write"],
     zone: ["Zone Transform Rules Write"],
   }),
   access: extend({ account: ["Access: Apps and Policies Write", "MCP Portals Write"] }),

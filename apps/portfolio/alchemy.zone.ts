@@ -1,13 +1,12 @@
 import { Ruleset, Zone, providers, state } from "@alchemy.run/cloudflare";
-import { aiGateway } from "@masseater.dev/cloudflare-account/ai-gateway";
-import { spendLimitProvider, spendLimits } from "@masseater.dev/cloudflare-account/spend-limits";
+import { spendLimitProvider, zoneResources } from "@masseater.dev/cloudflare-account/zone";
 import { Stack } from "alchemy";
 import type { CompiledStack } from "alchemy";
 import { adopt } from "alchemy/AdoptPolicy";
 import { Effect, Layer, Record as Rec, pipe } from "effect";
 import type { ConfigError } from "effect/Config";
 
-import { PREFIX } from "./src/app/app-name.ts";
+import { APP_NAME, PREFIX } from "./src/app/app-name.ts";
 import { SECURITY_HEADERS } from "./src/shared/config/security-headers.ts";
 import { site } from "./src/shared/config/site.ts";
 
@@ -26,8 +25,7 @@ const stack: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: s
   `${PREFIX}zone`,
   { providers: Layer.provideMerge(spendLimitProvider, providers()), state: state() },
   Effect.gen(function* zone() {
-    yield* aiGateway;
-    yield* spendLimits;
+    yield* zoneResources(APP_NAME);
     const owned = yield* Zone.Zone("Zone", { name: DOMAIN }).pipe(adopt(true));
     yield* Ruleset.Ruleset("CloudflareResponseHeaders", {
       zone: owned,
