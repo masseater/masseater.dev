@@ -2,8 +2,9 @@ use std::path::{Path, PathBuf};
 
 use oxc_allocator::Allocator;
 use oxc_parser::Parser;
-use oxc_resolver::{ResolveOptions, Resolver};
+use oxc_resolver::{ResolveOptions, Resolver, TsconfigDiscovery};
 use oxc_span::SourceType;
+use oxc_syntax::module_record::ExportImportName;
 
 use crate::entities::import::{Edge, Target};
 use crate::shared::text::Lines;
@@ -52,7 +53,11 @@ fn requests(path: &str, text: &str) -> Vec<Request> {
             });
         }
     }
-    for entry in &record.star_export_entries {
+    let namespaces = record
+        .indirect_export_entries
+        .iter()
+        .filter(|entry| matches!(entry.import_name, ExportImportName::All));
+    for entry in record.star_export_entries.iter().chain(namespaces) {
         if let Some(request) = &entry.module_request {
             let offset = request.span.start as usize;
             match found.iter_mut().find(|known| known.offset == offset) {
@@ -92,6 +97,7 @@ impl Scripts {
             ],
             condition_names: owned(&CONDITIONS),
             builtin_modules: true,
+            tsconfig: Some(TsconfigDiscovery::Auto),
             ..ResolveOptions::default()
         };
         Self {
@@ -109,14 +115,11 @@ impl Scripts {
     #[must_use]
     pub fn edges(&self, path: &str, text: &str) -> Vec<Edge> {
         let file = self.root.join(path);
-        let Some(directory) = file.parent() else {
-            return Vec::new();
-        };
         let lines = Lines::new(text);
         requests(path, text)
             .into_iter()
             .filter_map(|request| {
-                let resolved = self.resolver.resolve(directory, &request.specifier).ok()?;
+                let resolved = self.resolver.resolve_file(&file, &request.specifier).ok()?;
                 let target = self.relative(resolved.path())?;
                 let (line, column) = lines.position(request.offset);
                 Some(Edge {
@@ -226,5 +229,43 @@ const f = await import(`./f${a}.ts`);
         );
         assert_eq!(tsx.len(), 1);
         assert_eq!(scripts.edges("app/view.tsx", "import {{{").len(), 0);
+    }
+
+    #[test]
+    fn resolves_the_path_aliases_of_the_nearest_tsconfig() {
+        let tree = Tree::new(&[
+            ("kit/package.json", "{}"),
+            (
+                "kit/tsconfig.json",
+                r#"{ "compilerOptions": { "baseUrl": "./src", "paths": { "@/*": ["./*"] } } }"#,
+            ),
+            ("kit/src/entities/user/index.ts", ""),
+        ]);
+        let found: Vec<String> = Scripts::new(&tree.root)
+            .edges(
+                "kit/src/app/index.ts",
+                "import { user } from \"@/entities/user\";\n",
+            )
+            .into_iter()
+            .map(|edge| match edge.target {
+                Target::File(path) => path,
+                Target::Module(path) => path.join("::"),
+            })
+            .collect();
+        assert_eq!(found, vec!["kit/src/entities/user/index.ts".to_owned()]);
+    }
+
+    #[test]
+    fn marks_namespace_re_exports_as_wildcards() {
+        let tree = Tree::new(&[("kit/src/a.ts", ""), ("kit/src/b.ts", "")]);
+        let found: Vec<bool> = Scripts::new(&tree.root)
+            .edges(
+                "kit/src/index.ts",
+                "export * as a from \"./a.ts\";\nexport { b } from \"./b.ts\";\n",
+            )
+            .into_iter()
+            .map(|edge| edge.wildcard)
+            .collect();
+        assert_eq!(found, vec![true, false]);
     }
 }
