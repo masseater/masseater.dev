@@ -2,7 +2,7 @@ import { defineRule } from "@r_masseater/i68";
 import type { Rule } from "@r_masseater/i68";
 import { Match, Option } from "effect";
 
-import { nameOf, pitchClassOf } from "#/shared/lib/pitch.ts";
+import { pitchClassOf } from "#/shared/lib/pitch.ts";
 import { neighborsOf, reporterOf } from "#/shared/lib/voices.ts";
 import type { Reporter } from "#/shared/lib/voices.ts";
 
@@ -39,7 +39,7 @@ const checkMove =
       report(`${String(next.melody.line)}:${String(next.tick)}`, {
         line: next.melody.line,
         column: next.melody.column,
-        message: `Parallel ${name.value}: ${nameOf(previous.melody.midi)}/${nameOf(previous.bass.midi)} to ${nameOf(next.melody.midi)}/${nameOf(next.bass.midi)} between ${next.melody.track} and ${next.bass.track}`,
+        message: `Parallel ${name.value}: ${previous.melody.spelling}/${previous.bass.spelling} to ${next.melody.spelling}/${next.bass.spelling} between ${next.melody.track} and ${next.bass.track}`,
         detail: "Move the melody or the bass the other way",
       });
     }
