@@ -41,15 +41,18 @@ const program = Effect.gen(function* () {
 
 ## The song value
 
-| Field                           | Holds                                                                                         |
-| ------------------------------- | --------------------------------------------------------------------------------------------- |
-| `notes`                         | Pitched notes: `midi`, `velocity` (0 to 1), `releaseVelocity`, `gate`, `lyric`, `bend`        |
-| `hits`                          | Drum hits: kit `voice`, `velocity`, `releaseVelocity`                                         |
-| `controls`                      | Controller events: `controller.kind` is `cc` (with `number`), `pressure`, `bend` or `program` |
-| `bars`                          | Each bar's `start`, `length`, `meter`, `tempo`, `tempoSteps`, `section` and `mark`            |
-| `tracks`, `instruments`, `kits` | The declarations in the header                                                                |
+| Field                           | Holds                                                                                          |
+| ------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `notes`                         | Pitched notes: `midi`, `velocity` (0 to 1), `releaseVelocity`, `gate`, `lyric`, `bend`         |
+| `hits`                          | Drum hits: kit `voice`, `velocity`, `releaseVelocity`, `bend`                                  |
+| `controls`                      | Controller events: `controller.kind` is `cc` (with `number`), `pressure`, `bend` or `program`  |
+| `bars`                          | Each bar's `start`, `length`, `meter`, `tempo`, `tempoSteps`, `section` and `mark`             |
+| `tracks`, `instruments`, `kits` | The declarations in the header. A track with `into` is a layer of another track                |
+| `mix`, `tailSeconds`            | The `master` line: a mix plugin that replaces the built-in mixdown, and the tail after the end |
 
 Ties are already joined: a note tied over a bar line is one note.
+
+Notes and hits carry `args`, the values a `with { … }` attribute passes to plugins, and `nudgeSeconds`. Times and shares written as decimals (`nudge 0.4ms`, `pan -35%`) are read as the double that the decimal names, so `seconds` is exact rather than `milliseconds * 0.001`.
 
 Times are ticks. `TICKS_PER_WHOLE` ticks make a whole note, and `fractionOf(ticks)` prints `"3/8"`. Compare with ticks, not with fractions.
 

@@ -3,6 +3,8 @@ import { Schema } from "effect";
 import { Name, OptionalNumber, OptionalShare, Share, Ticks, kind } from "./fields.ts";
 import { PluginUseSchema } from "./plugin.ts";
 
+const Duration = { milliseconds: Schema.Finite, seconds: Schema.Finite };
+
 export const SendSchema = Schema.Struct({ bus: Name, amount: Share });
 
 const HighpassSchema = kind("highpass")({ hertz: Schema.Finite, resonance: OptionalNumber });
@@ -19,11 +21,12 @@ const DriveSchema = kind("drive")({ amount: Schema.Finite });
 
 export const PlayParamSchema = Schema.Union([
   kind("semi")({ semitones: Schema.Finite }),
-  kind("length")({ milliseconds: Schema.Finite }),
-  kind("attack")({ milliseconds: Schema.Finite }),
-  kind("release")({ milliseconds: Schema.Finite }),
-  kind("decay")({ milliseconds: Schema.Finite }),
-  kind("offset")({ milliseconds: Schema.Finite }),
+  kind("rate")({ ratio: Schema.Finite }),
+  kind("length")(Duration),
+  kind("attack")(Duration),
+  kind("release")(Duration),
+  kind("decay")(Duration),
+  kind("offset")(Duration),
   HighpassSchema,
   LowpassSchema,
   GainSchema,

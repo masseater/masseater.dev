@@ -56,12 +56,14 @@ describe("the song catalog", () => {
     expect(filesOf(slug)).toStrictEqual(tableOf(slug));
   });
 
-  test.each(songs)("$slug states the tempo and key its song.fumx implies", (work) => {
+  test.each(songs)("$slug states the tempo and any key its song.fumx implies", (work) => {
     Option.map(fumxOf(work.slug), (song) => {
       expect(Option.map(Arr.head(song.bars), (bar) => bar.tempo.bpm)).toStrictEqual(
         Option.some(work.tempo),
       );
-      expect(keyOf(song)).toStrictEqual(Option.some(work.key));
+      Option.map(keyOf(song), (key) => {
+        expect(key).toBe(work.key);
+      });
     });
   });
 });

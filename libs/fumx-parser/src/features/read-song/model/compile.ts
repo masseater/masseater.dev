@@ -35,6 +35,7 @@ type Timed = Pick<
   | "start"
   | "length"
   | "nudgeMilliseconds"
+  | "nudgeSeconds"
 >;
 
 const timedOf: From<PlacedItem, Timed> = (placed) => ({
@@ -47,6 +48,7 @@ const timedOf: From<PlacedItem, Timed> = (placed) => ({
   start: placed.start,
   length: placed.item.length,
   nudgeMilliseconds: placed.item.nudgeMilliseconds,
+  nudgeSeconds: placed.item.nudgeSeconds,
 });
 
 const noteOf: From<PlacedNote, Note> = (placed) => {
@@ -61,6 +63,7 @@ const noteOf: From<PlacedNote, Note> = (placed) => {
     lyric,
     bend,
     params,
+    args,
   }: NoteItem = placed.item;
   return {
     ...timedOf(placed),
@@ -74,6 +77,7 @@ const noteOf: From<PlacedNote, Note> = (placed) => {
     lyric,
     bend,
     params,
+    args,
   };
 };
 
@@ -94,8 +98,8 @@ const isKind =
     placed.item.kind === kind;
 
 const hitOf: From<PlacedOf<"hit">, Hit> = (placed) => {
-  const { voice, velocity, releaseVelocity, params } = placed.item;
-  return { ...timedOf(placed), voice, velocity, releaseVelocity, params };
+  const { voice, velocity, releaseVelocity, bend, params, args } = placed.item;
+  return { ...timedOf(placed), voice, velocity, releaseVelocity, bend, params, args };
 };
 
 const tieHits = tieChains<PlacedOf<"hit">, Hit>({

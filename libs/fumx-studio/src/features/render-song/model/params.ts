@@ -4,7 +4,6 @@ import { Array as Arr, Match, Option, pipe } from "effect";
 import { decibels } from "#/shared/lib/dsp/number.ts";
 import type { Placement } from "#/shared/lib/studio/placement.ts";
 
-const MILLI = 1e-3;
 const NONE = 0;
 const ONE = 1;
 
@@ -28,11 +27,12 @@ const paramPlacement = (param: PlayParam): Placement =>
   Match.value(param).pipe(
     Match.discriminatorsExhaustive("kind")({
       semi: ({ semitones }) => ({ semitones }),
-      length: ({ milliseconds }) => ({ duration: milliseconds * MILLI }),
-      attack: ({ milliseconds }) => ({ attack: milliseconds * MILLI }),
-      release: ({ milliseconds }) => ({ release: milliseconds * MILLI }),
-      decay: ({ milliseconds }) => ({ decay: milliseconds * MILLI }),
-      offset: ({ milliseconds }) => ({ offset: milliseconds * MILLI }),
+      rate: ({ ratio }) => ({ rate: ratio }),
+      length: ({ seconds }) => ({ duration: seconds }),
+      attack: ({ seconds }) => ({ attack: seconds }),
+      release: ({ seconds }) => ({ release: seconds }),
+      decay: ({ seconds }) => ({ decay: seconds }),
+      offset: ({ seconds }) => ({ offset: seconds }),
       highpass: ({ hertz }) => ({ highPass: hertz }),
       lowpass: (given) => ({ lowPass: lowPassOf(given), ...resonanceOf(given.resonance) }),
       gain: (given) => ({ gain: decibels(given.decibels) }),
