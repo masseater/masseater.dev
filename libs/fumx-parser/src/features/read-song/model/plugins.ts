@@ -182,7 +182,7 @@ const strayProblemsOf: From<
     ),
   );
 
-export const argumentsOf: From<readonly PluginArgument[], readonly Argument[]> = (given) =>
+export const argumentsOf: From<readonly PluginArgument[], PluginUse["arguments"]> = (given) =>
   pipe(
     given,
     Arr.flatMap((argument) =>
