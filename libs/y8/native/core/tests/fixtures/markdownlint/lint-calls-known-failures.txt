@@ -1,0 +1,5 @@
+markdownlint-test#74 # frontMatter: null, y8 always strips front matter
+markdownlint-test#75 # custom frontMatter pattern
+markdownlint-test#87 # configParsers for inline config
+markdownlint-test#88 # configParsers for inline config
+markdownlint-test#89 # configParsers for inline config
