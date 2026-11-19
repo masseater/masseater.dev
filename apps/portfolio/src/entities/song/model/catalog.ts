@@ -17,8 +17,6 @@ const thumbnails = import.meta.glob<string>("../catalog/*/thumb.webp", {
   import: "default",
 });
 
-const recordings = import.meta.glob<DawSong>("../catalog/*/recording.ts", { import: "song" });
-
 const fumxSongs = import.meta.glob<FumxSong>("../catalog/*/song.fumx", { import: "song" });
 
 const pluginModules = import.meta.glob<FumxPlugin>("../catalog/*/plugins/*.ts", {
@@ -42,7 +40,6 @@ const bySlug = <Value>(found: Readonly<Record<string, Value>>): ReadonlyMap<stri
   );
 
 const thumbnailBySlug = bySlug(thumbnails);
-const recordingBySlug = bySlug(recordings);
 const fumxBySlug = bySlug(fumxSongs);
 const workBySlug = bySlug(works);
 
@@ -80,7 +77,7 @@ const loadedSong =
     return Effect.runPromise(recorded);
   };
 
-const fumxRecordingOf = (slug: string): Option.Option<() => Promise<DawSong>> =>
+export const recordingOf = (slug: string): Option.Option<() => Promise<DawSong>> =>
   Option.flatMap(Option.fromUndefinedOr(fumxBySlug.get(slug)), (load) =>
     Option.map(
       Option.fromUndefinedOr(workBySlug.get(slug)),
@@ -102,6 +99,3 @@ export const songs: readonly Song[] = pipe(
 
 export const songOf = (slug: string): Option.Option<Song> =>
   Arr.findFirst(songs, (song) => song.slug === slug);
-
-export const recordingOf = (slug: string): Option.Option<() => Promise<DawSong>> =>
-  Option.orElse(Option.fromUndefinedOr(recordingBySlug.get(slug)), () => fumxRecordingOf(slug));

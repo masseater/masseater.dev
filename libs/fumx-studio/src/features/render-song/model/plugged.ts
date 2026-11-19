@@ -1,5 +1,6 @@
 import type { Mixer, PluginUse, Song } from "@r_masseater/fumx-parser";
 import { Array as Arr, Effect, Option, pipe } from "effect";
+import type { Scope } from "effect";
 
 import type { MixPlugin, MixedStem, PlayedEvent } from "#/shared/lib/plugin/plugin.ts";
 import type { Bus } from "#/shared/lib/studio/bus.ts";
@@ -45,44 +46,53 @@ const mixPluginOf =
 
 const isHead = (track: SongTrack): boolean => Option.isNone(track.into);
 
-const busFor =
-  (buses: ReadonlyMap<string, Bus>) =>
-  (track: SongTrack): Option.Option<Bus> => {
-    const head = Option.getOrElse(track.into, () => track.name);
-    return Option.fromUndefinedOr(buses.get(head));
-  };
+const headOf = (track: SongTrack): string => Option.getOrElse(track.into, () => track.name);
 
-const playerOf =
+const trackNamed =
   (context: Context) =>
-  (buses: ReadonlyMap<string, Bus>) =>
-  (name: string): readonly PlayedEvent[] =>
+  (name: string): Option.Option<SongTrack> =>
     pipe(
       context.song.tracks,
       Arr.findFirst((track) => track.name === name),
+    );
+
+const busesOf = (context: Context): ((head: string) => Option.Option<Bus>) => {
+  const made = new Map<string, Bus>();
+  return (head) =>
+    pipe(
+      trackNamed(context)(head),
+      Option.filter(isHead),
+      Option.map((track) => made.getOrInsertComputed(head, () => trackBusOf(context)(track))),
+    );
+};
+
+const playedInto =
+  (context: Context) =>
+  (into: (track: SongTrack) => Option.Option<Bus>) =>
+  (name: string): readonly PlayedEvent[] =>
+    pipe(
+      trackNamed(context)(name),
       Option.flatMap((track) =>
-        Option.map(busFor(buses)(track), (bus) => pastedInto(context)(bus)([track])),
+        Option.map(into(track), (bus) =>
+          pastedInto(context)({ ...bus, name: headOf(track) })([track]),
+        ),
       ),
       Option.getOrElse((): readonly PlayedEvent[] => []),
     );
 
 export const pluggedMix =
   (context: Context) =>
-  (use: PluginUse): Effect.Effect<Mastered, Unplayable> =>
+  (use: PluginUse): Effect.Effect<Mastered, Unplayable, Scope.Scope> =>
     Effect.gen(function* plugged() {
       const plugin = yield* mixPluginOf(context)(use);
-      const buses = new Map(
-        pipe(
-          context.song.tracks,
-          Arr.filter(isHead),
-          Arr.map((track): readonly [string, Bus] => [track.name, trackBusOf(context)(track)]),
-        ),
-      );
+      const bus = busesOf(context);
       const mix = yield* plugin.mix({
         song: context.song,
         frames: context.frames,
         samples: context.samples,
-        buses,
-        play: playerOf(context)(buses),
+        bus,
+        play: playedInto(context)((track) => bus(headOf(track))),
+        playInto: (into) => playedInto(context)(() => Option.some(into)),
         args: use.arguments,
         log: context.session.log,
         progress: context.session.progress,
@@ -94,5 +104,6 @@ export const pluggedMix =
         right: mix.right,
         stages: mix.stages,
         lanes: mix.lanes,
+        live: mix.live,
       };
     });

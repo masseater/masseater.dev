@@ -1,5 +1,6 @@
+import type { LiveMix } from "@masseater.dev/daw-view";
 import type { PluginArgument, Song } from "@r_masseater/fumx-parser";
-import type { Effect, Option } from "effect";
+import type { Effect, Option, Scope } from "effect";
 
 import type { Lane } from "#/shared/lib/daw/view.ts";
 import type { Bus } from "#/shared/lib/studio/bus.ts";
@@ -41,8 +42,9 @@ export interface MixRequest {
   readonly song: Song;
   readonly frames: number;
   readonly samples: Samples;
-  readonly buses: ReadonlyMap<string, Bus>;
+  readonly bus: (track: string) => Option.Option<Bus>;
   readonly play: (track: string) => readonly PlayedEvent[];
+  readonly playInto: (bus: Bus) => (track: string) => readonly PlayedEvent[];
   readonly args: readonly PluginArgument[];
   readonly log: Ledger;
   readonly progress: (share: number, label: string) => void;
@@ -74,11 +76,12 @@ export interface Mix {
   readonly stems: readonly MixedStem[];
   readonly stages: readonly Stage[];
   readonly lanes: Readonly<Record<string, Lane>>;
+  readonly live: Option.Option<LiveMix>;
 }
 
 export interface MixPlugin {
   readonly kind: "mix";
-  readonly mix: (request: MixRequest) => Effect.Effect<Mix>;
+  readonly mix: (request: MixRequest) => Effect.Effect<Mix, never, Scope.Scope>;
 }
 
 export type FumxPlugin = InstrumentPlugin | MixPlugin;

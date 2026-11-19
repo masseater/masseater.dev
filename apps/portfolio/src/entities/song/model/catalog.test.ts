@@ -7,11 +7,6 @@ import { recordingOf, songs } from "./catalog.ts";
 
 const works = import.meta.glob("../catalog/*/work.ts");
 
-const sampleTables = import.meta.glob<Readonly<Record<string, unknown>>>(
-  "../catalog/*/samples.json",
-  { eager: true, import: "default" },
-);
-
 const sampleFiles = import.meta.glob("../catalog/*/samples/*.flac");
 
 const fumxSongs = import.meta.glob<FumxSong>("../catalog/*/song.fumx", {
@@ -35,10 +30,8 @@ const filesOf = (slug: string): readonly string[] =>
 
 const tableOf = (slug: string): readonly string[] =>
   pipe(
-    Option.match(fumxOf(slug), {
-      onNone: () => Option.map(Rec.get(sampleTables, `../catalog/${slug}/samples.json`), Rec.keys),
-      onSome: (song) => Option.some(Arr.map(sampleFilesOf(song), baseName)),
-    }),
+    fumxOf(slug),
+    Option.map((song) => Arr.map(sampleFilesOf(song), baseName)),
     Option.getOrElse((): readonly string[] => []),
     Arr.sortWith((name) => name, Str.Order),
   );
