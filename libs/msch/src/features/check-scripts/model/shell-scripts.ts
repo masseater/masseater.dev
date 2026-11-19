@@ -1,6 +1,7 @@
 import { Array as Arr, Effect, Option, Schema, String as Str, pipe } from "effect";
 
-import type { Problem, RuleName } from "#/shared/lib/problem.ts";
+import { problemInFile } from "#/shared/lib/problem.ts";
+import type { RuleName } from "#/shared/lib/problem.ts";
 import { RepositoryFiles } from "#/shared/lib/repository-files.ts";
 
 const SHELL_FILE = /\.(?:sh|bash|zsh|ksh|fish|command)$/u;
@@ -8,7 +9,6 @@ const SHELL_SHEBANG = /^#!\S*(?:\/|\s)(?:env\s+)?(?:-\S+\s+)*(?:ba|z|k|da)?sh\b|
 const EXTENSION = /\.[^./]+$/u;
 const SETTINGS_FILE = ".claude/settings.json";
 const READ_CONCURRENCY = 64;
-const FIRST = 1;
 const RULE: RuleName = "shell-script";
 const MESSAGE =
   "is a shell script. Do the work in TypeScript as a Vite+ task in vite.config.ts, a test, or the tool's own hook, and delete this file. Only the SessionStart hook in .claude/settings.json, which installs the toolchain before TypeScript can run, stays a shell script.";
@@ -63,14 +63,6 @@ const baseName = (name: string): string =>
 
 const hasExtension = (name: string): boolean => EXTENSION.test(baseName(name));
 
-const problemFor = (file: string): Problem => ({
-  file,
-  line: FIRST,
-  column: FIRST,
-  rule: RULE,
-  message: MESSAGE,
-});
-
 /** @internal */
 export const checkShellScripts = Effect.fn("checkShellScripts")(function* checkShellScripts(
   root: string,
@@ -104,6 +96,6 @@ export const checkShellScripts = Effect.fn("checkShellScripts")(function* checkS
   const shell = yield* Effect.filter(candidates, isShell, { concurrency: READ_CONCURRENCY });
   return pipe(
     shell,
-    Arr.map((name) => problemFor(files.join(root, name))),
+    Arr.map((name) => problemInFile(RULE)(files.join(root, name), MESSAGE)),
   );
 });

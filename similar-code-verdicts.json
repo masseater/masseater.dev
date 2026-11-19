@@ -1,0 +1,545 @@
+{
+  "schema_version": "1",
+  "verdicts": [
+    {
+      "candidate_id": "similar-code:candidate:v1:f29098fcfbe65953a2d7b98fba8b57c7723d7d90f126e1e62c7f2d64b9d02870",
+      "review_key": "similar-code:review:v1:20040e7f93ad1afa924fe400ff966978c5d556f2af600375def75afb0896d9d6",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "related-but-distinct",
+      "rationale": "Each lists the extension order TypeScript tries for one module kind; the lists differ and mirror the compiler's own tables."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:93eb2bc2096057668dcd463e776a41b65126bac312390657c06e259ab2ec2543",
+      "review_key": "similar-code:review:v1:9e083cc25ffb23af19fa95ca3d4e5fea2135b01b20a855f89816e662b4efc76c",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "related-but-distinct",
+      "rationale": "rpcBody decodes a PortalResult that may carry a failure; jsonBody reads a fetch Response body. The inputs differ."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:74b399d738efb93668c07e50a916ef641c778b72672b93a63b37a5c60063cbca",
+      "review_key": "similar-code:review:v1:35dbf010eaa9095417b44144753c7b7fd3e9f2cf048a7ae75fe6e07d89248cd9",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "related-but-distinct",
+      "rationale": "Two report queries that group by different columns and return different shapes."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:cc3a775d73a3f6c3a0208dbbf2feb587c25bd8709a02870482059d84b05957c6",
+      "review_key": "similar-code:review:v1:2624d6485d11db3eee834619933bd7f7643777956029e61c99ec113a79b56fc7",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "related-but-distinct",
+      "rationale": "Pointer up and pointer down handlers of one scrubber; they do opposite things."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:6a744988f529151e5a419b3f4c6daf63fe8d5d07342581d9e601fccf7b29584e",
+      "review_key": "similar-code:review:v1:7749a80b69dd3d96f64ecae2a0f1e0d7a1bc7bfd4b5a76ccc8ec16094ba8e825",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "related-but-distinct",
+      "rationale": "outcome handles a missing grpc-status and delegates to succeeded, which checks the code; they compose rather than repeat."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:d5da1543d0520b38fe5442298df88f339d3257f5b6dc4abeaade5c99368ec825",
+      "review_key": "similar-code:review:v1:6102f6a5fd1797c10c52bf9a7f2c385065ed6af6c42299421f5bb8719b21c7b2",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "intentional-duplication",
+      "rationale": "One edits the fumx studio buffer, the other belongs to a finished song's frozen engine with its own fade constants; songs do not depend on the studio library."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:760a75218e49f71d7af9e30ad968accb9dff391a4cf151c1baec33495fa989f3",
+      "review_key": "similar-code:review:v1:d8a25416887cfd5fbfe991842dff6951034a0a6ca52aaa2ebcc63da59fb6d75e",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "related-but-distinct",
+      "rationale": "scanCapped reports whether the result was truncated by asking for one extra row; scanRecords clamps to the scan limit."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:167efb91802e7fa0bf19b81551d4051eae9a575dde864fcba9c5da723815a808",
+      "review_key": "similar-code:review:v1:df436292fd12f6889bfe3a3f08bfc2918c4eb72a2d2e9d461a0210b95e7d8a04",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "intentional-duplication",
+      "rationale": "A memoising thunk in a song engine and in the published GitHub Actions linter engine; sharing it would add a dependency between an app's song catalog and that published package for four lines."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:f126332863dc88b794e4cb6e071f377aa062aa17333c7877d1f28162f784032c",
+      "review_key": "similar-code:review:v1:b484cf62fdbb461e53a1fbf3e6d657c3c245a8a4dd87e0fee6f330db4927e4c5",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "related-but-distinct",
+      "rationale": "Two instrument buses of one song with different effect chains."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:2fef8916ecb4f715dd7d6d4451ada7568b2fb928b67617e957f3bcd13abcaabb",
+      "review_key": "similar-code:review:v1:2460f2cd52c7404237353bd8aee194799feb077cc91e2bfec64780abcdfa350a",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "related-but-distinct",
+      "rationale": "Each app wires its own auth and tool registry; watashi-mcp passes the caller identity, med-db does not."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:81dfa4eb53c5ddda9301e03a500ff3ec305e50799b5d0e38f18ca447702cebf4",
+      "review_key": "similar-code:review:v1:71585439f7947ea971101aa5392fecffd58e70df45b1511a98a626c0fb89ebea",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "related-but-distinct",
+      "rationale": "discover builds on issuerOf: one finds the authorization server from resource metadata, the other fetches that server's metadata."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:8028241c571a1f2b5633b17bdba955c0e0a14c4240b59bef2c8f610f3f0eeb9f",
+      "review_key": "similar-code:review:v1:e2d9b6ece346bbd6fc43aefa6cd18760aaeb787cf0a79cec750b05db9e90a10a",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "related-but-distinct",
+      "rationale": "Each maps imports of a different upstream plugin's layout to virtual modules; the id derivation differs per upstream."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:b8cf6bac6b6602f46ec409a9f83851f986de8654688e50d1738f8bde238b0c5e",
+      "review_key": "similar-code:review:v1:766cf4057b6f4c596b765409be33942a12124053fe511a8528ce47f3d7ba04da",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "related-but-distinct",
+      "rationale": "Different buses with different effect chains in a song engine."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:7a8b145f3fec02465884932044a4cc06c1e2ea121bb9f0aead321a26f087a02a",
+      "review_key": "similar-code:review:v1:66f48f7dfd141b11a3bafb788d553da881bc3dd0be9046ed673e809b8de5e2c7",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "unrelated",
+      "rationale": "Headers of two different apps with different content."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:3582a669b19d259e3ba35635aff5bccf9fbdd7d4a61bbdd25d6801a7f75eefd7",
+      "review_key": "similar-code:review:v1:9526bc75f5045866438fc683cbba609e7a777280f4f5820fef403a5c5d5ac3ce",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "unrelated",
+      "rationale": "Footers of two different apps with different content and styling."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:5220e2272c34cc9ea1c1b88afc0118f392422dc27f9ddb4258e4875ca8785e91",
+      "review_key": "similar-code:review:v1:09a4935fd1d7b91860720155111b079314312860b5b4f21f5af27457a52f4cae",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "related-but-distinct",
+      "rationale": "LinkExample chooses between a plain link and WikiFigure; it calls WikiFigure."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:41378d930b8fe3e1efc4432559bc960b81323a2a50d77fbcbf89ebd50b106b01",
+      "review_key": "similar-code:review:v1:7012a3bc9ae8ad6e769a90cb0a0c8485fda797a9579662e8e841c6f458760a00",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "related-but-distinct",
+      "rationale": "Reads UVs from the legacy MLoopUV struct versus the float2 attribute layout of newer Blender files."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:9ffa14e6bf422f0a7aebcba0fcdf5e17ecc461cc0183a0b1a90822f5a36607f6",
+      "review_key": "similar-code:review:v1:5c4073f8018f2d0a7e65264e505a29f0c7839e0dcffb901fad68ff94de55e622",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "related-but-distinct",
+      "rationale": "problemInFile reports at the start of a file; itemProblem reports at a Rust item's position."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:abd2f46cafdf6b5b53372cc97e34db1da8669ae8bdb39ef860b0e2e031f1a9df",
+      "review_key": "similar-code:review:v1:7d0b82a070cbcba7948162c1931101fd4a5dc2e6db7d1f014e3b194e03a4a776",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "related-but-distinct",
+      "rationale": "Cache read with a trace message versus resolution that writes the cache."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:257b40f4b10d65a846372b58cb127d34aa8f64fbd2819d36bc13ed2775400150",
+      "review_key": "similar-code:review:v1:07444230d48af2f2c2ef7ccdc9df80a7bee5a59673989c6b0914a59c14a47381",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "related-but-distinct",
+      "rationale": "subpathsOf keeps every export entry for public-entry checks; subpathTargetsOf keeps only concrete non-wildcard targets for dependency checks."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:9ec1a96ce0f7c1d4263ee13593a60e31d7b65e85c6e865828feeea3a2515586e",
+      "review_key": "similar-code:review:v1:6611cce671f2e3eaf7ed4ef45df597516fe63e9b402573f9e71d3d961f43f784",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "related-but-distinct",
+      "rationale": "Each CLI builds its own service layer; msch adds repository files, tracing and an HTTP client."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:d4b90d349c9449189b23a0e549bcc218889acf180640b5f33aab052a12c34870",
+      "review_key": "similar-code:review:v1:fe3b58725e6bb67117ffd2b074cb2a8289d360ebeb3f9ccb9332b6b6172823cd",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "unrelated",
+      "rationale": "Headings of two different sites with different design systems."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:930edafab429239941a5561e9a7584fffa5c6d2831d2cffc57eba62fc42fc6c3",
+      "review_key": "similar-code:review:v1:7f10a2402814f416b1282a4b752177d1232e7c4c88993c5eddfcf779fc26eaba",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "related-but-distinct",
+      "rationale": "Tempo points from MIDI bars in microseconds versus from song bars in BPM."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:54d731cc692b4a32cb49d9e49b1de8427a693aea0796614d501e23ecc5e2b6f3",
+      "review_key": "similar-code:review:v1:0f79fc6915182cec15d2ea1a6789ae7356c8ab21ad3d0529705c182ad471f899",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "related-but-distinct",
+      "rationale": "Different upstream layouts resolved by different patterns."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:871aae449a0903ad3fef120eb4fedaa548a8661357cbfccd173c274c07a43eac",
+      "review_key": "similar-code:review:v1:ff44dfaf19519ef5239c396506dd5b82eeafe4f2caabff6d8cd503bd6a0637d6",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "unrelated",
+      "rationale": "Footers of two different sites with different content."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:e16618fae9b6150a239d2e2ce6c1bbc586fad37d2ee4793d4641b175d5c84b85",
+      "review_key": "similar-code:review:v1:ffc6c8b0e861714c61e1697c6f12b3745fdac0ee2dc3083f1cb04e3dd406de46",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "related-but-distinct",
+      "rationale": "Different buses with different effect chains in a song engine."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:c2f5ad24c2e4b4f1def759b702a1617d838c94312e9ef0628e30d83e742597ba",
+      "review_key": "similar-code:review:v1:25698a710f97d77d03a4a609f14454492f7c2ca4f415b40c0fef7fb425cfd7d8",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "related-but-distinct",
+      "rationale": "Draws unkeyed notes as rows versus keyed notes against the keyboard; the filters are complementary."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:508f1faa4839477d6e1ff3e5f9a458f0d7769c21be5b02366b97e6c65205d494",
+      "review_key": "similar-code:review:v1:95ed98ac27a897012c9431942a2478346c93f054d1eac2874ecd5ba89fc71f42",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "related-but-distinct",
+      "rationale": "Variable lookup with lazy global evaluation versus assignment into the innermost frame."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:e7d70b34c47166aae309ffdf1f78da90f243dbeb0631a06d442112e1c24bd90c",
+      "review_key": "similar-code:review:v1:40eda02a9b97173c64e3446e111c9e9741ff12875e31cbf4bad9b1174c5004f8",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "related-but-distinct",
+      "rationale": "parseString uses checkString and then returns the text; they compose."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:c2383dd5d66d6eff1a4dc1d02dc8aee2fe30c6c282d9d315cbf0ad7ccadc59ac",
+      "review_key": "similar-code:review:v1:c95d75e9db5a372634bd098af11539e382341962ef2e495a61864641f53258d2",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "related-but-distinct",
+      "rationale": "A WebGPU bind group layout and the bind group that fills it; the API needs both."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:fb8323656bccb8097b834f174b6c522081e16e7eac9fe01a35ba6844df02fd70",
+      "review_key": "similar-code:review:v1:8dcd7a2e4180c89a2a9b630cdd40c689c4be523fca365e0fb5094a2f8976f279",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "unrelated",
+      "rationale": "Different pages composed of different sections."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:dc3adbfe8b80a74d212c5420f16794d21ab946d2c79c895ba88e332128983c7f",
+      "review_key": "similar-code:review:v1:8d15dea885ed28b0c8cf88c71152db1021baaf002fe92dd987abdc6c8c873bd6",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "related-but-distinct",
+      "rationale": "Different upstream layouts resolved by different patterns."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:dbc3edebef89a032ab4e98f1a3e600f5c4d7b4a82f179fb995cabdbc885e032b",
+      "review_key": "similar-code:review:v1:3e63c689321c34cd5c595987b20c44361412c424c70b75e84c808ae93fa7c08e",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "related-but-distinct",
+      "rationale": "Output formats of two separate linters; the fumx linter prints the whole line and the Markdown linter only the detail suffix."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:49b308bbb0bcda044ab62bd95acf80072f09a55ad415d848cad71ed0f869b647",
+      "review_key": "similar-code:review:v1:587e58c3b0169d1fa0b90117e5a404abaf5d6a8a2920d985052ac58bb9d29e92",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "unrelated",
+      "rationale": "FSD layer name of a path versus the parent directory of a path."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:4ac634773ca648c6244db2ce6450f7ced3b02db3310760ac98aae2348b722bc8",
+      "review_key": "similar-code:review:v1:b7247f5b5e3e8e5556c63c03c28a95d157999942b7e3aa10a2335b1bce93f408",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "unrelated",
+      "rationale": "shadcn table parts of different elements in different apps."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:c37fc936560a215a46a94240ae21415d8fa7e66326dcb038cb43be579e1df4da",
+      "review_key": "similar-code:review:v1:1ba371d25c5bb7a02f3c7cfb347a5e2207f9027b0a9809f1519d0a4e5760d4f5",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "related-but-distinct",
+      "rationale": "Bind groups for two different pipelines with different bindings."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:7ad495db8640b3518b7d6ff814cfee68a8a8b0ef970749b4bf432321d7b6161c",
+      "review_key": "similar-code:review:v1:5672642c1d2835a5d9c57b8cc7956b06e33918c9b33788d63b29dbd1bbbb85cf",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "unrelated",
+      "rationale": "A figure with caption and a page section in different apps."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:984346c92b6f7c54150958202105ee5f81be0b8131712b15db572e40d32bde66",
+      "review_key": "similar-code:review:v1:67bb1037ac9973b987d6e3ad8903117c9d407887a64b1271ef507799c23c3381",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "related-but-distinct",
+      "rationale": "Dispatch on two different optional inputs; one calls the other."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:8408fd30844fc0d24ee34f5c3bdc228716457af87c72b1b4b42a68068a368cdb",
+      "review_key": "similar-code:review:v1:4c396aa187d9fd94313c855f3384e161d6eef770d3165b1e4a526ec96c83768c",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "related-but-distinct",
+      "rationale": "Comment readers for two formats with different parsers."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:cbe8c4fae68913a93f0c9d829e39c2d03bb0ca31c6abd2cba1c22d0d1e210764",
+      "review_key": "similar-code:review:v1:3a6c21ba34d1c591ec20ac049e5e0e8cb4a314bd5edbd1e69093754ee95cd2c9",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "related-but-distinct",
+      "rationale": "Paging through every row versus one capped page."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:aa56a13c1b9a9f442b72aae909a8577ce7913080be6bced67ca807b5d999b0ca",
+      "review_key": "similar-code:review:v1:72ac9cf10b8d8e4abf5c3e2003f1de4cbce39cd8229dcddea43808bae4805e94",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "related-but-distinct",
+      "rationale": "anyValue decodes an OTLP AnyValue and uses kvlist for the key-value case."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:a1240f22857184238721cf8be941abf9470fef1cc31990373a4452524f34a3a6",
+      "review_key": "similar-code:review:v1:f2cf327d72e8193ad2907e20d7ba6c00f6dfc0867dfb0596b278704229ab545b",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "related-but-distinct",
+      "rationale": "checkWorkflow checks the whole workflow and calls checkEvents for its triggers."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:7756e1f1ba3d59980a3d4082e228a7e3cde3daed1fa772b4e2362db7a07fb631",
+      "review_key": "similar-code:review:v1:b068fc63a62cf6b0a49d57b6717b40b10cfc42909c213a2fde7c3ec1c0f521dc",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "related-but-distinct",
+      "rationale": "One grouping strategy versus the dispatcher over all strategies."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:dff81bba540885543b24d94633d3d102735635706c723cc3d09d7f99f8c6eed0",
+      "review_key": "similar-code:review:v1:a54386cfd039f16e07cf880bb4d244c305cd90318a4dca0c70d80c22b077a0b8",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "related-but-distinct",
+      "rationale": "Findings of two different audits with different severities and locations."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:6056f12e277cc4e8a117c497e8756639f4ed3e2af85555516a276dbcfb2157c2",
+      "review_key": "similar-code:review:v1:73da5f18ea1ebe395b99c82d0fdc0ef8d45c3c40ed57d7ecbf721f0e8ea6a460",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "related-but-distinct",
+      "rationale": "Draws ruler marks versus alternating section lanes."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:5ad4e0ec98ac583d313d098d7a9f81ffd2b55df0f4c7f3d4598f71584bf40b28",
+      "review_key": "similar-code:review:v1:6d0939ea940ddc628f15915014979d077665df40dc17be7ca040b5dbb3ff100c",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "unrelated",
+      "rationale": "Different syntax shapes checked by different rules."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:d9402dcb6fdeaa2b3677b037c18247149b81720f19f698de6deb32b02cfad923",
+      "review_key": "similar-code:review:v1:da5fc34be5f776069328c2a0550369dc784c41c6350a693ae8fe14e84cca8334",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "unrelated",
+      "rationale": "Matches parsed document extensions versus file name suffixes, in different packages."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:9ebe60dcd761e177aa5f31e3ab1ddfe4795b2cde020bd78438ebc4144453e9a2",
+      "review_key": "similar-code:review:v1:e11bc0e93078ae0bb10faf111043ab06cde23cee0390be049897672a2b1c210e",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "related-but-distinct",
+      "rationale": "Each slice registers its own tools; the shape is the MCP SDK's registration API."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:14fce2927f745867e8dba25d126daa05bef2f9c74c51829ab8bc791e4fc8fed3",
+      "review_key": "similar-code:review:v1:c40ecf619af5228700702b0a23c7d9fe0f8df18c053d27ab6528115b768080b7",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "related-but-distinct",
+      "rationale": "Handling of an escaped character versus the main dispatch step of the glob validator."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:3907e0953056e56662d880090740e90330d79c944a45fc75922f066631bfd5a8",
+      "review_key": "similar-code:review:v1:0884bd3d1c05499dd0edc6b098edaadea69e01d72ad14bf9394f71168e375bc0",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "related-but-distinct",
+      "rationale": "blankGroup calls drawGroup with a 1x1 texture."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:2d4deefe5401fae16c40a144550c42e261378aafce3ff5b19fc1f1338b962020",
+      "review_key": "similar-code:review:v1:f92406a464d812c0416385aab0c16d4383567209944d8e9a432148a6d501fd5a",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "related-but-distinct",
+      "rationale": "Different buses with different effect chains in a song engine."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:af94a5fd43f73f9f1fb8312a8a7c32e0bf22a76b4daedb28c96bfb8ec2413c0a",
+      "review_key": "similar-code:review:v1:b2bdb766b979f608a2e249c7371f5658f04c2243e0d2849710857f995dc734ab",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "related-but-distinct",
+      "rationale": "MosaicChrome composes MosaicToolbar with the switcher."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:2e697737fdbda1c3440e99886721b60a87de99be26ac7e873514976420e5686b",
+      "review_key": "similar-code:review:v1:df2177186777a8e6ba65adeb68753ee2ac166cdcf892c8d7f73d5da2933a8941",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "related-but-distinct",
+      "rationale": "Different buses with different effect chains in a song engine."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:8dd2ffcacf5ce20404dd2345ed9b3feac055ced05db810d1399e76d33e68ec0b",
+      "review_key": "similar-code:review:v1:d8ec04723386d775f7c37f4da0149e29e348e210535074530a50bdc489a01138",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "related-but-distinct",
+      "rationale": "Event handlers for different instruments of one song."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:08dd898b6dc538997b4c795c45fc9fdaf5fdc4b5619ea4640e0688668f1404b9",
+      "review_key": "similar-code:review:v1:36f9191aae22b86bc0bd048134c265657847511ac358ced8e7d7f109a71871f6",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "unrelated",
+      "rationale": "Last path segment versus everything before it, in different packages."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:6a3c97be5a885272095cbbdcca5f7cb644f3c870472c0f4569e94adfcf597719",
+      "review_key": "similar-code:review:v1:6f07fa68515cca36c5a03726ee97d8f941e8aa4af5f45809006a90c38221d74d",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "unrelated",
+      "rationale": "Adds a panned clip into a bus versus scaling a bus's gain."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:3309a725c2fce30dfb06c03f37cd48f82109408e80805ec158a5ec42f8939345",
+      "review_key": "similar-code:review:v1:cdf70a8c52adb5f11576727f054c14076ca46fbf6875d9bd8a81aa6730a04aaf",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "related-but-distinct",
+      "rationale": "Action outputs reject duplicates as actionlint does; reusable workflow outputs do not. The behaviour differs on purpose to match actionlint."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:a4fe5c653171120fd1324d5f5f31ecf25c3707dc698c040f1f9143cb7f4aabfb",
+      "review_key": "similar-code:review:v1:f07658122fe06847ebaa900aef0c576176bcbe3e3a41f458f5680c2707ac55a0",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "related-but-distinct",
+      "rationale": "Different steps of TypeScript module resolution."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:4772a7fc2568d23ee069ac67c1c619774f070115d7b30c61cea6355ecd5174b6",
+      "review_key": "similar-code:review:v1:5a5afbbbf358e34b3b46c714df91b796bcc27aa240adcc0fcfa7201974b2e928",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "unrelated",
+      "rationale": "Search forms of two different apps with different design systems and hidden fields."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:398398597dff0a0ba6198b415fc56585c278b1fdfb56c24e1ec00ff923a9887b",
+      "review_key": "similar-code:review:v1:e59575ebe2eaf74b2ca3cd23694b76cd874b54382b81b9a772cb85e2645a3e19",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "related-but-distinct",
+      "rationale": "Validation pass versus write pass over the same records."
+    }
+  ]
+}
