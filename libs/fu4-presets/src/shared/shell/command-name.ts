@@ -81,11 +81,6 @@ export const effectiveWordOf = (node: SyntaxNode): Option.Option<SyntaxNode> =>
     ),
   );
 
-export const commandWordsOf = (node: SyntaxNode): readonly SyntaxNode[] => [
-  ...Option.toArray(fieldOf("name")(node)),
-  ...fieldsOf("argument")(node),
-];
-
 export const commandNameOf = (node: SyntaxNode): Option.Option<string> =>
   pipe(
     fieldOf("name")(node),

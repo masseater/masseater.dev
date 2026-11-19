@@ -51,37 +51,43 @@ const variableStatus = (scope: Scope, node: SyntaxNode): Status =>
     }),
   );
 
+type Rate = (scope: Scope, node: SyntaxNode) => Status;
+
+const wordStatus: Rate = (_scope, node) =>
+  literalStatus(Str.replaceAll(WORD_ESCAPE, "$<char>")(node.text));
+
+const RATES: ReadonlyMap<string, Rate> = new Map<string, Rate>([
+  ["word", wordStatus],
+  ["number", wordStatus],
+  ["raw_string", (_scope, node) => literalStatus(Str.slice(QUOTE, -QUOTE)(node.text))],
+  [
+    "string_content",
+    (_scope, node) => literalStatus(Str.replaceAll(STRING_ESCAPE, "$<char>")(node.text)),
+  ],
+  ["simple_expansion", variableStatus],
+  ["expansion", variableStatus],
+  ["arithmetic_expansion", (): Status => "clean"],
+]);
+
+const PARTS = new Set(["string", "concatenation"]);
+
+const rated = (scope: Scope, node: SyntaxNode): Status =>
+  pipe(
+    Option.fromNullishOr(RATES.get(node.type)),
+    Option.match({
+      onNone: (): Status => "dirty",
+      onSome: (rate) => rate(scope, node),
+    }),
+  );
+
 export const valueStatus =
   (scope: Scope) =>
   (node: SyntaxNode): Status => {
-    switch (node.type) {
-      case "word":
-      case "number": {
-        return literalStatus(Str.replaceAll(WORD_ESCAPE, "$<char>")(node.text));
-      }
-      case "raw_string": {
-        return literalStatus(Str.slice(QUOTE, -QUOTE)(node.text));
-      }
-      case "string_content": {
-        return literalStatus(Str.replaceAll(STRING_ESCAPE, "$<char>")(node.text));
-      }
-      case "string":
-      case "concatenation": {
-        const partStatus = valueStatus(scope);
-        const parts = pipe(node.namedChildren, Arr.map(partStatus));
-        return appendAll(parts);
-      }
-      case "simple_expansion":
-      case "expansion": {
-        return variableStatus(scope, node);
-      }
-      case "arithmetic_expansion": {
-        return "clean";
-      }
-      default: {
-        return "dirty";
-      }
+    if (PARTS.has(node.type)) {
+      const partStatus = valueStatus(scope);
+      return appendAll(pipe(node.namedChildren, Arr.map(partStatus)));
     }
+    return rated(scope, node);
   };
 
 export const isCleanRead =
