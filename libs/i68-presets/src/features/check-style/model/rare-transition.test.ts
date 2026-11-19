@@ -1,6 +1,6 @@
 import { Record as Rec } from "effect";
 
-import { chordBars, ruleCases } from "#/shared/lib/rule-cases.ts";
+import { chordBars, ruleCases } from "#/shared/lib/rule-cases.test.support.ts";
 import type { StyleTable } from "#/shared/lib/style-table.ts";
 
 import { bachPlugin, stylePluginOf } from "./preset.ts";

@@ -55,6 +55,3 @@ export const midiOf = (name: string): Option.Option<number> =>
       ),
     ),
   );
-
-export const namesOf = (midis: readonly number[]): string =>
-  pipe(midis, Arr.map(nameOf), Arr.join(", "));

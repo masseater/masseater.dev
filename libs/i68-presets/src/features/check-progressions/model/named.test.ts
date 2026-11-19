@@ -1,4 +1,4 @@
-import { chordBars as barsOf, ruleCases } from "#/shared/lib/rule-cases.ts";
+import { chordBars as barsOf, ruleCases } from "#/shared/lib/rule-cases.test.support.ts";
 
 import { progressionsPlugin } from "./preset.ts";
 

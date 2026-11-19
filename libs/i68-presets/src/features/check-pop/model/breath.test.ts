@@ -1,6 +1,6 @@
 import { Array as Arr } from "effect";
 
-import { ruleCases } from "#/shared/lib/rule-cases.ts";
+import { ruleCases } from "#/shared/lib/rule-cases.test.support.ts";
 
 import { popPlugin } from "./preset.ts";
 
