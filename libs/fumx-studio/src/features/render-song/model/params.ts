@@ -31,6 +31,7 @@ const paramPlacement = (param: PlayParam): Placement =>
     Match.discriminatorsExhaustive("kind")({
       semi: ({ semitones }) => ({ semitones }),
       rate: ({ ratio }) => ({ rate: ratio }),
+      amp: ({ ratio }) => ({ gain: ratio }),
       length: ({ seconds }) => ({ duration: seconds }),
       attack: ({ seconds }) => ({ attack: seconds }),
       release: ({ seconds }) => ({ release: seconds }),

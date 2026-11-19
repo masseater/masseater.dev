@@ -21,6 +21,7 @@ const DriveSchema = kind("drive")({ amount: Schema.Finite });
 
 export const PlayParamSchema = Schema.Union([
   kind("semi")({ semitones: Schema.Finite }),
+  kind("amp")({ ratio: Schema.Finite }),
   kind("rate")({ ratio: Schema.Finite }),
   kind("length")(Duration),
   kind("attack")(Duration),

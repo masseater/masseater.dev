@@ -50,6 +50,7 @@ export type FumxKeywordNames =
     | "]"
     | "_"
     | "accent"
+    | "amp"
     | "and"
     | "attack"
     | "audio"
@@ -197,6 +198,21 @@ export const Amount = {
 
 export function isAmount(item: unknown): item is Amount {
     return reflection.isInstance(item, Amount.$type);
+}
+
+export interface Amp extends langium.AstNode {
+    readonly $container: KitVoice | Sounding;
+    readonly $type: 'Amp';
+    amount: number;
+}
+
+export const Amp = {
+    $type: 'Amp',
+    amount: 'amount'
+} as const;
+
+export function isAmp(item: unknown): item is Amp {
+    return reflection.isInstance(item, Amp.$type);
 }
 
 export interface Articulation extends langium.AstNode {
@@ -1374,10 +1390,10 @@ export function isMultiSample(item: unknown): item is MultiSample {
     return reflection.isInstance(item, MultiSample.$type);
 }
 
-export type Name = 'accent' | 'attack' | 'audio' | 'automate' | 'bar' | 'base' | 'bass' | 'bend' | 'bool' | 'bus' | 'by' | 'cc' | 'chorus' | 'comp' | 'countermelody' | 'curve' | 'decay' | 'decibels' | 'delay' | 'depth' | 'drive' | 'drums' | 'duck' | 'duration' | 'every' | 'exp' | 'fade' | 'feedback' | 'from' | 'fx' | 'gain' | 'gate' | 'groove' | 'harmony' | 'hertz' | 'highpass' | 'hold' | 'instrument' | 'into' | 'ir' | 'kit' | 'legato' | 'length' | 'limit' | 'linear' | 'lookahead' | 'lowpass' | 'lyric' | 'makeup' | 'mark' | 'melody' | 'meter' | 'mix' | 'mono' | 'mono-below' | 'multisample' | 'nudge' | 'number' | 'off' | 'offset' | 'onsets' | 'over' | 'pan' | 'percent' | 'phaser' | 'pingpong' | 'pitch' | 'plugin' | 'predelay' | 'pressure' | 'program' | 'q' | 'rate' | 'release' | 'reverb' | 'reverse' | 'role' | 'root' | 'sample' | 'section' | 'semi' | 'semitones' | 'send' | 'slice' | 'slices' | 'song' | 'staccato' | 'string' | 'swing' | 'tail' | 'tempo' | 'texture' | 'tie' | 'time' | 'to' | 'track' | 'tremolo' | 'vel' | 'volume' | 'width' | 'with' | string;
+export type Name = 'accent' | 'amp' | 'attack' | 'audio' | 'automate' | 'bar' | 'base' | 'bass' | 'bend' | 'bool' | 'bus' | 'by' | 'cc' | 'chorus' | 'comp' | 'countermelody' | 'curve' | 'decay' | 'decibels' | 'delay' | 'depth' | 'drive' | 'drums' | 'duck' | 'duration' | 'every' | 'exp' | 'fade' | 'feedback' | 'from' | 'fx' | 'gain' | 'gate' | 'groove' | 'harmony' | 'hertz' | 'highpass' | 'hold' | 'instrument' | 'into' | 'ir' | 'kit' | 'legato' | 'length' | 'limit' | 'linear' | 'lookahead' | 'lowpass' | 'lyric' | 'makeup' | 'mark' | 'melody' | 'meter' | 'mix' | 'mono' | 'mono-below' | 'multisample' | 'nudge' | 'number' | 'off' | 'offset' | 'onsets' | 'over' | 'pan' | 'percent' | 'phaser' | 'pingpong' | 'pitch' | 'plugin' | 'predelay' | 'pressure' | 'program' | 'q' | 'rate' | 'release' | 'reverb' | 'reverse' | 'role' | 'root' | 'sample' | 'section' | 'semi' | 'semitones' | 'send' | 'slice' | 'slices' | 'song' | 'staccato' | 'string' | 'swing' | 'tail' | 'tempo' | 'texture' | 'tie' | 'time' | 'to' | 'track' | 'tremolo' | 'vel' | 'volume' | 'width' | 'with' | string;
 
 export function isName(item: unknown): item is Name {
-    return item === 'melody' || item === 'countermelody' || item === 'bass' || item === 'harmony' || item === 'drums' || item === 'texture' || item === 'delay' || item === 'reverb' || item === 'chorus' || item === 'comp' || item === 'limit' || item === 'width' || item === 'phaser' || item === 'tremolo' || item === 'drive' || item === 'gain' || item === 'pan' || item === 'sample' || item === 'release' || item === 'attack' || item === 'decay' || item === 'offset' || item === 'length' || item === 'mix' || item === 'base' || item === 'from' || item === 'to' || item === 'q' || item === 'ir' || item === 'predelay' || item === 'feedback' || item === 'pingpong' || item === 'lookahead' || item === 'makeup' || item === 'semi' || item === 'highpass' || item === 'lowpass' || item === 'slice' || item === 'slices' || item === 'onsets' || item === 'root' || item === 'hold' || item === 'depth' || item === 'by' || item === 'over' || item === 'curve' || item === 'linear' || item === 'exp' || item === 'every' || item === 'fade' || item === 'nudge' || item === 'bend' || item === 'lyric' || item === 'gate' || item === 'vel' || item === 'tie' || item === 'staccato' || item === 'legato' || item === 'accent' || item === 'reverse' || item === 'audio' || item === 'kit' || item === 'instrument' || item === 'track' || item === 'bus' || item === 'duck' || item === 'groove' || item === 'swing' || item === 'multisample' || item === 'song' || item === 'bar' || item === 'meter' || item === 'tempo' || item === 'section' || item === 'mark' || item === 'automate' || item === 'fx' || item === 'send' || item === 'role' || item === 'mono-below' || item === 'volume' || item === 'plugin' || item === 'number' || item === 'pitch' || item === 'duration' || item === 'decibels' || item === 'percent' || item === 'hertz' || item === 'time' || item === 'semitones' || item === 'string' || item === 'bool' || item === 'cc' || item === 'pressure' || item === 'program' || item === 'off' || item === 'rate' || item === 'into' || item === 'mono' || item === 'tail' || item === 'with' || (typeof item === 'string' && (/[a-z][a-z0-9]*(-[a-z0-9]+)*/.test(item)));
+    return item === 'melody' || item === 'countermelody' || item === 'bass' || item === 'harmony' || item === 'drums' || item === 'texture' || item === 'delay' || item === 'reverb' || item === 'chorus' || item === 'comp' || item === 'limit' || item === 'width' || item === 'phaser' || item === 'tremolo' || item === 'drive' || item === 'gain' || item === 'pan' || item === 'sample' || item === 'release' || item === 'attack' || item === 'decay' || item === 'offset' || item === 'length' || item === 'mix' || item === 'base' || item === 'from' || item === 'to' || item === 'q' || item === 'ir' || item === 'predelay' || item === 'feedback' || item === 'pingpong' || item === 'lookahead' || item === 'makeup' || item === 'semi' || item === 'highpass' || item === 'lowpass' || item === 'slice' || item === 'slices' || item === 'onsets' || item === 'root' || item === 'hold' || item === 'depth' || item === 'by' || item === 'over' || item === 'curve' || item === 'linear' || item === 'exp' || item === 'every' || item === 'fade' || item === 'nudge' || item === 'bend' || item === 'lyric' || item === 'gate' || item === 'vel' || item === 'tie' || item === 'staccato' || item === 'legato' || item === 'accent' || item === 'reverse' || item === 'audio' || item === 'kit' || item === 'instrument' || item === 'track' || item === 'bus' || item === 'duck' || item === 'groove' || item === 'swing' || item === 'multisample' || item === 'song' || item === 'bar' || item === 'meter' || item === 'tempo' || item === 'section' || item === 'mark' || item === 'automate' || item === 'fx' || item === 'send' || item === 'role' || item === 'mono-below' || item === 'volume' || item === 'plugin' || item === 'number' || item === 'pitch' || item === 'duration' || item === 'decibels' || item === 'percent' || item === 'hertz' || item === 'time' || item === 'semitones' || item === 'string' || item === 'bool' || item === 'cc' || item === 'pressure' || item === 'program' || item === 'off' || item === 'rate' || item === 'into' || item === 'mono' || item === 'tail' || item === 'with' || item === 'amp' || (typeof item === 'string' && (/[a-z][a-z0-9]*(-[a-z0-9]+)*/.test(item)));
 }
 
 export interface Note extends langium.AstNode {
@@ -1480,7 +1496,7 @@ export function isPhaser(item: unknown): item is Phaser {
     return reflection.isInstance(item, Phaser.$type);
 }
 
-export type PlayParam = Attack | Decay | Drive | Gain | Highpass | Length | Lowpass | Offset | Pan | Rate | Release | Reverse | Semi | Send;
+export type PlayParam = Amp | Attack | Decay | Drive | Gain | Highpass | Length | Lowpass | Offset | Pan | Rate | Release | Reverse | Semi | Send;
 
 export const PlayParam = {
     $type: 'PlayParam'
@@ -2174,6 +2190,7 @@ export function isZone(item: unknown): item is Zone {
 
 export type FumxAstType = {
     Amount: Amount
+    Amp: Amp
     Articulation: Articulation
     Assign: Assign
     Attack: Attack
@@ -2304,6 +2321,15 @@ export class FumxAstReflection extends langium.AbstractAstReflection {
                 }
             },
             superTypes: []
+        },
+        Amp: {
+            name: Amp.$type,
+            properties: {
+                amount: {
+                    name: Amp.amount
+                }
+            },
+            superTypes: [PlayParam.$type]
         },
         Articulation: {
             name: Articulation.$type,

@@ -64,6 +64,7 @@ export const playParamOf: From<PlayParamNode, PlayParam> = (node) =>
     Match.discriminatorsExhaustive("$type")({
       Semi: (semi): PlayParam => ({ kind: "semi", semitones: semitonesOf(semi.amount) }),
       Rate: (rate): PlayParam => ({ kind: "rate", ratio: rate.amount }),
+      Amp: (amp): PlayParam => ({ kind: "amp", ratio: amp.amount }),
       Length: (length): PlayParam => ({
         kind: "length",
         milliseconds: millisecondsOf(length.time),
