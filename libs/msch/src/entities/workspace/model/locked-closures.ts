@@ -9,10 +9,16 @@ import type { ResolvedDependencies } from "./locked-graph.ts";
 import { linkedPaths } from "./locked-links.ts";
 import { wantedLockfile } from "./locked-packages.ts";
 
-type LockedClosures = Readonly<Record<string, readonly string[]>>;
+export interface LockedClosure {
+  readonly packages: readonly string[];
+  readonly workspaces: readonly string[];
+}
+
+type LockedClosures = Readonly<Record<string, LockedClosure>>;
 
 const IMPORTER = "importer:";
 const ROOT_IMPORTER = ".";
+const isImporter = Str.startsWith(IMPORTER);
 
 type Sections = readonly (ResolvedDependencies | undefined)[];
 type Edge = readonly [string, readonly string[]];
@@ -41,15 +47,38 @@ const packageEdges = <Package extends string>(
     Arr.map(([id, snapshot]): Edge => [id, pipe(usedSections(snapshot), Arr.flatMap(depPathsOf))]),
   );
 
+const workspacesOf = (nodes: readonly string[]): readonly string[] =>
+  pipe(nodes, Arr.filter(isImporter), Arr.map(Str.slice(IMPORTER.length)));
+
 const closureOf =
-  (edges: Edges) =>
-  ({ own }: Importer): readonly string[] => {
-    const packages = pipe(
-      reachable(edges, own),
-      Arr.filter((id) => !Str.startsWith(IMPORTER)(id)),
-    );
-    return Arr.sort(packages, Str.Order);
+  (edges: Edges, hoisted: readonly string[]) =>
+  ({ id, own }: Importer): LockedClosure => {
+    const nodes = reachable(edges, own);
+    return {
+      packages: Arr.sort(
+        pipe(
+          nodes,
+          Arr.filter((node) => !isImporter(node)),
+        ),
+        Str.Order,
+      ),
+      workspaces: Arr.sort(Arr.dedupe([...workspacesOf(nodes), ...hoisted, id]), Str.Order),
+    };
   };
+
+const closuresOf = (found: readonly Importer[], edges: Edges): LockedClosures => {
+  const hoisted = pipe(
+    Arr.findFirst(found, ({ id }) => id === ROOT_IMPORTER),
+    Option.map(({ own }) => workspacesOf(reachable(edges, own))),
+    Option.getOrElse((): readonly string[] => []),
+  );
+  return Rec.fromEntries(
+    pipe(
+      found,
+      Arr.map((importer) => [importer.id, closureOf(edges, hoisted)(importer)] as const),
+    ),
+  );
+};
 
 /** @internal */
 export const lockedClosures = Effect.fn("lockedClosures")(function* lockedClosures(root: string) {
@@ -87,12 +116,7 @@ export const lockedClosures = Effect.fn("lockedClosures")(function* lockedClosur
         ),
         ...packageEdges(packages ?? {}),
       ]);
-      return Rec.fromEntries(
-        pipe(
-          found,
-          Arr.map((importer) => [importer.id, closureOf(edges)(importer)] as const),
-        ),
-      );
+      return closuresOf(found, edges);
     }),
   );
 });

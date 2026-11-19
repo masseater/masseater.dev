@@ -3,6 +3,7 @@ import { CLOSURE_FILE, FINGERPRINT_FILE, LOCK_FILE } from "#/shared/lib/locked-c
 const NEGATION = "!";
 const INSTALLED_LOCK_FILE = "node_modules/.pnpm/lock.yaml";
 const WORKSPACE_FILE = "pnpm-workspace.yaml";
+const WORKSPACE_MANIFESTS = "*/**/package.json";
 
 export type LockedInput =
   | string
@@ -26,5 +27,6 @@ export const LOCKED: LockedCache = {
     notInput(LOCK_FILE),
     notInput(INSTALLED_LOCK_FILE),
     notInput(WORKSPACE_FILE),
+    notInput(WORKSPACE_MANIFESTS),
   ],
 };
