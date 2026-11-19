@@ -34,7 +34,7 @@ if (source.status === "valid") {
 }
 ```
 
-`readSong` follows `import` statements through `read`, so the files can come from disk, memory or a network. An invalid file gives `issues` with a path, line and column. The messages are in Japanese.
+`readSong` follows `import` statements through `read`, so the files can come from disk, memory or a network. An invalid file gives `issues` with a path, line and column. The messages are in Japanese. `outline.comments` lists the `//` and `/* */` comments of the entry file with their line and column, so tools such as linters can read directives from them.
 
 Times are integer ticks, `TICKS_PER_WHOLE` to a whole note; `fractionOf` prints them as `1/4`. `@r_masseater/fumx-parser/analysis` estimates what the notes imply but the file does not write: the key of a range of bars (`keyIn`), the chord on each beat (`chordsOf`) and bars that repeat. `analyze` returns all of them for a song, and `soundingsOf` lists the notes of unmuted tracks with their track role and source line.
 

@@ -131,8 +131,8 @@ bar {
       expect(Arr.dedupe(found)).toStrictEqual([
         "voicing/semitone-clash",
         "voicing/chord-above-melody",
-        "voicing/low-interval-limit",
         "voicing/crowded-low-mids",
+        "voicing/low-interval-limit",
       ]);
     }),
 );

@@ -58,3 +58,29 @@ export const unknownPlugins = (config: I68Config): readonly string[] =>
     Arr.filter((plugin) => !Rec.has(config.plugins ?? {}, plugin)),
     Arr.dedupe,
   );
+
+const ruleNameOf = (id: string): string =>
+  pipe(
+    Str.indexOf(SEPARATOR)(id),
+    Option.match({
+      onNone: () => "",
+      onSome: (slash) => Str.slice(slash + SEPARATOR.length)(id),
+    }),
+  );
+
+const isKnownRule =
+  (config: I68Config) =>
+  (id: string): boolean =>
+    pipe(
+      Rec.get(config.plugins ?? {}, pluginOf(id)),
+      Option.match({
+        onNone: () => true,
+        onSome: (plugin) => Rec.has(plugin.rules, ruleNameOf(id)),
+      }),
+    );
+
+export const unknownRules = (config: I68Config): readonly string[] =>
+  pipe(
+    Rec.keys(config.rules ?? {}),
+    Arr.filter((id) => !isKnownRule(config)(id)),
+  );
