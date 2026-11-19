@@ -7,7 +7,10 @@ import type { TaskEntry } from "#/entities/benchmark/model/ranking.ts";
 import { ModelName } from "#/entities/benchmark/ui/model-name.tsx";
 
 export const ModelKey = ({ entries }: Readonly<{ entries: readonly TaskEntry[] }>): ReactNode => (
-  <ol className="text-muted-foreground grid grid-cols-2 content-start gap-x-4 gap-y-1 self-start text-xs sm:grid-cols-3">
+  <ol
+    className="text-muted-foreground grid grid-cols-2 content-start gap-x-4 gap-y-1 self-start text-xs sm:grid-cols-3"
+    role="list"
+  >
     {pipe(
       entries,
       Arr.map((entry) => (

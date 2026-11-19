@@ -6,11 +6,13 @@ const LAYER =
 
 export const HighlightTextarea = ({
   children,
+  label,
   maxLength,
   value,
   onChange,
 }: Readonly<{
   children: ReactNode;
+  label: string;
   maxLength: number;
   value: string;
   onChange: ChangeEventHandler<HTMLTextAreaElement>;
@@ -24,6 +26,7 @@ export const HighlightTextarea = ({
         LAYER,
         "resize-none overflow-hidden border-input bg-transparent shadow-xs transition-colors outline-none placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50",
       )}
+      aria-label={label}
       maxLength={maxLength}
       value={value}
       onChange={onChange}

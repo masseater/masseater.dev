@@ -8,7 +8,7 @@ export const AttentionList = ({
   label,
   states,
 }: Readonly<{ label: string; states: readonly CredentialState[] }>): ReactNode => (
-  <ul aria-label={label} className="divide-border divide-y">
+  <ul aria-label={label} className="divide-border divide-y" role="list">
     {pipe(
       states,
       Arr.map((state) => <AttentionRow key={state.id} state={state} />),

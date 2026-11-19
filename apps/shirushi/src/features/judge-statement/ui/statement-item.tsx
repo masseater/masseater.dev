@@ -8,7 +8,7 @@ export const StatementItem = ({ statement }: Readonly<{ statement: Statement }>)
   <li className="grid gap-2 py-3">
     <p className="text-sm">{statement.words}</p>
     {Arr.isReadonlyArrayNonEmpty(statement.evidence) && (
-      <ul className="text-muted-foreground grid gap-0.5 text-xs">
+      <ul className="text-muted-foreground grid gap-0.5 text-xs" role="list">
         {pipe(
           statement.evidence,
           Arr.map((evidence) => (

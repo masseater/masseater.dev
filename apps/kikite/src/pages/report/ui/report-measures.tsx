@@ -12,7 +12,7 @@ export const ReportMeasures = (): ReactNode => {
   return (
     <section className="text-muted-foreground flex flex-col gap-6 border-t pt-8 text-sm">
       <StrategyTable rows={report.rows} />
-      <ul className="flex flex-col gap-3">
+      <ul className="flex flex-col gap-3" role="list">
         {pipe(
           factsOf(report),
           Arr.map((fact) => <FactLine key={fact.key} fact={fact} />),

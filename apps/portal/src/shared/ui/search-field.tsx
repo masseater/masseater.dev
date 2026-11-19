@@ -29,10 +29,12 @@ export const SearchField = ({
       />
       <input
         aria-label={label}
-        className="border-input focus-visible:ring-ring h-10 w-full rounded-md border bg-white pr-3 pl-9 text-base outline-none focus-visible:ring-2"
+        className="border-input focus-visible:ring-ring h-10 w-full rounded-md border bg-white pr-3 pl-9 text-base outline-hidden focus-visible:ring-2"
         defaultValue={value}
+        enterKeyHint="search"
         name="keyword"
         placeholder={label}
+        spellCheck={false}
         type="search"
       />
     </form>

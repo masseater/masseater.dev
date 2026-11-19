@@ -791,6 +791,9 @@ catalogs:
     ml-confusion-matrix:
       specifier: 2.0.0
       version: 2.0.0
+    modern-web-guidance:
+      specifier: 1.0.1
+      version: 1.0.1
     msw:
       specifier: 3.0.6
       version: 3.0.6
@@ -896,6 +899,9 @@ catalogs:
     size-limit:
       specifier: 14.3.0
       version: 14.3.0
+    smol-toml:
+      specifier: 1.9.1
+      version: 1.9.1
     sql-parser-cst:
       specifier: 0.44.1
       version: 0.44.1
@@ -3863,6 +3869,9 @@ importers:
       effect:
         specifier: catalog:stack
         version: 4.1.4
+      smol-toml:
+        specifier: 'catalog:'
+        version: 1.9.1
       vite:
         specifier: 'catalog:'
         version: '@voidzero-dev/vite-plus-core@8.3.8000(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)'
@@ -4314,6 +4323,9 @@ importers:
       htmlparser2:
         specifier: 'catalog:'
         version: 12.0.0
+      modern-web-guidance:
+        specifier: 'catalog:'
+        version: 1.0.1
       oxlint-plugin-eslint:
         specifier: 'catalog:'
         version: 1.94.0
@@ -4357,6 +4369,9 @@ importers:
       effect:
         specifier: catalog:stack
         version: 4.1.4
+      oxlint:
+        specifier: 'catalog:'
+        version: 1.94.0(oxlint-tsgolint@7.0.2007)(vite-plus@1.7.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.6(@types/node@26.6.6)(@voidzero-dev/vite-plus-core@8.3.8000(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2007)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))
       typescript:
         specifier: catalog:stack
         version: 7.1.0-beta
@@ -15969,6 +15984,11 @@ packages:
   modern-tar@0.8.6:
     resolution: {integrity: sha512-LYSks0tNVqbtez/9OB0YFP6qLRSqkdAxJWOQpVaR67lNTbj2zNLyYpowkRMia5lXLCZKzxwoxkxH2MbbBR2aEg==}
     engines: {node: '>=18.0.0'}
+
+  modern-web-guidance@1.0.1:
+    resolution: {integrity: sha512-5ztUh5F1p2PewnSkA6EhsGUXqomaZY9qe6iWJCU4JbIQxHTky7s5lMJcPE4EbD1uhbQZIhl0HROH0+s6fIiGzg==}
+    engines: {node: '>=22.0.0', vscode: ^1.90.0}
+    hasBin: true
 
   module-details-from-path@1.0.4:
     resolution: {integrity: sha512-EGWKgxALGMgzvxYF1UyGTy0HXX/2vHLkw6+NvDKW2jypWbHpjQuj4UMcqQWXHERJhVGKikolT06G3bcKe4fi7w==}
@@ -28868,6 +28888,8 @@ snapshots:
   ml-confusion-matrix@2.0.0: {}
 
   modern-tar@0.8.6: {}
+
+  modern-web-guidance@1.0.1: {}
 
   module-details-from-path@1.0.4: {}
 

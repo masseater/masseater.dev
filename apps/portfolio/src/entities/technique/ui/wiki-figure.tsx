@@ -11,7 +11,7 @@ export const WikiFigure = ({
   label,
   image,
 }: Readonly<{ href: string; label: string; image: WikiImage }>): ReactNode => (
-  <ExampleFigure alt={label} src={image.src}>
+  <ExampleFigure alt={label} height={image.height} src={image.src} width={image.width}>
     <ExternalLink href={href}>{label}</ExternalLink>
     {IMAGE_SEPARATOR}
     <ExternalLink href={image.file}>{imageCredit(image)}</ExternalLink>

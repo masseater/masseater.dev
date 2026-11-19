@@ -7,7 +7,7 @@ import type { Audit } from "#/features/audit-workflows/model/audit.ts";
 import type { Finding } from "#/features/audit-workflows/model/finding.ts";
 import type { GitHubClient } from "#/features/audit-workflows/model/github.ts";
 
-import { message, primaryLocation } from "./finding.ts";
+import { message, primaryColumn, primaryLocation } from "./finding.ts";
 import { inputOf } from "./input.ts";
 import { findingsOf } from "./run.ts";
 import { settingsOf } from "./settings.ts";
@@ -51,7 +51,7 @@ const reported =
       const { start } = primaryLocation(each).concrete;
       context.report({
         line: start.row + ONE_BASED,
-        column: start.column + ONE_BASED,
+        column: primaryColumn(context.source.text)(each) + ONE_BASED,
         message: message(each),
       });
     }

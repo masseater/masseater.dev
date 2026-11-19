@@ -85,3 +85,4 @@ export const shadcnRestyleContracts = [
 ];
 
 export { COMMENT_DIRECTIVES } from "#/shared/lib/comment-directives.ts";
+export { webGuidanceRules } from "./web-guidance.config.ts";

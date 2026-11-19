@@ -8,9 +8,11 @@ const LABEL = "すべて";
 
 const ALL = {};
 
+const EXACT = { exact: true };
+
 export const AllKindsLink = ({ selected }: Readonly<{ selected: boolean }>): ReactNode => (
   <Button asChild size="sm" variant={variantOf(selected)}>
-    <Link to="/videos" search={ALL}>
+    <Link to="/videos" search={ALL} activeOptions={EXACT}>
       {LABEL}
     </Link>
   </Button>

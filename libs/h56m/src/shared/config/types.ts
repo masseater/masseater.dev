@@ -21,6 +21,7 @@ export interface H56mExtend {
 
 export interface H56mConfig {
   readonly extend?: H56mExtend;
+  readonly maxDecodeDepth?: number;
   readonly prefilter?: string;
   readonly filter?: string;
   readonly rules?: readonly H56mRule[];

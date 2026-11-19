@@ -8,6 +8,7 @@ use serde_json::Value;
 use crate::shared::text;
 
 const MAX_EXTEND_DEPTH: usize = 2;
+const DEFAULT_DECODE_DEPTH: usize = 5;
 
 #[derive(Debug, Deserialize, Default)]
 #[serde(deny_unknown_fields, rename_all = "camelCase")]
@@ -24,6 +25,8 @@ struct Raw {
     filter: String,
     #[serde(default)]
     rules: Vec<RuleConfig>,
+    #[serde(default)]
+    max_decode_depth: Option<usize>,
     #[serde(default)]
     extend: Extend,
 }
@@ -90,6 +93,7 @@ pub struct Config {
     pub prefilter: String,
     pub filter: String,
     pub rules: Vec<RuleConfig>,
+    pub max_decode_depth: usize,
 }
 
 fn joined(base: String, current: String) -> String {
@@ -136,6 +140,7 @@ fn resolve(mut raw: Raw, depth: usize) -> Result<Raw> {
     raw.rules = rules;
     raw.prefilter = joined(base.prefilter, raw.prefilter);
     raw.filter = joined(base.filter, raw.filter);
+    raw.max_decode_depth = raw.max_decode_depth.or(base.max_decode_depth);
     Ok(raw)
 }
 
@@ -171,6 +176,7 @@ pub fn load(value: &Value) -> Result<Config> {
         prefilter: raw.prefilter,
         filter: raw.filter,
         rules: raw.rules,
+        max_decode_depth: raw.max_decode_depth.unwrap_or(DEFAULT_DECODE_DEPTH),
     };
     for rule in &mut config.rules {
         for keyword in &mut rule.keywords {

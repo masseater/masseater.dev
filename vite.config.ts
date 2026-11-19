@@ -44,6 +44,7 @@ export default defineConfig({
         String.raw`(^|/)fixtures/[^/]+\.tgz!`,
         String.raw`/fixtures/actionlint/`,
         String.raw`/audit-workflows/fixtures/`,
+        String.raw`/h56m(-presets)?/src/app/fixtures/`,
       ],
     },
     textlint: {

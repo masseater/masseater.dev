@@ -11,7 +11,7 @@ const pending = (job: Job): boolean => job.kind === "import" && job.state !== "d
 export const PendingImports = (): ReactNode => {
   const jobs = useJobs();
   return (
-    <ul className="flex flex-col gap-2">
+    <ul className="flex flex-col gap-2" role="list">
       {pipe(
         jobs,
         Arr.filter(pending),

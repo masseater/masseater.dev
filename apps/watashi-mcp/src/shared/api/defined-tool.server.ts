@@ -1,5 +1,5 @@
-import { NO_PROJECT } from "@masseater.dev/mcp-tool-call";
-import type { Caller, OVERWRITE, READ_ONLY, WRITE } from "@masseater.dev/mcp-tool-call";
+import { compactInput } from "@masseater.dev/mcp-tool-call";
+import type { OVERWRITE, READ_ONLY, WRITE } from "@masseater.dev/mcp-tool-call";
 import type { McpServer, StandardSchemaWithJSON } from "@modelcontextprotocol/server";
 import { Array as Arr, Effect, Layer, pipe } from "effect";
 import { Digest, SecureRandom } from "effect/crypto";
@@ -7,7 +7,7 @@ import { Digest, SecureRandom } from "effect/crypto";
 import type { StorageFailed } from "#/shared/db/index.ts";
 
 import { InvalidRecord } from "./invalid-record.ts";
-import { meteredInput, runToolIn } from "./tool-call.server.ts";
+import { runToolIn } from "./tool-call.server.ts";
 
 /** @internal */
 export type Failure = StorageFailed | InvalidRecord;
@@ -32,7 +32,7 @@ export type Tool<Input, Output, Value> = Readonly<{
 }>;
 
 /** @internal */
-export type Register = (caller: Caller) => (server: McpServer) => McpServer;
+export type Register = (server: McpServer) => McpServer;
 
 /** @internal */
 export type DefinedTool = Readonly<{
@@ -70,16 +70,15 @@ const validated =
 export const tool = <Input, Output, Value>(spec: Tool<Input, Output, Value>): DefinedTool => ({
   name: spec.name,
   annotations: spec.annotations,
-  register: (caller) => (server) => {
-    const meter = { tool: spec.name, caller, project: NO_PROJECT } as const;
+  register: (server) => {
     server.registerTool(
       spec.name,
       {
         description: spec.description,
-        inputSchema: meteredInput(meter)(spec.input),
+        inputSchema: compactInput(spec.input),
         annotations: spec.annotations,
       },
-      (input) => pipe(spec.run(input), runMoneyTool({ ...meter, input, count: spec.count })),
+      (input) => pipe(spec.run(input), runMoneyTool({ count: spec.count })),
     );
     return server;
   },
@@ -89,10 +88,9 @@ export const tool = <Input, Output, Value>(spec: Tool<Input, Output, Value>): De
 /** @internal */
 export const registerAll =
   (tools: readonly DefinedTool[]): Register =>
-  (caller) =>
   (server) => {
     for (const { register } of tools) {
-      register(caller)(server);
+      register(server);
     }
     return server;
   };

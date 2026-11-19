@@ -10,7 +10,7 @@ export const AboutCue = (): ReactNode => (
     href={`#${ABOUT_ID}`}
   >
     {ABOUT_TITLE}
-    <span aria-hidden className="animate-bounce">
+    <span aria-hidden className="motion-safe:animate-bounce">
       {DOWN}
     </span>
   </a>

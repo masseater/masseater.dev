@@ -12,7 +12,7 @@ export const ExtractResult = ({ state }: Readonly<{ state: ExtractState }>): Rea
   }
   if (state.outcome.status === "failed") {
     return (
-      <p className="flex items-start gap-2 text-sm [&_svg]:size-4 [&_svg]:shrink-0">
+      <p role="alert" className="flex items-start gap-2 text-sm [&_svg]:size-4 [&_svg]:shrink-0">
         <CircleX />
         {state.outcome.reason}
       </p>

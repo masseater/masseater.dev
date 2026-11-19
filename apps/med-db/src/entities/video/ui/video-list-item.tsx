@@ -22,7 +22,7 @@ export const VideoListItem = ({
   return (
     <li>
       <Link to="/videos/$id" params={params} className="group flex flex-col gap-2">
-        <VideoThumbnail src={video.thumbnailUrl} />
+        <VideoThumbnail src={video.thumbnailUrl} priority="lazy" />
         <VideoCaption video={video} detail={detail} />
       </Link>
     </li>

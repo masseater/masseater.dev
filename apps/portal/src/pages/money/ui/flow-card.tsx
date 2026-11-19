@@ -13,6 +13,8 @@ const TITLE = "収支の流れ";
 
 const EMPTY = "この期間の取引はありません";
 
+const FOCUSABLE = 0;
+
 const route = getRouteApi("/money");
 
 const shownFlow = ({
@@ -39,9 +41,9 @@ export const FlowCard = ({
         <p className="text-muted-foreground text-sm">{EMPTY}</p>
       )}
       {Arr.isReadonlyArrayNonEmpty(flow.links) && (
-        <div className="-mx-2 overflow-x-auto px-2">
+        <section aria-label={TITLE} className="-mx-2 overflow-x-auto px-2" tabIndex={FOCUSABLE}>
           <FlowChart flow={shown} title={TITLE} />
-        </div>
+        </section>
       )}
     </Section>
   );

@@ -73,12 +73,12 @@ export const OpenFile = (): ReactNode => {
   );
   return (
     <div className="flex items-center gap-2">
-      <label className="border-input hover:bg-accent dark:bg-input/30 inline-flex h-9 cursor-pointer items-center gap-2 rounded-md border px-3 text-sm shadow-xs [&_svg]:size-4">
+      <label className="border-input hover:bg-accent dark:bg-input/30 has-focus-visible:border-ring has-focus-visible:ring-ring/50 inline-flex h-9 cursor-pointer items-center gap-2 rounded-md border px-3 text-sm shadow-xs has-focus-visible:ring-3 [&_svg]:size-4">
         <FileUp />
         {COPY.open}
         <input type="file" className="sr-only" onChange={open} />
       </label>
-      <span className="text-muted-foreground text-xs">{statusOf(opening)}</span>
+      <output className="text-muted-foreground text-xs">{statusOf(opening)}</output>
     </div>
   );
 };

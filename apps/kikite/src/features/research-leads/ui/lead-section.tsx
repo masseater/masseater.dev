@@ -16,9 +16,9 @@ export const LeadSection = ({ className }: Readonly<{ className?: string }>): Re
     <section className={cn("flex flex-col gap-3 px-5 py-4", className)}>
       <h2 className="text-muted-foreground flex items-baseline gap-2 text-xs font-semibold tracking-wider">
         <span className="max-lg:sr-only">{LABEL}</span>
-        {running && <span className="animate-pulse font-normal">{RUNNING}</span>}
+        {running && <span className="font-normal motion-safe:animate-pulse">{RUNNING}</span>}
       </h2>
-      <ul className="flex flex-col gap-3 text-sm leading-relaxed">
+      <ul className="flex flex-col gap-3 text-sm leading-relaxed" role="list">
         {pipe(
           leads,
           Arr.reverse,

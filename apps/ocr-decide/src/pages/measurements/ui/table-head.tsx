@@ -10,11 +10,13 @@ export const TableHead = ({
 }: Readonly<{ columns: readonly Readonly<{ id: string; label: string }>[] }>): ReactNode => (
   <thead className="bg-muted">
     <tr>
-      <th className={CELL}>{COPY.way}</th>
+      <th scope="col" className={CELL}>
+        {COPY.way}
+      </th>
       {pipe(
         columns,
         Arr.map(({ id, label }) => (
-          <th key={id} className={CELL}>
+          <th key={id} scope="col" className={CELL}>
             {label}
           </th>
         )),

@@ -1,4 +1,3 @@
-import type { Caller } from "@masseater.dev/mcp-tool-call";
 import { McpServer } from "@modelcontextprotocol/server";
 import { pipe } from "effect";
 
@@ -11,12 +10,12 @@ import { SERVER_NAME } from "#/shared/config/index.ts";
 
 const SERVER_INFO = { name: SERVER_NAME, version: "0.0.0" };
 
-export const registerTools = (caller: Caller): McpServer =>
+export const registerTools = (): McpServer =>
   pipe(
     new McpServer(SERVER_INFO),
-    registerSloppediaTools(caller),
-    registerAnalyticsTools(caller),
-    registerSlideTools(caller),
-    registerBrokerTools(caller),
-    registerClaudeRequestTools(caller),
+    registerSloppediaTools,
+    registerAnalyticsTools,
+    registerSlideTools,
+    registerBrokerTools,
+    registerClaudeRequestTools,
   );

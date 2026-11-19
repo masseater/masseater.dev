@@ -1,5 +1,4 @@
 import { expect, it } from "@effect/vitest";
-import type { Caller } from "@masseater.dev/mcp-tool-call";
 import { createMcpHandler } from "@modelcontextprotocol/server";
 import { Array as Arr, Effect, Option, Record as Rec, Schema, String as Str, pipe } from "effect";
 import { afterAll, beforeAll, beforeEach, vi } from "vite-plus/test";
@@ -27,8 +26,6 @@ beforeEach(() => {
 afterAll(() => {
   github.close();
 });
-
-const CALLER: Caller = { client: "vitest", userAgent: "vitest" };
 
 const BRANCH = "sloppedia/web-dev";
 
@@ -74,7 +71,7 @@ const encodeJson = Schema.encodeEffect(Schema.fromJsonString(Schema.Unknown));
 const writeArticle = Effect.gen(function* writeArticle() {
   const body = yield* encodeJson(toolCall);
   const response = yield* Effect.promise(() =>
-    createMcpHandler(() => registerTools(CALLER)).fetch(
+    createMcpHandler(registerTools).fetch(
       new Request("https://sundries.masseater.dev/mcp", {
         method: "POST",
         headers: {

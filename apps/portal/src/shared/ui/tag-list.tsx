@@ -5,7 +5,7 @@ const LABEL = "タグ";
 
 export const TagList = ({ tags }: Readonly<{ tags: readonly string[] }>): ReactNode =>
   Arr.isReadonlyArrayNonEmpty(tags) && (
-    <ul aria-label={LABEL} className="flex max-w-full min-w-0 flex-wrap gap-1">
+    <ul aria-label={LABEL} className="flex max-w-full min-w-0 flex-wrap gap-1" role="list">
       {pipe(
         tags,
         Arr.map((tag) => (

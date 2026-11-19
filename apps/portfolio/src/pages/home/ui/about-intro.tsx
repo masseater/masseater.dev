@@ -15,6 +15,7 @@ export const AboutIntro = (): ReactNode => (
         alt=""
         className="rounded-full"
         height={AVATAR_SIZE}
+        loading="lazy"
         src={AVATAR_PATH}
         width={AVATAR_SIZE}
       />

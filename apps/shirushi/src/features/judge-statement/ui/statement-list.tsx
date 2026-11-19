@@ -20,7 +20,7 @@ export const StatementList = (): ReactNode => {
   return (
     <div className="grid">
       <p className="text-muted-foreground pt-2 text-xs tabular-nums">{scoreOf(statements)}</p>
-      <ul className="divide-border grid divide-y">
+      <ul className="divide-border grid divide-y" role="list">
         {pipe(
           doneLast(judged)(statements),
           Arr.map((statement) => <StatementItem key={statement.id} statement={statement} />),

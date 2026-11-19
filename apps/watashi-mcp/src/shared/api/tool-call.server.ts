@@ -1,5 +1,4 @@
 import { toolCalls } from "@masseater.dev/mcp-tool-call";
-import { env } from "cloudflare:workers";
 import { Match } from "effect";
 
 import type { ToolFailure } from "./tool-failure.ts";
@@ -30,7 +29,6 @@ export const describeFailure = Match.type<ToolFailure>().pipe(
   }),
 );
 
-export const { meteredInput, runTool, runToolIn } = toolCalls<ToolFailure>({
-  dataset: () => env.TOOL_CALLS,
+export const { runTool, runToolIn } = toolCalls<ToolFailure>({
   describe: describeFailure,
 });

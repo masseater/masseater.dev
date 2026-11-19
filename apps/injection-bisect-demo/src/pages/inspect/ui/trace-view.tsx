@@ -13,7 +13,7 @@ export const TraceView = ({ text, trace }: Readonly<{ text: string; trace: Trace
   <div className="flex flex-col gap-2">
     <h2 className="text-lg font-semibold">{COPY.trace}</h2>
     <Legend />
-    <ol className="flex flex-col">
+    <ol className="flex flex-col" role="list">
       {pipe(
         trace.rows,
         Arr.map((row) => (
