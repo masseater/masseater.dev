@@ -64,6 +64,7 @@ export const playParamOf: From<PlayParamNode, PlayParam> = (node) =>
     Match.discriminatorsExhaustive("$type")({
       Semi: (semi): PlayParam => ({ kind: "semi", semitones: semitonesOf(semi.amount) }),
       Rate: (rate): PlayParam => ({ kind: "rate", ratio: rate.amount }),
+      Amp: (amp): PlayParam => ({ kind: "amp", ratio: amp.amount }),
       Length: (length): PlayParam => ({
         kind: "length",
         milliseconds: millisecondsOf(length.time),
@@ -95,7 +96,10 @@ export const playParamOf: From<PlayParamNode, PlayParam> = (node) =>
       Pan: (pan): PlayParam => ({ kind: "pan", amount: shareOf(pan.amount) }),
       Drive: (drive): PlayParam => ({ kind: "drive", amount: drive.amount }),
       Send: (send): PlayParam => ({ kind: "send", ...sendOf(send) }),
-      Reverse: (): PlayParam => ({ kind: "reverse" }),
+      Reverse: (reverse): PlayParam => ({
+        kind: "reverse",
+        fromSeconds: Option.map(Option.fromNullishOr(reverse.from), secondsOf),
+      }),
     }),
   );
 

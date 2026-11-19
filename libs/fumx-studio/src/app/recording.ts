@@ -1,6 +1,6 @@
 import type { RenderSession, Rendered, Structure } from "@masseater.dev/daw-view";
 import type { Song } from "@r_masseater/fumx-parser";
-import { Effect } from "effect";
+import { Effect, Option } from "effect";
 import type { Scope } from "effect";
 
 import { renderSong } from "#/features/render-song/index.ts";
@@ -37,7 +37,10 @@ const renderOf = ({ song, worklet, plugins }: Studio): Recording["render"] =>
       progress: sheet.progress,
     });
     sheet.show({ roots: rootsOf(song), auto: mastered.lanes });
-    const live = yield* liveFor(worklet)(mastered);
+    const live = yield* Option.match(mastered.live, {
+      onNone: () => liveFor(worklet)(mastered),
+      onSome: (given) => Effect.succeedSome(given),
+    });
     const mixdown: Rendered = { left: mastered.left, right: mastered.right, take: sheet.take() };
     return withLive(mixdown)(live);
   });
