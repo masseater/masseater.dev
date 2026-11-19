@@ -30,10 +30,7 @@ export const DanceStage = ({
     [slug, source, track],
   );
   return (
-    <div
-      className="[contain-intrinsic-size:auto_none_auto_540px] [content-visibility:auto]"
-      ref={attach}
-    >
+    <div className="skip-offscreen-stage" ref={attach}>
       <canvas
         aria-label={label}
         className="bg-muted aspect-video w-full rounded-lg"
