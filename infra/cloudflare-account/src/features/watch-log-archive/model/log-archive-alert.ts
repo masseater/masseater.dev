@@ -1,22 +1,30 @@
 import { Alerting, CloudflareEnvironment } from "@alchemy.run/cloudflare";
 import { listPolicies } from "@distilled.cloud/cloudflare/alerting";
-import type { PoliciesListResultItem } from "@distilled.cloud/cloudflare/alerting";
-import { Array as Arr, Effect, Option, pipe } from "effect";
+import { Array as Arr, Effect, Schema, pipe } from "effect";
 
 const BUDGET_ALERT = "billing_budget_alert";
 
 const LOGPUSH_DISABLED = "failing_logpush_job_disabled_alert";
 
-const budgetEmails = (policies: readonly PoliciesListResultItem[]): readonly { id: string }[] =>
+const EmailDestination = Schema.Struct({ id: Schema.String });
+
+const BudgetPolicy = Schema.Struct({
+  alertType: Schema.Literal(BUDGET_ALERT),
+  mechanisms: Schema.Struct({ email: Schema.Array(EmailDestination) }),
+});
+
+const decodeBudgetPolicy = Schema.decodeUnknownOption(BudgetPolicy);
+
+const budgetEmails = (policies: readonly unknown[]): readonly (typeof EmailDestination.Type)[] =>
   pipe(
     policies,
-    Arr.filter((policy) => policy.alertType === BUDGET_ALERT),
-    Arr.flatMap((policy) => policy.mechanisms?.email ?? []),
-    Arr.filterMap(({ id }) => Option.fromNullishOr(id)),
-    Arr.dedupe,
-    Arr.map((id) => ({ id })),
+    Arr.map((policy) => decodeBudgetPolicy(policy)),
+    Arr.getSomes,
+    Arr.flatMap(({ mechanisms }) => mechanisms.email),
+    Arr.dedupeWith((left, right) => left.id === right.id),
   );
 
+/** @internal */
 export const logArchiveAlert = Effect.fn("logArchiveAlert")(function* logArchiveAlert(
   appName: string,
 ) {

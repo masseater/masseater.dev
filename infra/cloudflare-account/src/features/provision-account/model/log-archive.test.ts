@@ -21,7 +21,8 @@ const Lifecycle = Schema.Struct({
   lifecycleRules: Schema.Array(Schema.Struct({ id: Schema.String })),
 });
 
-const decodeLifecycle = Schema.decodeUnknownOption(Lifecycle);
+const decodeLifecycle = (props: unknown): Option.Option<typeof Lifecycle.Type> =>
+  Schema.decodeUnknownOption(Lifecycle)(props);
 
 const decodeProps = Schema.decodeUnknownOption(Declared);
 
@@ -46,35 +47,24 @@ const NO_PROVIDERS = Layer.succeed(Providers, {
   providers: REGISTERED,
 });
 
-const declaredProps = (type: string): Promise<readonly unknown[]> =>
-  Effect.runPromise(
-    Stack(APP_NAME, { providers: NO_PROVIDERS, state: inMemoryState() }, archive).pipe(
-      Effect.provideService(Stage, "test"),
-      Effect.scoped,
-      Effect.map(({ resources }) =>
-        pipe(
-          Rec.values(resources),
-          Arr.filter((resource) => isResourceOfType(resource, type)),
-          Arr.map(({ Props }) => Props),
+const declaredWith =
+  <Decoded>(decode: (props: unknown) => Option.Option<Decoded>) =>
+  (type: string): Promise<readonly Option.Option<Decoded>[]> =>
+    Effect.runPromise(
+      Stack(APP_NAME, { providers: NO_PROVIDERS, state: inMemoryState() }, archive).pipe(
+        Effect.provideService(Stage, "test"),
+        Effect.scoped,
+        Effect.map(({ resources }) =>
+          pipe(
+            Rec.values(resources),
+            Arr.filter((resource) => isResourceOfType(resource, type)),
+            Arr.map(({ Props }) => decode(Props)),
+          ),
         ),
       ),
-    ),
-  );
+    );
 
-const declared = (type: string): Promise<readonly Option.Option<typeof Declared.Type>[]> =>
-  Effect.runPromise(
-    Stack(APP_NAME, { providers: NO_PROVIDERS, state: inMemoryState() }, archive).pipe(
-      Effect.provideService(Stage, "test"),
-      Effect.scoped,
-      Effect.map(({ resources }) =>
-        pipe(
-          Rec.values(resources),
-          Arr.filter((resource) => isResourceOfType(resource, type)),
-          Arr.map(({ Props }) => decodeProps(Props)),
-        ),
-      ),
-    ),
-  );
+const declared = declaredWith((props) => decodeProps(props));
 
 test("ログのバケットは、管轄を指定せずに決まった名前で作る", () =>
   expect(declared(R2.Bucket.Type)).resolves.toStrictEqual([Option.some({ name: BUCKET_NAME })]));
@@ -96,6 +86,6 @@ test("ログを書くトークンは、ログのバケットの中身を書く�
   ]));
 
 test("ログのバケットは、古いログと途中で止まったマルチパートアップロードを消す", () =>
-  expect(declaredProps(R2.Bucket.Type).then(Arr.map(decodeLifecycle))).resolves.toStrictEqual([
+  expect(declaredWith(decodeLifecycle)(R2.Bucket.Type)).resolves.toStrictEqual([
     Option.some({ lifecycleRules: [{ id: "expire" }, { id: "abort-multipart" }] }),
   ]));
