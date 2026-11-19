@@ -1,0 +1,14 @@
+{
+  echo "$COMMENT_BODY"
+  echo
+  echo '<details><summary>Results</summary>'
+  echo
+  cat body.txt
+  echo
+  echo '</details>'
+} | jq -Rrcs '{ body: . }' | gh api \
+  --method PATCH \
+  -H "Accept: application/vnd.github+json" \
+  -H "X-GitHub-Api-Version: 2026-03-10" \
+  "/repos/${REPO:-$GITHUB_REPOSITORY}/issues/comments/${COMMENT_URL##*-}" \
+  --input -

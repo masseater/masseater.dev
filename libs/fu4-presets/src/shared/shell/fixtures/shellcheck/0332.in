@@ -1,0 +1,13 @@
+if ! [[ "$BATCH_SIZE" =~ ^[1-9][0-9]*$ ]]; then
+  echo '::error::AUTO_START_CI_BATCH_SIZE must be a strictly positive integer'
+  exit 1
+fi
+# Filter before selecting the batch; UNKNOWN mergeability is retried later.
+numbers=$(gh pr list \
+        --repo "$GITHUB_REPOSITORY" \
+        --json 'number,mergeable' \
+        --search 'review:approved label:request-ci,resume-ci' \
+        --limit 100 \
+        | jq --argjson limit "$BATCH_SIZE" \
+          '[.[] | select(.mergeable == "MERGEABLE") | .number] | .[:$limit] | map(tostring) | join(" ")' -r)
+echo "numbers=$numbers" >> "$GITHUB_OUTPUT"

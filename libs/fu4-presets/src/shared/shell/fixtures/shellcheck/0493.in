@@ -1,0 +1,20 @@
+# Major and patch updates to V8 would update deps/v8/include/v8-version.h,
+# while individual backports do not.
+# The API lists at most 3000 files sorted by path. The version header
+# should appear early enough to show up within the limit even for major updates.
+gh api --paginate \
+  "/repos/$GITHUB_REPOSITORY/pulls/$NUMBER/files?per_page=100" > files.json
+files=$(jq -r '.[].filename' files.json)
+if printf '%s\n' "$files" | grep -q '^deps/v8/' &&
+   ! printf '%s\n' "$files" | grep -qx 'deps/v8/include/v8-version.h'; then
+  echo 'is_backport=true' >> "$GITHUB_OUTPUT"
+else
+  echo 'is_backport=false' >> "$GITHUB_OUTPUT"
+fi
+# Check if the patch bumps v8_embedder_string in common.gypi.
+if jq -r '.[] | select(.filename == "common.gypi") | .patch // ""' files.json |
+   grep -q '^+.*v8_embedder_string'; then
+  echo 'bumps_embedder_string=true' >> "$GITHUB_OUTPUT"
+else
+  echo 'bumps_embedder_string=false' >> "$GITHUB_OUTPUT"
+fi

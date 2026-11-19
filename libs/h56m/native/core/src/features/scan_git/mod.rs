@@ -1,3 +1,5 @@
+mod added;
+
 use std::collections::{HashMap, HashSet};
 use std::path::Path;
 
@@ -27,8 +29,11 @@ pub enum GitSource {
 struct Blob {
     path: String,
     id: ObjectId,
+    parent: Option<ObjectId>,
     commit: Option<ObjectId>,
 }
+
+type Changed = (String, Option<ObjectId>, ObjectId);
 
 fn commit_of(repository: &gix::Repository, revision: &str) -> Result<ObjectId> {
     Ok(repository
@@ -79,7 +84,7 @@ fn changed_blobs(
     old: Option<ObjectId>,
     new: ObjectId,
     prefix: &str,
-    out: &mut Vec<(String, ObjectId)>,
+    out: &mut Vec<Changed>,
 ) -> Result<()> {
     if old == Some(new) {
         return Ok(());
@@ -97,7 +102,10 @@ fn changed_blobs(
             let old_tree = previous.filter(|(was_tree, _)| *was_tree).map(|(_, id)| id);
             changed_blobs(repository, old_tree, id, &joined(prefix, &name), out)?;
         } else if blob && previous != Some((false, id)) {
-            out.push((joined(prefix, &name), id));
+            let parent = previous
+                .filter(|(was_tree, _)| !*was_tree)
+                .map(|(_, id)| id);
+            out.push((joined(prefix, &name), parent, id));
         }
     }
     Ok(())
@@ -134,11 +142,12 @@ fn history(repository: &gix::Repository, bases: &[String], head: &str) -> Result
             "",
             &mut changed,
         )?;
-        for (path, id) in changed {
-            if seen.insert((path.clone(), id)) {
+        for (path, parent, id) in changed {
+            if seen.insert((path.clone(), parent, id)) {
                 blobs.push(Blob {
                     path,
                     id,
+                    parent,
                     commit: Some(commit),
                 });
             }
@@ -153,9 +162,10 @@ fn snapshot(repository: &gix::Repository, revision: &str) -> Result<Vec<Blob>> {
     changed_blobs(repository, None, tree, "", &mut changed)?;
     Ok(changed
         .into_iter()
-        .map(|(path, id)| Blob {
+        .map(|(path, _, id)| Blob {
             path,
             id,
+            parent: None,
             commit: None,
         })
         .collect())
@@ -172,7 +182,10 @@ fn staged(repository: &gix::Repository) -> Result<Vec<Blob>> {
             &mut committed,
         )?;
     }
-    let committed: HashMap<String, ObjectId> = committed.into_iter().collect();
+    let committed: HashMap<String, ObjectId> = committed
+        .into_iter()
+        .map(|(path, _, id)| (path, id))
+        .collect();
     let index = repository.open_index()?;
     Ok(index
         .entries()
@@ -182,6 +195,7 @@ fn staged(repository: &gix::Repository) -> Result<Vec<Blob>> {
         .map(|entry| (entry.path(&index).to_string(), entry.id))
         .filter(|(path, id)| committed.get(path) != Some(id))
         .map(|(path, id)| Blob {
+            parent: committed.get(&path).copied(),
             path,
             id,
             commit: None,
@@ -189,7 +203,43 @@ fn staged(repository: &gix::Repository) -> Result<Vec<Blob>> {
         .collect())
 }
 
+const BINARY_PROBE: usize = 8_000;
+
 impl Detector {
+    fn scan_added(&self, repository: &gix::Repository, blob: &Blob) -> Result<Vec<Finding>> {
+        let data = repository.find_object(blob.id)?.detach().data;
+        let Some(parent) = blob.parent else {
+            return self.scan(&blob.path, &data);
+        };
+        let old = repository.find_object(parent)?.detach().data;
+        if old[..old.len().min(BINARY_PROBE)].contains(&0) {
+            return self.scan(&blob.path, &data);
+        }
+        let mut fragments = Vec::new();
+        added::additions(&old, &data, |raw, line| {
+            fragments.push((
+                raw.as_ptr() as usize - data.as_ptr() as usize,
+                raw.len(),
+                line,
+            ));
+        });
+        let mut findings = Vec::new();
+        for (start, length, line) in fragments {
+            findings.extend(
+                self.scan(&blob.path, &data[start..start + length])?
+                    .into_iter()
+                    .map(|finding| Finding {
+                        line: finding.line + line - 1,
+                        end_line: finding.end_line + line - 1,
+                        start_offset: finding.start_offset + start,
+                        end_offset: finding.end_offset + start,
+                        ..finding
+                    }),
+            );
+        }
+        Ok(findings)
+    }
+
     pub fn scan_git(&self, root: &Path, source: &GitSource) -> Result<Vec<Finding>> {
         let _span = info_span!("h56m.scan_git", "h56m.source" = ?source).entered();
         let repository = gix::open(root)?;
@@ -200,10 +250,9 @@ impl Detector {
         };
         let mut findings = Vec::new();
         for blob in blobs {
-            let data = repository.find_object(blob.id)?.detach().data;
             let commit = blob.commit.map(|id| id.to_string());
             findings.extend(
-                self.scan(&blob.path, &data)?
+                self.scan_added(&repository, &blob)?
                     .into_iter()
                     .map(|finding| Finding {
                         commit: commit.clone(),
@@ -395,6 +444,87 @@ mod tests {
             )
             .unwrap();
         assert_eq!(paths(&tree), ["old.ts"]);
+    }
+
+    fn history_from(root: &std::path::Path, base: String) -> Vec<crate::shared::finding::Finding> {
+        detector()
+            .scan_git(
+                root,
+                &GitSource::History {
+                    bases: vec![base],
+                    head: "HEAD".to_owned(),
+                },
+            )
+            .unwrap()
+    }
+
+    #[test]
+    fn history_reports_only_lines_that_the_commits_add() {
+        let (directory, base) = repository();
+        let root = directory.path();
+        commit(
+            root,
+            "old.ts",
+            &format!("// note\nconst t = \"{TOKEN}\";\n"),
+        );
+        assert_eq!(paths(&history_from(root, base)), NONE);
+    }
+
+    #[test]
+    fn an_added_secret_keeps_its_line_and_column_in_the_file() {
+        let (directory, base) = repository();
+        let root = directory.path();
+        commit(root, "a.ts", "a\nb\nc\n");
+        commit(root, "a.ts", &format!("a\nb\nconst t = \"{TOKEN}\";\nc\n"));
+        let found = history_from(root, base);
+        assert_eq!(paths(&found), ["a.ts"]);
+        assert_eq!((found[0].line, found[0].column), (3, 12));
+        assert_eq!((found[0].end_line, found[0].end_column), (3, 51));
+    }
+
+    #[test]
+    fn a_match_that_needs_an_unchanged_line_is_not_reported() {
+        let detector = Detector::new(
+            &json!({ "rules": [{
+                "id": "paired-key",
+                "regex": "key:\\n\"(\\w{12})\"",
+                "keywords": ["key"]
+            }] }),
+            [],
+        )
+        .unwrap();
+        let (directory, _) = repository();
+        let root = directory.path();
+        let base = commit(root, "pair.yml", "key:\n\"aaaaaaaaaaaa\"\n");
+        commit(root, "pair.yml", "key:\n\"bbbbbbbbbbbb\"\n");
+        let history = GitSource::History {
+            bases: vec![base],
+            head: "HEAD".to_owned(),
+        };
+        assert_eq!(paths(&detector.scan_git(root, &history).unwrap()), NONE);
+        let tree = GitSource::Snapshot {
+            revision: "HEAD".to_owned(),
+        };
+        assert_eq!(
+            paths(&detector.scan_git(root, &tree).unwrap()),
+            ["pair.yml"]
+        );
+    }
+
+    #[test]
+    fn staged_reports_only_lines_that_the_index_adds() {
+        let (directory, _) = repository();
+        let root = directory.path();
+        std::fs::write(
+            root.join("old.ts"),
+            format!("const t = \"{TOKEN}\";\nconst u = 1;\n"),
+        )
+        .unwrap();
+        git(root, &["add", "old.ts"]);
+        assert_eq!(
+            paths(&detector().scan_git(root, &GitSource::Staged).unwrap()),
+            NONE
+        );
     }
 
     #[test]

@@ -1,5 +1,6 @@
+import type { LiveMix } from "@masseater.dev/daw-view";
 import type { Song } from "@r_masseater/fumx-parser";
-import { Effect } from "effect";
+import { Effect, Option } from "effect";
 
 import type { Lane } from "#/shared/lib/daw/view.ts";
 import type { Stage } from "#/shared/lib/plugin/plugin.ts";
@@ -24,6 +25,7 @@ export interface Mastered {
   readonly right: Float32Array<ArrayBuffer>;
   readonly stages: readonly Stage[];
   readonly lanes: Readonly<Record<string, Lane>>;
+  readonly live: Option.Option<LiveMix>;
 }
 
 export const mastered = ({ song, frames, stems }: Mixing): Effect.Effect<Mastered, Unplayable> =>
@@ -39,5 +41,13 @@ export const mastered = ({ song, frames, stems }: Mixing): Effect.Effect<Mastere
         }),
       { concurrency: 1 },
     );
-    return { frames, stems, left: mix.left, right: mix.right, stages, lanes: {} };
+    return {
+      frames,
+      stems,
+      left: mix.left,
+      right: mix.right,
+      stages,
+      lanes: {},
+      live: Option.none(),
+    };
   });

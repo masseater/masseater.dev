@@ -1,0 +1,1 @@
+gh workflow run update-links.yml --repo nodejs/release-cloudflare-worker -f version=$VERSION

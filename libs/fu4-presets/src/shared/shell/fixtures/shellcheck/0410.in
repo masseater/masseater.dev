@@ -1,0 +1,1 @@
+NODE=$(command -v node) make lint-addon-docs
