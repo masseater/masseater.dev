@@ -48,7 +48,7 @@ catalog:
   lighthouse: 13.6.0
   miniflare: 4.20260730.0
   puppeteer-core: 25.17.0
-  tonal: 6.5.1
+  tonal: 6.6.0
   midi-file: 1.2.4
   langium: 4.4.2
   langium-cli: 4.4.1
@@ -210,7 +210,7 @@ catalog:
   "@oxlint/plugins": 1.94.0
   oxlint: 1.94.0
   oxlint-tsgolint: 7.0.2007
-  "@eslint-react/eslint-plugin": 5.30.2
+  "@eslint-react/eslint-plugin": 5.30.3
   "@remotion/eslint-plugin": 4.0.543
   "@tanstack/eslint-plugin-query": 5.107.1
   "@tanstack/eslint-plugin-router": 1.162.0

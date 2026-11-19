@@ -282,8 +282,8 @@ catalogs:
       specifier: 4.1.4
       version: 4.1.4
     '@eslint-react/eslint-plugin':
-      specifier: 5.30.2
-      version: 5.30.2
+      specifier: 5.30.3
+      version: 5.30.3
     '@feature-sliced/filesystem':
       specifier: 3.1.1
       version: 3.1.1
@@ -930,8 +930,8 @@ catalogs:
       specifier: 1.0.3
       version: 1.0.3
     tonal:
-      specifier: 6.5.1
-      version: 6.5.1
+      specifier: 6.6.0
+      version: 6.6.0
     tsconfck:
       specifier: 3.1.6
       version: 3.1.6
@@ -3756,7 +3756,7 @@ importers:
         version: 4.4.2
       tonal:
         specifier: 'catalog:'
-        version: 6.5.1
+        version: 6.6.0
       vscode-languageserver:
         specifier: 'catalog:'
         version: 11.0.0
@@ -3793,7 +3793,7 @@ importers:
         version: 4.1.4
       tonal:
         specifier: 'catalog:'
-        version: 6.5.1
+        version: 6.6.0
     devDependencies:
       typescript:
         specifier: catalog:stack
@@ -3859,7 +3859,7 @@ importers:
         version: 26.6.6
       betterleaks:
         specifier: github:betterleaks/betterleaks#e07e69ba6a441313529b3e72be43ffdcc62bdf86
-        version: git+https://github.com/betterleaks/betterleaks.git#e07e69ba6a441313529b3e72be43ffdcc62bdf86
+        version: https://codeload.github.com/betterleaks/betterleaks/tar.gz/e07e69ba6a441313529b3e72be43ffdcc62bdf86
       effect:
         specifier: catalog:stack
         version: 4.1.4
@@ -3908,7 +3908,7 @@ importers:
         version: link:../fumx-parser
       tonal:
         specifier: 'catalog:'
-        version: 6.5.1
+        version: 6.6.0
     devDependencies:
       '@effect/platform-node':
         specifier: 'catalog:'
@@ -4529,7 +4529,7 @@ importers:
         version: 4.1.4(effect@4.1.4)(vitest@5.1.0)
       '@eslint-react/eslint-plugin':
         specifier: 'catalog:'
-        version: 5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
+        version: 5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
       '@r_masseater/vite-plus-adopt':
         specifier: 'catalog:'
         version: 0.10.2(@voidzero-dev/vite-plus-core@8.3.8000(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(effect@4.1.4)(supports-color@10.2.2)(typescript@7.1.0-beta)(vite-plus@1.7.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.6(@types/node@26.6.6)(@voidzero-dev/vite-plus-core@8.3.8000(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2007)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))
@@ -4739,7 +4739,7 @@ importers:
         version: 1.2.4
       tonal:
         specifier: 'catalog:'
-        version: 6.5.1
+        version: 6.6.0
       ts-content-mapper:
         specifier: 0.1.1
         version: 0.1.1
@@ -7363,8 +7363,8 @@ packages:
     resolution: {integrity: sha512-EriSTlt5OC9/7SXkRSCAhfSxxoSUgBm33OH+IkwbdpgoqsSsUg7y3uh+IICI/Qg4BBWr3U2i39RpmycbxMq4ew==}
     engines: {node: ^12.0.0 || ^14.0.0 || >=16.0.0}
 
-  '@eslint-react/ast@5.30.2':
-    resolution: {integrity: sha512-FY6gkXhWNOHks920Z+wIPMA2ja3sa3bznk32CzcSuJFRhL+YhbZrAd1WG+VHqKXsfK5o5rt2b8x2XzPoaWUgQw==}
+  '@eslint-react/ast@5.30.3':
+    resolution: {integrity: sha512-OcTklJpdSJ+3Nmvl9J4R9WJq3rAQR2QyqAjrF7vY07zSO4chAq+YsUZ0xaVONkJRpT5+u33K6G2WFjBXOatRog==}
     engines: {node: '>=20.19.0'}
     peerDependencies:
       eslint: '*'
@@ -7373,8 +7373,8 @@ packages:
       eslint:
         optional: true
 
-  '@eslint-react/core@5.30.2':
-    resolution: {integrity: sha512-TKDUcbW5cJafb1/ulUZSO9XD01IK8wVJLb2hOsyyC3OzzAUUSx2nVwiyiC4a4dGBi/U8DHeIUNABE3R+6KsWDQ==}
+  '@eslint-react/core@5.30.3':
+    resolution: {integrity: sha512-wa9iMHwRQAGiIMtSGdgXM3Q0v5iKps9vX/6V1eoFxjRql/bnmywH1ZSdRXp3iTzmKYx9SQJryKVHbly1GDBQcw==}
     engines: {node: '>=20.19.0'}
     peerDependencies:
       eslint: '*'
@@ -7383,8 +7383,8 @@ packages:
       eslint:
         optional: true
 
-  '@eslint-react/eslint-plugin@5.30.2':
-    resolution: {integrity: sha512-4iDMVmAMmgwlHDB/MDalTacK1hwdSFkFIw2NdrS7mIp1ugBVTFGzfASST0VrYTzyqdtm2qPCS5Xg/2ppVl++Mg==}
+  '@eslint-react/eslint-plugin@5.30.3':
+    resolution: {integrity: sha512-ObFCVyGqmYG/ojhVubMTqNg38GGifBP0eRauIylw15l7l7np7ilp9QI/VSBFDCCbXUEx1ArEmeRr4LGc7f+wgg==}
     engines: {node: '>=20.19.0'}
     peerDependencies:
       eslint: '*'
@@ -7393,8 +7393,8 @@ packages:
       eslint:
         optional: true
 
-  '@eslint-react/eslint@5.30.2':
-    resolution: {integrity: sha512-F99aikWhxm1lew+xlxknEZ7jPNpwbI2lNRiLG9RY3SLnYO5dvJUL0DPHGMN+BEFF/QXTjOBNSPdG5sKl05Lzig==}
+  '@eslint-react/eslint@5.30.3':
+    resolution: {integrity: sha512-qjN/x9HLe4jXUNU4aWPrbEQQ2YlYHeUMFvTLiGzHI5hCFBsb+sfAyaVaBj1faagXXLrQQkUL6bcnE32Pr9VP+g==}
     engines: {node: '>=20.19.0'}
     peerDependencies:
       eslint: '*'
@@ -7403,8 +7403,8 @@ packages:
       eslint:
         optional: true
 
-  '@eslint-react/jsx@5.30.2':
-    resolution: {integrity: sha512-BVHm40YuRk1WW7B12yWylMhXy4vgDReH7ispj+H8cprJKs5ltRRFp2KjHXhNI5W0r/LRJv9h5WscsUO1bWS4Yw==}
+  '@eslint-react/jsx@5.30.3':
+    resolution: {integrity: sha512-kEyuId4UR0GS7oi3UwKj3bq7gTdXLE8n5HvNCVsS3IKumKIH+IxbPvU944dD0lQzZ+E8AusjT9XC2DqXoKniIQ==}
     engines: {node: '>=20.19.0'}
     peerDependencies:
       eslint: '*'
@@ -7413,8 +7413,8 @@ packages:
       eslint:
         optional: true
 
-  '@eslint-react/shared@5.30.2':
-    resolution: {integrity: sha512-BIVFaUfLRJP9roXzfn5SWJb+LoQcaDMnogB2TLo7hv2iljVpXpSmbSnvxT72kDjmDyM2Sp3trnceA3ktcjisPA==}
+  '@eslint-react/shared@5.30.3':
+    resolution: {integrity: sha512-BCyYj+Cq9iKrwChiYOZ7Ek2vdYmPDozL7AuGYLUtG8VNqPK8ge/SFvHXzL0lPDM6e7S0q2qbsrP/X1XW459VIw==}
     engines: {node: '>=20.19.0'}
     peerDependencies:
       eslint: '*'
@@ -7423,8 +7423,8 @@ packages:
       eslint:
         optional: true
 
-  '@eslint-react/var@5.30.2':
-    resolution: {integrity: sha512-xuh17JbQmzwhBvq0CHB8ZV66t8k0Rgs3HIZMyYhq9LJ0XBt2vy4+2378t+QQxYymeJMa1r3zy2s5ZXyMezEyFQ==}
+  '@eslint-react/var@5.30.3':
+    resolution: {integrity: sha512-w7GvgSyDA5ttTER2olNP2ZNS6GWZNP6hyNTOK5NQlYmOGFbghMccw0nad5pwDbkBMwy50Yh0Kp+FaWVrF7/kOw==}
     engines: {node: '>=20.19.0'}
     peerDependencies:
       eslint: '*'
@@ -11750,53 +11750,53 @@ packages:
   '@tokenizer/token@0.3.0':
     resolution: {integrity: sha512-OvjF+z51L3ov0OyAU0duzsYuvO01PH7x4t6DJx+guahgTnBHkhJdG7soQeTSFLWN3efnHyibZ4Z8l2EuWwJN3A==}
 
-  '@tonaljs/abc-notation@4.9.3':
-    resolution: {integrity: sha512-t1mH17qPEDSHqSa4+enqeYPEf/6vLZD8aavsMGY1eiXGUO3lIc6sjkI2skQEmhFlMCTEx6HO/dJQL3Det7U2Kw==}
+  '@tonaljs/abc-notation@4.9.4':
+    resolution: {integrity: sha512-p+i/2YW7WzVJFA2kbICBcCWC8xHvArpEs+rt2XpSUk73QMBsgEOB/mRsEO5FtL63qfkhOE2c3GbK0WG+LsSNPQ==}
 
   '@tonaljs/array@4.8.6':
     resolution: {integrity: sha512-zBLWZVvZEtbekuV1+60cx5LZcT8tMU1fa1OGzxV7Zz0WuanckMw5Wm0v9LUCHnWxvBMWXlIsoWm6W98A6Mj7bg==}
 
-  '@tonaljs/chord-detect@4.9.3':
-    resolution: {integrity: sha512-L6qFtpM2hFXM7Nexq1EPM+6vt5tElYzFftmtH2UbtwmpS2f6+Lx9iPC8hBuu3HLUFld5vOd+7o7hyzabDAmsDg==}
+  '@tonaljs/chord-detect@4.9.4':
+    resolution: {integrity: sha512-dnsnjRcUEw+lWVFvrqHRIRvQrqKYLZtPC30Zz4aQ3Bcm9+9+htuYtjhfS4d3lVNE5PjzEpIkLDbw5wousWLDQw==}
 
-  '@tonaljs/chord-type@5.2.1':
-    resolution: {integrity: sha512-Zr1HApsSLFklR4VFOlxnM+7eCLQ1VZEOSBTuSLa3cd+Y/LLsbOI+xDxraspcAfPP3tgJziQFkzT864eF47cY3w==}
+  '@tonaljs/chord-type@5.2.2':
+    resolution: {integrity: sha512-/QfGnenWy2YD8PiJQXwVh9dz8GFd9KrWgcvrqfvQbQKG1+tQgZZksfD3dTMOKLP9dxrndzVdpFkD2i1P50+MFA==}
 
-  '@tonaljs/chord@6.2.1':
-    resolution: {integrity: sha512-7K4J8B6xv8usTkKJ/Fg/r5Ay6Nc0TxWc+jr25ijYPJZstJH8gnWMGxsWjFnqjZViu8lrFxa4F384iJtS+X8w+Q==}
+  '@tonaljs/chord@6.2.2':
+    resolution: {integrity: sha512-FJCmTBFglIMwaOBiXVCcgxL0xaG8kFUiVtMeDOiz76ednaVlb45kGU1kB7vfxYxiXldbKIrCWZ1ZWHZ0YzN23Q==}
 
   '@tonaljs/collection@4.9.1':
     resolution: {integrity: sha512-xcWRxcX17qwMKEBAcpkp100eFeRbNnt08FEoomAmbfkpg7i33iNwsR8FFHJ9CnkoMcEVKqLVEGW5hdEXMSjjCg==}
 
-  '@tonaljs/core@5.0.4':
-    resolution: {integrity: sha512-KQ1EcjgduPkBzduJ0FhezndTQZsupqcdulh9kLcUSH6YY1ehDsJzRm3vdXdcvSn5SqHs2oxveM2TENQColAErw==}
+  '@tonaljs/core@5.0.5':
+    resolution: {integrity: sha512-pEiyacTkJj3TPsWPPxDfYxYueA3mXmcQ8SYGGuCPOMqrhgp1EZGMOIwwxTfhvjEZDHpzBoDjMBibiCDFvPSfPg==}
 
   '@tonaljs/duration-value@4.9.1':
     resolution: {integrity: sha512-wX3Q3QM0tTC2ZP7RyWxnOcHh47Z3zf93UaKi0W9RnoNpXWxyiYWzGehPe0FzFRhcjEhh2Fl4qN9M6Feo9+etig==}
 
-  '@tonaljs/interval@5.1.1':
-    resolution: {integrity: sha512-Zqowl7yIlSA45ibMWV4Kcb/VMd06L0GXxi6Qf2pk6ERUNbRtx+D+0S2mmIHLO/VcwkenyyUraUriYTmLiPESXA==}
+  '@tonaljs/interval@5.1.2':
+    resolution: {integrity: sha512-kZwmFnywjELrE/zhS1ZLQHMNEhxXd998QxXmGYCgi/ea7KcFyscY0hczxKGMbijslazeZStt+53C3M7nvwYjdg==}
 
-  '@tonaljs/key@4.11.4':
-    resolution: {integrity: sha512-Mhd+kNNw3l0kmPf4I5wy3zXIXqPj1/QB1bc78Zb+H5tDAT92Gycpa3vlbiKvVZrq6OsUcF9+2TNXO+P1SSbJ3w==}
+  '@tonaljs/key@4.11.5':
+    resolution: {integrity: sha512-hHMbFKt4KY2v/Zh6zpPr4AQfvFRR7xwGGvvn33DbtvDexlcS+R0XXnq+Y7p76SRwQ5HAaWFDJKzG/bwN1GQ3TQ==}
 
-  '@tonaljs/midi@4.10.4':
-    resolution: {integrity: sha512-pEIwjTUiJyVlfVJlG0pYLTSCQ4xoWo+NYLChFMIcrq/KUjdrtGOwgbFVfD2jyff5qgDmH05rRrJBJsVE1gwIkg==}
+  '@tonaljs/midi@4.10.5':
+    resolution: {integrity: sha512-qbkF/yEpdC+41CLBif3RaN+5sH+0tEVF5tc1s5dS/vXzvHSehgQATklUdFFXWJHbE6d86WMhQC+Z6kG62HUbSA==}
 
-  '@tonaljs/mode@4.9.4':
-    resolution: {integrity: sha512-99kkIEVxEyfTwLFO/jUJdaHNHzTLe9B+U4bjVcgjGBFaQEYpn9DZO8/3+HbFMfkucx2wtyo1uY/JS2YGT/E/Aw==}
+  '@tonaljs/mode@4.9.5':
+    resolution: {integrity: sha512-bQVk7luDgqZl8ifs99hMyo/FOCNefzwV+fZeP7yOf70MTjgIw59ZLxS2+Mze7Fy/GpHwbBB2o9sS3OgAsQqDxw==}
 
-  '@tonaljs/note@4.12.3':
-    resolution: {integrity: sha512-UhGXcLgLymnK7ANvdCzi1D1nW+1bj4OhDGe0J82O2V+ofYVdBCKc0w5a79mfGEt01omKARaWeAzf3rgSEopwEQ==}
+  '@tonaljs/note@4.12.4':
+    resolution: {integrity: sha512-MkwSH3X+rCpHoGQeRHy/a/vqUuPxGnv16i+o5Bx2e4xlggGS+KcvlFh+WdFmgfsthwKKF6Tn3PHiGbD9dJI2dw==}
 
-  '@tonaljs/pcset@4.10.3':
-    resolution: {integrity: sha512-LhynuFEyjgPJH4T9VENDRx1CSqKR9kJ2txWTqyxwUoCMnNL3I7UdyxFKPijr2V1IEMplJsk/G1TaPMYVVCdqoA==}
+  '@tonaljs/pcset@4.10.4':
+    resolution: {integrity: sha512-PQerdN9o1ByouiWkqXVKFb09yO0CGpBcTlWOdfPCcs0etx/jyPK71tKP3ck809Mw0uxHX9NhYAyGlKkxfquNtA==}
 
-  '@tonaljs/pitch-distance@5.0.7':
-    resolution: {integrity: sha512-x+tC1izI1+5dzhHf1JRVVggN4pFEKTkbANSLRYEwW6PmUm3uuPPsDwHyHCWE9iwlIEc9YpG8Kc1ioeXGiCQ9xg==}
+  '@tonaljs/pitch-distance@5.1.0':
+    resolution: {integrity: sha512-tmu+wIscERmTz1maDFBgHyA5KG2XowR92thnb641B30C8hhXfGYPX+MU06yb094ZcbDv33CwzZsPww/aokOGSA==}
 
-  '@tonaljs/pitch-interval@6.1.2':
-    resolution: {integrity: sha512-obMQb1Z1rP54BMiJmroCeStHsQyYCuI2MwxadAjvFYl69h2Cv+yBH5/A9Miq25hQi/M2yLjBZtm1nE9opL9Ltg==}
+  '@tonaljs/pitch-interval@6.2.0':
+    resolution: {integrity: sha512-Gy+KvAahvQ7g2U2ISxVPoJJGY8sEmgEW70VZGGeQhOgOsmwj06yu6yUfSQMGLA/4YKWnzcgBd68Cs8EoSChEvw==}
 
   '@tonaljs/pitch-note@6.1.2':
     resolution: {integrity: sha512-xNtUXR6DvFMHyXKgewF0QFv9UIAd8Xxc07HIWOABIGFuKFmgT3znN2TbACSnHJGIKVfSoJhwPen2eok6UdOCwg==}
@@ -11804,35 +11804,35 @@ packages:
   '@tonaljs/pitch@5.0.3':
     resolution: {integrity: sha512-2OpxK/p0NaOymVdlxgJxruFAt2pHfFIkPxkQ3PKQqMXhaza+SXG1Kxpo0jpuAjw946LlQ3KBC+GJRSncjYtoKA==}
 
-  '@tonaljs/progression@4.9.4':
-    resolution: {integrity: sha512-AEwXlVztdlKNgHFDscR5cBzbCkGVjLOZ/gNnxTOCbj3vYaqw8+Fek76ZCCwT1eVkcuD+C690AgTEPrMemENI1g==}
+  '@tonaljs/progression@4.10.0':
+    resolution: {integrity: sha512-AGEciyJKYVeyb0ytWxuru5W3/ul+Y949uHjRAOB/7oFAotDXDl0CPoEE9SlYQr5mb5EkgcpzZd2lRxGuJOHiQg==}
 
-  '@tonaljs/range@4.9.4':
-    resolution: {integrity: sha512-2ZDAy5HmDGt1rySlkqS+jbWsSwhudJJwVZ7JITdCKz4ZU9S0xbGsKvg/jjRv/sFiaEL3EeCKSAC6C4eWz8Y7Vg==}
+  '@tonaljs/range@4.9.5':
+    resolution: {integrity: sha512-C/HU4MBbU9m/jsKW8gKPvrj4ig8k0hd2cWnwHBRViBa+u792D8fH28fQ9nOeZYZjDoXJzj/h1qITOaLNudijIw==}
 
   '@tonaljs/rhythm-pattern@1.0.1':
     resolution: {integrity: sha512-4nMuBnlL9GDX8SoJneiYlMyNxiKynMAA9jf0ubB04sPqe6ALE+sLCNlqcKoYO9ARZ92bUN4Etj5VWMN7pdevDQ==}
 
-  '@tonaljs/roman-numeral@4.9.3':
-    resolution: {integrity: sha512-MnnVYosos1unepZRQd3fGKV5FQXNXs1ijUEN1pL65GuAlEhKIikDUR8nNgl7IoSEp63TpEhKXZXK7efZt1e95w==}
+  '@tonaljs/roman-numeral@4.9.4':
+    resolution: {integrity: sha512-bKHXYWCy+m9PlWsZ1YWOQbzo694c5cz9yqio1rWZUBgR86MLGzdi12UuSsuKStqbgF6xsVpY4bRH9yxwb94Elw==}
 
-  '@tonaljs/scale-type@4.9.4':
-    resolution: {integrity: sha512-yuG4dLCrA9q2X+DpIMrz+4S+8CLCFDBWm+WQh/sJgBaU2ADULjajuYnWPWacBAPpBDVXYYgbvm8Qbs6EzLGvrg==}
+  '@tonaljs/scale-type@4.9.5':
+    resolution: {integrity: sha512-zERFpYMW9bY9wo6MhcAysZ3B+V00acAWtMR0SG0Dfzvil779Fon9SUh3UYtsj4qPOL0B9giQa+9vOSba3V8ICA==}
 
-  '@tonaljs/scale@4.13.6':
-    resolution: {integrity: sha512-Yb+gWXj5G4nTZ8jm+RwFvupVkvZ2NhrLNpPv5WW8nFXjYtMdsGR88fg7Fg3bAxjQSoMAdFY59yXNv7NbfQ0rSg==}
+  '@tonaljs/scale@4.13.7':
+    resolution: {integrity: sha512-TuqpC9W1YUnt120N70vL/OFCCXDJh+bNrOMAfAS7DGLY0vZQDAcPKLU61lRV/QN9ClWfxBF2EdvyTDEuo1CKWQ==}
 
   '@tonaljs/time-signature@4.10.1':
     resolution: {integrity: sha512-ljAA8x1ChYMmYAThAPfUuzLNrFWd+eVuvljUzbgg3Fnmvjnwg4JgTku0kK9wqDZc7NsdngFlS32kzAOS2eUBmw==}
 
-  '@tonaljs/voice-leading@5.1.4':
-    resolution: {integrity: sha512-Qn2RkwjL6zfpiklE9hFKsg7IK69aBKgCZXNmDTJPm6cyReXMrSvO/Ufv7YahfbypHTthL05zE27QviB3SaYJKw==}
+  '@tonaljs/voice-leading@5.1.5':
+    resolution: {integrity: sha512-u2cbiYI4t1Q7CXNUwbW12AJ0q+VGZhlPaFFJHd1hBirw4LEgflTAXXzlIqorQjcXjGHsWwOyBTv7KMah96CrRQ==}
 
-  '@tonaljs/voicing-dictionary@5.1.5':
-    resolution: {integrity: sha512-XALBmXTeR04Z9+IlHFjspLeHDT9wQ9bkU9OGaETCXOZkO5r6KOoxnv7ZvA9nkWVH7AmOagRM/+xEbLgCYe9xag==}
+  '@tonaljs/voicing-dictionary@5.1.6':
+    resolution: {integrity: sha512-7kILs4PQ9tK+w7mJSk9/vo35cvyZ2D1gNfiGo3syaHZgrUf0BSksaSJXTcnY543CCKPj5PIagO23S+Ydd8oQwA==}
 
-  '@tonaljs/voicing@5.1.5':
-    resolution: {integrity: sha512-iNbXna6aCUdiTbl2bxPeSTiUwthDsvJGFyWF0zlNYFCTAW5aSgXUlVPqHpAsCuQuy5QDUIWuyTxWN7qfvwvMNw==}
+  '@tonaljs/voicing@5.1.6':
+    resolution: {integrity: sha512-naQWneRp/6knST4bEOipqMNtqZH9pdKmixOBDM+boFDUHBl8a35BGLp1PO8XfmEaZaOVBulz7DAn9t1+VpOyuw==}
 
   '@tsconfig/strictest@2.0.9':
     resolution: {integrity: sha512-CbwIySRXoGapLZYXqQHF15cg0wQImJa25Ynmubb7816vnHqTdQrmQlSbZxkJrrBusHLbF1kFbNVn8XtxmQ3EpQ==}
@@ -13140,8 +13140,8 @@ packages:
       zod:
         optional: true
 
-  betterleaks@git+https://github.com/betterleaks/betterleaks.git#e07e69ba6a441313529b3e72be43ffdcc62bdf86:
-    resolution: {commit: e07e69ba6a441313529b3e72be43ffdcc62bdf86, repo: https://github.com/betterleaks/betterleaks.git, type: git}
+  betterleaks@https://codeload.github.com/betterleaks/betterleaks/tar.gz/e07e69ba6a441313529b3e72be43ffdcc62bdf86:
+    resolution: {gitHosted: true, integrity: sha512-Nuw5CBCTOf1XTPDu7DNEH0w29VQ4w1PvgCneVx1UVakuF3eAFJorFnMkYyqf2hX4VGSH9HeyUF6Qmd/Ekor8PQ==, tarball: https://codeload.github.com/betterleaks/betterleaks/tar.gz/e07e69ba6a441313529b3e72be43ffdcc62bdf86}
     version: 0.0.0
 
   bignumber.js@9.3.1:
@@ -14220,8 +14220,8 @@ packages:
     peerDependencies:
       eslint: ^9.0.0 || ^10.0.0
 
-  eslint-plugin-react-dom@5.30.2:
-    resolution: {integrity: sha512-YX0m9EiY63duSEZ50g+0N/rE02ucdcbC8YvsM+q15xBOhzus3MUSc9uxWNhiWL4EsLS+PWgHnotZXiO5Ky2gyA==}
+  eslint-plugin-react-dom@5.30.3:
+    resolution: {integrity: sha512-dzlwtHn9gKQJX3wfpHimUXQ1F27XeBTp0jZl7Dnz+upOYePxTG+ctoJ98i395s4iAvZDjgZpNasSkoYNVdS+ZQ==}
     engines: {node: '>=20.19.0'}
     peerDependencies:
       eslint: '*'
@@ -14236,8 +14236,8 @@ packages:
     peerDependencies:
       eslint: ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0-0 || ^9.0.0 || ^10.0.0
 
-  eslint-plugin-react-jsx@5.30.2:
-    resolution: {integrity: sha512-galfERDnmR9kT98LPcAintvRpFea9d6Q8Z/pp9+iw6lJ75TSf8N3mTcAmNOk5C62EYgLJjUFzVpmDaNKQRluzg==}
+  eslint-plugin-react-jsx@5.30.3:
+    resolution: {integrity: sha512-sQUdc/1tcE9nHJYmzKMh2CRy9vNVX1fHadhp/SvTMU+NGG7RtbAh33Ju3KM8iuExHW44a/DQaCfuBaVbvhzvUQ==}
     engines: {node: '>=20.19.0'}
     peerDependencies:
       eslint: '*'
@@ -14246,8 +14246,8 @@ packages:
       eslint:
         optional: true
 
-  eslint-plugin-react-naming-convention@5.30.2:
-    resolution: {integrity: sha512-syppdrla/0mvn2t9QiE1At/mtWpdSKviYXcEcs9dsAJk4VrYqRPZuvAIGWLMy5m7ZrKdx1J3GKAbZtwvt28HeA==}
+  eslint-plugin-react-naming-convention@5.30.3:
+    resolution: {integrity: sha512-0Qr9PyCxJNXPxJLhqHqB5LrWw+I/NntJddmW5ESviF2GHldt+TxE+R61SMl/WVU43R/EGjDAuJZjuLRSqDzjPg==}
     engines: {node: '>=20.19.0'}
     peerDependencies:
       eslint: '*'
@@ -14256,8 +14256,8 @@ packages:
       eslint:
         optional: true
 
-  eslint-plugin-react-rsc@5.30.2:
-    resolution: {integrity: sha512-NP7faU8KQ59Sh371X4Ct3L+NOuxNZxmgFObh9yGLzBgNP64dMg1Jwh58p/E7TS+rr9I1cQsUBADNlEZD4jZlIQ==}
+  eslint-plugin-react-rsc@5.30.3:
+    resolution: {integrity: sha512-GQa+Q44vEQv3w2TwZfcB5FbwCg6YRtbcPXyS/oBKylmjOqsWSUGHQEDqVdeod2OXC43o0vCcE6VuyeEBE7JFWw==}
     engines: {node: '>=20.19.0'}
     peerDependencies:
       eslint: '*'
@@ -14266,8 +14266,8 @@ packages:
       eslint:
         optional: true
 
-  eslint-plugin-react-web-api@5.30.2:
-    resolution: {integrity: sha512-D2/5o0ahnQpJKD+q5t53Dix4VlY9M1YpwTLbd16wyDbWJZgwYsYMGQRNnFjZs4q0jWRnfVmvhSYGxyqdfkuEPw==}
+  eslint-plugin-react-web-api@5.30.3:
+    resolution: {integrity: sha512-AN+f+H+1A1EPXs5supS6MWl8mzhIdNO9MaJ9yopCSsT6hnJZDQFH9xQlvyQGmccuJyhFAxnT6OH01G4KS8+c/A==}
     engines: {node: '>=20.19.0'}
     peerDependencies:
       eslint: '*'
@@ -14276,8 +14276,8 @@ packages:
       eslint:
         optional: true
 
-  eslint-plugin-react-x@5.30.2:
-    resolution: {integrity: sha512-3B1NXU4iy2nSjplhsNfU9L2gueVhJHFj/4gT/ZfZWmCSuhC0XMudFG+88P3+BVyXa49TM3U6R2692lXzIC0GXw==}
+  eslint-plugin-react-x@5.30.3:
+    resolution: {integrity: sha512-/BQ3u/p2cbrRAk11xOWNKKI79frFPIjeu5F4NtoPykQwDgbCud1MlN/2FpjKSMilXtD89UEeYue4QwOLcJ64GA==}
     engines: {node: '>=20.19.0'}
     peerDependencies:
       eslint: '*'
@@ -17502,8 +17502,8 @@ packages:
     resolution: {integrity: sha512-A5F0cM6+mDleacLIEUkmfpkBbnHJFV1d2rprHU2MXNk7mlxHq2zGojA+SRvQD1RoMo9gqjZPWEaKG4v1BQ48lw==}
     engines: {node: ^20.19.0 || ^22.13.0 || >=24}
 
-  tonal@6.5.1:
-    resolution: {integrity: sha512-zIg3eBoRooX6f3bSFpPh/qKWMRrWGbNUVgklqCXDKt8eDi9snJt5UBFhwE3/JkupPV5w+JaeU7Lk0f0sFTFM/Q==}
+  tonal@6.6.0:
+    resolution: {integrity: sha512-wBOwIe7Z6bfT4lk7Rmaj39wrWv/wlZGwRJV1rqaDSO2qP4zgQtHU17D+yKiSx5rFRIZGU5hrsZbDJrHTFnPTsA==}
 
   totalist@3.0.1:
     resolution: {integrity: sha512-sf4i37nQ2LBx4m3wB74y+ubopq6W/dIzXg0FDGjsYnZHVa1Da8FH853wlL2gtUhg+xJXjfk3kUZS3BRoQeoQBQ==}
@@ -19973,7 +19973,7 @@ snapshots:
 
   '@eslint-community/regexpp@4.12.2': {}
 
-  '@eslint-react/ast@5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)':
+  '@eslint-react/ast@5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)':
     dependencies:
       '@typescript-eslint/types': 8.72.2
       '@typescript-eslint/utils': 8.72.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
@@ -19984,13 +19984,13 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@eslint-react/core@5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)':
+  '@eslint-react/core@5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)':
     dependencies:
-      '@eslint-react/ast': 5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
-      '@eslint-react/eslint': 5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
-      '@eslint-react/jsx': 5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
-      '@eslint-react/shared': 5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
-      '@eslint-react/var': 5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
+      '@eslint-react/ast': 5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
+      '@eslint-react/eslint': 5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
+      '@eslint-react/jsx': 5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
+      '@eslint-react/shared': 5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
+      '@eslint-react/var': 5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
       '@typescript-eslint/types': 8.72.2
       '@typescript-eslint/utils': 8.72.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
       ts-pattern: 5.9.2
@@ -20000,27 +20000,27 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@eslint-react/eslint-plugin@5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)':
+  '@eslint-react/eslint-plugin@5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)':
     dependencies:
-      '@eslint-react/ast': 5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
-      '@eslint-react/eslint': 5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
-      '@eslint-react/shared': 5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
+      '@eslint-react/ast': 5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
+      '@eslint-react/eslint': 5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
+      '@eslint-react/shared': 5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
       '@typescript-eslint/scope-manager': 8.72.2
       '@typescript-eslint/types': 8.72.2
       '@typescript-eslint/utils': 8.72.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
-      eslint-plugin-react-dom: 5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
-      eslint-plugin-react-jsx: 5.30.2(patch_hash=b992c01baefacc91e5b12432715428f4c3ec7bc2494b0cbae68d0a20e7e10ebe)(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
-      eslint-plugin-react-naming-convention: 5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
-      eslint-plugin-react-rsc: 5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
-      eslint-plugin-react-web-api: 5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
-      eslint-plugin-react-x: 5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
+      eslint-plugin-react-dom: 5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
+      eslint-plugin-react-jsx: 5.30.3(patch_hash=b992c01baefacc91e5b12432715428f4c3ec7bc2494b0cbae68d0a20e7e10ebe)(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
+      eslint-plugin-react-naming-convention: 5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
+      eslint-plugin-react-rsc: 5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
+      eslint-plugin-react-web-api: 5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
+      eslint-plugin-react-x: 5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
       typescript: 7.1.0-beta
     optionalDependencies:
       eslint: 10.15.0(jiti@2.7.0)(supports-color@10.2.2)
     transitivePeerDependencies:
       - supports-color
 
-  '@eslint-react/eslint@5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)':
+  '@eslint-react/eslint@5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)':
     dependencies:
       '@typescript-eslint/types': 8.72.2
       '@typescript-eslint/utils': 8.72.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
@@ -20030,10 +20030,10 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@eslint-react/jsx@5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)':
+  '@eslint-react/jsx@5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)':
     dependencies:
-      '@eslint-react/ast': 5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
-      '@eslint-react/eslint': 5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
+      '@eslint-react/ast': 5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
+      '@eslint-react/eslint': 5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
       '@typescript-eslint/types': 8.72.2
       '@typescript-eslint/utils': 8.72.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
       typescript: 7.1.0-beta
@@ -20042,9 +20042,9 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@eslint-react/shared@5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)':
+  '@eslint-react/shared@5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)':
     dependencies:
-      '@eslint-react/eslint': 5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
+      '@eslint-react/eslint': 5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
       '@typescript-eslint/utils': 8.72.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
       ts-pattern: 5.9.2
       typescript: 7.1.0-beta
@@ -20054,10 +20054,10 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@eslint-react/var@5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)':
+  '@eslint-react/var@5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)':
     dependencies:
-      '@eslint-react/ast': 5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
-      '@eslint-react/eslint': 5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
+      '@eslint-react/ast': 5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
+      '@eslint-react/eslint': 5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
       '@typescript-eslint/scope-manager': 8.72.2
       '@typescript-eslint/types': 8.72.2
       '@typescript-eslint/utils': 8.72.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
@@ -24373,95 +24373,95 @@ snapshots:
 
   '@tokenizer/token@0.3.0': {}
 
-  '@tonaljs/abc-notation@4.9.3':
+  '@tonaljs/abc-notation@4.9.4':
     dependencies:
-      '@tonaljs/pitch-distance': 5.0.7
+      '@tonaljs/pitch-distance': 5.1.0
       '@tonaljs/pitch-note': 6.1.2
 
   '@tonaljs/array@4.8.6':
     dependencies:
       '@tonaljs/pitch-note': 6.1.2
 
-  '@tonaljs/chord-detect@4.9.3':
+  '@tonaljs/chord-detect@4.9.4':
     dependencies:
-      '@tonaljs/chord-type': 5.2.1
-      '@tonaljs/pcset': 4.10.3
+      '@tonaljs/chord-type': 5.2.2
+      '@tonaljs/pcset': 4.10.4
       '@tonaljs/pitch-note': 6.1.2
 
-  '@tonaljs/chord-type@5.2.1':
+  '@tonaljs/chord-type@5.2.2':
     dependencies:
-      '@tonaljs/pcset': 4.10.3
+      '@tonaljs/pcset': 4.10.4
 
-  '@tonaljs/chord@6.2.1':
+  '@tonaljs/chord@6.2.2':
     dependencies:
-      '@tonaljs/chord-detect': 4.9.3
-      '@tonaljs/chord-type': 5.2.1
+      '@tonaljs/chord-detect': 4.9.4
+      '@tonaljs/chord-type': 5.2.2
       '@tonaljs/collection': 4.9.1
-      '@tonaljs/interval': 5.1.1
-      '@tonaljs/pcset': 4.10.3
-      '@tonaljs/pitch-distance': 5.0.7
+      '@tonaljs/interval': 5.1.2
+      '@tonaljs/pcset': 4.10.4
+      '@tonaljs/pitch-distance': 5.1.0
       '@tonaljs/pitch-note': 6.1.2
-      '@tonaljs/scale-type': 4.9.4
+      '@tonaljs/scale-type': 4.9.5
 
   '@tonaljs/collection@4.9.1': {}
 
-  '@tonaljs/core@5.0.4':
+  '@tonaljs/core@5.0.5':
     dependencies:
       '@tonaljs/pitch': 5.0.3
-      '@tonaljs/pitch-distance': 5.0.7
-      '@tonaljs/pitch-interval': 6.1.2
+      '@tonaljs/pitch-distance': 5.1.0
+      '@tonaljs/pitch-interval': 6.2.0
       '@tonaljs/pitch-note': 6.1.2
 
   '@tonaljs/duration-value@4.9.1': {}
 
-  '@tonaljs/interval@5.1.1':
+  '@tonaljs/interval@5.1.2':
     dependencies:
       '@tonaljs/pitch': 5.0.3
-      '@tonaljs/pitch-distance': 5.0.7
-      '@tonaljs/pitch-interval': 6.1.2
+      '@tonaljs/pitch-distance': 5.1.0
+      '@tonaljs/pitch-interval': 6.2.0
 
-  '@tonaljs/key@4.11.4':
+  '@tonaljs/key@4.11.5':
     dependencies:
-      '@tonaljs/note': 4.12.3
+      '@tonaljs/note': 4.12.4
       '@tonaljs/pitch-note': 6.1.2
-      '@tonaljs/roman-numeral': 4.9.3
+      '@tonaljs/roman-numeral': 4.9.4
 
-  '@tonaljs/midi@4.10.4':
+  '@tonaljs/midi@4.10.5':
     dependencies:
       '@tonaljs/pitch-note': 6.1.2
 
-  '@tonaljs/mode@4.9.4':
+  '@tonaljs/mode@4.9.5':
     dependencies:
       '@tonaljs/collection': 4.9.1
-      '@tonaljs/interval': 5.1.1
-      '@tonaljs/pcset': 4.10.3
-      '@tonaljs/pitch-distance': 5.0.7
+      '@tonaljs/interval': 5.1.2
+      '@tonaljs/pcset': 4.10.4
+      '@tonaljs/pitch-distance': 5.1.0
       '@tonaljs/pitch-note': 6.1.2
-      '@tonaljs/scale-type': 4.9.4
+      '@tonaljs/scale-type': 4.9.5
 
-  '@tonaljs/note@4.12.3':
+  '@tonaljs/note@4.12.4':
     dependencies:
-      '@tonaljs/midi': 4.10.4
+      '@tonaljs/midi': 4.10.5
       '@tonaljs/pitch': 5.0.3
-      '@tonaljs/pitch-distance': 5.0.7
-      '@tonaljs/pitch-interval': 6.1.2
+      '@tonaljs/pitch-distance': 5.1.0
+      '@tonaljs/pitch-interval': 6.2.0
       '@tonaljs/pitch-note': 6.1.2
 
-  '@tonaljs/pcset@4.10.3':
+  '@tonaljs/pcset@4.10.4':
     dependencies:
       '@tonaljs/collection': 4.9.1
       '@tonaljs/pitch': 5.0.3
-      '@tonaljs/pitch-distance': 5.0.7
-      '@tonaljs/pitch-interval': 6.1.2
+      '@tonaljs/pitch-distance': 5.1.0
+      '@tonaljs/pitch-interval': 6.2.0
       '@tonaljs/pitch-note': 6.1.2
 
-  '@tonaljs/pitch-distance@5.0.7':
+  '@tonaljs/pitch-distance@5.1.0':
     dependencies:
       '@tonaljs/pitch': 5.0.3
-      '@tonaljs/pitch-interval': 6.1.2
+      '@tonaljs/pitch-interval': 6.2.0
       '@tonaljs/pitch-note': 6.1.2
 
-  '@tonaljs/pitch-interval@6.1.2':
+  '@tonaljs/pitch-interval@6.2.0':
     dependencies:
       '@tonaljs/pitch': 5.0.3
 
@@ -24471,61 +24471,62 @@ snapshots:
 
   '@tonaljs/pitch@5.0.3': {}
 
-  '@tonaljs/progression@4.9.4':
+  '@tonaljs/progression@4.10.0':
     dependencies:
-      '@tonaljs/chord': 6.2.1
-      '@tonaljs/pitch-distance': 5.0.7
-      '@tonaljs/pitch-interval': 6.1.2
+      '@tonaljs/chord': 6.2.2
+      '@tonaljs/chord-type': 5.2.2
+      '@tonaljs/pitch-distance': 5.1.0
+      '@tonaljs/pitch-interval': 6.2.0
       '@tonaljs/pitch-note': 6.1.2
-      '@tonaljs/roman-numeral': 4.9.3
+      '@tonaljs/roman-numeral': 4.9.4
 
-  '@tonaljs/range@4.9.4':
+  '@tonaljs/range@4.9.5':
     dependencies:
       '@tonaljs/collection': 4.9.1
-      '@tonaljs/midi': 4.10.4
+      '@tonaljs/midi': 4.10.5
 
   '@tonaljs/rhythm-pattern@1.0.1': {}
 
-  '@tonaljs/roman-numeral@4.9.3':
+  '@tonaljs/roman-numeral@4.9.4':
     dependencies:
       '@tonaljs/pitch': 5.0.3
-      '@tonaljs/pitch-interval': 6.1.2
+      '@tonaljs/pitch-interval': 6.2.0
       '@tonaljs/pitch-note': 6.1.2
 
-  '@tonaljs/scale-type@4.9.4':
+  '@tonaljs/scale-type@4.9.5':
     dependencies:
-      '@tonaljs/pcset': 4.10.3
+      '@tonaljs/pcset': 4.10.4
 
-  '@tonaljs/scale@4.13.6':
+  '@tonaljs/scale@4.13.7':
     dependencies:
-      '@tonaljs/chord-type': 5.2.1
+      '@tonaljs/chord-type': 5.2.2
       '@tonaljs/collection': 4.9.1
-      '@tonaljs/note': 4.12.3
-      '@tonaljs/pcset': 4.10.3
-      '@tonaljs/pitch-distance': 5.0.7
+      '@tonaljs/note': 4.12.4
+      '@tonaljs/pcset': 4.10.4
+      '@tonaljs/pitch-distance': 5.1.0
       '@tonaljs/pitch-note': 6.1.2
-      '@tonaljs/scale-type': 4.9.4
+      '@tonaljs/scale-type': 4.9.5
 
   '@tonaljs/time-signature@4.10.1': {}
 
-  '@tonaljs/voice-leading@5.1.4':
+  '@tonaljs/voice-leading@5.1.5':
     dependencies:
-      '@tonaljs/note': 4.12.3
+      '@tonaljs/note': 4.12.4
 
-  '@tonaljs/voicing-dictionary@5.1.5':
+  '@tonaljs/voicing-dictionary@5.1.6':
     dependencies:
-      '@tonaljs/chord': 6.2.1
-      '@tonaljs/note': 4.12.3
-      '@tonaljs/voice-leading': 5.1.4
+      '@tonaljs/chord': 6.2.2
+      '@tonaljs/note': 4.12.4
+      '@tonaljs/voice-leading': 5.1.5
 
-  '@tonaljs/voicing@5.1.5':
+  '@tonaljs/voicing@5.1.6':
     dependencies:
-      '@tonaljs/chord': 6.2.1
-      '@tonaljs/interval': 5.1.1
-      '@tonaljs/note': 4.12.3
-      '@tonaljs/range': 4.9.4
-      '@tonaljs/voice-leading': 5.1.4
-      '@tonaljs/voicing-dictionary': 5.1.5
+      '@tonaljs/chord': 6.2.2
+      '@tonaljs/interval': 5.1.2
+      '@tonaljs/note': 4.12.4
+      '@tonaljs/range': 4.9.5
+      '@tonaljs/voice-leading': 5.1.5
+      '@tonaljs/voicing-dictionary': 5.1.6
 
   '@tsconfig/strictest@2.0.9': {}
 
@@ -25607,7 +25608,7 @@ snapshots:
     optionalDependencies:
       zod: 4.6.7
 
-  betterleaks@git+https://github.com/betterleaks/betterleaks.git#e07e69ba6a441313529b3e72be43ffdcc62bdf86: {}
+  betterleaks@https://codeload.github.com/betterleaks/betterleaks/tar.gz/e07e69ba6a441313529b3e72be43ffdcc62bdf86: {}
 
   bignumber.js@9.3.1: {}
 
@@ -26589,13 +26590,13 @@ snapshots:
     dependencies:
       eslint: 10.15.0(jiti@2.7.0)(supports-color@10.2.2)
 
-  eslint-plugin-react-dom@5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta):
+  eslint-plugin-react-dom@5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta):
     dependencies:
-      '@eslint-react/ast': 5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
-      '@eslint-react/eslint': 5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
-      '@eslint-react/jsx': 5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
-      '@eslint-react/shared': 5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
-      '@eslint-react/var': 5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
+      '@eslint-react/ast': 5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
+      '@eslint-react/eslint': 5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
+      '@eslint-react/jsx': 5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
+      '@eslint-react/shared': 5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
+      '@eslint-react/var': 5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
       '@typescript-eslint/types': 8.72.2
       '@typescript-eslint/utils': 8.72.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
       compare-versions: 6.1.1
@@ -26617,13 +26618,13 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-plugin-react-jsx@5.30.2(patch_hash=b992c01baefacc91e5b12432715428f4c3ec7bc2494b0cbae68d0a20e7e10ebe)(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta):
+  eslint-plugin-react-jsx@5.30.3(patch_hash=b992c01baefacc91e5b12432715428f4c3ec7bc2494b0cbae68d0a20e7e10ebe)(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta):
     dependencies:
-      '@eslint-react/ast': 5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
-      '@eslint-react/core': 5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
-      '@eslint-react/eslint': 5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
-      '@eslint-react/jsx': 5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
-      '@eslint-react/shared': 5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
+      '@eslint-react/ast': 5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
+      '@eslint-react/core': 5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
+      '@eslint-react/eslint': 5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
+      '@eslint-react/jsx': 5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
+      '@eslint-react/shared': 5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
       '@typescript-eslint/types': 8.72.2
       '@typescript-eslint/utils': 8.72.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
       entities: 9.0.0
@@ -26633,13 +26634,13 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-plugin-react-naming-convention@5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta):
+  eslint-plugin-react-naming-convention@5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta):
     dependencies:
-      '@eslint-react/ast': 5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
-      '@eslint-react/core': 5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
-      '@eslint-react/eslint': 5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
-      '@eslint-react/shared': 5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
-      '@eslint-react/var': 5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
+      '@eslint-react/ast': 5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
+      '@eslint-react/core': 5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
+      '@eslint-react/eslint': 5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
+      '@eslint-react/shared': 5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
+      '@eslint-react/var': 5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
       '@typescript-eslint/types': 8.72.2
       '@typescript-eslint/utils': 8.72.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
       ts-pattern: 5.9.2
@@ -26649,13 +26650,13 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-plugin-react-rsc@5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta):
+  eslint-plugin-react-rsc@5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta):
     dependencies:
-      '@eslint-react/ast': 5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
-      '@eslint-react/core': 5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
-      '@eslint-react/eslint': 5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
-      '@eslint-react/shared': 5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
-      '@eslint-react/var': 5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
+      '@eslint-react/ast': 5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
+      '@eslint-react/core': 5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
+      '@eslint-react/eslint': 5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
+      '@eslint-react/shared': 5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
+      '@eslint-react/var': 5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
       '@typescript-eslint/types': 8.72.2
       '@typescript-eslint/utils': 8.72.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
       typescript: 7.1.0-beta
@@ -26664,13 +26665,13 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-plugin-react-web-api@5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta):
+  eslint-plugin-react-web-api@5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta):
     dependencies:
-      '@eslint-react/ast': 5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
-      '@eslint-react/core': 5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
-      '@eslint-react/eslint': 5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
-      '@eslint-react/shared': 5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
-      '@eslint-react/var': 5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
+      '@eslint-react/ast': 5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
+      '@eslint-react/core': 5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
+      '@eslint-react/eslint': 5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
+      '@eslint-react/shared': 5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
+      '@eslint-react/var': 5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
       '@typescript-eslint/types': 8.72.2
       '@typescript-eslint/utils': 8.72.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
       ts-pattern: 5.9.2
@@ -26680,14 +26681,14 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-plugin-react-x@5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta):
+  eslint-plugin-react-x@5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta):
     dependencies:
-      '@eslint-react/ast': 5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
-      '@eslint-react/core': 5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
-      '@eslint-react/eslint': 5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
-      '@eslint-react/jsx': 5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
-      '@eslint-react/shared': 5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
-      '@eslint-react/var': 5.30.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
+      '@eslint-react/ast': 5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
+      '@eslint-react/core': 5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
+      '@eslint-react/eslint': 5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
+      '@eslint-react/jsx': 5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
+      '@eslint-react/shared': 5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
+      '@eslint-react/var': 5.30.3(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
       '@typescript-eslint/scope-manager': 8.72.2
       '@typescript-eslint/types': 8.72.2
       '@typescript-eslint/utils': 8.72.2(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))(supports-color@10.2.2)(typescript@7.1.0-beta)
@@ -30916,31 +30917,31 @@ snapshots:
     dependencies:
       eslint-visitor-keys: 5.0.1
 
-  tonal@6.5.1:
+  tonal@6.6.0:
     dependencies:
-      '@tonaljs/abc-notation': 4.9.3
+      '@tonaljs/abc-notation': 4.9.4
       '@tonaljs/array': 4.8.6
-      '@tonaljs/chord': 6.2.1
-      '@tonaljs/chord-type': 5.2.1
+      '@tonaljs/chord': 6.2.2
+      '@tonaljs/chord-type': 5.2.2
       '@tonaljs/collection': 4.9.1
-      '@tonaljs/core': 5.0.4
+      '@tonaljs/core': 5.0.5
       '@tonaljs/duration-value': 4.9.1
-      '@tonaljs/interval': 5.1.1
-      '@tonaljs/key': 4.11.4
-      '@tonaljs/midi': 4.10.4
-      '@tonaljs/mode': 4.9.4
-      '@tonaljs/note': 4.12.3
-      '@tonaljs/pcset': 4.10.3
-      '@tonaljs/progression': 4.9.4
-      '@tonaljs/range': 4.9.4
+      '@tonaljs/interval': 5.1.2
+      '@tonaljs/key': 4.11.5
+      '@tonaljs/midi': 4.10.5
+      '@tonaljs/mode': 4.9.5
+      '@tonaljs/note': 4.12.4
+      '@tonaljs/pcset': 4.10.4
+      '@tonaljs/progression': 4.10.0
+      '@tonaljs/range': 4.9.5
       '@tonaljs/rhythm-pattern': 1.0.1
-      '@tonaljs/roman-numeral': 4.9.3
-      '@tonaljs/scale': 4.13.6
-      '@tonaljs/scale-type': 4.9.4
+      '@tonaljs/roman-numeral': 4.9.4
+      '@tonaljs/scale': 4.13.7
+      '@tonaljs/scale-type': 4.9.5
       '@tonaljs/time-signature': 4.10.1
-      '@tonaljs/voice-leading': 5.1.4
-      '@tonaljs/voicing': 5.1.5
-      '@tonaljs/voicing-dictionary': 5.1.5
+      '@tonaljs/voice-leading': 5.1.5
+      '@tonaljs/voicing': 5.1.6
+      '@tonaljs/voicing-dictionary': 5.1.6
 
   totalist@3.0.1: {}
 
