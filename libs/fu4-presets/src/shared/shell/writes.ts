@@ -70,8 +70,8 @@ const targetsOf = (name: string, args: readonly SyntaxNode[]): readonly SyntaxNo
 export const descriptorOf = (node: SyntaxNode): Option.Option<string> =>
   pipe(
     Option.fromNullishOr(DESCRIPTOR.exec(node.text)),
-    Option.flatMap((match) => Option.fromNullishOr(match.groups)),
-    Option.flatMap((groups) => Option.fromNullishOr(groups["name"])),
+    Option.flatMapNullishOr((match) => match.groups),
+    Option.flatMapNullishOr((groups) => groups["name"]),
   );
 
 export const commandWrites = (command: SyntaxNode): readonly Write[] => {

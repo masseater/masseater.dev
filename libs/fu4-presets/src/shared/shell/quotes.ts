@@ -6,7 +6,7 @@ import { fieldOf, fieldsOf } from "#/shared/syntax/index.ts";
 import { basenameOf, commandNameOf, literalOf } from "./command-name.ts";
 import { report } from "./finding.ts";
 import type { State } from "./finding.ts";
-import { ancestors } from "./node.ts";
+import { ancestors, keywordOf } from "./node.ts";
 
 const QUOTE = 1;
 const PATH_DEPTH = 2;
@@ -115,13 +115,6 @@ const commandOf = (node: SyntaxNode): string => {
     }
   }
 };
-
-const keywordOf = (node: SyntaxNode): string =>
-  pipe(
-    Arr.head(node.children),
-    Option.map((child) => child.text),
-    Option.getOrElse(() => ""),
-  );
 
 const closestCommand = (node: SyntaxNode): string => {
   for (const parent of ancestors(node)) {

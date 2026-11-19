@@ -6,18 +6,11 @@ import { fieldOf } from "#/shared/syntax/index.ts";
 import { findingAt, report } from "./finding.ts";
 import type { State } from "./finding.ts";
 import { INTERNAL_VARIABLES } from "./internal-variables.ts";
-import { ancestors, parentOf, sameNode } from "./node.ts";
+import { ancestors, keywordOf, parentOf, sameNode } from "./node.ts";
 import { commandWrites, descriptorOf } from "./writes.ts";
 
 const NAMED = new Set(["variable_assignment", "subscript"]);
 const FLAG = 1;
-
-const declarationKeyword = (node: SyntaxNode): string =>
-  pipe(
-    Arr.head(node.children),
-    Option.map((child) => child.text),
-    Option.getOrElse(() => ""),
-  );
 
 const declarationFlags = (node: SyntaxNode): string =>
   pipe(
@@ -36,7 +29,7 @@ const isAssignmentOnly = (command: SyntaxNode): boolean =>
   );
 
 const isExportingDeclaration = (node: SyntaxNode): boolean =>
-  declarationKeyword(node) === "export" || Str.includes("x")(declarationFlags(node));
+  keywordOf(node) === "export" || Str.includes("x")(declarationFlags(node));
 
 const isExported = (node: SyntaxNode): boolean =>
   Option.exists(
@@ -149,7 +142,7 @@ const isLocalReadonly = (node: SyntaxNode, keyword: string): boolean => {
 export const checkMaskedReturns =
   (state: State) =>
   (node: SyntaxNode): void => {
-    const keyword = declarationKeyword(node);
+    const keyword = keywordOf(node);
     if (!DECLARING.has(keyword) || isLocalReadonly(node, keyword)) {
       return;
     }

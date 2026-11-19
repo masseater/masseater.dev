@@ -38,3 +38,10 @@ export const ancestors = (node: SyntaxNode): readonly SyntaxNode[] => {
   }
   return found;
 };
+
+export const keywordOf = (node: SyntaxNode): string =>
+  pipe(
+    Arr.head(node.children),
+    Option.map((child) => child.text),
+    Option.getOrElse(() => ""),
+  );
