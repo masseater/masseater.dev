@@ -1,0 +1,2 @@
+lint#1 syntax-check # fu4 reports the tab at the same place, in the words of its own YAML parser rather than go-yaml
+lint#2 custom # the Go test adds its own rule through onRulesCreated
