@@ -18,8 +18,8 @@ import { expect } from "vite-plus/test";
 import { betterleaks } from "./index.ts";
 
 const FIXTURE = "fixtures/betterleaks-rule-tests.json.gz";
-const KNOWN = "fixtures/betterleaks-rule-tests-known-failures.txt";
 const NO_PATH = "input";
+const NO_DECODING = 0;
 const TIMEOUT = 1_200_000;
 const SEQUENTIAL = { concurrency: 1 } as const;
 
@@ -116,7 +116,11 @@ const isolatedConfig =
       Option.map((rule): H56mRule => ({ ...rule, id: test.rule, skipReport: false })),
       Option.toArray,
     );
-    return { extend: { path: betterleaks, disabledRules }, rules: own };
+    return {
+      extend: { path: betterleaks, disabledRules },
+      maxDecodeDepth: NO_DECODING,
+      rules: own,
+    };
   };
 
 const secretsOf = (
@@ -153,40 +157,7 @@ const isolatedOutcome =
 const differs = (outcome: Outcome): boolean =>
   !Arr.makeEquivalence(Str.Equivalence)(outcome.want, outcome.have);
 
-const knownIds = (text: string): readonly string[] =>
-  pipe(
-    Str.split("\n")(text),
-    Arr.map((line) => Str.trim(Arr.headNonEmpty(Str.split(" #")(line)))),
-    Arr.filter(Str.isNonEmpty),
-  );
-
-interface Verdict {
-  readonly unexpected: readonly Outcome[];
-  readonly fixed: readonly string[];
-}
-
-const verdictOf = (known: readonly string[], outcomes: readonly Outcome[]): Verdict => {
-  const failing = pipe(outcomes, Arr.filter(differs));
-  const failingIds = pipe(
-    failing,
-    Arr.map((outcome) => outcome.id),
-  );
-  return {
-    unexpected: pipe(
-      failing,
-      Arr.filter((outcome) => !Arr.contains(known, outcome.id)),
-    ),
-    fixed: pipe(
-      known,
-      Arr.filter((id) => !Arr.contains(failingIds, id)),
-    ),
-  };
-};
-
 const matchesEveryRuleTest = Effect.gen(function* matchesEveryRuleTest() {
-  const fileSystem = yield* FileSystem.FileSystem;
-  const path = yield* Path.Path;
-  const dir = yield* here;
   const { rules, tests } = yield* recorded;
   const definitions = yield* presetRules;
   const outcomes = yield* Effect.forEach(
@@ -194,8 +165,7 @@ const matchesEveryRuleTest = Effect.gen(function* matchesEveryRuleTest() {
     isolatedOutcome({ rules, definitions }),
     SEQUENTIAL,
   );
-  const known = yield* fileSystem.readFileString(path.join(dir, KNOWN));
-  expect(verdictOf(knownIds(known), outcomes)).toStrictEqual({ unexpected: [], fixed: [] });
+  expect(pipe(outcomes, Arr.filter(differs))).toStrictEqual([]);
 });
 
 const isReported =
@@ -229,7 +199,10 @@ const precedenceOutcome =
 const keepsEveryRuleWithAllRulesOn = Effect.gen(function* keepsEveryRuleWithAllRulesOn() {
   const { tests } = yield* recorded;
   const definitions = yield* presetRules;
-  const detector = yield* makeDetector({ extend: { path: betterleaks } });
+  const detector = yield* makeDetector({
+    extend: { path: betterleaks },
+    maxDecodeDepth: NO_DECODING,
+  });
   const scanText = (test: RuleTest): Effect.Effect<readonly Finding[], H56mError> =>
     detector.scanText({ path: pathOf(test), text: test.input });
   const reported = pipe(tests, Arr.filter(isReported(definitions)));

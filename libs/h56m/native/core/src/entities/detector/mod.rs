@@ -15,7 +15,6 @@ use crate::shared::finding::{Confidence, Finding, digest_of};
 use scanner::{Hit, Scanner};
 
 const ALLOW_MARKER: &[u8] = b"h56m:allow";
-const BINARY_PROBE: usize = 8000;
 
 static COMPILED: LazyLock<Mutex<HashMap<String, Arc<Scanner>>>> =
     LazyLock::new(|| Mutex::new(HashMap::new()));
@@ -146,9 +145,6 @@ impl Detector {
     }
 
     pub fn scan(&self, path: &str, text: &[u8]) -> Result<Vec<Finding>> {
-        if text[..text.len().min(BINARY_PROBE)].contains(&0) {
-            return Ok(Vec::new());
-        }
         let decoded = Decoded::new(text);
         let mut findings: Vec<Finding> = self
             .scanner
@@ -240,6 +236,25 @@ mod tests {
         let found = found(&detector(&defaults()), "a.ts", &format!("{encoded}\n"));
         assert_eq!(found.len(), 1);
         assert!(found[0].encoded);
+        assert_eq!(found[0].secret, TOKEN);
+    }
+
+    #[test]
+    fn a_decode_depth_of_zero_reads_only_the_text_as_written() {
+        let encoded = concat!(
+            "a2V5OiBnaHBf",
+            "NEZxOHNMbTJadDlXbjZSYjFZYzNYdjdIazVQZDBKYThRZTJU"
+        );
+        let config = json!({ "extend": { "path": PRESET }, "maxDecodeDepth": 0 });
+        assert_eq!(rules(&detector(&config), &format!("{encoded}\n")), NONE);
+    }
+
+    #[test]
+    fn finds_a_secret_after_binary_bytes() {
+        let mut text = vec![0, 159, 146, 150, 255, b'\n'];
+        text.extend_from_slice(format!("token = \"{TOKEN}\"\n").as_bytes());
+        let found = detector(&defaults()).scan("a.bin", &text).unwrap();
+        assert_eq!(found.len(), 1);
         assert_eq!(found[0].secret, TOKEN);
     }
 
