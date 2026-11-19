@@ -70,15 +70,15 @@ const failMalformed = ({ fail, project }: Env, uses: Text): void => {
 
 const checkUses = (env: Env, call: WorkflowCall, uses: Text): void => {
   const { fail } = env;
+  if (isSelfReferenceWithRef(uses.value)) {
+    fail(uses, selfReferenceError(uses.value));
+    return;
+  }
   if (isLocalFormat(uses.value)) {
     checkLocal(env, call, uses);
     return;
   }
   if (isRepoFormat(uses.value)) {
-    return;
-  }
-  if (isSelfReferenceWithRef(uses.value)) {
-    fail(uses, selfReferenceError(uses.value));
     return;
   }
   failMalformed(env, uses);

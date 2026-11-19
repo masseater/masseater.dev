@@ -1,0 +1,2 @@
+git add -A deps/openssl/openssl
+git commit -m "deps: upgrade openssl sources to openssl-$NEW_VERSION"

@@ -30,19 +30,19 @@ The engine ports code from Betterleaks, which is under MIT, and embeds its word 
 
 ## Comparison
 
-Measured on 2026-11-18 on linux x64, 4 CPUs with [lint-bench](https://github.com/masseater/masseater.dev/tree/main/tools/lint-bench), which keeps the full results in [results.md](https://github.com/masseater/masseater.dev/blob/main/tools/lint-bench/results/results.md). Cold runs drop the page cache and the tools' caches first. "Same as ours", "Only ours" and "Only theirs" compare findings by file, line and rule where both tools use the same rules.
+Measured on 2026-11-19 on linux x64, 4 CPUs with [lint-bench](https://github.com/masseater/masseater.dev/tree/main/tools/lint-bench), which keeps the full results in [results.md](https://github.com/masseater/masseater.dev/blob/main/tools/lint-bench/results/results.md). Cold runs drop the page cache and the tools' caches first. "Same as ours", "Only ours" and "Only theirs" compare findings by file, line and rule where both tools use the same rules.
 
-h56m uses the Betterleaks rules, but reports findings that Betterleaks drops: low-confidence `generic-password` and `generic-api-key` matches in test fixtures. This is a difference to fix in h56m, not an intended one.
+h56m uses the Betterleaks rules and, like Betterleaks, scans only the lines each commit adds. Its findings match Betterleaks on both repositories. It runs 2 to 3 times slower than Betterleaks.
 
 ### masseater.dev
 
 | Tool        | Version                             | Cold   | Warm            | Peak RSS | Findings | Same as ours | Only ours | Only theirs |
 | ----------- | ----------------------------------- | ------ | --------------- | -------- | -------- | ------------ | --------- | ----------- |
-| Kingfisher  | 2.19.1                              | 8.05 s | 714 ms ± 27 ms  | 157 MB   | 0        |              |           |             |
-| gitleaks    | 8.30.1                              | 864 ms | 784 ms ± 28 ms  | 72 MB    | 0        |              |           |             |
-| **h56m**    | workspace, h56m-presets betterleaks | 985 ms | 803 ms ± 37 ms  | 280 MB   | 5        |              |           |             |
-| Betterleaks | 2.0.0-rc.9                          | 1.58 s | 1.62 s ± 70 ms  | 118 MB   | 0        | 0            | 5         | 0           |
-| TruffleHog  | 3.99.9                              | 5.76 s | 8.48 s ± 657 ms | 185 MB   | 0        |              |           |             |
+| Betterleaks | 2.0.0-rc.9                          | 369 ms | 328 ms ± 29 ms  | 82 MB    | 1        | 1            | 0         | 0           |
+| gitleaks    | 8.30.1                              | 805 ms | 652 ms ± 25 ms  | 63 MB    | 1        |              |           |             |
+| **h56m**    | workspace, h56m-presets betterleaks | 1.03 s | 740 ms ± 19 ms  | 254 MB   | 1        |              |           |             |
+| Kingfisher  | 2.19.1                              | 9.10 s | 740 ms ± 20 ms  | 178 MB   | 0        |              |           |             |
+| TruffleHog  | 3.99.9                              | 5.96 s | 9.89 s ± 477 ms | 185 MB   | 0        |              |           |             |
 
 - h56m: Commits from the base to HEAD, Betterleaks default rules, no live validation
 - Betterleaks: Commits from the base to HEAD, Betterleaks default rules, no live validation
@@ -54,11 +54,11 @@ h56m uses the Betterleaks rules, but reports findings that Betterleaks drops: lo
 
 | Tool        | Version                             | Cold    | Warm             | Peak RSS | Findings | Same as ours | Only ours | Only theirs |
 | ----------- | ----------------------------------- | ------- | ---------------- | -------- | -------- | ------------ | --------- | ----------- |
-| Betterleaks | 2.0.0-rc.9                          | 689 ms  | 646 ms ± 51 ms   | 370 MB   | 0        | 0            | 11        | 0           |
-| gitleaks    | 8.30.1                              | 1.23 s  | 1.10 s ± 71 ms   | 71 MB    | 3        |              |           |             |
-| Kingfisher  | 2.19.1                              | 8.49 s  | 1.21 s ± 64 ms   | 231 MB   | 0        |              |           |             |
-| **h56m**    | workspace, h56m-presets betterleaks | 2.58 s  | 2.29 s ± 94 ms   | 340 MB   | 11       |              |           |             |
-| TruffleHog  | 3.99.9                              | 16.40 s | 30.30 s ± 2.40 s | 185 MB   | 0        |              |           |             |
+| Betterleaks | 2.0.0-rc.9                          | 722 ms  | 674 ms ± 23 ms   | 387 MB   | 0        | 0            | 0         | 0           |
+| gitleaks    | 8.30.1                              | 1.31 s  | 1.18 s ± 51 ms   | 72 MB    | 3        |              |           |             |
+| Kingfisher  | 2.19.1                              | 9.92 s  | 1.36 s ± 41 ms   | 204 MB   | 0        |              |           |             |
+| **h56m**    | workspace, h56m-presets betterleaks | 2.19 s  | 1.96 s ± 36 ms   | 436 MB   | 0        |              |           |             |
+| TruffleHog  | 3.99.9                              | 14.07 s | 30.49 s ± 1.67 s | 185 MB   | 0        |              |           |             |
 
 - h56m: Commits from the base to HEAD, Betterleaks default rules, no live validation
 - Betterleaks: Commits from the base to HEAD, Betterleaks default rules, no live validation

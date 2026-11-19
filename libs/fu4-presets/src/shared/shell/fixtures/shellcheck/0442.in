@@ -1,0 +1,8 @@
+cd node
+read -ra EXTRA_ARGS <<< "$TEST_ARGS"
+python3 tools/test.py \
+  --repeat "$REPEAT" \
+  -j "$JOBS" \
+  -p actions \
+  "${EXTRA_ARGS[@]}" \
+  "$TEST_PATH"

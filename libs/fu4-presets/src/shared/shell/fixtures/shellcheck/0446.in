@@ -1,0 +1,1 @@
+make build-ci -j4 V=1 CONFIG_FLAGS="--error-on-warn --v8-enable-temporal-support --with-perfetto"

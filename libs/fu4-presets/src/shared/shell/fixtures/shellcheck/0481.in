@@ -1,0 +1,8 @@
+commit_list=$(gh pr list --repo "$GITHUB_REPOSITORY" \
+  --head "$PR_BRANCH" --base "$TARGET_BRANCH" --state open \
+  --json commits,isCrossRepository \
+  --jq 'first(.[] | select(.isCrossRepository | not)).commits[]?.oid')
+if [ -n "$commit_list" ]; then
+  git fetch --depth=2 --no-tags origin $commit_list
+  git cherry-pick --empty=drop $commit_list
+fi

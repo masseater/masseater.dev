@@ -1,0 +1,11 @@
+if [[ -n "_______________________________________" ]]; then
+  number="_______________________________________"
+  link="https://github.com/________________________/pull/$number"
+  echo "message=The PR (#$number) requires review from Node.js maintainers. See: $link" >> "$GITHUB_OUTPUT"
+  echo "title=$TITLE_PR" >> "$GITHUB_OUTPUT"
+else
+  number="________________________________"
+  link="https://github.com/________________________/issues/$number"
+  echo "message=The issue (#$number) requires review from Node.js maintainers. See: $link" >> "$GITHUB_OUTPUT"
+  echo "title=$TITLE_ISSUE" >> "$GITHUB_OUTPUT"
+fi

@@ -1,4 +1,5 @@
 import type { Mix } from "@masseater.dev/fumx-studio/plugin/plugin";
+import { Option } from "effect";
 
 import { cutUp } from "./cuts.ts";
 import { mastered } from "./master.ts";
@@ -31,5 +32,6 @@ export const masterPass = ({ session: { life, stems }, main }: Pass): Mix => {
       { kind: "gain", curve: out.limit, every: MASTER.limit.every },
     ],
     lanes,
+    live: Option.none(),
   };
 };
