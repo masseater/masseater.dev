@@ -1,0 +1,1 @@
+configSchema#14 # zizmor's JSON Schema rejects an unknown audit name, but zizmor itself loads it (rules is a map of any names); fu4 follows zizmor
