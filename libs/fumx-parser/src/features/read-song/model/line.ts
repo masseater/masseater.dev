@@ -4,7 +4,7 @@ import { ticksOf } from "#/shared/lib/ticks.ts";
 import { ratioOf } from "#/shared/lib/units.ts";
 import type { Event, Rest, Sounding } from "#generated/langium/ast.ts";
 
-import { nudgeOf } from "./attributes.ts";
+import { nudgeOf, nudgeSecondsOf } from "./attributes.ts";
 import { headItemsOf } from "./heads.ts";
 import type { Item, LineKind } from "./items.ts";
 import { problemAt } from "./problem.ts";
@@ -85,6 +85,7 @@ const soundingOf =
         offset: NONE,
         length: length.value,
         nudgeMilliseconds: nudgeOf(sounding.attributes),
+        nudgeSeconds: nudgeSecondsOf(sounding.attributes),
         ...sourceOf(sounding),
       },
     })(sounding);

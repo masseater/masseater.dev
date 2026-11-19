@@ -4,6 +4,7 @@ export interface Lane {
   readonly high: number;
   readonly log?: number;
   readonly unit: string;
+  readonly shade?: boolean;
 }
 
 export interface View {

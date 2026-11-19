@@ -1,13 +1,14 @@
 import type { Song } from "@r_masseater/fumx-parser";
 import { Effect } from "effect";
 
+import type { Lane } from "#/shared/lib/daw/view.ts";
+import type { Stage } from "#/shared/lib/plugin/plugin.ts";
 import { breathe } from "#/shared/lib/studio/breathe.ts";
 import { curveApplied } from "#/shared/lib/studio/curves.ts";
 
 import { mixedDown } from "./mixdown.ts";
 import type { Stem } from "./mixdown.ts";
 import { EVERY, stageOf } from "./stages.ts";
-import type { Curve } from "./stages.ts";
 import type { Unplayable } from "./unplayable.ts";
 
 export interface Mixing {
@@ -21,8 +22,8 @@ export interface Mastered {
   readonly stems: readonly Stem[];
   readonly left: Float32Array<ArrayBuffer>;
   readonly right: Float32Array<ArrayBuffer>;
-  readonly every: number;
-  readonly stages: readonly Readonly<Curve>[];
+  readonly stages: readonly Stage[];
+  readonly lanes: Readonly<Record<string, Lane>>;
 }
 
 export const mastered = ({ song, frames, stems }: Mixing): Effect.Effect<Mastered, Unplayable> =>
@@ -32,11 +33,11 @@ export const mastered = ({ song, frames, stems }: Mixing): Effect.Effect<Mastere
     const stages = yield* Effect.forEach(
       song.master,
       (effect) =>
-        Effect.map(stageOf(frames)(mix)(effect), (curve) => {
+        Effect.map(stageOf(frames)(mix)(effect), (curve): Stage => {
           curveApplied(frames)({ curve, every: EVERY })(mix);
-          return curve;
+          return { kind: "gain", curve, every: EVERY };
         }),
       { concurrency: 1 },
     );
-    return { frames, stems, left: mix.left, right: mix.right, every: EVERY, stages };
+    return { frames, stems, left: mix.left, right: mix.right, stages, lanes: {} };
   });

@@ -64,6 +64,7 @@ const stylesOf = (song: Song): readonly TrackStyle[] => {
   const names = [
     ...pipe(
       song.tracks,
+      Arr.filter((track) => Option.isNone(track.into)),
       Arr.map((track) => ({ name: track.name, tone: "full" as const })),
     ),
     ...pipe(
@@ -102,7 +103,9 @@ export const structureOf = (song: Song): Structure => {
       onSome: (groove) => groove.amount,
     }),
     bars: song.bars.length,
-    tail: Math.max(NONE, clock.end - clock.secondsAt(lastTick(song))),
+    tail: Option.getOrElse(song.tailSeconds, () =>
+      Math.max(NONE, clock.end - clock.secondsAt(lastTick(song))),
+    ),
     sections: sectionsOf(song),
     marks: marksOf(song),
     tracks: stylesOf(song),

@@ -23,10 +23,10 @@ export const trackStem =
   (track: Song["tracks"][number]): Effect.Effect<Stem, Unplayable> =>
     Effect.gen(function* trackRendered() {
       yield* breathe;
-      const bus = yield* played(context)(track);
+      const { bus, events } = yield* played(context)(track);
       yield* chained(context)(bus)(track.fx);
       sentOut(context.frames)(context.buses)(bus)(track);
-      return { name: track.name, bus, mixer: track.mixer };
+      return { name: track.name, bus, events, mixer: track.mixer };
     });
 
 export const busStem =
@@ -38,5 +38,5 @@ export const busStem =
         context.buses.get(declared.name) ?? busOf(context.frames)({ name: declared.name });
       yield* chained(context)(bus)(declared.fx);
       sentOut(context.frames)(context.buses)(bus)(declared);
-      return { name: declared.name, bus, mixer: declared.mixer };
+      return { name: declared.name, bus, events: [], mixer: declared.mixer };
     });
