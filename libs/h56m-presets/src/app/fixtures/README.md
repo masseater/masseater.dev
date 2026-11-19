@@ -2,7 +2,7 @@
 
 `betterleaks-rule-tests.json.gz` holds every test of every rule in Betterleaks at commit `e07e69ba6a441313529b3e72be43ffdcc62bdf86` (v2.0.0-rc.9), the commit that the `betterleaks` dev dependency pins. It is gzipped so that secret scanners do not read the test secrets. `LICENSE` is the Betterleaks license (MIT).
 
-`src/app/betterleaks-rules.test.ts` runs them the way Betterleaks' `rules/rules_test.go` does: `TestRules` scans each input with the rule and its components alone, and `TestDefaultConfigPrecedence` scans each positive input with every rule on. Tests that do not match are listed in `betterleaks-rule-tests-known-failures.txt` with the reason.
+`src/app/betterleaks-rules.test.ts` runs them the way Betterleaks' `rules/rules_test.go` does: `TestRules` scans each input with the rule and its components alone, and `TestDefaultConfigPrecedence` scans each positive input with every rule on. Both run without decoding, as Betterleaks runs them, and every test must match.
 
 Record it again when the pin moves. Put the program below at `cmd/dumptests/main.go` in a Betterleaks checkout of the pinned commit, then run `go run ./cmd/dumptests | gzip -9 -n > betterleaks-rule-tests.json.gz`.
 

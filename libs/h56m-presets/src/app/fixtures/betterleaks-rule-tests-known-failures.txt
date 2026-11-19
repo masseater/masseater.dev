@@ -1,4 +1,0 @@
-gcp-service-account/bare secret # Betterleaks runs its rule tests without decoding; h56m decodes up to depth 5 as the Betterleaks CLI does, and also reports the percent-decoded URL
-generic-credential-uri/true positive 10 # same: h56m also reports the percent-decoded password
-generic-password/false positive 26 # same: h56m also reports the base64-decoded value
-kubernetes-secret-yaml/true positive 7 # same: h56m also reports the base64-decoded value
