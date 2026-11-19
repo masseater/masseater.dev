@@ -6,7 +6,8 @@ import { ChildProcess } from "effect/process";
 
 import { publishedProjects } from "#/entities/workspace/index.ts";
 import type { WorkspaceProject } from "#/entities/workspace/index.ts";
-import type { Problem, RuleName } from "#/shared/lib/problem.ts";
+import { problemInFile } from "#/shared/lib/problem.ts";
+import type { RuleName } from "#/shared/lib/problem.ts";
 import { RepositoryFiles } from "#/shared/lib/repository-files.ts";
 
 const RULE: RuleName = "published-skills";
@@ -14,18 +15,11 @@ const KEYWORD = "tanstack-intent";
 const SKILLS = "skills";
 const MANIFEST_FILE = "package.json";
 const SKILL_FILE = "SKILL.md";
-const FIRST = 1;
 const SUCCEEDED = 0;
 const SYNC = "Run vp exec intent maintainer sync in the repository root.";
 const INTENT_CLI = fileURLToPath(new URL("./cli.mjs", import.meta.resolve("@tanstack/intent")));
 
-const problemAt = (file: string, message: string): Problem => ({
-  file,
-  line: FIRST,
-  column: FIRST,
-  rule: RULE,
-  message,
-});
+const problemAt = problemInFile(RULE);
 
 const skillDirectoriesIn = (
   files: typeof RepositoryFiles.Service,
