@@ -1,3 +1,4 @@
+import { flagIn, keyOf, textIn } from "@masseater.dev/fumx-studio/plugin/args";
 import type {
   InstrumentPlugin,
   Voice,
@@ -5,7 +6,6 @@ import type {
 } from "@masseater.dev/fumx-studio/plugin/plugin";
 import { Option } from "effect";
 
-import { flagIn, keyOf, textIn } from "./lib/args.ts";
 import { spokenOf, wordIn } from "./voice/words.ts";
 
 const cache = new Map<string, Voice>();
