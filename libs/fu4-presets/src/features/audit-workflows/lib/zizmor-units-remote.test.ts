@@ -13,7 +13,7 @@ import {
 import { afterAll, expect, test } from "vite-plus/test";
 
 import { endpointsOf } from "#/features/audit-workflows/api/endpoints.ts";
-import { decodePacket, encodePackets } from "#/shared/git-protocol/pkt-line.ts";
+import { encodePackets, packetAt } from "#/shared/git-protocol/pkt-line.ts";
 
 import { bestTag } from "./github-refs.ts";
 import { FIXTURE, KNOWN, Recorded, knownIds, verdictOf } from "./zizmor-units.test.support.ts";
@@ -22,6 +22,7 @@ import type { Outcome, Units } from "./zizmor-units.test.support.ts";
 type Case<Kind extends keyof Units> = Units[Kind][number];
 
 const ERROR = "error";
+const FIRST = 0;
 
 const textDecoder = new TextDecoder();
 
@@ -61,10 +62,15 @@ const wantDecoded = (found: Case<"pktDecode">): unknown => {
   return ERROR;
 };
 
+const firstPacket = (bytes: readonly number[]): unknown => {
+  const step = packetAt(Uint8Array.from(bytes))(FIRST);
+  return Result.match(step, { onFailure: () => ERROR, onSuccess: ([packet]) => packet });
+};
+
 const decoded = (found: Case<"pktDecode">): Outcome => ({
   id: found.id,
   want: wantDecoded(found),
-  have: Result.getOrElse(decodePacket(Uint8Array.from(found.bytes)), (): unknown => ERROR),
+  have: firstPacket(found.bytes),
 });
 
 const outcomesOf = (units: Units): readonly Outcome[] => [

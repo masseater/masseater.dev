@@ -30,7 +30,7 @@ const encodeOne: (packet: Packet) => string = Match.type<Packet>().pipe(
 export const encodePackets = (packets: readonly Packet[]): Uint8Array =>
   encoder.encode(pipe(packets, Arr.map(encodeOne), Arr.join("")));
 
-type Step = readonly [Packet, number];
+export type Step = readonly [Packet, number];
 
 const lengthAt =
   (bytes: Uint8Array) =>
@@ -56,7 +56,7 @@ const dataAt =
     return Result.succeed([{ type: "data", data }, end]);
   };
 
-const packetAt =
+export const packetAt =
   (bytes: Uint8Array) =>
   (position: number): Result.Result<Step, string> =>
     Result.flatMap(lengthAt(bytes)(position), (length) => {
@@ -71,9 +71,6 @@ const packetAt =
       }
       return dataAt(bytes, position)(length);
     });
-
-export const decodePacket = (bytes: Uint8Array): Result.Result<Packet, string> =>
-  Result.map(packetAt(bytes)(START), ([packet]) => packet);
 
 export const decodePackets = (bytes: Uint8Array): Result.Result<readonly Packet[], string> => {
   const packets: Packet[] = [];
