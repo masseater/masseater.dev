@@ -91,7 +91,7 @@ const call = (client: string, name: string, args: Args): Effect.Effect<Called> =
     });
     const response = yield* Effect.promise(() =>
       createMcpHandler(registerTools).fetch(mcpRequest(body), {
-        authInfo: authInfoOf({ azp: client, clientId: undefined }),
+        authInfo: authInfoOf({ azp: client, clientId: client }),
       }),
     );
     const text = yield* Effect.promise(() => response.text());

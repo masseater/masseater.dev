@@ -1,6 +1,4 @@
-import { MeteredMcpServer } from "@masseater.dev/mcp-tool-call";
-import type { McpServer } from "@modelcontextprotocol/server";
-import { env } from "cloudflare:workers";
+import { McpServer } from "@modelcontextprotocol/server";
 import { pipe } from "effect";
 
 import { registerTokenTools } from "#/features/issue-tokens/index.server.ts";
@@ -15,7 +13,7 @@ const SERVER_INFO = { name: SITE_NAME, version: "0.0.0", websiteUrl: SITE_ORIGIN
 
 export const registerTools = (): McpServer =>
   pipe(
-    new MeteredMcpServer(SERVER_INFO, env.TOOL_CALLS),
+    new McpServer(SERVER_INFO),
     registerLifeTools,
     registerWatashiTools,
     registerConversationTools,

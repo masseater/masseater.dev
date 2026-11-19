@@ -1,6 +1,4 @@
-import { MeteredMcpServer } from "@masseater.dev/mcp-tool-call";
-import type { McpServer } from "@modelcontextprotocol/server";
-import { env } from "cloudflare:workers";
+import { McpServer } from "@modelcontextprotocol/server";
 import { pipe } from "effect";
 
 import {
@@ -17,7 +15,7 @@ const SERVER_INFO = { name: "med-db", version: "0.0.0", websiteUrl: SITE_ORIGIN 
 
 export const buildServer = (): McpServer =>
   pipe(
-    new MeteredMcpServer(SERVER_INFO, env.TOOL_CALLS),
+    new McpServer(SERVER_INFO),
     registerReadTools,
     registerPersonTools,
     registerSongTools,

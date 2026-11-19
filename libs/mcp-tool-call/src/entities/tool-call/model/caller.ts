@@ -1,9 +1,13 @@
 import type { AuthInfo } from "@modelcontextprotocol/server";
-import { Option } from "effect";
+import { Option, pipe } from "effect";
 
 export type CallerClaims = Readonly<{ azp: unknown; clientId: unknown }>;
 
-const UNKNOWN_CLIENT = "unknown";
+export type CallContext = Readonly<{
+  http?: Readonly<{ authInfo?: Readonly<{ clientId: string }> | undefined }> | undefined;
+}>;
+
+export const UNKNOWN_CLIENT = "unknown";
 
 const NO_TOKEN = "";
 
@@ -16,7 +20,10 @@ export const authInfoOf = ({ azp, clientId }: CallerClaims): AuthInfo => ({
   scopes: [],
 });
 
-export type CallContext = Readonly<{ http?: Readonly<{ authInfo?: AuthInfo }> | undefined }>;
-
 export const clientOf = (ctx: CallContext): string =>
-  ctx.http?.authInfo?.clientId ?? UNKNOWN_CLIENT;
+  pipe(
+    Option.fromNullishOr(ctx.http),
+    Option.flatMap(({ authInfo }) => Option.fromNullishOr(authInfo)),
+    Option.map(({ clientId }) => clientId),
+    Option.getOrElse(() => UNKNOWN_CLIENT),
+  );
