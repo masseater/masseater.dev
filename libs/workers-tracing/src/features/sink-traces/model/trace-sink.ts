@@ -24,7 +24,7 @@ const sinkMain = (): string =>
 export const traceSink = Effect.fn("traceSink")(function* traceSink({
   destination = DEFAULT_DESTINATION,
   workerName = `${destination}-sink`,
-  logpush = false,
+  logpush = true,
   cpuMs = DEFAULT_CPU_MS,
 }: TraceSinkProps = {}) {
   const token = yield* makeRandom("TraceSinkToken");
