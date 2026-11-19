@@ -36,7 +36,7 @@ const labelTable =
       Option.getOrElse(() => node),
     );
 
-export const rehypeTableLabel = (): Transform<Root, Root> => (tree) => ({
+export const rehypeTableLabel = (): ((tree: Root) => Root) => (tree) => ({
   ...tree,
   children: pipe(
     tree.children,

@@ -83,10 +83,13 @@ export const useRailDrag = (): ((press: Press) => void) => {
         },
         onRelease: (type) => {
           root.removeAttribute(RESIZING);
-          if (open && drag.moved) {
-            save(drag.width);
+          if (drag.moved) {
+            if (open) {
+              save(drag.width);
+            }
+            return;
           }
-          if (type === RELEASED && !drag.moved) {
+          if (type === RELEASED) {
             toggle();
           }
         },
