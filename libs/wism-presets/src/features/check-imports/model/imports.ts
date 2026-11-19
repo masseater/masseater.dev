@@ -16,6 +16,7 @@ export const LINK_TARGET = "link-target";
 
 const MARKDOWN = /\.md$/iu;
 const SIBLING = ".";
+const NESTED = "/";
 const ONE = 1;
 
 interface Hop {
@@ -41,7 +42,10 @@ const finding = (edge: GraphEdge, rule: string, message: string): Finding => ({
 
 const startsCross = (prefix: string, inner: string): boolean => {
   const rest = Str.slice(prefix.length)(inner);
-  return Str.startsWith(prefix)(inner) && (Str.isEmpty(rest) || Str.startsWith(SIBLING)(rest));
+  return (
+    Str.startsWith(prefix)(inner) &&
+    (Str.isEmpty(rest) || Str.startsWith(SIBLING)(rest) || Str.startsWith(NESTED)(rest))
+  );
 };
 
 const crossing = ({ layers, source, target }: Omit<Hop, "edge">): boolean =>
@@ -51,7 +55,11 @@ const crossing = ({ layers, source, target }: Omit<Hop, "edge">): boolean =>
       slice: source.slice,
       inner: target.inner,
     }),
-    Option.exists(({ cross, slice, inner }) => startsCross(`${cross}/${baseName(slice)}`, inner)),
+    Option.exists(
+      ({ cross, slice, inner }) =>
+        startsCross(`${cross}/${slice}`, inner) ||
+        startsCross(`${cross}/${baseName(slice)}`, inner),
+    ),
   );
 
 const otherSlice = ({ layers, source, target }: Omit<Hop, "edge">): boolean =>
@@ -103,8 +111,7 @@ const wildcardFinding = (
 ): Option.Option<Finding> =>
   pipe(
     asLayer(position),
-    Option.flatMap(({ inner }) => inner),
-    Option.filter((inner) => edge.wildcard && layout.isEntry(instance)(inner)),
+    Option.filter(() => edge.wildcard && layout.isEntry(instance)(baseName(edge.from))),
     Option.map(() =>
       finding(
         edge,
