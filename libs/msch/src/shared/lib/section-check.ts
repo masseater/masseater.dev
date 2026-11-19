@@ -1,6 +1,7 @@
 import { Array as Arr, Effect, Metric, Option, Result, Schema, pipe } from "effect";
 import { resolveConfigFromFile } from "vite-plus";
 
+import { problemInFile } from "./problem.ts";
 import type { Problem, RuleName } from "./problem.ts";
 import { RepositoryFiles } from "./repository-files.ts";
 
@@ -80,10 +81,6 @@ const sectionAt = <Config>(
     return pipe(config, Option.map(pick));
   });
 
-const failureAt = (file: string, rule: RuleName, message: string): readonly Problem[] => [
-  { file, line: FIRST, column: FIRST, rule, message },
-];
-
 export const checkSection =
   <Config, Found extends Linted, Failure extends { readonly message: string }>(
     check: SectionCheck<Config, Found, Failure>,
@@ -109,7 +106,7 @@ export const checkSection =
         onSuccess: (found) => countDiagnostics(check.name, found),
       });
       return Result.match(linted, {
-        onFailure: (failure) => failureAt(configFile, check.rule, failure.message),
+        onFailure: (failure) => [problemInFile(check.rule)(configFile, failure.message)],
         onSuccess: (found) =>
           pipe(
             found,
