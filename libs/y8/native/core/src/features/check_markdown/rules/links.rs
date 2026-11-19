@@ -722,25 +722,54 @@ static ENTITY: LazyLock<Regex> = LazyLock::new(|| {
 });
 
 fn valid_label_text(ctx: &Context<'_>, start: usize, end: usize) -> Option<String> {
-    let mut text = String::new();
+    let source = ctx.source.text.as_str();
+    let mut pieces: Vec<(usize, usize, String)> = Vec::new();
+    let mut verbatim_until = 0;
     for (_, node) in ctx.tree.iter() {
-        if node.start < start || node.end > end {
+        if node.start < start || node.end > end || node.start < verbatim_until {
             continue;
         }
-        if matches!(node.kind, Kind::SoftBreak | Kind::HardBreak) {
-            text.push('\n');
-            continue;
+        let piece = match &node.kind {
+            Kind::SoftBreak | Kind::HardBreak => "\n".to_owned(),
+            Kind::Code
+            | Kind::InlineHtml
+            | Kind::Math { .. }
+            | Kind::Link {
+                link: LinkKind::Autolink | LinkKind::Email,
+                ..
+            } => {
+                verbatim_until = node.end;
+                source[node.start..node.end].to_owned()
+            }
+            Kind::Text => {
+                let mut slice = &source[node.start..node.end];
+                if node.start > 0 && source.as_bytes()[node.start - 1] == b'\\' {
+                    slice = slice
+                        .get(slice.chars().next().map_or(0, char::len_utf8)..)
+                        .unwrap_or("");
+                }
+                ENTITY.replace_all(slice, "").into_owned()
+            }
+            _ => continue,
+        };
+        pieces.push((node.start, node.end, piece));
+    }
+    pieces.sort_by_key(|piece| piece.0);
+    let mut text = String::new();
+    let mut at = start;
+    for (piece_start, piece_end, piece) in pieces {
+        if piece_start > at {
+            text.extend(
+                source[at..piece_start]
+                    .chars()
+                    .filter(|c| matches!(c, '*' | '_')),
+            );
         }
-        if !matches!(node.kind, Kind::Text) {
-            continue;
-        }
-        let mut slice = &ctx.source.text[node.start..node.end];
-        if node.start > 0 && ctx.source.text.as_bytes()[node.start - 1] == b'\\' {
-            slice = slice
-                .get(slice.chars().next().map_or(0, char::len_utf8)..)
-                .unwrap_or("");
-        }
-        text.push_str(&ENTITY.replace_all(slice, ""));
+        text.push_str(&piece);
+        at = at.max(piece_end);
+    }
+    if end > at {
+        text.extend(source[at..end].chars().filter(|c| matches!(c, '*' | '_')));
     }
     let text = text.trim();
     (!text.is_empty() && !text.contains(']')).then(|| text.to_owned())
