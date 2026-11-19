@@ -3,7 +3,7 @@ import { SVF, svf } from "@masseater.dev/fumx-studio/dsp/filter";
 import { SAMPLE_RATE } from "@masseater.dev/fumx-studio/dsp/number";
 import type { Bus } from "@masseater.dev/fumx-studio/studio/bus";
 
-import type { Life } from "./context.ts";
+import type { Impulses, Life } from "./context.ts";
 import { LEVEL } from "./levels.ts";
 import { kept } from "./tone.ts";
 
@@ -75,7 +75,7 @@ export const plateOpened = (life: Life): Plate => {
 
 export const plateSide =
   (life: Life) =>
-  (side: "left" | "right") =>
+  (side: keyof Impulses) =>
   ({ send, plate }: Plate): void => {
     const impulse = life.impulses[side];
     convolve({ impulse, out: plate[side], gain: PLATE.gain })(shifted(life, send[side]));
