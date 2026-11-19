@@ -19,11 +19,11 @@ const runLogged = runner(Logger.layer([Logger.withLeveledConsole(Logger.formatSt
 
 export const accessMcpEndpoint = ({ teamDomain, audience, register, dataset }: AccessMcp) => {
   const verifier = { keys: createRemoteJWKSet(certsUrl(teamDomain)), teamDomain, audience };
-  const fetch = meteredMcpHandler(dataset)(register);
+  const serve = meteredMcpHandler(dataset)(register);
   return (request: Request): Promise<Response> =>
     runLogged(
       verifyAccess(request, verifier).pipe(
-        Effect.flatMap((claims) => Effect.promise(() => fetch(request, claims))),
+        Effect.flatMap((claims) => Effect.promise(() => serve(request, claims))),
         Effect.catchTag("AccessDenied", ({ reason }) =>
           Effect.logWarning("access denied").pipe(
             Effect.annotateLogs({ event: "access_denied", reason }),
