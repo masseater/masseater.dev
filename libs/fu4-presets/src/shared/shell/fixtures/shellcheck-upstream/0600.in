@@ -1,0 +1,1 @@
+f() { declare -i s; }; f; s=$(var); echo $s

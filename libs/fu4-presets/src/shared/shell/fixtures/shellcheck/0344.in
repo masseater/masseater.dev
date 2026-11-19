@@ -1,0 +1,1 @@
+printf '::add-mask::%s\n' "$COMMENT_TOKEN"

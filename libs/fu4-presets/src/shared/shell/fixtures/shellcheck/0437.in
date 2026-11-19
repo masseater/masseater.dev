@@ -1,0 +1,1 @@
+gh workflow run create-release-post.yml --repo nodejs/nodejs.org -f version=$VERSION

@@ -1,0 +1,1 @@
+printf '%s\n' "$new_version" > test/fixtures/tz-version.txt

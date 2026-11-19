@@ -1,0 +1,2 @@
+git config --local user.email "github-bot@iojs.org"
+git config --local user.name "Node.js GitHub Bot"

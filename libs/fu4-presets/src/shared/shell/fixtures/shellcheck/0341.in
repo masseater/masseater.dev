@@ -1,0 +1,2 @@
+[ "$(git rev-parse HEAD^2)" = "$EXPECTED_SHA" ]
+git reset HEAD^ --hard

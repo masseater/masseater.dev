@@ -1,0 +1,1 @@
+gh issue comment "$NUMBER" --repo "$GITHUB_REPOSITORY" --body "$STALE_MESSAGE"
