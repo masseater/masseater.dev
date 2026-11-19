@@ -1,0 +1,1 @@
+SC2126:style:1:7: Consider using 'grep -c' instead of 'grep|wc -l'

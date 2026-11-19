@@ -1,0 +1,4 @@
+ncu-config set username "$USERNAME"
+ncu-config set token "$GH_TOKEN"
+ncu-config set owner "${GITHUB_REPOSITORY_OWNER}"
+ncu-config set repo "$(echo "$GITHUB_REPOSITORY" | cut -d/ -f2)"

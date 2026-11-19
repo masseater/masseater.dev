@@ -1,0 +1,1 @@
+SC2038:warning:1:1: Use -print0/-0 or -exec + to allow for non-alphanumeric filenames

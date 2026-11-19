@@ -1,0 +1,1 @@
+./configure --verbose --error-on-warn --coverage

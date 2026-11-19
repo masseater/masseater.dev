@@ -5,11 +5,13 @@ import type { Timing } from "#/entities/bench/index.ts";
 
 import type { Run } from "./sample.ts";
 
-const Result = Schema.Struct({
+const Summary = Schema.Struct({
   mean: Schema.Finite,
   stddev: Schema.NullOr(Schema.Finite),
-  times: Schema.Array(Schema.Finite),
+  count: Schema.Finite,
 });
+
+const Result = Schema.Struct({ summary: Schema.Struct({ time_wall_clock: Summary }) });
 
 const Export = Schema.Struct({ results: Schema.Array(Result) });
 
@@ -29,10 +31,12 @@ const prepareOf = (plan: Plan): readonly string[] =>
     Option.match({ onNone: (): readonly string[] => [], onSome: (text) => ["--prepare", text] }),
   );
 
-const timingOf = (result: typeof Result.Type): Timing => ({
-  mean: result.mean * MILLIS,
-  stddev: Option.getOrElse(Option.fromNullishOr(result.stddev), () => NO_SPREAD) * MILLIS,
-  runs: result.times.length,
+const timingOf = ({ summary }: typeof Result.Type): Timing => ({
+  mean: summary.time_wall_clock.mean * MILLIS,
+  stddev:
+    Option.getOrElse(Option.fromNullishOr(summary.time_wall_clock.stddev), () => NO_SPREAD) *
+    MILLIS,
+  runs: summary.time_wall_clock.count,
 });
 
 /** @internal */

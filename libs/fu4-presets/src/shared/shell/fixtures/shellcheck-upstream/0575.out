@@ -1,0 +1,3 @@
+SC2005:style:1:6: Useless echo? Instead of 'echo $(cmd)', just use 'cmd'
+SC2006:style:1:7: Use $(...) notation instead of legacy backticks `...`
+SC2116:style:1:7: Useless echo? Instead of 'cmd $(echo foo)', just use 'cmd foo'
