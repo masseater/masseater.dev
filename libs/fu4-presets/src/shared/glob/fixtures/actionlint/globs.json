@@ -1,0 +1,1610 @@
+[
+ {
+  "id": "glob#1",
+  "errors": [
+   {
+    "column": 2,
+    "message": "character '\\' is invalid for branch and tag names. only special characters [, ?, +, *, \\, ! can be escaped with \\. see `man git-check-ref-format` for more details. note that regular expression is unavailable"
+   }
+  ],
+  "glob": "ref",
+  "pattern": "v\\d+"
+ },
+ {
+  "id": "glob#2",
+  "errors": [],
+  "glob": "ref",
+  "pattern": "a"
+ },
+ {
+  "id": "glob#3",
+  "errors": [],
+  "glob": "path",
+  "pattern": "a"
+ },
+ {
+  "id": "glob#4",
+  "errors": [],
+  "glob": "ref",
+  "pattern": "abc/def"
+ },
+ {
+  "id": "glob#5",
+  "errors": [],
+  "glob": "path",
+  "pattern": "abc/def"
+ },
+ {
+  "id": "glob#6",
+  "errors": [],
+  "glob": "ref",
+  "pattern": "[ab]"
+ },
+ {
+  "id": "glob#7",
+  "errors": [],
+  "glob": "path",
+  "pattern": "[ab]"
+ },
+ {
+  "id": "glob#8",
+  "errors": [],
+  "glob": "ref",
+  "pattern": "[a-z]"
+ },
+ {
+  "id": "glob#9",
+  "errors": [],
+  "glob": "path",
+  "pattern": "[a-z]"
+ },
+ {
+  "id": "glob#10",
+  "errors": [],
+  "glob": "ref",
+  "pattern": "[a-zA-Z_]"
+ },
+ {
+  "id": "glob#11",
+  "errors": [],
+  "glob": "path",
+  "pattern": "[a-zA-Z_]"
+ },
+ {
+  "id": "glob#12",
+  "errors": [],
+  "glob": "ref",
+  "pattern": "[xA-Zy0-9z]"
+ },
+ {
+  "id": "glob#13",
+  "errors": [],
+  "glob": "path",
+  "pattern": "[xA-Zy0-9z]"
+ },
+ {
+  "id": "glob#14",
+  "errors": [],
+  "glob": "ref",
+  "pattern": "[xy][A-Z][yz][0-9][zx]"
+ },
+ {
+  "id": "glob#15",
+  "errors": [],
+  "glob": "path",
+  "pattern": "[xy][A-Z][yz][0-9][zx]"
+ },
+ {
+  "id": "glob#16",
+  "errors": [],
+  "glob": "ref",
+  "pattern": "xy[A-Z]yz[0-9]zx"
+ },
+ {
+  "id": "glob#17",
+  "errors": [],
+  "glob": "path",
+  "pattern": "xy[A-Z]yz[0-9]zx"
+ },
+ {
+  "id": "glob#18",
+  "errors": [],
+  "glob": "ref",
+  "pattern": "*"
+ },
+ {
+  "id": "glob#19",
+  "errors": [],
+  "glob": "path",
+  "pattern": "*"
+ },
+ {
+  "id": "glob#20",
+  "errors": [],
+  "glob": "ref",
+  "pattern": "**"
+ },
+ {
+  "id": "glob#21",
+  "errors": [],
+  "glob": "path",
+  "pattern": "**"
+ },
+ {
+  "id": "glob#22",
+  "errors": [],
+  "glob": "ref",
+  "pattern": "*/*"
+ },
+ {
+  "id": "glob#23",
+  "errors": [],
+  "glob": "path",
+  "pattern": "*/*"
+ },
+ {
+  "id": "glob#24",
+  "errors": [],
+  "glob": "ref",
+  "pattern": "*/**"
+ },
+ {
+  "id": "glob#25",
+  "errors": [],
+  "glob": "path",
+  "pattern": "*/**"
+ },
+ {
+  "id": "glob#26",
+  "errors": [],
+  "glob": "ref",
+  "pattern": "a?"
+ },
+ {
+  "id": "glob#27",
+  "errors": [],
+  "glob": "path",
+  "pattern": "a?"
+ },
+ {
+  "id": "glob#28",
+  "errors": [],
+  "glob": "ref",
+  "pattern": "a+"
+ },
+ {
+  "id": "glob#29",
+  "errors": [],
+  "glob": "path",
+  "pattern": "a+"
+ },
+ {
+  "id": "glob#30",
+  "errors": [],
+  "glob": "ref",
+  "pattern": "\\+"
+ },
+ {
+  "id": "glob#31",
+  "errors": [],
+  "glob": "path",
+  "pattern": "\\+"
+ },
+ {
+  "id": "glob#32",
+  "errors": [],
+  "glob": "ref",
+  "pattern": "\\\\"
+ },
+ {
+  "id": "glob#33",
+  "errors": [],
+  "glob": "path",
+  "pattern": "\\\\"
+ },
+ {
+  "id": "glob#34",
+  "errors": [],
+  "glob": "ref",
+  "pattern": "\\!"
+ },
+ {
+  "id": "glob#35",
+  "errors": [],
+  "glob": "path",
+  "pattern": "\\!"
+ },
+ {
+  "id": "glob#36",
+  "errors": [],
+  "glob": "ref",
+  "pattern": "foo\\!bar"
+ },
+ {
+  "id": "glob#37",
+  "errors": [],
+  "glob": "path",
+  "pattern": "foo\\!bar"
+ },
+ {
+  "id": "glob#38",
+  "errors": [],
+  "glob": "ref",
+  "pattern": "\\++\\\\?"
+ },
+ {
+  "id": "glob#39",
+  "errors": [],
+  "glob": "path",
+  "pattern": "\\++\\\\?"
+ },
+ {
+  "id": "glob#40",
+  "errors": [],
+  "glob": "ref",
+  "pattern": "[a-z]+"
+ },
+ {
+  "id": "glob#41",
+  "errors": [],
+  "glob": "path",
+  "pattern": "[a-z]+"
+ },
+ {
+  "id": "glob#42",
+  "errors": [],
+  "glob": "ref",
+  "pattern": "[a-z]?"
+ },
+ {
+  "id": "glob#43",
+  "errors": [],
+  "glob": "path",
+  "pattern": "[a-z]?"
+ },
+ {
+  "id": "glob#44",
+  "errors": [],
+  "glob": "ref",
+  "pattern": "*.*.*-**"
+ },
+ {
+  "id": "glob#45",
+  "errors": [],
+  "glob": "path",
+  "pattern": "*.*.*-**"
+ },
+ {
+  "id": "glob#46",
+  "errors": [],
+  "glob": "ref",
+  "pattern": "!a"
+ },
+ {
+  "id": "glob#47",
+  "errors": [],
+  "glob": "path",
+  "pattern": "!a"
+ },
+ {
+  "id": "glob#48",
+  "errors": [],
+  "glob": "ref",
+  "pattern": "a!"
+ },
+ {
+  "id": "glob#49",
+  "errors": [],
+  "glob": "path",
+  "pattern": "a!"
+ },
+ {
+  "id": "glob#50",
+  "errors": [],
+  "glob": "ref",
+  "pattern": "a!+"
+ },
+ {
+  "id": "glob#51",
+  "errors": [],
+  "glob": "path",
+  "pattern": "a!+"
+ },
+ {
+  "id": "glob#52",
+  "errors": [],
+  "glob": "ref",
+  "pattern": "a!?"
+ },
+ {
+  "id": "glob#53",
+  "errors": [],
+  "glob": "path",
+  "pattern": "a!?"
+ },
+ {
+  "id": "glob#54",
+  "errors": [],
+  "glob": "ref",
+  "pattern": "!*"
+ },
+ {
+  "id": "glob#55",
+  "errors": [],
+  "glob": "path",
+  "pattern": "!*"
+ },
+ {
+  "id": "glob#56",
+  "errors": [],
+  "glob": "ref",
+  "pattern": "feature/*"
+ },
+ {
+  "id": "glob#57",
+  "errors": [],
+  "glob": "path",
+  "pattern": "feature/*"
+ },
+ {
+  "id": "glob#58",
+  "errors": [],
+  "glob": "ref",
+  "pattern": "feature/**"
+ },
+ {
+  "id": "glob#59",
+  "errors": [],
+  "glob": "path",
+  "pattern": "feature/**"
+ },
+ {
+  "id": "glob#60",
+  "errors": [],
+  "glob": "ref",
+  "pattern": "main"
+ },
+ {
+  "id": "glob#61",
+  "errors": [],
+  "glob": "path",
+  "pattern": "main"
+ },
+ {
+  "id": "glob#62",
+  "errors": [],
+  "glob": "ref",
+  "pattern": "releases/mona-the-octcat"
+ },
+ {
+  "id": "glob#63",
+  "errors": [],
+  "glob": "path",
+  "pattern": "releases/mona-the-octcat"
+ },
+ {
+  "id": "glob#64",
+  "errors": [],
+  "glob": "ref",
+  "pattern": "*feature"
+ },
+ {
+  "id": "glob#65",
+  "errors": [],
+  "glob": "path",
+  "pattern": "*feature"
+ },
+ {
+  "id": "glob#66",
+  "errors": [],
+  "glob": "ref",
+  "pattern": "v2*"
+ },
+ {
+  "id": "glob#67",
+  "errors": [],
+  "glob": "path",
+  "pattern": "v2*"
+ },
+ {
+  "id": "glob#68",
+  "errors": [],
+  "glob": "ref",
+  "pattern": "v[12].[0-9]+.[0-9]+"
+ },
+ {
+  "id": "glob#69",
+  "errors": [],
+  "glob": "path",
+  "pattern": "v[12].[0-9]+.[0-9]+"
+ },
+ {
+  "id": "glob#70",
+  "errors": [],
+  "glob": "ref",
+  "pattern": ".foo.txt"
+ },
+ {
+  "id": "glob#71",
+  "errors": [],
+  "glob": "path",
+  "pattern": ".foo.txt"
+ },
+ {
+  "id": "glob#72",
+  "errors": [],
+  "glob": "ref",
+  "pattern": "..foo.txt"
+ },
+ {
+  "id": "glob#73",
+  "errors": [],
+  "glob": "path",
+  "pattern": "..foo.txt"
+ },
+ {
+  "id": "glob#74",
+  "errors": [],
+  "glob": "path",
+  "pattern": "/foo"
+ },
+ {
+  "id": "glob#75",
+  "errors": [],
+  "glob": "path",
+  "pattern": "/foo/"
+ },
+ {
+  "id": "glob#76",
+  "errors": [],
+  "glob": "path",
+  "pattern": "/foo/bar"
+ },
+ {
+  "id": "glob#77",
+  "errors": [],
+  "glob": "path",
+  "pattern": "\\[\\?\\*\\+\\\\"
+ },
+ {
+  "id": "glob#78",
+  "errors": [],
+  "glob": "path",
+  "pattern": "foo bar"
+ },
+ {
+  "id": "glob#79",
+  "errors": [],
+  "glob": "path",
+  "pattern": "~/foo"
+ },
+ {
+  "id": "glob#80",
+  "errors": [],
+  "glob": "path",
+  "pattern": "foo:bar"
+ },
+ {
+  "id": "glob#81",
+  "errors": [],
+  "glob": "path",
+  "pattern": "foo^bar"
+ },
+ {
+  "id": "glob#82",
+  "errors": [],
+  "glob": "path",
+  "pattern": "*.jsx?"
+ },
+ {
+  "id": "glob#83",
+  "errors": [],
+  "glob": "path",
+  "pattern": "*.js"
+ },
+ {
+  "id": "glob#84",
+  "errors": [],
+  "glob": "path",
+  "pattern": "**.js"
+ },
+ {
+  "id": "glob#85",
+  "errors": [],
+  "glob": "path",
+  "pattern": "docs/*"
+ },
+ {
+  "id": "glob#86",
+  "errors": [],
+  "glob": "path",
+  "pattern": "docs/**"
+ },
+ {
+  "id": "glob#87",
+  "errors": [],
+  "glob": "path",
+  "pattern": "docs/**/*.md"
+ },
+ {
+  "id": "glob#88",
+  "errors": [],
+  "glob": "path",
+  "pattern": "**/docs/**"
+ },
+ {
+  "id": "glob#89",
+  "errors": [],
+  "glob": "path",
+  "pattern": "**/README.md"
+ },
+ {
+  "id": "glob#90",
+  "errors": [],
+  "glob": "path",
+  "pattern": "**/*src/**"
+ },
+ {
+  "id": "glob#91",
+  "errors": [],
+  "glob": "path",
+  "pattern": "*/*-post.md"
+ },
+ {
+  "id": "glob#92",
+  "errors": [],
+  "glob": "path",
+  "pattern": "**/migrate-*.sql"
+ },
+ {
+  "id": "glob#93",
+  "errors": [],
+  "glob": "path",
+  "pattern": "!README.md"
+ },
+ {
+  "id": "glob#94",
+  "errors": [
+   {
+    "column": 0,
+    "message": "glob pattern cannot be empty"
+   }
+  ],
+  "glob": "ref",
+  "pattern": ""
+ },
+ {
+  "id": "glob#95",
+  "errors": [
+   {
+    "column": 1,
+    "message": "invalid glob pattern. unexpected character '!' while checking ! at first character (negate pattern). at least one character must follow !"
+   }
+  ],
+  "glob": "ref",
+  "pattern": "!"
+ },
+ {
+  "id": "glob#96",
+  "errors": [
+   {
+    "column": 1,
+    "message": "invalid glob pattern. unexpected character '?' while checking special character ? (zero or one). the preceding character must not be special character"
+   }
+  ],
+  "glob": "ref",
+  "pattern": "?"
+ },
+ {
+  "id": "glob#97",
+  "errors": [
+   {
+    "column": 2,
+    "message": "invalid glob pattern. unexpected character '?' while checking special character ? (zero or one). the preceding character must not be special character"
+   }
+  ],
+  "glob": "ref",
+  "pattern": "*?"
+ },
+ {
+  "id": "glob#98",
+  "errors": [
+   {
+    "column": 3,
+    "message": "invalid glob pattern. unexpected character '?' while checking special character ? (zero or one). the preceding character must not be special character"
+   }
+  ],
+  "glob": "ref",
+  "pattern": "a??"
+ },
+ {
+  "id": "glob#99",
+  "errors": [
+   {
+    "column": 1,
+    "message": "invalid glob pattern. unexpected character '+' while checking special character + (one or more). the preceding character must not be special character"
+   }
+  ],
+  "glob": "ref",
+  "pattern": "+"
+ },
+ {
+  "id": "glob#100",
+  "errors": [
+   {
+    "column": 2,
+    "message": "invalid glob pattern. unexpected character '+' while checking special character + (one or more). the preceding character must not be special character"
+   }
+  ],
+  "glob": "ref",
+  "pattern": "*+"
+ },
+ {
+  "id": "glob#101",
+  "errors": [
+   {
+    "column": 3,
+    "message": "invalid glob pattern. unexpected character '+' while checking special character + (one or more). the preceding character must not be special character"
+   }
+  ],
+  "glob": "ref",
+  "pattern": "a++"
+ },
+ {
+  "id": "glob#102",
+  "errors": [
+   {
+    "column": 0,
+    "message": "invalid glob pattern. unexpected character '\\n'. newline cannot be contained"
+   }
+  ],
+  "glob": "ref",
+  "pattern": "foo\nbar"
+ },
+ {
+  "id": "glob#103",
+  "errors": [
+   {
+    "column": 4,
+    "message": "invalid glob pattern. unexpected character '\\r'. newline cannot be contained"
+   }
+  ],
+  "glob": "ref",
+  "pattern": "foo\rbar"
+ },
+ {
+  "id": "glob#104",
+  "errors": [
+   {
+    "column": 0,
+    "message": "invalid glob pattern. unexpected character '\\n'. newline cannot be contained"
+   }
+  ],
+  "glob": "ref",
+  "pattern": "foo\r\nbar"
+ },
+ {
+  "id": "glob#105",
+  "errors": [
+   {
+    "column": 2,
+    "message": "invalid glob pattern. unexpected character ']' while checking content of character match []. character match must not be empty"
+   }
+  ],
+  "glob": "ref",
+  "pattern": "[]"
+ },
+ {
+  "id": "glob#106",
+  "errors": [
+   {
+    "column": 1,
+    "message": "invalid glob pattern. unexpected EOF while checking end of character match []. missing ]"
+   }
+  ],
+  "glob": "ref",
+  "pattern": "["
+ },
+ {
+  "id": "glob#107",
+  "errors": [
+   {
+    "column": 2,
+    "message": "invalid glob pattern. unexpected EOF while checking end of character match []. missing ]"
+   }
+  ],
+  "glob": "ref",
+  "pattern": "[a"
+ },
+ {
+  "id": "glob#108",
+  "errors": [
+   {
+    "column": 4,
+    "message": "invalid glob pattern. unexpected EOF while checking end of character match []. missing ]"
+   }
+  ],
+  "glob": "ref",
+  "pattern": "[a-c"
+ },
+ {
+  "id": "glob#109",
+  "errors": [
+   {
+    "column": 4,
+    "message": "invalid glob pattern. unexpected character ']' while checking character range in []. end of range is missing"
+   }
+  ],
+  "glob": "ref",
+  "pattern": "[a-]"
+ },
+ {
+  "id": "glob#110",
+  "errors": [
+   {
+    "column": 3,
+    "message": "invalid glob pattern. unexpected EOF while checking end of character match []. missing ]"
+   }
+  ],
+  "glob": "ref",
+  "pattern": "[a-"
+ },
+ {
+  "id": "glob#111",
+  "errors": [
+   {
+    "column": 4,
+    "message": "invalid glob pattern. unexpected character 'a' while checking character range in []. start of range 'b' (98) is larger than end of range 'a' (97)"
+   }
+  ],
+  "glob": "ref",
+  "pattern": "[b-a]"
+ },
+ {
+  "id": "glob#112",
+  "errors": [
+   {
+    "column": 3,
+    "message": "invalid glob pattern. unexpected character ']' while checking character match []. character match with single character is useless. simply use x instead of [x]"
+   }
+  ],
+  "glob": "ref",
+  "pattern": "[x]"
+ },
+ {
+  "id": "glob#113",
+  "errors": [
+   {
+    "column": 1,
+    "message": "invalid glob pattern. unexpected character '+' while checking special character + (one or more). the preceding character must not be special character"
+   },
+   {
+    "column": 2,
+    "message": "invalid glob pattern. unexpected character '?' while checking special character ? (zero or one). the preceding character must not be special character"
+   },
+   {
+    "column": 4,
+    "message": "invalid glob pattern. unexpected character ']' while checking content of character match []. character match must not be empty"
+   },
+   {
+    "column": 8,
+    "message": "invalid glob pattern. unexpected character ']' while checking character range in []. end of range is missing"
+   },
+   {
+    "column": 10,
+    "message": "invalid glob pattern. unexpected character '+' while checking special character + (one or more). the preceding character must not be special character"
+   },
+   {
+    "column": 0,
+    "message": "invalid glob pattern. unexpected character '\\n'. newline cannot be contained"
+   },
+   {
+    "column": 0,
+    "message": "invalid glob pattern. unexpected EOF while checking end of character match []. missing ]"
+   }
+  ],
+  "glob": "ref",
+  "pattern": "+?[][a-]*+\n[b"
+ },
+ {
+  "id": "glob#114",
+  "errors": [
+   {
+    "column": 2,
+    "message": "invalid glob pattern. unexpected character '?' while checking special character ? (zero or one). the preceding character must not be special character"
+   }
+  ],
+  "glob": "ref",
+  "pattern": "!?"
+ },
+ {
+  "id": "glob#115",
+  "errors": [
+   {
+    "column": 2,
+    "message": "invalid glob pattern. unexpected character '+' while checking special character + (one or more). the preceding character must not be special character"
+   }
+  ],
+  "glob": "ref",
+  "pattern": "!+"
+ },
+ {
+  "id": "glob#116",
+  "errors": [
+   {
+    "column": 0,
+    "message": "glob pattern cannot be empty"
+   }
+  ],
+  "glob": "path",
+  "pattern": ""
+ },
+ {
+  "id": "glob#117",
+  "errors": [
+   {
+    "column": 1,
+    "message": "invalid glob pattern. unexpected character '!' while checking ! at first character (negate pattern). at least one character must follow !"
+   }
+  ],
+  "glob": "path",
+  "pattern": "!"
+ },
+ {
+  "id": "glob#118",
+  "errors": [
+   {
+    "column": 1,
+    "message": "invalid glob pattern. unexpected character '?' while checking special character ? (zero or one). the preceding character must not be special character"
+   }
+  ],
+  "glob": "path",
+  "pattern": "?"
+ },
+ {
+  "id": "glob#119",
+  "errors": [
+   {
+    "column": 2,
+    "message": "invalid glob pattern. unexpected character '?' while checking special character ? (zero or one). the preceding character must not be special character"
+   }
+  ],
+  "glob": "path",
+  "pattern": "*?"
+ },
+ {
+  "id": "glob#120",
+  "errors": [
+   {
+    "column": 3,
+    "message": "invalid glob pattern. unexpected character '?' while checking special character ? (zero or one). the preceding character must not be special character"
+   }
+  ],
+  "glob": "path",
+  "pattern": "a??"
+ },
+ {
+  "id": "glob#121",
+  "errors": [
+   {
+    "column": 1,
+    "message": "invalid glob pattern. unexpected character '+' while checking special character + (one or more). the preceding character must not be special character"
+   }
+  ],
+  "glob": "path",
+  "pattern": "+"
+ },
+ {
+  "id": "glob#122",
+  "errors": [
+   {
+    "column": 2,
+    "message": "invalid glob pattern. unexpected character '+' while checking special character + (one or more). the preceding character must not be special character"
+   }
+  ],
+  "glob": "path",
+  "pattern": "*+"
+ },
+ {
+  "id": "glob#123",
+  "errors": [
+   {
+    "column": 3,
+    "message": "invalid glob pattern. unexpected character '+' while checking special character + (one or more). the preceding character must not be special character"
+   }
+  ],
+  "glob": "path",
+  "pattern": "a++"
+ },
+ {
+  "id": "glob#124",
+  "errors": [
+   {
+    "column": 0,
+    "message": "invalid glob pattern. unexpected character '\\n'. newline cannot be contained"
+   }
+  ],
+  "glob": "path",
+  "pattern": "foo\nbar"
+ },
+ {
+  "id": "glob#125",
+  "errors": [
+   {
+    "column": 4,
+    "message": "invalid glob pattern. unexpected character '\\r'. newline cannot be contained"
+   }
+  ],
+  "glob": "path",
+  "pattern": "foo\rbar"
+ },
+ {
+  "id": "glob#126",
+  "errors": [
+   {
+    "column": 0,
+    "message": "invalid glob pattern. unexpected character '\\n'. newline cannot be contained"
+   }
+  ],
+  "glob": "path",
+  "pattern": "foo\r\nbar"
+ },
+ {
+  "id": "glob#127",
+  "errors": [
+   {
+    "column": 2,
+    "message": "invalid glob pattern. unexpected character ']' while checking content of character match []. character match must not be empty"
+   }
+  ],
+  "glob": "path",
+  "pattern": "[]"
+ },
+ {
+  "id": "glob#128",
+  "errors": [
+   {
+    "column": 1,
+    "message": "invalid glob pattern. unexpected EOF while checking end of character match []. missing ]"
+   }
+  ],
+  "glob": "path",
+  "pattern": "["
+ },
+ {
+  "id": "glob#129",
+  "errors": [
+   {
+    "column": 2,
+    "message": "invalid glob pattern. unexpected EOF while checking end of character match []. missing ]"
+   }
+  ],
+  "glob": "path",
+  "pattern": "[a"
+ },
+ {
+  "id": "glob#130",
+  "errors": [
+   {
+    "column": 4,
+    "message": "invalid glob pattern. unexpected EOF while checking end of character match []. missing ]"
+   }
+  ],
+  "glob": "path",
+  "pattern": "[a-c"
+ },
+ {
+  "id": "glob#131",
+  "errors": [
+   {
+    "column": 4,
+    "message": "invalid glob pattern. unexpected character ']' while checking character range in []. end of range is missing"
+   }
+  ],
+  "glob": "path",
+  "pattern": "[a-]"
+ },
+ {
+  "id": "glob#132",
+  "errors": [
+   {
+    "column": 3,
+    "message": "invalid glob pattern. unexpected EOF while checking end of character match []. missing ]"
+   }
+  ],
+  "glob": "path",
+  "pattern": "[a-"
+ },
+ {
+  "id": "glob#133",
+  "errors": [
+   {
+    "column": 4,
+    "message": "invalid glob pattern. unexpected character 'a' while checking character range in []. start of range 'b' (98) is larger than end of range 'a' (97)"
+   }
+  ],
+  "glob": "path",
+  "pattern": "[b-a]"
+ },
+ {
+  "id": "glob#134",
+  "errors": [
+   {
+    "column": 3,
+    "message": "invalid glob pattern. unexpected character ']' while checking character match []. character match with single character is useless. simply use x instead of [x]"
+   }
+  ],
+  "glob": "path",
+  "pattern": "[x]"
+ },
+ {
+  "id": "glob#135",
+  "errors": [
+   {
+    "column": 1,
+    "message": "invalid glob pattern. unexpected character '+' while checking special character + (one or more). the preceding character must not be special character"
+   },
+   {
+    "column": 2,
+    "message": "invalid glob pattern. unexpected character '?' while checking special character ? (zero or one). the preceding character must not be special character"
+   },
+   {
+    "column": 4,
+    "message": "invalid glob pattern. unexpected character ']' while checking content of character match []. character match must not be empty"
+   },
+   {
+    "column": 8,
+    "message": "invalid glob pattern. unexpected character ']' while checking character range in []. end of range is missing"
+   },
+   {
+    "column": 10,
+    "message": "invalid glob pattern. unexpected character '+' while checking special character + (one or more). the preceding character must not be special character"
+   },
+   {
+    "column": 0,
+    "message": "invalid glob pattern. unexpected character '\\n'. newline cannot be contained"
+   },
+   {
+    "column": 0,
+    "message": "invalid glob pattern. unexpected EOF while checking end of character match []. missing ]"
+   }
+  ],
+  "glob": "path",
+  "pattern": "+?[][a-]*+\n[b"
+ },
+ {
+  "id": "glob#136",
+  "errors": [
+   {
+    "column": 2,
+    "message": "invalid glob pattern. unexpected character '?' while checking special character ? (zero or one). the preceding character must not be special character"
+   }
+  ],
+  "glob": "path",
+  "pattern": "!?"
+ },
+ {
+  "id": "glob#137",
+  "errors": [
+   {
+    "column": 2,
+    "message": "invalid glob pattern. unexpected character '+' while checking special character + (one or more). the preceding character must not be special character"
+   }
+  ],
+  "glob": "path",
+  "pattern": "!+"
+ },
+ {
+  "id": "glob#138",
+  "errors": [
+   {
+    "column": 1,
+    "message": "character '/' is invalid for branch and tag names. ref name must not start with /. see `man git-check-ref-format` for more details. note that regular expression is unavailable"
+   }
+  ],
+  "glob": "ref",
+  "pattern": "/foo"
+ },
+ {
+  "id": "glob#139",
+  "errors": [
+   {
+    "column": 4,
+    "message": "character '/' is invalid for branch and tag names. ref name must not end with / and .. see `man git-check-ref-format` for more details. note that regular expression is unavailable"
+   }
+  ],
+  "glob": "ref",
+  "pattern": "foo/"
+ },
+ {
+  "id": "glob#140",
+  "errors": [
+   {
+    "column": 4,
+    "message": "character '.' is invalid for branch and tag names. ref name must not end with / and .. see `man git-check-ref-format` for more details. note that regular expression is unavailable"
+   }
+  ],
+  "glob": "ref",
+  "pattern": "foo."
+ },
+ {
+  "id": "glob#141",
+  "errors": [
+   {
+    "column": 2,
+    "message": "character '\\' is invalid for branch and tag names. ref name cannot contain spaces, ~, ^, :, [, ?, *. see `man git-check-ref-format` for more details. note that regular expression is unavailable"
+   },
+   {
+    "column": 4,
+    "message": "character '\\' is invalid for branch and tag names. ref name cannot contain spaces, ~, ^, :, [, ?, *. see `man git-check-ref-format` for more details. note that regular expression is unavailable"
+   },
+   {
+    "column": 6,
+    "message": "character '�' is invalid for branch and tag names. ref name cannot contain spaces, ~, ^, :, [, ?, *. see `man git-check-ref-format` for more details. note that regular expression is unavailable"
+   }
+  ],
+  "glob": "ref",
+  "pattern": "\\[\\?\\*"
+ },
+ {
+  "id": "glob#142",
+  "errors": [
+   {
+    "column": 1,
+    "message": "character '\\' is invalid for branch and tag names. only special characters [, ?, +, *, \\, ! can be escaped with \\. see `man git-check-ref-format` for more details. note that regular expression is unavailable"
+   }
+  ],
+  "glob": "ref",
+  "pattern": "\\d"
+ },
+ {
+  "id": "glob#143",
+  "errors": [
+   {
+    "column": 1,
+    "message": "character ' ' is invalid for branch and tag names. ref name cannot contain spaces, ~, ^, :, [, ?, *. see `man git-check-ref-format` for more details. note that regular expression is unavailable"
+   },
+   {
+    "column": 2,
+    "message": "character '\\t' is invalid for branch and tag names. ref name cannot contain spaces, ~, ^, :, [, ?, *. see `man git-check-ref-format` for more details. note that regular expression is unavailable"
+   },
+   {
+    "column": 3,
+    "message": "character '~' is invalid for branch and tag names. ref name cannot contain spaces, ~, ^, :, [, ?, *. see `man git-check-ref-format` for more details. note that regular expression is unavailable"
+   },
+   {
+    "column": 4,
+    "message": "character '^' is invalid for branch and tag names. ref name cannot contain spaces, ~, ^, :, [, ?, *. see `man git-check-ref-format` for more details. note that regular expression is unavailable"
+   },
+   {
+    "column": 5,
+    "message": "character ':' is invalid for branch and tag names. ref name cannot contain spaces, ~, ^, :, [, ?, *. see `man git-check-ref-format` for more details. note that regular expression is unavailable"
+   }
+  ],
+  "glob": "ref",
+  "pattern": " \t~^:"
+ },
+ {
+  "id": "glob#144",
+  "errors": [
+   {
+    "column": 1,
+    "message": "character '/' is invalid for branch and tag names. ref name must not start with /. see `man git-check-ref-format` for more details. note that regular expression is unavailable"
+   },
+   {
+    "column": 2,
+    "message": "character '^' is invalid for branch and tag names. ref name cannot contain spaces, ~, ^, :, [, ?, *. see `man git-check-ref-format` for more details. note that regular expression is unavailable"
+   },
+   {
+    "column": 4,
+    "message": "character '\\' is invalid for branch and tag names. only special characters [, ?, +, *, \\, ! can be escaped with \\. see `man git-check-ref-format` for more details. note that regular expression is unavailable"
+   },
+   {
+    "column": 7,
+    "message": "character '\\' is invalid for branch and tag names. only special characters [, ?, +, *, \\, ! can be escaped with \\. see `man git-check-ref-format` for more details. note that regular expression is unavailable"
+   },
+   {
+    "column": 9,
+    "message": "character '\\' is invalid for branch and tag names. only special characters [, ?, +, *, \\, ! can be escaped with \\. see `man git-check-ref-format` for more details. note that regular expression is unavailable"
+   },
+   {
+    "column": 12,
+    "message": "character '\\' is invalid for branch and tag names. only special characters [, ?, +, *, \\, ! can be escaped with \\. see `man git-check-ref-format` for more details. note that regular expression is unavailable"
+   },
+   {
+    "column": 17,
+    "message": "character '\\' is invalid for branch and tag names. only special characters [, ?, +, *, \\, ! can be escaped with \\. see `man git-check-ref-format` for more details. note that regular expression is unavailable"
+   },
+   {
+    "column": 22,
+    "message": "character '/' is invalid for branch and tag names. ref name must not end with / and .. see `man git-check-ref-format` for more details. note that regular expression is unavailable"
+   }
+  ],
+  "glob": "ref",
+  "pattern": "/^v\\d+\\.\\d+\\.(x|\\d+)$/"
+ },
+ {
+  "id": "glob#145",
+  "errors": [
+   {
+    "column": 0,
+    "message": "invalid glob pattern. unexpected character '\\n'. newline cannot be contained"
+   }
+  ],
+  "glob": "ref",
+  "pattern": "a\n"
+ },
+ {
+  "id": "glob#146",
+  "errors": [
+   {
+    "column": 2,
+    "message": "invalid glob pattern. unexpected EOF while checking end of character match []. missing ]"
+   }
+  ],
+  "glob": "ref",
+  "pattern": "[0"
+ },
+ {
+  "id": "glob#147",
+  "errors": [
+   {
+    "column": 4,
+    "message": "invalid glob pattern. unexpected character ']' while checking character range in []. end of range is missing"
+   }
+  ],
+  "glob": "ref",
+  "pattern": "[0-]"
+ },
+ {
+  "id": "glob#148",
+  "errors": [
+   {
+    "column": 3,
+    "message": "invalid glob pattern. unexpected EOF while checking end of character match []. missing ]"
+   }
+  ],
+  "glob": "ref",
+  "pattern": "[0-"
+ },
+ {
+  "id": "glob#149",
+  "errors": [
+   {
+    "column": 2,
+    "message": "character '�' is invalid for branch and tag names. ref name cannot contain spaces, ~, ^, :, [, ?, *. see `man git-check-ref-format` for more details. note that regular expression is unavailable"
+   }
+  ],
+  "glob": "ref",
+  "pattern": "\\["
+ },
+ {
+  "id": "glob#150",
+  "errors": [
+   {
+    "column": 4,
+    "message": "character ' ' is invalid for branch and tag names. ref name cannot contain spaces, ~, ^, :, [, ?, *. see `man git-check-ref-format` for more details. note that regular expression is unavailable"
+   }
+  ],
+  "glob": "ref",
+  "pattern": "foo bar"
+ },
+ {
+  "id": "glob#151",
+  "errors": [
+   {
+    "column": 0,
+    "message": "invalid glob pattern. unexpected character '\\n'. newline cannot be contained"
+   }
+  ],
+  "glob": "ref",
+  "pattern": "\n"
+ },
+ {
+  "id": "glob#152",
+  "errors": [
+   {
+    "column": 0,
+    "message": "leading and trailing spaces are not allowed in glob path"
+   }
+  ],
+  "glob": "path",
+  "pattern": "   foo.txt"
+ },
+ {
+  "id": "glob#153",
+  "errors": [
+   {
+    "column": 0,
+    "message": "leading and trailing spaces are not allowed in glob path"
+   }
+  ],
+  "glob": "path",
+  "pattern": "foo.txt\n"
+ },
+ {
+  "id": "glob#154",
+  "errors": [
+   {
+    "column": 0,
+    "message": "'.' and '..' are not allowed in glob path"
+   }
+  ],
+  "glob": "path",
+  "pattern": "."
+ },
+ {
+  "id": "glob#155",
+  "errors": [
+   {
+    "column": 0,
+    "message": "'.' and '..' are not allowed in glob path"
+   }
+  ],
+  "glob": "path",
+  "pattern": ".."
+ },
+ {
+  "id": "glob#156",
+  "errors": [
+   {
+    "column": 0,
+    "message": "'.' and '..' are not allowed in glob path"
+   }
+  ],
+  "glob": "path",
+  "pattern": "!."
+ },
+ {
+  "id": "glob#157",
+  "errors": [
+   {
+    "column": 0,
+    "message": "'.' and '..' are not allowed in glob path"
+   }
+  ],
+  "glob": "path",
+  "pattern": "./foo.txt"
+ },
+ {
+  "id": "glob#158",
+  "errors": [
+   {
+    "column": 0,
+    "message": "'.' and '..' are not allowed in glob path"
+   }
+  ],
+  "glob": "path",
+  "pattern": "../foo.txt"
+ },
+ {
+  "id": "glob#159",
+  "errors": [
+   {
+    "column": 0,
+    "message": "'.' and '..' are not allowed in glob path"
+   }
+  ],
+  "glob": "path",
+  "pattern": "!./foo.txt"
+ },
+ {
+  "id": "glob#160",
+  "errors": [],
+  "glob": "ref",
+  "pattern": "test"
+ },
+ {
+  "id": "glob#161",
+  "errors": [],
+  "glob": "path",
+  "pattern": "path/to/foo"
+ },
+ {
+  "id": "glob#162",
+  "errors": [],
+  "glob": "ref",
+  "pattern": "2.*"
+ },
+ {
+  "id": "glob#163",
+  "errors": [],
+  "glob": "ref",
+  "pattern": "v*.*.*"
+ },
+ {
+  "id": "glob#164",
+  "errors": [],
+  "glob": "ref",
+  "pattern": "bar"
+ },
+ {
+  "id": "glob#165",
+  "errors": [],
+  "glob": "ref",
+  "pattern": "deploy/*"
+ },
+ {
+  "id": "glob#166",
+  "errors": [],
+  "glob": "ref",
+  "pattern": "1.*"
+ },
+ {
+  "id": "glob#167",
+  "errors": [],
+  "glob": "ref",
+  "pattern": "master"
+ },
+ {
+  "id": "glob#168",
+  "errors": [
+   {
+    "column": 1,
+    "message": "character '^' is invalid for branch and tag names. ref name cannot contain spaces, ~, ^, :, [, ?, *. see `man git-check-ref-format` for more details. note that regular expression is unavailable"
+   }
+  ],
+  "glob": "ref",
+  "pattern": "^foo-"
+ },
+ {
+  "id": "glob#169",
+  "errors": [
+   {
+    "column": 3,
+    "message": "invalid glob pattern. unexpected character '+' while checking special character + (one or more). the preceding character must not be special character"
+   }
+  ],
+  "glob": "ref",
+  "pattern": "v*+"
+ },
+ {
+  "id": "glob#170",
+  "errors": [
+   {
+    "column": 5,
+    "message": "invalid glob pattern. unexpected character '1' while checking character range in []. start of range '9' (57) is larger than end of range '1' (49)"
+   }
+  ],
+  "glob": "ref",
+  "pattern": "v[9-1]"
+ },
+ {
+  "id": "glob#171",
+  "errors": [
+   {
+    "column": 0,
+    "message": "'.' and '..' are not allowed in glob path"
+   }
+  ],
+  "glob": "path",
+  "pattern": "./foo/bar.txt"
+ },
+ {
+  "id": "glob#172",
+  "errors": [],
+  "glob": "ref",
+  "pattern": "foo"
+ },
+ {
+  "id": "glob#173",
+  "errors": [],
+  "glob": "ref",
+  "pattern": "dev"
+ },
+ {
+  "id": "glob#174",
+  "errors": [],
+  "glob": "path",
+  "pattern": "path/to/bar"
+ },
+ {
+  "id": "glob#175",
+  "errors": [],
+  "glob": "ref",
+  "pattern": "release/v12"
+ },
+ {
+  "id": "glob#176",
+  "errors": [
+   {
+    "column": 1,
+    "message": "character ' ' is invalid for branch and tag names. ref name cannot contain spaces, ~, ^, :, [, ?, *. see `man git-check-ref-format` for more details. note that regular expression is unavailable"
+   }
+  ],
+  "glob": "ref",
+  "pattern": " "
+ },
+ {
+  "id": "glob#177",
+  "errors": [
+   {
+    "column": 1,
+    "message": "character '/' is invalid for branch and tag names. ref name must not start with /. see `man git-check-ref-format` for more details. note that regular expression is unavailable"
+   },
+   {
+    "column": 3,
+    "message": "character '\\' is invalid for branch and tag names. only special characters [, ?, +, *, \\, ! can be escaped with \\. see `man git-check-ref-format` for more details. note that regular expression is unavailable"
+   },
+   {
+    "column": 6,
+    "message": "character '/' is invalid for branch and tag names. ref name must not end with / and .. see `man git-check-ref-format` for more details. note that regular expression is unavailable"
+   }
+  ],
+  "glob": "ref",
+  "pattern": "/v\\d+/"
+ },
+ {
+  "id": "glob#178",
+  "errors": [
+   {
+    "column": 4,
+    "message": "invalid glob pattern. unexpected EOF while checking end of character match []. missing ]"
+   }
+  ],
+  "glob": "ref",
+  "pattern": "v[0-"
+ },
+ {
+  "id": "glob#179",
+  "errors": [
+   {
+    "column": 5,
+    "message": "invalid glob pattern. unexpected character '0' while checking character range in []. start of range '9' (57) is larger than end of range '0' (48)"
+   }
+  ],
+  "glob": "ref",
+  "pattern": "v[9-0]"
+ },
+ {
+  "id": "glob#180",
+  "errors": [],
+  "glob": "path",
+  "pattern": "foo\\bar"
+ },
+ {
+  "id": "glob#181",
+  "errors": [
+   {
+    "column": 0,
+    "message": "leading and trailing spaces are not allowed in glob path"
+   }
+  ],
+  "glob": "path",
+  "pattern": " "
+ },
+ {
+  "id": "glob#182",
+  "errors": [
+   {
+    "column": 0,
+    "message": "leading and trailing spaces are not allowed in glob path"
+   }
+  ],
+  "glob": "path",
+  "pattern": "  foo"
+ },
+ {
+  "id": "glob#183",
+  "errors": [
+   {
+    "column": 0,
+    "message": "leading and trailing spaces are not allowed in glob path"
+   }
+  ],
+  "glob": "path",
+  "pattern": "foo  "
+ },
+ {
+  "id": "glob#184",
+  "errors": [],
+  "glob": "path",
+  "pattern": "/path/to/foo.txt"
+ },
+ {
+  "id": "glob#185",
+  "errors": [],
+  "glob": "path",
+  "pattern": "/path/to/bar.txt"
+ }
+]

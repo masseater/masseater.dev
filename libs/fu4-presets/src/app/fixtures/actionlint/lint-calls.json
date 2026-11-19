@@ -1,0 +1,37 @@
+[
+ {
+  "id": "lint#1",
+  "content": "on: push\njobs:\n  job:\n    runs-on: foo\n\tsteps:\n\t  - run: echo",
+  "configVariables": null,
+  "unsupported": "",
+  "errors": [
+   {
+    "column": 13,
+    "line": 4,
+    "message": "could not parse as YAML: found a tab character that violates indentation",
+    "rule": "syntax-check"
+   }
+  ]
+ },
+ {
+  "id": "lint#2",
+  "content": "on: push\njobs:\n  test:\n    runs-on: ubuntu-latest\n    steps:\n      - run: echo\n      - run: echo\n",
+  "configVariables": null,
+  "unsupported": "custom rule added through onRulesCreated",
+  "errors": [
+   {
+    "column": 9,
+    "line": 7,
+    "message": "only single step is allowed but got 2 steps",
+    "rule": "this-is-test"
+   }
+  ]
+ },
+ {
+  "id": "lint#3",
+  "content": "name: Release\non:\n  push:\n    tags:\n      - \"v*.*.*\"\n\njobs:\n  binaries:\n    runs-on: ubuntu-latest\n    permissions:\n      contents: write\n      id-token: write\n      attestations: write\n    steps:\n      - uses: actions/checkout@v6\n      - uses: ruby/setup-ruby@v1\n        with:\n          ruby-version: '3.3'\n      - run: gem install ronn\n      - run: ronn ./man/actionlint.1.ronn\n      - uses: actions/setup-go@v6\n        with:\n          go-version: '1.26'\n          check-latest: true\n      - name: Get version\n        run: echo VERSION=\"${GITHUB_REF#refs/tags/v}\" >> \"$GITHUB_ENV\"\n      - uses: goreleaser/goreleaser-action@v7\n        with:\n          version: '~> v2'\n          args: release --clean\n        env:\n          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}\n      - uses: actions/attest-build-provenance@v4\n        with:\n          subject-checksums: ${{ format('./dist/actionlint_{0}_checksums.txt', env.VERSION) }}\n      - name: Post-release download check\n        run: bash ./scripts/download-actionlint.bash \"$VERSION\"\n      - name: Clone nested repository to make version bump commit\n        uses: actions/checkout@v6\n        with:\n          path: ./tmp-actionlint-for-update-ver\n          ref: main\n          fetch-depth: 0\n      - name: Update version in download script\n        run: |\n          set -x\n          cd ./tmp-actionlint-for-update-ver\n          sed -i -E \"s/version=\\\"[0-9]+\\\\.[0-9]+\\\\.[0-9]+\\\"/version=\\\"${VERSION}\\\"/\" ./scripts/download-actionlint.bash\n          git diff\n          git add ./scripts/download-actionlint.bash\n          git -c user.email='41898282+github-actions[bot]@users.noreply.github.com' -c user.name='github-actions[bot]' commit -m \"update version to $VERSION in download-actionlint.bash\"\n          git log -n 1\n          git push\n  winget:\n    runs-on: ubuntu-latest\n    needs: binaries\n    steps:\n      - uses: vedantmgoyal9/winget-releaser@main\n        with:\n          identifier: rhysd.actionlint\n          installers-regex: '_windows_\\w+\\.zip$'\n          release-notes-url: 'https://github.com/rhysd/actionlint/blob/main/CHANGELOG.md#${{ github.ref_name }}'\n          token: ${{ secrets.WINGET_TOKEN }}\n  docker:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v6\n      - name: Get tag name\n        id: tag\n        run: |\n          echo \"name=${GITHUB_REF#refs/tags/v}\" >> \"$GITHUB_OUTPUT\"\n      - name: Set up QEMU\n        uses: docker/setup-qemu-action@v4\n      - name: Set up Docker Buildx\n        id: buildx\n        uses: docker/setup-buildx-action@v4\n      - name: Login to DockerHub\n        uses: docker/login-action@v4\n        with:\n          username: rhysd\n          password: ${{ secrets.DOCKERHUB_TOKEN }}\n      - name: Build and push\n        uses: docker/build-push-action@v7\n        with:\n          platforms: linux/amd64,linux/arm64\n          build-args: |\n            GOLANG_VER=1.26\n            ACTIONLINT_VER=${{ steps.tag.outputs.name }}\n          push: true\n          tags: |\n            rhysd/actionlint:${{ steps.tag.outputs.name }}\n            rhysd/actionlint:latest\n",
+  "configVariables": null,
+  "unsupported": "",
+  "errors": []
+ }
+]
