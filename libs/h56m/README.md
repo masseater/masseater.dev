@@ -26,6 +26,12 @@ export default defineConfig({
 Run `h56m` to scan the commits since the default branch, or `h56m --staged`
 to scan the index. Call `makeDetector` to scan text from code.
 
+Encoded text is decoded up to five times, as the Betterleaks CLI does. Set
+`maxDecodeDepth` to change that; `0` scans only the text as written.
+
+The tests run every scan that the Betterleaks test suite makes and compare the
+findings; `src/app/fixtures/` holds them.
+
 The engine ports code from Betterleaks, which is under MIT, and embeds its word list, which is under CC-BY-SA-4.0. `THIRD-PARTY-NOTICES.txt` holds their notices.
 
 ## Comparison
