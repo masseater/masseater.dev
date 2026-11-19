@@ -29,8 +29,8 @@
   "ignoreExports": [
     { "file": "**/generated/**", "exports": ["*"] },
     {
-      "file": "apps/portfolio/src/entities/song/catalog/*/{work,recording}.ts",
-      "exports": ["work", "song"],
+      "file": "apps/portfolio/src/entities/song/catalog/*/work.ts",
+      "exports": ["work"],
     },
     {
       "file": "apps/portfolio/src/entities/song/catalog/*/plugins/*.ts",

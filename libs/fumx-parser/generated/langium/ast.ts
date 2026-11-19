@@ -1725,11 +1725,13 @@ export function isReverb(item: unknown): item is Reverb {
 export interface Reverse extends langium.AstNode {
     readonly $container: KitVoice | Sounding;
     readonly $type: 'Reverse';
+    from?: string;
     reverse: boolean;
 }
 
 export const Reverse = {
     $type: 'Reverse',
+    from: 'from',
     reverse: 'reverse'
 } as const;
 
@@ -3517,6 +3519,10 @@ export class FumxAstReflection extends langium.AbstractAstReflection {
         Reverse: {
             name: Reverse.$type,
             properties: {
+                from: {
+                    name: Reverse.from,
+                    optional: true
+                },
                 reverse: {
                     name: Reverse.reverse,
                     defaultValue: false

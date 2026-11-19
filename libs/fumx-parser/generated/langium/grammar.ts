@@ -1504,13 +1504,40 @@ export const FumxGrammar = (): Grammar => loadedFumxGrammar ?? (loadedFumxGramma
       "$type": "ParserRule",
       "name": "Reverse",
       "definition": {
-        "$type": "Assignment",
-        "feature": "reverse",
-        "operator": "?=",
-        "terminal": {
-          "$type": "Keyword",
-          "value": "reverse"
-        }
+        "$type": "Group",
+        "elements": [
+          {
+            "$type": "Assignment",
+            "feature": "reverse",
+            "operator": "?=",
+            "terminal": {
+              "$type": "Keyword",
+              "value": "reverse"
+            }
+          },
+          {
+            "$type": "Group",
+            "elements": [
+              {
+                "$type": "Keyword",
+                "value": "from"
+              },
+              {
+                "$type": "Assignment",
+                "feature": "from",
+                "operator": "=",
+                "terminal": {
+                  "$type": "RuleCall",
+                  "rule": {
+                    "$ref": "#/rules@132"
+                  },
+                  "arguments": []
+                }
+              }
+            ],
+            "cardinality": "?"
+          }
+        ]
       },
       "entry": false,
       "fragment": false,

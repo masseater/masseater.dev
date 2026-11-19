@@ -15,6 +15,9 @@ export interface Send {
 const resonanceOf = (resonance: Option.Option<number>): Placement =>
   Option.match(resonance, { onNone: () => ({}), onSome: (given) => ({ resonance: given }) });
 
+const reversalOf = (fromSeconds: Option.Option<number>): NonNullable<Placement["reverse"]> =>
+  Option.match(fromSeconds, { onNone: () => ({}), onSome: (from) => ({ from }) });
+
 const lowPassOf = (
   param: Extract<PlayParam, { kind: "lowpass" }>,
 ): NonNullable<Placement["lowPass"]> =>
@@ -39,7 +42,7 @@ const paramPlacement = (param: PlayParam): Placement =>
       pan: ({ amount }) => ({ pan: amount }),
       drive: ({ amount }) => ({ drive: amount }),
       send: () => ({}),
-      reverse: () => ({ reverse: {} }),
+      reverse: ({ fromSeconds }) => ({ reverse: reversalOf(fromSeconds) }),
     }),
   );
 

@@ -33,7 +33,7 @@ export const PlayParamSchema = Schema.Union([
   kind("pan")({ amount: Share }),
   DriveSchema,
   kind("send")({ bus: Name, amount: Share }),
-  kind("reverse")({}),
+  kind("reverse")({ fromSeconds: OptionalNumber }),
 ]);
 
 export type PlayParam = typeof PlayParamSchema.Type;

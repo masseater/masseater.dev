@@ -75,7 +75,7 @@ Gain: 'gain' amount=DECIBELS;
 Pan: 'pan' amount=PERCENT;
 Drive: 'drive' amount=NUMBER;
 Send: 'send' bus=[Bus:Name] amount=PERCENT;
-Reverse: reverse?='reverse';
+Reverse: reverse?='reverse' ('from' from=MILLISECONDS)?;
 
 Bus:
     'bus' name=Name Mixer ('fx' fx=FxChain)? sends+=Send*;
