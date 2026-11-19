@@ -1,11 +1,11 @@
-import type { Caller, UpstreamFailed } from "@masseater.dev/mcp-tool-call";
-import { NO_PROJECT } from "@masseater.dev/mcp-tool-call";
+import type { UpstreamFailed } from "@masseater.dev/mcp-tool-call";
+import { compactInput } from "@masseater.dev/mcp-tool-call";
 import type { JoinedTailnet } from "@masseater.dev/repositories/credential-broker";
 import type { McpServer } from "@modelcontextprotocol/server";
 import { env } from "cloudflare:workers";
 import { Effect, Schema } from "effect";
 
-import { brokerFailed, meteredInput, runTool } from "#/shared/api/index.ts";
+import { brokerFailed, runTool } from "#/shared/api/index.ts";
 
 const ONE_JOIN = 1;
 
@@ -24,28 +24,15 @@ const INPUT_SCHEMA = TailnetInput.pipe(Schema.toStandardSchemaV1, Schema.toStand
 const join = (publicKey: string): Effect.Effect<JoinedTailnet, UpstreamFailed> =>
   Effect.tryPromise({ try: () => env.TAILNET.join(publicKey), catch: brokerFailed });
 
-export const registerTailnetTools =
-  (caller: Caller) =>
-  (server: McpServer): McpServer => {
-    server.registerTool(
-      "join_tailnet",
-      {
-        description: DESCRIPTION,
-        inputSchema: meteredInput({ tool: "join_tailnet", caller, project: NO_PROJECT })(
-          INPUT_SCHEMA,
-        ),
-        annotations: { readOnlyHint: false, openWorldHint: true },
-      },
-      (input) =>
-        join(input.publicKey).pipe(
-          runTool({
-            tool: "join_tailnet",
-            caller,
-            project: NO_PROJECT,
-            input,
-            count: () => ONE_JOIN,
-          }),
-        ),
-    );
-    return server;
-  };
+export const registerTailnetTools = (server: McpServer): McpServer => {
+  server.registerTool(
+    "join_tailnet",
+    {
+      description: DESCRIPTION,
+      inputSchema: compactInput(INPUT_SCHEMA),
+      annotations: { readOnlyHint: false, openWorldHint: true },
+    },
+    (input) => join(input.publicKey).pipe(runTool({ count: () => ONE_JOIN })),
+  );
+  return server;
+};

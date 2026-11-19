@@ -1,5 +1,5 @@
-import type { Caller, UpstreamFailed } from "@masseater.dev/mcp-tool-call";
-import { failedAt, NO_PROJECT } from "@masseater.dev/mcp-tool-call";
+import type { UpstreamFailed } from "@masseater.dev/mcp-tool-call";
+import { failedAt, compactInput } from "@masseater.dev/mcp-tool-call";
 import type { SiteToken } from "@masseater.dev/repositories/credential-broker";
 import { TWILOG_ACCOUNTS, twilogTarget } from "@masseater.dev/repositories/oauth-targets";
 import type { TwilogAccount } from "@masseater.dev/repositories/oauth-targets";
@@ -7,7 +7,7 @@ import type { McpServer } from "@modelcontextprotocol/server";
 import { env } from "cloudflare:workers";
 import { Array as Arr, Effect, Match, Number as Num, Option, Schema, pipe } from "effect";
 
-import { meteredInput, runTool } from "#/shared/api/index.ts";
+import { runTool } from "#/shared/api/index.ts";
 
 import { SearchInput } from "./search-input.ts";
 import type { SearchRequest } from "./search-input.ts";
@@ -116,20 +116,15 @@ const postsIn = (result: AccountResult): number =>
 const postCount = ({ results }: SearchResult): number =>
   pipe(results, Arr.map(postsIn), Num.sumAll);
 
-export const registerSearchTools =
-  (caller: Caller) =>
-  (server: McpServer): McpServer => {
-    server.registerTool(
-      TOOL,
-      {
-        description: DESCRIPTION,
-        inputSchema: meteredInput({ tool: TOOL, caller, project: NO_PROJECT })(INPUT_SCHEMA),
-        annotations: { readOnlyHint: true, openWorldHint: true },
-      },
-      (input) =>
-        search(input).pipe(
-          runTool({ tool: TOOL, caller, project: NO_PROJECT, input, count: postCount }),
-        ),
-    );
-    return server;
-  };
+export const registerSearchTools = (server: McpServer): McpServer => {
+  server.registerTool(
+    TOOL,
+    {
+      description: DESCRIPTION,
+      inputSchema: compactInput(INPUT_SCHEMA),
+      annotations: { readOnlyHint: true, openWorldHint: true },
+    },
+    (input) => search(input).pipe(runTool({ count: postCount })),
+  );
+  return server;
+};
