@@ -37,7 +37,7 @@ export const PicturePicker = (): ReactNode => {
   );
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <label className="border-input hover:bg-accent dark:bg-input/30 inline-flex h-9 cursor-pointer items-center gap-2 rounded-md border px-3 text-sm shadow-xs [&_svg]:size-4">
+      <label className="border-input hover:bg-accent dark:bg-input/30 has-focus-visible:border-ring has-focus-visible:ring-ring/50 inline-flex h-9 cursor-pointer items-center gap-2 rounded-md border px-3 text-sm shadow-xs has-focus-visible:ring-3 [&_svg]:size-4">
         <FileUp />
         {COPY.image}
         <input type="file" accept="image/*" className="sr-only" onChange={pick} />
@@ -46,7 +46,7 @@ export const PicturePicker = (): ReactNode => {
         SAMPLES,
         Arr.map(({ name, label }) => <SampleButton key={name} name={name} label={label} />),
       )}
-      <span className="text-muted-foreground text-xs">{statusOf(picture)}</span>
+      <output className="text-muted-foreground text-xs">{statusOf(picture)}</output>
     </div>
   );
 };

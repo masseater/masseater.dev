@@ -1,8 +1,9 @@
 import { useAtom } from "@effect/atom-react";
 import { Button } from "@masseater.dev/ui/button";
+import { Option } from "effect";
 import { AsyncResult } from "effect/reactivity";
 import { LoaderCircle } from "lucide-react";
-import { useCallback } from "react";
+import { useCallback, useId } from "react";
 import type { ChangeEvent, ReactNode, SubmitEvent } from "react";
 
 import { linkAtom, openLinkAtom } from "#/features/open-media/model/open.ts";
@@ -19,6 +20,8 @@ export const OpenBar = ({
 }: Readonly<{ files: boolean; label: string }>): ReactNode => {
   const [link, setLink] = useAtom(linkAtom);
   const [opened, open] = useAtom(openLinkAtom);
+  const refusalId = useId();
+  const failed = AsyncResult.isFailure(opened);
   useFileDrop(files);
   const submit = useCallback(
     (event: SubmitEvent<HTMLFormElement>) => {
@@ -39,7 +42,8 @@ export const OpenBar = ({
         type="url"
         value={link}
         aria-label={label}
-        aria-invalid={AsyncResult.isFailure(opened)}
+        aria-invalid={failed}
+        aria-describedby={Option.getOrUndefined(Option.liftPredicate(refusalId, () => failed))}
         placeholder="https://"
         className="border-input bg-background focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:border-destructive h-9 min-w-0 flex-1 rounded-md border px-3 font-mono text-sm outline-none focus-visible:ring-3"
         onChange={change}
@@ -49,7 +53,7 @@ export const OpenBar = ({
         {OPEN}
       </Button>
       {files && <ChooseFile />}
-      <Refusal />
+      <Refusal id={refusalId} />
     </form>
   );
 };

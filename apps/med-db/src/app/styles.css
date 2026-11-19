@@ -71,7 +71,17 @@
   }
 }
 
+@utility animation-paused {
+  animation-play-state: paused;
+}
+
 @layer base {
+  html {
+    scroll-padding-top: 7.5rem;
+    @media (width >= 64rem) {
+      scroll-padding-top: 4.5rem;
+    }
+  }
   * {
     @apply border-border outline-ring/50;
   }

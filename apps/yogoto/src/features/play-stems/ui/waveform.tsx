@@ -10,7 +10,7 @@ import { SeekSlider } from "./seek-slider.tsx";
 const HEIGHT = 100;
 
 export const Waveform = ({ track, deck }: Readonly<{ track: Track; deck: Deck }>): ReactNode => (
-  <div className="bg-muted relative h-12 flex-1 overflow-hidden rounded-sm">
+  <div className="bg-muted has-focus-visible:outline-ring relative h-12 flex-1 overflow-hidden rounded-sm outline-offset-2 has-focus-visible:outline-2">
     <svg
       viewBox={`0 0 ${String(track.peaks.length)} ${String(HEIGHT)}`}
       preserveAspectRatio="none"

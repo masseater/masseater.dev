@@ -5,6 +5,7 @@ import rehypeExportToc from "@stefanprobst/rehype-extract-toc/mdx";
 import rehypeSlug from "rehype-slug";
 
 import { rehypeFootnotePreview } from "./rehype-footnote-preview.ts";
+import { rehypeTableLabel } from "./rehype-table-label.ts";
 import { remarkPlugins } from "./remark-plugins.ts";
 
 export default {
@@ -13,6 +14,7 @@ export default {
     remarkPlugins: [...remarkPlugins],
     rehypePlugins: [
       rehypeSlug,
+      rehypeTableLabel,
       rehypeExtractToc,
       rehypeExportToc,
       [rehypeShiki, { theme: "github-light" }],

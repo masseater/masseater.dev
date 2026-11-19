@@ -28,7 +28,7 @@ export const ConsoleView = (): ReactNode => {
   const notice = noticeOf(output);
   return (
     <div className="h-full overflow-auto font-mono text-xs" role="log">
-      <ol>
+      <ol role="list">
         {pipe(
           entriesOf(output),
           Arr.map((entry) => <ConsoleLine key={entry.id} entry={entry} />),

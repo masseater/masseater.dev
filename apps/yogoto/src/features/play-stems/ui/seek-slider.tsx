@@ -1,3 +1,4 @@
+import { clock } from "@masseater.dev/media-notes-ui";
 import { useCallback } from "react";
 import type { ChangeEvent, ReactNode } from "react";
 
@@ -27,6 +28,7 @@ export const SeekSlider = ({ stem, deck }: Readonly<{ stem: string; deck: Deck }
       value={position}
       onChange={handleChange}
       aria-label={`${stem} ${LABELS.seek}`}
+      aria-valuetext={`${clock(position)}${LABELS.separator}${clock(deck.duration)}`}
       className="absolute inset-0 cursor-pointer opacity-0"
     />
   );

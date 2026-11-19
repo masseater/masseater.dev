@@ -8,7 +8,7 @@ import { TechniqueLink } from "./technique-link.tsx";
 export const TechniqueGroup = ({ group }: Readonly<{ group: Group }>): ReactNode => (
   <div className="flex flex-col gap-2">
     <h3 className="text-muted-foreground text-sm">{group.name}</h3>
-    <ul className="flex flex-wrap gap-x-4 gap-y-1">
+    <ul className="flex flex-wrap gap-x-4 gap-y-1" role="list">
       {pipe(
         group.techniques,
         Arr.map((technique) => <TechniqueLink key={technique.slug} technique={technique} />),

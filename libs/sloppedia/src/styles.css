@@ -84,9 +84,11 @@
 }
 .wiki-prose sup::before {
   content: "[";
+  content: "[" / "";
 }
 .wiki-prose sup::after {
   content: "]";
+  content: "]" / "";
 }
 .wiki-prose [data-footnotes] sup::before,
 .wiki-prose [data-footnotes] sup::after {

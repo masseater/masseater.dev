@@ -2,7 +2,7 @@ import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
 export const AboutItemList = ({ items }: Readonly<{ items: readonly string[] }>): ReactNode => (
-  <ul className="flex flex-col gap-2">
+  <ul className="flex flex-col gap-2" role="list">
     {pipe(
       items,
       Arr.map((item) => <li key={item}>{item}</li>),

@@ -22,7 +22,7 @@ export const CurrentAnswer = (): ReactNode => {
         usePanel() === "transcript" && "max-lg:hidden",
       )}
     >
-      <ol aria-live="polite" className="flex flex-col gap-2 lg:text-lg">
+      <ol aria-live="polite" className="flex flex-col gap-2 lg:text-lg" role="list">
         {pipe(
           said,
           Arr.map((entry) => <HistoryItem key={entry.id} entry={entry} />),

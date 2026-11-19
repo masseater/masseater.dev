@@ -26,7 +26,7 @@ const byArtistThenName = Order.combine(
 export const CreditsList = ({ tiles }: Readonly<{ tiles: readonly Entry[] }>): ReactNode => {
   const sorted = useMemo(() => Array.sort(tiles, byArtistThenName), [tiles]);
   return (
-    <ol className="flex flex-col divide-y">
+    <ol className="flex flex-col divide-y" role="list">
       {pipe(
         sorted,
         Array.map(([cell, name, artist, url, service]) => (

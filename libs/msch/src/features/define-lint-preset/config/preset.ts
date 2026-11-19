@@ -19,6 +19,7 @@ import {
   generated,
   pluginRules,
   shadcnRestyleContracts,
+  webGuidanceRules,
 } from "./lint.config.ts";
 import { readonlyParameterAllow } from "./readonly-types.config.ts";
 import { flakeMaskingSyntax, testDoubleSyntax, testRules } from "./test-rules.config.ts";
@@ -79,6 +80,7 @@ const rules = {
   "import/group-exports": "off",
   "import/exports-last": "off",
   ...testRules,
+  ...webGuidanceRules,
   "msch-lint/ecosystem-readers": "error",
   "msch-lint/get-or-insert": "error",
   "msch-lint/mcp-tool-layer": "error",

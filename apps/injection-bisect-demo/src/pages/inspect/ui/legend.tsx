@@ -14,7 +14,7 @@ const ITEMS: readonly (readonly [Tone, string])[] = [
 ];
 
 export const Legend = (): ReactNode => (
-  <ul className="text-muted-foreground flex flex-wrap gap-4 text-xs">
+  <ul className="text-muted-foreground flex flex-wrap gap-4 text-xs" role="list">
     {pipe(
       ITEMS,
       Arr.map(([tone, label]) => (

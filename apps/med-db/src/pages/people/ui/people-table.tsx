@@ -14,11 +14,11 @@ const route = getRouteApi("/people/");
 
 const HEADINGS = ["名前", "担当パート"];
 
-export const PeopleTable = (): ReactNode => {
+export const PeopleTable = ({ label }: Readonly<{ label: string }>): ReactNode => {
   const filter = route.useSearch();
   const { data: people } = useSuspenseQuery(catalogQueries.people.get.queryOptions(filter));
   return (
-    <Table>
+    <Table label={label}>
       <TableHeadings labels={HEADINGS} />
       <TableBody>
         {pipe(

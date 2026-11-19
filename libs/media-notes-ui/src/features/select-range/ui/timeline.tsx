@@ -19,7 +19,7 @@ export const Timeline = ({
   const attach = useScrub({ duration: position.duration, seek });
   return (
     <div className="grid gap-1">
-      <div ref={attach} className="h-16 cursor-crosshair touch-none select-none">
+      <div ref={attach} className="h-16 cursor-crosshair touch-pan-y select-none">
         <Track position={position} spans={spans} />
       </div>
       <Ruler duration={position.duration} />

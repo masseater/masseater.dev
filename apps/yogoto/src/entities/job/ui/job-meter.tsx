@@ -7,5 +7,12 @@ export const JobMeter = ({ job }: Readonly<{ job: Job }>): ReactNode => {
   if (job.state !== "running") {
     return false;
   }
-  return <progress className="accent-foreground h-1 w-24" max={WHOLE} value={job.progress} />;
+  return (
+    <progress
+      aria-label={job.label}
+      className="accent-foreground h-1 w-24"
+      max={WHOLE}
+      value={job.progress}
+    />
+  );
 };

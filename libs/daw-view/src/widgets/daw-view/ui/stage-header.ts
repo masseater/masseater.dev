@@ -6,8 +6,6 @@ import type { Structure } from "#/entities/song/index.ts";
 import type { Shell } from "./shell.ts";
 import { mark, say } from "./stage-text.ts";
 
-const PERCENT = 100;
-const SHARE_DECIMALS = 1;
 const JUST_BEFORE = 1e-6;
 
 const sectionAt = (structure: Structure, time: number): string =>
@@ -50,7 +48,7 @@ const paintProgress = ({ parts, model }: Shell): void => {
   const { header } = parts;
   mark(header.progress)("data-done", String(phase.status === "ready"));
   if (phase.status === "loading") {
-    header.progressFill.style.width = `${(phase.share * PERCENT).toFixed(SHARE_DECIMALS)}%`;
+    mark(header.progress)("value", String(phase.share));
   }
   if (phase.status === "ready") {
     say(header.total)(clock(phase.seconds));

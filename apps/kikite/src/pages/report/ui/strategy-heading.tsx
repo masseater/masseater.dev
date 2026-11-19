@@ -7,10 +7,20 @@ const GOOD = "聞いてほしかった";
 const OFF = "ずれている";
 
 export const StrategyHeading = (): ReactNode => (
-  <>
-    <span>{STRATEGY}</span>
-    <span className="text-right">{ASKED}</span>
-    <ThumbsUp className="size-4 justify-self-end" aria-label={GOOD} />
-    <ThumbsDown className="size-4 justify-self-end" aria-label={OFF} />
-  </>
+  <tr>
+    <th scope="col" className="text-left font-normal">
+      {STRATEGY}
+    </th>
+    <th scope="col" className="text-right font-normal">
+      {ASKED}
+    </th>
+    <th scope="col">
+      <ThumbsUp aria-hidden="true" className="ml-auto size-4" />
+      <span className="sr-only">{GOOD}</span>
+    </th>
+    <th scope="col">
+      <ThumbsDown aria-hidden="true" className="ml-auto size-4" />
+      <span className="sr-only">{OFF}</span>
+    </th>
+  </tr>
 );

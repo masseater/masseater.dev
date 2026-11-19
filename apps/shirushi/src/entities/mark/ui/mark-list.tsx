@@ -16,7 +16,7 @@ export const MarkList = ({
   onPick: (mark: Mark) => void;
   onRemove: (id: string) => void;
 }>): ReactNode => (
-  <ul className="grid">
+  <ul className="grid" role="list">
     {pipe(
       marks,
       Arr.map((mark) => (

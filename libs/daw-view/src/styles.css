@@ -149,6 +149,42 @@
     cursor: default;
   }
 
+  .daw-progress {
+    display: block;
+    width: 100%;
+    height: 3px;
+    appearance: none;
+    border: 0 solid;
+    overflow: clip;
+    background: var(--daw-line);
+  }
+
+  .daw-progress[data-done="true"] {
+    height: 1px;
+  }
+
+  .daw-progress::-webkit-progress-bar {
+    background: transparent;
+  }
+
+  .daw-progress::-webkit-progress-value {
+    background: var(--daw-hot);
+    transition: inline-size 150ms;
+  }
+
+  .daw-progress::-moz-progress-bar {
+    background: var(--daw-hot);
+    transition: inline-size 150ms;
+  }
+
+  .daw-progress[data-done="true"]::-webkit-progress-value {
+    background: transparent;
+  }
+
+  .daw-progress[data-done="true"]::-moz-progress-bar {
+    background: transparent;
+  }
+
   .daw-head {
     display: flex;
     align-items: center;
@@ -174,6 +210,14 @@
   @media (prefers-reduced-motion: reduce) {
     .daw-play[data-waiting="true"] {
       animation: none;
+    }
+
+    .daw-progress::-webkit-progress-value {
+      transition: none;
+    }
+
+    .daw-progress::-moz-progress-bar {
+      transition: none;
     }
   }
 }
