@@ -13,6 +13,7 @@
     "./daw/*": "./src/shared/lib/daw/*.ts",
     "./dsp/*": "./src/shared/lib/dsp/*.ts",
     "./live/*": "./src/shared/lib/live/*.ts",
+    "./plugin/*": "./src/shared/lib/plugin/*.ts",
     "./studio/*": "./src/shared/lib/studio/*.ts"
   },
   "dependencies": {

@@ -1,6 +1,7 @@
 import { Schema } from "effect";
 
 import { Name, OptionalNumber, Share, Ticks, kind } from "./fields.ts";
+import { PluginArgumentSchema } from "./plugin.ts";
 import { PlayParamSchema } from "./sound.ts";
 
 const timedFields = {
@@ -13,6 +14,7 @@ const timedFields = {
   start: Ticks,
   length: Ticks,
   nudgeMilliseconds: Schema.Finite,
+  nudgeSeconds: Schema.Finite,
 };
 
 const LyricSchema = Schema.Union([kind("syllable")({ text: Schema.String }), kind("melisma")({})]);
@@ -21,7 +23,11 @@ export type Lyric = typeof LyricSchema.Type;
 
 const ArticulationSchema = Schema.Literals(["staccato", "legato", "accent"]);
 
-const BendPointSchema = Schema.Struct({ milliseconds: Schema.Finite, semitones: Schema.Finite });
+const BendPointSchema = Schema.Struct({
+  milliseconds: Schema.Finite,
+  seconds: Schema.Finite,
+  semitones: Schema.Finite,
+});
 
 export const NoteSchema = Schema.Struct({
   ...timedFields,
@@ -35,6 +41,7 @@ export const NoteSchema = Schema.Struct({
   lyric: Schema.OptionFromNullOr(LyricSchema),
   bend: Schema.Array(BendPointSchema),
   params: Schema.Array(PlayParamSchema),
+  args: Schema.Array(PluginArgumentSchema),
 });
 
 export type Note = typeof NoteSchema.Type;
@@ -44,7 +51,9 @@ export const HitSchema = Schema.Struct({
   voice: Name,
   velocity: Share,
   releaseVelocity: Schema.OptionFromNullOr(Share),
+  bend: Schema.Array(BendPointSchema),
   params: Schema.Array(PlayParamSchema),
+  args: Schema.Array(PluginArgumentSchema),
 });
 
 export type Hit = typeof HitSchema.Type;

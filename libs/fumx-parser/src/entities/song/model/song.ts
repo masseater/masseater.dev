@@ -27,6 +27,7 @@ const SampleSchema = Schema.Struct({
 const KitVoiceSchema = Schema.Struct({
   name: Name,
   path: Schema.String,
+  plugin: Schema.OptionFromNullOr(PluginUseSchema),
   params: Schema.Array(PlayParamSchema),
 });
 
@@ -59,6 +60,8 @@ const TrackSchema = Schema.Struct({
   name: Name,
   source: TrackSourceSchema,
   role: Schema.OptionFromNullOr(RoleSchema),
+  into: Schema.OptionFromNullOr(Name),
+  mono: Schema.Boolean,
   mixer: MixerSchema,
   fx: Schema.Array(EffectSchema),
   sends: Schema.Array(SendSchema),
@@ -176,6 +179,8 @@ export const SongSchema = Schema.Struct({
   plugins: Schema.Array(PluginSchema),
   ducks: Schema.Array(DuckSchema),
   master: Schema.Array(EffectSchema),
+  mix: Schema.OptionFromNullOr(PluginUseSchema),
+  tailSeconds: Schema.OptionFromNullOr(Schema.Finite),
   bars: Schema.Array(BarSchema),
   notes: Schema.Array(NoteSchema),
   hits: Schema.Array(HitSchema),

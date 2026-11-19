@@ -14,6 +14,7 @@ export type {
   Note,
   PlayParam,
   Plugin,
+  PluginArgument,
   PluginUse,
   PluginValue,
   Role,

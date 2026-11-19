@@ -35,6 +35,7 @@ const kitFilesOf = (song: Song): readonly string[] =>
     song.kits,
     Arr.flatMap((kit) => kit.voices),
     Arr.map((voice) => voice.path),
+    Arr.filter((path) => path !== ""),
   );
 
 export const sampleFilesOf = (song: Song): readonly string[] =>

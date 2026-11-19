@@ -1,5 +1,6 @@
 import { Array as Arr, Option, Record as Rec, String as Str, pipe } from "effect";
 
+import type { Samples } from "#/shared/lib/plugin/plugin.ts";
 import type { Bus } from "#/shared/lib/studio/bus.ts";
 import type { Desk } from "#/shared/lib/studio/paste.ts";
 import { pasteOn } from "#/shared/lib/studio/pasting.ts";
@@ -13,8 +14,6 @@ const EXTENSION = /\.[a-z0-9]+$/u;
 const ONE = 1;
 const UNNAMED = "";
 
-export type Samples = Readonly<Record<string, Float32Array>>;
-
 const sampleName = (path: string): string =>
   pipe(
     Str.lastIndexOf("/")(path),
@@ -25,6 +24,7 @@ const sampleName = (path: string): string =>
 export const deskOf =
   (frames: number) =>
   (samples: Samples) =>
+  (labels: ReadonlyMap<Float32Array, string>) =>
   (log: Ledger): Desk => {
     const names = new Map(
       pipe(
@@ -36,7 +36,7 @@ export const deskOf =
       frames,
       samples,
       table: {},
-      labelOf: (sample) => ({ name: names.get(sample) ?? UNNAMED }),
+      labelOf: (sample) => ({ name: labels.get(sample) ?? names.get(sample) ?? UNNAMED }),
       log: Option.some(log),
       quiet: () => false,
     };
@@ -48,11 +48,11 @@ export const pasted =
   (bus: Bus) =>
   (placed: Placed): void => {
     const paste = pasteOn(desk);
-    paste({ bus, source: placed.sample, time: placed.time, placement: placed.placement });
+    paste({ bus, source: placed.source, time: placed.time, placement: placed.placement });
     for (const { into, amount } of routesOf(buses)(placed.sends)) {
       paste({
         bus: { ...into, name: UNNAMED },
-        source: placed.sample,
+        source: placed.source,
         time: placed.time,
         placement: { ...placed.placement, gain: (placed.placement.gain ?? ONE) * amount },
       });

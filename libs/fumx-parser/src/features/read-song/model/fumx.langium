@@ -39,7 +39,7 @@ Kit:
     'kit' name=Name '{' voices+=KitVoice* '}';
 
 KitVoice:
-    name=Name path=STRING params+=PlayParam*;
+    name=Name (path=STRING params+=PlayParam* | 'plugin' use=PluginUse);
 
 Instrument:
     'instrument' name=Name source=InstrumentSource;
@@ -60,9 +60,10 @@ Zone:
     path=STRING 'root' root=PITCH;
 
 PlayParam:
-    Semi | Length | Attack | Release | Decay | Offset | Highpass | Lowpass | Gain | Pan | Drive | Send | Reverse;
+    Semi | Rate | Length | Attack | Release | Decay | Offset | Highpass | Lowpass | Gain | Pan | Drive | Send | Reverse;
 
 Semi: 'semi' amount=SEMITONES;
+Rate: 'rate' amount=NUMBER;
 Length: 'length' time=MILLISECONDS;
 Attack: 'attack' time=MILLISECONDS;
 Release: 'release' time=MILLISECONDS;
@@ -80,7 +81,7 @@ Bus:
     'bus' name=Name Mixer ('fx' fx=FxChain)? sends+=Send*;
 
 Track:
-    'track' name=Name source=TrackSource ('role' role=Role)? Mixer ('fx' fx=FxChain)? sends+=Send*;
+    'track' name=Name source=TrackSource ('into' into=[Track:Name])? (mono?='mono')? ('role' role=Role)? Mixer ('fx' fx=FxChain)? sends+=Send*;
 
 fragment Mixer:
     ('volume' volume=DECIBELS)? ('pan' pan=PERCENT)? (muted?='mute')?;
@@ -107,7 +108,7 @@ DuckDepth:
     target=[Mixable:Name] amount=PERCENT;
 
 Master:
-    'master' 'fx' fx=FxChain;
+    'master' ('tail' tail=MILLISECONDS)? ('fx' fx=FxChain)? ('mix' mix=PluginUse)?;
 
 FxChain:
     '[' effects+=Effect (',' effects+=Effect)* ']';
@@ -293,7 +294,7 @@ Edit: kind=('mute' | 'stutter' | 'tapestop' | 'reverse-slice');
 Hit: voice=Name;
 
 Attribute:
-    Velocity | ReleaseVelocity | GateLength | Tie | Articulation | Lyric | Bend | Nudge | Fade | Every | PlayParam;
+    Velocity | ReleaseVelocity | GateLength | Tie | Articulation | Lyric | Bend | Nudge | Fade | Every | With | PlayParam;
 
 Velocity: 'vel' (value=NUMBER | '(' computed=Expression ')');
 ReleaseVelocity: 'off' value=NUMBER;
@@ -306,9 +307,10 @@ BendPoint: at=MILLISECONDS ':' amount=SEMITONES;
 Nudge: 'nudge' time=MILLISECONDS;
 Fade: 'fade' time=MILLISECONDS;
 Every: 'every' slice=FRACTION count=COUNT?;
+With: 'with' '{' arguments+=PluginArgument* '}';
 
 Name returns string:
-    ID | 'melody' | 'countermelody' | 'bass' | 'harmony' | 'drums' | 'texture' | 'delay' | 'reverb' | 'chorus' | 'comp' | 'limit' | 'width' | 'phaser' | 'tremolo' | 'drive' | 'gain' | 'pan' | 'sample' | 'release' | 'attack' | 'decay' | 'offset' | 'length' | 'mix' | 'base' | 'from' | 'to' | 'q' | 'ir' | 'predelay' | 'feedback' | 'pingpong' | 'lookahead' | 'makeup' | 'semi' | 'highpass' | 'lowpass' | 'slice' | 'slices' | 'onsets' | 'root' | 'hold' | 'depth' | 'by' | 'over' | 'curve' | 'linear' | 'exp' | 'every' | 'fade' | 'nudge' | 'bend' | 'lyric' | 'gate' | 'vel' | 'tie' | 'staccato' | 'legato' | 'accent' | 'reverse' | 'audio' | 'kit' | 'instrument' | 'track' | 'bus' | 'duck' | 'groove' | 'swing' | 'multisample' | 'song' | 'bar' | 'meter' | 'tempo' | 'section' | 'mark' | 'automate' | 'fx' | 'send' | 'role' | 'mono-below' | 'volume' | 'plugin' | 'number' | 'pitch' | 'duration' | 'decibels' | 'percent' | 'hertz' | 'time' | 'semitones' | 'string' | 'bool' | 'cc' | 'pressure' | 'program' | 'off';
+    ID | 'melody' | 'countermelody' | 'bass' | 'harmony' | 'drums' | 'texture' | 'delay' | 'reverb' | 'chorus' | 'comp' | 'limit' | 'width' | 'phaser' | 'tremolo' | 'drive' | 'gain' | 'pan' | 'sample' | 'release' | 'attack' | 'decay' | 'offset' | 'length' | 'mix' | 'base' | 'from' | 'to' | 'q' | 'ir' | 'predelay' | 'feedback' | 'pingpong' | 'lookahead' | 'makeup' | 'semi' | 'highpass' | 'lowpass' | 'slice' | 'slices' | 'onsets' | 'root' | 'hold' | 'depth' | 'by' | 'over' | 'curve' | 'linear' | 'exp' | 'every' | 'fade' | 'nudge' | 'bend' | 'lyric' | 'gate' | 'vel' | 'tie' | 'staccato' | 'legato' | 'accent' | 'reverse' | 'audio' | 'kit' | 'instrument' | 'track' | 'bus' | 'duck' | 'groove' | 'swing' | 'multisample' | 'song' | 'bar' | 'meter' | 'tempo' | 'section' | 'mark' | 'automate' | 'fx' | 'send' | 'role' | 'mono-below' | 'volume' | 'plugin' | 'number' | 'pitch' | 'duration' | 'decibels' | 'percent' | 'hertz' | 'time' | 'semitones' | 'string' | 'bool' | 'cc' | 'pressure' | 'program' | 'off' | 'rate' | 'into' | 'mono' | 'tail' | 'with';
 
 hidden terminal WS: /\s+/;
 hidden terminal ML_COMMENT: /\/\*[\s\S]*?\*\//;

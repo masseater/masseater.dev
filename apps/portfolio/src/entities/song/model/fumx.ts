@@ -1,6 +1,7 @@
 import type { Song as DawSong } from "@masseater.dev/daw-view";
 import { recordingOf, sampleFilesOf } from "@masseater.dev/fumx-studio";
 import { SAMPLE_RATE } from "@masseater.dev/fumx-studio/dsp/number";
+import type { Plugins } from "@masseater.dev/fumx-studio/plugin/plugin";
 import type { Song } from "@r_masseater/fumx-parser";
 import { Array as Arr, Effect, Option, Record as Rec, pipe } from "effect";
 
@@ -41,12 +42,13 @@ const samplesOf =
 export interface Listing {
   readonly slug: string;
   readonly work: Work;
+  readonly plugins: Plugins;
 }
 
 export const dawSongOfFumx =
-  ({ slug, work }: Listing) =>
+  ({ slug, work, plugins }: Listing) =>
   (song: Song): DawSong => {
-    const recording = recordingOf(song)(worklet);
+    const recording = recordingOf({ song, worklet, plugins });
     return {
       title: song.title,
       facts: factsOf(work),
