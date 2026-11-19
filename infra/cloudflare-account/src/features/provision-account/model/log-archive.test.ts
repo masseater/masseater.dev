@@ -17,6 +17,12 @@ const Declared = Schema.Struct({
   policies: Schema.optional(Schema.Unknown),
 });
 
+const Lifecycle = Schema.Struct({
+  lifecycleRules: Schema.Array(Schema.Struct({ id: Schema.String })),
+});
+
+const decodeLifecycle = Schema.decodeUnknownOption(Lifecycle);
+
 const decodeProps = Schema.decodeUnknownOption(Declared);
 
 const UNUSED_TOKEN = Redacted.make("unused");
@@ -39,6 +45,21 @@ const NO_PROVIDERS = Layer.succeed(Providers, {
   get: (service: string) => REGISTERED[service],
   providers: REGISTERED,
 });
+
+const declaredProps = (type: string): Promise<readonly unknown[]> =>
+  Effect.runPromise(
+    Stack(APP_NAME, { providers: NO_PROVIDERS, state: inMemoryState() }, archive).pipe(
+      Effect.provideService(Stage, "test"),
+      Effect.scoped,
+      Effect.map(({ resources }) =>
+        pipe(
+          Rec.values(resources),
+          Arr.filter((resource) => isResourceOfType(resource, type)),
+          Arr.map(({ Props }) => Props),
+        ),
+      ),
+    ),
+  );
 
 const declared = (type: string): Promise<readonly Option.Option<typeof Declared.Type>[]> =>
   Effect.runPromise(
@@ -72,4 +93,9 @@ test("ログを書くトークンは、ログのバケットの中身を書く�
         },
       ],
     }),
+  ]));
+
+test("ログのバケットは、古いログと途中で止まったマルチパートアップロードを消す", () =>
+  expect(declaredProps(R2.Bucket.Type).then(Arr.map(decodeLifecycle))).resolves.toStrictEqual([
+    Option.some({ lifecycleRules: [{ id: "expire" }, { id: "abort-multipart" }] }),
   ]));

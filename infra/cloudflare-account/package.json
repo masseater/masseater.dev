@@ -11,6 +11,7 @@
     "./account": "./src/features/provision-account/index.ts",
     "./ai-gateway": "./src/features/provision-ai-gateway/index.ts",
     "./spend-limits": "./src/features/cap-spend/index.ts",
+    "./log-archive-alert": "./src/features/watch-log-archive/index.ts",
     "./auth-site": "./src/features/provision-auth-site/index.ts",
     "./edge-guard": "./src/features/guard-edge/index.ts",
     "./trace-destination": "./src/shared/config/index.ts",

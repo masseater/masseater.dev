@@ -6,6 +6,8 @@ import { Effect, Redacted } from "effect";
 
 const RETENTION_DAYS = 30;
 
+const ABORT_MULTIPART_DAYS = 7;
+
 const SECONDS_PER_DAY = 86_400;
 
 const NORMAL_SAMPLE_RATE = 0.01;
@@ -59,6 +61,12 @@ export const logArchive = Effect.fn("logArchive")(function* logArchive(appName: 
         id: "expire",
         deleteObjectsTransition: {
           condition: { type: "Age", maxAge: RETENTION_DAYS * SECONDS_PER_DAY },
+        },
+      },
+      {
+        id: "abort-multipart",
+        abortMultipartUploadsTransition: {
+          condition: { type: "Age", maxAge: ABORT_MULTIPART_DAYS * SECONDS_PER_DAY },
         },
       },
     ],
