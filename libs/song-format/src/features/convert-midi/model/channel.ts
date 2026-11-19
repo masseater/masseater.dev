@@ -1,8 +1,9 @@
 import { Array as Arr, Match, Option, Order, Record as Rec, pipe } from "effect";
 
+import type { TimelineControl, TimelineNote } from "#/entities/timeline/index.ts";
 import type { From } from "#/shared/lib/from.ts";
 
-import type { ChannelEvent, PlacedEvent, TimelineControl, TimelineNote } from "./events.ts";
+import type { ChannelEvent, PlacedEvent } from "./placed.ts";
 
 const NONE = 0;
 const NEXT = 1;

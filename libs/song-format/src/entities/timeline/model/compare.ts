@@ -264,7 +264,7 @@ export interface CompareInput {
   readonly song: Song;
 }
 
-export const compareWithMidi: From<CompareInput, Comparison> = ({ plan, bars, song }) => {
+export const compareWithSong: From<CompareInput, Comparison> = ({ plan, bars, song }) => {
   const tallies = {
     notes: tallyOf(expectedNotesOf(plan), actualNotesOf({ plan, song })),
     controls: tallyOf(expectedControlsOf(plan), actualControlsOf(song)),

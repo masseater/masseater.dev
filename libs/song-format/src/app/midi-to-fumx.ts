@@ -2,8 +2,10 @@ import { readSong } from "@r_masseater/fumx-parser";
 import type { SourceIssue } from "@r_masseater/fumx-parser";
 import { Array as Arr, Effect, Schema, pipe } from "effect";
 
-import { compareWithMidi, midiToFumx } from "#/features/convert-midi/index.ts";
-import type { Comparison, MidiFile } from "#/features/convert-midi/index.ts";
+import { compareWithSong } from "#/entities/timeline/index.ts";
+import type { Comparison } from "#/entities/timeline/index.ts";
+import { midiToFumx } from "#/features/convert-midi/index.ts";
+import type { MidiFile } from "#/features/convert-midi/index.ts";
 
 const taggedError = Schema.TaggedError;
 
@@ -41,7 +43,7 @@ export const convertMidiFile = Effect.fn("convertMidiFile")(function* convert(so
       text: fumx.text,
     });
   }
-  const comparison = compareWithMidi({ plan: fumx.plan, bars: fumx.bars, song: read.song });
+  const comparison = compareWithSong({ plan: fumx.plan, bars: fumx.bars, song: read.song });
   yield* Effect.annotateCurrentSpan({
     matches: comparison.matches,
     notes: comparison.notes.expected,
