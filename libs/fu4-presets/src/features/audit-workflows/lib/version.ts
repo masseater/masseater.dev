@@ -30,8 +30,14 @@ const groupOf = (pattern: RegExp, text: string): Option.Option<string> =>
     Option.flatMap((groups) => Option.fromNullishOr(groups["version"])),
   );
 
+export const ratchetVersionOf = (raw: string): Option.Option<string> =>
+  groupOf(RATCHET_COMMENT, raw);
+
+export const commentVersionOf = (raw: string): Option.Option<string> =>
+  groupOf(VERSION_COMMENT, raw);
+
 export const rawVersionOf = (comment: Comment): Option.Option<string> =>
-  Option.orElse(groupOf(RATCHET_COMMENT, comment.raw), () => groupOf(VERSION_COMMENT, comment.raw));
+  Option.orElse(ratchetVersionOf(comment.raw), () => commentVersionOf(comment.raw));
 
 const numberOf = (text: string | undefined): number =>
   Option.match(Option.fromNullishOr(text), { onNone: () => MISSING, onSome: Number });

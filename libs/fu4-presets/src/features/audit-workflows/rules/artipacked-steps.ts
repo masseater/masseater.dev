@@ -30,7 +30,7 @@ const isModern = (uses: RepositoryUses): Option.Option<boolean> => {
   return isModernTag(uses.gitRef);
 };
 
-const splitPatterns = (patterns: string): readonly string[] =>
+export const splitPatterns = (patterns: string): readonly string[] =>
   pipe(
     Str.split("\n")(patterns),
     Arr.map(Str.trim),
