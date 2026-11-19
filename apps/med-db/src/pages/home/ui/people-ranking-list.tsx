@@ -13,7 +13,7 @@ const creditsLabel = (count: number): string => `${count.toString()} パート`;
 export const PeopleRankingList = (): ReactNode => {
   const { data: people } = useSuspenseQuery(peopleQuery);
   return (
-    <ol className="flex flex-col divide-y">
+    <ol className="flex flex-col divide-y" role="list">
       {pipe(
         people,
         Array.take(RANKING_LIMIT),

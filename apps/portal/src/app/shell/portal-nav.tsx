@@ -6,10 +6,15 @@ import { SidebarBrand } from "#/shared/ui/sidebar/index.ts";
 
 import { PortalNavGroup } from "./portal-nav-group.tsx";
 
+const LABEL = "メニュー";
+
 export const PortalNav = (): ReactNode => (
   <>
     <SidebarBrand />
-    <nav className="flex min-h-0 flex-1 flex-col gap-2 overflow-auto group-data-[collapsible=icon]:overflow-hidden">
+    <nav
+      aria-label={LABEL}
+      className="flex min-h-0 flex-1 flex-col gap-2 overflow-auto group-data-[collapsible=icon]:overflow-hidden"
+    >
       {pipe(
         NAV_GROUPS,
         Arr.prepend(TOP_GROUP),

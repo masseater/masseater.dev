@@ -4,6 +4,7 @@ export const COPY = {
   title: PRODUCT_NAME,
   why: "計測結果を見る",
   examples: "例",
+  text: "調べる文章",
   model: "判定モデル",
   format: "形式",
   auto: "自動判定",

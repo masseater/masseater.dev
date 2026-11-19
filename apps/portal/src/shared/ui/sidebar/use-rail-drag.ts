@@ -15,7 +15,11 @@ const CONTAINER = '[data-slot="sidebar-container"]';
 
 const CLICK_SLOP = 3;
 
+const PRIMARY = 0;
+
 export type Pointer = Readonly<{ clientX: number }>;
+
+export type Press = Pointer & Readonly<{ button: number }>;
 
 interface Drag {
   width: number;
@@ -33,42 +37,60 @@ const applyWidth = (width: number): void => {
   document.documentElement.style.setProperty(WIDTH_VARIABLE, `${String(width)}px`);
 };
 
-export const useRailDrag = (): ((press: Pointer) => void) => {
+const RELEASED = "pointerup";
+
+const listenUntilRelease = ({
+  onMove,
+  onRelease,
+}: Readonly<{ onMove: (move: Pointer) => void; onRelease: (type: string) => void }>): void => {
+  const listening = new AbortController();
+  const options = { signal: listening.signal };
+  const release = (event: Readonly<{ type: string }>): void => {
+    listening.abort();
+    onRelease(event.type);
+  };
+  globalThis.addEventListener("pointermove", onMove, options);
+  globalThis.addEventListener(RELEASED, release, options);
+  globalThis.addEventListener("pointercancel", release, options);
+};
+
+export const useRailDrag = (): ((press: Press) => void) => {
   const open = useSidebarOpen();
   const toggle = useToggleSidebar();
   const { mutate: save } = useMutation({
     mutationFn: (data: number) => saveSidebarWidth({ data }),
   });
   return useCallback(
-    (press: Pointer) => {
+    (press: Press) => {
+      if (press.button !== PRIMARY) {
+        return;
+      }
       const startWidth = currentWidth();
       const drag: Drag = { width: startWidth, moved: false };
       const root = document.documentElement;
       root.setAttribute(RESIZING, "");
-      const onMove = (move: Pointer): void => {
-        const delta = move.clientX - press.clientX;
-        if (Math.abs(delta) > CLICK_SLOP) {
-          drag.moved = true;
-        }
-        if (!open || !drag.moved) {
-          return;
-        }
-        drag.width = sidebarWidthOf(startWidth + delta);
-        applyWidth(drag.width);
-      };
-      const onUp = (): void => {
-        globalThis.removeEventListener("pointermove", onMove);
-        root.removeAttribute(RESIZING);
-        if (!drag.moved) {
-          toggle();
-          return;
-        }
-        if (open) {
-          save(drag.width);
-        }
-      };
-      globalThis.addEventListener("pointermove", onMove);
-      globalThis.addEventListener("pointerup", onUp, { once: true });
+      listenUntilRelease({
+        onMove: (move) => {
+          const delta = move.clientX - press.clientX;
+          if (Math.abs(delta) > CLICK_SLOP) {
+            drag.moved = true;
+          }
+          if (!open || !drag.moved) {
+            return;
+          }
+          drag.width = sidebarWidthOf(startWidth + delta);
+          applyWidth(drag.width);
+        },
+        onRelease: (type) => {
+          root.removeAttribute(RESIZING);
+          if (open && drag.moved) {
+            save(drag.width);
+          }
+          if (type === RELEASED && !drag.moved) {
+            toggle();
+          }
+        },
+      });
     },
     [open, save, toggle],
   );

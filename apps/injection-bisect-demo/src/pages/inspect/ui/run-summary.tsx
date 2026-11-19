@@ -71,7 +71,10 @@ export const RunSummary = ({
   trace,
 }: Readonly<{ text: string; model: string; format: string; trace: Trace }>): ReactNode => (
   <div className="flex flex-col gap-2">
-    <h2 className={cn("text-xl font-semibold", isAlarm(trace.phase) && "text-destructive")}>
+    <h2
+      aria-live="polite"
+      className={cn("text-xl font-semibold", isAlarm(trace.phase) && "text-destructive")}
+    >
       {labelOf(trace.phase)}
     </h2>
     <PhaseNotes phase={trace.phase} />

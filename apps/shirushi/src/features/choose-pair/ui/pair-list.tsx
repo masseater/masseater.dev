@@ -17,7 +17,7 @@ export const PairList = (): ReactNode => {
     return <p className="text-muted-foreground py-6 text-center text-sm">{EMPTY}</p>;
   }
   return (
-    <ul className="divide-border grid divide-y">
+    <ul className="divide-border grid divide-y" role="list">
       {pipe(
         doneLast(answered)(pairs),
         Arr.map((pair) => <PairCard key={pair.id} pair={pair} />),

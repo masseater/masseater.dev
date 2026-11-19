@@ -12,7 +12,10 @@ export const SearchResults = ({ query }: Readonly<{ query: string }>): ReactNode
   const tiles = useTiles();
   const hits = searchTiles({ tiles, query });
   return (
-    <ul className="bg-background/95 absolute inset-x-0 top-10 flex flex-col rounded-md border py-1 text-sm shadow-lg backdrop-blur">
+    <ul
+      className="bg-background/95 absolute inset-x-0 top-10 flex flex-col rounded-md border py-1 text-sm shadow-lg backdrop-blur"
+      role="list"
+    >
       {Array.isReadonlyArrayEmpty(hits) && (
         <li className="text-muted-foreground px-3 py-2">{NOTHING}</li>
       )}

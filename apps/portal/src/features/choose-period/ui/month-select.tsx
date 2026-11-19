@@ -2,7 +2,7 @@ import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
 const FIELD =
-  "border-input focus-visible:ring-ring h-10 rounded-md border bg-white px-3 text-sm tabular-nums outline-none focus-visible:ring-2";
+  "border-input focus-visible:ring-ring h-10 rounded-md border bg-white px-3 text-sm tabular-nums outline-hidden focus-visible:ring-2";
 
 export const MonthSelect = ({
   label,

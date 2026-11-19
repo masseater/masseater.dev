@@ -6,6 +6,7 @@ export const COPY = {
   apiKey: "OpenRouter の API キー",
   way: "読み方",
   run: "読み取る",
+  result: "読み取り結果",
   running: "読み取り中",
   missing: "見つからない",
   seconds: "時間",

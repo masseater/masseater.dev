@@ -209,11 +209,16 @@ const rendererFor: Fn<
 };
 
 const run: Fn<
-  Readonly<{ renderer: Renderer; effect: DanceEffect; track: DanceTrack; video: HTMLVideoElement }>,
+  Readonly<{
+    renderer: Renderer;
+    effect: DanceEffect;
+    track: DanceTrack;
+    video: HTMLVideoElement;
+    stage: HTMLElement;
+  }>,
   () => void
-> = ({ renderer, effect, track, video }) => {
+> = ({ renderer, effect, track, video, stage }) => {
   const loop = { request: FIRST_FRAME };
-  Effect.runFork(play(video));
   loadHistory({ renderer, effect });
   loadGlyphs({ renderer, effect });
   const render = (): void => {
@@ -222,24 +227,48 @@ const run: Fn<
       renderer.draw({ video, frame: frameOf({ video, track }) });
     }
   };
-  loop.request = requestAnimationFrame(render);
+  const pause = (): void => {
+    cancelAnimationFrame(loop.request);
+    video.pause();
+  };
+  const resume = (): void => {
+    pause();
+    Effect.runFork(play(video));
+    loop.request = requestAnimationFrame(render);
+  };
+  const follow: Fn<Event, void> = (event) => {
+    if (event instanceof ContentVisibilityAutoStateChangeEvent && event.skipped) {
+      pause();
+      return;
+    }
+    resume();
+  };
+  stage.addEventListener("contentvisibilityautostatechange", follow);
+  resume();
   return () => {
+    stage.removeEventListener("contentvisibilityautostatechange", follow);
     cancelAnimationFrame(loop.request);
     renderer.dispose();
   };
 };
 
 export const startStage: Fn<
-  Readonly<{ canvas: HTMLCanvasElement; slug: string; effect: DanceEffect; track: DanceTrack }>,
+  Readonly<{
+    stage: HTMLElement;
+    canvas: HTMLCanvasElement;
+    slug: string;
+    effect: DanceEffect;
+    track: DanceTrack;
+  }>,
   () => void
-> = ({ canvas, slug, effect, track }) => {
+> = ({ stage, canvas, slug, effect, track }) => {
   const video = createVideo();
   const state = { stop: constVoid, stopped: false };
   const attach: Fn<Renderer, void> = (renderer) => {
     if (state.stopped) {
       renderer.dispose();
     } else {
-      state.stop = run({ renderer, effect, track, video });
+      state.stop = run({ renderer, effect, track, video, stage });
     }
   };
   Effect.runFork(rendererFor({ canvas, slug, effect }).pipe(Effect.map(attach)));

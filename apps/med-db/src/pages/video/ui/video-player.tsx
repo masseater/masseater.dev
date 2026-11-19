@@ -12,12 +12,12 @@ type Playable = Readonly<{
 
 export const VideoPlayer = ({ video }: Readonly<{ video: Playable }>): ReactNode =>
   Option.match(embedUrl(video), {
-    onNone: () => <VideoThumbnail src={video.thumbnailUrl} />,
+    onNone: () => <VideoThumbnail src={video.thumbnailUrl} priority="lcp" />,
     onSome: (src) => (
       <iframe
         src={src}
         title={`${video.title} の動画プレイヤー`}
-        allow="autoplay; fullscreen; picture-in-picture"
+        allow="autoplay; fullscreen; picture-in-picture; focus-without-user-activation 'none'"
         sandbox="allow-scripts allow-popups allow-presentation"
         loading="lazy"
         className="bg-screen aspect-video w-full rounded-lg"

@@ -7,9 +7,13 @@ const CELL = "px-3 py-2 text-left font-medium";
 export const ResultsHead = (): ReactNode => (
   <thead className="bg-muted">
     <tr>
-      <th className={CELL}>{COPY.results.corner}</th>
-      <th className={CELL}>{COPY.results.ours}</th>
-      <th className={CELL}>{COPY.results.direct}</th>
+      <td className={CELL}>{COPY.results.corner}</td>
+      <th scope="col" className={CELL}>
+        {COPY.results.ours}
+      </th>
+      <th scope="col" className={CELL}>
+        {COPY.results.direct}
+      </th>
     </tr>
   </thead>
 );

@@ -16,7 +16,7 @@ export const IngestedList = (): ReactNode => {
     return false;
   }
   return (
-    <ul aria-label={LABEL} className="flex flex-col gap-3">
+    <ul aria-label={LABEL} className="flex flex-col gap-3" role="list">
       {pipe(
         sources,
         Array.map((source) => <SourceFacts key={source.id} source={source} />),

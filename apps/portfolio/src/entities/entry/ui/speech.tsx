@@ -27,6 +27,7 @@ export const Speech = ({
           alt=""
           className="size-10 rounded-full"
           height={AVATAR_SIZE}
+          loading="lazy"
           src={avatar}
           width={AVATAR_SIZE}
         />

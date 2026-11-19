@@ -2,6 +2,8 @@ import type { ComponentProps, ReactNode } from "react";
 
 import { cn } from "#/shared/lib/utils.ts";
 
+const FOCUSABLE = 0;
+
 export const Table = ({
   className,
   label,
@@ -10,8 +12,8 @@ export const Table = ({
   <section
     data-slot="table-container"
     aria-label={label}
-    tabIndex={0}
     className="bg-card relative w-full overflow-x-auto rounded-xl border"
+    tabIndex={FOCUSABLE}
   >
     <table
       data-slot="table"

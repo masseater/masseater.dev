@@ -38,7 +38,7 @@ export const CreditsFrame = ({ children }: Readonly<{ children?: ReactNode }>): 
         {BACK}
       </Link>
       <h1 className="text-2xl font-bold">{HEADING}</h1>
-      <ul className="text-muted-foreground flex flex-col gap-1">
+      <ul className="text-muted-foreground flex flex-col gap-1" role="list">
         {pipe(
           [...creditOf(params.slug), ...SOURCES],
           Array.map((line) => <li key={line}>{line}</li>),

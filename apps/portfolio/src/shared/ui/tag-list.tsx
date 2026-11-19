@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 const LABEL = "タグ";
 
 export const TagList = ({ tags }: Readonly<{ tags: readonly string[] }>): ReactNode => (
-  <ul aria-label={LABEL} className="flex max-w-full min-w-0 flex-wrap gap-1.5">
+  <ul aria-label={LABEL} className="flex max-w-full min-w-0 flex-wrap gap-1.5" role="list">
     {pipe(
       tags,
       Arr.map((tag) => (

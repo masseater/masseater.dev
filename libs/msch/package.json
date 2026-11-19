@@ -153,6 +153,7 @@
     "@types/node": "catalog:",
     "@types/semver": "catalog:",
     "effect": "catalog:stack",
+    "oxlint": "catalog:",
     "typescript": "catalog:stack",
     "vite": "catalog:",
     "vite-plus": "catalog:stack",

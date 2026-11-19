@@ -41,7 +41,7 @@ export const MemoRetract = ({ memo }: Readonly<{ memo: MemoValue }>): ReactNode 
       <div className="flex items-center gap-2">
         <input
           aria-label={TEXT.reason}
-          className="border-input focus-visible:ring-ring h-10 min-w-0 flex-1 rounded-md border bg-white px-3 text-sm outline-none focus-visible:ring-2"
+          className="border-input focus-visible:ring-ring h-10 min-w-0 flex-1 rounded-md border bg-white px-3 text-sm outline-hidden focus-visible:ring-2"
           name="reason"
           placeholder={TEXT.reason}
           required

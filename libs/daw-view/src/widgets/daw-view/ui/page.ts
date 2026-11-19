@@ -11,7 +11,7 @@ const SPECTRUM_SIZE = { width: "1600", height: "112" } as const;
 
 const CLASS = {
   title:
-    "m-0 font-display text-[clamp(40px,11vw,104px)] leading-[0.92] font-extrabold tracking-[-0.045em]",
+    "m-0 font-display text-[clamp(2.625rem,1rem_+_9vw,6.5rem)] leading-[0.92] font-extrabold tracking-[-0.045em]",
   cursor: "ml-[0.12em] inline-block h-[0.09em] w-[0.62em] bg-hot align-[0.05em]",
   facts: "my-3.5 flex flex-wrap gap-x-[18px] gap-y-1.5 text-[13px] text-dim",
   transport: "sticky top-0 z-20 bg-paper pt-2.5",
@@ -22,9 +22,7 @@ const CLASS = {
   total: "text-[13px] text-dim",
   position: "min-w-[4.6em] flex-none text-[13px] text-dim tabular-nums",
   section: "ml-auto min-w-0 truncate text-right text-[13px] text-dim",
-  progress: "group mt-2.5 h-[3px] overflow-hidden bg-line data-[done=true]:h-px",
-  progressFill:
-    "block h-full w-0 bg-hot transition-[width] duration-150 group-data-[done=true]:hidden motion-reduce:transition-none",
+  progress: "daw-progress mt-2.5",
   deck: "mt-4 overflow-hidden rounded-[14px] border border-line bg-card p-3",
   wave: "block h-[120px] w-full cursor-pointer touch-manipulation rounded-lg",
   spectrum: "mt-2.5 block h-14 w-full rounded-lg",
@@ -43,7 +41,6 @@ export interface Header {
   readonly position: HTMLElement;
   readonly section: HTMLElement;
   readonly progress: HTMLElement;
-  readonly progressFill: HTMLElement;
 }
 
 export interface Deck {
@@ -78,11 +75,12 @@ export const headerOf = (heading: Heading): Header => {
   const total = span("", ["0:00"]);
   const position = withAttributes({ title: "小節.拍.16分" })(div(CLASS.position, ["1.1.1"]));
   const section = div(CLASS.section);
-  const progressFill = make("b")(CLASS.progressFill);
-  const progress = div(CLASS.progress, [progressFill]);
+  const progress = withAttributes({ max: "1", value: "0", "aria-label": "読み込み" })(
+    make("progress")(CLASS.progress),
+  );
   const row = div(CLASS.row, [play, timeOf(clock, total), position, section]);
   const node = div("", [...titleOf(heading), div(CLASS.transport, [row, progress])]);
-  return { node, play, clock, total, position, section, progress, progressFill };
+  return { node, play, clock, total, position, section, progress };
 };
 
 export const deckOf = (): Deck => {

@@ -20,11 +20,11 @@ const iconOf = (done: boolean): ReactNode => {
   return <Copy aria-hidden="true" />;
 };
 
-const statusOf = (copied: AsyncResult.AsyncResult<void, unknown>): string => {
-  if (AsyncResult.isSuccess(copied)) {
+const statusOf = (done: boolean, failed: boolean): string => {
+  if (done) {
     return COPIED;
   }
-  if (AsyncResult.isFailure(copied)) {
+  if (failed) {
     return FAILED;
   }
   return SILENT;
@@ -41,9 +41,9 @@ export const CopyMcpCommand = ({ name }: Readonly<{ name: string }>): ReactNode 
         {iconOf(AsyncResult.isSuccess(copied))}
         {LABEL}
       </Button>
-      <span role="status" className="sr-only">
-        {statusOf(copied)}
-      </span>
+      <output className="sr-only">
+        {statusOf(AsyncResult.isSuccess(copied), AsyncResult.isFailure(copied))}
+      </output>
     </>
   );
 };

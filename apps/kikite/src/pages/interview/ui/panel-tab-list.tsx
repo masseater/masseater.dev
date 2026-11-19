@@ -16,7 +16,7 @@ const countOf = (panel: PanelLabel, open: number): number => {
   return NONE;
 };
 
-export const PanelTabList = ({ idBase }: Readonly<{ idBase: string }>): ReactNode => {
+export const PanelTabList = ({ tabsId }: Readonly<{ tabsId: string }>): ReactNode => {
   const open = pipe(
     useSummary(),
     Option.match({ onNone: () => NONE, onSome: (summary) => summary.open.length }),
@@ -26,7 +26,7 @@ export const PanelTabList = ({ idBase }: Readonly<{ idBase: string }>): ReactNod
       {pipe(
         PANELS,
         Arr.map((panel) => (
-          <PanelTab key={panel.id} idBase={idBase} panel={panel} count={countOf(panel, open)} />
+          <PanelTab key={panel.id} tabsId={tabsId} panel={panel} count={countOf(panel, open)} />
         )),
       )}
     </div>

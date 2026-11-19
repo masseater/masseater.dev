@@ -1,13 +1,20 @@
+import { Option } from "effect";
 import { useCallback } from "react";
 import type { ChangeEvent, ReactNode } from "react";
 
-import { MAX_CHARACTERS, useDraft, useSetDraft } from "#/entities/translation/index.ts";
+import {
+  MAX_CHARACTERS,
+  useDirection,
+  useDraft,
+  useSetDraft,
+} from "#/entities/translation/index.ts";
 
 const LABEL = "原文";
 
 export const SourceText = (): ReactNode => {
   const draft = useDraft();
   const setDraft = useSetDraft();
+  const { source, detected } = useDirection();
   const onChange = useCallback(
     (event: ChangeEvent<HTMLTextAreaElement>) => {
       setDraft(event.currentTarget.value);
@@ -18,6 +25,7 @@ export const SourceText = (): ReactNode => {
     <textarea
       aria-label={LABEL}
       className="min-h-56 flex-1 resize-none bg-transparent py-5 pr-14 pl-6 text-2xl leading-relaxed outline-none"
+      lang={Option.getOrUndefined(Option.orElse(source, () => detected))}
       maxLength={MAX_CHARACTERS}
       spellCheck={false}
       value={draft}
