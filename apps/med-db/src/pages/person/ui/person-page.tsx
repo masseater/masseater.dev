@@ -7,6 +7,7 @@ import { SectionHeading } from "#/shared/ui/section-heading.tsx";
 import { CreditsTable } from "./credits-table.tsx";
 
 const KICKER = "✎ 担当者";
+const CREDITS_TITLE = "担当したパート";
 
 export const PersonPage = (): ReactNode => {
   const person = usePerson();
@@ -20,8 +21,8 @@ export const PersonPage = (): ReactNode => {
         )}
       </header>
       <section className="flex flex-col gap-4">
-        <SectionHeading title="担当したパート" count={person.credits.length} />
-        <CreditsTable />
+        <SectionHeading title={CREDITS_TITLE} count={person.credits.length} />
+        <CreditsTable label={CREDITS_TITLE} />
       </section>
     </div>
   );

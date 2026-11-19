@@ -10,7 +10,7 @@ export const ActivityDayGroup = ({ group }: Readonly<{ group: ActivityDay }>): R
     <h3 className="text-muted-foreground border-b pb-1 text-xs font-bold tabular-nums">
       {group.day}
     </h3>
-    <ul aria-label={group.day} className="divide-border divide-y">
+    <ul aria-label={group.day} className="divide-border divide-y" role="list">
       {pipe(
         group.activities,
         Arr.map((activity) => <ActivityRow activity={activity} key={activity.key} />),

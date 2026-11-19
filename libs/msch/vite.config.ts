@@ -7,7 +7,7 @@ const inputs = [...LOCKED.input, ...(await ignoredDirectories(`${import.meta.dir
 
 export default defineConfig({
   msch: {
-    publish: { installSize: "330 MB" },
+    publish: { installSize: "350 MB" },
     lint: {
       overrides: [
         {

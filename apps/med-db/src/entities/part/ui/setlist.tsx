@@ -11,7 +11,7 @@ export const Setlist = ({
   source,
   parts,
 }: Readonly<{ source: Watchable; parts: readonly PartRow[] }>): ReactNode => (
-  <ol className="bg-card flex flex-col divide-y overflow-hidden rounded-xl border">
+  <ol className="bg-card flex flex-col divide-y overflow-hidden rounded-xl border" role="list">
     {pipe(
       parts,
       Array.map((part) => (

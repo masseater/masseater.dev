@@ -16,24 +16,27 @@ export const DanceStage = ({
   label,
 }: Readonly<{ slug: string; source: string; label: string }>): ReactNode => {
   const { data: track = emptyTrack } = useQuery(trackQuery);
-  const attach: RefCallback<HTMLCanvasElement> = useCallback(
-    (canvas) =>
+  const attach: RefCallback<HTMLDivElement> = useCallback(
+    (stage) =>
       pipe(
-        Option.fromNullishOr(canvas),
-        Option.map((found) =>
-          startStage({ canvas: found, slug, effect: parseEffect(source), track }),
+        Option.fromNullishOr(stage),
+        Option.flatMap((found) =>
+          Option.map(Option.fromNullishOr(found.querySelector("canvas")), (canvas) =>
+            startStage({ stage: found, canvas, slug, effect: parseEffect(source), track }),
+          ),
         ),
         Option.getOrUndefined,
       ),
     [slug, source, track],
   );
   return (
-    <canvas
-      aria-label={label}
-      className="bg-muted aspect-video w-full rounded-lg"
-      height={HEIGHT}
-      ref={attach}
-      width={WIDTH}
-    />
+    <div className="skip-offscreen-stage" ref={attach}>
+      <canvas
+        aria-label={label}
+        className="bg-muted aspect-video w-full rounded-lg"
+        height={HEIGHT}
+        width={WIDTH}
+      />
+    </div>
   );
 };

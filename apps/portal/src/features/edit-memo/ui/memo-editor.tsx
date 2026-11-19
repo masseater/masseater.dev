@@ -11,7 +11,7 @@ import { FailedNote } from "./failed-note.tsx";
 const TEXT = { description: "説明", content: "本文", save: "保存" } as const;
 
 const FIELD =
-  "border-input focus-visible:ring-ring w-full rounded-md border bg-white px-3 py-2 outline-none focus-visible:ring-2";
+  "border-input focus-visible:ring-ring w-full rounded-md border bg-white px-3 py-2 outline-hidden focus-visible:ring-2";
 
 export const MemoEditor = ({ memo }: Readonly<{ memo: MemoValue }>): ReactNode => {
   const save = useChangeMemo();

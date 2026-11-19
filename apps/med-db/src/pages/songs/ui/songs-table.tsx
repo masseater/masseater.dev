@@ -14,11 +14,11 @@ const route = getRouteApi("/songs/");
 
 const HEADINGS = ["曲", "アーティスト", "使用動画"];
 
-export const SongsTable = (): ReactNode => {
+export const SongsTable = ({ label }: Readonly<{ label: string }>): ReactNode => {
   const filter = route.useSearch();
   const { data: songs } = useSuspenseQuery(catalogQueries.songs.get.queryOptions(filter));
   return (
-    <Table>
+    <Table label={label}>
       <TableHeadings labels={HEADINGS} />
       <TableBody>
         {pipe(

@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 export type Choice = Readonly<{ value: string; label: string }>;
 
 const SELECT =
-  "border-input focus-visible:ring-ring h-10 min-w-36 rounded-md border bg-white px-3 text-sm font-normal outline-none focus-visible:ring-2";
+  "border-input focus-visible:ring-ring h-10 min-w-36 rounded-md border bg-white px-3 text-sm font-normal outline-hidden focus-visible:ring-2";
 
 const EVERY = "";
 

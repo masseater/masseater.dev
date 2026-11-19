@@ -17,7 +17,7 @@ export const SourceList = (): ReactNode => {
     return <Notice tone="error">{sources.error.message}</Notice>;
   }
   return (
-    <ul className="flex flex-col gap-1">
+    <ul className="flex flex-col gap-1" role="list">
       {pipe(
         sources.data,
         Array.map((source) => (

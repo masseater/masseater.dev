@@ -7,7 +7,7 @@ import { LineItem } from "./line-item.tsx";
 
 export const LineList = ({ lines }: Readonly<{ lines: readonly ProfileLineValue[] }>): ReactNode =>
   Arr.isReadonlyArrayNonEmpty(lines) && (
-    <ul className="flex flex-col gap-1.5">
+    <ul className="flex flex-col gap-1.5" role="list">
       {pipe(
         lines,
         Arr.map((line) => <LineItem key={line.text} line={line} />),

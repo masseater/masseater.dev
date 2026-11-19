@@ -24,7 +24,7 @@ Run `vp exec msch` at the repository root. It takes no subcommand, checks the wh
 
 msch also runs every vite-plus-adopt check that the root `vite.config.ts` configures.
 Those include h56m, commitlint and textlint.
-Steiger, the dependency rules and fallow run as well.
+Steiger, the dependency rules, fallow and the `legacy-scan` of modern-web-guidance run as well.
 They read `VPA_BASE` (default `origin/main`) and other environment variables.
 A task that runs msch therefore sets `cache: false`.
 

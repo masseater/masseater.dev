@@ -13,7 +13,7 @@ export const Transcript = (): ReactNode => {
   const ref = useStickToBottom();
   return (
     <div ref={ref} className="min-h-0 flex-1 overflow-y-auto py-3 lg:px-5">
-      <ol className="flex flex-col gap-2">
+      <ol className="flex flex-col gap-2" role="list">
         {pipe(
           entries,
           Arr.map((entry) => <HistoryItem key={entry.id} entry={entry} />),
