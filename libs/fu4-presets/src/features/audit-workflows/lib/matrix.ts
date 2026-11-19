@@ -68,6 +68,7 @@ const literalMatrix = (inner: Matrix, location: SymbolicLocation): MatrixView =>
       expansions: [],
       indirectlyExpanded: Option.some(location),
       indirectInclusions: Option.none(),
+      indirectExclusions: Option.none(),
     };
   }
   const expanded = expand(dimensionRow(inner.dimensions.value), location);
@@ -97,6 +98,10 @@ const literalMatrix = (inner: Matrix, location: SymbolicLocation): MatrixView =>
       withKeys("include")(location),
       () => inner.include.type === "expr",
     ),
+    indirectExclusions: Option.liftPredicate(
+      withKeys("exclude")(location),
+      () => inner.exclude.type === "expr",
+    ),
   };
 };
 
@@ -109,6 +114,7 @@ export const matrixView =
         expansions: [],
         indirectlyExpanded: Option.some(location),
         indirectInclusions: Option.none(),
+        indirectExclusions: Option.none(),
       };
     }
     return literalMatrix(matrix.value, location);

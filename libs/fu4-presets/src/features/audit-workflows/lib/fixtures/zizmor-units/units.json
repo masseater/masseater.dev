@@ -1,0 +1,5632 @@
+{
+ "configSchema": [
+  {
+   "id": "configSchema#1",
+   "instance": {
+    "rules": {
+     "stale-action-refs": {
+      "disable": true
+     },
+     "unpinned-uses": {
+      "disable": false
+     }
+    }
+   },
+   "valid": true
+  },
+  {
+   "id": "configSchema#2",
+   "instance": {
+    "rules": {}
+   },
+   "valid": true
+  },
+  {
+   "id": "configSchema#3",
+   "instance": {
+    "rules": {
+     "forbidden-uses": {
+      "config": {
+       "allow": [
+        "actions/checkout@v2",
+        "actions/setup-node@v3",
+        "foo/*"
+       ]
+      }
+     }
+    }
+   },
+   "valid": true
+  },
+  {
+   "id": "configSchema#4",
+   "instance": {
+    "rules": {
+     "forbidden-uses": {
+      "config": {
+       "deny": [
+        "actions/checkout@v1",
+        "actions/setup-node@v1",
+        "foo/*"
+       ]
+      }
+     }
+    }
+   },
+   "valid": true
+  },
+  {
+   "id": "configSchema#5",
+   "instance": {
+    "rules": {
+     "stale-action-refs": {
+      "ignore": [
+       "foo.yml",
+       "foo.yml:10",
+       "foo.yml:10:20"
+      ]
+     }
+    }
+   },
+   "valid": true
+  },
+  {
+   "id": "configSchema#6",
+   "instance": {
+    "rules": {
+     "stale-action-refs": {
+      "ignore": [
+       "foo.yml:invalid"
+      ]
+     }
+    }
+   },
+   "valid": false
+  },
+  {
+   "id": "configSchema#7",
+   "instance": {
+    "rules": {
+     "artipacked": {
+      "remap": {
+       "severity": "Ultra"
+      }
+     }
+    }
+   },
+   "valid": false
+  },
+  {
+   "id": "configSchema#8",
+   "instance": {
+    "rules": {
+     "artipacked": {
+      "remap": {
+       "severity": "informational"
+      }
+     }
+    }
+   },
+   "valid": true
+  },
+  {
+   "id": "configSchema#9",
+   "instance": {
+    "rules": {
+     "artipacked": {
+      "remap": {
+       "severity": "low"
+      }
+     }
+    }
+   },
+   "valid": true
+  },
+  {
+   "id": "configSchema#10",
+   "instance": {
+    "rules": {
+     "artipacked": {
+      "remap": {
+       "severity": "medium"
+      }
+     }
+    }
+   },
+   "valid": true
+  },
+  {
+   "id": "configSchema#11",
+   "instance": {
+    "rules": {
+     "artipacked": {
+      "remap": {
+       "severity": "high"
+      }
+     }
+    }
+   },
+   "valid": true
+  },
+  {
+   "id": "configSchema#12",
+   "instance": {
+    "rules": {
+     "secrets-outside-env": {
+      "config": {
+       "allow": [
+        "NOT_SO_SECRET"
+       ]
+      },
+      "ignore": [
+       "foo.yml"
+      ]
+     }
+    }
+   },
+   "valid": true
+  },
+  {
+   "id": "configSchema#13",
+   "instance": {
+    "rules": {
+     "secrets-outside-env": {
+      "config": {
+       "allow": [
+        "NOT_SO_SECRET",
+        "ALSO_NOT_SO_SECRET"
+       ]
+      }
+     }
+    }
+   },
+   "valid": true
+  },
+  {
+   "id": "configSchema#14",
+   "instance": {
+    "rules": {
+     "this-audit-does-not-exist": {
+      "disable": false
+     }
+    }
+   },
+   "valid": false
+  },
+  {
+   "id": "configSchema#15",
+   "instance": {
+    "rules": {
+     "unpinned-uses": {
+      "config": {
+       "policies": {
+        "actions/checkout": "hash-pin"
+       }
+      }
+     }
+    }
+   },
+   "valid": true
+  },
+  {
+   "id": "configSchema#16",
+   "instance": {
+    "rules": {
+     "unpinned-uses": {
+      "config": {
+       "policies": {
+        "actions/checkout": "unknown-policy"
+       }
+      }
+     }
+    }
+   },
+   "valid": false
+  }
+ ],
+ "pktDecode": [
+  {
+   "id": "pktDecode#1",
+   "bytes": [
+    48,
+    48,
+    51,
+    50,
+    97,
+    99,
+    55,
+    99,
+    102,
+    97,
+    57,
+    102,
+    98,
+    55,
+    98,
+    53,
+    100,
+    54,
+    99,
+    52,
+    49,
+    55,
+    56,
+    52,
+    55,
+    101,
+    52,
+    57,
+    101,
+    51,
+    55,
+    53,
+    97,
+    97,
+    101,
+    50,
+    48,
+    56,
+    49,
+    57,
+    97,
+    48,
+    54,
+    102,
+    32,
+    72,
+    69,
+    65,
+    68,
+    10,
+    48,
+    48,
+    51,
+    100,
+    97,
+    99,
+    55,
+    99,
+    102,
+    97,
+    57,
+    102,
+    98,
+    55,
+    98,
+    53,
+    100,
+    54,
+    99,
+    52,
+    49,
+    55,
+    56,
+    52,
+    55,
+    101,
+    52,
+    57,
+    101,
+    51,
+    55,
+    53,
+    97,
+    97,
+    101,
+    50,
+    48,
+    56,
+    49,
+    57,
+    97,
+    48,
+    54,
+    102,
+    32,
+    114,
+    101,
+    102,
+    115,
+    47,
+    104,
+    101,
+    97,
+    100,
+    115,
+    47,
+    109,
+    97,
+    105,
+    110,
+    10,
+    48,
+    48,
+    51,
+    101,
+    51,
+    101,
+    55,
+    57,
+    51,
+    97,
+    99,
+    53,
+    97,
+    98,
+    97,
+    48,
+    52,
+    99,
+    102,
+    56,
+    49,
+    53,
+    55,
+    101,
+    53,
+    50,
+    101,
+    55,
+    57,
+    54,
+    100,
+    101,
+    50,
+    100,
+    56,
+    48,
+    56,
+    102,
+    56,
+    48,
+    48,
+    48,
+    51,
+    57,
+    32,
+    114,
+    101,
+    102,
+    115,
+    47,
+    112,
+    117,
+    108,
+    108,
+    47,
+    49,
+    47,
+    104,
+    101,
+    97,
+    100,
+    10,
+    48,
+    48,
+    54,
+    97,
+    49,
+    97,
+    99,
+    99,
+    99,
+    97,
+    51,
+    52,
+    98,
+    102,
+    102,
+    54,
+    48,
+    51,
+    52,
+    55,
+    100,
+    57,
+    54,
+    102,
+    97,
+    97,
+    102,
+    55,
+    49,
+    51,
+    100,
+    51,
+    50,
+    56,
+    99,
+    97,
+    49,
+    50,
+    53,
+    48,
+    100,
+    51,
+    55,
+    98,
+    32,
+    114,
+    101,
+    102,
+    115,
+    47,
+    116,
+    97,
+    103,
+    115,
+    47,
+    118,
+    49,
+    32,
+    112,
+    101,
+    101,
+    108,
+    101,
+    100,
+    58,
+    51,
+    102,
+    100,
+    100,
+    52,
+    102,
+    99,
+    97,
+    56,
+    102,
+    99,
+    55,
+    54,
+    98,
+    50,
+    53,
+    52,
+    99,
+    101,
+    102,
+    101,
+    102,
+    99,
+    97,
+    57,
+    50,
+    51,
+    56,
+    49,
+    99,
+    52,
+    49,
+    98,
+    50,
+    56,
+    100,
+    49,
+    102,
+    48,
+    100,
+    10,
+    48,
+    48,
+    54,
+    99,
+    98,
+    99,
+    98,
+    51,
+    54,
+    102,
+    51,
+    100,
+    53,
+    53,
+    49,
+    51,
+    52,
+    48,
+    101,
+    49,
+    49,
+    98,
+    56,
+    56,
+    99,
+    51,
+    55,
+    54,
+    101,
+    55,
+    52,
+    101,
+    56,
+    97,
+    101,
+    55,
+    55,
+    102,
+    99,
+    54,
+    99,
+    102,
+    48,
+    98,
+    32,
+    114,
+    101,
+    102,
+    115,
+    47,
+    116,
+    97,
+    103,
+    115,
+    47,
+    118,
+    49,
+    46,
+    48,
+    32,
+    112,
+    101,
+    101,
+    108,
+    101,
+    100,
+    58,
+    51,
+    102,
+    100,
+    100,
+    52,
+    102,
+    99,
+    97,
+    56,
+    102,
+    99,
+    55,
+    54,
+    98,
+    50,
+    53,
+    52,
+    99,
+    101,
+    102,
+    101,
+    102,
+    99,
+    97,
+    57,
+    50,
+    51,
+    56,
+    49,
+    99,
+    52,
+    49,
+    98,
+    50,
+    56,
+    100,
+    49,
+    102,
+    48,
+    100,
+    10,
+    48,
+    48,
+    54,
+    101,
+    48,
+    54,
+    102,
+    57,
+    100,
+    52,
+    55,
+    97,
+    98,
+    102,
+    51,
+    52,
+    48,
+    98,
+    55,
+    48,
+    57,
+    98,
+    52,
+    49,
+    50,
+    57,
+    48,
+    48,
+    97,
+    55,
+    98,
+    51,
+    99,
+    101,
+    51,
+    51,
+    53,
+    53,
+    55,
+    100,
+    51,
+    50,
+    98,
+    53,
+    32,
+    114,
+    101,
+    102,
+    115,
+    47,
+    116,
+    97,
+    103,
+    115,
+    47,
+    118,
+    49,
+    46,
+    48,
+    46,
+    48,
+    32,
+    112,
+    101,
+    101,
+    108,
+    101,
+    100,
+    58,
+    51,
+    102,
+    100,
+    100,
+    52,
+    102,
+    99,
+    97,
+    56,
+    102,
+    99,
+    55,
+    54,
+    98,
+    50,
+    53,
+    52,
+    99,
+    101,
+    102,
+    101,
+    102,
+    99,
+    97,
+    57,
+    50,
+    51,
+    56,
+    49,
+    99,
+    52,
+    49,
+    98,
+    50,
+    56,
+    100,
+    49,
+    102,
+    48,
+    100,
+    10,
+    48,
+    48,
+    48,
+    48,
+    10
+   ],
+   "result": {
+    "packet": {
+     "data": "ac7cfa9fb7b5d6c417847e49e375aae20819a06f HEAD\n",
+     "type": "data"
+    }
+   }
+  },
+  {
+   "id": "pktDecode#2",
+   "bytes": [
+    48,
+    48,
+    49,
+    49,
+    104,
+    101,
+    108,
+    108,
+    111,
+    44,
+    32,
+    119,
+    111,
+    114,
+    108,
+    100,
+    33
+   ],
+   "result": {
+    "packet": {
+     "data": "hello, world!",
+     "type": "data"
+    }
+   }
+  },
+  {
+   "id": "pktDecode#3",
+   "bytes": [],
+   "result": {
+    "error": "FrameTooShort"
+   }
+  },
+  {
+   "id": "pktDecode#4",
+   "bytes": [
+    48
+   ],
+   "result": {
+    "error": "FrameTooShort"
+   }
+  },
+  {
+   "id": "pktDecode#5",
+   "bytes": [
+    48,
+    48
+   ],
+   "result": {
+    "error": "FrameTooShort"
+   }
+  },
+  {
+   "id": "pktDecode#6",
+   "bytes": [
+    48,
+    48,
+    48
+   ],
+   "result": {
+    "error": "FrameTooShort"
+   }
+  },
+  {
+   "id": "pktDecode#7",
+   "bytes": [
+    122,
+    122,
+    122,
+    122
+   ],
+   "result": {
+    "error": "BadLength"
+   }
+  },
+  {
+   "id": "pktDecode#8",
+   "bytes": [
+    0,
+    0,
+    0,
+    0
+   ],
+   "result": {
+    "error": "BadLength"
+   }
+  },
+  {
+   "id": "pktDecode#9",
+   "bytes": [
+    240,
+    40,
+    140,
+    188
+   ],
+   "result": {
+    "error": "BadLength"
+   }
+  },
+  {
+   "id": "pktDecode#10",
+   "bytes": [
+    48,
+    48,
+    48,
+    50
+   ],
+   "result": {
+    "error": "BadControl"
+   }
+  },
+  {
+   "id": "pktDecode#11",
+   "bytes": [
+    48,
+    48,
+    48,
+    51
+   ],
+   "result": {
+    "error": "BadControl"
+   }
+  },
+  {
+   "id": "pktDecode#12",
+   "bytes": [
+    102,
+    102,
+    102,
+    102,
+    104,
+    101,
+    108,
+    108,
+    111
+   ],
+   "result": {
+    "error": "DataTooLong"
+   }
+  },
+  {
+   "id": "pktDecode#13",
+   "bytes": [
+    48,
+    48,
+    48,
+    56,
+    104,
+    105
+   ],
+   "result": {
+    "error": "DataTooShort"
+   }
+  },
+  {
+   "id": "pktDecode#14",
+   "bytes": [
+    48,
+    48,
+    48,
+    49
+   ],
+   "result": {
+    "packet": {
+     "type": "delim"
+    }
+   }
+  },
+  {
+   "id": "pktDecode#15",
+   "bytes": [
+    48,
+    48,
+    49,
+    99,
+    69,
+    82,
+    82,
+    32,
+    115,
+    111,
+    109,
+    101,
+    116,
+    104,
+    105,
+    110,
+    103,
+    32,
+    119,
+    101,
+    110,
+    116,
+    32,
+    119,
+    114,
+    111,
+    110,
+    103
+   ],
+   "result": {
+    "error": "InBandError"
+   }
+  },
+  {
+   "id": "pktDecode#16",
+   "bytes": [
+    48,
+    48,
+    48,
+    48
+   ],
+   "result": {
+    "packet": {
+     "type": "flush"
+    }
+   }
+  },
+  {
+   "id": "pktDecode#17",
+   "bytes": [
+    48,
+    48,
+    51,
+    100,
+    97,
+    99,
+    55,
+    99,
+    102,
+    97,
+    57,
+    102,
+    98,
+    55,
+    98,
+    53,
+    100,
+    54,
+    99,
+    52,
+    49,
+    55,
+    56,
+    52,
+    55,
+    101,
+    52,
+    57,
+    101,
+    51,
+    55,
+    53,
+    97,
+    97,
+    101,
+    50,
+    48,
+    56,
+    49,
+    57,
+    97,
+    48,
+    54,
+    102,
+    32,
+    114,
+    101,
+    102,
+    115,
+    47,
+    104,
+    101,
+    97,
+    100,
+    115,
+    47,
+    109,
+    97,
+    105,
+    110,
+    10,
+    48,
+    48,
+    51,
+    101,
+    51,
+    101,
+    55,
+    57,
+    51,
+    97,
+    99,
+    53,
+    97,
+    98,
+    97,
+    48,
+    52,
+    99,
+    102,
+    56,
+    49,
+    53,
+    55,
+    101,
+    53,
+    50,
+    101,
+    55,
+    57,
+    54,
+    100,
+    101,
+    50,
+    100,
+    56,
+    48,
+    56,
+    102,
+    56,
+    48,
+    48,
+    48,
+    51,
+    57,
+    32,
+    114,
+    101,
+    102,
+    115,
+    47,
+    112,
+    117,
+    108,
+    108,
+    47,
+    49,
+    47,
+    104,
+    101,
+    97,
+    100,
+    10,
+    48,
+    48,
+    54,
+    97,
+    49,
+    97,
+    99,
+    99,
+    99,
+    97,
+    51,
+    52,
+    98,
+    102,
+    102,
+    54,
+    48,
+    51,
+    52,
+    55,
+    100,
+    57,
+    54,
+    102,
+    97,
+    97,
+    102,
+    55,
+    49,
+    51,
+    100,
+    51,
+    50,
+    56,
+    99,
+    97,
+    49,
+    50,
+    53,
+    48,
+    100,
+    51,
+    55,
+    98,
+    32,
+    114,
+    101,
+    102,
+    115,
+    47,
+    116,
+    97,
+    103,
+    115,
+    47,
+    118,
+    49,
+    32,
+    112,
+    101,
+    101,
+    108,
+    101,
+    100,
+    58,
+    51,
+    102,
+    100,
+    100,
+    52,
+    102,
+    99,
+    97,
+    56,
+    102,
+    99,
+    55,
+    54,
+    98,
+    50,
+    53,
+    52,
+    99,
+    101,
+    102,
+    101,
+    102,
+    99,
+    97,
+    57,
+    50,
+    51,
+    56,
+    49,
+    99,
+    52,
+    49,
+    98,
+    50,
+    56,
+    100,
+    49,
+    102,
+    48,
+    100,
+    10,
+    48,
+    48,
+    54,
+    99,
+    98,
+    99,
+    98,
+    51,
+    54,
+    102,
+    51,
+    100,
+    53,
+    53,
+    49,
+    51,
+    52,
+    48,
+    101,
+    49,
+    49,
+    98,
+    56,
+    56,
+    99,
+    51,
+    55,
+    54,
+    101,
+    55,
+    52,
+    101,
+    56,
+    97,
+    101,
+    55,
+    55,
+    102,
+    99,
+    54,
+    99,
+    102,
+    48,
+    98,
+    32,
+    114,
+    101,
+    102,
+    115,
+    47,
+    116,
+    97,
+    103,
+    115,
+    47,
+    118,
+    49,
+    46,
+    48,
+    32,
+    112,
+    101,
+    101,
+    108,
+    101,
+    100,
+    58,
+    51,
+    102,
+    100,
+    100,
+    52,
+    102,
+    99,
+    97,
+    56,
+    102,
+    99,
+    55,
+    54,
+    98,
+    50,
+    53,
+    52,
+    99,
+    101,
+    102,
+    101,
+    102,
+    99,
+    97,
+    57,
+    50,
+    51,
+    56,
+    49,
+    99,
+    52,
+    49,
+    98,
+    50,
+    56,
+    100,
+    49,
+    102,
+    48,
+    100,
+    10,
+    48,
+    48,
+    54,
+    101,
+    48,
+    54,
+    102,
+    57,
+    100,
+    52,
+    55,
+    97,
+    98,
+    102,
+    51,
+    52,
+    48,
+    98,
+    55,
+    48,
+    57,
+    98,
+    52,
+    49,
+    50,
+    57,
+    48,
+    48,
+    97,
+    55,
+    98,
+    51,
+    99,
+    101,
+    51,
+    51,
+    53,
+    53,
+    55,
+    100,
+    51,
+    50,
+    98,
+    53,
+    32,
+    114,
+    101,
+    102,
+    115,
+    47,
+    116,
+    97,
+    103,
+    115,
+    47,
+    118,
+    49,
+    46,
+    48,
+    46,
+    48,
+    32,
+    112,
+    101,
+    101,
+    108,
+    101,
+    100,
+    58,
+    51,
+    102,
+    100,
+    100,
+    52,
+    102,
+    99,
+    97,
+    56,
+    102,
+    99,
+    55,
+    54,
+    98,
+    50,
+    53,
+    52,
+    99,
+    101,
+    102,
+    101,
+    102,
+    99,
+    97,
+    57,
+    50,
+    51,
+    56,
+    49,
+    99,
+    52,
+    49,
+    98,
+    50,
+    56,
+    100,
+    49,
+    102,
+    48,
+    100,
+    10,
+    48,
+    48,
+    48,
+    48,
+    10
+   ],
+   "result": {
+    "packet": {
+     "data": "ac7cfa9fb7b5d6c417847e49e375aae20819a06f refs/heads/main\n",
+     "type": "data"
+    }
+   }
+  },
+  {
+   "id": "pktDecode#18",
+   "bytes": [
+    48,
+    48,
+    51,
+    101,
+    51,
+    101,
+    55,
+    57,
+    51,
+    97,
+    99,
+    53,
+    97,
+    98,
+    97,
+    48,
+    52,
+    99,
+    102,
+    56,
+    49,
+    53,
+    55,
+    101,
+    53,
+    50,
+    101,
+    55,
+    57,
+    54,
+    100,
+    101,
+    50,
+    100,
+    56,
+    48,
+    56,
+    102,
+    56,
+    48,
+    48,
+    48,
+    51,
+    57,
+    32,
+    114,
+    101,
+    102,
+    115,
+    47,
+    112,
+    117,
+    108,
+    108,
+    47,
+    49,
+    47,
+    104,
+    101,
+    97,
+    100,
+    10,
+    48,
+    48,
+    54,
+    97,
+    49,
+    97,
+    99,
+    99,
+    99,
+    97,
+    51,
+    52,
+    98,
+    102,
+    102,
+    54,
+    48,
+    51,
+    52,
+    55,
+    100,
+    57,
+    54,
+    102,
+    97,
+    97,
+    102,
+    55,
+    49,
+    51,
+    100,
+    51,
+    50,
+    56,
+    99,
+    97,
+    49,
+    50,
+    53,
+    48,
+    100,
+    51,
+    55,
+    98,
+    32,
+    114,
+    101,
+    102,
+    115,
+    47,
+    116,
+    97,
+    103,
+    115,
+    47,
+    118,
+    49,
+    32,
+    112,
+    101,
+    101,
+    108,
+    101,
+    100,
+    58,
+    51,
+    102,
+    100,
+    100,
+    52,
+    102,
+    99,
+    97,
+    56,
+    102,
+    99,
+    55,
+    54,
+    98,
+    50,
+    53,
+    52,
+    99,
+    101,
+    102,
+    101,
+    102,
+    99,
+    97,
+    57,
+    50,
+    51,
+    56,
+    49,
+    99,
+    52,
+    49,
+    98,
+    50,
+    56,
+    100,
+    49,
+    102,
+    48,
+    100,
+    10,
+    48,
+    48,
+    54,
+    99,
+    98,
+    99,
+    98,
+    51,
+    54,
+    102,
+    51,
+    100,
+    53,
+    53,
+    49,
+    51,
+    52,
+    48,
+    101,
+    49,
+    49,
+    98,
+    56,
+    56,
+    99,
+    51,
+    55,
+    54,
+    101,
+    55,
+    52,
+    101,
+    56,
+    97,
+    101,
+    55,
+    55,
+    102,
+    99,
+    54,
+    99,
+    102,
+    48,
+    98,
+    32,
+    114,
+    101,
+    102,
+    115,
+    47,
+    116,
+    97,
+    103,
+    115,
+    47,
+    118,
+    49,
+    46,
+    48,
+    32,
+    112,
+    101,
+    101,
+    108,
+    101,
+    100,
+    58,
+    51,
+    102,
+    100,
+    100,
+    52,
+    102,
+    99,
+    97,
+    56,
+    102,
+    99,
+    55,
+    54,
+    98,
+    50,
+    53,
+    52,
+    99,
+    101,
+    102,
+    101,
+    102,
+    99,
+    97,
+    57,
+    50,
+    51,
+    56,
+    49,
+    99,
+    52,
+    49,
+    98,
+    50,
+    56,
+    100,
+    49,
+    102,
+    48,
+    100,
+    10,
+    48,
+    48,
+    54,
+    101,
+    48,
+    54,
+    102,
+    57,
+    100,
+    52,
+    55,
+    97,
+    98,
+    102,
+    51,
+    52,
+    48,
+    98,
+    55,
+    48,
+    57,
+    98,
+    52,
+    49,
+    50,
+    57,
+    48,
+    48,
+    97,
+    55,
+    98,
+    51,
+    99,
+    101,
+    51,
+    51,
+    53,
+    53,
+    55,
+    100,
+    51,
+    50,
+    98,
+    53,
+    32,
+    114,
+    101,
+    102,
+    115,
+    47,
+    116,
+    97,
+    103,
+    115,
+    47,
+    118,
+    49,
+    46,
+    48,
+    46,
+    48,
+    32,
+    112,
+    101,
+    101,
+    108,
+    101,
+    100,
+    58,
+    51,
+    102,
+    100,
+    100,
+    52,
+    102,
+    99,
+    97,
+    56,
+    102,
+    99,
+    55,
+    54,
+    98,
+    50,
+    53,
+    52,
+    99,
+    101,
+    102,
+    101,
+    102,
+    99,
+    97,
+    57,
+    50,
+    51,
+    56,
+    49,
+    99,
+    52,
+    49,
+    98,
+    50,
+    56,
+    100,
+    49,
+    102,
+    48,
+    100,
+    10,
+    48,
+    48,
+    48,
+    48,
+    10
+   ],
+   "result": {
+    "packet": {
+     "data": "3e793ac5aba04cf8157e52e796de2d808f800039 refs/pull/1/head\n",
+     "type": "data"
+    }
+   }
+  },
+  {
+   "id": "pktDecode#19",
+   "bytes": [
+    48,
+    48,
+    54,
+    97,
+    49,
+    97,
+    99,
+    99,
+    99,
+    97,
+    51,
+    52,
+    98,
+    102,
+    102,
+    54,
+    48,
+    51,
+    52,
+    55,
+    100,
+    57,
+    54,
+    102,
+    97,
+    97,
+    102,
+    55,
+    49,
+    51,
+    100,
+    51,
+    50,
+    56,
+    99,
+    97,
+    49,
+    50,
+    53,
+    48,
+    100,
+    51,
+    55,
+    98,
+    32,
+    114,
+    101,
+    102,
+    115,
+    47,
+    116,
+    97,
+    103,
+    115,
+    47,
+    118,
+    49,
+    32,
+    112,
+    101,
+    101,
+    108,
+    101,
+    100,
+    58,
+    51,
+    102,
+    100,
+    100,
+    52,
+    102,
+    99,
+    97,
+    56,
+    102,
+    99,
+    55,
+    54,
+    98,
+    50,
+    53,
+    52,
+    99,
+    101,
+    102,
+    101,
+    102,
+    99,
+    97,
+    57,
+    50,
+    51,
+    56,
+    49,
+    99,
+    52,
+    49,
+    98,
+    50,
+    56,
+    100,
+    49,
+    102,
+    48,
+    100,
+    10,
+    48,
+    48,
+    54,
+    99,
+    98,
+    99,
+    98,
+    51,
+    54,
+    102,
+    51,
+    100,
+    53,
+    53,
+    49,
+    51,
+    52,
+    48,
+    101,
+    49,
+    49,
+    98,
+    56,
+    56,
+    99,
+    51,
+    55,
+    54,
+    101,
+    55,
+    52,
+    101,
+    56,
+    97,
+    101,
+    55,
+    55,
+    102,
+    99,
+    54,
+    99,
+    102,
+    48,
+    98,
+    32,
+    114,
+    101,
+    102,
+    115,
+    47,
+    116,
+    97,
+    103,
+    115,
+    47,
+    118,
+    49,
+    46,
+    48,
+    32,
+    112,
+    101,
+    101,
+    108,
+    101,
+    100,
+    58,
+    51,
+    102,
+    100,
+    100,
+    52,
+    102,
+    99,
+    97,
+    56,
+    102,
+    99,
+    55,
+    54,
+    98,
+    50,
+    53,
+    52,
+    99,
+    101,
+    102,
+    101,
+    102,
+    99,
+    97,
+    57,
+    50,
+    51,
+    56,
+    49,
+    99,
+    52,
+    49,
+    98,
+    50,
+    56,
+    100,
+    49,
+    102,
+    48,
+    100,
+    10,
+    48,
+    48,
+    54,
+    101,
+    48,
+    54,
+    102,
+    57,
+    100,
+    52,
+    55,
+    97,
+    98,
+    102,
+    51,
+    52,
+    48,
+    98,
+    55,
+    48,
+    57,
+    98,
+    52,
+    49,
+    50,
+    57,
+    48,
+    48,
+    97,
+    55,
+    98,
+    51,
+    99,
+    101,
+    51,
+    51,
+    53,
+    53,
+    55,
+    100,
+    51,
+    50,
+    98,
+    53,
+    32,
+    114,
+    101,
+    102,
+    115,
+    47,
+    116,
+    97,
+    103,
+    115,
+    47,
+    118,
+    49,
+    46,
+    48,
+    46,
+    48,
+    32,
+    112,
+    101,
+    101,
+    108,
+    101,
+    100,
+    58,
+    51,
+    102,
+    100,
+    100,
+    52,
+    102,
+    99,
+    97,
+    56,
+    102,
+    99,
+    55,
+    54,
+    98,
+    50,
+    53,
+    52,
+    99,
+    101,
+    102,
+    101,
+    102,
+    99,
+    97,
+    57,
+    50,
+    51,
+    56,
+    49,
+    99,
+    52,
+    49,
+    98,
+    50,
+    56,
+    100,
+    49,
+    102,
+    48,
+    100,
+    10,
+    48,
+    48,
+    48,
+    48,
+    10
+   ],
+   "result": {
+    "packet": {
+     "data": "1accca34bff60347d96faaf713d328ca1250d37b refs/tags/v1 peeled:3fdd4fca8fc76b254cefefca92381c41b28d1f0d\n",
+     "type": "data"
+    }
+   }
+  },
+  {
+   "id": "pktDecode#20",
+   "bytes": [
+    48,
+    48,
+    54,
+    99,
+    98,
+    99,
+    98,
+    51,
+    54,
+    102,
+    51,
+    100,
+    53,
+    53,
+    49,
+    51,
+    52,
+    48,
+    101,
+    49,
+    49,
+    98,
+    56,
+    56,
+    99,
+    51,
+    55,
+    54,
+    101,
+    55,
+    52,
+    101,
+    56,
+    97,
+    101,
+    55,
+    55,
+    102,
+    99,
+    54,
+    99,
+    102,
+    48,
+    98,
+    32,
+    114,
+    101,
+    102,
+    115,
+    47,
+    116,
+    97,
+    103,
+    115,
+    47,
+    118,
+    49,
+    46,
+    48,
+    32,
+    112,
+    101,
+    101,
+    108,
+    101,
+    100,
+    58,
+    51,
+    102,
+    100,
+    100,
+    52,
+    102,
+    99,
+    97,
+    56,
+    102,
+    99,
+    55,
+    54,
+    98,
+    50,
+    53,
+    52,
+    99,
+    101,
+    102,
+    101,
+    102,
+    99,
+    97,
+    57,
+    50,
+    51,
+    56,
+    49,
+    99,
+    52,
+    49,
+    98,
+    50,
+    56,
+    100,
+    49,
+    102,
+    48,
+    100,
+    10,
+    48,
+    48,
+    54,
+    101,
+    48,
+    54,
+    102,
+    57,
+    100,
+    52,
+    55,
+    97,
+    98,
+    102,
+    51,
+    52,
+    48,
+    98,
+    55,
+    48,
+    57,
+    98,
+    52,
+    49,
+    50,
+    57,
+    48,
+    48,
+    97,
+    55,
+    98,
+    51,
+    99,
+    101,
+    51,
+    51,
+    53,
+    53,
+    55,
+    100,
+    51,
+    50,
+    98,
+    53,
+    32,
+    114,
+    101,
+    102,
+    115,
+    47,
+    116,
+    97,
+    103,
+    115,
+    47,
+    118,
+    49,
+    46,
+    48,
+    46,
+    48,
+    32,
+    112,
+    101,
+    101,
+    108,
+    101,
+    100,
+    58,
+    51,
+    102,
+    100,
+    100,
+    52,
+    102,
+    99,
+    97,
+    56,
+    102,
+    99,
+    55,
+    54,
+    98,
+    50,
+    53,
+    52,
+    99,
+    101,
+    102,
+    101,
+    102,
+    99,
+    97,
+    57,
+    50,
+    51,
+    56,
+    49,
+    99,
+    52,
+    49,
+    98,
+    50,
+    56,
+    100,
+    49,
+    102,
+    48,
+    100,
+    10,
+    48,
+    48,
+    48,
+    48,
+    10
+   ],
+   "result": {
+    "packet": {
+     "data": "bcb36f3d551340e11b88c376e74e8ae77fc6cf0b refs/tags/v1.0 peeled:3fdd4fca8fc76b254cefefca92381c41b28d1f0d\n",
+     "type": "data"
+    }
+   }
+  },
+  {
+   "id": "pktDecode#21",
+   "bytes": [
+    48,
+    48,
+    54,
+    101,
+    48,
+    54,
+    102,
+    57,
+    100,
+    52,
+    55,
+    97,
+    98,
+    102,
+    51,
+    52,
+    48,
+    98,
+    55,
+    48,
+    57,
+    98,
+    52,
+    49,
+    50,
+    57,
+    48,
+    48,
+    97,
+    55,
+    98,
+    51,
+    99,
+    101,
+    51,
+    51,
+    53,
+    53,
+    55,
+    100,
+    51,
+    50,
+    98,
+    53,
+    32,
+    114,
+    101,
+    102,
+    115,
+    47,
+    116,
+    97,
+    103,
+    115,
+    47,
+    118,
+    49,
+    46,
+    48,
+    46,
+    48,
+    32,
+    112,
+    101,
+    101,
+    108,
+    101,
+    100,
+    58,
+    51,
+    102,
+    100,
+    100,
+    52,
+    102,
+    99,
+    97,
+    56,
+    102,
+    99,
+    55,
+    54,
+    98,
+    50,
+    53,
+    52,
+    99,
+    101,
+    102,
+    101,
+    102,
+    99,
+    97,
+    57,
+    50,
+    51,
+    56,
+    49,
+    99,
+    52,
+    49,
+    98,
+    50,
+    56,
+    100,
+    49,
+    102,
+    48,
+    100,
+    10,
+    48,
+    48,
+    48,
+    48,
+    10
+   ],
+   "result": {
+    "packet": {
+     "data": "06f9d47abf340b709b412900a7b3ce33557d32b5 refs/tags/v1.0.0 peeled:3fdd4fca8fc76b254cefefca92381c41b28d1f0d\n",
+     "type": "data"
+    }
+   }
+  },
+  {
+   "id": "pktDecode#22",
+   "bytes": [
+    48,
+    48,
+    48,
+    48,
+    10
+   ],
+   "result": {
+    "packet": {
+     "type": "flush"
+    }
+   }
+  }
+ ],
+ "pktEncode": [
+  {
+   "id": "pktEncode#1",
+   "bytes": "0011hello, world!",
+   "packet": {
+    "data": "hello, world!",
+    "type": "data"
+   }
+  },
+  {
+   "id": "pktEncode#2",
+   "bytes": "0001",
+   "packet": {
+    "type": "delim"
+   }
+  },
+  {
+   "id": "pktEncode#3",
+   "bytes": "001cERR something went wrong",
+   "packet": {
+    "data": "ERR something went wrong",
+    "type": "data"
+   }
+  },
+  {
+   "id": "pktEncode#4",
+   "bytes": "0000",
+   "packet": {
+    "type": "flush"
+   }
+  }
+ ],
+ "bestTag": [
+  {
+   "id": "bestTag#1",
+   "commit": "abcd",
+   "result": "save/v1.0.0",
+   "subpath": "stash/save",
+   "tags": [
+    [
+     "allowlist-check/v1",
+     "abcd"
+    ],
+    [
+     "allowlist-check/v1.0.0",
+     "abcd"
+    ],
+    [
+     "restore/v1",
+     "abcd"
+    ],
+    [
+     "restore/v1.0.0",
+     "abcd"
+    ],
+    [
+     "save/v1",
+     "abcd"
+    ],
+    [
+     "save/v1.0.0",
+     "abcd"
+    ]
+   ]
+  },
+  {
+   "id": "bestTag#2",
+   "commit": "abcd",
+   "result": "save/v1.0.0",
+   "subpath": "save",
+   "tags": [
+    [
+     "allowlist-check/v1",
+     "abcd"
+    ],
+    [
+     "allowlist-check/v1.0.0",
+     "abcd"
+    ],
+    [
+     "restore/v1",
+     "abcd"
+    ],
+    [
+     "restore/v1.0.0",
+     "abcd"
+    ],
+    [
+     "save/v1",
+     "abcd"
+    ],
+    [
+     "save/v1.0.0",
+     "abcd"
+    ]
+   ]
+  },
+  {
+   "id": "bestTag#3",
+   "commit": "abcd",
+   "result": "restore/v1.0.0",
+   "subpath": "stash/restore",
+   "tags": [
+    [
+     "allowlist-check/v1",
+     "abcd"
+    ],
+    [
+     "allowlist-check/v1.0.0",
+     "abcd"
+    ],
+    [
+     "restore/v1",
+     "abcd"
+    ],
+    [
+     "restore/v1.0.0",
+     "abcd"
+    ],
+    [
+     "save/v1",
+     "abcd"
+    ],
+    [
+     "save/v1.0.0",
+     "abcd"
+    ]
+   ]
+  },
+  {
+   "id": "bestTag#4",
+   "commit": "abcd",
+   "result": "restore/v1.0.0",
+   "subpath": "restore",
+   "tags": [
+    [
+     "allowlist-check/v1",
+     "abcd"
+    ],
+    [
+     "allowlist-check/v1.0.0",
+     "abcd"
+    ],
+    [
+     "restore/v1",
+     "abcd"
+    ],
+    [
+     "restore/v1.0.0",
+     "abcd"
+    ],
+    [
+     "save/v1",
+     "abcd"
+    ],
+    [
+     "save/v1.0.0",
+     "abcd"
+    ]
+   ]
+  },
+  {
+   "id": "bestTag#5",
+   "commit": "abcd",
+   "result": "allowlist-check/v1.0.0",
+   "subpath": "allowlist-check",
+   "tags": [
+    [
+     "allowlist-check/v1",
+     "abcd"
+    ],
+    [
+     "allowlist-check/v1.0.0",
+     "abcd"
+    ],
+    [
+     "restore/v1",
+     "abcd"
+    ],
+    [
+     "restore/v1.0.0",
+     "abcd"
+    ],
+    [
+     "save/v1",
+     "abcd"
+    ],
+    [
+     "save/v1.0.0",
+     "abcd"
+    ]
+   ]
+  },
+  {
+   "id": "bestTag#6",
+   "commit": "abcd",
+   "result": "allowlist-check/v1.0.0",
+   "subpath": "pelican",
+   "tags": [
+    [
+     "allowlist-check/v1",
+     "abcd"
+    ],
+    [
+     "allowlist-check/v1.0.0",
+     "abcd"
+    ],
+    [
+     "restore/v1",
+     "abcd"
+    ],
+    [
+     "restore/v1.0.0",
+     "abcd"
+    ],
+    [
+     "save/v1",
+     "abcd"
+    ],
+    [
+     "save/v1.0.0",
+     "abcd"
+    ]
+   ]
+  },
+  {
+   "id": "bestTag#7",
+   "commit": "abcd",
+   "result": "v1.2.3",
+   "subpath": null,
+   "tags": [
+    [
+     "v1",
+     "abcd"
+    ],
+    [
+     "v1.2.3",
+     "abcd"
+    ],
+    [
+     "v2.0.0",
+     "beef"
+    ]
+   ]
+  },
+  {
+   "id": "bestTag#8",
+   "commit": "abcd",
+   "result": "v1.2.3",
+   "subpath": "sub",
+   "tags": [
+    [
+     "v1",
+     "abcd"
+    ],
+    [
+     "v1.2.3",
+     "abcd"
+    ],
+    [
+     "v2.0.0",
+     "beef"
+    ]
+   ]
+  },
+  {
+   "id": "bestTag#9",
+   "commit": "abcd",
+   "result": "v1.0.0",
+   "subpath": null,
+   "tags": [
+    [
+     "v1.0.0",
+     "abcd"
+    ],
+    [
+     "some-action/v1.0.0",
+     "abcd"
+    ]
+   ]
+  },
+  {
+   "id": "bestTag#10",
+   "commit": "dead",
+   "result": null,
+   "subpath": null,
+   "tags": [
+    [
+     "v1",
+     "abcd"
+    ],
+    [
+     "v1.2.3",
+     "abcd"
+    ],
+    [
+     "v2.0.0",
+     "beef"
+    ]
+   ]
+  }
+ ],
+ "githubHost": [
+  {
+   "id": "githubHost#1",
+   "api": "https://api.github.com",
+   "host": "github.com"
+  },
+  {
+   "id": "githubHost#2",
+   "api": "https://api.something.ghe.com",
+   "host": "something.ghe.com"
+  },
+  {
+   "id": "githubHost#3",
+   "api": "https://selfhosted.example.com/api/v3",
+   "host": "selfhosted.example.com"
+  }
+ ],
+ "controlEval": [
+  {
+   "id": "controlEval#1",
+   "control": {
+    "field": "set-me",
+    "fieldType": {
+     "type": "free-string"
+    },
+    "satisfiedByDefault": false,
+    "toggle": "opt-in",
+    "type": "field"
+   },
+   "inputs": [
+    [
+     "set-me",
+     {
+      "type": "string",
+      "value": "anything"
+     }
+    ]
+   ],
+   "result": {
+    "origins": [
+     {
+      "field": "set-me",
+      "type": "input"
+     }
+    ],
+    "verdict": "satisfied"
+   },
+   "uses": "foo/bar@doesnotmatter"
+  },
+  {
+   "id": "controlEval#2",
+   "control": {
+    "field": "set-me",
+    "fieldType": {
+     "items": [
+      "yes"
+     ],
+     "type": "exact"
+    },
+    "satisfiedByDefault": false,
+    "toggle": "opt-in",
+    "type": "field"
+   },
+   "inputs": [
+    [
+     "set-me",
+     {
+      "type": "string",
+      "value": "yes"
+     }
+    ]
+   ],
+   "result": {
+    "origins": [
+     {
+      "field": "set-me",
+      "type": "input"
+     }
+    ],
+    "verdict": "satisfied"
+   },
+   "uses": "foo/bar@doesnotmatter"
+  },
+  {
+   "id": "controlEval#3",
+   "control": {
+    "field": "set-me",
+    "fieldType": {
+     "type": "free-string"
+    },
+    "satisfiedByDefault": false,
+    "toggle": "opt-in",
+    "type": "field"
+   },
+   "inputs": [
+    [
+     "set-me",
+     {
+      "type": "string",
+      "value": ""
+     }
+    ]
+   ],
+   "result": {
+    "origins": [
+     {
+      "field": "set-me",
+      "type": "input"
+     }
+    ],
+    "verdict": "not-satisfied"
+   },
+   "uses": "foo/bar@doesnotmatter"
+  },
+  {
+   "id": "controlEval#4",
+   "control": {
+    "field": "set-me",
+    "fieldType": {
+     "items": [
+      "yes"
+     ],
+     "type": "exact"
+    },
+    "satisfiedByDefault": false,
+    "toggle": "opt-in",
+    "type": "field"
+   },
+   "inputs": [
+    [
+     "set-me",
+     {
+      "type": "string",
+      "value": "no"
+     }
+    ]
+   ],
+   "result": {
+    "origins": [
+     {
+      "field": "set-me",
+      "type": "input"
+     }
+    ],
+    "verdict": "not-satisfied"
+   },
+   "uses": "foo/bar@doesnotmatter"
+  },
+  {
+   "id": "controlEval#5",
+   "control": {
+    "field": "set-me",
+    "fieldType": {
+     "type": "free-string"
+    },
+    "satisfiedByDefault": true,
+    "toggle": "opt-out",
+    "type": "field"
+   },
+   "inputs": [
+    [
+     "set-me",
+     {
+      "type": "string",
+      "value": "anything"
+     }
+    ]
+   ],
+   "result": {
+    "origins": [
+     {
+      "field": "set-me",
+      "type": "input"
+     }
+    ],
+    "verdict": "not-satisfied"
+   },
+   "uses": "foo/bar@doesnotmatter"
+  },
+  {
+   "id": "controlEval#6",
+   "control": {
+    "field": "set-me",
+    "fieldType": {
+     "items": [
+      "yes"
+     ],
+     "type": "exact"
+    },
+    "satisfiedByDefault": false,
+    "toggle": "opt-in",
+    "type": "field"
+   },
+   "inputs": [
+    [
+     "set-me",
+     {
+      "type": "string",
+      "value": "${{ expression }}"
+     }
+    ]
+   ],
+   "result": {
+    "origins": [
+     {
+      "field": "set-me",
+      "type": "input"
+     }
+    ],
+    "verdict": "conditional"
+   },
+   "uses": "foo/bar@doesnotmatter"
+  },
+  {
+   "id": "controlEval#7",
+   "control": {
+    "field": "set-me",
+    "fieldType": {
+     "type": "free-string"
+    },
+    "satisfiedByDefault": true,
+    "toggle": "opt-out",
+    "type": "field"
+   },
+   "inputs": [
+    [
+     "set-me",
+     {
+      "type": "string",
+      "value": ""
+     }
+    ]
+   ],
+   "result": {
+    "origins": [
+     {
+      "field": "set-me",
+      "type": "input"
+     }
+    ],
+    "verdict": "satisfied"
+   },
+   "uses": "foo/bar@doesnotmatter"
+  },
+  {
+   "id": "controlEval#8",
+   "control": {
+    "exprs": [
+     {
+      "field": "enable-cache",
+      "fieldType": {
+       "items": [
+        "true"
+       ],
+       "type": "exact"
+      },
+      "satisfiedByDefault": false,
+      "toggle": "opt-in",
+      "type": "field"
+     },
+     {
+      "exprs": [
+       {
+        "type": "version-less-than",
+        "version": {
+         "major": 10,
+         "minor": 0,
+         "patch": 0,
+         "raw": "v10"
+        }
+       },
+       {
+        "field": "enable-cache",
+        "fieldType": {
+         "type": "boolean"
+        },
+        "satisfiedByDefault": true,
+        "toggle": "opt-in",
+        "type": "field"
+       }
+      ],
+      "type": "all"
+     }
+    ],
+    "type": "any"
+   },
+   "inputs": [],
+   "result": {
+    "origins": [
+     {
+      "type": "uses-ref"
+     },
+     {
+      "field": "enable-cache",
+      "type": "default"
+     }
+    ],
+    "verdict": "satisfied"
+   },
+   "uses": "foo/bar@v6.5.0"
+  },
+  {
+   "id": "controlEval#9",
+   "control": {
+    "exprs": [
+     {
+      "field": "enable-cache",
+      "fieldType": {
+       "items": [
+        "true"
+       ],
+       "type": "exact"
+      },
+      "satisfiedByDefault": false,
+      "toggle": "opt-in",
+      "type": "field"
+     },
+     {
+      "exprs": [
+       {
+        "type": "version-less-than",
+        "version": {
+         "major": 10,
+         "minor": 0,
+         "patch": 0,
+         "raw": "v10"
+        }
+       },
+       {
+        "field": "enable-cache",
+        "fieldType": {
+         "type": "boolean"
+        },
+        "satisfiedByDefault": true,
+        "toggle": "opt-in",
+        "type": "field"
+       }
+      ],
+      "type": "all"
+     }
+    ],
+    "type": "any"
+   },
+   "inputs": [
+    [
+     "enable-cache",
+     {
+      "type": "boolean",
+      "value": true
+     }
+    ]
+   ],
+   "result": {
+    "origins": [
+     {
+      "field": "enable-cache",
+      "type": "input"
+     },
+     {
+      "type": "uses-ref"
+     }
+    ],
+    "verdict": "satisfied"
+   },
+   "uses": "foo/bar@v6.5.0"
+  },
+  {
+   "id": "controlEval#10",
+   "control": {
+    "exprs": [
+     {
+      "field": "enable-cache",
+      "fieldType": {
+       "items": [
+        "true"
+       ],
+       "type": "exact"
+      },
+      "satisfiedByDefault": false,
+      "toggle": "opt-in",
+      "type": "field"
+     },
+     {
+      "exprs": [
+       {
+        "type": "version-less-than",
+        "version": {
+         "major": 10,
+         "minor": 0,
+         "patch": 0,
+         "raw": "v10"
+        }
+       },
+       {
+        "field": "enable-cache",
+        "fieldType": {
+         "type": "boolean"
+        },
+        "satisfiedByDefault": true,
+        "toggle": "opt-in",
+        "type": "field"
+       }
+      ],
+      "type": "all"
+     }
+    ],
+    "type": "any"
+   },
+   "inputs": [
+    [
+     "enable-cache",
+     {
+      "type": "boolean",
+      "value": true
+     }
+    ]
+   ],
+   "result": {
+    "origins": [
+     {
+      "field": "enable-cache",
+      "type": "input"
+     }
+    ],
+    "verdict": "satisfied"
+   },
+   "uses": "foo/bar@v10.0.0"
+  },
+  {
+   "id": "controlEval#11",
+   "control": {
+    "exprs": [
+     {
+      "field": "enable-cache",
+      "fieldType": {
+       "items": [
+        "true"
+       ],
+       "type": "exact"
+      },
+      "satisfiedByDefault": false,
+      "toggle": "opt-in",
+      "type": "field"
+     },
+     {
+      "exprs": [
+       {
+        "type": "version-less-than",
+        "version": {
+         "major": 10,
+         "minor": 0,
+         "patch": 0,
+         "raw": "v10"
+        }
+       },
+       {
+        "field": "enable-cache",
+        "fieldType": {
+         "type": "boolean"
+        },
+        "satisfiedByDefault": true,
+        "toggle": "opt-in",
+        "type": "field"
+       }
+      ],
+      "type": "all"
+     }
+    ],
+    "type": "any"
+   },
+   "inputs": [],
+   "result": {
+    "origins": [
+     {
+      "field": "enable-cache",
+      "type": "default"
+     },
+     {
+      "type": "uses-ref"
+     }
+    ],
+    "verdict": "not-satisfied"
+   },
+   "uses": "foo/bar@v10.0.0"
+  },
+  {
+   "id": "controlEval#12",
+   "control": {
+    "exprs": [
+     {
+      "field": "enable-cache",
+      "fieldType": {
+       "items": [
+        "true"
+       ],
+       "type": "exact"
+      },
+      "satisfiedByDefault": false,
+      "toggle": "opt-in",
+      "type": "field"
+     },
+     {
+      "exprs": [
+       {
+        "type": "version-less-than",
+        "version": {
+         "major": 10,
+         "minor": 0,
+         "patch": 0,
+         "raw": "v10"
+        }
+       },
+       {
+        "field": "enable-cache",
+        "fieldType": {
+         "type": "boolean"
+        },
+        "satisfiedByDefault": true,
+        "toggle": "opt-in",
+        "type": "field"
+       }
+      ],
+      "type": "all"
+     }
+    ],
+    "type": "any"
+   },
+   "inputs": [
+    [
+     "enable-cache",
+     {
+      "type": "string",
+      "value": "auto"
+     }
+    ]
+   ],
+   "result": {
+    "origins": [
+     {
+      "field": "enable-cache",
+      "type": "input"
+     },
+     {
+      "type": "uses-ref"
+     }
+    ],
+    "verdict": "not-satisfied"
+   },
+   "uses": "foo/bar@v10.0.0"
+  },
+  {
+   "id": "controlEval#13",
+   "control": {
+    "exprs": [
+     {
+      "field": "enable-cache",
+      "fieldType": {
+       "items": [
+        "true"
+       ],
+       "type": "exact"
+      },
+      "satisfiedByDefault": false,
+      "toggle": "opt-in",
+      "type": "field"
+     },
+     {
+      "exprs": [
+       {
+        "type": "version-less-than",
+        "version": {
+         "major": 10,
+         "minor": 0,
+         "patch": 0,
+         "raw": "v10"
+        }
+       },
+       {
+        "field": "enable-cache",
+        "fieldType": {
+         "type": "boolean"
+        },
+        "satisfiedByDefault": true,
+        "toggle": "opt-in",
+        "type": "field"
+       }
+      ],
+      "type": "all"
+     }
+    ],
+    "type": "any"
+   },
+   "inputs": [
+    [
+     "enable-cache",
+     {
+      "type": "string",
+      "value": "auto"
+     }
+    ]
+   ],
+   "result": {
+    "origins": [
+     {
+      "type": "uses-ref"
+     },
+     {
+      "field": "enable-cache",
+      "type": "input"
+     }
+    ],
+    "verdict": "satisfied"
+   },
+   "uses": "foo/bar@v6.5.0"
+  },
+  {
+   "id": "controlEval#14",
+   "control": {
+    "exprs": [
+     {
+      "field": "enable-cache",
+      "fieldType": {
+       "items": [
+        "true"
+       ],
+       "type": "exact"
+      },
+      "satisfiedByDefault": false,
+      "toggle": "opt-in",
+      "type": "field"
+     },
+     {
+      "exprs": [
+       {
+        "type": "version-less-than",
+        "version": {
+         "major": 10,
+         "minor": 0,
+         "patch": 0,
+         "raw": "v10"
+        }
+       },
+       {
+        "field": "enable-cache",
+        "fieldType": {
+         "type": "boolean"
+        },
+        "satisfiedByDefault": true,
+        "toggle": "opt-in",
+        "type": "field"
+       }
+      ],
+      "type": "all"
+     }
+    ],
+    "type": "any"
+   },
+   "inputs": [
+    [
+     "enable-cache",
+     {
+      "type": "boolean",
+      "value": false
+     }
+    ]
+   ],
+   "result": {
+    "origins": [
+     {
+      "field": "enable-cache",
+      "type": "input"
+     }
+    ],
+    "verdict": "not-satisfied"
+   },
+   "uses": "foo/bar@v6.5.0"
+  },
+  {
+   "id": "controlEval#15",
+   "control": {
+    "exprs": [
+     {
+      "field": "enable-cache",
+      "fieldType": {
+       "items": [
+        "true"
+       ],
+       "type": "exact"
+      },
+      "satisfiedByDefault": false,
+      "toggle": "opt-in",
+      "type": "field"
+     },
+     {
+      "exprs": [
+       {
+        "type": "version-less-than",
+        "version": {
+         "major": 10,
+         "minor": 0,
+         "patch": 0,
+         "raw": "v10"
+        }
+       },
+       {
+        "field": "enable-cache",
+        "fieldType": {
+         "type": "boolean"
+        },
+        "satisfiedByDefault": true,
+        "toggle": "opt-in",
+        "type": "field"
+       }
+      ],
+      "type": "all"
+     }
+    ],
+    "type": "any"
+   },
+   "inputs": [],
+   "result": {
+    "origins": [
+     {
+      "type": "uses-ref"
+     }
+    ],
+    "verdict": "conditional"
+   },
+   "uses": "foo/bar@d9e0f98d3fc6adb07d1e3d37f3043649ddad06a1"
+  }
+ ],
+ "coordinateUsage": [
+  {
+   "id": "coordinateUsage#1",
+   "coordinate": {
+    "pattern": "foo/bar",
+    "type": "fixed"
+   },
+   "result": null,
+   "source": "\n    name: test_usage\n    on: push\n    jobs:\n      test_usage:\n        runs-on: ubuntu-latest\n        steps:\n          - uses: foo/bar@v1      # 0\n\n          - uses: foo/bar@v1      # 1\n\n          - uses: not/thesame@v1  # 2\n            with:\n              set-me: true\n\n          - uses: not/thesame@v1  # 3\n\n          - uses: foo/bar@v1      # 4\n            with:\n              set-me: true\n\n          - uses: foo/bar@v1      # 5\n            with:\n              set-me: false\n\n          - uses: foo/bar@v1      # 6\n            with:\n              disable-cache: true\n\n          - uses: foo/bar@v1      # 7\n            with:\n              disable-cache: false\n\n          - uses: foo/bar@v1      # 8\n            with: ${{ fromJson(steps.setup.outputs.options) }}\n    ",
+   "step": 3
+  },
+  {
+   "id": "coordinateUsage#2",
+   "coordinate": {
+    "pattern": "foo/bar",
+    "type": "fixed"
+   },
+   "result": {
+    "type": "always"
+   },
+   "source": "\n    name: test_usage\n    on: push\n    jobs:\n      test_usage:\n        runs-on: ubuntu-latest\n        steps:\n          - uses: foo/bar@v1      # 0\n\n          - uses: foo/bar@v1      # 1\n\n          - uses: not/thesame@v1  # 2\n            with:\n              set-me: true\n\n          - uses: not/thesame@v1  # 3\n\n          - uses: foo/bar@v1      # 4\n            with:\n              set-me: true\n\n          - uses: foo/bar@v1      # 5\n            with:\n              set-me: false\n\n          - uses: foo/bar@v1      # 6\n            with:\n              disable-cache: true\n\n          - uses: foo/bar@v1      # 7\n            with:\n              disable-cache: false\n\n          - uses: foo/bar@v1      # 8\n            with: ${{ fromJson(steps.setup.outputs.options) }}\n    ",
+   "step": 0
+  },
+  {
+   "id": "coordinateUsage#3",
+   "coordinate": {
+    "pattern": "foo/bar",
+    "type": "fixed"
+   },
+   "result": {
+    "type": "always"
+   },
+   "source": "\n    name: test_usage\n    on: push\n    jobs:\n      test_usage:\n        runs-on: ubuntu-latest\n        steps:\n          - uses: foo/bar@v1      # 0\n\n          - uses: foo/bar@v1      # 1\n\n          - uses: not/thesame@v1  # 2\n            with:\n              set-me: true\n\n          - uses: not/thesame@v1  # 3\n\n          - uses: foo/bar@v1      # 4\n            with:\n              set-me: true\n\n          - uses: foo/bar@v1      # 5\n            with:\n              set-me: false\n\n          - uses: foo/bar@v1      # 6\n            with:\n              disable-cache: true\n\n          - uses: foo/bar@v1      # 7\n            with:\n              disable-cache: false\n\n          - uses: foo/bar@v1      # 8\n            with: ${{ fromJson(steps.setup.outputs.options) }}\n    ",
+   "step": 1
+  },
+  {
+   "id": "coordinateUsage#4",
+   "coordinate": {
+    "control": {
+     "field": "set-me",
+     "fieldType": {
+      "type": "boolean"
+     },
+     "satisfiedByDefault": false,
+     "toggle": "opt-in",
+     "type": "field"
+    },
+    "pattern": "foo/bar",
+    "type": "configurable"
+   },
+   "result": null,
+   "source": "\n    name: test_usage\n    on: push\n    jobs:\n      test_usage:\n        runs-on: ubuntu-latest\n        steps:\n          - uses: foo/bar@v1      # 0\n\n          - uses: foo/bar@v1      # 1\n\n          - uses: not/thesame@v1  # 2\n            with:\n              set-me: true\n\n          - uses: not/thesame@v1  # 3\n\n          - uses: foo/bar@v1      # 4\n            with:\n              set-me: true\n\n          - uses: foo/bar@v1      # 5\n            with:\n              set-me: false\n\n          - uses: foo/bar@v1      # 6\n            with:\n              disable-cache: true\n\n          - uses: foo/bar@v1      # 7\n            with:\n              disable-cache: false\n\n          - uses: foo/bar@v1      # 8\n            with: ${{ fromJson(steps.setup.outputs.options) }}\n    ",
+   "step": 0
+  },
+  {
+   "id": "coordinateUsage#5",
+   "coordinate": {
+    "control": {
+     "field": "set-me",
+     "fieldType": {
+      "type": "boolean"
+     },
+     "satisfiedByDefault": false,
+     "toggle": "opt-in",
+     "type": "field"
+    },
+    "pattern": "foo/bar",
+    "type": "configurable"
+   },
+   "result": {
+    "origins": [
+     {
+      "field": "set-me",
+      "type": "input"
+     }
+    ],
+    "type": "enabled"
+   },
+   "source": "\n    name: test_usage\n    on: push\n    jobs:\n      test_usage:\n        runs-on: ubuntu-latest\n        steps:\n          - uses: foo/bar@v1      # 0\n\n          - uses: foo/bar@v1      # 1\n\n          - uses: not/thesame@v1  # 2\n            with:\n              set-me: true\n\n          - uses: not/thesame@v1  # 3\n\n          - uses: foo/bar@v1      # 4\n            with:\n              set-me: true\n\n          - uses: foo/bar@v1      # 5\n            with:\n              set-me: false\n\n          - uses: foo/bar@v1      # 6\n            with:\n              disable-cache: true\n\n          - uses: foo/bar@v1      # 7\n            with:\n              disable-cache: false\n\n          - uses: foo/bar@v1      # 8\n            with: ${{ fromJson(steps.setup.outputs.options) }}\n    ",
+   "step": 4
+  },
+  {
+   "id": "coordinateUsage#6",
+   "coordinate": {
+    "control": {
+     "field": "set-me",
+     "fieldType": {
+      "type": "boolean"
+     },
+     "satisfiedByDefault": false,
+     "toggle": "opt-in",
+     "type": "field"
+    },
+    "pattern": "foo/bar",
+    "type": "configurable"
+   },
+   "result": null,
+   "source": "\n    name: test_usage\n    on: push\n    jobs:\n      test_usage:\n        runs-on: ubuntu-latest\n        steps:\n          - uses: foo/bar@v1      # 0\n\n          - uses: foo/bar@v1      # 1\n\n          - uses: not/thesame@v1  # 2\n            with:\n              set-me: true\n\n          - uses: not/thesame@v1  # 3\n\n          - uses: foo/bar@v1      # 4\n            with:\n              set-me: true\n\n          - uses: foo/bar@v1      # 5\n            with:\n              set-me: false\n\n          - uses: foo/bar@v1      # 6\n            with:\n              disable-cache: true\n\n          - uses: foo/bar@v1      # 7\n            with:\n              disable-cache: false\n\n          - uses: foo/bar@v1      # 8\n            with: ${{ fromJson(steps.setup.outputs.options) }}\n    ",
+   "step": 5
+  },
+  {
+   "id": "coordinateUsage#7",
+   "coordinate": {
+    "control": {
+     "field": "set-me",
+     "fieldType": {
+      "type": "boolean"
+     },
+     "satisfiedByDefault": true,
+     "toggle": "opt-in",
+     "type": "field"
+    },
+    "pattern": "foo/bar",
+    "type": "configurable"
+   },
+   "result": {
+    "origins": [
+     {
+      "field": "set-me",
+      "type": "default"
+     }
+    ],
+    "type": "enabled"
+   },
+   "source": "\n    name: test_usage\n    on: push\n    jobs:\n      test_usage:\n        runs-on: ubuntu-latest\n        steps:\n          - uses: foo/bar@v1      # 0\n\n          - uses: foo/bar@v1      # 1\n\n          - uses: not/thesame@v1  # 2\n            with:\n              set-me: true\n\n          - uses: not/thesame@v1  # 3\n\n          - uses: foo/bar@v1      # 4\n            with:\n              set-me: true\n\n          - uses: foo/bar@v1      # 5\n            with:\n              set-me: false\n\n          - uses: foo/bar@v1      # 6\n            with:\n              disable-cache: true\n\n          - uses: foo/bar@v1      # 7\n            with:\n              disable-cache: false\n\n          - uses: foo/bar@v1      # 8\n            with: ${{ fromJson(steps.setup.outputs.options) }}\n    ",
+   "step": 0
+  },
+  {
+   "id": "coordinateUsage#8",
+   "coordinate": {
+    "control": {
+     "field": "set-me",
+     "fieldType": {
+      "type": "boolean"
+     },
+     "satisfiedByDefault": true,
+     "toggle": "opt-in",
+     "type": "field"
+    },
+    "pattern": "foo/bar",
+    "type": "configurable"
+   },
+   "result": {
+    "origins": [
+     {
+      "field": "set-me",
+      "type": "input"
+     }
+    ],
+    "type": "enabled"
+   },
+   "source": "\n    name: test_usage\n    on: push\n    jobs:\n      test_usage:\n        runs-on: ubuntu-latest\n        steps:\n          - uses: foo/bar@v1      # 0\n\n          - uses: foo/bar@v1      # 1\n\n          - uses: not/thesame@v1  # 2\n            with:\n              set-me: true\n\n          - uses: not/thesame@v1  # 3\n\n          - uses: foo/bar@v1      # 4\n            with:\n              set-me: true\n\n          - uses: foo/bar@v1      # 5\n            with:\n              set-me: false\n\n          - uses: foo/bar@v1      # 6\n            with:\n              disable-cache: true\n\n          - uses: foo/bar@v1      # 7\n            with:\n              disable-cache: false\n\n          - uses: foo/bar@v1      # 8\n            with: ${{ fromJson(steps.setup.outputs.options) }}\n    ",
+   "step": 4
+  },
+  {
+   "id": "coordinateUsage#9",
+   "coordinate": {
+    "control": {
+     "field": "set-me",
+     "fieldType": {
+      "type": "boolean"
+     },
+     "satisfiedByDefault": true,
+     "toggle": "opt-in",
+     "type": "field"
+    },
+    "pattern": "foo/bar",
+    "type": "configurable"
+   },
+   "result": null,
+   "source": "\n    name: test_usage\n    on: push\n    jobs:\n      test_usage:\n        runs-on: ubuntu-latest\n        steps:\n          - uses: foo/bar@v1      # 0\n\n          - uses: foo/bar@v1      # 1\n\n          - uses: not/thesame@v1  # 2\n            with:\n              set-me: true\n\n          - uses: not/thesame@v1  # 3\n\n          - uses: foo/bar@v1      # 4\n            with:\n              set-me: true\n\n          - uses: foo/bar@v1      # 5\n            with:\n              set-me: false\n\n          - uses: foo/bar@v1      # 6\n            with:\n              disable-cache: true\n\n          - uses: foo/bar@v1      # 7\n            with:\n              disable-cache: false\n\n          - uses: foo/bar@v1      # 8\n            with: ${{ fromJson(steps.setup.outputs.options) }}\n    ",
+   "step": 5
+  },
+  {
+   "id": "coordinateUsage#10",
+   "coordinate": {
+    "control": {
+     "field": "disable-cache",
+     "fieldType": {
+      "type": "boolean"
+     },
+     "satisfiedByDefault": false,
+     "toggle": "opt-out",
+     "type": "field"
+    },
+    "pattern": "foo/bar",
+    "type": "configurable"
+   },
+   "result": null,
+   "source": "\n    name: test_usage\n    on: push\n    jobs:\n      test_usage:\n        runs-on: ubuntu-latest\n        steps:\n          - uses: foo/bar@v1      # 0\n\n          - uses: foo/bar@v1      # 1\n\n          - uses: not/thesame@v1  # 2\n            with:\n              set-me: true\n\n          - uses: not/thesame@v1  # 3\n\n          - uses: foo/bar@v1      # 4\n            with:\n              set-me: true\n\n          - uses: foo/bar@v1      # 5\n            with:\n              set-me: false\n\n          - uses: foo/bar@v1      # 6\n            with:\n              disable-cache: true\n\n          - uses: foo/bar@v1      # 7\n            with:\n              disable-cache: false\n\n          - uses: foo/bar@v1      # 8\n            with: ${{ fromJson(steps.setup.outputs.options) }}\n    ",
+   "step": 0
+  },
+  {
+   "id": "coordinateUsage#11",
+   "coordinate": {
+    "control": {
+     "field": "disable-cache",
+     "fieldType": {
+      "type": "boolean"
+     },
+     "satisfiedByDefault": false,
+     "toggle": "opt-out",
+     "type": "field"
+    },
+    "pattern": "foo/bar",
+    "type": "configurable"
+   },
+   "result": null,
+   "source": "\n    name: test_usage\n    on: push\n    jobs:\n      test_usage:\n        runs-on: ubuntu-latest\n        steps:\n          - uses: foo/bar@v1      # 0\n\n          - uses: foo/bar@v1      # 1\n\n          - uses: not/thesame@v1  # 2\n            with:\n              set-me: true\n\n          - uses: not/thesame@v1  # 3\n\n          - uses: foo/bar@v1      # 4\n            with:\n              set-me: true\n\n          - uses: foo/bar@v1      # 5\n            with:\n              set-me: false\n\n          - uses: foo/bar@v1      # 6\n            with:\n              disable-cache: true\n\n          - uses: foo/bar@v1      # 7\n            with:\n              disable-cache: false\n\n          - uses: foo/bar@v1      # 8\n            with: ${{ fromJson(steps.setup.outputs.options) }}\n    ",
+   "step": 6
+  },
+  {
+   "id": "coordinateUsage#12",
+   "coordinate": {
+    "control": {
+     "field": "disable-cache",
+     "fieldType": {
+      "type": "boolean"
+     },
+     "satisfiedByDefault": false,
+     "toggle": "opt-out",
+     "type": "field"
+    },
+    "pattern": "foo/bar",
+    "type": "configurable"
+   },
+   "result": {
+    "origins": [
+     {
+      "field": "disable-cache",
+      "type": "input"
+     }
+    ],
+    "type": "enabled"
+   },
+   "source": "\n    name: test_usage\n    on: push\n    jobs:\n      test_usage:\n        runs-on: ubuntu-latest\n        steps:\n          - uses: foo/bar@v1      # 0\n\n          - uses: foo/bar@v1      # 1\n\n          - uses: not/thesame@v1  # 2\n            with:\n              set-me: true\n\n          - uses: not/thesame@v1  # 3\n\n          - uses: foo/bar@v1      # 4\n            with:\n              set-me: true\n\n          - uses: foo/bar@v1      # 5\n            with:\n              set-me: false\n\n          - uses: foo/bar@v1      # 6\n            with:\n              disable-cache: true\n\n          - uses: foo/bar@v1      # 7\n            with:\n              disable-cache: false\n\n          - uses: foo/bar@v1      # 8\n            with: ${{ fromJson(steps.setup.outputs.options) }}\n    ",
+   "step": 7
+  },
+  {
+   "id": "coordinateUsage#13",
+   "coordinate": {
+    "control": {
+     "field": "disable-cache",
+     "fieldType": {
+      "type": "boolean"
+     },
+     "satisfiedByDefault": false,
+     "toggle": "opt-out",
+     "type": "field"
+    },
+    "pattern": "foo/bar",
+    "type": "configurable"
+   },
+   "result": {
+    "origins": [
+     {
+      "type": "with-expression"
+     }
+    ],
+    "type": "conditional"
+   },
+   "source": "\n    name: test_usage\n    on: push\n    jobs:\n      test_usage:\n        runs-on: ubuntu-latest\n        steps:\n          - uses: foo/bar@v1      # 0\n\n          - uses: foo/bar@v1      # 1\n\n          - uses: not/thesame@v1  # 2\n            with:\n              set-me: true\n\n          - uses: not/thesame@v1  # 3\n\n          - uses: foo/bar@v1      # 4\n            with:\n              set-me: true\n\n          - uses: foo/bar@v1      # 5\n            with:\n              set-me: false\n\n          - uses: foo/bar@v1      # 6\n            with:\n              disable-cache: true\n\n          - uses: foo/bar@v1      # 7\n            with:\n              disable-cache: false\n\n          - uses: foo/bar@v1      # 8\n            with: ${{ fromJson(steps.setup.outputs.options) }}\n    ",
+   "step": 8
+  }
+ ],
+ "usesPatternMatchesUrl": [
+  {
+   "id": "usesPatternMatchesUrl#1",
+   "gitRef": "v3",
+   "pattern": {
+    "gitRef": "v3",
+    "owner": "Actions",
+    "repo": "Checkout",
+    "subpath": null,
+    "type": "exact-with-ref"
+   },
+   "result": true,
+   "url": "https://github.com/actions/checkout"
+  },
+  {
+   "id": "usesPatternMatchesUrl#2",
+   "gitRef": "v3",
+   "pattern": {
+    "gitRef": "v3",
+    "owner": "Actions",
+    "repo": "Checkout",
+    "subpath": null,
+    "type": "exact-with-ref"
+   },
+   "result": false,
+   "url": "https://notgithub.com/actions/checkout"
+  },
+  {
+   "id": "usesPatternMatchesUrl#3",
+   "gitRef": "v3",
+   "pattern": {
+    "gitRef": "v3",
+    "owner": "Actions",
+    "repo": "Checkout",
+    "subpath": "foo",
+    "type": "exact-with-ref"
+   },
+   "result": false,
+   "url": "https://github.com/actions/checkout"
+  }
+ ],
+ "usesPatternMatchesUses": [
+  {
+   "id": "usesPatternMatchesUses#1",
+   "pattern": {
+    "gitRef": "v3",
+    "owner": "Actions",
+    "repo": "Checkout",
+    "subpath": null,
+    "type": "exact-with-ref"
+   },
+   "result": true,
+   "uses": "actions/checkout@v3"
+  },
+  {
+   "id": "usesPatternMatchesUses#2",
+   "pattern": {
+    "owner": "Actions",
+    "repo": "Checkout",
+    "subpath": "foo",
+    "type": "exact-path"
+   },
+   "result": true,
+   "uses": "actions/checkout/foo@v3"
+  },
+  {
+   "id": "usesPatternMatchesUses#3",
+   "pattern": {
+    "gitRef": "V3",
+    "owner": "actions",
+    "repo": "checkout",
+    "subpath": null,
+    "type": "exact-with-ref"
+   },
+   "result": false,
+   "uses": "actions/checkout@v3"
+  },
+  {
+   "id": "usesPatternMatchesUses#4",
+   "pattern": {
+    "owner": "foo",
+    "repo": "checkout",
+    "type": "exact-repo"
+   },
+   "result": false,
+   "uses": "actions/checkout@v3"
+  },
+  {
+   "id": "usesPatternMatchesUses#5",
+   "pattern": {
+    "owner": "actions",
+    "repo": "bar",
+    "type": "exact-repo"
+   },
+   "result": false,
+   "uses": "actions/checkout@v3"
+  },
+  {
+   "id": "usesPatternMatchesUses#6",
+   "pattern": {
+    "gitRef": "v3",
+    "owner": "actions",
+    "repo": "checkout",
+    "subpath": null,
+    "type": "exact-with-ref"
+   },
+   "result": false,
+   "uses": "actions/checkout/foo@v3"
+  },
+  {
+   "id": "usesPatternMatchesUses#7",
+   "pattern": {
+    "gitRef": "v3",
+    "owner": "actions",
+    "repo": "checkout",
+    "subpath": "foo",
+    "type": "exact-with-ref"
+   },
+   "result": false,
+   "uses": "actions/checkout@v3"
+  },
+  {
+   "id": "usesPatternMatchesUses#8",
+   "pattern": {
+    "owner": "actions",
+    "repo": "checkout",
+    "subpath": "foo",
+    "type": "exact-path"
+   },
+   "result": true,
+   "uses": "actions/checkout/foo@v3"
+  },
+  {
+   "id": "usesPatternMatchesUses#9",
+   "pattern": {
+    "owner": "actions",
+    "repo": "checkout",
+    "subpath": "foo",
+    "type": "exact-path"
+   },
+   "result": true,
+   "uses": "ACTIONS/CHECKOUT/foo@v3"
+  },
+  {
+   "id": "usesPatternMatchesUses#10",
+   "pattern": {
+    "owner": "actions",
+    "repo": "checkout",
+    "type": "exact-repo"
+   },
+   "result": true,
+   "uses": "ACTIONS/CHECKOUT@v3"
+  },
+  {
+   "id": "usesPatternMatchesUses#11",
+   "pattern": {
+    "owner": "actions",
+    "repo": "checkout",
+    "type": "exact-repo"
+   },
+   "result": true,
+   "uses": "actions/checkout@v3"
+  },
+  {
+   "id": "usesPatternMatchesUses#12",
+   "pattern": {
+    "owner": "actions",
+    "repo": "checkout",
+    "type": "exact-repo"
+   },
+   "result": false,
+   "uses": "actions/checkout/foo@v3"
+  },
+  {
+   "id": "usesPatternMatchesUses#13",
+   "pattern": {
+    "owner": "actions",
+    "repo": "checkout",
+    "type": "exact-repo"
+   },
+   "result": false,
+   "uses": "actions/somethingelse@v3"
+  },
+  {
+   "id": "usesPatternMatchesUses#14",
+   "pattern": {
+    "owner": "actions",
+    "repo": "checkout",
+    "type": "exact-repo"
+   },
+   "result": false,
+   "uses": "whatever/checkout@v3"
+  },
+  {
+   "id": "usesPatternMatchesUses#15",
+   "pattern": {
+    "owner": "actions",
+    "repo": "checkout",
+    "type": "in-repo"
+   },
+   "result": true,
+   "uses": "ACTIONS/CHECKOUT@v3"
+  },
+  {
+   "id": "usesPatternMatchesUses#16",
+   "pattern": {
+    "owner": "actions",
+    "repo": "checkout",
+    "type": "in-repo"
+   },
+   "result": true,
+   "uses": "actions/checkout@v3"
+  },
+  {
+   "id": "usesPatternMatchesUses#17",
+   "pattern": {
+    "owner": "actions",
+    "repo": "checkout",
+    "type": "in-repo"
+   },
+   "result": true,
+   "uses": "actions/checkout/foo@v3"
+  },
+  {
+   "id": "usesPatternMatchesUses#18",
+   "pattern": {
+    "owner": "actions",
+    "repo": "checkout",
+    "type": "in-repo"
+   },
+   "result": true,
+   "uses": "actions/checkout/foo/bar@v3"
+  },
+  {
+   "id": "usesPatternMatchesUses#19",
+   "pattern": {
+    "owner": "actions",
+    "repo": "checkout",
+    "type": "in-repo"
+   },
+   "result": false,
+   "uses": "someoneelse/checkout@v3"
+  },
+  {
+   "id": "usesPatternMatchesUses#20",
+   "pattern": {
+    "owner": "actions",
+    "type": "in-owner"
+   },
+   "result": true,
+   "uses": "ACTIONS/CHECKOUT@v3"
+  },
+  {
+   "id": "usesPatternMatchesUses#21",
+   "pattern": {
+    "owner": "actions",
+    "type": "in-owner"
+   },
+   "result": true,
+   "uses": "actions/checkout@v3"
+  },
+  {
+   "id": "usesPatternMatchesUses#22",
+   "pattern": {
+    "owner": "actions",
+    "type": "in-owner"
+   },
+   "result": true,
+   "uses": "actions/checkout/foo@v3"
+  },
+  {
+   "id": "usesPatternMatchesUses#23",
+   "pattern": {
+    "owner": "actions",
+    "type": "in-owner"
+   },
+   "result": false,
+   "uses": "someoneelse/checkout@v3"
+  },
+  {
+   "id": "usesPatternMatchesUses#24",
+   "pattern": {
+    "type": "any"
+   },
+   "result": true,
+   "uses": "actions/checkout@v3"
+  },
+  {
+   "id": "usesPatternMatchesUses#25",
+   "pattern": {
+    "type": "any"
+   },
+   "result": true,
+   "uses": "actions/checkout/foo@v3"
+  },
+  {
+   "id": "usesPatternMatchesUses#26",
+   "pattern": {
+    "type": "any"
+   },
+   "result": true,
+   "uses": "whatever/checkout@v3"
+  },
+  {
+   "id": "usesPatternMatchesUses#27",
+   "pattern": {
+    "gitRef": "v3",
+    "owner": "actions",
+    "repo": "checkout",
+    "subpath": null,
+    "type": "exact-with-ref"
+   },
+   "result": true,
+   "uses": "actions/checkout@v3"
+  },
+  {
+   "id": "usesPatternMatchesUses#28",
+   "pattern": {
+    "gitRef": "v3",
+    "owner": "actions",
+    "repo": "checkout",
+    "subpath": "foo",
+    "type": "exact-with-ref"
+   },
+   "result": true,
+   "uses": "actions/checkout/foo@v3"
+  },
+  {
+   "id": "usesPatternMatchesUses#29",
+   "pattern": {
+    "gitRef": "v3",
+    "owner": "actions",
+    "repo": "checkout",
+    "subpath": "foo",
+    "type": "exact-with-ref"
+   },
+   "result": false,
+   "uses": "actions/checkout/foo@v1"
+  }
+ ],
+ "usesPatternOrder": [
+  {
+   "id": "usesPatternOrder#1",
+   "input": [
+    {
+     "type": "any"
+    },
+    {
+     "owner": "owner",
+     "repo": "repo",
+     "type": "exact-repo"
+    },
+    {
+     "owner": "owner",
+     "type": "in-owner"
+    }
+   ],
+   "output": [
+    {
+     "owner": "owner",
+     "repo": "repo",
+     "type": "exact-repo"
+    },
+    {
+     "owner": "owner",
+     "type": "in-owner"
+    },
+    {
+     "type": "any"
+    }
+   ]
+  }
+ ],
+ "usesPatternParse": [
+  {
+   "id": "usesPatternParse#1",
+   "input": "",
+   "result": null
+  },
+  {
+   "id": "usesPatternParse#2",
+   "input": "/",
+   "result": null
+  },
+  {
+   "id": "usesPatternParse#3",
+   "input": "//",
+   "result": null
+  },
+  {
+   "id": "usesPatternParse#4",
+   "input": "///",
+   "result": null
+  },
+  {
+   "id": "usesPatternParse#5",
+   "input": "owner",
+   "result": null
+  },
+  {
+   "id": "usesPatternParse#6",
+   "input": "**",
+   "result": null
+  },
+  {
+   "id": "usesPatternParse#7",
+   "input": "*",
+   "result": {
+    "type": "any"
+   }
+  },
+  {
+   "id": "usesPatternParse#8",
+   "input": "owner/*",
+   "result": {
+    "owner": "owner",
+    "type": "in-owner"
+   }
+  },
+  {
+   "id": "usesPatternParse#9",
+   "input": "owner/*/",
+   "result": null
+  },
+  {
+   "id": "usesPatternParse#10",
+   "input": "owner/*/foo",
+   "result": null
+  },
+  {
+   "id": "usesPatternParse#11",
+   "input": "owner/*/*",
+   "result": null
+  },
+  {
+   "id": "usesPatternParse#12",
+   "input": "*/foo",
+   "result": null
+  },
+  {
+   "id": "usesPatternParse#13",
+   "input": "owner/repo/**",
+   "result": null
+  },
+  {
+   "id": "usesPatternParse#14",
+   "input": "owner/repo/*",
+   "result": {
+    "owner": "owner",
+    "repo": "repo",
+    "type": "in-repo"
+   }
+  },
+  {
+   "id": "usesPatternParse#15",
+   "input": "owner/repo",
+   "result": {
+    "owner": "owner",
+    "repo": "repo",
+    "type": "exact-repo"
+   }
+  },
+  {
+   "id": "usesPatternParse#16",
+   "input": "owner/repo/subpath",
+   "result": {
+    "owner": "owner",
+    "repo": "repo",
+    "subpath": "subpath",
+    "type": "exact-path"
+   }
+  },
+  {
+   "id": "usesPatternParse#17",
+   "input": "owner/repo//",
+   "result": {
+    "owner": "owner",
+    "repo": "repo",
+    "subpath": "/",
+    "type": "exact-path"
+   }
+  },
+  {
+   "id": "usesPatternParse#18",
+   "input": "owner/repo/subpath/",
+   "result": {
+    "owner": "owner",
+    "repo": "repo",
+    "subpath": "subpath/",
+    "type": "exact-path"
+   }
+  },
+  {
+   "id": "usesPatternParse#19",
+   "input": "owner/repo/subpath/very/nested////and/literal",
+   "result": {
+    "owner": "owner",
+    "repo": "repo",
+    "subpath": "subpath/very/nested////and/literal",
+    "type": "exact-path"
+   }
+  },
+  {
+   "id": "usesPatternParse#20",
+   "input": "owner/repo@v1",
+   "result": {
+    "gitRef": "v1",
+    "owner": "owner",
+    "repo": "repo",
+    "subpath": null,
+    "type": "exact-with-ref"
+   }
+  },
+  {
+   "id": "usesPatternParse#21",
+   "input": "owner/repo/subpath@v1",
+   "result": {
+    "gitRef": "v1",
+    "owner": "owner",
+    "repo": "repo",
+    "subpath": "subpath",
+    "type": "exact-with-ref"
+   }
+  },
+  {
+   "id": "usesPatternParse#22",
+   "input": "owner/repo@172239021f7ba04fe7327647b213799853a9eb89",
+   "result": {
+    "gitRef": "172239021f7ba04fe7327647b213799853a9eb89",
+    "owner": "owner",
+    "repo": "repo",
+    "subpath": null,
+    "type": "exact-with-ref"
+   }
+  },
+  {
+   "id": "usesPatternParse#23",
+   "input": "pypa/gh-action-pypi-publish@release/v1",
+   "result": {
+    "gitRef": "release/v1",
+    "owner": "pypa",
+    "repo": "gh-action-pypi-publish",
+    "subpath": null,
+    "type": "exact-with-ref"
+   }
+  },
+  {
+   "id": "usesPatternParse#24",
+   "input": "owner/repo/*@v1",
+   "result": null
+  },
+  {
+   "id": "usesPatternParse#25",
+   "input": "owner/repo/*/subpath@v1",
+   "result": null
+  },
+  {
+   "id": "usesPatternParse#26",
+   "input": "owner/*/subpath@v1",
+   "result": null
+  },
+  {
+   "id": "usesPatternParse#27",
+   "input": "*/*/subpath@v1",
+   "result": null
+  },
+  {
+   "id": "usesPatternParse#28",
+   "input": "owner/repo@*",
+   "result": null
+  },
+  {
+   "id": "usesPatternParse#29",
+   "input": "owner/repo@**",
+   "result": null
+  },
+  {
+   "id": "usesPatternParse#30",
+   "input": "owner/repo@***",
+   "result": null
+  },
+  {
+   "id": "usesPatternParse#31",
+   "input": "owner/repo/subpath@*",
+   "result": null
+  },
+  {
+   "id": "usesPatternParse#32",
+   "input": "owner/*@*",
+   "result": null
+  },
+  {
+   "id": "usesPatternParse#33",
+   "input": "*@*",
+   "result": null
+  }
+ ],
+ "versionCompare": [
+  {
+   "id": "versionCompare#1",
+   "lhs": "v1",
+   "ordering": "Equal",
+   "rhs": "v1"
+  },
+  {
+   "id": "versionCompare#2",
+   "lhs": "v1",
+   "ordering": "Equal",
+   "rhs": "v1.0"
+  },
+  {
+   "id": "versionCompare#3",
+   "lhs": "v1",
+   "ordering": "Equal",
+   "rhs": "v1.0.0"
+  },
+  {
+   "id": "versionCompare#4",
+   "lhs": "v1.0",
+   "ordering": "Equal",
+   "rhs": "v1.0.0"
+  },
+  {
+   "id": "versionCompare#5",
+   "lhs": "v1.2",
+   "ordering": "Equal",
+   "rhs": "v1.2.0"
+  },
+  {
+   "id": "versionCompare#6",
+   "lhs": "v1.2.3",
+   "ordering": "Equal",
+   "rhs": "v1.2.3"
+  },
+  {
+   "id": "versionCompare#7",
+   "lhs": "v1",
+   "ordering": "Less",
+   "rhs": "v2"
+  },
+  {
+   "id": "versionCompare#8",
+   "lhs": "v1.0",
+   "ordering": "Less",
+   "rhs": "v2.0"
+  },
+  {
+   "id": "versionCompare#9",
+   "lhs": "v1.0.0",
+   "ordering": "Less",
+   "rhs": "v2.0.0"
+  },
+  {
+   "id": "versionCompare#10",
+   "lhs": "v1.2",
+   "ordering": "Less",
+   "rhs": "v2.0"
+  },
+  {
+   "id": "versionCompare#11",
+   "lhs": "v1.2.3",
+   "ordering": "Less",
+   "rhs": "v2.0.0"
+  },
+  {
+   "id": "versionCompare#12",
+   "lhs": "v1.2",
+   "ordering": "Less",
+   "rhs": "v1.3"
+  },
+  {
+   "id": "versionCompare#13",
+   "lhs": "v1.2.3",
+   "ordering": "Less",
+   "rhs": "v1.3.0"
+  },
+  {
+   "id": "versionCompare#14",
+   "lhs": "v1.2.3",
+   "ordering": "Less",
+   "rhs": "v1.2.4"
+  },
+  {
+   "id": "versionCompare#15",
+   "lhs": "v2",
+   "ordering": "Greater",
+   "rhs": "v1"
+  },
+  {
+   "id": "versionCompare#16",
+   "lhs": "v2.0",
+   "ordering": "Greater",
+   "rhs": "v1.0"
+  },
+  {
+   "id": "versionCompare#17",
+   "lhs": "v2.0.0",
+   "ordering": "Greater",
+   "rhs": "v1.0.0"
+  },
+  {
+   "id": "versionCompare#18",
+   "lhs": "v2.0",
+   "ordering": "Greater",
+   "rhs": "v1.2"
+  },
+  {
+   "id": "versionCompare#19",
+   "lhs": "v2.0.0",
+   "ordering": "Greater",
+   "rhs": "v1.2.3"
+  },
+  {
+   "id": "versionCompare#20",
+   "lhs": "v1.3",
+   "ordering": "Greater",
+   "rhs": "v1.2"
+  },
+  {
+   "id": "versionCompare#21",
+   "lhs": "v1.3.0",
+   "ordering": "Greater",
+   "rhs": "v1.2.3"
+  },
+  {
+   "id": "versionCompare#22",
+   "lhs": "v1.2.4",
+   "ordering": "Greater",
+   "rhs": "v1.2.3"
+  }
+ ],
+ "versionParse": [
+  {
+   "id": "versionParse#1",
+   "input": "",
+   "result": null
+  },
+  {
+   "id": "versionParse#2",
+   "input": "v",
+   "result": null
+  },
+  {
+   "id": "versionParse#3",
+   "input": "v1.2.3.4",
+   "result": null
+  },
+  {
+   "id": "versionParse#4",
+   "input": "nonsense",
+   "result": null
+  },
+  {
+   "id": "versionParse#5",
+   "input": "v1.beta",
+   "result": null
+  },
+  {
+   "id": "versionParse#6",
+   "input": ".1",
+   "result": null
+  },
+  {
+   "id": "versionParse#7",
+   "input": ".v1",
+   "result": null
+  },
+  {
+   "id": "versionParse#8",
+   "input": "v.1",
+   "result": null
+  },
+  {
+   "id": "versionParse#9",
+   "input": "v1.",
+   "result": null
+  },
+  {
+   "id": "versionParse#10",
+   "input": "v1.2.",
+   "result": null
+  },
+  {
+   "id": "versionParse#11",
+   "input": "v1",
+   "result": {
+    "major": 1,
+    "minor": 0,
+    "patch": 0
+   }
+  },
+  {
+   "id": "versionParse#12",
+   "input": "v1.2",
+   "result": {
+    "major": 1,
+    "minor": 2,
+    "patch": 0
+   }
+  },
+  {
+   "id": "versionParse#13",
+   "input": "v1.2.3",
+   "result": {
+    "major": 1,
+    "minor": 2,
+    "patch": 3
+   }
+  },
+  {
+   "id": "versionParse#14",
+   "input": "1",
+   "result": {
+    "major": 1,
+    "minor": 0,
+    "patch": 0
+   }
+  },
+  {
+   "id": "versionParse#15",
+   "input": "1.2",
+   "result": {
+    "major": 1,
+    "minor": 2,
+    "patch": 0
+   }
+  },
+  {
+   "id": "versionParse#16",
+   "input": "1.2.3",
+   "result": {
+    "major": 1,
+    "minor": 2,
+    "patch": 3
+   }
+  },
+  {
+   "id": "versionParse#17",
+   "input": "v0.0.1",
+   "result": {
+    "major": 0,
+    "minor": 0,
+    "patch": 1
+   }
+  },
+  {
+   "id": "versionParse#18",
+   "input": "0.0.1",
+   "result": {
+    "major": 0,
+    "minor": 0,
+    "patch": 1
+   }
+  },
+  {
+   "id": "versionParse#19",
+   "input": "v10.20.30",
+   "result": {
+    "major": 10,
+    "minor": 20,
+    "patch": 30
+   }
+  },
+  {
+   "id": "versionParse#20",
+   "input": "10.20.30",
+   "result": {
+    "major": 10,
+    "minor": 20,
+    "patch": 30
+   }
+  },
+  {
+   "id": "versionParse#21",
+   "input": "0.0.0",
+   "result": {
+    "major": 0,
+    "minor": 0,
+    "patch": 0
+   }
+  },
+  {
+   "id": "versionParse#22",
+   "input": "v0",
+   "result": {
+    "major": 0,
+    "minor": 0,
+    "patch": 0
+   }
+  },
+  {
+   "id": "versionParse#23",
+   "input": "v0.0",
+   "result": {
+    "major": 0,
+    "minor": 0,
+    "patch": 0
+   }
+  },
+  {
+   "id": "versionParse#24",
+   "input": "0",
+   "result": {
+    "major": 0,
+    "minor": 0,
+    "patch": 0
+   }
+  },
+  {
+   "id": "versionParse#25",
+   "input": "0.0",
+   "result": {
+    "major": 0,
+    "minor": 0,
+    "patch": 0
+   }
+  },
+  {
+   "id": "versionParse#26",
+   "input": "v000.0.1",
+   "result": {
+    "major": 0,
+    "minor": 0,
+    "patch": 1
+   }
+  },
+  {
+   "id": "versionParse#27",
+   "input": "000.0.1",
+   "result": {
+    "major": 0,
+    "minor": 0,
+    "patch": 1
+   }
+  }
+ ],
+ "ratchetComment": [
+  {
+   "id": "ratchetComment#1",
+   "capture": "v4",
+   "comment": "# ratchet:actions/checkout@v4"
+  },
+  {
+   "id": "ratchetComment#2",
+   "capture": "v4.2.2",
+   "comment": "# ratchet:actions/checkout@v4.2.2"
+  },
+  {
+   "id": "ratchetComment#3",
+   "capture": "v3.8.2",
+   "comment": "# ratchet:actions/setup-node@v3.8.2"
+  },
+  {
+   "id": "ratchetComment#4",
+   "capture": "v1.0.0",
+   "comment": "# ratchet:owner/repo/path@v1.0.0"
+  },
+  {
+   "id": "ratchetComment#5",
+   "capture": "4.2.2",
+   "comment": "# ratchet:actions/checkout@4.2.2"
+  },
+  {
+   "id": "ratchetComment#6",
+   "capture": null,
+   "comment": "# v4.2.2"
+  },
+  {
+   "id": "ratchetComment#7",
+   "capture": null,
+   "comment": "# actions/checkout@v4.2.2"
+  },
+  {
+   "id": "ratchetComment#8",
+   "capture": null,
+   "comment": "# some other comment"
+  }
+ ],
+ "versionComment": [
+  {
+   "id": "versionComment#1",
+   "capture": "v2.8.0",
+   "comment": "# tag=v2.8.0"
+  },
+  {
+   "id": "versionComment#2",
+   "capture": "v6-beta",
+   "comment": "# tag=v6-beta"
+  },
+  {
+   "id": "versionComment#3",
+   "capture": "v1.2.3-rc.1",
+   "comment": "# tag=v1.2.3-rc.1"
+  },
+  {
+   "id": "versionComment#4",
+   "capture": "v1.2.3rc.1",
+   "comment": "# tag=v1.2.3rc.1"
+  },
+  {
+   "id": "versionComment#5",
+   "capture": "v6-beta-2",
+   "comment": "# tag=v6-beta-2"
+  },
+  {
+   "id": "versionComment#6",
+   "capture": "release-2024-01",
+   "comment": "# tag=release-2024-01"
+  },
+  {
+   "id": "versionComment#7",
+   "capture": "v2.8.0",
+   "comment": "# v2.8.0"
+  },
+  {
+   "id": "versionComment#8",
+   "capture": "v6-beta",
+   "comment": "# v6-beta"
+  },
+  {
+   "id": "versionComment#9",
+   "capture": "v1.2.3-rc.1",
+   "comment": "# v1.2.3-rc.1"
+  },
+  {
+   "id": "versionComment#10",
+   "capture": "v1.2.3rc1",
+   "comment": "# v1.2.3rc1"
+  },
+  {
+   "id": "versionComment#11",
+   "capture": "v6-beta-2",
+   "comment": "# v6-beta-2"
+  },
+  {
+   "id": "versionComment#12",
+   "capture": "v1.0.0-rc-1",
+   "comment": "# v1.0.0-rc-1"
+  },
+  {
+   "id": "versionComment#13",
+   "capture": "v2.0-preview-3",
+   "comment": "# v2.0-preview-3"
+  },
+  {
+   "id": "versionComment#14",
+   "capture": "2.8.0",
+   "comment": "# tag=2.8.0"
+  },
+  {
+   "id": "versionComment#15",
+   "capture": "2.8.0",
+   "comment": "# version: 2.8.0"
+  },
+  {
+   "id": "versionComment#16",
+   "capture": "v1.2.3-rc.1",
+   "comment": "# version: v1.2.3-rc.1"
+  },
+  {
+   "id": "versionComment#17",
+   "capture": "v1.2.3rc.1",
+   "comment": "# version: v1.2.3rc.1"
+  },
+  {
+   "id": "versionComment#18",
+   "capture": "v6-beta-2",
+   "comment": "# version: v6-beta-2"
+  },
+  {
+   "id": "versionComment#19",
+   "capture": "v1.0.0-rc-1",
+   "comment": "# version: v1.0.0-rc-1"
+  },
+  {
+   "id": "versionComment#20",
+   "capture": "1.0.0",
+   "comment": "# ver=1.0.0"
+  },
+  {
+   "id": "versionComment#21",
+   "capture": null,
+   "comment": "# visit the docs"
+  },
+  {
+   "id": "versionComment#22",
+   "capture": null,
+   "comment": "# some other comment"
+  },
+  {
+   "id": "versionComment#23",
+   "capture": null,
+   "comment": "# zizmor: ignore[ref-version-mismatch]"
+  }
+ ],
+ "matrix": [
+  {
+   "id": "matrix#1",
+   "expansions": [],
+   "indirectExclusions": false,
+   "indirectInclusions": false,
+   "indirectlyExpanded": true,
+   "job": "test",
+   "source": "\nname: test\non: push\njobs:\n  test:\n    runs-on: ubuntu-latest\n    strategy:\n      matrix: ${{ dynamic }}\n    steps:\n      - run: true\n        ",
+   "static": []
+  },
+  {
+   "id": "matrix#2",
+   "expansions": [
+    {
+     "path": "matrix.trivially-static",
+     "route": [
+      "jobs",
+      "test",
+      "strategy",
+      "matrix",
+      "trivially-static",
+      0
+     ],
+     "value": "a"
+    },
+    {
+     "path": "matrix.trivially-static",
+     "route": [
+      "jobs",
+      "test",
+      "strategy",
+      "matrix",
+      "trivially-static",
+      1
+     ],
+     "value": "b"
+    },
+    {
+     "path": "matrix.trivially-static",
+     "route": [
+      "jobs",
+      "test",
+      "strategy",
+      "matrix",
+      "trivially-static",
+      2
+     ],
+     "value": "c"
+    },
+    {
+     "path": "matrix.trivially-static",
+     "route": [
+      "jobs",
+      "test",
+      "strategy",
+      "matrix",
+      "trivially-static",
+      3
+     ],
+     "value": "d"
+    },
+    {
+     "path": "matrix.trivially-dynamic",
+     "route": [
+      "jobs",
+      "test",
+      "strategy",
+      "matrix",
+      "trivially-dynamic",
+      0
+     ],
+     "value": "a"
+    },
+    {
+     "path": "matrix.trivially-dynamic",
+     "route": [
+      "jobs",
+      "test",
+      "strategy",
+      "matrix",
+      "trivially-dynamic",
+      1
+     ],
+     "value": "${{ github.ref }}"
+    },
+    {
+     "path": "matrix.trivially-dynamic",
+     "route": [
+      "jobs",
+      "test",
+      "strategy",
+      "matrix",
+      "trivially-dynamic",
+      2
+     ],
+     "value": "c"
+    },
+    {
+     "path": "matrix.trivially-dynamic",
+     "route": [
+      "jobs",
+      "test",
+      "strategy",
+      "matrix",
+      "trivially-dynamic",
+      3
+     ],
+     "value": "d"
+    },
+    {
+     "path": "matrix.nested-static.a",
+     "route": [
+      "jobs",
+      "test",
+      "strategy",
+      "matrix",
+      "nested-static",
+      0,
+      "a"
+     ],
+     "value": "1"
+    },
+    {
+     "path": "matrix.nested-static.b",
+     "route": [
+      "jobs",
+      "test",
+      "strategy",
+      "matrix",
+      "nested-static",
+      0,
+      "b"
+     ],
+     "value": "2"
+    },
+    {
+     "path": "matrix.nested-static.a",
+     "route": [
+      "jobs",
+      "test",
+      "strategy",
+      "matrix",
+      "nested-static",
+      1,
+      "a"
+     ],
+     "value": "3"
+    },
+    {
+     "path": "matrix.nested-static.b",
+     "route": [
+      "jobs",
+      "test",
+      "strategy",
+      "matrix",
+      "nested-static",
+      1,
+      "b"
+     ],
+     "value": "4"
+    },
+    {
+     "path": "matrix.nested-dynamic.a",
+     "route": [
+      "jobs",
+      "test",
+      "strategy",
+      "matrix",
+      "nested-dynamic",
+      0,
+      "a"
+     ],
+     "value": "1"
+    },
+    {
+     "path": "matrix.nested-dynamic.b",
+     "route": [
+      "jobs",
+      "test",
+      "strategy",
+      "matrix",
+      "nested-dynamic",
+      0,
+      "b"
+     ],
+     "value": "${{ github.ref }}"
+    },
+    {
+     "path": "matrix.nested-dynamic.a",
+     "route": [
+      "jobs",
+      "test",
+      "strategy",
+      "matrix",
+      "nested-dynamic",
+      1,
+      "a"
+     ],
+     "value": "3"
+    },
+    {
+     "path": "matrix.nested-dynamic.b",
+     "route": [
+      "jobs",
+      "test",
+      "strategy",
+      "matrix",
+      "nested-dynamic",
+      1,
+      "b"
+     ],
+     "value": "4"
+    }
+   ],
+   "indirectExclusions": false,
+   "indirectInclusions": false,
+   "indirectlyExpanded": false,
+   "job": "test",
+   "source": "\nname: test\non: push\njobs:\n  test:\n    runs-on: ubuntu-latest\n    strategy:\n      matrix:\n        trivially-static: [a, b, c, d]\n        trivially-dynamic: [a, '${{ github.ref }}', c, d]\n        nested-static:\n          - { a: 1, b: 2 }\n          - { a: 3, b: 4 }\n        nested-dynamic:\n          - { a: 1, b: '${{ github.ref }}' }\n          - { a: 3, b: 4 }\n    steps:\n      - run: true\n        ",
+   "static": [
+    {
+     "context": "matrix.trivially-static",
+     "result": true
+    },
+    {
+     "context": "matrix.trivially-dynamic",
+     "result": false
+    },
+    {
+     "context": "matrix.nested-static.a",
+     "result": true
+    },
+    {
+     "context": "matrix.nested-dynamic.b",
+     "result": false
+    },
+    {
+     "context": "matrix.nonexistent",
+     "result": true
+    }
+   ]
+  },
+  {
+   "id": "matrix#3",
+   "expansions": [
+    {
+     "path": "matrix.os",
+     "route": [
+      "jobs",
+      "test",
+      "strategy",
+      "matrix",
+      "os",
+      0
+     ],
+     "value": "ubuntu-latest"
+    },
+    {
+     "path": "matrix.os",
+     "route": [
+      "jobs",
+      "test",
+      "strategy",
+      "matrix",
+      "os",
+      1
+     ],
+     "value": "windows-latest"
+    },
+    {
+     "path": "matrix.os",
+     "route": [
+      "jobs",
+      "test",
+      "strategy",
+      "matrix",
+      "os",
+      2
+     ],
+     "value": "macos-latest"
+    },
+    {
+     "path": "matrix.node",
+     "route": [
+      "jobs",
+      "test",
+      "strategy",
+      "matrix",
+      "node",
+      0
+     ],
+     "value": "12"
+    },
+    {
+     "path": "matrix.node",
+     "route": [
+      "jobs",
+      "test",
+      "strategy",
+      "matrix",
+      "node",
+      1
+     ],
+     "value": "14"
+    },
+    {
+     "path": "matrix.node",
+     "route": [
+      "jobs",
+      "test",
+      "strategy",
+      "matrix",
+      "node",
+      2
+     ],
+     "value": "16"
+    },
+    {
+     "path": "matrix.nested.a",
+     "route": [
+      "jobs",
+      "test",
+      "strategy",
+      "matrix",
+      "nested",
+      0,
+      "a"
+     ],
+     "value": "1"
+    },
+    {
+     "path": "matrix.nested.b",
+     "route": [
+      "jobs",
+      "test",
+      "strategy",
+      "matrix",
+      "nested",
+      0,
+      "b"
+     ],
+     "value": "2"
+    },
+    {
+     "path": "matrix.nested.a",
+     "route": [
+      "jobs",
+      "test",
+      "strategy",
+      "matrix",
+      "nested",
+      1,
+      "a"
+     ],
+     "value": "3"
+    },
+    {
+     "path": "matrix.nested.b",
+     "route": [
+      "jobs",
+      "test",
+      "strategy",
+      "matrix",
+      "nested",
+      1,
+      "b"
+     ],
+     "value": "4"
+    },
+    {
+     "path": "matrix.os",
+     "route": [
+      "jobs",
+      "test",
+      "strategy",
+      "matrix",
+      "include",
+      0,
+      "os"
+     ],
+     "value": "ubuntu-latest"
+    },
+    {
+     "path": "matrix.node",
+     "route": [
+      "jobs",
+      "test",
+      "strategy",
+      "matrix",
+      "include",
+      0,
+      "node"
+     ],
+     "value": "18"
+    },
+    {
+     "path": "matrix.nested.a",
+     "route": [
+      "jobs",
+      "test",
+      "strategy",
+      "matrix",
+      "include",
+      0,
+      "nested",
+      "a"
+     ],
+     "value": "5"
+    },
+    {
+     "path": "matrix.nested.b",
+     "route": [
+      "jobs",
+      "test",
+      "strategy",
+      "matrix",
+      "include",
+      0,
+      "nested",
+      "b"
+     ],
+     "value": "6"
+    }
+   ],
+   "indirectExclusions": false,
+   "indirectInclusions": false,
+   "indirectlyExpanded": false,
+   "job": "test",
+   "source": "\nname: test\non: push\njobs:\n  test:\n    runs-on: ubuntu-latest\n    strategy:\n      matrix:\n        os: [ubuntu-latest, windows-latest, macos-latest]\n        node: [12, 14, 16]\n        nested:\n          - { a: 1, b: 2 }\n          - { a: 3, b: 4 }\n        include:\n          - os: ubuntu-latest\n            node: 18\n            nested:\n              a: 5\n              b: 6\n    steps:\n      - run: true\n        ",
+   "static": []
+  },
+  {
+   "id": "matrix#4",
+   "expansions": [
+    {
+     "path": "matrix.arch",
+     "route": [
+      "jobs",
+      "indirect-matrix",
+      "strategy",
+      "matrix",
+      "arch",
+      0
+     ],
+     "value": "x86_64"
+    },
+    {
+     "path": "matrix.arch",
+     "route": [
+      "jobs",
+      "indirect-matrix",
+      "strategy",
+      "matrix",
+      "arch",
+      1
+     ],
+     "value": "aarch64"
+    },
+    {
+     "path": "matrix.image",
+     "route": [
+      "jobs",
+      "indirect-matrix",
+      "strategy",
+      "matrix",
+      "image",
+      0
+     ],
+     "value": "ubuntu@latest"
+    }
+   ],
+   "indirectExclusions": true,
+   "indirectInclusions": true,
+   "indirectlyExpanded": false,
+   "job": "indirect-matrix",
+   "source": "\nname: test\non: push\njobs:\n  indirect-matrix:\n    name: indirect-matrix\n    runs-on: ubuntu-26.04\n    container:\n      image: ${{ matrix.image }}\n    strategy:\n      matrix:\n        arch: [x86_64, aarch64]\n        image:\n          - ubuntu@latest\n        include: ${{ fromJSON(vars.EXTRA_TARGETS) }}\n        exclude: ${{ fromJSON(vars.KNOWN_BROKEN_COMBOS) }}\n    steps:\n      - name: Noop\n        run: true\n        ",
+   "static": []
+  }
+ ],
+ "splitPatterns": [
+  {
+   "id": "splitPatterns#1",
+   "input": "\n        foo\n        bar\n        ${{ baz }}\n        internal  spaces\n        **\n        *\n        # comment\n        ## more hashes\n        # internal # hashes\n\n        # another comment\n        foo/*.txt\n        ",
+   "output": [
+    "foo",
+    "bar",
+    "${{ baz }}",
+    "internal  spaces",
+    "**",
+    "*",
+    "foo/*.txt"
+   ]
+  }
+ ],
+ "envIsStatic": [
+  {
+   "id": "envIsStatic#1",
+   "context": "env.CI",
+   "result": false
+  },
+  {
+   "id": "envIsStatic#2",
+   "context": "env.GITHUB_ACTION",
+   "result": true
+  },
+  {
+   "id": "envIsStatic#3",
+   "context": "env['GITHUB_ACTION']",
+   "result": true
+  },
+  {
+   "id": "envIsStatic#4",
+   "context": "env.GITHUB_ACTIONS",
+   "result": true
+  },
+  {
+   "id": "envIsStatic#5",
+   "context": "env.RUNNER_OS",
+   "result": true
+  },
+  {
+   "id": "envIsStatic#6",
+   "context": "env.runner_os",
+   "result": true
+  },
+  {
+   "id": "envIsStatic#7",
+   "context": "env['runner_os']",
+   "result": true
+  },
+  {
+   "id": "envIsStatic#8",
+   "context": "env.UNKNOWN",
+   "result": false
+  },
+  {
+   "id": "envIsStatic#9",
+   "context": "env['UNKNOWN']",
+   "result": false
+  }
+ ],
+ "extractFenced": [
+  {
+   "id": "extractFenced#1",
+   "bare": " foo ",
+   "end": 10,
+   "offset": 0,
+   "raw": "${{ foo }}",
+   "start": 0,
+   "text": "${{ foo }}"
+  },
+  {
+   "id": "extractFenced#2",
+   "bare": " foo ",
+   "end": 10,
+   "offset": 0,
+   "raw": "${{ foo }}",
+   "start": 0,
+   "text": "${{ foo }}${{ bar }}"
+  },
+  {
+   "id": "extractFenced#3",
+   "bare": " foo ",
+   "end": 18,
+   "offset": 0,
+   "raw": "${{ foo }}",
+   "start": 8,
+   "text": "leading ${{ foo }} trailing"
+  },
+  {
+   "id": "extractFenced#4",
+   "bare": " '${{ quoted! }}' ",
+   "end": 31,
+   "offset": 0,
+   "raw": "${{ '${{ quoted! }}' }}",
+   "start": 8,
+   "text": "leading ${{ '${{ quoted! }}' }} trailing"
+  },
+  {
+   "id": "extractFenced#5",
+   "bare": " 'es''cape' ",
+   "end": 17,
+   "offset": 0,
+   "raw": "${{ 'es''cape' }}",
+   "start": 0,
+   "text": "${{ 'es''cape' }}"
+  }
+ ],
+ "extractAllFenced": [
+  {
+   "id": "extractAllFenced#1",
+   "result": [
+    {
+     "end": 39,
+     "raw": "${{ github.workspace }}",
+     "start": 16
+    },
+    {
+     "end": 83,
+     "raw": "${{ matrix.PYTHON.OPENSSL.TYPE }}",
+     "start": 50
+    },
+    {
+     "end": 120,
+     "raw": "${{ matrix.PYTHON.OPENSSL.VERSION }}",
+     "start": 84
+    }
+   ],
+   "text": "echo \"OSSL_PATH=${{ github.workspace }}/osslcache/${{ matrix.PYTHON.OPENSSL.TYPE }}-${{ matrix.PYTHON.OPENSSL.VERSION }}-${OPENSSL_HASH}\" >> $GITHUB_ENV"
+  }
+ ],
+ "fencedInInput": [
+  {
+   "id": "fencedInInput#1",
+   "input": "Action",
+   "result": [
+    {
+     "end": 99,
+     "raw": "${{ '' }}",
+     "start": 90
+    }
+   ],
+   "source": "\nname: >-  # ${{ '' } is a hack to nest jobs under the same sidebar category\n  Windows MSI${{ '' }}\n\ndescription: test\n\nruns:\n  using: composite\n  steps:\n    - name: foo\n      run: echo hello\n      shell: bash\n"
+  },
+  {
+   "id": "fencedInInput#2",
+   "input": "Workflow",
+   "result": [
+    {
+     "end": 255,
+     "raw": "${{ github.sha }}",
+     "start": 238
+    },
+    {
+     "end": 389,
+     "raw": "${{ github.actor }}",
+     "start": 370
+    }
+   ],
+   "source": "\n# ${{ 'don''t parse me' }}\n\n# Observe that the expression in the comment below is invalid:\n# it's missing a closing brace. This should not interfere with\n# parsing the rest of the file's expressions\nname: >- # ${{ 'oops' }\n  custom-name-${{ github.sha }}\n\non:\n  push:\n\npermissions: {}\n\njobs:\n  whops:\n    runs-on: ubuntu-latest\n\n    steps:\n      - run: echo hello from ${{ github.actor }}\n"
+  },
+  {
+   "id": "fencedInInput#3",
+   "input": "Workflow",
+   "result": [
+    {
+     "end": 665,
+     "raw": "${{ inputs.rp_target_branch }}",
+     "start": 635
+    },
+    {
+     "end": 811,
+     "raw": "${{ 'steps.release.outputs.iac/terraform/attribution.tfm--release_created' }}",
+     "start": 734
+    }
+   ],
+   "source": "\nname: Test Workflow\non: push\n\npermissions: {}\n\njobs:\n  release-please:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2\n        with:\n          fetch-depth: 0 # ... because release-please scans historical commits to build releases, so we need all the history.\n          persist-credentials: false\n      - id: release\n        uses: ./vendor/github.com/googleapis/release-please-action\n        with:\n          config-file: \"tools/releasing/config.release-please.json\"\n          manifest-file: \"tools/releasing/manifest.release-please.json\"\n          target-branch: \"${{ inputs.rp_target_branch }}\"\n    outputs:\n      iac/terraform/attribution.tfm--release_created: ${{ 'steps.release.outputs.iac/terraform/attribution.tfm--release_created' }}\n"
+  }
+ ],
+ "normalizeShell": [
+  {
+   "id": "normalizeShell#1",
+   "input": "bash",
+   "output": "bash"
+  },
+  {
+   "id": "normalizeShell#2",
+   "input": "/bin/bash",
+   "output": "bash"
+  },
+  {
+   "id": "normalizeShell#3",
+   "input": "/bash",
+   "output": "bash"
+  },
+  {
+   "id": "normalizeShell#4",
+   "input": "./bash",
+   "output": "bash"
+  },
+  {
+   "id": "normalizeShell#5",
+   "input": "../bash",
+   "output": "bash"
+  },
+  {
+   "id": "normalizeShell#6",
+   "input": "/./../bash",
+   "output": "bash"
+  },
+  {
+   "id": "normalizeShell#7",
+   "input": "/bin/bash -e {0}",
+   "output": "bash"
+  }
+ ]
+}

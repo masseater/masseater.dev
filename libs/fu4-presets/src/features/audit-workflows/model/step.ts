@@ -28,6 +28,7 @@ export interface MatrixView {
   readonly expansions: readonly Expansion[];
   readonly indirectlyExpanded: Option.Option<SymbolicLocation>;
   readonly indirectInclusions: Option.Option<SymbolicLocation>;
+  readonly indirectExclusions: Option.Option<SymbolicLocation>;
 }
 
 export interface StepView {
