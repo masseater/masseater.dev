@@ -7,7 +7,7 @@ export type CallContext = Readonly<{
   http?: Readonly<{ authInfo?: Readonly<{ clientId: string }> | undefined }> | undefined;
 }>;
 
-export const UNKNOWN_CLIENT = "unknown";
+const UNKNOWN_CLIENT = "unknown";
 
 const NO_TOKEN = "";
 
