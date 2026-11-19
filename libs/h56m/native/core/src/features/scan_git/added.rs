@@ -160,10 +160,6 @@ fn backtrack(
     matched
 }
 
-/// Calls `emit` with each block of lines that `new` adds to `old`, and the
-/// 1-based line of the block in `new`, as Betterleaks does for one change in
-/// git history: lines shared at both ends are trimmed, lines that cannot match
-/// stay out of the edit search, and a change too large to diff is emitted whole.
 pub fn additions(old: &[u8], new: &[u8], mut emit: impl FnMut(&[u8], usize)) {
     let prefix = common_line_prefix(old, new);
     let base = newlines(&new[..prefix]);
