@@ -10,8 +10,7 @@ import type { GitHubClient } from "#/features/audit-workflows/model/github.ts";
 import { message, primaryColumn, primaryLocation } from "./finding.ts";
 import { inputOf } from "./input.ts";
 import { findingsOf } from "./run.ts";
-import { settingsOf } from "./settings.ts";
-import type { ZizmorSettings } from "./settings.ts";
+import type { SettingsOf, ZizmorSettings } from "./settings.ts";
 
 const ONE_BASED = 1;
 const UNBOUNDED = { concurrency: "unbounded" } as const;
@@ -58,7 +57,7 @@ const reported =
   };
 
 const check =
-  (audit: Audit) =>
+  (settingsOf: SettingsOf, audit: Audit) =>
   (context: RuleContext): Effect.Effect<void> => {
     const settings = settingsOf(context.settings);
     if (Result.isFailure(settings)) {
@@ -67,12 +66,14 @@ const check =
     return audited(audit, context)(settings.success).pipe(Effect.map(reported(context)));
   };
 
-export const auditRule = (audit: Audit): Rule =>
-  defineRule({
-    meta: {
-      description: audit.desc,
-      docs: `https://docs.zizmor.sh/audits/#${audit.ident}`,
-      kinds: INPUT_KINDS,
-    },
-    check: check(audit),
-  });
+export const auditRule =
+  (settingsOf: SettingsOf) =>
+  (audit: Audit): Rule =>
+    defineRule({
+      meta: {
+        description: audit.desc,
+        docs: `https://docs.zizmor.sh/audits/#${audit.ident}`,
+        kinds: INPUT_KINDS,
+      },
+      check: check(settingsOf, audit),
+    });

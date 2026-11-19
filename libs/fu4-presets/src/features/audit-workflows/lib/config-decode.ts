@@ -122,14 +122,33 @@ const ruleEntry = ([ident, raw]: readonly [string, typeof RawRule.Type]): Parsed
 
 const decodeRules = Schema.decodeUnknownResult(RawRules, STRICT);
 
-const rulesOf = (raw: unknown): ParsedConfig<ReadonlyMap<string, RuleConfig>> =>
-  pipe(
-    decodeRules(raw),
-    Result.mapError(messageOf),
-    Result.map((each) => Rec.toEntries(each ?? {})),
-    Result.flatMap((entries) => Result.all(pipe(entries, Arr.map(ruleEntry)))),
-    Result.map((entries) => new Map(entries)),
-  );
+const knownRule =
+  (known: readonly string[]) =>
+  (ident: string): ParsedConfig<string> =>
+    Result.liftPredicate(
+      ident,
+      (each) => Arr.contains(known, each),
+      (each) => `unknown audit: ${each}`,
+    );
+
+const rulesOf =
+  (known: readonly string[]) =>
+  (raw: unknown): ParsedConfig<ReadonlyMap<string, RuleConfig>> =>
+    pipe(
+      decodeRules(raw),
+      Result.mapError(messageOf),
+      Result.map((each) => Rec.toEntries(each ?? {})),
+      Result.flatMap((entries) =>
+        pipe(
+          entries,
+          Arr.map(([ident]) => knownRule(known)(ident)),
+          Result.all,
+          Result.map(() => entries),
+        ),
+      ),
+      Result.flatMap((entries) => Result.all(pipe(entries, Arr.map(ruleEntry)))),
+      Result.map((entries) => new Map(entries)),
+    );
 
 const settingOf =
   <Raw, Value>(decode: Decode<Raw>, fallback: () => Value) =>
@@ -271,5 +290,7 @@ const withRules = (rules: ReadonlyMap<string, RuleConfig>): ParsedConfig<Config>
   );
 };
 
-export const loadConfig = (raw: unknown): ParsedConfig<Config> =>
-  pipe(rulesOf(raw), Result.flatMap(withRules));
+export const loadConfig =
+  (known: readonly string[]) =>
+  (raw: unknown): ParsedConfig<Config> =>
+    pipe(rulesOf(known)(raw), Result.flatMap(withRules));
