@@ -1,0 +1,2 @@
+mkdir -p "${XDG_CONFIG_HOME:-~/.config}/changelog-maker"
+jq --null-input '{user: env.GITHUB_ACTOR, token: env.TOKEN}' > "${XDG_CONFIG_HOME:-~/.config}/changelog-maker/config.json"

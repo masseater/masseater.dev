@@ -17,6 +17,7 @@ export interface Finding {
 
 export interface State {
   readonly source: string;
+  readonly cleanReads: ReadonlySet<number>;
   readonly add: (finding: Finding) => void;
   readonly assign: (finding: Finding) => void;
   readonly use: (name: string) => void;

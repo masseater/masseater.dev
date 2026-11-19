@@ -1,0 +1,6 @@
+# shellcheck disable=SC2086
+for pr in $PULL_REQUESTS; do
+  if ! gh -R "$GITHUB_REPOSITORY" pr edit "$pr" --add-label 'lacks-second-approval'; then
+    echo "::warning::Failed to add lacks-second-approval to PR ${pr}"
+  fi
+done

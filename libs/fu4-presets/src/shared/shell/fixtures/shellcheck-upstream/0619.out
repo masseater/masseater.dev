@@ -1,0 +1,2 @@
+SC2034:warning:1:1: var appears unused. Verify use (or export if used externally)
+SC2006:style:1:5: Use $(...) notation instead of legacy backticks `...`

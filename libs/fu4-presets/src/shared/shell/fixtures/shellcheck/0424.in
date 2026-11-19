@@ -1,0 +1,1 @@
+echo "PR_MAX_DATE=$(date -d "$RELEASE_DATE -1 month" +%Y-%m-%d)" >> "$GITHUB_ENV"

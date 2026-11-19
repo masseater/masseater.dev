@@ -14,7 +14,7 @@ import type { Shells } from "#/features/check-workflows/lib/shellcheck.ts";
 import { runOf } from "#/features/check-workflows/lib/step.ts";
 import { NOOP, workflowRule } from "#/features/check-workflows/lib/workflow-rule.ts";
 import type { Visitor } from "#/features/check-workflows/lib/workflow-rule.ts";
-import { checkShell } from "#/shared/shell/index.ts";
+import { checkShell, parseableScript } from "#/shared/shell/index.ts";
 import type { Text } from "#/shared/yaml/index.ts";
 
 const checkedRun =
@@ -48,7 +48,8 @@ export const shellcheck = workflowRule({
       },
       step: (step) => {
         for (const [script, at] of Option.toArray(checkedRun(shells)(step))) {
-          for (const finding of checkShell(context.parseScript("bash", sanitize(script.value)))) {
+          const parseable = parseableScript(sanitize(script.value));
+          for (const finding of checkShell(context.parseScript("bash", parseable))) {
             fail(at, shown(finding));
           }
         }

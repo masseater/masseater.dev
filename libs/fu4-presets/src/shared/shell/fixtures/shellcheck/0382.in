@@ -1,0 +1,6 @@
+ncu-config set branch "${RELEASE_BRANCH}"
+ncu-config set upstream origin
+ncu-config set username "$GITHUB_ACTOR"
+ncu-config set token "$GH_TOKEN"
+ncu-config set repo "$(echo "$GITHUB_REPOSITORY" | cut -d/ -f2)"
+ncu-config set owner "${GITHUB_REPOSITORY_OWNER}"
