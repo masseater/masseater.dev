@@ -55,6 +55,11 @@ const rendered = (found: Finding): Expected => {
 const encodeMessage = (message: typeof ProbeMessage.Type): string =>
   Result.getOrThrow(Schema.encodeResult(ProbeMessage)(message));
 
+const KNOWN_AUDITS = pipe(
+  AUDITS,
+  Arr.map((audit) => audit.ident),
+);
+
 export const probedOf = (message: string): typeof ProbeMessage.Type =>
   Result.getOrThrow(Schema.decodeResult(ProbeMessage)(message));
 
@@ -91,7 +96,7 @@ export const probe = defineRule({
     kinds: ["workflow", "action", "dependabot", "pre-commit"],
   },
   check: (context: RuleContext) => {
-    const settings = settingsOf(context.settings);
+    const settings = settingsOf(KNOWN_AUDITS)(context.settings);
     if (Result.isFailure(settings)) {
       return Effect.void;
     }

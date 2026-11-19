@@ -33,39 +33,45 @@ const decodeSettings = Schema.decodeUnknownResult(RawSettings);
 
 const NO_SETTINGS = {};
 
-const cache = new WeakMap<object, ParsedSettings>();
+const withConfig =
+  (known: readonly string[]) =>
+  (raw: typeof RawSettings.Type): ParsedSettings =>
+    pipe(
+      loadConfig(known)(raw.rules),
+      Result.map((config) => ({
+        config,
+        persona: raw.persona ?? "regular",
+        minSeverity: Option.fromNullishOr(raw.minSeverity),
+        minConfidence: Option.fromNullishOr(raw.minConfidence),
+        online: raw.online !== false,
+        githubHost: raw.githubHost ?? "github.com",
+      })),
+    );
 
-const withConfig = (raw: typeof RawSettings.Type): ParsedSettings =>
-  pipe(
-    loadConfig(raw.rules),
-    Result.map((config) => ({
-      config,
-      persona: raw.persona ?? "regular",
-      minSeverity: Option.fromNullishOr(raw.minSeverity),
-      minConfidence: Option.fromNullishOr(raw.minConfidence),
-      online: raw.online !== false,
-      githubHost: raw.githubHost ?? "github.com",
-    })),
-  );
+const parse =
+  (known: readonly string[]) =>
+  (raw: object): ParsedSettings =>
+    pipe(
+      decodeSettings(raw),
+      Result.mapError((issue) => `invalid zizmor setting: ${issue.message}`),
+      Result.flatMap(withConfig(known)),
+    );
 
-const parse = (raw: object): ParsedSettings =>
-  pipe(
-    decodeSettings(raw),
-    Result.mapError((issue) => `invalid zizmor setting: ${issue.message}`),
-    Result.flatMap(withConfig),
-  );
+export type SettingsOf = (settings: Readonly<Record<string, unknown>>) => ParsedSettings;
 
-const cached = (value: object): ParsedSettings => {
-  const parsed = parse(value);
-  cache.set(value, parsed);
-  return parsed;
-};
-
-export const settingsOf = (settings: Readonly<Record<string, unknown>>): ParsedSettings => {
-  const value = pipe(
-    Option.fromNullishOr(settings["zizmor"]),
-    Option.filter(Predicate.isObject),
-    Option.getOrElse(() => NO_SETTINGS),
-  );
-  return Option.getOrElse(Option.fromNullishOr(cache.get(value)), () => cached(value));
+export const settingsOf = (known: readonly string[]): SettingsOf => {
+  const cache = new WeakMap<object, ParsedSettings>();
+  const cached = (value: object): ParsedSettings => {
+    const parsed = parse(known)(value);
+    cache.set(value, parsed);
+    return parsed;
+  };
+  return (settings) => {
+    const value = pipe(
+      Option.fromNullishOr(settings["zizmor"]),
+      Option.filter(Predicate.isObject),
+      Option.getOrElse(() => NO_SETTINGS),
+    );
+    return Option.getOrElse(Option.fromNullishOr(cache.get(value)), () => cached(value));
+  };
 };
