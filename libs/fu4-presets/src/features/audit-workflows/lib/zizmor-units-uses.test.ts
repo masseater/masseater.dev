@@ -13,6 +13,8 @@ import {
 } from "effect";
 import { afterAll, expect, test } from "vite-plus/test";
 
+import { AUDITS } from "#/features/audit-workflows/concerns/index.ts";
+
 import { parseRepository } from "./common.ts";
 import { loadConfig } from "./config-decode.ts";
 import { evaluateControl } from "./control.ts";
@@ -86,10 +88,15 @@ const urlMatched = (found: Case<"usesPatternMatchesUrl">): Outcome => {
   return { id: found.id, want: found.result, have: patternMatches(patternOf(found.pattern))(ref) };
 };
 
+const KNOWN_AUDITS = pipe(
+  AUDITS,
+  Arr.map((audit) => audit.ident),
+);
+
 const configLoaded = (found: Case<"configSchema">): Outcome => ({
   id: found.id,
   want: found.valid,
-  have: Result.isSuccess(loadConfig(found.instance.rules)),
+  have: Result.isSuccess(loadConfig(KNOWN_AUDITS)(found.instance.rules)),
 });
 
 const outcomesOf = (units: Units): readonly Outcome[] => [
