@@ -54,14 +54,35 @@ const isNoteOnly: From<Attribute, boolean> = (attribute) =>
 
 const isEditOnly: From<Attribute, boolean> = (attribute) => isEvery(attribute) || isFade(attribute);
 
+const isAbove = (low: number, value: number): boolean => value > low && value <= FULL;
+const isWithin = (low: number, value: number): boolean => value >= low && value <= FULL;
+
+const rangeProblemOf: From<Attribute, Option.Option<Problem>> = (attribute) => {
+  if (
+    isVelocity(attribute) &&
+    Option.exists(Option.fromUndefinedOr(attribute.value), (value) => !isAbove(NONE, value))
+  ) {
+    return Option.some(problemAt(attribute)("value")("vel は 0 より大きく 1 以下で書きます"));
+  }
+  if (isReleaseVelocity(attribute) && !isWithin(NONE, attribute.value)) {
+    return Option.some(problemAt(attribute)("value")("off は 0 から 1 で書きます"));
+  }
+  if (isGateLength(attribute) && !isAbove(NONE, shareOf(attribute.amount))) {
+    return Option.some(problemAt(attribute)("amount")("gate は 0% より大きく 100% 以下で書きます"));
+  }
+  return Option.none();
+};
+
 const misplacedOf =
   (allowed: From<Attribute, boolean>, what: string): From<Attributes, readonly Problem[]> =>
-  (attributes) =>
-    pipe(
+  (attributes) => [
+    ...pipe(
       attributes,
       Arr.filter((attribute) => !allowed(attribute)),
       Arr.map((attribute) => problemAt(attribute)("$type")(`${what}にはこの指定を書けません`)),
-    );
+    ),
+    ...pipe(attributes, Arr.map(rangeProblemOf), Arr.getSomes),
+  ];
 
 export const misplacedOnNote = misplacedOf((attribute) => !isEditOnly(attribute), "音符");
 

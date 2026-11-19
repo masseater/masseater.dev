@@ -24,7 +24,7 @@ import {
 } from "./attributes.ts";
 import type { Item, LineKind, NoteItem, Placed } from "./items.ts";
 import { problemAt, problemsOf } from "./problem.ts";
-import type { Compiled, From } from "./problem.ts";
+import type { Compiled, From, Problem } from "./problem.ts";
 import { sourceOf } from "./source.ts";
 
 export type Items = Compiled<readonly Item[]>;
@@ -35,6 +35,28 @@ interface Context {
 }
 
 type HeadOf<Node> = From<Node, From<Context, Items>>;
+
+const repeatedPitchesOf: From<readonly NoteNode[], readonly Problem[]> = (pitches) =>
+  pipe(
+    pitches,
+    Arr.filter((pitch, index) => {
+      const midi = Option.map(pitchOf(pitch.pitch), (found) => found.midi);
+      return pipe(
+        Arr.take(pitches, index),
+        Arr.some(
+          (before) =>
+            Option.isSome(midi) &&
+            Option.contains(
+              Option.map(pitchOf(before.pitch), (found) => found.midi),
+              midi.value,
+            ),
+        ),
+      );
+    }),
+    Arr.map((pitch) =>
+      problemAt(pitch)("pitch")(`${pitch.pitch} と同じ高さの音が和音にもうあります`),
+    ),
+  );
 
 const notesOf: HeadOf<readonly NoteNode[]> =
   (pitches) =>
@@ -69,7 +91,11 @@ const notesOf: HeadOf<readonly NoteNode[]> =
         Arr.map((note) => note.value),
         Arr.getSomes,
       ),
-      problems: [...problemsOf(notes), ...misplacedOnNote(sounding.attributes)],
+      problems: [
+        ...problemsOf(notes),
+        ...repeatedPitchesOf(pitches),
+        ...misplacedOnNote(sounding.attributes),
+      ],
     };
   };
 

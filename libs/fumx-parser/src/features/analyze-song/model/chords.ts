@@ -37,6 +37,12 @@ const heldIn =
 const isHarmonic = (note: Sounding): boolean =>
   Option.exists(note.role, (role) => role === "bass" || role === "harmony");
 
+const OCTAVE = 12;
+
+const UNISON = 0;
+
+const samePitchClass = (left: number, right: number): boolean => (left - right) % OCTAVE === UNISON;
+
 const byMidi = Order.mapInput(Order.Number, (note: Sounding) => note.midi);
 
 const harmonicOrAll = (held: readonly Sounding[]): readonly Sounding[] => {
@@ -55,16 +61,32 @@ const chordNotesIn =
       Arr.filter(heldIn(window)),
       harmonicOrAll,
       (held) => Arr.sort(held, byMidi),
+      Arr.dedupeWith((left, right) => samePitchClass(left.midi, right.midi)),
       Arr.map((note) => note.pitchClass),
-      Arr.dedupe,
     );
 
-const symbolOf = (notes: readonly string[]): string =>
-  pipe(
-    Chord.detect(Arr.copy(notes)),
-    Arr.head,
+const spells =
+  (notes: readonly string[]) =>
+  (symbol: string): boolean => {
+    const spelled = Chord.get(symbol).notes;
+    return (
+      spelled.length === notes.length &&
+      pipe(
+        spelled,
+        Arr.every((note) => Arr.contains(notes, note)),
+      )
+    );
+  };
+
+const symbolOf = (notes: readonly string[]): string => {
+  const candidates = Chord.detect(Arr.copy(notes));
+  return pipe(
+    candidates,
+    Arr.findFirst(spells(notes)),
+    Option.orElse(() => Arr.head(candidates)),
     Option.getOrElse(() => UNKNOWN),
   );
+};
 
 const beatWindowsOf = (song: Song): readonly Span[] =>
   pipe(
