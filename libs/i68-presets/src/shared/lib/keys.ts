@@ -3,15 +3,12 @@ import { keyIn } from "@r_masseater/fumx-parser/analysis";
 import type { BarRange, KeySpan } from "@r_masseater/fumx-parser/analysis";
 import { Array as Arr, Option, String as Str, pipe } from "effect";
 
-const PHRASE_BARS = 4;
-const FIRST = 1;
+const UNLABELED = "#song";
 
 interface Labeled {
   readonly bar: Bar;
   readonly label: string;
 }
-
-const phraseOf = (bar: Bar): string => `#${String(Math.floor((bar.index - FIRST) / PHRASE_BARS))}`;
 
 const labeled = (bars: readonly Bar[]): readonly Labeled[] =>
   Arr.reduce(bars, Arr.empty<Labeled>(), (done, bar) => {
@@ -23,7 +20,7 @@ const labeled = (bars: readonly Bar[]): readonly Labeled[] =>
     const label = pipe(
       bar.section,
       Option.orElse(() => carried),
-      Option.getOrElse(() => phraseOf(bar)),
+      Option.getOrElse(() => UNLABELED),
     );
     return Arr.append(done, { bar, label });
   });

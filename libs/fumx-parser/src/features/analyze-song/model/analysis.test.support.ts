@@ -31,8 +31,11 @@ const notesOf =
   (pitches: string): readonly Note[] =>
     pipe(
       Str.split(" ")(pitches),
-      Arr.map((pitch) => TonalNote.midi(pitch) ?? NONE),
-      Arr.map((midi) => ({
+      Arr.map((pitch) => ({
+        spelling: pitch,
+        midi: TonalNote.midi(pitch) ?? NONE,
+      })),
+      Arr.map(({ spelling, midi }) => ({
         track,
         line: NONE,
         sourceLine: NONE,
@@ -42,7 +45,9 @@ const notesOf =
         start: bar.start,
         length: bar.length,
         nudgeMilliseconds: NONE,
+        nudgeSeconds: NONE,
         midi,
+        spelling,
         cents: NONE,
         velocity: FULL,
         releaseVelocity: Option.none(),
@@ -51,6 +56,7 @@ const notesOf =
         lyric: Option.none(),
         bend: [],
         params: [],
+        args: [],
       })),
     );
 
@@ -75,6 +81,8 @@ export const songOf = (specs: readonly BarSpec[]): Song => {
       Arr.map(([name, role]) => ({
         name,
         source: { kind: "audio" as const },
+        into: Option.none(),
+        mono: false,
         role: Option.some(role),
         mixer: { volumeDecibels: 0, pan: 0, muted: false },
         fx: [],
@@ -83,6 +91,8 @@ export const songOf = (specs: readonly BarSpec[]): Song => {
     ),
     ducks: [],
     master: [],
+    mix: Option.none(),
+    tailSeconds: Option.none(),
     bars,
     notes: pipe(
       Arr.zip(bars, specs),

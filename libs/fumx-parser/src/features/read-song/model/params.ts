@@ -7,6 +7,7 @@ import {
   hertzOf,
   millisecondsOf,
   ratioOf,
+  secondsOf,
   semitonesOf,
   shareOf,
 } from "#/shared/lib/units.ts";
@@ -62,22 +63,31 @@ export const playParamOf: From<PlayParamNode, PlayParam> = (node) =>
   Match.value(node).pipe(
     Match.discriminatorsExhaustive("$type")({
       Semi: (semi): PlayParam => ({ kind: "semi", semitones: semitonesOf(semi.amount) }),
+      Rate: (rate): PlayParam => ({ kind: "rate", ratio: rate.amount }),
       Length: (length): PlayParam => ({
         kind: "length",
         milliseconds: millisecondsOf(length.time),
+        seconds: secondsOf(length.time),
       }),
       Attack: (attack): PlayParam => ({
         kind: "attack",
         milliseconds: millisecondsOf(attack.time),
+        seconds: secondsOf(attack.time),
       }),
       Release: (release): PlayParam => ({
         kind: "release",
         milliseconds: millisecondsOf(release.time),
+        seconds: secondsOf(release.time),
       }),
-      Decay: (decay): PlayParam => ({ kind: "decay", milliseconds: millisecondsOf(decay.time) }),
+      Decay: (decay): PlayParam => ({
+        kind: "decay",
+        milliseconds: millisecondsOf(decay.time),
+        seconds: secondsOf(decay.time),
+      }),
       Offset: (offset): PlayParam => ({
         kind: "offset",
         milliseconds: millisecondsOf(offset.time),
+        seconds: secondsOf(offset.time),
       }),
       Highpass: highpassOf,
       Lowpass: lowpassOf,

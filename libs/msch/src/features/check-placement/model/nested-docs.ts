@@ -2,13 +2,13 @@ import { Array as Arr, Effect, HashSet, Option, Schema, String as Str, pipe } fr
 import { resolveConfigFromFile } from "vite-plus";
 
 import { workspaceDirectories } from "#/entities/workspace/index.ts";
+import { problemInFile } from "#/shared/lib/problem.ts";
 import type { Problem, RuleName } from "#/shared/lib/problem.ts";
 import { RepositoryFiles } from "#/shared/lib/repository-files.ts";
 
 const RULE: RuleName = "nested-docs";
 const CONFIG_FILE = "vite.config.ts";
 const SEPARATOR = "/";
-const FIRST = 1;
 const READ_CONCURRENCY = 64;
 const AGENT_DOCS = /^(?:AGENTS|CLAUDE)(?:\.[^/]+)?\.md$/iu;
 const WORKSPACE_AGENT_DOC = "AGENTS.md";
@@ -27,13 +27,7 @@ class RootConfigUnreadable extends taggedError<
 
 const isNested = (name: string): boolean => Str.includes(SEPARATOR)(name);
 
-const problemFor = (file: string, message: string): Problem => ({
-  file,
-  line: FIRST,
-  column: FIRST,
-  rule: RULE,
-  message,
-});
+const problemFor = problemInFile(RULE);
 
 const AGENT_DOCS_MESSAGE =
   "belongs only at the repository root. Move what agents need into the root AGENTS.md and delete this file.";

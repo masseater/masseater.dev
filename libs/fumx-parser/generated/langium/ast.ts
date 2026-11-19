@@ -97,6 +97,7 @@ export type FumxKeywordNames =
     | "import"
     | "in"
     | "instrument"
+    | "into"
     | "ir"
     | "kit"
     | "legato"
@@ -115,6 +116,7 @@ export type FumxKeywordNames =
     | "meter"
     | "mix"
     | "mod"
+    | "mono"
     | "mono-below"
     | "multisample"
     | "mute"
@@ -139,6 +141,7 @@ export type FumxKeywordNames =
     | "q"
     | "random"
     | "range"
+    | "rate"
     | "release"
     | "repeat"
     | "rest"
@@ -160,6 +163,7 @@ export type FumxKeywordNames =
     | "string"
     | "stutter"
     | "swing"
+    | "tail"
     | "tapestop"
     | "tempo"
     | "texture"
@@ -174,6 +178,7 @@ export type FumxKeywordNames =
     | "volume"
     | "while"
     | "width"
+    | "with"
     | "{"
     | "}";
 
@@ -241,7 +246,7 @@ export function isAttack(item: unknown): item is Attack {
     return reflection.isInstance(item, Attack.$type);
 }
 
-export type Attribute = Articulation | Bend | Every | Fade | GateLength | Lyric | Nudge | PlayParam | ReleaseVelocity | Tie | Velocity;
+export type Attribute = Articulation | Bend | Every | Fade | GateLength | Lyric | Nudge | PlayParam | ReleaseVelocity | Tie | Velocity | With;
 
 export const Attribute = {
     $type: 'Attribute'
@@ -1130,14 +1135,16 @@ export interface KitVoice extends langium.AstNode {
     readonly $type: 'KitVoice';
     name: Name;
     params: Array<PlayParam>;
-    path: string;
+    path?: string;
+    use?: PluginUse;
 }
 
 export const KitVoice = {
     $type: 'KitVoice',
     name: 'name',
     params: 'params',
-    path: 'path'
+    path: 'path',
+    use: 'use'
 } as const;
 
 export function isKitVoice(item: unknown): item is KitVoice {
@@ -1309,12 +1316,16 @@ export function isLyric(item: unknown): item is Lyric {
 export interface Master extends langium.AstNode {
     readonly $container: Song;
     readonly $type: 'Master';
-    fx: FxChain;
+    fx?: FxChain;
+    mix?: PluginUse;
+    tail?: string;
 }
 
 export const Master = {
     $type: 'Master',
-    fx: 'fx'
+    fx: 'fx',
+    mix: 'mix',
+    tail: 'tail'
 } as const;
 
 export function isMaster(item: unknown): item is Master {
@@ -1363,10 +1374,10 @@ export function isMultiSample(item: unknown): item is MultiSample {
     return reflection.isInstance(item, MultiSample.$type);
 }
 
-export type Name = 'accent' | 'attack' | 'audio' | 'automate' | 'bar' | 'base' | 'bass' | 'bend' | 'bool' | 'bus' | 'by' | 'cc' | 'chorus' | 'comp' | 'countermelody' | 'curve' | 'decay' | 'decibels' | 'delay' | 'depth' | 'drive' | 'drums' | 'duck' | 'duration' | 'every' | 'exp' | 'fade' | 'feedback' | 'from' | 'fx' | 'gain' | 'gate' | 'groove' | 'harmony' | 'hertz' | 'highpass' | 'hold' | 'instrument' | 'ir' | 'kit' | 'legato' | 'length' | 'limit' | 'linear' | 'lookahead' | 'lowpass' | 'lyric' | 'makeup' | 'mark' | 'melody' | 'meter' | 'mix' | 'mono-below' | 'multisample' | 'nudge' | 'number' | 'off' | 'offset' | 'onsets' | 'over' | 'pan' | 'percent' | 'phaser' | 'pingpong' | 'pitch' | 'plugin' | 'predelay' | 'pressure' | 'program' | 'q' | 'release' | 'reverb' | 'reverse' | 'role' | 'root' | 'sample' | 'section' | 'semi' | 'semitones' | 'send' | 'slice' | 'slices' | 'song' | 'staccato' | 'string' | 'swing' | 'tempo' | 'texture' | 'tie' | 'time' | 'to' | 'track' | 'tremolo' | 'vel' | 'volume' | 'width' | string;
+export type Name = 'accent' | 'attack' | 'audio' | 'automate' | 'bar' | 'base' | 'bass' | 'bend' | 'bool' | 'bus' | 'by' | 'cc' | 'chorus' | 'comp' | 'countermelody' | 'curve' | 'decay' | 'decibels' | 'delay' | 'depth' | 'drive' | 'drums' | 'duck' | 'duration' | 'every' | 'exp' | 'fade' | 'feedback' | 'from' | 'fx' | 'gain' | 'gate' | 'groove' | 'harmony' | 'hertz' | 'highpass' | 'hold' | 'instrument' | 'into' | 'ir' | 'kit' | 'legato' | 'length' | 'limit' | 'linear' | 'lookahead' | 'lowpass' | 'lyric' | 'makeup' | 'mark' | 'melody' | 'meter' | 'mix' | 'mono' | 'mono-below' | 'multisample' | 'nudge' | 'number' | 'off' | 'offset' | 'onsets' | 'over' | 'pan' | 'percent' | 'phaser' | 'pingpong' | 'pitch' | 'plugin' | 'predelay' | 'pressure' | 'program' | 'q' | 'rate' | 'release' | 'reverb' | 'reverse' | 'role' | 'root' | 'sample' | 'section' | 'semi' | 'semitones' | 'send' | 'slice' | 'slices' | 'song' | 'staccato' | 'string' | 'swing' | 'tail' | 'tempo' | 'texture' | 'tie' | 'time' | 'to' | 'track' | 'tremolo' | 'vel' | 'volume' | 'width' | 'with' | string;
 
 export function isName(item: unknown): item is Name {
-    return item === 'melody' || item === 'countermelody' || item === 'bass' || item === 'harmony' || item === 'drums' || item === 'texture' || item === 'delay' || item === 'reverb' || item === 'chorus' || item === 'comp' || item === 'limit' || item === 'width' || item === 'phaser' || item === 'tremolo' || item === 'drive' || item === 'gain' || item === 'pan' || item === 'sample' || item === 'release' || item === 'attack' || item === 'decay' || item === 'offset' || item === 'length' || item === 'mix' || item === 'base' || item === 'from' || item === 'to' || item === 'q' || item === 'ir' || item === 'predelay' || item === 'feedback' || item === 'pingpong' || item === 'lookahead' || item === 'makeup' || item === 'semi' || item === 'highpass' || item === 'lowpass' || item === 'slice' || item === 'slices' || item === 'onsets' || item === 'root' || item === 'hold' || item === 'depth' || item === 'by' || item === 'over' || item === 'curve' || item === 'linear' || item === 'exp' || item === 'every' || item === 'fade' || item === 'nudge' || item === 'bend' || item === 'lyric' || item === 'gate' || item === 'vel' || item === 'tie' || item === 'staccato' || item === 'legato' || item === 'accent' || item === 'reverse' || item === 'audio' || item === 'kit' || item === 'instrument' || item === 'track' || item === 'bus' || item === 'duck' || item === 'groove' || item === 'swing' || item === 'multisample' || item === 'song' || item === 'bar' || item === 'meter' || item === 'tempo' || item === 'section' || item === 'mark' || item === 'automate' || item === 'fx' || item === 'send' || item === 'role' || item === 'mono-below' || item === 'volume' || item === 'plugin' || item === 'number' || item === 'pitch' || item === 'duration' || item === 'decibels' || item === 'percent' || item === 'hertz' || item === 'time' || item === 'semitones' || item === 'string' || item === 'bool' || item === 'cc' || item === 'pressure' || item === 'program' || item === 'off' || (typeof item === 'string' && (/[a-z][a-z0-9]*(-[a-z0-9]+)*/.test(item)));
+    return item === 'melody' || item === 'countermelody' || item === 'bass' || item === 'harmony' || item === 'drums' || item === 'texture' || item === 'delay' || item === 'reverb' || item === 'chorus' || item === 'comp' || item === 'limit' || item === 'width' || item === 'phaser' || item === 'tremolo' || item === 'drive' || item === 'gain' || item === 'pan' || item === 'sample' || item === 'release' || item === 'attack' || item === 'decay' || item === 'offset' || item === 'length' || item === 'mix' || item === 'base' || item === 'from' || item === 'to' || item === 'q' || item === 'ir' || item === 'predelay' || item === 'feedback' || item === 'pingpong' || item === 'lookahead' || item === 'makeup' || item === 'semi' || item === 'highpass' || item === 'lowpass' || item === 'slice' || item === 'slices' || item === 'onsets' || item === 'root' || item === 'hold' || item === 'depth' || item === 'by' || item === 'over' || item === 'curve' || item === 'linear' || item === 'exp' || item === 'every' || item === 'fade' || item === 'nudge' || item === 'bend' || item === 'lyric' || item === 'gate' || item === 'vel' || item === 'tie' || item === 'staccato' || item === 'legato' || item === 'accent' || item === 'reverse' || item === 'audio' || item === 'kit' || item === 'instrument' || item === 'track' || item === 'bus' || item === 'duck' || item === 'groove' || item === 'swing' || item === 'multisample' || item === 'song' || item === 'bar' || item === 'meter' || item === 'tempo' || item === 'section' || item === 'mark' || item === 'automate' || item === 'fx' || item === 'send' || item === 'role' || item === 'mono-below' || item === 'volume' || item === 'plugin' || item === 'number' || item === 'pitch' || item === 'duration' || item === 'decibels' || item === 'percent' || item === 'hertz' || item === 'time' || item === 'semitones' || item === 'string' || item === 'bool' || item === 'cc' || item === 'pressure' || item === 'program' || item === 'off' || item === 'rate' || item === 'into' || item === 'mono' || item === 'tail' || item === 'with' || (typeof item === 'string' && (/[a-z][a-z0-9]*(-[a-z0-9]+)*/.test(item)));
 }
 
 export interface Note extends langium.AstNode {
@@ -1469,7 +1480,7 @@ export function isPhaser(item: unknown): item is Phaser {
     return reflection.isInstance(item, Phaser.$type);
 }
 
-export type PlayParam = Attack | Decay | Drive | Gain | Highpass | Length | Lowpass | Offset | Pan | Release | Reverse | Semi | Send;
+export type PlayParam = Attack | Decay | Drive | Gain | Highpass | Length | Lowpass | Offset | Pan | Rate | Release | Reverse | Semi | Send;
 
 export const PlayParam = {
     $type: 'PlayParam'
@@ -1499,7 +1510,7 @@ export function isPlugin(item: unknown): item is Plugin {
 }
 
 export interface PluginArgument extends langium.AstNode {
-    readonly $container: PluginUse;
+    readonly $container: PluginUse | With;
     readonly $type: 'PluginArgument';
     name: Name;
     value: Literal;
@@ -1565,7 +1576,7 @@ export function isPluginParam(item: unknown): item is PluginParam {
 }
 
 export interface PluginUse extends langium.AstNode {
-    readonly $container: PluginEffect | PluginInstrument;
+    readonly $container: KitVoice | Master | PluginEffect | PluginInstrument;
     readonly $type: 'PluginUse';
     arguments: Array<PluginArgument>;
     plugin: langium.Reference<Plugin>;
@@ -1579,6 +1590,21 @@ export const PluginUse = {
 
 export function isPluginUse(item: unknown): item is PluginUse {
     return reflection.isInstance(item, PluginUse.$type);
+}
+
+export interface Rate extends langium.AstNode {
+    readonly $container: KitVoice | Sounding;
+    readonly $type: 'Rate';
+    amount: number;
+}
+
+export const Rate = {
+    $type: 'Rate',
+    amount: 'amount'
+} as const;
+
+export function isRate(item: unknown): item is Rate {
+    return reflection.isInstance(item, Rate.$type);
 }
 
 export interface Ref extends langium.AstNode {
@@ -1942,6 +1968,8 @@ export interface Track extends langium.AstNode {
     readonly $container: Song;
     readonly $type: 'Track';
     fx?: FxChain;
+    into?: langium.Reference<Track>;
+    mono: boolean;
     muted: boolean;
     name: Name;
     pan?: string;
@@ -1954,6 +1982,8 @@ export interface Track extends langium.AstNode {
 export const Track = {
     $type: 'Track',
     fx: 'fx',
+    into: 'into',
+    mono: 'mono',
     muted: 'muted',
     name: 'name',
     pan: 'pan',
@@ -2108,6 +2138,21 @@ export function isWidth(item: unknown): item is Width {
     return reflection.isInstance(item, Width.$type);
 }
 
+export interface With extends langium.AstNode {
+    readonly $container: Sounding;
+    readonly $type: 'With';
+    arguments: Array<PluginArgument>;
+}
+
+export const With = {
+    $type: 'With',
+    arguments: 'arguments'
+} as const;
+
+export function isWith(item: unknown): item is With {
+    return reflection.isInstance(item, With.$type);
+}
+
 export interface Zone extends langium.AstNode {
     readonly $container: MultiSample;
     readonly $type: 'Zone';
@@ -2211,6 +2256,7 @@ export type FumxAstType = {
     PluginInstrument: PluginInstrument
     PluginParam: PluginParam
     PluginUse: PluginUse
+    Rate: Rate
     Ref: Ref
     Release: Release
     ReleaseVelocity: ReleaseVelocity
@@ -2242,6 +2288,7 @@ export type FumxAstType = {
     VoiceLine: VoiceLine
     While: While
     Width: Width
+    With: With
     Zone: Zone
 }
 
@@ -3011,7 +3058,12 @@ export class FumxAstReflection extends langium.AbstractAstReflection {
                     optional: true
                 },
                 path: {
-                    name: KitVoice.path
+                    name: KitVoice.path,
+                    optional: true
+                },
+                use: {
+                    name: KitVoice.use,
+                    optional: true
                 }
             },
             superTypes: []
@@ -3166,7 +3218,16 @@ export class FumxAstReflection extends langium.AbstractAstReflection {
             name: Master.$type,
             properties: {
                 fx: {
-                    name: Master.fx
+                    name: Master.fx,
+                    optional: true
+                },
+                mix: {
+                    name: Master.mix,
+                    optional: true
+                },
+                tail: {
+                    name: Master.tail,
+                    optional: true
                 }
             },
             superTypes: [Declaration.$type]
@@ -3356,6 +3417,15 @@ export class FumxAstReflection extends langium.AbstractAstReflection {
                 }
             },
             superTypes: []
+        },
+        Rate: {
+            name: Rate.$type,
+            properties: {
+                amount: {
+                    name: Rate.amount
+                }
+            },
+            superTypes: [PlayParam.$type]
         },
         Ref: {
             name: Ref.$type,
@@ -3644,6 +3714,16 @@ export class FumxAstReflection extends langium.AbstractAstReflection {
                     name: Track.fx,
                     optional: true
                 },
+                into: {
+                    name: Track.into,
+                    referenceType: Track.$type,
+                    optional: true
+                },
+                mono: {
+                    name: Track.mono,
+                    defaultValue: false,
+                    optional: true
+                },
                 muted: {
                     name: Track.muted,
                     defaultValue: false,
@@ -3784,6 +3864,17 @@ export class FumxAstReflection extends langium.AbstractAstReflection {
                 }
             },
             superTypes: [Effect.$type]
+        },
+        With: {
+            name: With.$type,
+            properties: {
+                arguments: {
+                    name: With.arguments,
+                    defaultValue: [],
+                    optional: true
+                }
+            },
+            superTypes: [Attribute.$type]
         },
         Zone: {
             name: Zone.$type,

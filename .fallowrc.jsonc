@@ -33,6 +33,10 @@
       "exports": ["work", "song"],
     },
     {
+      "file": "apps/portfolio/src/entities/song/catalog/*/plugins/*.ts",
+      "exports": ["plugin"],
+    },
+    {
       "file": "libs/workers-tracing/src/app/tanstack-start.plain.ts",
       "exports": ["traceServerFn"],
     },

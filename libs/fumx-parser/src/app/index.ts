@@ -14,6 +14,7 @@ export type {
   Note,
   PlayParam,
   Plugin,
+  PluginArgument,
   PluginUse,
   PluginValue,
   Role,
@@ -30,6 +31,7 @@ export type {
   Outline,
   SongFiles,
   SongSource,
+  SourceComment,
   SourceIssue,
 } from "#/features/read-song/index.ts";
 export { TICKS_PER_WHOLE, fractionOf, ticksOf } from "#/shared/lib/ticks.ts";
