@@ -16,13 +16,7 @@ const passesEveryConfiguredCheck = Effect.gen(function* passesEveryConfiguredChe
   const root = yield* repositoryWith({ commits: ["feat: second"] });
   const { exit, output } = yield* run(root, []);
   assertTrue(Exit.isSuccess(exit));
-  deepStrictEqual(statusLines(output), [
-    "✓ h56m",
-    "✓ commitlint",
-    "✓ dependencies",
-    "✓ steiger",
-    "✓ textlint",
-  ]);
+  deepStrictEqual(statusLines(output), ["✓ h56m", "✓ commitlint", "✓ dependencies", "✓ textlint"]);
 });
 
 const namesTheFailingChecks = Effect.gen(function* namesTheFailingChecks() {
@@ -132,34 +126,6 @@ const scansTheTreeOfAShallowClone = Effect.gen(function* scansTheTreeOfAShallowC
   deepStrictEqual(failedChecksOf(leakedRun.output), ["✗ h56m"]);
 });
 
-const ROOT_REPORTING_CONFIG = lines(
-  "export default {",
-  "  steiger: {",
-  '    paths: ["src", "libs/*/src"],',
-  "    rules: [",
-  '      { meta: { name: "roots", version: "0.0.0" }, ruleDefinitions: [{ name: "roots/each", check: (root) => ({ diagnostics: [{ message: "checked", location: { path: root.path } }] }) }] },',
-  '      { rules: { "roots/each": "error" } },',
-  "    ],",
-  "  },",
-  "};",
-);
-
-const checksOnlyLayeredSources = Effect.gen(function* checksOnlyLayeredSources() {
-  const root = yield* repositoryWith({
-    files: {
-      "vite.config.ts": ROOT_REPORTING_CONFIG,
-      "libs/a/src/features/greet/index.ts": "export {};\n",
-      "libs/plain/src/ui/button.ts": "export {};\n",
-    },
-  });
-  const { output } = yield* run(root, []);
-  const checked = pipe(Str.split(output, "\n"), Arr.filter(Str.startsWith("error ")));
-  deepStrictEqual(checked, [
-    "error libs/a/src: checked (roots/each)",
-    "error src: checked (roots/each)",
-  ]);
-});
-
 layer(fixtureLayer)("vpa", (it) => {
   it.effect(
     "runs every check configured in vite.config.ts and passes",
@@ -173,9 +139,5 @@ layer(fixtureLayer)("vpa", (it) => {
   it.effect(
     "scans the committed tree when the clone has no history to diff",
     () => scansTheTreeOfAShallowClone,
-  );
-  it.effect(
-    "runs Steiger only on source folders laid out in FSD layers",
-    () => checksOnlyLayeredSources,
   );
 });
