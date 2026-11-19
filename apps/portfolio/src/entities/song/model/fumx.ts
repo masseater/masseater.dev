@@ -18,6 +18,14 @@ const worklets = import.meta.glob<string>("./fumx-worklet.ts", {
 
 const worklet = pipe(Rec.values(worklets), Arr.join(""));
 
+const partsWorkers = import.meta.glob<string>("./fumx-parts-worker.ts", {
+  query: "?worker&url",
+  import: "default",
+  eager: true,
+});
+
+const partsWorker = pipe(Rec.values(partsWorkers), Arr.join(""));
+
 const sampleUrls = import.meta.glob<string>("../catalog/*/samples/*.flac", {
   query: "?url",
   import: "default",
@@ -48,7 +56,12 @@ export interface Listing {
 export const dawSongOfFumx =
   ({ slug, work, plugins }: Listing) =>
   (song: Song): DawSong => {
-    const recording = recordingOf({ song, worklet, plugins });
+    const recording = recordingOf({
+      song,
+      worklet,
+      plugins,
+      parts: Option.some({ url: partsWorker, song: slug }),
+    });
     return {
       title: song.title,
       facts: factsOf(work),
