@@ -6,13 +6,13 @@ import {
   pulls,
   repos,
 } from "@distilled.cloud/github";
-import type { Caller, UpstreamFailed } from "@masseater.dev/mcp-tool-call";
-import { failedAt, NO_PROJECT, one, WRITE } from "@masseater.dev/mcp-tool-call";
+import type { UpstreamFailed } from "@masseater.dev/mcp-tool-call";
+import { failedAt, one, WRITE, compactInput } from "@masseater.dev/mcp-tool-call";
 import type { McpServer } from "@modelcontextprotocol/server";
 import { Array as Arr, Effect, Layer, Option, Redacted, Schema, pipe } from "effect";
 import { FetchHttpClient, HttpClient, HttpClientRequest, HttpClientResponse } from "effect/http";
 
-import { meteredInput, runToolIn } from "#/shared/api/index.ts";
+import { runToolIn } from "#/shared/api/index.ts";
 
 import { ArticleInput } from "./sloppedia-input.ts";
 import { articleContent } from "./sloppedia-markdown.ts";
@@ -169,28 +169,15 @@ const writeArticle = Effect.fn("writeArticle")(function* writeArticle(article: A
 
 const runGithubTool = runToolIn(githubLayer);
 
-export const registerSloppediaTools =
-  (caller: Caller) =>
-  (server: McpServer): McpServer => {
-    server.registerTool(
-      "write_sloppedia_article",
-      {
-        description: DESCRIPTION,
-        inputSchema: meteredInput({ tool: "write_sloppedia_article", caller, project: NO_PROJECT })(
-          INPUT_SCHEMA,
-        ),
-        annotations: WRITE,
-      },
-      (input) =>
-        writeArticle(input).pipe(
-          runGithubTool({
-            tool: "write_sloppedia_article",
-            caller,
-            project: NO_PROJECT,
-            input,
-            count: one,
-          }),
-        ),
-    );
-    return server;
-  };
+export const registerSloppediaTools = (server: McpServer): McpServer => {
+  server.registerTool(
+    "write_sloppedia_article",
+    {
+      description: DESCRIPTION,
+      inputSchema: compactInput(INPUT_SCHEMA),
+      annotations: WRITE,
+    },
+    (input) => writeArticle(input).pipe(runGithubTool({ count: one })),
+  );
+  return server;
+};

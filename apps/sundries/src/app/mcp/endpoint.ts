@@ -7,4 +7,5 @@ export const serveMcp = accessMcpEndpoint({
   teamDomain: env.ACCESS_TEAM_DOMAIN,
   audience: env.ACCESS_AUDIENCE,
   register: registerTools,
+  dataset: env.TOOL_CALLS,
 });

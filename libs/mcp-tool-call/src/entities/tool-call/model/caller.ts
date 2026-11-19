@@ -1,15 +1,29 @@
-import { Option } from "effect";
+import type { AuthInfo } from "@modelcontextprotocol/server";
+import { Option, pipe } from "effect";
 
-export type Caller = Readonly<{ client: string; userAgent: string }>;
+export type CallerClaims = Readonly<Record<string, unknown>>;
 
-export type CallerSource = Readonly<{ request: Request; azp: unknown; clientId: unknown }>;
+export type CallContext = Readonly<{
+  http?: Readonly<{ authInfo?: Readonly<{ clientId: string }> | undefined }> | undefined;
+}>;
 
 const UNKNOWN_CLIENT = "unknown";
 
-export const callerOf = ({ request, azp, clientId }: CallerSource): Caller => ({
-  client: Option.fromNullishOr(azp ?? clientId).pipe(
+const NO_TOKEN = "";
+
+export const authInfoOf = (claims: CallerClaims): AuthInfo => ({
+  token: NO_TOKEN,
+  clientId: Option.fromNullishOr(claims["azp"] ?? claims["client_id"]).pipe(
     Option.map(String),
     Option.getOrElse(() => UNKNOWN_CLIENT),
   ),
-  userAgent: request.headers.get("user-agent") ?? "",
+  scopes: [],
 });
+
+export const clientOf = (ctx: CallContext): string =>
+  pipe(
+    Option.fromNullishOr(ctx.http),
+    Option.flatMap(({ authInfo }) => Option.fromNullishOr(authInfo)),
+    Option.map(({ clientId }) => clientId),
+    Option.getOrElse(() => UNKNOWN_CLIENT),
+  );
