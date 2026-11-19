@@ -103,10 +103,10 @@ test("each file kind gets its own rules", () =>
       "AGENTS.md agents-md/title",
       "AGENTS.md agents-md/sections",
       "AGENTS.md agents-md/skill-owned",
-      "README.md readme/title",
       "README.md readme/summary",
       "README.md readme/usage",
       "README.md readme/agent-skills",
+      "README.md readme/title",
       "README.md readme/no-feature-list",
       "README.md readme/no-unshipped-links",
       "README.md docs/link-target-exists",
@@ -132,10 +132,10 @@ test("a config that extends one preset gets only the rules of that concern", () 
         Arr.filter((line) => !Str.includes("markdownlint/")(line)),
       ),
     ).toStrictEqual([
-      "README.md readme/title",
       "README.md readme/summary",
       "README.md readme/usage",
       "README.md readme/agent-skills",
+      "README.md readme/title",
       "README.md readme/no-feature-list",
       "README.md readme/no-unshipped-links",
     ]);
