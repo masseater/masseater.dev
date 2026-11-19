@@ -10,6 +10,7 @@
   "exports": {
     ".": "./src/app/index.ts",
     "./worklet": "./src/app/worklet.ts",
+    "./parts-worker": "./src/app/parts-worker.ts",
     "./daw/*": "./src/shared/lib/daw/*.ts",
     "./dsp/*": "./src/shared/lib/dsp/*.ts",
     "./live/*": "./src/shared/lib/live/*.ts",

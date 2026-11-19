@@ -8,7 +8,7 @@ import type { PluginOption } from "vite-plus";
 import { seikinTechniques } from "#/app/vite/seikin/seikin-techniques.ts";
 
 import { clientAssets } from "./client-assets.ts";
-import { formats } from "./formats.ts";
+import { formats, songs } from "./formats.ts";
 import { pages, sitemap, withLastmod } from "./prerender.ts";
 
 export const portfolioPlugins = (): PluginOption[] => [
@@ -37,3 +37,5 @@ export const portfolioPlugins = (): PluginOption[] => [
   rsc(),
   viteReact({ include: /\.(?:md|tsx?)$/u }),
 ];
+
+export const workerPlugins = (): PluginOption[] => [songs()];

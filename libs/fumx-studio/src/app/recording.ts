@@ -1,6 +1,6 @@
 import type { RenderSession, Rendered, Structure } from "@masseater.dev/daw-view";
 import type { Song } from "@r_masseater/fumx-parser";
-import { Effect, Option } from "effect";
+import { Effect, Option, pipe } from "effect";
 import type { Scope } from "effect";
 
 import { renderSong } from "#/features/render-song/index.ts";
@@ -11,6 +11,8 @@ import { sheetOf } from "#/shared/lib/daw/take.ts";
 import type { Plugins } from "#/shared/lib/plugin/plugin.ts";
 
 import { liveFor } from "./live.ts";
+import { partsIn } from "./parts.ts";
+import type { PartsWorker } from "./parts.ts";
 
 const UNSHADED = "";
 
@@ -25,9 +27,10 @@ export interface Studio {
   readonly song: Song;
   readonly worklet: string;
   readonly plugins: Plugins;
+  readonly parts: Option.Option<PartsWorker>;
 }
 
-const renderOf = ({ song, worklet, plugins }: Studio): Recording["render"] =>
+const renderOf = ({ song, worklet, plugins, parts }: Studio): Recording["render"] =>
   Effect.fn("fumx.song")(function* songRendered({ samples, report }: RecordingSession) {
     const sheet = sheetOf(UNSHADED)(report);
     const mastered = yield* renderSong(song, {
@@ -35,6 +38,10 @@ const renderOf = ({ song, worklet, plugins }: Studio): Recording["render"] =>
       plugins,
       log: sheet.log,
       progress: sheet.progress,
+      parts: pipe(
+        parts,
+        Option.map((worker) => partsIn(worker)(samples)),
+      ),
     });
     sheet.show({ roots: rootsOf(song), auto: mastered.lanes });
     const live = yield* Option.match(mastered.live, {
