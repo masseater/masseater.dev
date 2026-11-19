@@ -26,6 +26,14 @@ export type ExprType =
 export type Describe = (type: ExprType) => string;
 
 export const ANY: ExprType = { kind: "any" };
+
+export const propertyOf =
+  (property: string) =>
+  (object: ObjectType): Option.Option<ExprType> =>
+    pipe(
+      Rec.get(object.props, property),
+      Option.orElse(() => object.mapped),
+    );
 export const NULL: ExprType = { kind: "null" };
 export const NUMBER: ExprType = { kind: "number" };
 export const BOOL: ExprType = { kind: "bool" };
