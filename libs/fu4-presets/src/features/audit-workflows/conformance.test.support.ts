@@ -1,6 +1,6 @@
 import { defineRule } from "@r_masseater/fu4";
-import type { RuleContext } from "@r_masseater/fu4";
-import { Effect, Option, Result, Schema, String as Str } from "effect";
+import type { InputKind, RuleContext } from "@r_masseater/fu4";
+import { Array as Arr, Effect, Option, Result, Schema, String as Str, pipe } from "effect";
 
 import { AUDITS } from "./concerns/index.ts";
 import { primaryLocation } from "./lib/finding.ts";
@@ -25,7 +25,12 @@ export const ExpectedFinding = Schema.Struct({
 export type Expected = typeof ExpectedFinding.Type;
 
 const ProbeMessage = Schema.fromJsonString(
-  Schema.Struct({ audit: Schema.String, index: Schema.Finite, finding: ExpectedFinding }),
+  Schema.Struct({
+    audit: Schema.String,
+    index: Schema.Finite,
+    offset: Schema.Finite,
+    finding: ExpectedFinding,
+  }),
 );
 
 const ONE_BASED = 1;
@@ -50,14 +55,21 @@ const rendered = (found: Finding): Expected => {
 const encodeMessage = (message: typeof ProbeMessage.Type): string =>
   Result.getOrThrow(Schema.encodeResult(ProbeMessage)(message));
 
-export const expectedOf = (message: string): Expected =>
-  Result.getOrThrow(Schema.decodeResult(ProbeMessage)(message)).finding;
+export const probedOf = (message: string): typeof ProbeMessage.Type =>
+  Result.getOrThrow(Schema.decodeResult(ProbeMessage)(message));
+
+export const expectedOf = (message: string): Expected => probedOf(message).finding;
 
 const reportedBy =
   (context: RuleContext, audit: Audit) =>
   (findings: readonly Finding[]): void => {
     for (const [index, found] of findings.entries()) {
-      const message = encodeMessage({ audit: audit.ident, index, finding: rendered(found) });
+      const message = encodeMessage({
+        audit: audit.ident,
+        index,
+        offset: primaryLocation(found).concrete.startOffset,
+        finding: rendered(found),
+      });
       context.report({ line: FIRST, column: FIRST, message });
     }
   };
@@ -90,3 +102,40 @@ export const probe = defineRule({
     );
   },
 });
+
+const LAST = 1;
+
+const baseName = (path: string): string =>
+  Option.getOrElse(Arr.last(Str.split("/")(path)), () => path);
+
+const parentName = (path: string): string =>
+  pipe(Str.split("/")(path), Arr.dropRight(LAST), Arr.join("/"));
+
+export const kindOf = (path: string): InputKind => {
+  const base = baseName(path);
+  if (Str.endsWith(".github/workflows")(parentName(path))) {
+    return "workflow";
+  }
+  if (base === "action.yml" || base === "action.yaml") {
+    return "action";
+  }
+  if (base === "dependabot.yml" || base === "dependabot.yaml") {
+    return "dependabot";
+  }
+  if (Str.startsWith(".pre-commit-")(base)) {
+    return "pre-commit";
+  }
+  return "workflow";
+};
+
+export const isAuditable = (path: string): boolean => {
+  const base = baseName(path);
+  return (
+    Str.endsWith(".github/workflows")(parentName(path)) ||
+    base === "action.yml" ||
+    base === "action.yaml" ||
+    base === ".pre-commit-config.yaml" ||
+    ((base === "dependabot.yml" || base === "dependabot.yaml") &&
+      Str.endsWith(".github")(parentName(path)))
+  );
+};
