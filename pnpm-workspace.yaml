@@ -23,12 +23,12 @@ catalog:
   immer: 11.2.10
   micromatch: 4.0.8
   patronum: 2.3.0
-  "@pnpm/deps.path": 1101.0.9
-  "@pnpm/lockfile.fs": 1100.2.18
+  "@pnpm/deps.path": 1101.0.10
+  "@pnpm/lockfile.fs": 1100.2.19
   "@pnpm/logger": 1100.0.0
-  "@pnpm/workspace.projects-reader": 1101.1.7
-  "@pnpm/workspace.workspace-manifest-reader": 1100.3.2
-  "@pnpm/workspace.workspace-manifest-writer": 1100.2.11
+  "@pnpm/workspace.projects-reader": 1101.1.8
+  "@pnpm/workspace.workspace-manifest-reader": 1100.3.3
+  "@pnpm/workspace.workspace-manifest-writer": 1100.2.12
   "@textlint-ja/textlint-rule-preset-ai-writing": 1.7.0
   textlint-rule-preset-ja-technical-writing: 12.0.2
   "@textlint/ast-node-types": 16.1.1
@@ -47,7 +47,7 @@ catalog:
   wordnet-db: 3.1.14
   lighthouse: 13.6.0
   miniflare: 4.20260730.0
-  puppeteer-core: 25.17.0
+  puppeteer-core: 25.18.1
   tonal: 6.6.0
   midi-file: 1.2.4
   langium: 4.4.2
@@ -99,7 +99,7 @@ catalog:
   eslint-plugin-baseline-js: 0.7.7
   "@html-eslint/eslint-plugin-react": 0.68.0
   "@commitlint/config-conventional": 21.2.4
-  "@tanstack/react-query-devtools": 5.107.2
+  "@tanstack/react-query-devtools": 5.108.0
   "@vitejs/plugin-react": 6.3.0
   "@vitejs/plugin-rsc": 0.5.39
   "@tanstack/intent": 0.5.6
@@ -130,7 +130,7 @@ catalog:
   yaml: 2.9.1
   mdast-util-directive: 3.2.0
   remark-directive: 4.0.0
-  "@xyflow/react": 13.0.1
+  "@xyflow/react": 13.0.2
   lucide-react: 1.74.0
   niconico-embed-player: 0.1.2
   budoux: 0.10.4
@@ -159,7 +159,7 @@ catalog:
   "@size-limit/file": 14.3.0
   publint: 0.3.25
   sequoia-cli: 0.5.8
-  "@atproto/api": 0.32.1
+  "@atproto/api": 0.32.2
   "@effect/ai-openrouter": 4.1.4
   parse5: 8.1.1
   mdast-util-from-markdown: 2.1.0
@@ -198,8 +198,8 @@ catalog:
   "@fontsource/zen-kurenaido": 5.3.1
   fastest-levenshtein: 1.0.16
   "@cfworker/json-schema": 4.1.6
-  "@openrouter/sdk": 1.5.108
-  recharts: 3.10.1
+  "@openrouter/sdk": 1.5.110
+  recharts: 3.11.0
   ml-confusion-matrix: 2.0.0
   forecast-calibration-kit: 0.1.2
   seedrandom: 3.0.5
@@ -210,9 +210,9 @@ catalog:
   "@oxlint/plugins": 1.94.0
   oxlint: 1.94.0
   oxlint-tsgolint: 7.0.2007
-  "@eslint-react/eslint-plugin": 5.30.3
+  "@eslint-react/eslint-plugin": 5.30.4
   "@remotion/eslint-plugin": 4.0.544
-  "@tanstack/eslint-plugin-query": 5.107.2
+  "@tanstack/eslint-plugin-query": 5.108.0
   "@tanstack/eslint-plugin-router": 1.162.0
   "@tanstack/eslint-plugin-start": 0.1.0
   "@tsconfig/strictest": 2.0.9
@@ -267,7 +267,7 @@ catalog:
   "@tauri-apps/api": 2.12.5
   "@tauri-apps/cli": 2.12.5
   "@tauri-apps/plugin-opener": 2.7.3
-  "@anthropic-ai/claude-agent-sdk": 0.3.326
+  "@anthropic-ai/claude-agent-sdk": 0.3.327
   "@types/dom-speech-recognition": 0.0.12
   oauth4webapi: 3.8.8
   agents: 0.33.0
@@ -293,7 +293,7 @@ catalogs:
     "@huggingface/transformers": 4.3.2
     "@effect/tsgo": 0.70.0
     "@elysiajs/eden": 1.4.9
-    "@tanstack/react-query": 5.107.2
+    "@tanstack/react-query": 5.108.0
     "@tanstack/react-start": 1.169.5
     better-auth: 1.7.25
     "@alchemy.run/cloudflare": 2.0.0-beta.87
