@@ -130,7 +130,7 @@ catalog:
   yaml: 2.9.1
   mdast-util-directive: 3.2.0
   remark-directive: 4.0.0
-  "@xyflow/react": 12.12.1
+  "@xyflow/react": 13.0.1
   lucide-react: 1.74.0
   niconico-embed-player: 0.1.2
   budoux: 0.10.4
