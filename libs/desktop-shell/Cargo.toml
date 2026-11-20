@@ -14,7 +14,7 @@ getrandom = "=0.4.3"
 opentelemetry = "=0.33.1"
 opentelemetry_sdk = "=0.33.1"
 otlp-file-exporter = "=0.2.1"
-rmcp = { version = "=3.10.0", features = ["macros", "server", "transport-streamable-http-server"] }
+rmcp = { version = "=3.11.0", features = ["macros", "server", "transport-streamable-http-server"] }
 tauri = { version = "=2.12.6", features = ["tracing"] }
 tauri-plugin-dialog = "=2.8.4"
 tauri-plugin-localhost = "=2.4.0"
