@@ -72,7 +72,7 @@ catalog:
   "@modelcontextprotocol/server": 2.4.0
   auth: 1.7.25
   "@r_masseater/oxlint-typed-rules": 0.4.3
-  "@r_masseater/vite-plus-adopt": 0.10.2
+  "@r_masseater/vite-plus-adopt": 0.11.0
   "@discordjs/voice": 0.19.2
   "@snazzah/davey": 0.2.0
   discord.js: 14.28.1
@@ -99,7 +99,7 @@ catalog:
   eslint-plugin-baseline-js: 0.7.7
   "@html-eslint/eslint-plugin-react": 0.68.0
   "@commitlint/config-conventional": 21.2.4
-  "@tanstack/react-query-devtools": 5.107.1
+  "@tanstack/react-query-devtools": 5.107.2
   "@vitejs/plugin-react": 6.3.0
   "@vitejs/plugin-rsc": 0.5.39
   "@tanstack/intent": 0.5.6
@@ -212,7 +212,7 @@ catalog:
   oxlint-tsgolint: 7.0.2007
   "@eslint-react/eslint-plugin": 5.30.3
   "@remotion/eslint-plugin": 4.0.544
-  "@tanstack/eslint-plugin-query": 5.107.1
+  "@tanstack/eslint-plugin-query": 5.107.2
   "@tanstack/eslint-plugin-router": 1.162.0
   "@tanstack/eslint-plugin-start": 0.1.0
   "@tsconfig/strictest": 2.0.9
@@ -293,7 +293,7 @@ catalogs:
     "@huggingface/transformers": 4.3.2
     "@effect/tsgo": 0.70.0
     "@elysiajs/eden": 1.4.9
-    "@tanstack/react-query": 5.107.1
+    "@tanstack/react-query": 5.107.2
     "@tanstack/react-start": 1.169.5
     better-auth: 1.7.25
     "@alchemy.run/cloudflare": 2.0.0-beta.87
