@@ -9,7 +9,7 @@ publish = false
 name = "yohaku_desktop"
 
 [build-dependencies]
-tauri-build = { version = "=2.7.4", features = [] }
+tauri-build = { version = "=2.7.5", features = [] }
 
 [dependencies]
 axum = "=0.8.9"
@@ -33,7 +33,7 @@ serde = { version = "=1.0.229", features = ["derive"] }
 serde_json = "=1.0.154"
 specta = { version = "=2.0.0-rc.28", features = ["derive"] }
 specta-typescript = "=0.0.15"
-tauri = { version = "=2.12.5", features = [] }
+tauri = { version = "=2.12.6", features = [] }
 tauri-plugin-dialog = "=2.8.4"
 tauri-plugin-opener = "=2.7.3"
 tauri-plugin-single-instance = "=2.5.5"
@@ -50,7 +50,7 @@ tokio = { version = "=1.54.1", features = [
   "time",
 ] }
 url = "=2.5.8"
-uuid = { version = "=1.29.2", features = ["v7"] }
+uuid = { version = "=1.29.3", features = ["v7"] }
 
 [lints.rust]
 unsafe_code = "forbid"
