@@ -807,8 +807,8 @@ catalogs:
       specifier: 3.8.8
       version: 3.8.8
     officeparser:
-      specifier: 8.8.0
-      version: 8.8.0
+      specifier: 8.9.0
+      version: 8.9.0
     oxlint:
       specifier: 1.94.0
       version: 1.94.0
@@ -4002,7 +4002,7 @@ importers:
         version: 3.0.0
       officeparser:
         specifier: 'catalog:'
-        version: 8.8.0(supports-color@10.2.2)
+        version: 8.9.0(supports-color@10.2.2)
       parse5:
         specifier: 'catalog:'
         version: 8.1.1
@@ -4017,7 +4017,7 @@ importers:
         version: 7.0.0
       unpdf:
         specifier: 'catalog:'
-        version: 2.2.1(@napi-rs/canvas@1.1.1)(pdfjs-dist@6.2.108)
+        version: 2.2.1(@napi-rs/canvas@1.1.1)(pdfjs-dist@6.5.438)
       xlsx:
         specifier: 'catalog:'
         version: https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz
@@ -16261,8 +16261,8 @@ packages:
     resolution: {integrity: sha512-5vvB5+W7ePv+p3uqxi+RcW1XAzLW0/hxt3/4X4Lc4qHudzOhmBiBwOY6DRob4WnanAEGvNcLjF+KNOufrUoEQw==}
     engines: {node: '>=12.20.0'}
 
-  officeparser@8.8.0:
-    resolution: {integrity: sha512-puBiaCEKvhClBd/+VUS/n9DpoVgOj7HakjojX/7QhPqSXoGudRqIbOAbJ9rOq1nQv/ecbER2MwgmKCHY72jNvw==}
+  officeparser@8.9.0:
+    resolution: {integrity: sha512-xev/YU26lCoynqatHl50DVVyVz6KFBfkP0cP7p+VXSVzZUOnDgY24os7p8zPmnHpCHqRZgmIyHCuOd3j6OHW5w==}
     engines: {node: '>=22.23.4 <23 || >=24.22.1 <25 || >=26.12.1'}
     hasBin: true
     peerDependencies:
@@ -16507,8 +16507,8 @@ packages:
     peerDependencies:
       effector: ^23
 
-  pdfjs-dist@6.2.108:
-    resolution: {integrity: sha512-YxFb+SQcodN2rnX9Tn3dHYlqfb7NjlzzfONPpJd+AKoKtUjEdevTfbC07d5TcczzOK6261auRkP/M8OBHs9vFQ==}
+  pdfjs-dist@6.5.438:
+    resolution: {integrity: sha512-vg8Pw1x+AFKy4AMDvhuWl5cOYV8d698UoEANoFFhc79hqXDnZQqnOXoxw3HG907WHOg1JYOvLhP756boddFxpA==}
     engines: {node: '>=22.13.0 || >=24'}
 
   pend@1.2.0:
@@ -29531,12 +29531,12 @@ snapshots:
 
   obug@3.0.0: {}
 
-  officeparser@8.8.0(supports-color@10.2.2):
+  officeparser@8.9.0(supports-color@10.2.2):
     dependencies:
       '@xmldom/xmldom': 0.9.12
       fflate: 0.8.3
       file-type: 22.3.0(supports-color@10.2.2)
-      pdfjs-dist: 6.2.108
+      pdfjs-dist: 6.5.438
       tesseract.js: 7.0.0
     transitivePeerDependencies:
       - encoding
@@ -29911,7 +29911,7 @@ snapshots:
     dependencies:
       effector: 23.4.4
 
-  pdfjs-dist@6.2.108:
+  pdfjs-dist@6.5.438:
     optionalDependencies:
       '@napi-rs/canvas': 1.1.1
 
@@ -31843,10 +31843,10 @@ snapshots:
 
   universalify@2.0.1: {}
 
-  unpdf@2.2.1(@napi-rs/canvas@1.1.1)(pdfjs-dist@6.2.108):
+  unpdf@2.2.1(@napi-rs/canvas@1.1.1)(pdfjs-dist@6.5.438):
     optionalDependencies:
       '@napi-rs/canvas': 1.1.1
-      pdfjs-dist: 6.2.108
+      pdfjs-dist: 6.5.438
 
   unpipe@1.0.0: {}
 
