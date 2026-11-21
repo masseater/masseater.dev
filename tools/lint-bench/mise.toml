@@ -1,6 +1,6 @@
 [tools]
 "aqua:sharkdp/hyperfine" = "2.0.0"
-"aqua:rvben/rumdl" = "0.3.4"
+"aqua:rvben/rumdl" = "0.3.5"
 "aqua:rhysd/actionlint" = "1.7.12"
 "aqua:zizmorcore/zizmor" = "1.32.0"
 "aqua:suzuki-shunsuke/ghalint" = "1.6.0"
