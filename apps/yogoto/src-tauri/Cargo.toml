@@ -10,7 +10,7 @@ name = "yogoto"
 crate-type = ["staticlib", "cdylib", "rlib"]
 
 [build-dependencies]
-tauri-build = { version = "=2.7.5", features = [] }
+tauri-build = { version = "=2.7.6", features = [] }
 serde_json = "=1.0.154"
 
 [dependencies]
@@ -42,7 +42,7 @@ rten-tensor = "=0.28.0"
 serde = { version = "=1.0.229", features = ["derive"] }
 serde_json = "=1.0.154"
 symphonia = { version = "=0.6.1", features = ["all"] }
-tauri = { version = "=2.12.6", features = ["protocol-asset"] }
+tauri = { version = "=2.12.7", features = ["protocol-asset"] }
 
 [features]
 cuda = ["candle-core/cuda", "roformer/cuda"]
