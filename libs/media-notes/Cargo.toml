@@ -9,7 +9,7 @@ publish = false
 
 [dependencies]
 desktop-shell = { path = "../desktop-shell" }
-regex = "=1.13.1"
+regex = "=1.13.2"
 reqwest = { version = "=0.13.5", default-features = false, features = [
   "json",
   "query",
