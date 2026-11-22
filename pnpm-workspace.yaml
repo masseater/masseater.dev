@@ -131,7 +131,7 @@ catalog:
   mdast-util-directive: 3.2.0
   remark-directive: 4.0.0
   "@xyflow/react": 13.0.2
-  lucide-react: 1.75.0
+  lucide-react: 1.76.0
   niconico-embed-player: 0.1.2
   budoux: 0.10.4
   mdast-util-to-string: 4.0.0
@@ -198,7 +198,7 @@ catalog:
   "@fontsource/zen-kurenaido": 5.3.1
   fastest-levenshtein: 1.0.16
   "@cfworker/json-schema": 4.1.6
-  "@openrouter/sdk": 1.5.116
+  "@openrouter/sdk": 1.5.118
   recharts: 3.11.0
   ml-confusion-matrix: 2.0.0
   forecast-calibration-kit: 0.1.2
@@ -304,9 +304,9 @@ catalogs:
     eden-tanstack-react-query: 0.5.1
     effect: 4.1.4
     elysia: 1.4.32
-    fallow: 3.43.2
-    fallow-type-aware: 3.43.2
-    fallow-similar-code: 3.43.2
+    fallow: 3.44.0
+    fallow-type-aware: 3.44.0
+    fallow-similar-code: 3.44.0
     radix-ui: 1.8.1
     tailwindcss: 4.3.5
     typescript: 7.1.0-beta
