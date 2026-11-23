@@ -1,6 +1,6 @@
 # @r_masseater/fu4
 
-![fu4 logo](logo.svg)
+<img src="logo.svg" alt="fu4 logo" width="256">
 
 The engine of a GitHub Actions linter, configured from `vite.config.ts`.
 
