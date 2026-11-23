@@ -30,6 +30,11 @@
       "groupName": "textlint"
     },
     {
+      "description": "@better-auth/* は ^ の peer で最新の @better-auth/core を取り、better-auth は自分の版の core に固定する。1 つずつ上げると core が 2 つ入り、OwnerAuthOptions が BetterAuthOptions に合わずに check が落ちる (#1482)。",
+      "matchPackageNames": ["better-auth", "@better-auth/**", "auth"],
+      "groupName": "better-auth"
+    },
+    {
       "description": "vite-plus は oxlint と tsrs の版を固定し、@effect/tsgo は対応している版の oxlint と oxlint-tsgolint にしかパッチを当てられない。合わないと prepare が落ちて vp install が失敗する。vite-plus は vitest の版も固定し、@vitest/* だけが上がると vitest が 2 つ入って @effect/vitest のテストが suite を見つけられずに落ちる (#1479)。組で上げ、up-to-date の install が通ったときだけマージする。",
       "matchPackageNames": [
         "vite-plus",
