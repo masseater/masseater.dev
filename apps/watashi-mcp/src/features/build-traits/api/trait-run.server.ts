@@ -23,6 +23,7 @@ import { translateTraits } from "./trait-translate.server.ts";
 export type Answer = Readonly<{ status: string; reason?: string; messages: readonly unknown[] }>;
 
 export type Conversation = Readonly<{
+  pickModel: () => Promise<void>;
   reset: () => Promise<void>;
   prompt: (input: string) => Promise<Answer>;
 }>;
@@ -58,6 +59,7 @@ const analyze =
   (request: AnalysisRequestValue): Effect.Effect<AnalysisResultValue, AnalystFailed> =>
     Effect.gen(function* analyzeSources() {
       const input = yield* encodeJson(request);
+      yield* Effect.tryPromise({ try: () => conversation.pickModel(), catch: analystFailed });
       yield* Effect.tryPromise({ try: () => conversation.reset(), catch: analystFailed });
       const answer = yield* Effect.tryPromise({
         try: () => conversation.prompt(input),
