@@ -86,6 +86,7 @@ const reportsSegmentFolders = Effect.gen(function* reportsSegmentFolders() {
   });
   expect(found).toStrictEqual([
     "slice-segment-name apps/site/src/entities/manuscript/catalog",
+    "slice-segment-name apps/site/src/features/check-code/check-first/finders",
     "slice-segment-name apps/site/src/features/sync-manuscripts/rules",
   ]);
 });
