@@ -17,6 +17,7 @@ export default defineConfig({
   pack: {
     entry: ["src/app/index.ts"],
     platform: "node",
+    publint: { strict: true },
     sourcemap: true,
     dts: {
       generator: "tsgo",
