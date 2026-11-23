@@ -17,22 +17,19 @@ const NO_PASSKEYS = 0;
 
 const UNDELIVERABLE_EMAIL_DOMAIN = "passkey.invalid";
 
+const invalidInvite = (): APIError => new APIError("FORBIDDEN", { message: "invalid_invite" });
+
 const requireOwnerInvite = (
   inviteHash: string,
   invite: string | null | undefined,
   countPasskeys: () => Promise<number>,
 ): Effect.Effect<void, APIError> =>
-  Effect.all(
-    [
+  Effect.promise(countPasskeys).pipe(
+    Effect.filterOrFail((registered) => registered === NO_PASSKEYS, invalidInvite),
+    Effect.andThen(
       Effect.promise(() => verifyPassword({ hash: inviteHash, password: invite ?? "" })),
-      Effect.promise(countPasskeys),
-    ],
-    { concurrency: 1 },
-  ).pipe(
-    Effect.filterOrFail(
-      ([valid, registered]) => valid && registered === NO_PASSKEYS,
-      () => new APIError("FORBIDDEN", { message: "invalid_invite" }),
     ),
+    Effect.filterOrFail((valid) => valid, invalidInvite),
     Effect.asVoid,
   );
 

@@ -1,4 +1,5 @@
-import { Effect, Option } from "effect";
+import { Array as Arr, Duration, Effect, Option, String as Str, pipe } from "effect";
+import { TestClock } from "effect/testing";
 import type { DefaultBodyType, StrictRequest } from "msw";
 import { http } from "msw/http";
 import { setupServer } from "msw/node";
@@ -7,7 +8,7 @@ import { afterAll, afterEach, beforeAll, expect, test } from "vite-plus/test";
 import { memoryStore } from "#/shared/lib/app-store.test.support.ts";
 import type { MemoryStore } from "#/shared/lib/app-store.test.support.ts";
 
-import { accessOAuthRoute } from "./access-oauth-login.ts";
+import { accessOAuthRoute, sweepPendingLogins } from "./access-oauth-login.ts";
 
 const TEAM = "https://masseater.cloudflareaccess.com";
 const SITE = "personal.masseater.dev";
@@ -212,5 +213,80 @@ test("twilog のアカウントごとに別のトークンとして保存する"
         Option.isSome(rows.get(`access_oauth_grant:${TWILOG_SITE}`)),
         Option.isSome(rows.get("access_oauth_grant:twilog/r_masseater")),
       ]).toStrictEqual([true, false]);
+    }),
+  ));
+
+const STATE_PREFIX = "access_oauth_state:";
+const LOGIN = `${BROKER}/access-oauth/login?site=${SITE}`;
+const PAST_LIFETIME = Duration.fromInputUnsafe("61 minutes");
+const ONE_ROW = 1;
+const TWO_ROWS = 2;
+
+const pendingRows = (rows: MemoryStore["rows"]): readonly string[] =>
+  pipe(rows.names(), Arr.filter(Str.startsWith(STATE_PREFIX)));
+
+test("使い終えた state の行は残さない", () =>
+  Effect.runPromise(
+    Effect.gen(function* consumed() {
+      answeredBy(fakeAccess);
+      const { env, rows } = memoryStore();
+      const started = yield* route(env, LOGIN);
+      const pending = pendingRows(rows);
+      yield* route(env, `${BROKER}/access-oauth/callback?code=${CODE}&state=${stateOf(started)}`);
+      expect(pending).toHaveLength(ONE_ROW);
+      expect(pendingRows(rows)).toStrictEqual([]);
+    }),
+  ));
+
+const clock = TestClock.layer();
+
+const abandon = (env: Env): Effect.Effect<void> =>
+  Effect.andThen(route(env, LOGIN), route(env, LOGIN)).pipe(Effect.asVoid);
+
+test("戻ってこなかったログインの state は、期限を過ぎたら掃除し、期限内のものは残す", () =>
+  Effect.runPromise(
+    Effect.gen(function* stale() {
+      answeredBy(fakeAccess);
+      const { env, rows } = memoryStore();
+      yield* abandon(env);
+      yield* sweepPendingLogins(env);
+      const early = pendingRows(rows);
+      yield* TestClock.adjust(PAST_LIFETIME);
+      const fresh = yield* route(env, LOGIN);
+      yield* sweepPendingLogins(env);
+      expect([early.length, pendingRows(rows)]).toStrictEqual([
+        TWO_ROWS,
+        [`${STATE_PREFIX}${stateOf(fresh)}`],
+      ]);
+    }).pipe(Effect.provide(clock)),
+  ));
+
+const unreachable = (): Promise<Response> =>
+  Promise.resolve(new Response("upstream-secret-detail", { status: NOT_FOUND }));
+
+const FAILING = [
+  LOGIN,
+  `${BROKER}/access-oauth/login?site=unknown`,
+  `${BROKER}/access-oauth/callback?state=x`,
+];
+
+const REJECTION = [BAD_REQUEST, "ログインに失敗しました", "最初からやり直す:"];
+
+const headOf = (response: Response): Effect.Effect<readonly (number | string)[]> =>
+  Effect.promise(() => response.text()).pipe(
+    Effect.map((body) => [response.status, ...Arr.take(Str.split("\n")(body), TWO_ROWS)]),
+  );
+
+test("失敗した理由は応答に書かず、やり直す入口だけを返す", () =>
+  Effect.runPromise(
+    Effect.gen(function* opaque() {
+      answeredBy(unreachable);
+      const { env } = memoryStore();
+      const failures = yield* Effect.forEach(
+        FAILING,
+        (url) => Effect.flatMap(route(env, url), headOf),
+        { concurrency: 1 },
+      );
+      expect(failures).toStrictEqual(Arr.makeBy(FAILING.length, () => REJECTION));
     }),
   ));

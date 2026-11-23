@@ -6,5 +6,5 @@ const handle = ({ request }: Readonly<{ request: Request }>): Promise<Response> 
   serveMemories(request);
 
 export const Route = createFileRoute("/api/memories")({
-  server: { handlers: { PUT: handle } },
+  server: { handlers: { PUT: handle, ANY: handle } },
 });

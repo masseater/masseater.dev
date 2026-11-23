@@ -1,5 +1,7 @@
-import { Array as Arr, Effect, Option, String as Str } from "effect";
-import { expect, test } from "vite-plus/test";
+import { Array as Arr, Effect, Option, Schema, String as Str } from "effect";
+import { http } from "msw/http";
+import { setupServer } from "msw/node";
+import { afterAll, beforeAll, expect, test } from "vite-plus/test";
 
 import { writeSealed } from "#/shared/api/index.ts";
 import { memoryStore, randomKey } from "#/shared/lib/app-store.test.support.ts";
@@ -22,6 +24,8 @@ const TOO_MANY_REQUESTS = 429;
 
 type Env = MemoryStore["env"];
 
+const encodeJson = Schema.encodeOption(Schema.fromJsonString(Schema.Unknown));
+
 const isSealed = (stored: Option.Option<string>): boolean =>
   Option.exists(
     stored,
@@ -34,8 +38,49 @@ const statusOf = (request: Request, env: Env): Effect.Effect<number> =>
     onSome: Effect.map((response) => response.status),
   });
 
-const submitMalformed = (env: Env): Effect.Effect<number> =>
-  statusOf(new Request(SUBMIT_URL, { method: "POST", body: "{}" }), env);
+const submit = (env: Env, body: string): Effect.Effect<number> =>
+  statusOf(new Request(SUBMIT_URL, { method: "POST", body }), env);
+
+const submitWrong = (env: Env): Effect.Effect<number> =>
+  submit(
+    env,
+    Option.getOrElse(encodeJson({ password: `wrong-${PASSWORD}` }), () => ""),
+  );
+
+const OWNER_DID = "did:plc:sz2kxumpsjbch3kgnsjjed5z";
+const FAKE_JWT = "eyJhbGciOiJub25lIn0.e30.";
+const NO_CONTENT = 204;
+
+const Credentials = Schema.Struct({ password: Schema.String });
+
+const session = (submitted: unknown): Response => {
+  if (Schema.is(Credentials)(submitted) && submitted.password === PASSWORD) {
+    return Response.json({
+      did: OWNER_DID,
+      handle: "owner.test",
+      accessJwt: FAKE_JWT,
+      refreshJwt: FAKE_JWT,
+    });
+  }
+  return Response.json(
+    { error: "AuthenticationRequired", message: "Invalid identifier or password" },
+    { status: UNAUTHORIZED },
+  );
+};
+
+const network = setupServer(
+  http.post("https://bsky.social/xrpc/com.atproto.server.createSession", ({ request }) =>
+    Effect.runPromise(Effect.promise(() => request.json()).pipe(Effect.map(session))),
+  ),
+);
+
+beforeAll(() => {
+  network.listen({ onUnhandledFrame: "error" });
+});
+
+afterAll(() => {
+  network.close();
+});
 
 test("変更前に平文で置かれたパスワードはそのまま渡し、読んだときに封筒へ書き換える", () =>
   Effect.runPromise(
@@ -87,13 +132,42 @@ test("パスワードの受け口は 5 回まで試させ、6 回目からはサ
       const { env, rows } = memoryStore();
       const statuses = yield* Effect.forEach(
         Arr.makeBy(OVER_LIMIT, () => env),
-        submitMalformed,
+        submitWrong,
         { concurrency: 1 },
       );
       expect(Arr.take(statuses, LIMIT)).toStrictEqual(Arr.makeBy(LIMIT, () => UNAUTHORIZED));
       expect(Arr.drop(statuses, LIMIT)).toStrictEqual([TOO_MANY_REQUESTS, TOO_MANY_REQUESTS]);
       expect(Option.isSome(rows.get(ATTEMPTS_ROW))).toBe(true);
       expect(rows.get(PASSWORD_ROW)).toStrictEqual(Option.none());
+    }),
+  ));
+
+test("パスワードの形をしていない送信は断り、試行には数えない", () =>
+  Effect.runPromise(
+    Effect.gen(function* malformed() {
+      const { env, rows } = memoryStore();
+      const statuses = yield* Effect.forEach(
+        Arr.makeBy(OVER_LIMIT, () => ["{}", "", '{"password":""}', "not json"]).flat(),
+        (body) => submit(env, body),
+        { concurrency: 1 },
+      );
+      const afterwards = yield* submitWrong(env);
+      expect(Arr.dedupe(statuses)).toStrictEqual([UNAUTHORIZED]);
+      expect(afterwards).toBe(UNAUTHORIZED);
+      expect(rows.get(PASSWORD_ROW)).toStrictEqual(Option.none());
+    }),
+  ));
+
+test("持ち主としてサインインできたパスワードは 204 で受け取り、封筒に入れて置く", () =>
+  Effect.runPromise(
+    Effect.gen(function* accepted() {
+      const { env, rows } = memoryStore();
+      const body = Option.getOrElse(encodeJson({ password: PASSWORD }), () => "");
+      const status = yield* submit(env, body);
+      const issued = yield* issueAppPassword({ env, granted: true });
+      expect(status).toBe(NO_CONTENT);
+      expect(isSealed(rows.get(PASSWORD_ROW))).toBe(true);
+      expect(issued).toStrictEqual(ISSUED);
     }),
   ));
 

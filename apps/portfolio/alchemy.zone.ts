@@ -1,4 +1,4 @@
-import { Ruleset, Zone, providers, state } from "@alchemy.run/cloudflare";
+import { DNS, Ruleset, Zone, providers, state } from "@alchemy.run/cloudflare";
 import { spendLimitProvider, zoneResources } from "@masseater.dev/cloudflare-account/zone";
 import { Stack } from "alchemy";
 import type { CompiledStack } from "alchemy";
@@ -21,12 +21,27 @@ const CLOUDFLARE_RESPONSE_HEADERS = {
     "default-src 'none'; style-src 'self'; img-src 'self' data:; base-uri 'none'; form-action 'none'; frame-ancestors 'none'",
 } as const;
 
+const NO_MAIL_TEXTS = {
+  NoMailSpf: { name: "@", content: '"v=spf1 -all"' },
+  NoMailDmarc: { name: "_dmarc", content: '"v=DMARC1; p=reject; sp=reject; adkim=s; aspf=s"' },
+  NoMailDkim: { name: "*._domainkey", content: '"v=DKIM1; p="' },
+} as const;
+
+const NULL_MX = { name: "@", type: "MX", content: ".", priority: 0 } as const;
+
 const stack: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: string }> = Stack(
   `${PREFIX}zone`,
   { providers: Layer.provideMerge(spendLimitProvider, providers()), state: state() },
   Effect.gen(function* zone() {
     yield* zoneResources(APP_NAME);
     const owned = yield* Zone.Zone("Zone", { name: DOMAIN }).pipe(adopt(true));
+    yield* Effect.forEach(
+      Rec.toEntries(NO_MAIL_TEXTS),
+      ([id, text]) => DNS.Record(id, { zoneId: owned.zoneId, type: "TXT", ...text }),
+      { concurrency: 1 },
+    );
+    yield* DNS.Record("NoMailMx", { zoneId: owned.zoneId, ...NULL_MX });
+    yield* DNS.Dnssec("Dnssec", { zoneId: owned.zoneId });
     yield* Ruleset.Ruleset("CloudflareResponseHeaders", {
       zone: owned,
       name: `${PREFIX}cloudflare-response-headers`,

@@ -16,7 +16,11 @@ const INDENT = 2;
 const OwnerSchema = Schema.Struct({ name: Schema.String, url: Schema.optionalKey(Schema.String) });
 const Person = Schema.Union([Schema.String, OwnerSchema]);
 const RootManifest = Schema.fromJsonString(
-  Schema.Struct({ name: Schema.String, author: Schema.optionalKey(Person) }),
+  Schema.Struct({
+    name: Schema.String,
+    description: Schema.optionalKey(Schema.String),
+    author: Schema.optionalKey(Person),
+  }),
 );
 const PluginManifest = Schema.fromJsonString(Schema.Struct({ name: Schema.String }));
 const NpmSource = Schema.Struct({ source: Schema.Literal("npm"), package: Schema.String });
@@ -25,8 +29,14 @@ const PluginSchema = Schema.Struct({
   source: Schema.Union([Schema.String, NpmSource]),
   description: Schema.String,
 });
+const MetadataSchema = Schema.Struct({ description: Schema.String });
 const Marketplace = Schema.fromJsonString(
-  Schema.Struct({ name: Schema.String, owner: OwnerSchema, plugins: Schema.Array(PluginSchema) }),
+  Schema.Struct({
+    name: Schema.String,
+    owner: OwnerSchema,
+    metadata: Schema.optionalKey(MetadataSchema),
+    plugins: Schema.Array(PluginSchema),
+  }),
   { space: INDENT },
 );
 
@@ -86,16 +96,31 @@ const pluginsIn = Effect.fn("pluginsIn")(function* pluginsIn(root: string) {
   return Arr.getSomes(found);
 });
 
+const described = (
+  description: string | undefined,
+): { readonly metadata?: { readonly description: string } } =>
+  pipe(
+    Option.fromUndefinedOr(description),
+    Option.match({
+      onNone: () => ({}),
+      onSome: (text) => ({ metadata: { description: text } }),
+    }),
+  );
+
 const ownerIn = Effect.fn("ownerIn")(function* ownerIn(root: string) {
   const files = yield* RepositoryFiles;
   const text = yield* files.readFile(files.join(root, MANIFEST_FILE));
   return pipe(
     text,
     Option.flatMap(decodeRoot),
-    Option.flatMap(({ name, author }) =>
+    Option.flatMap(({ name, description, author }) =>
       pipe(
         Option.fromUndefinedOr(author),
-        Option.map((found) => ({ name: marketplaceName(name), owner: ownerOf(found) })),
+        Option.map((found) => ({
+          name: marketplaceName(name),
+          owner: ownerOf(found),
+          ...described(description),
+        })),
       ),
     ),
   );

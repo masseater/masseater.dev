@@ -1,4 +1,13 @@
-import { Array as Arr, Clock, Effect, Option, Record as Rec, Schema, pipe } from "effect";
+import {
+  Array as Arr,
+  Clock,
+  Effect,
+  Option,
+  Record as Rec,
+  Schema,
+  String as Str,
+  pipe,
+} from "effect";
 import {
   authorizationCodeGrantRequest,
   calculatePKCECodeChallenge,
@@ -15,7 +24,7 @@ import type { OAuthTargetId } from "#/entities/oauth-target/index.ts";
 import { failed, failedWith } from "#/features/access-oauth/model/access-oauth-failed.ts";
 import type { AccessOAuthFailed } from "#/features/access-oauth/model/access-oauth-failed.ts";
 import { grantFrom, saveGrant } from "#/features/access-oauth/model/access-oauth-grant.ts";
-import { readRow, swapRow, writeSealed } from "#/shared/api/index.ts";
+import { deleteRows, readRow, takeRow, writeSealed } from "#/shared/api/index.ts";
 import type { AppStoreEnv } from "#/shared/api/index.ts";
 import { unseal } from "#/shared/lib/sealed-value.ts";
 
@@ -30,7 +39,9 @@ import {
 } from "./access-oauth-server.ts";
 
 const PENDING_LIFETIME_MS = 3_600_000;
-const CONSUMED = "";
+const NO_STATE = "";
+const PENDING_PREFIX = "access_oauth_state:";
+const TIMESTAMP_DIGITS = 15;
 const BAD_REQUEST = 400;
 const FOUND = 302;
 
@@ -42,7 +53,11 @@ const PendingJson = Schema.fromJsonString(Pending);
 
 type PendingLogin = typeof Pending.Type;
 
-const pendingKey = (state: string): string => `access_oauth_state:${state}`;
+const pendingKey = (state: string): string => `${PENDING_PREFIX}${state}`;
+
+const sortable = (millis: number): string => Str.padStart(TIMESTAMP_DIGITS, "0")(String(millis));
+
+const stateAt = (createdAt: number): string => `${sortable(createdAt)}.${generateRandomState()}`;
 
 const siteOf = (request: Request): Effect.Effect<PendingLogin["site"], AccessOAuthFailed> =>
   Schema.decodeUnknownEffect(Site)(new URL(request.url).searchParams.get("site")).pipe(
@@ -91,10 +106,10 @@ const login = ({ request, env }: RouteInput): Effect.Effect<Response, AccessOAut
   Effect.gen(function* startLogin() {
     const site = yield* siteOf(request);
     const connection = yield* connect({ env, site });
-    const state = generateRandomState();
+    const createdAt = yield* Clock.currentTimeMillis;
+    const state = stateAt(createdAt);
     const verifier = generateRandomCodeVerifier();
     const challenge = yield* promised(() => calculatePKCECodeChallenge(verifier));
-    const createdAt = yield* Clock.currentTimeMillis;
     yield* remember(env, state, { site, verifier, createdAt });
     const url = yield* authorizationUrl({
       site,
@@ -133,12 +148,11 @@ const takePending = (
   Effect.gen(function* take() {
     const name = pendingKey(state);
     const stored = yield* readRow({ env, name }).pipe(
-      Effect.map(Option.filter((value) => value !== CONSUMED)),
       Effect.flatMap(Effect.fromOption),
       Effect.mapError(() => failedWith("the login state is unknown or already used")),
     );
     const pending = yield* openPending(env, state, stored);
-    const taken = yield* swapRow({ env, name, expected: Option.some(stored), value: CONSUMED });
+    const taken = yield* takeRow({ env, name, expected: stored });
     const now = yield* Clock.currentTimeMillis;
     if (!taken || now - pending.createdAt > PENDING_LIFETIME_MS) {
       return yield* failedWith("the login state was used or expired");
@@ -193,7 +207,7 @@ const exchange = ({
 const callback = ({ request, env }: RouteInput): Effect.Effect<Response, AccessOAuthFailed> =>
   Effect.gen(function* finishLogin() {
     const callbackUrl = request.url;
-    const state = new URL(callbackUrl).searchParams.get("state") ?? CONSUMED;
+    const state = new URL(callbackUrl).searchParams.get("state") ?? NO_STATE;
     const pending = yield* takePending(env, state);
     const tokens = yield* exchange({ env, callbackUrl, state, pending });
     const grant = yield* grantFrom({ tokens, previous: Option.none() });
@@ -209,19 +223,27 @@ const LOGIN_URLS = pipe(
   Arr.map((site) => loginUrlOf(site)),
 );
 
-const rejectionOf = (message: string): Response =>
-  new Response(
-    Arr.join([`ログインに失敗しました: ${message}`, "最初からやり直す:", ...LOGIN_URLS], "\n"),
-    {
-      status: BAD_REQUEST,
-      headers: { "content-type": "text/plain; charset=utf-8" },
-    },
-  );
+const rejection = (): Response =>
+  new Response(Arr.join(["ログインに失敗しました", "最初からやり直す:", ...LOGIN_URLS], "\n"), {
+    status: BAD_REQUEST,
+    headers: { "content-type": "text/plain; charset=utf-8" },
+  });
 
 const rejected = ({ message }: Readonly<{ message: string }>): Effect.Effect<Response> =>
   Effect.logWarning("access_oauth.rejected").pipe(
     Effect.annotateLogs({ reason: message }),
-    Effect.as(rejectionOf(message)),
+    Effect.as(rejection()),
+  );
+
+export const sweepPendingLogins = (env: AppStoreEnv): Effect.Effect<void> =>
+  Clock.currentTimeMillis.pipe(
+    Effect.flatMap((now) =>
+      deleteRows({
+        env,
+        from: PENDING_PREFIX,
+        to: pendingKey(sortable(now - PENDING_LIFETIME_MS)),
+      }),
+    ),
   );
 
 const HANDLERS: Readonly<

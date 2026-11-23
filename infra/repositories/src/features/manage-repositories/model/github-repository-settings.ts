@@ -34,4 +34,6 @@ export const settingsOf = (
     allowUpdateBranch: true,
     secretScanning: !repository.private,
     actionsCreatePullRequests: true,
+    collaboratorPullRequests: !repository.private,
+    vulnerabilityReporting: !repository.private,
   });

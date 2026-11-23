@@ -145,15 +145,10 @@ fn analysis_brief(analysis: &Analysis) -> AnalysisBrief {
     }
 }
 
-fn brief_of(workshop: &Workshop, song: Song) -> SongBrief {
-    let path = |relative: &str| {
-        workshop
-            .library
-            .path(&song, relative)
-            .to_string_lossy()
-            .into_owned()
-    };
-    SongBrief {
+fn brief_of(workshop: &Workshop, song: Song) -> Outcome<SongBrief> {
+    let folder = workshop.library.folder(&song.id)?;
+    let path = |relative: &str| folder.join(relative).to_string_lossy().into_owned();
+    Ok(SongBrief {
         sources: song
             .sources
             .iter()
@@ -183,7 +178,7 @@ fn brief_of(workshop: &Workshop, song: Song) -> SongBrief {
         id: song.id,
         title: song.title,
         artist: song.artist,
-    }
+    })
 }
 
 fn matches(song: &Song, query: Option<&str>) -> bool {
@@ -194,13 +189,13 @@ fn matches(song: &Song, query: Option<&str>) -> bool {
 }
 
 fn listed(workshop: &Workshop, query: Option<&str>) -> Outcome<Vec<SongBrief>> {
-    Ok(workshop
+    workshop
         .library
         .list()?
         .into_iter()
         .filter(|song| matches(song, query))
         .map(|song| brief_of(workshop, song))
-        .collect())
+        .collect()
 }
 
 #[derive(Clone)]
@@ -299,7 +294,7 @@ impl Tools {
     ) -> Result<CallToolResult, ErrorData> {
         Ok(answer(
             self.song(&input.id)
-                .map(|song| brief_of(&self.serving.workshop, song)),
+                .and_then(|song| brief_of(&self.serving.workshop, song)),
         ))
     }
 

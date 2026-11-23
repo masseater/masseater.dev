@@ -22,6 +22,7 @@ import {
   grantKeys,
   isGranted,
   repositoryName,
+  sourceWorkflows,
   verify,
   workflowGrant,
 } from "#/entities/credential/index.ts";
@@ -32,8 +33,9 @@ import {
   cloudflare,
   sweepIssuedTokens,
 } from "#/features/issue-cloudflare-token/index.ts";
-import { dispatchExposure, mintGitHubToken } from "#/features/mint-github-token/index.ts";
+import { mintGitHubToken, ownsSource } from "#/features/mint-github-token/index.ts";
 
+import { hourlyJobs } from "./hourly-jobs.ts";
 import { sideRoute } from "./side-routes.ts";
 import type { SideRouteInput } from "./side-routes.ts";
 
@@ -146,10 +148,11 @@ const issueCloudflareToken = (
 const issueGitHubToken = (
   env: CredentialBrokerEnv,
   claims: typeof Claims.Type,
+  workflows: typeof WorkflowGrants.Type,
 ): Effect.Effect<Option.Option<Issued>, IssueError> =>
   Effect.gen(function* createGitHubToken() {
     const grants = yield* decodeGrants(env);
-    const grant = Option.orElse(workflowGrant(grants.workflows)(claims), () =>
+    const grant = Option.orElse(workflowGrant(workflows)(claims), () =>
       Arr.findFirst(grantKeys(claims), (key) => Option.fromNullishOr(grants.github[key])),
     );
     if (Option.isNone(grant)) {
@@ -204,8 +207,12 @@ const issue = (
 ): Effect.Effect<Response, never, BrokerContext> =>
   Effect.gen(function* issueToken() {
     const claims = yield* verify(request);
-    const grants = yield* decodeGrants(env);
-    if (!isGranted(grants)(claims)) {
+    const listed = yield* decodeGrants(env);
+    const workflows = yield* sourceWorkflows({
+      workflows: listed.workflows,
+      isSource: (repository) => Effect.promise(() => ownsSource({ env, repository })),
+    })(claims);
+    if (!isGranted({ ...listed, workflows })(claims)) {
       return yield* Rejected.make({ reason: `no grant for ${claims.repository}` });
     }
     const kinds = yield* selectKinds(new URL(request.url).searchParams);
@@ -213,7 +220,7 @@ const issue = (
       kinds,
       issuers: {
         cloudflare: issueCloudflareToken(env, claims),
-        github: issueGitHubToken(env, claims),
+        github: issueGitHubToken(env, claims, workflows),
         npm: issueNpmToken(env, claims),
         atproto: issueAtproto(env, claims),
         shared: sharedKeys(env),
@@ -269,13 +276,7 @@ const worker = {
   fetch: (request: Request, env: CredentialBrokerEnv): Promise<Response> =>
     run(env, handle(request, env)),
   scheduled: (_controller: unknown, env: CredentialBrokerEnv): Promise<void> =>
-    run(
-      env,
-      Effect.andThen(
-        sweepIssuedTokens(env.ACCOUNT_ID),
-        Effect.promise(() => dispatchExposure(env)),
-      ),
-    ),
+    run(env, Effect.andThen(sweepIssuedTokens(env.ACCOUNT_ID), hourlyJobs(env))),
 };
 
 export { AccessOAuth } from "#/features/access-oauth/index.ts";

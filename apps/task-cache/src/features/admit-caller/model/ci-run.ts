@@ -7,7 +7,12 @@ import { malformed } from "#/shared/lib/malformed.ts";
 const DEFAULT_BRANCH = "refs/heads/main";
 const PUBLIC = "public";
 const NO_TOKEN = "";
-const UNTRUSTED_EVENTS: ReadonlySet<string> = new Set(["pull_request_target", "workflow_run"]);
+const STORING_EVENTS: ReadonlySet<string> = new Set([
+  "push",
+  "schedule",
+  "workflow_dispatch",
+  "repository_dispatch",
+]);
 
 const Claims = Schema.Struct({
   repository: Schema.String,
@@ -37,7 +42,7 @@ const ownsNamespace = (claims: Claimed, namespace: string): boolean =>
 
 const runOf = (claims: Claimed): CiRun => ({
   publicRepository: claims.repository_visibility === PUBLIC,
-  defaultBranch: claims.ref === DEFAULT_BRANCH && !UNTRUSTED_EVENTS.has(claims.event_name),
+  defaultBranch: claims.ref === DEFAULT_BRANCH && STORING_EVENTS.has(claims.event_name),
 });
 
 export const ciRunOf = Effect.fn("admitCaller.ciRunOf")(function* ciRunOf(
