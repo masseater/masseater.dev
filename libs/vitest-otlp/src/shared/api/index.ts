@@ -12,7 +12,10 @@ export type {
   KeyValueSchema,
 } from "./generated/opentelemetry/proto/common/v1/common_pb.ts";
 export type { LogRecordSchema } from "./generated/opentelemetry/proto/logs/v1/logs_pb.ts";
-export type { SpanSchema } from "./generated/opentelemetry/proto/trace/v1/trace_pb.ts";
+export type {
+  SpanSchema,
+  Span_LinkSchema,
+} from "./generated/opentelemetry/proto/trace/v1/trace_pb.ts";
 export { ExportLogsServiceResponseSchema } from "./generated/opentelemetry/proto/collector/logs/v1/logs_service_pb.ts";
 export {
   ExportMetricsServiceRequestSchema,

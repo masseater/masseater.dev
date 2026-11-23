@@ -1,9 +1,9 @@
 import { scoreOf } from "@masseater.dev/fumx-studio/studio/score";
 
-import automation from "#/entities/song/catalog/kuraku-narikake/plugins/mix/score/automation.json";
-import cues from "#/entities/song/catalog/kuraku-narikake/plugins/mix/score/cues.json";
-import sections from "#/entities/song/catalog/kuraku-narikake/plugins/mix/score/sections.json";
-import tracks from "#/entities/song/catalog/kuraku-narikake/plugins/mix/score/tracks.json";
+import automation from "#/entities/song/model/catalog/kuraku-narikake/plugins/mix/score/automation.json";
+import cues from "#/entities/song/model/catalog/kuraku-narikake/plugins/mix/score/cues.json";
+import sections from "#/entities/song/model/catalog/kuraku-narikake/plugins/mix/score/sections.json";
+import tracks from "#/entities/song/model/catalog/kuraku-narikake/plugins/mix/score/tracks.json";
 
 import { AutomationSchema, CuesSchema, MixSchema, SectionsSchema } from "./score-schema.ts";
 
