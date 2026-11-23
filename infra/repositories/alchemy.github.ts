@@ -96,9 +96,15 @@ const policyOf = (repository: ManagedRepository): Partial<RepositoryProps> => {
   return { ...PUBLIC_POLICY, ...PUBLIC_PROFILES[repository.name] };
 };
 
+const HISTORY_REWRITE = "masseater.dev";
+
 const rulesOf = (
   upToDate: boolean,
+  name: string,
 ): Pick<RulesetProps, "deletion" | "nonFastForward" | "requiredStatusChecks"> => {
+  if (name === HISTORY_REWRITE) {
+    return { deletion: true, nonFastForward: false };
+  }
   const protection = { deletion: true, nonFastForward: true };
   if (!upToDate) {
     return protection;
@@ -172,7 +178,7 @@ const github: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: 
                   repository: repository.name,
                   name: "protect default branch",
                   conditions: { include: ["~DEFAULT_BRANCH"] },
-                  ...rulesOf(upToDate),
+                  ...rulesOf(upToDate, repository.name),
                 }).pipe(adopt(true)),
               ),
             ),
