@@ -29,11 +29,11 @@
   "ignoreExports": [
     { "file": "**/generated/**", "exports": ["*"] },
     {
-      "file": "apps/portfolio/src/entities/song/catalog/*/work.ts",
+      "file": "apps/portfolio/src/entities/song/model/catalog/*/work.ts",
       "exports": ["work"],
     },
     {
-      "file": "apps/portfolio/src/entities/song/catalog/*/plugins/*.ts",
+      "file": "apps/portfolio/src/entities/song/model/catalog/*/plugins/*.ts",
       "exports": ["plugin"],
     },
     {

@@ -4,9 +4,9 @@ import { Array as Arr, Effect, Option, Record as Rec, String as Str, pipe } from
 
 const SLUG = 2;
 
-const fumxSongs = import.meta.glob<FumxSong>("../catalog/*/song.fumx", { import: "song" });
+const fumxSongs = import.meta.glob<FumxSong>("./catalog/*/song.fumx", { import: "song" });
 
-const pluginModules = import.meta.glob<FumxPlugin>("../catalog/*/plugins/*.ts", {
+const pluginModules = import.meta.glob<FumxPlugin>("./catalog/*/plugins/*.ts", {
   import: "plugin",
 });
 
@@ -38,7 +38,7 @@ const loadedIn =
   };
 
 export const pluginsOf = (slug: string): Effect.Effect<Plugins> => {
-  const folder = `../catalog/${slug}/`;
+  const folder = `./catalog/${slug}/`;
   const modules = pipe(
     Rec.toEntries(pluginModules),
     Arr.filter(([path]) => Str.startsWith(folder)(path)),

@@ -5,17 +5,17 @@ import { describe, expect, test } from "vite-plus/test";
 
 import { recordingOf, songs } from "./catalog.ts";
 
-const works = import.meta.glob("../catalog/*/work.ts");
+const works = import.meta.glob("./catalog/*/work.ts");
 
-const sampleFiles = import.meta.glob("../catalog/*/samples/*.flac");
+const sampleFiles = import.meta.glob("./catalog/*/samples/*.flac");
 
-const fumxSongs = import.meta.glob<FumxSong>("../catalog/*/song.fumx", {
+const fumxSongs = import.meta.glob<FumxSong>("./catalog/*/song.fumx", {
   eager: true,
   import: "song",
 });
 
 const fumxOf = (slug: string): Option.Option<FumxSong> =>
-  Rec.get(fumxSongs, `../catalog/${slug}/song.fumx`);
+  Rec.get(fumxSongs, `./catalog/${slug}/song.fumx`);
 
 const baseName = (path: string): string =>
   Str.replace(/^(?:.*\/)?(?<name>[^/]+)\.flac$/u, "$<name>")(path);
@@ -23,7 +23,7 @@ const baseName = (path: string): string =>
 const filesOf = (slug: string): readonly string[] =>
   pipe(
     Rec.keys(sampleFiles),
-    Arr.filter(Str.startsWith(`../catalog/${slug}/samples/`)),
+    Arr.filter(Str.startsWith(`./catalog/${slug}/samples/`)),
     Arr.map(baseName),
     Arr.sortWith((name) => name, Str.Order),
   );
