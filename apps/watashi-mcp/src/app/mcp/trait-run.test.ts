@@ -132,6 +132,7 @@ const fake = (answer: (input: string) => readonly unknown[]): Fake => {
   const counted = { resets: 0 };
   return {
     conversation: {
+      pickModel: () => Promise.resolve(),
       reset: () => {
         counted.resets += 1;
         return Promise.resolve();
@@ -230,6 +231,7 @@ it.effect("作るのに時間を使い切っても、前の回に作った特性
     yield* settle;
     const services = yield* Effect.context();
     const slow: Conversation = {
+      pickModel: () => Promise.resolve(),
       reset: () => Promise.resolve(),
       prompt: () =>
         Effect.runPromiseWith(services)(
