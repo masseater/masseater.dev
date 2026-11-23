@@ -8,6 +8,8 @@ export type Grant = Readonly<{
   ip: readonly string[];
 }>;
 
+export type Access = Pick<Grant, "src" | "ip">;
+
 export type PolicyEntries = Readonly<{
   tagOwners: Readonly<Record<string, readonly string[]>>;
   grants: readonly Grant[];
@@ -16,6 +18,12 @@ export type PolicyEntries = Readonly<{
 const ParsedPolicy = Schema.Struct({
   tagOwners: Schema.optional(Schema.Record(Schema.String, Schema.Unknown)),
   grants: Schema.optional(Schema.Array(Schema.Unknown)),
+});
+
+const ParsedGrant = Schema.Struct({
+  src: Schema.Array(Schema.String),
+  dst: Schema.Array(Schema.String),
+  ip: Schema.Array(Schema.String),
 });
 
 type Edit = Readonly<{ path: readonly (string | number)[]; value?: unknown; insert?: boolean }>;
@@ -37,6 +45,23 @@ const tagOwnerOf = (body: string, tag: string): Option.Option<unknown> =>
 
 const grantsOf = (body: string): Option.Option<readonly unknown[]> =>
   Option.fromNullishOr(parsed(body).grants);
+
+const decodeGrant = Schema.decodeUnknownOption(ParsedGrant);
+
+export const grantFor =
+  ({ src, ip }: Access) =>
+  (body: string): Option.Option<Grant> =>
+    pipe(
+      grantsOf(body),
+      Option.flatMap(
+        Arr.findFirst((present) =>
+          pipe(
+            decodeGrant(present),
+            Option.filter((grant) => Equal.equals(grant.src, src) && Equal.equals(grant.ip, ip)),
+          ),
+        ),
+      ),
+    );
 
 const edited =
   ({ path, value, insert = false }: Edit) =>

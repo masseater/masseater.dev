@@ -26,15 +26,15 @@ const PUSH: typeof Claims.Type = {
 const inEnvironment = (environment: string): typeof Claims.Type => ({ ...PUSH, environment });
 
 const GRANTS: Readonly<Record<string, string>> = {
-  "masseater.dev": "deploy",
-  "masseater.dev/github": "github",
+  "1411948414": "deploy",
+  "1411948414/github": "github",
 };
 
 const grantFor = (claims: typeof Claims.Type): Option.Option<string> =>
   Arr.findFirst(grantKeys(claims), (key) => Rec.get(GRANTS, key));
 
-test("a job without an environment is looked up by repository", () => {
-  expect(grantKeys(PUSH)).toStrictEqual(["masseater.dev", "1411948414"]);
+test("a job without an environment is looked up by repository id", () => {
+  expect(grantKeys(PUSH)).toStrictEqual(["1411948414"]);
   expect(grantFor(PUSH)).toStrictEqual(Option.some("deploy"));
 });
 
@@ -44,21 +44,17 @@ test("a job in an environment prefers the environment grant", () => {
 
 test("an environment without its own grant falls back to the repository", () => {
   expect(grantKeys(inEnvironment("production"))).toStrictEqual([
-    "masseater.dev/production",
-    "masseater.dev",
     "1411948414/production",
     "1411948414",
   ]);
   expect(grantFor(inEnvironment("production"))).toStrictEqual(Option.some("deploy"));
 });
 
-const ID_GRANTS: Readonly<Record<string, string>> = { "42": "access" };
+const UNLISTED_ID = "42";
 
-test("a repository granted by its id is found without its name in the grants", () => {
-  const unnamed = { ...PUSH, repository: "masseater/unnamed", repository_id: "42" };
-  expect(Arr.findFirst(grantKeys(unnamed), (key) => Rec.get(ID_GRANTS, key))).toStrictEqual(
-    Option.some("access"),
-  );
+test("a repository that takes the name of a granted one is not granted by that name", () => {
+  const renamed = { ...PUSH, repository_id: UNLISTED_ID };
+  expect(grantFor(renamed)).toStrictEqual(Option.none());
 });
 
 test("the workflow file is read from the workflow ref", () => {
@@ -87,6 +83,7 @@ const jobIn = ({
 }: Readonly<{ repository: string; workflow: string }>): typeof Claims.Type => ({
   ...PUSH,
   repository: `masseater/${repository}`,
+  repository_id: UNLISTED_ID,
   workflow_ref: `masseater/${repository}/.github/workflows/${workflow}@refs/heads/main`,
 });
 
@@ -231,10 +228,13 @@ test("a bot workflow in the owner's own repository keeps its workflow grant", ()
     }),
   ));
 
-test("a fork listed by name keeps its listed grants but loses the workflow grant", () =>
+test("a fork listed by id keeps its listed grants but loses the workflow grant", () =>
   Effect.runPromise(
     Effect.gen(function* listedFork() {
-      const autofix = jobIn({ repository: "masseater.dev", workflow: "autofix.yml" });
+      const autofix = {
+        ...jobIn({ repository: "masseater.dev", workflow: "autofix.yml" }),
+        repository_id: PUSH.repository_id,
+      };
       const grants = yield* grantsIn(autofix, asked(false));
       expect(workflowGrant(grants.workflows)(autofix)).toStrictEqual(Option.none());
       expect(isGranted(grants)(autofix)).toBe(true);

@@ -1,7 +1,7 @@
 import { Array as Arr, Effect, Option, Record as Rec, Schema, pipe } from "effect";
 
 import type { Claims } from "#/entities/credential/index.ts";
-import { Rejected, grantKeys, verify } from "#/entities/credential/index.ts";
+import { EXPOSURE_GRANT_KEY, Rejected, grantKeys, verify } from "#/entities/credential/index.ts";
 import {
   LedgerJson,
   ReportJson,
@@ -10,7 +10,6 @@ import {
 } from "#/features/report-exposure/model/exposure-ledger.ts";
 import type { ExposureEnv } from "#/features/report-exposure/model/exposure-ledger.ts";
 
-const GRANT = "masseater.dev/exposure";
 const LEDGER_PATH = "/exposure/ledger";
 const REPORT_PATH = "/exposure/report";
 const UNAUTHORIZED = 401;
@@ -23,7 +22,7 @@ const authorized = (
 ): Effect.Effect<typeof Claims.Type, Rejected | Schema.SchemaError> =>
   verify(request).pipe(
     Effect.filterOrFail(
-      (claims) => Arr.contains(grantKeys(claims), GRANT),
+      (claims) => Arr.contains(grantKeys(claims), EXPOSURE_GRANT_KEY),
       (claims) => Rejected.make({ reason: `no exposure grant for ${claims.repository}` }),
     ),
   );

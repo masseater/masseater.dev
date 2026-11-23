@@ -9,7 +9,6 @@ import {
   validateAndTestPolicyFile,
 } from "@distilled.cloud/tailscale";
 import type {
-  GetPolicyFileError,
   SetPolicyFileError,
   TailscaleOpContext,
   ValidateAndTestPolicyFileError,
@@ -26,16 +25,10 @@ import {
   HttpClientResponse,
 } from "effect/http";
 
-import {
-  AGENT_SUBJECT,
-  AGENT_TAG,
-  SSH_PORT,
-  TAILNET_ISSUER,
-  WINDOWS_HOST,
-} from "#/shared/config/index.ts";
+import { AGENT_SUBJECT, AGENT_TAG, SSH_PORT, TAILNET_ISSUER } from "#/shared/config/index.ts";
 
-import { ensureEntries, removeEntries, replaceEntries } from "./tailnet-policy.ts";
-import type { PolicyEntries } from "./tailnet-policy.ts";
+import { ensureEntries, grantFor, removeEntries, replaceEntries } from "./tailnet-policy.ts";
+import type { Access, PolicyEntries } from "./tailnet-policy.ts";
 
 const TAILNET = "-";
 const API_ROOT = "https://api.tailscale.com/api/v2";
@@ -43,9 +36,11 @@ const TOKEN_EXCHANGE = `${API_ROOT}/oauth/token-exchange`;
 const CI_CLIENT_ID = "TMwqo2dMr211CNTRL-k9SS94yMES11CNTRL";
 const CI_AUDIENCE = `api.tailscale.com/${CI_CLIENT_ID}`;
 
-const AGENT_POLICY: PolicyEntries = {
+type AgentPolicy = Readonly<{ tagOwners: PolicyEntries["tagOwners"]; access: Access }>;
+
+const AGENT_POLICY: AgentPolicy = {
   tagOwners: { [AGENT_TAG]: ["autogroup:admin"] },
-  grants: [{ src: [AGENT_TAG], dst: [WINDOWS_HOST], ip: [`tcp:${String(SSH_PORT)}`] }],
+  access: { src: [AGENT_TAG], ip: [`tcp:${String(SSH_PORT)}`] },
 };
 
 type FederatedIdentityProps = Readonly<{
@@ -64,7 +59,7 @@ type FederatedIdentityResource = Resource<
 
 type PolicyEntriesResource = Resource<
   "MasseaterDev.Tailscale.PolicyEntries",
-  PolicyEntries,
+  AgentPolicy,
   PolicyEntries
 >;
 
@@ -116,16 +111,13 @@ const ifMatch = (eTag: string | undefined): Readonly<{ ifMatch?: string }> =>
     onSome: (value) => ({ ifMatch: value }),
   });
 
-const rewritePolicy = (
-  edit: (body: string) => string,
-): Effect.Effect<
-  void,
-  GetPolicyFileError | ValidateAndTestPolicyFileError | SetPolicyFileError,
-  TailscaleOpContext
-> =>
-  Effect.gen(function* rewrite() {
-    const current = yield* getPolicyFile({ tailnet: TAILNET });
-    const body = edit(current.body);
+type PolicyFile = Readonly<{ body: string; eTag?: string | undefined }>;
+
+const savePolicy = (
+  current: PolicyFile,
+  body: string,
+): Effect.Effect<void, ValidateAndTestPolicyFileError | SetPolicyFileError, TailscaleOpContext> =>
+  Effect.gen(function* save() {
     if (body === current.body) {
       return;
     }
@@ -133,15 +125,40 @@ const rewritePolicy = (
     yield* setPolicyFile({ tailnet: TAILNET, body, ...ifMatch(current.eTag) });
   });
 
+const destinationMissing = (): ConfigError =>
+  new ConfigError({
+    message: `The Tailscale policy file has no grant from ${AGENT_TAG}. Add it with its destination in the admin console.`,
+  });
+
+const entriesIn = (
+  { tagOwners, access }: AgentPolicy,
+  body: string,
+): Effect.Effect<PolicyEntries, ConfigError> =>
+  pipe(
+    grantFor(access)(body),
+    Option.match({
+      onNone: () => Effect.fail(destinationMissing()),
+      onSome: (grant) => Effect.succeed({ tagOwners, grants: [grant] }),
+    }),
+  );
+
 const policyEntriesProvider = succeed(TailnetPolicyEntries, {
   reconcile: ({ news, output }) =>
-    rewritePolicy(
-      Option.match(Option.fromNullishOr(output), {
-        onNone: () => ensureEntries(news),
-        onSome: (previous) => replaceEntries(previous)(news),
-      }),
-    ).pipe(Effect.as(news)),
-  delete: ({ output }) => rewritePolicy(removeEntries(output)),
+    Effect.gen(function* reconcile() {
+      const current = yield* getPolicyFile({ tailnet: TAILNET });
+      const entries = yield* entriesIn(news, current.body);
+      const edit = Option.match(Option.fromNullishOr(output), {
+        onNone: () => ensureEntries(entries),
+        onSome: (previous) => replaceEntries(previous)(entries),
+      });
+      yield* savePolicy(current, edit(current.body));
+      return entries;
+    }),
+  delete: ({ output }) =>
+    Effect.gen(function* remove() {
+      const current = yield* getPolicyFile({ tailnet: TAILNET });
+      yield* savePolicy(current, removeEntries(output)(current.body));
+    }),
 });
 
 const GitHubIdToken = Schema.Struct({ value: Schema.String });

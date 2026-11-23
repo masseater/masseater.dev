@@ -123,6 +123,16 @@
   "customManagers": [
     {
       "customType": "regex",
+      "managerFilePatterns": ["/^\\.claude/settings\\.json$/"],
+      "matchStrings": [
+        "\"repo\": \"(?<depName>masseater/cc-jev-teacher)\",\\s+\"ref\": \"(?<currentDigest>[a-f0-9]{40})\""
+      ],
+      "currentValueTemplate": "main",
+      "packageNameTemplate": "https://github.com/{{depName}}",
+      "datasourceTemplate": "git-refs"
+    },
+    {
+      "customType": "regex",
       "managerFilePatterns": ["/^libs/tsrs-effect/package\\.json$/"],
       "matchStrings": ["\"effect\": \"@effect/tsgo@(?<currentValue>[0-9.]+)\""],
       "depNameTemplate": "@effect/tsgo",
