@@ -140,3 +140,40 @@ test("a config that extends one preset gets only the rules of that concern", () 
       "README.md readme/no-unshipped-links",
     ]);
   }).pipe(services.runPromise));
+
+const readmeErrors = (
+  text: string,
+): Effect.Effect<readonly string[], Y8Error | PlatformError, FileSystem.FileSystem | Path.Path> =>
+  lintRepository({ "package.json": PACKAGE, "README.md": text, "dist/index.js": "" }).pipe(
+    Effect.map((diagnostics) =>
+      pipe(
+        errorsOf(diagnostics),
+        Arr.filter((line) => line === "README.md readme/summary" || Str.includes("MD033")(line)),
+      ),
+    ),
+  );
+
+const BODY =
+  "Demo does one thing.\n\n```sh\nnpm i @scope/demo\n```\n\nThe package ships agent skills for coding agents.\n";
+const HTML_LOGO = '<img src="logo.svg" alt="demo logo" width="256">';
+const MARKDOWN_LOGO = "![demo logo](logo.svg)";
+
+test.each([
+  { logo: HTML_LOGO, expected: [] },
+  { logo: MARKDOWN_LOGO, expected: [] },
+  { logo: `${HTML_LOGO}\n\n## Usage`, expected: ["README.md readme/summary"] },
+  { logo: `${MARKDOWN_LOGO}\n\n## Usage`, expected: ["README.md readme/summary"] },
+])("a logo under the title is allowed but not taken for the summary: $logo", ({ logo, expected }) =>
+  Effect.gen(function* logoUnderTitle() {
+    const errors = yield* readmeErrors(`# @scope/demo\n\n${logo}\n\n${BODY}`);
+    expect(errors).toStrictEqual(expected);
+  }).pipe(services.runPromise),
+);
+
+test("inline HTML other than images is still reported", () =>
+  Effect.gen(function* otherHtml() {
+    const errors = yield* readmeErrors(
+      `# @scope/demo\n\n${BODY}\n<details><summary>More</summary>Text.</details>\n`,
+    );
+    expect(errors).toStrictEqual(["README.md markdownlint/MD033", "README.md markdownlint/MD033"]);
+  }).pipe(services.runPromise));
