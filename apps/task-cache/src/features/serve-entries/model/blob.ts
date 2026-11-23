@@ -1,6 +1,7 @@
 import { Effect, Option, pipe } from "effect";
 
 import { blobIdOf, blobOf, entryOf } from "#/entities/entry/index.ts";
+import type { BlobRef } from "#/entities/entry/index.ts";
 import { spendObjectReads } from "#/entities/spending/index.ts";
 import { STATUS, status, stream } from "#/shared/lib/responses.ts";
 
@@ -8,9 +9,9 @@ const ONCE = 1;
 
 export const readBlob = Effect.fn("serveEntries.readBlob")(function* readBlob(
   namespace: string,
-  id: number,
+  ref: BlobRef,
 ) {
-  const found = yield* entryOf(namespace, id);
+  const found = yield* entryOf(namespace, ref);
   const entry = pipe(
     found,
     Option.filter((candidate) => Option.isSome(blobIdOf(candidate))),
