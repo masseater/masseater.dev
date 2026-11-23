@@ -44,11 +44,6 @@
       "ignoreTests": false
     },
     {
-      "description": "vite-plus は @vitest/browser-playwright を同じ版に固定した peer として持つ。単独で上げると vitest が 2 つ入り、@effect/vitest が別の vitest を読んで suite が見つからず test が落ちる。vite-plus を上げる組に任せる。",
-      "matchPackageNames": ["@vitest/browser-playwright"],
-      "enabled": false
-    },
-    {
       "description": "patches/ の crate はルートの Cargo.lock で解決される。Renovate は写しの Cargo.toml と写し自身の Cargo.lock だけを上げ、ルートの Cargo.lock と食い違って cargo の --locked が落ちる (#1283, #1284, #1289)。更新しない。",
       "matchFileNames": ["patches/**"],
       "enabled": false
