@@ -146,10 +146,11 @@ export const setUp: Fn<
     const format = navigator.gpu.getPreferredCanvasFormat();
     const sharedLayout = sharedLayoutOf(device);
     const vertex = device.createShaderModule({ code: VERTEX });
-    const pipelines = yield* Effect.tryPromise({
-      try: () =>
-        Promise.all(
-          Arr.zipWith(passes, gpu.passes, (pass, code) =>
+    const pipelines = yield* Effect.forEach(
+      Arr.zip(passes, gpu.passes),
+      ([pass, code]) =>
+        Effect.tryPromise({
+          try: () =>
             pipelineOf({
               device,
               sharedLayout,
@@ -157,10 +158,10 @@ export const setUp: Fn<
               gpu: code,
               format: formatOf({ pass, screen: format }),
             }),
-          ),
-        ),
-      catch: unavailable("pipeline"),
-    });
+          catch: unavailable("pipeline"),
+        }),
+      { concurrency: "unbounded" },
+    );
     const computeLayout = computeLayoutOf(device);
     const computePipelines = yield* Effect.tryPromise({
       try: () => computePipelinesOf({ device, layout: computeLayout, computes: gpu.computes }),

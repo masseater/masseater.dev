@@ -64,10 +64,10 @@ catalog:
   codemirror: 6.0.2
   comlink: 4.4.2
   typescript-wasm: npm:typescript@7.1.0-dev.20261106.1
-  "@better-auth/drizzle-adapter": 1.7.26
-  "@better-auth/mcp": 1.7.26
-  "@better-auth/oauth-provider": 1.7.26
-  "@better-auth/passkey": 1.7.26
+  "@better-auth/drizzle-adapter": 1.7.27
+  "@better-auth/mcp": 1.7.27
+  "@better-auth/oauth-provider": 1.7.27
+  "@better-auth/passkey": 1.7.27
   "@modelcontextprotocol/client": 2.4.0
   "@modelcontextprotocol/server": 2.4.0
   auth: 1.7.26
@@ -295,7 +295,7 @@ catalogs:
     "@elysiajs/eden": 1.4.9
     "@tanstack/react-query": 5.108.1
     "@tanstack/react-start": 1.169.7
-    better-auth: 1.7.26
+    better-auth: 1.7.27
     "@alchemy.run/cloudflare": 2.0.0-beta.87
     "@alchemy.run/github": 2.0.0-beta.87
     alchemy: 2.0.0-beta.87
@@ -312,6 +312,7 @@ catalogs:
     typescript: 7.1.0-beta
     vite-plus: 1.7.0
 overrides:
+  "@effect/vitest>vitest": 5.1.0 # exit: npm:vite-plus@>1.7.0
   "@feature-sliced/filesystem>typescript": "catalog:stack" # exit: npm:@feature-sliced/filesystem allows typescript@>=7
   "langium>vscode-languageserver": "catalog:" # exit: npm:langium allows vscode-languageserver@>=11
   "@remotion/eslint-plugin>@typescript-eslint/utils": "-" # exit: npm:@remotion/eslint-plugin allows @typescript-eslint/utils@>=8
@@ -361,15 +362,6 @@ patchedDependencies:
   "@voidzero-dev/vite-plus-core@8.3.8000": patches/@voidzero-dev__vite-plus-core@8.3.8000.patch # exit: npm:@voidzero-dev/vite-plus-core@>8.3.8000
   "@tanstack/intent@0.5.6": patches/@tanstack__intent@0.5.6.patch # exit: npm:@tanstack/intent@>0.5.6
 minimumReleaseAgeExclude:
-  - "@r_masseater/vite-plus-adopt@0.10.2"
-  - "@effect/tsgo-darwin-arm64@0.70.0"
-  - "@effect/tsgo-darwin-x64@0.70.0"
-  - "@effect/tsgo-linux-arm64@0.70.0"
-  - "@effect/tsgo-linux-arm@0.70.0"
-  - "@effect/tsgo-linux-x64@0.70.0"
-  - "@effect/tsgo-win32-arm64@0.70.0"
-  - "@effect/tsgo-win32-x64@0.70.0"
-  - "@effect/tsgo@0.70.0"
   - "@voidzero-dev/vite-plus-core@8.3.8000"
   - "@voidzero-dev/vite-plus-darwin-arm64@1.7.0"
   - "@voidzero-dev/vite-plus-darwin-x64@1.7.0"

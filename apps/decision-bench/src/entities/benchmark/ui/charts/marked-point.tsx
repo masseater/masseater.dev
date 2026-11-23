@@ -1,7 +1,7 @@
 import { Schema } from "effect";
 import type { ReactElement } from "react";
 
-import { ORIGIN, REFERENCE_COLOR } from "./chart-style.ts";
+import { ORIGIN, REFERENCE_COLOR, SERIES_COLOR } from "./chart-style.ts";
 
 const RADIUS = 5;
 const FONT_SIZE = 11;
@@ -22,16 +22,14 @@ const isMarked = Schema.is(MarkSchema);
 export const MarkedPoint = ({
   cx = ORIGIN,
   cy = ORIGIN,
-  fill,
   payload,
 }: Readonly<{
   cx: number | undefined;
   cy: number | undefined;
-  fill?: string | undefined;
   payload?: unknown;
 }>): ReactElement => {
   if (!isMarked(payload)) {
-    return <circle cx={cx} cy={cy} r={RADIUS} fill={fill} />;
+    return <circle cx={cx} cy={cy} r={RADIUS} fill={SERIES_COLOR} />;
   }
   const { mark, spot, color } = payload;
   const leader = {

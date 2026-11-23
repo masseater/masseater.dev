@@ -52,7 +52,7 @@ const registerSend: Register = (server) => {
     },
     (input, ctx) =>
       enqueue({ text: input.text, sender: clientOf(ctx) }).pipe(
-        Effect.flatMap(({ id }) => wakeProject.pipe(Effect.map((woke) => ({ id, woke })))),
+        Effect.zipWith(wakeProject, ({ id }, woke) => ({ id, woke })),
         runTool({ count: one }),
       ),
   );
