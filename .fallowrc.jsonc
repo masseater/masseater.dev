@@ -43,6 +43,7 @@
   ],
   "overrides": [{ "files": ["**/generated/**"], "rules": { "unused-enum-members": "off" } }],
   "ignoreDependencies": ["@effect/language-service", "fallow-similar-code"],
+  "ignoreUnresolvedImports": ["/vision/**"],
   "workspaces": {
     "settings": {
       "libs/h56m-presets": {
