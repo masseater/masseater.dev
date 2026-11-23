@@ -12,6 +12,7 @@ import type { SkillMdOptions } from "./skill-md-preset.ts";
 export const markdownStyle = (): Y8Config => ({
   rules: {
     "markdownlint/MD013": "off",
+    "markdownlint/MD033": ["error", { allowed_elements: ["img"] }],
     "markdownlint/MD034": "off",
     "markdownlint/MD060": "off",
     "markdownlint/MD024": ["error", { siblings_only: true }],

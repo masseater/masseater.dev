@@ -1,6 +1,6 @@
 # @r_masseater/wism
 
-![wism logo](logo.svg)
+<img src="logo.svg" alt="wism logo" width="256">
 
 The engine of a structure and dependency linter for TypeScript, Rust and Markdown, configured from
 `vite.config.ts`.
