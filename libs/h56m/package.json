@@ -27,6 +27,7 @@
     "LICENSE",
     "THIRD-PARTY-NOTICES.txt",
     "dist",
+    "logo.svg",
     "skills/scan-secrets"
   ],
   "type": "module",
