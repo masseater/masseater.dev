@@ -81,6 +81,7 @@ const rules = {
   "import/exports-last": "off",
   ...testRules,
   ...webGuidanceRules,
+  "msch-lint/array-from-async": "error",
   "msch-lint/ecosystem-readers": "error",
   "msch-lint/get-or-insert": "error",
   "msch-lint/mcp-tool-layer": "error",
