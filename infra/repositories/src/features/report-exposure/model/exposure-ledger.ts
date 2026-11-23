@@ -1,5 +1,5 @@
-import { Ledger, Report } from "@masseater.dev/exposure-protocol";
-import type { LedgerEntryValue } from "@masseater.dev/exposure-protocol";
+import { Ledger } from "@masseater.dev/exposure-protocol";
+import type { LedgerEntryValue, Report } from "@masseater.dev/exposure-protocol";
 import type { ClaudeRequest } from "@masseater.dev/exposure-protocol/claude-requests";
 import {
   Array as Arr,
@@ -22,6 +22,20 @@ const LEDGER_KEY = "exposure_ledger";
 const REPORTED_KEY = "exposure_reported";
 const SENDER = "exposure-check";
 const RENOTIFY_AFTER = Duration.toMillis(Duration.fromInputUnsafe("1 day"));
+const MAX_FINDINGS = 200;
+const MAX_TEXT_LENGTH = 500;
+const PRINTABLE_LINE = /^[\p{L}\p{M}\p{N}\p{P}\p{S} ]+$/u;
+
+const InstructionText = Schema.String.check(
+  Schema.isMaxLength(MAX_TEXT_LENGTH),
+  Schema.isPattern(PRINTABLE_LINE),
+);
+
+const BoundedReport = Schema.Struct({
+  findings: Schema.Array(
+    Schema.Struct({ fingerprint: InstructionText, line: InstructionText }),
+  ).check(Schema.isMaxLength(MAX_FINDINGS)),
+});
 
 const Reported = Schema.Record(Schema.String, Schema.Finite);
 
@@ -50,7 +64,7 @@ class QueueRefused extends taggedError<QueueRefused, { readonly brand: unique sy
 ) {}
 
 export const LedgerJson = Schema.fromJsonString(Ledger);
-export const ReportJson = Schema.fromJsonString(Report);
+export const ReportJson = Schema.fromJsonString(BoundedReport);
 const ReportedJson = Schema.fromJsonString(Reported);
 
 const stored = <Codec extends Schema.Codec<unknown, string>>({

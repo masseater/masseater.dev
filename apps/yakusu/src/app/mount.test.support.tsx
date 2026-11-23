@@ -29,6 +29,14 @@ const attach = (engine: Engine): Effect.Effect<Mounted> =>
     return { style, container, root };
   });
 
+const fontsLoaded = Effect.gen(function* fontsLoaded() {
+  const faces = yield* Effect.sync(() => [...document.fonts]);
+  yield* Effect.forEach(faces, (face) => Effect.promise(() => face.load()), {
+    concurrency: "unbounded",
+    discard: true,
+  });
+});
+
 export const mount = (engine: Engine): Effect.Effect<void, never, Scope.Scope> =>
   Effect.acquireRelease(attach(engine), ({ style, container, root }) =>
     Effect.sync(() => {
@@ -37,8 +45,4 @@ export const mount = (engine: Engine): Effect.Effect<void, never, Scope.Scope> =
       style.remove();
       document.documentElement.classList.remove("dark");
     }),
-  ).pipe(
-    Effect.andThen(
-      Effect.promise(() => Promise.all(Array.from(document.fonts, (face) => face.load()))),
-    ),
-  );
+  ).pipe(Effect.andThen(fontsLoaded));

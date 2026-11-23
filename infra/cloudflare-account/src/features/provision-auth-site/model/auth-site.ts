@@ -1,6 +1,8 @@
-import { Website } from "@alchemy.run/cloudflare";
+import { Website, Workers } from "@alchemy.run/cloudflare";
 import { makeRandom } from "alchemy";
-import { Effect, Option } from "effect";
+import { Effect, Hash, Option } from "effect";
+
+const AUTH_REQUESTS_PER_MINUTE = 60;
 
 export interface AuthSiteProps<Bindings> {
   readonly domain: string;
@@ -16,13 +18,18 @@ export const authSite = Effect.fn("authSite")(function* authSite<Bindings extend
   cpuMs,
 }: AuthSiteProps<Bindings>) {
   const BETTER_AUTH_SECRET = yield* makeRandom("BetterAuthSecret");
+  const AUTH_LIMITER = Workers.RateLimit("AUTH_LIMITER", {
+    namespaceId: Math.abs(Hash.string(domain)),
+    simple: { limit: AUTH_REQUESTS_PER_MINUTE, period: 60 },
+  });
   return yield* Website.Vite("Web", {
     ...Option.match(name, { onNone: () => ({}), onSome: (siteName) => ({ name: siteName }) }),
     compatibility: { flags: ["global_fetch_strictly_public"] },
     logpush: true,
     limits: { cpuMs },
     domain,
-    env: { ...bindings, BETTER_AUTH_SECRET },
+    workersDev: false,
+    env: { ...bindings, BETTER_AUTH_SECRET, AUTH_LIMITER },
     viteEnvironments: { entry: "ssr", children: ["rsc"] },
   });
 });

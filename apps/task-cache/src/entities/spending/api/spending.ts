@@ -1,11 +1,12 @@
 import { env } from "cloudflare:workers";
-import { eq, lt, min } from "drizzle-orm";
+import { eq, lt, max, min } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/d1";
 import { Array as Arr, DateTime, Effect, Option } from "effect";
 
 import { objectReads, uploads } from "#/entities/spending/model/spending.table.ts";
 import { Limits } from "#/shared/config/index.ts";
-import { StoreFailed, storeFailed } from "#/shared/lib/store-failed.ts";
+import { storeFailed } from "#/shared/lib/store-failed.ts";
+import type { StoreFailed } from "#/shared/lib/store-failed.ts";
 
 const LEDGERS = { objectReads, uploads } as const;
 
@@ -18,43 +19,52 @@ const today = DateTime.now.pipe(Effect.map(DateTime.formatIsoDateUtc));
 const queried = <Found>(query: () => Promise<Found>): Effect.Effect<Found, StoreFailed> =>
   Effect.tryPromise({ try: query, catch: storeFailed });
 
-const missing = Effect.fail(StoreFailed.make({ message: "spending row missing" }));
+type Kind = keyof typeof LEDGERS;
 
-const spentToday = Effect.fn("spending.spentToday")(function* spentToday(
-  kind: keyof typeof LEDGERS,
-  count: number,
-) {
+const NOTHING = 0;
+
+const spentBy = Effect.fn("spending.spentBy")(function* spentBy(kind: Kind, day: string) {
   const ledger = LEDGERS[kind];
-  const day = yield* today;
-  const rows = Arr.replicate({ day }, count);
-  const added = yield* queried(() => db.insert(ledger).values(rows).returning({ id: ledger.id }));
-  const firsts = yield* queried(() =>
+  const ranges = yield* queried(() =>
     db
-      .select({ id: min(ledger.id) })
+      .select({ first: min(ledger.id), newest: max(ledger.id) })
       .from(ledger)
       .where(eq(ledger.day, day)),
   );
-  const newest = Option.map(Arr.last(added), (row) => row.id);
-  const first = Option.flatMapNullishOr(Arr.head(firsts), (row) => row.id);
-  return yield* Option.match(Option.all({ newest, first }), {
-    onNone: () => missing,
-    onSome: (ids) => Effect.succeed(ids.newest - ids.first + ONCE),
+  const first = Option.flatMapNullishOr(Arr.head(ranges), (row) => row.first);
+  const newest = Option.flatMapNullishOr(Arr.head(ranges), (row) => row.newest);
+  return Option.match(Option.all({ newest, first }), {
+    onNone: () => NOTHING,
+    onSome: (ids) => ids.newest - ids.first + ONCE,
   });
+});
+
+const spentToday = Effect.fn("spending.spentToday")(function* spentToday(
+  kind: Kind,
+  count: number,
+  limit: number,
+) {
+  const day = yield* today;
+  const before = yield* spentBy(kind, day);
+  if (before + count > limit) {
+    return false;
+  }
+  yield* queried(() => db.insert(LEDGERS[kind]).values(Arr.replicate({ day }, count)));
+  const spent = yield* spentBy(kind, day);
+  return spent <= limit;
 });
 
 export const spendUpload: Effect.Effect<boolean, StoreFailed> = Effect.gen(
   function* spendOneUpload() {
-    const spent = yield* spentToday("uploads", ONCE);
     const { uploadsPerDay } = yield* Limits;
-    return spent <= uploadsPerDay;
+    return yield* spentToday("uploads", ONCE, uploadsPerDay);
   },
 );
 
 export const spendObjectReads = (count: number): Effect.Effect<boolean, StoreFailed> =>
   Effect.gen(function* spendReads() {
-    const spent = yield* spentToday("objectReads", count);
     const { objectReadsPerDay } = yield* Limits;
-    return spent <= objectReadsPerDay;
+    return yield* spentToday("objectReads", count, objectReadsPerDay);
   });
 
 export const forgetPastDays = Effect.gen(function* forgetPastDays() {

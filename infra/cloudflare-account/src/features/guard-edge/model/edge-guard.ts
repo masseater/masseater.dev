@@ -5,6 +5,8 @@ import { Array as Arr, Effect, Record as Rec, String as Str, pipe } from "effect
 
 import { SCANNER_PROBES } from "#/features/guard-edge/config/scanner-probes.ts";
 
+import { rateLimitRules } from "./rate-limit.ts";
+
 const HONEYPOT_PATHS = ["/.env", "/wp-login.php"] as const;
 
 const PATH = "lower(http.request.uri.path)";
@@ -60,6 +62,7 @@ const honeypot = Effect.fn("honeypot")(function* honeypot({ appName, domain }: E
     name: `${appName}-honeypot`,
     main: decodeURIComponent(new URL("./honeypot.ts", import.meta.url).pathname),
     logpush: true,
+    workersDev: false,
     env: { HONEYPOT },
     routes: pipe(
       HONEYPOT_PATHS,
@@ -75,6 +78,12 @@ export const edgeGuard = Effect.fn("edgeGuard")(function* edgeGuard(props: EdgeG
     name: `${props.appName}-scanner-block`,
     phase: "http_request_firewall_custom",
     rules: scannerRules(props.domain),
+  });
+  yield* Ruleset.Ruleset("RateLimit", {
+    zone,
+    name: `${props.appName}-rate-limit`,
+    phase: "http_ratelimit",
+    rules: rateLimitRules,
   });
   return yield* honeypot(props);
 });

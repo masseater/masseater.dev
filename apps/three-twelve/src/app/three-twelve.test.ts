@@ -3,7 +3,13 @@ import { beforeEach, expect, test, vi } from "vite-plus/test";
 
 import { BASE_PATH } from "#/shared/config/index.ts";
 
-import { KNOWN_TOKEN, recordedCalls, resetCalls } from "./three-twelve.test.support.ts";
+import {
+  KNOWN_TOKEN,
+  flood,
+  limitedKeys,
+  recordedCalls,
+  resetCalls,
+} from "./three-twelve.test.support.ts";
 import worker from "./three-twelve.ts";
 
 vi.mock("cloudflare:workers", () => import("./three-twelve.test.support.ts"));
@@ -17,6 +23,10 @@ const OK = 200;
 const UNAUTHORIZED = 401;
 
 const NOT_FOUND = 404;
+
+const TOO_MANY = 429;
+
+const IP = "192.0.2.1";
 
 const call = (
   method: string,
@@ -67,5 +77,25 @@ test("無い経路はトークンを確かめる前に 404 で断る", () =>
       const response = yield* call("DELETE", "/audio", { authorization: `Bot ${KNOWN_TOKEN}` });
       expect(response.status).toBe(NOT_FOUND);
       expect(recordedCalls()).toStrictEqual([]);
+    }),
+  ));
+
+test("上限を超えた送信元は、トークンを確かめる前に 429 で断る", () =>
+  Effect.runPromise(
+    Effect.gen(function* flooded() {
+      flood();
+      const status = yield* call("GET", "/status", { authorization: `Bot ${KNOWN_TOKEN}` });
+      const token = yield* call("PUT", "/token", { authorization: "Bot unknown.token" });
+      expect(status.status).toBe(TOO_MANY);
+      expect(token.status).toBe(TOO_MANY);
+      expect(recordedCalls()).toStrictEqual([]);
+    }),
+  ));
+
+test("上限は送信元の IP ごとに数える", () =>
+  Effect.runPromise(
+    Effect.gen(function* countsByIp() {
+      yield* call("GET", "/status", { "cf-connecting-ip": IP });
+      expect(limitedKeys()).toStrictEqual([IP]);
     }),
   ));

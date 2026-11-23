@@ -141,7 +141,7 @@ fn command(program: &Path) -> tokio::process::Command {
     #[cfg(target_os = "windows")]
     command.creation_flags(CREATE_NO_WINDOW);
     command
-        .args(["--encoding", "utf-8", "--no-playlist"])
+        .args(["--ignore-config", "--encoding", "utf-8", "--no-playlist"])
         .kill_on_drop(true);
     command
 }
@@ -178,49 +178,104 @@ fn described_from(output: &str) -> Fetching<Described> {
     }
 }
 
+fn page(url: &str) -> Fetching<reqwest::Url> {
+    reqwest::Url::parse(url)
+        .ok()
+        .filter(|page| matches!(page.scheme(), "http" | "https"))
+        .ok_or_else(|| failure(format!("not an http or https URL: {url}")))
+}
+
+fn describing(program: &Path, url: &str) -> Fetching<tokio::process::Command> {
+    let page = page(url)?;
+    let mut command = command(program);
+    command
+        .args(["--skip-download", "--print", "title", "--print", "uploader"])
+        .args(["--", page.as_str()]);
+    Ok(command)
+}
+
 #[tracing::instrument(skip(program))]
 pub async fn describe(program: &Path, url: &str) -> Fetching<Described> {
-    let output = printed(
-        command(program)
-            .args(["--skip-download", "--print", "title", "--print", "uploader"])
-            .arg(url),
-    )
-    .await?;
+    let output = printed(&mut describing(program, url)?).await?;
     described_from(&output)
+}
+
+fn downloading(program: &Path, url: &str, directory: &Path) -> Fetching<tokio::process::Command> {
+    let page = page(url)?;
+    let mut command = command(program);
+    command
+        .args([
+            "--no-progress",
+            "--no-mtime",
+            "--format",
+            "bestaudio/best",
+            "--output",
+        ])
+        .arg(directory.join("source.%(ext)s"))
+        .args([
+            "--print",
+            "after_move:filepath",
+            "--print",
+            "after_move:title",
+            "--print",
+            "after_move:uploader",
+        ])
+        .args(["--", page.as_str()]);
+    Ok(command)
 }
 
 #[tracing::instrument(skip(program, directory))]
 pub async fn download(program: &Path, url: &str, directory: &Path) -> Fetching<Downloaded> {
-    let template = directory.join("source.%(ext)s");
-    let output = printed(
-        command(program)
-            .args([
-                "--no-progress",
-                "--no-mtime",
-                "--format",
-                "bestaudio/best",
-                "--output",
-            ])
-            .arg(&template)
-            .args([
-                "--print",
-                "after_move:filepath",
-                "--print",
-                "after_move:title",
-                "--print",
-                "after_move:uploader",
-            ])
-            .arg(url),
-    )
-    .await?;
+    let output = printed(&mut downloading(program, url, directory)?).await?;
     downloaded_from(&output)
 }
 
 #[cfg(test)]
 mod tests {
-    use std::path::PathBuf;
+    use std::path::{Path, PathBuf};
 
-    use super::{described_from, downloaded_from};
+    use super::{described_from, describing, downloaded_from, downloading};
+
+    const PROGRAM: &str = "yt-dlp";
+    const PAGE: &str = "https://example.com/watch?v=1";
+
+    fn arguments(command: &tokio::process::Command) -> Vec<&str> {
+        command
+            .as_std()
+            .get_args()
+            .filter_map(std::ffi::OsStr::to_str)
+            .collect()
+    }
+
+    #[test]
+    fn the_url_follows_the_end_of_options_and_no_config_file_is_read() {
+        let directory = Path::new("/tmp/song");
+        let program = Path::new(PROGRAM);
+        for command in [
+            describing(program, PAGE).unwrap(),
+            downloading(program, PAGE, directory).unwrap(),
+        ] {
+            let arguments = arguments(&command);
+            assert!(arguments.contains(&"--ignore-config"));
+            assert_eq!(arguments[arguments.len() - 2..], ["--", PAGE]);
+        }
+    }
+
+    #[test]
+    fn only_http_urls_reach_the_command_line() {
+        let directory = Path::new("/tmp/song");
+        let program = Path::new(PROGRAM);
+        for location in [
+            "--config-locations=/tmp/evil.conf",
+            "-U",
+            "file:///etc/passwd",
+            "song.mp3",
+            "",
+        ] {
+            assert!(describing(program, location).is_err());
+            assert!(downloading(program, location, directory).is_err());
+        }
+    }
 
     #[test]
     fn printed_fields_are_read_from_the_last_three_lines() {

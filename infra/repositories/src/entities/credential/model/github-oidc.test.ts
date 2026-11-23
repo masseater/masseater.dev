@@ -1,9 +1,15 @@
-import { Array as Arr, Option, Record as Rec, pipe } from "effect";
+import { Array as Arr, Effect, Option, Record as Rec, pipe } from "effect";
 import { expect, test } from "vite-plus/test";
 
 import { WORKFLOW_GITHUB_GRANTS, grantPolicies } from "./credential-grants.ts";
 import type { Claims } from "./github-oidc.ts";
-import { grantKeys, isGranted, workflowFile, workflowGrant } from "./github-oidc.ts";
+import {
+  grantKeys,
+  isGranted,
+  sourceWorkflows,
+  workflowFile,
+  workflowGrant,
+} from "./github-oidc.ts";
 
 const PUSH: typeof Claims.Type = {
   repository_owner: "masseater",
@@ -108,6 +114,17 @@ test("the real npm list grants only the npm environment of masseater.dev", () =>
   expect(isListedForNpm({ ...elsewhere, environment: "npm" })).toBe(false);
 });
 
+const isListedForAtproto = (claims: typeof Claims.Type): boolean =>
+  Arr.some(grantKeys(claims), (key) => Arr.contains(BROKER_GRANTS.atproto, key));
+
+test("the real atproto list grants only the bootstrap environment of masseater.dev", () => {
+  const elsewhere = jobIn({ repository: UNLISTED, workflow: "deploy.yml" });
+  expect(isListedForAtproto(PUSH)).toBe(false);
+  expect(isListedForAtproto(inEnvironment("production"))).toBe(false);
+  expect(isListedForAtproto(inEnvironment("bootstrap"))).toBe(true);
+  expect(isListedForAtproto({ ...elsewhere, environment: "bootstrap" })).toBe(false);
+});
+
 test("a bot workflow in an unlisted repository is granted for that repository alone", () => {
   const autofix = jobIn({ repository: UNLISTED, workflow: "autofix.yml" });
   expect(isGranted(BROKER_GRANTS)(autofix)).toBe(true);
@@ -178,3 +195,56 @@ test("every bot workflow grant except the merge queue and publish carries only c
     ),
   ).toStrictEqual([]);
 });
+
+const grantsIn = (
+  claims: typeof Claims.Type,
+  isSource: (repository: string) => Effect.Effect<boolean>,
+): Effect.Effect<typeof BROKER_GRANTS> =>
+  sourceWorkflows({ workflows: BROKER_GRANTS.workflows, isSource })(claims).pipe(
+    Effect.map((workflows) => ({ ...BROKER_GRANTS, workflows })),
+  );
+
+const asked = (answer: boolean) => (): Effect.Effect<boolean> => Effect.succeed(answer);
+
+const unasked = (repository: string): Effect.Effect<boolean> =>
+  Effect.die(`${repository} must not be looked up`);
+
+const AUTOFIX = jobIn({ repository: UNLISTED, workflow: "autofix.yml" });
+
+test("a bot workflow in a fork of someone else's repository gets no workflow grant and is not granted", () =>
+  Effect.runPromise(
+    Effect.gen(function* fork() {
+      const grants = yield* grantsIn(AUTOFIX, asked(false));
+      expect(workflowGrant(grants.workflows)(AUTOFIX)).toStrictEqual(Option.none());
+      expect(isGranted(grants)(AUTOFIX)).toBe(false);
+    }),
+  ));
+
+test("a bot workflow in the owner's own repository keeps its workflow grant", () =>
+  Effect.runPromise(
+    Effect.gen(function* source() {
+      const grants = yield* grantsIn(AUTOFIX, (repository) =>
+        Effect.succeed(repository === UNLISTED),
+      );
+      expect(grants.workflows).toStrictEqual(BROKER_GRANTS.workflows);
+      expect(isGranted(grants)(AUTOFIX)).toBe(true);
+    }),
+  ));
+
+test("a fork listed by name keeps its listed grants but loses the workflow grant", () =>
+  Effect.runPromise(
+    Effect.gen(function* listedFork() {
+      const autofix = jobIn({ repository: "masseater.dev", workflow: "autofix.yml" });
+      const grants = yield* grantsIn(autofix, asked(false));
+      expect(workflowGrant(grants.workflows)(autofix)).toStrictEqual(Option.none());
+      expect(isGranted(grants)(autofix)).toBe(true);
+    }),
+  ));
+
+test("a workflow outside the workflow table is decided without asking whether the repository is a fork", () =>
+  Effect.runPromise(
+    Effect.gen(function* outsideTable() {
+      const grants = yield* grantsIn(PUSH, unasked);
+      expect(grants.workflows).toStrictEqual(BROKER_GRANTS.workflows);
+    }),
+  ));

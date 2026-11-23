@@ -30,6 +30,7 @@ const web = Effect.gen(function* web() {
     name: `${PREFIX}trait-builder`,
     main: "./src/features/build-traits/api/trait-builder.ts",
     logpush: true,
+    workersDev: false,
     crons: [TRAIT_CRON],
     env: {
       DB,

@@ -9,6 +9,7 @@
   },
   "exports": {
     ".": "./src/entities/policy/index.ts",
+    "./request": "./src/features/guard-writes/index.ts",
     "./response": "./src/features/secure-response/index.ts",
     "./static": "./src/features/write-static-headers/index.ts"
   },

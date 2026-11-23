@@ -45,7 +45,11 @@ impl Appender {
     pub fn line(&self, json: &serde_json::Value) -> io::Result<()> {
         let mut bytes = serde_json::to_vec(json)?;
         bytes.push(NEWLINE);
-        self.append(&bytes)
+        let mut file = self.file.lock().unwrap_or_else(PoisonError::into_inner);
+        if file.metadata()?.len() > LIMIT {
+            return Err(io::ErrorKind::FileTooLarge.into());
+        }
+        file.write_all(&bytes)
     }
 }
 
@@ -72,7 +76,7 @@ mod tests {
     use std::fs;
     use std::io::Write;
 
-    use super::Appender;
+    use super::{Appender, LIMIT};
 
     #[test]
     fn keeps_lines_whole_when_two_writers_share_the_file() {
@@ -86,5 +90,22 @@ mod tests {
         spans.write_all(b"[]}\n").unwrap();
         let written = fs::read_to_string(dir.path().join("traces.jsonl")).unwrap();
         assert_eq!(written, "{\"resourceSpans\":[]}\n{\"resourceSpans\":[]}\n");
+    }
+
+    #[test]
+    fn refuses_screen_lines_once_the_file_has_passed_the_limit() {
+        let dir = tempfile::tempdir().unwrap();
+        let screen = Appender::open(dir.path(), "logs").unwrap();
+        let file = dir.path().join("logs.jsonl");
+        let batch = serde_json::json!({ "resourceLogs": [] });
+        screen.line(&batch).unwrap();
+        fs::OpenOptions::new()
+            .write(true)
+            .open(&file)
+            .unwrap()
+            .set_len(LIMIT + 1)
+            .unwrap();
+        assert!(screen.line(&batch).is_err());
+        assert_eq!(fs::metadata(&file).unwrap().len(), LIMIT + 1);
     }
 }

@@ -1,4 +1,5 @@
 import { makeD1 } from "@masseater.dev/d1-test";
+import type { Database, Statement } from "@masseater.dev/d1-test";
 import { Array as Arr, Effect, MutableRef, Option, Schema, String as Str, pipe } from "effect";
 import { vi } from "vite-plus/test";
 
@@ -35,6 +36,49 @@ const salt = MutableRef.make(FIRST_SALT);
 
 const assetRequests = MutableRef.make<readonly Request[]>([]);
 
+const flooded = MutableRef.make(false);
+
+const limited = MutableRef.make<readonly string[]>([]);
+
+const returned = MutableRef.make<readonly number[]>([]);
+
+const counting = (statement: Statement): Statement => ({
+  ...statement,
+  bind: (...params) => counting(statement.bind(...params)),
+  all: () =>
+    Effect.runPromise(
+      Effect.promise(() => statement.all()).pipe(
+        Effect.tap(({ results }) =>
+          Effect.sync(() => {
+            MutableRef.update(returned, Arr.append(results.length));
+          }),
+        ),
+      ),
+    ),
+  raw: () =>
+    Effect.runPromise(
+      Effect.promise(() => statement.raw()).pipe(
+        Effect.tap((rows) =>
+          Effect.sync(() => {
+            MutableRef.update(returned, Arr.append(rows.length));
+          }),
+        ),
+      ),
+    ),
+});
+
+const stars: Database = {
+  ...d1.DB,
+  prepare: (sql) => counting(d1.DB.prepare(sql)),
+};
+
+const limiter = {
+  limit: ({ key }: Readonly<{ key: string }>): Promise<{ success: boolean }> => {
+    MutableRef.update(limited, Arr.append(key));
+    return Promise.resolve({ success: !MutableRef.get(flooded) });
+  },
+};
+
 const missing = (): Response => new Response("", { status: NOT_FOUND });
 
 const image = (): Response =>
@@ -69,7 +113,8 @@ const assets: Pick<Fetcher, "fetch"> = {
 };
 
 export const env = {
-  STARS: d1.DB,
+  STARS: stars,
+  STARS_LIMITER: limiter,
   ASSETS: assets,
   get VISITOR_SALT(): string {
     return MutableRef.get(salt);
@@ -84,7 +129,22 @@ export const changeSalt = (next: string): Effect.Effect<void> =>
 export const resetSite = Effect.sync(() => {
   MutableRef.set(salt, FIRST_SALT);
   MutableRef.set(assetRequests, []);
+  MutableRef.set(flooded, false);
+  MutableRef.set(limited, []);
+  MutableRef.set(returned, []);
 }).pipe(Effect.andThen(resetDatabase));
+
+export const flood = Effect.sync(() => {
+  MutableRef.set(flooded, true);
+});
+
+export const limitedKeys = Effect.sync(() => MutableRef.get(limited));
+
+export const forgetReturnedRows = Effect.sync(() => {
+  MutableRef.set(returned, []);
+});
+
+export const returnedRows = Effect.sync(() => MutableRef.get(returned));
 
 export const lastAssetRequest = Effect.sync(() => Arr.last(MutableRef.get(assetRequests)));
 

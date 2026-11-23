@@ -15,7 +15,11 @@ const SCOPE = "openid profile offline_access";
 
 const CLIENT_ID_DETAIL = { label: "クライアント ID", values: [CLIENT_ID] };
 
+const REGISTRATION_DETAIL = { label: "登録", values: ["未認証の自己登録"] };
+
 const REDIRECT_LABEL = "リダイレクト先";
+
+const REDIRECT_URI_DETAIL = { label: "リダイレクト URI", values: [REDIRECT_URI] };
 
 const SCOPES_DETAIL = { label: "スコープ", values: ["openid", "profile", "offline_access"] };
 
@@ -37,10 +41,16 @@ const redirectDetail = (shown: string): Readonly<{ label: string; values: readon
   values: [shown],
 });
 
-test("クライアントの情報とリダイレクト先がそろえば、名前・ID・ホスト・スコープを出して許可できる", () => {
+test("クライアントの情報とリダイレクト先がそろえば、名前・ID・自己登録・ホスト・URI・スコープを出して許可できる", () => {
   expect(consentView(REQUEST)).toStrictEqual({
     name: CLIENT_NAME,
-    details: [CLIENT_ID_DETAIL, redirectDetail(REDIRECT_HOST), SCOPES_DETAIL],
+    details: [
+      CLIENT_ID_DETAIL,
+      REGISTRATION_DETAIL,
+      redirectDetail(REDIRECT_HOST),
+      REDIRECT_URI_DETAIL,
+      SCOPES_DETAIL,
+    ],
     allow: "enabled",
   });
 });
@@ -60,9 +70,24 @@ test.each([
   ["com.example.app:/callback"],
   ["https://"],
   ["リダイレクト先ではない文字列"],
-])("https でないか URL として読めないリダイレクト先 %s は、そのまま出す", (redirectUri) => {
+])(
+  "https でないか URL として読めないリダイレクト先 %s は、そのまま 1 度だけ出す",
+  (redirectUri) => {
+    expect(
+      consentView({ ...REQUEST, redirectUri: Option.some(redirectUri) }).details,
+    ).toStrictEqual([
+      CLIENT_ID_DETAIL,
+      REGISTRATION_DETAIL,
+      redirectDetail(redirectUri),
+      SCOPES_DETAIL,
+    ]);
+  },
+);
+
+test("https のリダイレクト先は、ホストとは別に URI の全体も出す", () => {
+  const redirectUri = "https://claude.ai@evil.example/callback?next=1";
   expect(consentView({ ...REQUEST, redirectUri: Option.some(redirectUri) }).details).toContainEqual(
-    redirectDetail(redirectUri),
+    { label: REDIRECT_URI_DETAIL.label, values: [redirectUri] },
   );
 });
 
@@ -75,14 +100,22 @@ test("スコープは空白で区切り、空の要素と重複を除いて並�
 test("スコープの指定が無ければ、スコープの項目を出さない", () => {
   expect(consentView({ ...REQUEST, requestedScope: Option.none() }).details).toStrictEqual([
     CLIENT_ID_DETAIL,
+    REGISTRATION_DETAIL,
     redirectDetail(REDIRECT_HOST),
+    REDIRECT_URI_DETAIL,
   ]);
 });
 
 test("クライアントの情報を読めていなければ、クライアント ID を名前にして許可させない", () => {
   expect(consentView({ ...REQUEST, clientName: Option.none() })).toStrictEqual({
     name: CLIENT_ID,
-    details: [CLIENT_ID_DETAIL, redirectDetail(REDIRECT_HOST), SCOPES_DETAIL],
+    details: [
+      CLIENT_ID_DETAIL,
+      REGISTRATION_DETAIL,
+      redirectDetail(REDIRECT_HOST),
+      REDIRECT_URI_DETAIL,
+      SCOPES_DETAIL,
+    ],
     allow: "disabled",
   });
 });
@@ -90,7 +123,7 @@ test("クライアントの情報を読めていなければ、クライアン�
 test("リダイレクト先が分からなければ、その項目を出さず許可させない", () => {
   expect(consentView({ ...REQUEST, redirectUri: Option.none() })).toStrictEqual({
     name: CLIENT_NAME,
-    details: [CLIENT_ID_DETAIL, SCOPES_DETAIL],
+    details: [CLIENT_ID_DETAIL, REGISTRATION_DETAIL, SCOPES_DETAIL],
     allow: "disabled",
   });
 });

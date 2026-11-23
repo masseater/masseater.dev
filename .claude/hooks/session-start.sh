@@ -37,7 +37,7 @@ vp env on >&2
 vp install --frozen-lockfile >&2
 if [ ! -d node_modules/.vite/task-cache ]; then
   repository="$(git remote get-url origin | sed -E 's#\.git$##; s#.*[/:]([^/]+/[^/]+)$#\1#')"
-  artifact="$(gh api "repos/$repository/actions/artifacts?name=vp-cache.tar&per_page=5" --jq '[.artifacts[] | select(.expired | not)][0].id // empty' 2>/dev/null || true)"
+  artifact="$(gh api "repos/$repository/actions/artifacts?name=vp-cache.tar&per_page=5" --jq '[.artifacts[] | select((.expired | not) and .workflow_run.head_branch == "main" and .workflow_run.head_repository_id == .workflow_run.repository_id)][0].id // empty' 2>/dev/null || true)"
   if [ -n "$artifact" ]; then
     gh api "repos/$repository/actions/artifacts/$artifact/zip" | tar -x >&2 || rm -rf node_modules/.vite/task-cache
   fi

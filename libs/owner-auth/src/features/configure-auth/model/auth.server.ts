@@ -35,6 +35,10 @@ export interface OwnerAuthConfig {
   readonly resource: string;
 }
 
+const CLIENT_IP_HEADER = "cf-connecting-ip";
+
+const PASSKEY_LIMIT = { window: 60, max: 10 } as const;
+
 export const createOwnerAuth = ({
   origin,
   db,
@@ -47,6 +51,8 @@ export const createOwnerAuth = ({
 }: OwnerAuthConfig): Auth<OwnerAuthOptions> =>
   betterAuth<OwnerAuthOptions>({
     baseURL: origin,
+    advanced: { ipAddress: { ipAddressHeaders: [CLIENT_IP_HEADER] } },
+    rateLimit: { enabled: true, customRules: { "/passkey/*": PASSKEY_LIMIT } },
     database: drizzleAdapter(db, { provider: "sqlite", schema: { ...schema } }),
     disabledPaths: ["/token"],
     plugins: [
