@@ -35,13 +35,15 @@ export class TraitBuilder extends DurableObject {
 
   private readonly registry = traitRegistry();
 
+  private readonly model = this.ai(TRAIT_MODEL);
+
   private readonly harness = new PiHarness({
     harness: ({ storage, context, onWake }): Promise<Harness> => {
       const models = createModels();
       models.setProvider(this.ai.provider);
       return Harness.open(storage, { models, registry: this.registry, onWake }, context);
     },
-    defaults: { model: this.ai(TRAIT_MODEL), thinkingLevel: "low", maxTurns: MAX_TURNS },
+    defaults: { model: this.model, thinkingLevel: "low", maxTurns: MAX_TURNS },
   });
 
   private readonly gate = Semaphore.makeUnsafe(ONE_RUN);
@@ -51,7 +53,10 @@ export class TraitBuilder extends DurableObject {
   public run(): Promise<RunResult> {
     const session = this.harness.session();
     const conversation: Conversation = {
-      reset: () => session.reset(),
+      reset: async () => {
+        await session.setModel(this.model);
+        await session.reset();
+      },
       prompt: (input) => session.prompt(input),
     };
     const guarded = buildTraits({ conversation, translator: env.AI, ai: env.AI }).pipe(
