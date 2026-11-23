@@ -1,6 +1,6 @@
-use std::fmt::Write;
+use std::fmt::Write as _;
 use std::fs;
-use std::io;
+use std::io::{self, Write as _};
 use std::path::Path;
 
 const TOKEN_FILE: &str = "mcp-token";
@@ -14,13 +14,20 @@ fn hex(bytes: &[u8]) -> String {
 }
 
 fn write_private(file: &Path, text: &str) -> io::Result<()> {
-    fs::write(file, text)?;
+    let mut options = fs::OpenOptions::new();
+    options.write(true).create(true).truncate(true);
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::OpenOptionsExt;
+        options.mode(0o600);
+    }
+    let mut file = options.open(file)?;
     #[cfg(unix)]
     {
         use std::os::unix::fs::PermissionsExt;
-        fs::set_permissions(file, fs::Permissions::from_mode(0o600))?;
+        file.set_permissions(fs::Permissions::from_mode(0o600))?;
     }
-    Ok(())
+    file.write_all(text.as_bytes())
 }
 
 pub fn token(directory: &Path) -> io::Result<String> {
@@ -48,5 +55,23 @@ mod tests {
         let second = token(directory.path()).expect("second token");
         assert_eq!(first.len(), 64);
         assert_eq!(first, second);
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn only_the_owner_can_read_the_token_file() {
+        use std::os::unix::fs::PermissionsExt;
+
+        let directory = tempfile::tempdir().expect("temporary directory");
+        let file = directory.path().join(super::TOKEN_FILE);
+        std::fs::write(&file, "").expect("empty token file");
+        std::fs::set_permissions(&file, std::fs::Permissions::from_mode(0o644))
+            .expect("loose permissions");
+        token(directory.path()).expect("token");
+        let mode = std::fs::metadata(&file)
+            .expect("token file")
+            .permissions()
+            .mode();
+        assert_eq!(mode & 0o777, 0o600);
     }
 }

@@ -22,6 +22,7 @@ env:
 jobs:
   bootstrap:
     runs-on: ubuntu-latest
+    environment: bootstrap
     permissions:
       contents: read
       deployments: read
@@ -54,6 +55,7 @@ jobs:
 
   tailnet:
     runs-on: ubuntu-latest
+    environment: bootstrap
     permissions:
       contents: read
       id-token: write
@@ -73,6 +75,7 @@ jobs:
     needs: [bootstrap, tailnet]
     if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
+    environment: bootstrap
     permissions:
       contents: read
       id-token: write

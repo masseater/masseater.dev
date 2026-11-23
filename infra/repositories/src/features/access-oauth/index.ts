@@ -1,3 +1,4 @@
+export { sweepPendingLogins } from "./api/access-oauth-login.ts";
 export { BROKER_ORIGIN, loginUrlOf } from "./api/access-oauth-server.ts";
 export { grantKey } from "./model/access-oauth-grant.ts";
 export { AccessOAuth, accessOAuthRoute } from "./model/access-oauth.ts";

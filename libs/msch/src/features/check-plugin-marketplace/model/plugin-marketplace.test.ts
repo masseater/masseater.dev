@@ -13,6 +13,9 @@ const MARKETPLACE = `{
     "name": "owner",
     "url": "https://example.com"
   },
+  "metadata": {
+    "description": "Plugins of the example."
+  },
   "plugins": [
     {
       "name": "local",
@@ -34,7 +37,7 @@ const MARKETPLACE = `{
 const REPOSITORY: Readonly<Record<string, string>> = {
   "pnpm-workspace.yaml": "packages:\n  - libs/*\n",
   "package.json":
-    '{ "name": "example.dev", "private": true, "author": { "name": "owner", "url": "https://example.com" } }\n',
+    '{ "name": "example.dev", "private": true, "description": "Plugins of the example.", "author": { "name": "owner", "url": "https://example.com" } }\n',
   "libs/local/package.json":
     '{ "name": "local", "private": true, "description": "Runs only from the repository." }\n',
   "libs/local/.claude-plugin/plugin.json": '{ "name": "local" }\n',

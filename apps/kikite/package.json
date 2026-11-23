@@ -19,6 +19,7 @@
     "react": "catalog:",
     "react-dom": "catalog:",
     "scheduler": "catalog:",
+    "security-headers": "workspace:*",
     "tailwindcss": "catalog:stack",
     "tw-animate-css": "catalog:"
   },

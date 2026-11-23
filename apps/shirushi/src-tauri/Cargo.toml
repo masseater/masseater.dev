@@ -12,6 +12,7 @@ name = "shirushi"
 tauri-build = { version = "=2.7.6", features = [] }
 
 [dev-dependencies]
+tauri = { version = "=2.12.7", features = ["test"] }
 tokio = { version = "=1.54.1", features = ["macros", "net", "rt-multi-thread"] }
 
 [dependencies]

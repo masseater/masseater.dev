@@ -1,12 +1,25 @@
-import { Array as Arr, Effect, Option, Record as Rec, String as Str, pipe } from "effect";
+import {
+  Array as Arr,
+  Clock,
+  Effect,
+  Number as Num,
+  Option,
+  Record as Rec,
+  String as Str,
+  pipe,
+} from "effect";
 import { afterAll, beforeEach, expect, test, vi } from "vite-plus/test";
 
 import {
   MISSING_ARTICLE,
   changeSalt,
   closeDatabase,
+  flood,
+  forgetReturnedRows,
   lastAssetRequest,
+  limitedKeys,
   resetSite,
+  returnedRows,
   storedVisitors,
   stubRewriter,
 } from "./site.test.support.ts";
@@ -28,7 +41,25 @@ const IP = "192.0.2.1";
 
 const OTHER_IP = "198.51.100.7";
 
+const THIRD_IP = "203.0.113.9";
+
+const IPV6 = "2001:db8:12:34::1";
+
+const SAME_NETWORK_IPV6 = "2001:db8:12:34:aaaa:bbbb:cccc:dddd";
+
+const OTHER_NETWORK_IPV6 = "2001:db8:12:35::1";
+
+const IPV6_NETWORK = "2001:db8:12:34";
+
 const NOT_FOUND = 404;
+
+const TOO_MANY = 429;
+
+const ONE_ROW = 1;
+
+const SECURITY_TXT = "/.well-known/security.txt";
+
+const VALIDITY = { minimum: 15_552_000_000, maximum: 31_536_000_000 };
 
 const BOTH_SALTS = 2;
 
@@ -84,6 +115,58 @@ test("同じ IP から 2 回付けた star は 1 つと数える", () =>
     }),
   ));
 
+test("同じ /64 の IPv6 から付けた star は 1 つと数える", () =>
+  Effect.runPromise(
+    Effect.gen(function* starFromOneNetwork() {
+      yield* fromIp(ARTICLE, "PUT", IPV6);
+      const neighbour = yield* fromIp(ARTICLE, "PUT", SAME_NETWORK_IPV6).pipe(
+        Effect.flatMap(jsonOf),
+      );
+      const other = yield* fromIp(ARTICLE, "PUT", OTHER_NETWORK_IPV6).pipe(Effect.flatMap(jsonOf));
+      expect(neighbour).toStrictEqual({ status: "found", count: 1, starred: true });
+      expect(other).toStrictEqual({ status: "found", count: 2, starred: true });
+    }),
+  ));
+
+test("star の書き込みが上限を超えたら 429 で断り、何も書かない", () =>
+  Effect.runPromise(
+    Effect.gen(function* starWhileFlooded() {
+      yield* flood;
+      const added = yield* fromIp(ARTICLE, "PUT", IP);
+      const removed = yield* fromIp(ARTICLE, "DELETE", IP);
+      const visitors = yield* storedVisitors;
+      expect(added.status).toBe(TOO_MANY);
+      expect(removed.status).toBe(TOO_MANY);
+      expect(visitors).toStrictEqual([]);
+    }),
+  ));
+
+test("書き込みの上限は IPv6 を /64 にまとめて数え、読み取りは数えない", () =>
+  Effect.runPromise(
+    Effect.gen(function* countWrites() {
+      yield* fromIp(ARTICLE, "PUT", IPV6);
+      yield* fromIp(ARTICLE, "DELETE", SAME_NETWORK_IPV6);
+      yield* fromIp(ARTICLE, "PUT", IP);
+      yield* fromIp(ARTICLE, "GET", IP);
+      const keys = yield* limitedKeys;
+      expect(keys).toStrictEqual([IPV6_NETWORK, IPV6_NETWORK, IP]);
+    }),
+  ));
+
+test("star を数える問い合わせは star の数だけの行を返さない", () =>
+  Effect.runPromise(
+    Effect.gen(function* countInSql() {
+      yield* Effect.forEach([IP, OTHER_IP, THIRD_IP], (ip) => fromIp(ARTICLE, "PUT", ip), {
+        concurrency: 1,
+      });
+      yield* forgetReturnedRows;
+      const seen = yield* fromIp(ARTICLE, "GET", IP).pipe(Effect.flatMap(jsonOf));
+      const rows = yield* returnedRows;
+      expect(seen).toStrictEqual({ status: "found", count: 3, starred: true });
+      expect(rows).toStrictEqual([ONE_ROW]);
+    }),
+  ));
+
 test("IP はそのまま置かず、ソルトを混ぜたハッシュで置く", () =>
   Effect.runPromise(
     Effect.gen(function* starWithTwoSalts() {
@@ -121,6 +204,34 @@ test("star の API が持たないメソッドは断り、何も書かない", (
       const visitors = yield* storedVisitors;
       expect(response.status).toBe(NOT_FOUND);
       expect(visitors).toStrictEqual([]);
+    }),
+  ));
+
+const expiresIn = (lines: readonly string[], now: number): Option.Option<number> =>
+  pipe(
+    lines,
+    Arr.findFirst(Str.startsWith("Expires: ")),
+    Option.map(Str.replace("Expires: ", "")),
+    Option.map((value) => Date.parse(value) - now),
+  );
+
+test("security.txt は報告先と 1 年以内の期限を返す", () =>
+  Effect.runPromise(
+    Effect.gen(function* fetchSecurityTxt() {
+      const now = yield* Clock.currentTimeMillis;
+      const response = yield* fetchSite(new Request(`${ORIGIN}${SECURITY_TXT}`));
+      const lines = yield* textOf(response).pipe(Effect.map(Str.split("\n")));
+      const forwarded = yield* lastAssetRequest;
+      expect(response.headers.get("Content-Type")).toBe("text/plain; charset=utf-8");
+      expect(lines).toStrictEqual([
+        "Contact: https://github.com/masseater/masseater.dev/security/advisories/new",
+        expect.stringMatching(/^Expires: \d{4}-\d{2}-\d{2}T[\d:.]+Z$/u),
+        "Preferred-Languages: ja, en",
+        `Canonical: ${ORIGIN}${SECURITY_TXT}`,
+        "",
+      ]);
+      expect(Option.exists(expiresIn(lines, now), Num.between(VALIDITY))).toBe(true);
+      expect(forwarded).toStrictEqual(Option.none());
     }),
   ));
 

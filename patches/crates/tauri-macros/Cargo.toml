@@ -62,9 +62,6 @@ version = "~2.7.6"
 [dependencies.tauri-utils]
 version = "~2.10.4"
 
-[lints.cargo]
-unused_dependencies = "deny"
-
 [lints.clippy]
 assigning_clones = "warn"
 collapsible_if = "allow"

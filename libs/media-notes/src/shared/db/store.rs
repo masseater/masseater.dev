@@ -32,6 +32,11 @@ pub fn fresh_id() -> String {
     uuid::Uuid::now_v7().to_string()
 }
 
+#[must_use]
+pub fn is_id(text: &str) -> bool {
+    uuid::Uuid::try_parse(text).is_ok_and(|id| id.to_string() == text)
+}
+
 pub struct Row<'a, T> {
     pub id: &'a str,
     pub source: &'a Source,
@@ -168,12 +173,30 @@ impl Store {
 mod tests {
     use serde::{Deserialize, Serialize};
 
-    use super::{Row, Store};
+    use super::{Row, Store, fresh_id, is_id};
     use crate::shared::protocol::{Site, Source};
 
     #[derive(Debug, PartialEq, Serialize, Deserialize)]
     struct Note {
         words: String,
+    }
+
+    #[test]
+    fn only_ids_in_the_form_the_app_makes_are_ids() {
+        assert!(is_id(&fresh_id()));
+        let id = fresh_id();
+        for other in [
+            id.to_uppercase(),
+            id.replace('-', ""),
+            format!("{{{id}}}"),
+            format!("urn:uuid:{id}"),
+            format!("../{id}"),
+            format!("/{id}"),
+            "..".to_owned(),
+            String::new(),
+        ] {
+            assert!(!is_id(&other), "{other}");
+        }
     }
 
     fn source(id: &str) -> Source {
