@@ -8,7 +8,7 @@
 "go:github.com/sisaku-security/sisakulint/cmd/sisakulint" = "0.3.8"
 "go:github.com/betterleaks/betterleaks/v2" = "2.0.0-rc.9"
 "aqua:gitleaks/gitleaks" = "8.30.1"
-"aqua:trufflesecurity/trufflehog" = "3.99.9"
+"aqua:trufflesecurity/trufflehog" = "3.100.0"
 "aqua:mongodb/kingfisher" = "2.19.1"
 
 [settings]
