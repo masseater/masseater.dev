@@ -41,7 +41,7 @@ const runsStrictPublint = (config: unknown): boolean =>
   pipe(
     decodePackConfig(config),
     Option.flatMap(({ pack }) => Option.fromUndefinedOr(pack)),
-    Option.map((pack): readonly unknown[] => (Arr.isArray(pack) ? pack : [pack])),
+    Option.map((pack): readonly unknown[] => Arr.ensure(pack)),
     Option.exists(Arr.some(isStrict)),
   );
 
@@ -53,28 +53,40 @@ const problemFor = (file: string, source: string): Problem => ({
     "This package is published, so its pack must run publint with `publint: { strict: true }`. Without it, publishConfig can point at files vp pack never writes, and the published package fails to import.",
 });
 
+const isPublishedManifest = (source: Option.Option<string>): boolean =>
+  pipe(source, Option.flatMap(decodeManifest), Option.exists(isPublished));
+
+const strictPublintIn = Effect.fn("strictPublintIn")(function* strictPublintIn(configFile: string) {
+  const config = yield* Effect.tryPromise({
+    try: () => resolveConfigFromFile(configFile),
+    catch: () => PackConfigUnreadable.make({ file: configFile }),
+  }).pipe(Effect.option);
+  return Option.exists(config, runsStrictPublint);
+});
+
+const configProblems = Effect.fn("configProblems")(function* configProblems(configFile: string) {
+  const files = yield* RepositoryFiles;
+  const source = yield* files.readFile(configFile);
+  if (Option.isNone(source)) {
+    return [];
+  }
+  const strict = yield* strictPublintIn(configFile);
+  if (strict) {
+    return [];
+  }
+  return [problemFor(configFile, source.value)];
+});
+
 const problemsIn = Effect.fn("problemsIn")(function* problemsIn(
   root: string,
   manifestName: string,
 ) {
   const files = yield* RepositoryFiles;
   const manifest = yield* files.readFile(files.join(root, manifestName));
-  if (!Option.exists(Option.flatMap(manifest, decodeManifest), isPublished)) {
+  if (!isPublishedManifest(manifest)) {
     return [];
   }
-  const configFile = files.join(root, files.dirname(manifestName), CONFIG_FILE);
-  const source = yield* files.readFile(configFile);
-  if (Option.isNone(source)) {
-    return [];
-  }
-  const config = yield* Effect.tryPromise({
-    try: () => resolveConfigFromFile(configFile),
-    catch: () => PackConfigUnreadable.make({ file: configFile }),
-  }).pipe(Effect.option);
-  if (Option.exists(config, runsStrictPublint)) {
-    return [];
-  }
-  return [problemFor(configFile, source.value)];
+  return yield* configProblems(files.join(root, files.dirname(manifestName), CONFIG_FILE));
 });
 
 /** @internal */
