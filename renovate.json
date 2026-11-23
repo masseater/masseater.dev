@@ -118,6 +118,13 @@
   "customManagers": [
     {
       "customType": "regex",
+      "managerFilePatterns": ["/^libs/tsrs-effect/package\\.json$/"],
+      "matchStrings": ["\"effect\": \"@effect/tsgo@(?<currentValue>[0-9.]+)\""],
+      "depNameTemplate": "@effect/tsgo",
+      "datasourceTemplate": "npm"
+    },
+    {
+      "customType": "regex",
       "managerFilePatterns": ["/(^|/)buf\\.gen\\.yaml$/"],
       "matchStrings": ["remote: buf\\.build/bufbuild/es:v(?<currentValue>[0-9.]+)"],
       "depNameTemplate": "@bufbuild/protoc-gen-es",

@@ -368,14 +368,6 @@ patchedDependencies:
   "@voidzero-dev/vite-plus-core@8.3.8000": patches/@voidzero-dev__vite-plus-core@8.3.8000.patch # exit: npm:@voidzero-dev/vite-plus-core@>8.3.8000
   "@tanstack/intent@0.5.6": patches/@tanstack__intent@0.5.6.patch # exit: npm:@tanstack/intent@>0.5.6
 minimumReleaseAgeExclude:
-  - "@effect/tsgo-darwin-arm64@0.70.0"
-  - "@effect/tsgo-darwin-x64@0.70.0"
-  - "@effect/tsgo-linux-arm64@0.70.0"
-  - "@effect/tsgo-linux-arm@0.70.0"
-  - "@effect/tsgo-linux-x64@0.70.0"
-  - "@effect/tsgo-win32-arm64@0.70.0"
-  - "@effect/tsgo-win32-x64@0.70.0"
-  - "@effect/tsgo@0.70.0"
   - "@voidzero-dev/vite-plus-core@8.3.8000"
   - "@voidzero-dev/vite-plus-darwin-arm64@1.7.0"
   - "@voidzero-dev/vite-plus-darwin-x64@1.7.0"
