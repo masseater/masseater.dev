@@ -26,7 +26,7 @@ npm: [@r_masseater/oxlint-typed-rules](https://www.npmjs.com/package/@r_masseate
 | `@r_masseater/oxlint-typed-rules/tanstack-router` | All rules and configs of [@tanstack/eslint-plugin-router][tanstack-router] 1.162.0 |
 | `@r_masseater/oxlint-typed-rules/drizzle`         | All rules and configs of [eslint-plugin-drizzle][drizzle] 0.2.3                    |
 | `@r_masseater/oxlint-typed-rules/remotion`        | All rules and configs of [@remotion/eslint-plugin][remotion] 4.0.541               |
-| `@r_masseater/oxlint-typed-rules/react`           | All rules and configs of [@eslint-react/eslint-plugin][eslint-react] 5.30.1        |
+| `@r_masseater/oxlint-typed-rules/react`           | All rules and configs of [@eslint-react/eslint-plugin][eslint-react] 5.30.5        |
 
 [tanstack]: https://www.npmjs.com/package/@tanstack/eslint-plugin-start
 [tanstack-query]: https://www.npmjs.com/package/@tanstack/eslint-plugin-query
