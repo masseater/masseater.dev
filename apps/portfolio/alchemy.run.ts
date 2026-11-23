@@ -1,4 +1,4 @@
-import { D1, Website } from "@alchemy.run/cloudflare";
+import { D1, Website, Workers } from "@alchemy.run/cloudflare";
 import type { InferEnv } from "@alchemy.run/cloudflare";
 import { accountResources } from "@masseater.dev/cloudflare-account/account";
 import { edgeGuard } from "@masseater.dev/cloudflare-account/edge-guard";
