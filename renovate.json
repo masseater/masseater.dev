@@ -30,14 +30,8 @@
       "groupName": "textlint"
     },
     {
-      "description": "vite-plus は oxlint と tsrs の版を固定し、@effect/tsgo は対応している版の oxlint と oxlint-tsgolint にしかパッチを当てられない。合わないと prepare が落ちて vp install が失敗する。組で上げ、up-to-date の install が通ったときだけマージする。",
-      "matchPackageNames": [
-        "vite-plus",
-        "oxlint",
-        "@oxlint/plugins",
-        "oxlint-tsgolint",
-        "@effect/tsgo"
-      ],
+      "description": "vite-plus は oxlint と tsrs の版を固定し、@effect/tsgo は対応している版の oxlint と tsrs にしかパッチを当てられない。合わないと prepare が落ちて vp install が失敗する。組で上げ、up-to-date の install が通ったときだけマージする。",
+      "matchPackageNames": ["vite-plus", "oxlint", "@oxlint/plugins", "@effect/tsgo"],
       "groupName": "oxlint and effect-tsgo",
       "ignoreTests": false
     },

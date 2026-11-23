@@ -815,9 +815,6 @@ catalogs:
     oxlint-plugin-eslint:
       specifier: 1.94.0
       version: 1.94.0
-    oxlint-tsgolint:
-      specifier: 7.0.2007
-      version: 7.0.2007
     parse5:
       specifier: 8.1.1
       version: 8.1.1
@@ -1121,9 +1118,6 @@ importers:
       fallow-type-aware:
         specifier: catalog:stack
         version: 3.44.0
-      oxlint-tsgolint:
-        specifier: 'catalog:'
-        version: 7.0.2007
       typescript:
         specifier: catalog:stack
         version: 7.1.0-beta
@@ -3865,7 +3859,7 @@ importers:
         version: 26.6.6
       betterleaks:
         specifier: github:betterleaks/betterleaks#e07e69ba6a441313529b3e72be43ffdcc62bdf86
-        version: https://codeload.github.com/betterleaks/betterleaks/tar.gz/e07e69ba6a441313529b3e72be43ffdcc62bdf86
+        version: git+https://github.com/betterleaks/betterleaks.git#e07e69ba6a441313529b3e72be43ffdcc62bdf86
       effect:
         specifier: catalog:stack
         version: 4.1.4
@@ -13261,8 +13255,8 @@ packages:
       zod:
         optional: true
 
-  betterleaks@https://codeload.github.com/betterleaks/betterleaks/tar.gz/e07e69ba6a441313529b3e72be43ffdcc62bdf86:
-    resolution: {gitHosted: true, integrity: sha512-Nuw5CBCTOf1XTPDu7DNEH0w29VQ4w1PvgCneVx1UVakuF3eAFJorFnMkYyqf2hX4VGSH9HeyUF6Qmd/Ekor8PQ==, tarball: https://codeload.github.com/betterleaks/betterleaks/tar.gz/e07e69ba6a441313529b3e72be43ffdcc62bdf86}
+  betterleaks@git+https://github.com/betterleaks/betterleaks.git#e07e69ba6a441313529b3e72be43ffdcc62bdf86:
+    resolution: {commit: e07e69ba6a441313529b3e72be43ffdcc62bdf86, repo: https://github.com/betterleaks/betterleaks.git, type: git}
     version: 0.0.0
 
   bignumber.js@9.3.1:
@@ -26121,7 +26115,7 @@ snapshots:
     optionalDependencies:
       zod: 4.6.7
 
-  betterleaks@https://codeload.github.com/betterleaks/betterleaks/tar.gz/e07e69ba6a441313529b3e72be43ffdcc62bdf86: {}
+  betterleaks@git+https://github.com/betterleaks/betterleaks.git#e07e69ba6a441313529b3e72be43ffdcc62bdf86: {}
 
   bignumber.js@9.3.1: {}
 
@@ -29754,6 +29748,7 @@ snapshots:
       '@oxlint-tsgolint/linux-x64': 7.0.2007
       '@oxlint-tsgolint/win32-arm64': 7.0.2007
       '@oxlint-tsgolint/win32-x64': 7.0.2007
+    optional: true
 
   oxlint@1.94.0(oxlint-tsgolint@7.0.2007)(vite-plus@1.7.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.0)(@vitest/browser-preview@5.1.0)(@vitest/ui@5.1.0)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.6)(@voidzero-dev/vite-plus-core@8.3.8000(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2007)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(vitest@5.1.0)(yaml@2.9.1)):
     optionalDependencies:
