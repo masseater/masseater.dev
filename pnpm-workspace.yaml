@@ -312,7 +312,7 @@ catalogs:
     typescript: 7.1.0-beta
     vite-plus: 1.7.0
 overrides:
-  "@vitest/browser-playwright": 5.1.0 # exit: npm:vite-plus allows @vitest/browser-playwright@>=5.1.1
+  "@vitest/browser-playwright": 5.1.1 # exit: npm:vite-plus allows @vitest/browser-playwright@>=5.1.1
   "@feature-sliced/filesystem>typescript": "catalog:stack" # exit: npm:@feature-sliced/filesystem allows typescript@>=7
   "langium>vscode-languageserver": "catalog:" # exit: npm:langium allows vscode-languageserver@>=11
   "@remotion/eslint-plugin>@typescript-eslint/utils": "-" # exit: npm:@remotion/eslint-plugin allows @typescript-eslint/utils@>=8
@@ -354,7 +354,7 @@ allowBuilds:
   onnxruntime-node: false
   "@bufbuild/buf": true
 packageExtensions:
-  eslint-plugin-react-jsx@^5.30.1: # exit: npm:eslint-plugin-react-jsx@>5.30.4
+  eslint-plugin-react-jsx@^5.30.1: # exit: npm:eslint-plugin-react-jsx@>5.30.6
     dependencies:
       entities: 9.0.0
   safer-buffer@2.1.2: # exit: npm:@kenjiuno/msgreader@>1.29.0
@@ -365,7 +365,7 @@ audit:
 patchedDependencies:
   "@tanstack/eslint-plugin-start@0.1.0": patches/@tanstack__eslint-plugin-start@0.1.0.patch # exit: npm:@tanstack/eslint-plugin-start@>0.1.0
   eslint-plugin-drizzle@0.2.3: patches/eslint-plugin-drizzle@0.2.3.patch # exit: npm:eslint-plugin-drizzle@>0.2.3
-  eslint-plugin-react-jsx@^5.30.1: patches/eslint-plugin-react-jsx.patch # exit: npm:eslint-plugin-react-jsx@>5.30.4
+  eslint-plugin-react-jsx@^5.30.1: patches/eslint-plugin-react-jsx.patch # exit: npm:eslint-plugin-react-jsx@>5.30.6
   "@voidzero-dev/vite-plus-core@8.3.8000": patches/@voidzero-dev__vite-plus-core@8.3.8000.patch # exit: npm:@voidzero-dev/vite-plus-core@>8.3.8000
   "@tanstack/intent@0.5.6": patches/@tanstack__intent@0.5.6.patch # exit: npm:@tanstack/intent@>0.5.6
 minimumReleaseAgeExclude:
