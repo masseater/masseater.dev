@@ -19,6 +19,7 @@ export default defineConfig({
     },
     platform: "node",
     sourcemap: true,
+    publint: { strict: true },
     deps: { resolveDepSubpath: true },
     dts: {
       generator: "tsgo",
