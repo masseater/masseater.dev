@@ -25,6 +25,10 @@ export const settingsProvider = succeed(RepositorySettings, {
   delete: () => Effect.void,
 });
 
+const CODEX_PLUGIN = 1_197_915_304;
+
+const ACTIONS_PULL_REQUEST_REPOSITORIES: ReadonlySet<number> = new Set([CODEX_PLUGIN]);
+
 export const settingsOf = (
   repository: ManagedRepository,
 ): Effect.Effect<unknown, never, Provider<RepositorySettingsResource>> =>
@@ -33,7 +37,7 @@ export const settingsOf = (
     name: repository.name,
     allowUpdateBranch: true,
     secretScanning: !repository.private,
-    actionsCreatePullRequests: true,
+    actionsCreatePullRequests: ACTIONS_PULL_REQUEST_REPOSITORIES.has(repository.id),
     collaboratorPullRequests: !repository.private,
     vulnerabilityReporting: !repository.private,
   });

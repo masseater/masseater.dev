@@ -50,19 +50,43 @@ const PROFILES = {
   exposure: EXPOSURE,
 } as const satisfies Readonly<Record<string, Grant>>;
 
+const REPOSITORY_IDS = {
+  "ai-produced": "1403877758",
+  "geigeki-kaiiki": "1443911830",
+  konomi: "1443059710",
+  "lint-kit": "1413881435",
+  "masseater.dev": "1411948414",
+  mirucord: "1411929170",
+  msa: "1420519505",
+  "typescript-template": "1392626348",
+} as const;
+
+type GrantedRepository = keyof typeof REPOSITORY_IDS;
+
+const grantKeyOf = (repository: GrantedRepository, environment?: string): string =>
+  pipe(
+    Option.fromNullishOr(environment),
+    Option.match({
+      onNone: () => REPOSITORY_IDS[repository],
+      onSome: (name) => `${REPOSITORY_IDS[repository]}/${name}`,
+    }),
+  );
+
+export const EXPOSURE_GRANT_KEY = grantKeyOf("masseater.dev", "exposure");
+
 const CREDENTIAL_GRANTS: Readonly<Record<string, keyof typeof PROFILES>> = {
   "1403864815": "access",
-  "ai-produced": "deploy",
-  "geigeki-kaiiki": "deploy",
-  konomi: "deploy",
-  "masseater.dev": "deploy",
-  "masseater.dev/exposure": "exposure",
-  "masseater.dev/zone": "transforms",
-  "masseater.dev/mcp-portal": "access",
-  "masseater.dev/production": "access",
-  mirucord: "deploy",
-  msa: "deploy",
-  "typescript-template": "deploy",
+  [grantKeyOf("ai-produced")]: "deploy",
+  [grantKeyOf("geigeki-kaiiki")]: "deploy",
+  [grantKeyOf("konomi")]: "deploy",
+  [grantKeyOf("masseater.dev")]: "deploy",
+  [EXPOSURE_GRANT_KEY]: "exposure",
+  [grantKeyOf("masseater.dev", "zone")]: "transforms",
+  [grantKeyOf("masseater.dev", "mcp-portal")]: "access",
+  [grantKeyOf("masseater.dev", "production")]: "access",
+  [grantKeyOf("mirucord")]: "deploy",
+  [grantKeyOf("msa")]: "deploy",
+  [grantKeyOf("typescript-template")]: "deploy",
 };
 
 type PermissionLevel = "read" | "write";
@@ -84,10 +108,10 @@ export type GitHubGrant = Readonly<{
   repositories?: readonly string[];
 }>;
 
-const RELEASE_REPOSITORIES: readonly string[] = ["lint-kit", "typescript-template"];
+const RELEASE_REPOSITORIES: readonly GrantedRepository[] = ["lint-kit", "typescript-template"];
 
-const releaseGrant = (repository: string): readonly [string, GitHubGrant] => [
-  repository,
+const releaseGrant = (repository: GrantedRepository): readonly [string, GitHubGrant] => [
+  grantKeyOf(repository),
   {
     permissions: { contents: "write", pull_requests: "write", metadata: "read" },
     repositories: [repository],
@@ -97,8 +121,8 @@ const releaseGrant = (repository: string): readonly [string, GitHubGrant] => [
 export const [, MASSEATER_DEV_GITHUB_GRANT] = releaseGrant("masseater.dev");
 
 const GITHUB_GRANTS: Readonly<Record<string, GitHubGrant>> = {
-  "masseater.dev/exposure": { permissions: { metadata: "read" } },
-  "masseater.dev/github": {
+  [EXPOSURE_GRANT_KEY]: { permissions: { metadata: "read" } },
+  [grantKeyOf("masseater.dev", "github")]: {
     permissions: {
       actions: "read",
       administration: "write",
@@ -110,7 +134,7 @@ const GITHUB_GRANTS: Readonly<Record<string, GitHubGrant>> = {
       metadata: "read",
     },
   },
-  "masseater.dev/private-names": { permissions: { metadata: "read" } },
+  [grantKeyOf("masseater.dev", "private-names")]: { permissions: { metadata: "read" } },
   ...Rec.fromEntries(pipe(RELEASE_REPOSITORIES, Arr.map(releaseGrant))),
 };
 
@@ -137,9 +161,9 @@ export const WORKFLOW_GITHUB_GRANTS: Readonly<Record<string, Readonly<Record<str
   "update-branches.yml": MERGE_QUEUE_PERMISSIONS,
 };
 
-const NPM_GRANTS: readonly string[] = ["masseater.dev/npm"];
+const NPM_GRANTS: readonly string[] = [grantKeyOf("masseater.dev", "npm")];
 
-const ATPROTO_GRANTS: readonly string[] = ["masseater.dev/bootstrap"];
+const ATPROTO_GRANTS: readonly string[] = [grantKeyOf("masseater.dev", "bootstrap")];
 
 const ACCOUNT_SCOPE = "com.cloudflare.api.account";
 const ZONE_SCOPE = "com.cloudflare.api.account.zone";
