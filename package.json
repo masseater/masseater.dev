@@ -13,7 +13,6 @@
   },
   "devDependencies": {
     "@effect/tsgo": "catalog:stack",
-    "@masseater.dev/tsrs-effect": "workspace:*",
     "@r_masseater/msch": "workspace:*",
     "@r_masseater/workers-tracing": "workspace:*",
     "@tanstack/intent": "catalog:",
