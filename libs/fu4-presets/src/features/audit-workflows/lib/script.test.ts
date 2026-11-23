@@ -8,12 +8,12 @@ import type { Dialect, ScriptParser } from "#/features/audit-workflows/lib/scrip
 import {
   installCommands,
   isAdhocInstall,
-} from "#/features/audit-workflows/rules/adhoc-packages.ts";
-import { environmentWrites } from "#/features/audit-workflows/rules/github-env.ts";
+} from "#/features/audit-workflows/model/rules/adhoc-packages.ts";
+import { environmentWrites } from "#/features/audit-workflows/model/rules/github-env.ts";
 import {
   isPublishCommand,
   publishCommands,
-} from "#/features/audit-workflows/rules/use-trusted-publishing.ts";
+} from "#/features/audit-workflows/model/rules/use-trusted-publishing.ts";
 
 import RAW_CASES from "./fixtures/script-cases.json" with { type: "json" };
 

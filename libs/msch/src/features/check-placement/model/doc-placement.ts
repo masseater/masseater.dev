@@ -3,6 +3,7 @@ import { Array as Arr, Effect } from "effect";
 import { checkAgentDocsLength } from "./agent-docs-length.ts";
 import { checkClaudeLinks } from "./claude-link.ts";
 import { checkDanglingLinks } from "./dangling-links.ts";
+import { checkDeployedReadme } from "./deployed-readme.ts";
 import { checkNestedDocs } from "./nested-docs.ts";
 import { checkPublishedReadme } from "./published-readme.ts";
 import { checkPublishedTests } from "./published-tests.ts";
@@ -22,6 +23,7 @@ export const checkDocPlacement = Effect.fn("checkDocPlacement")(function* checkD
       checkAgentDocsLength(root),
       checkDanglingLinks(root),
       checkPublishedReadme(root),
+      checkDeployedReadme(root),
       checkPublishedTests(root),
     ],
     { concurrency: "unbounded" },
