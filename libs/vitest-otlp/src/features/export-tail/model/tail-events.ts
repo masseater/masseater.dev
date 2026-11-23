@@ -218,7 +218,6 @@ const step = (invocation: Invocation, tail: TailEvent): Invocation => {
         updateSpan(own, withAttributes(exceptionAttributes(exception)))(invocation),
       log: (log) => onLog(tail, log)(invocation),
       diagnosticChannel: () => invocation,
-      spanLinks: () => invocation,
       streamDiagnostic: () => invocation,
     }),
   );
