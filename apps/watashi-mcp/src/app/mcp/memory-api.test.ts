@@ -18,6 +18,7 @@ const ENDPOINT = "https://watashi.masseater.dev/api/memories";
 const OK = 200;
 const BAD_REQUEST = 400;
 const FORBIDDEN = 403;
+const METHOD_NOT_ALLOWED = 405;
 const UNPROCESSABLE = 422;
 const ONE_REVISION = 1;
 const TWO_REVISIONS = 2;
@@ -116,5 +117,14 @@ it.effect("conversation:write のトークンは 403 で断る", () =>
     const { token } = yield* issued("conversation:write");
     const reply = yield* put(token)({ memos: [bicycle] });
     expect(reply).toStrictEqual({ status: FORBIDDEN, body: { error: "insufficient scope" } });
+  }),
+);
+
+it.effect("PUT 以外のメソッドには 405 を返す", () =>
+  Effect.gen(function* refusesOtherMethods() {
+    const { token } = yield* issued("memory:write");
+    const request = new Request(ENDPOINT, { headers: { authorization: `Bearer ${token}` } });
+    const response = yield* Effect.promise(() => serveMemories(request));
+    expect(response.status).toBe(METHOD_NOT_ALLOWED);
   }),
 );

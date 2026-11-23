@@ -1,4 +1,4 @@
-import { Option, String as Str, pipe } from "effect";
+import { Array as Arr, Option, String as Str, pipe } from "effect";
 import { Base64Url } from "effect/encoding";
 
 import type { VerifyToken } from "#/features/admit-caller/index.ts";
@@ -15,9 +15,23 @@ const tokenFor = (subject: string): string =>
 export const CI_TOKEN = tokenFor("ci-run");
 export const PRIVATE_CI_TOKEN = tokenFor("private-ci-run");
 export const BRANCH_CI_TOKEN = tokenFor("branch-ci-run");
+export const COMMENT_CI_TOKEN = tokenFor("comment-ci-run");
+export const STORING_EVENTS = ["schedule", "workflow_dispatch", "repository_dispatch"] as const;
 
-const RUNS = new Map([
-  [CI_TOKEN, { repository_visibility: "public", ref: "refs/heads/main" }],
+export const eventToken = (event: string): string => tokenFor(`${event}-ci-run`);
+
+const MAIN_RUN = { repository_visibility: "public", ref: "refs/heads/main" };
+
+const RUNS = new Map<string, Readonly<Record<string, string>>>([
+  [CI_TOKEN, MAIN_RUN],
+  [COMMENT_CI_TOKEN, { ...MAIN_RUN, event_name: "issue_comment" }],
+  ...pipe(
+    STORING_EVENTS,
+    Arr.map((event): [string, Readonly<Record<string, string>>] => [
+      eventToken(event),
+      { ...MAIN_RUN, event_name: event },
+    ]),
+  ),
   [PRIVATE_CI_TOKEN, { repository_visibility: "private", ref: "refs/heads/main" }],
   [BRANCH_CI_TOKEN, { repository_visibility: "public", ref: "refs/heads/feature" }],
 ]);
