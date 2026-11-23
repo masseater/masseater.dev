@@ -6,7 +6,13 @@ import { CREDENTIAL_BROKER_AUDIENCE } from "#/shared/config/index.ts";
 const ISSUER = "https://token.actions.githubusercontent.com";
 export const OWNER = "masseater";
 export const OWNER_ID = "62135405";
-const UNTRUSTED_EVENTS: ReadonlySet<string> = new Set(["pull_request_target", "workflow_run"]);
+const TRUSTED_EVENTS: ReadonlySet<string> = new Set([
+  "push",
+  "schedule",
+  "workflow_dispatch",
+  "repository_dispatch",
+]);
+const ALGORITHMS = ["RS256"];
 const DEFAULT_BRANCH = "refs/heads/main";
 
 const jwks = createRemoteJWKSet(new URL(`${ISSUER}/.well-known/jwks`));
@@ -44,7 +50,7 @@ const TRUSTED_CLAIMS = {
 
 const isTrusted = (claims: typeof Claims.Type): boolean =>
   Arr.every(Record.toEntries(TRUSTED_CLAIMS), ([key, value]) => claims[key] === value) &&
-  !UNTRUSTED_EVENTS.has(claims.event_name);
+  TRUSTED_EVENTS.has(claims.event_name);
 
 export const verify = (
   request: Request,
@@ -52,7 +58,11 @@ export const verify = (
   Effect.gen(function* verifyClaims() {
     const { payload } = yield* Effect.tryPromise({
       try: () =>
-        jwtVerify(bearer(request), jwks, { issuer: ISSUER, audience: CREDENTIAL_BROKER_AUDIENCE }),
+        jwtVerify(bearer(request), jwks, {
+          issuer: ISSUER,
+          audience: CREDENTIAL_BROKER_AUDIENCE,
+          algorithms: ALGORITHMS,
+        }),
       catch: (error) => Rejected.make({ reason: String(error) }),
     });
     const claims = yield* Schema.decodeUnknownEffect(Claims)(payload);
@@ -102,6 +112,30 @@ export const workflowGrant =
       Option.flatMap((file) => Option.fromNullishOr(workflows[file])),
       Option.map((permissions) => ({ permissions, repositories: [repositoryName(claims)] })),
     );
+
+export const sourceWorkflows =
+  <Failure, Context>({
+    workflows,
+    isSource,
+  }: Readonly<{
+    workflows: Readonly<Record<string, Readonly<Record<string, string>>>>;
+    isSource: (repository: string) => Effect.Effect<boolean, Failure, Context>;
+  }>) =>
+  (
+    claims: typeof Claims.Type,
+  ): Effect.Effect<Readonly<Record<string, Readonly<Record<string, string>>>>, Failure, Context> =>
+    Option.match(workflowGrant(workflows)(claims), {
+      onNone: () => Effect.succeed(workflows),
+      onSome: () =>
+        isSource(repositoryName(claims)).pipe(
+          Effect.map((source) => {
+            if (source) {
+              return workflows;
+            }
+            return {};
+          }),
+        ),
+    });
 
 export const isGranted =
   (
