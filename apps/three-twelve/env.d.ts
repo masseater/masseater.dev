@@ -5,6 +5,7 @@ declare module "cloudflare:workers" {
     interface Env {
       PLAYER: DurableObjectNamespace<Player>;
       AUDIO: R2Bucket;
+      LIMITER: RateLimit;
     }
   }
 }

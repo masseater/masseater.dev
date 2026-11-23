@@ -5,7 +5,7 @@ import { edgeGuard } from "@masseater.dev/cloudflare-account/edge-guard";
 import { tracedStackProps } from "@masseater.dev/cloudflare-account/traced-providers";
 import { makeRandom, RemovalPolicy, Stack, Stage } from "alchemy";
 import type { CompiledStack } from "alchemy";
-import { Effect, Option } from "effect";
+import { Effect, Hash, Option } from "effect";
 import type { ConfigError } from "effect/Config";
 
 import { APP_NAME, CI_TELEMETRY_AUDIENCE, requireAppPrefix } from "./src/app/app-name.ts";
@@ -16,6 +16,13 @@ const PRODUCTION_STAGE = "prod";
 const CF_BEACON_TOKEN = "021b4961f3fd419297b186136a5a8a0a";
 
 const OWNED_ZONE = Option.some(DOMAIN);
+
+const STAR_WRITES_PER_MINUTE = 20;
+
+const STARS_LIMITER = Workers.RateLimit("STARS_LIMITER", {
+  namespaceId: Math.abs(Hash.string(`${APP_NAME}-stars`)),
+  simple: { limit: STAR_WRITES_PER_MINUTE, period: 60 },
+});
 
 const web = Effect.gen(function* web() {
   const production = (yield* Stage) === PRODUCTION_STAGE;
@@ -30,7 +37,7 @@ const web = Effect.gen(function* web() {
     outdir: "dist/client",
     main: "./src/app/site.ts",
     logpush: true,
-    env: { STARS, VISITOR_SALT, VITE_CF_BEACON_TOKEN: CF_BEACON_TOKEN },
+    env: { STARS, STARS_LIMITER, VISITOR_SALT, VITE_CF_BEACON_TOKEN: CF_BEACON_TOKEN },
     assets: {
       htmlHandling: "auto-trailing-slash",
       notFoundHandling: "404-page",

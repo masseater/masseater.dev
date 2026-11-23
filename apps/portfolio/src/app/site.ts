@@ -12,6 +12,7 @@ import {
   contentSecurityPolicy,
   site,
 } from "#/shared/config/index.ts";
+import { securityTxt } from "#/shared/lib/security-txt.ts";
 
 const NONCE_BYTES = 16;
 
@@ -84,9 +85,18 @@ const page = (request: Request): Promise<Response> | Response =>
     onSome: (api) => handleStars(api),
   });
 
+const isSecurityTxt = (request: Request): boolean =>
+  new URL(request.url).pathname === site.securityTxtPath;
+
+const served = (request: Request): Promise<Response> | Response =>
+  Option.match(Option.liftPredicate(request, isSecurityTxt), {
+    onNone: () => page(request),
+    onSome: () => run(securityTxt),
+  });
+
 const upstream = (request: Request): Promise<Response> | Response =>
   Option.match(Option.liftPredicate(request, isTraces), {
-    onNone: () => page(request),
+    onNone: () => served(request),
     onSome: receiveSpans,
   });
 

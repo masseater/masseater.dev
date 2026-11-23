@@ -11,11 +11,20 @@ const OPENROUTER_ORIGIN = "https://openrouter.ai";
 
 const NPM_CDN = "https://cdn.jsdelivr.net/npm/";
 
+const TESSERACT_VERSION = "7.0.0";
+
+const OCR_SCRIPTS = [
+  `${NPM_CDN}tesseract.js@v${TESSERACT_VERSION}/dist/`,
+  `${NPM_CDN}tesseract.js-core@v${TESSERACT_VERSION}/`,
+] as const;
+
+const OCR_LANGUAGE_DATA = `${NPM_CDN}@tesseract.js-data/`;
+
 const CLIENT_COMPUTE = {
   scriptKeywords: ["'wasm-unsafe-eval'"],
-  scriptOrigins: [NPM_CDN],
+  scriptOrigins: OCR_SCRIPTS,
   worker: ["worker-src 'self' blob:"],
-  connect: [OPENROUTER_ORIGIN, NPM_CDN],
+  connect: [OPENROUTER_ORIGIN, OCR_LANGUAGE_DATA],
 } as const;
 
 const NO_CLIENT_COMPUTE = {
