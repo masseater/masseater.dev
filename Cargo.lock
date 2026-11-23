@@ -11384,8 +11384,6 @@ dependencies = [
 [[package]]
 name = "tauri-macros"
 version = "2.7.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2831c5da8603a96b1efc0b650c2cb6decc69b6cda257d815fe70c7f5be53818e"
 dependencies = [
  "heck 0.5.0",
  "proc-macro2",
@@ -14580,7 +14578,3 @@ dependencies = [
  "syn 3.0.10",
  "winnow 1.0.5",
 ]
-
-[[patch.unused]]
-name = "tauri-macros"
-version = "2.7.4"
