@@ -16,6 +16,7 @@ import { environmentOf, manifest } from "./manifest.ts";
 const SECRET = "TAURI_SIGNING_PRIVATE_KEY";
 const KEY = "updater.key";
 const PUBLIC = ".pub";
+const SECRETS_FILE = "secrets.env";
 
 const hasKey = Effect.fn("updaterKey.hasKey")(function* hasKey(environment: string) {
   const present = yield* gh(["api", `${environment}/secrets`, "--jq", ".secrets[].name"]);
@@ -38,8 +39,12 @@ const store = Effect.fn("updaterKey.store")(function* store(
   environment: string,
 ) {
   const { privateKey, publicKey } = yield* generate;
-  const scope = ["--env", environment, "--repo", repository];
-  yield* gh(["secret", "set", SECRET, ...scope, "--body", privateKey]);
+  const fileSystem = yield* FileSystem.FileSystem;
+  const path = yield* Path.Path;
+  const directory = yield* fileSystem.makeTempDirectoryScoped();
+  const secrets = path.join(directory, SECRETS_FILE);
+  yield* fileSystem.writeFileString(secrets, `${SECRET}="${Str.trim(privateKey)}"\n`);
+  yield* gh(["secret", "set", "--env-file", secrets, "--env", environment, "--repo", repository]);
   return publicKey;
 });
 

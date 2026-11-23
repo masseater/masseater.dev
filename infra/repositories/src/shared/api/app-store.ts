@@ -6,6 +6,8 @@ const SELECT = "SELECT value FROM github_app WHERE key = ?";
 const UPSERT =
   "INSERT INTO github_app (key, value) VALUES (?, ?) ON CONFLICT (key) DO UPDATE SET value = excluded.value";
 const SWAP = `${UPSERT} WHERE github_app.value = ? RETURNING key`;
+const TAKE = "DELETE FROM github_app WHERE key = ? AND value = ? RETURNING key";
+const DELETE_RANGE = "DELETE FROM github_app WHERE key >= ? AND key < ?";
 const ABSENT = "";
 
 export type BoundStatement = Readonly<{
@@ -28,6 +30,10 @@ export type SealedEntry = StoreRow & Readonly<{ plaintext: string }>;
 
 export type RowSwap = StoreRow & Readonly<{ expected: Option.Option<string>; value: string }>;
 
+export type RowTake = StoreRow & Readonly<{ expected: string }>;
+
+export type RowRange = Readonly<{ env: AppStoreEnv; from: string; to: string }>;
+
 export type SealedSwap = SealedEntry & Readonly<{ expected: Option.Option<string> }>;
 
 const decodeCell = Schema.decodeUnknownEffect(Schema.NullOr(Schema.String));
@@ -47,6 +53,14 @@ const absentOr = Option.getOrElse(() => ABSENT);
 export const swapRow = ({ env, name, expected, value }: RowSwap): Effect.Effect<boolean> =>
   cell(env.GITHUB_APP.prepare(SWAP).bind(name, value, absentOr(expected)), "key").pipe(
     Effect.map(Option.isSome),
+  );
+
+export const takeRow = ({ env, name, expected }: RowTake): Effect.Effect<boolean> =>
+  cell(env.GITHUB_APP.prepare(TAKE).bind(name, expected), "key").pipe(Effect.map(Option.isSome));
+
+export const deleteRows = ({ env, from, to }: RowRange): Effect.Effect<void> =>
+  Effect.promise(() => env.GITHUB_APP.prepare(DELETE_RANGE).bind(from, to).run()).pipe(
+    Effect.asVoid,
   );
 
 const mismatched = (): SealFailed =>

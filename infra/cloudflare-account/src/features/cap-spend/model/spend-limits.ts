@@ -17,7 +17,7 @@ import { Array as Arr, Effect, Option } from "effect";
 
 const SPEND_LIMIT = "MasseaterDev.Cloudflare.SpendLimit";
 const BLOCK = "usage_block";
-const OVERAGE_CENTS = 1;
+const OVERAGE_CENTS = 100;
 const PRODUCTS = ["workers", "durable_objects"] as const;
 
 type Product = (typeof PRODUCTS)[number];

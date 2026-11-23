@@ -2,7 +2,7 @@ import { env } from "cloudflare:workers";
 import { Effect, Option, pipe } from "effect";
 
 import { isPublic } from "#/entities/entry/index.ts";
-import { spendObjectReads, spendUpload } from "#/entities/spending/index.ts";
+import { spendUpload } from "#/entities/spending/index.ts";
 import { admitsWriter } from "#/features/admit-caller/index.ts";
 import type { Target } from "#/features/admit-caller/index.ts";
 import { fetchEntries, readBlob, storeEntry } from "#/features/serve-entries/index.ts";
@@ -14,7 +14,6 @@ import type { StoreFailed } from "#/shared/lib/store-failed.ts";
 const ROUTE =
   /^\/projects\/(?<namespace>[a-z0-9][a-z0-9._-]{0,62})\/(?:(?<plain>fetch|store)|blob\/(?<blob>[0-9]{1,15}))$/u;
 
-const ONCE = 1;
 const FETCH = "POST fetch";
 const STORE = "POST store";
 const BLOB = "GET blob";
@@ -95,10 +94,6 @@ const fetched = Effect.fn("routes.fetched")(function* fetched(request: Request, 
 const blobRead = Effect.fn("routes.blobRead")(function* blobRead(_request: Request, route: Routed) {
   const open = yield* isPublic(route.namespace);
   if (!open || Option.isNone(route.blob)) {
-    return status(STATUS.notFound);
-  }
-  const affordable = yield* spendObjectReads(ONCE);
-  if (!affordable) {
     return status(STATUS.notFound);
   }
   return yield* readBlob(route.namespace, route.blob.value);

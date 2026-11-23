@@ -29,7 +29,17 @@ const player: FakePlayer = {
   },
 };
 
+const flooded = MutableRef.make(false);
+
+const limited = MutableRef.make<readonly string[]>([]);
+
 export const env = {
+  LIMITER: {
+    limit: ({ key }: Readonly<{ key: string }>): Promise<{ success: boolean }> => {
+      MutableRef.update(limited, Arr.append(key));
+      return Promise.resolve({ success: !MutableRef.get(flooded) });
+    },
+  },
   PLAYER: { getByName: (): FakePlayer => player },
   AUDIO: {
     put: (): Promise<void> => {
@@ -43,6 +53,14 @@ export const DurableObject = Object;
 
 export const recordedCalls = (): readonly string[] => MutableRef.get(calls);
 
+export const flood = (): void => {
+  MutableRef.set(flooded, true);
+};
+
+export const limitedKeys = (): readonly string[] => MutableRef.get(limited);
+
 export const resetCalls = (): void => {
   MutableRef.set(calls, []);
+  MutableRef.set(flooded, false);
+  MutableRef.set(limited, []);
 };

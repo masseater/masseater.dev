@@ -1,7 +1,8 @@
-import { Option, Schema, SchemaGetter } from "effect";
+import { Schema } from "effect";
 import type { ReactElement } from "react";
+import type { ScatterShapeProps } from "recharts";
 
-import { ORIGIN, REFERENCE_COLOR } from "./chart-style.ts";
+import { ORIGIN, REFERENCE_COLOR, SERIES_COLOR } from "./chart-style.ts";
 
 const RADIUS = 5;
 const FONT_SIZE = 11;
@@ -19,33 +20,16 @@ const MarkSchema = Schema.Struct({
 
 const isMarked = Schema.is(MarkSchema);
 
-const colorOf = SchemaGetter.transform(({ color }: { readonly color: string }) => color);
-const fillOf = SchemaGetter.transform((color: string) => ({ color }));
-
-const FillObjectSchema = Schema.Struct({ color: Schema.String }).pipe(
-  Schema.decodeTo(Schema.String, { decode: colorOf, encode: fillOf }),
-);
-
-const PaintSchema = Schema.Union([Schema.String, FillObjectSchema]);
-
-const paintOf = (fill: unknown): string | undefined =>
-  Option.getOrUndefined(Schema.decodeUnknownOption(PaintSchema)(fill));
-
 export const MarkedPoint = ({
   cx = ORIGIN,
   cy = ORIGIN,
-  fill,
   payload,
-}: Readonly<{
-  cx: number | undefined;
-  cy: number | undefined;
-  fill?: unknown;
-  payload?: unknown;
-}>): ReactElement => {
-  if (!isMarked(payload)) {
-    return <circle cx={cx} cy={cy} r={RADIUS} fill={paintOf(fill)} />;
+}: Readonly<Pick<ScatterShapeProps, "cx" | "cy" | "payload">>): ReactElement => {
+  const marked: unknown = payload;
+  if (!isMarked(marked)) {
+    return <circle cx={cx} cy={cy} r={RADIUS} fill={SERIES_COLOR} />;
   }
-  const { mark, spot, color } = payload;
+  const { mark, spot, color } = marked;
   const leader = {
     near: [],
     far: [

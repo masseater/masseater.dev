@@ -139,8 +139,8 @@ async fn settle(library: &Library, arrival: Arrival) -> Outcome<Imported> {
     let mut song = library.create(&title, &arrival.artist)?;
     let id = fresh_id();
     let file = format!("{SOURCES}/{id}.{}", extension_of(&arrival.path));
-    let target = library.path(&song, &file);
-    tokio::fs::create_dir_all(library.folder(&song.id).join(SOURCES)).await?;
+    let target = library.path(&song, &file)?;
+    tokio::fs::create_dir_all(library.folder(&song.id)?.join(SOURCES)).await?;
     if tokio::fs::rename(&arrival.path, &target).await.is_err() {
         tokio::fs::copy(&arrival.path, &target).await?;
     }
@@ -193,7 +193,7 @@ mod tests {
             }
         );
         assert_eq!((source.sample_rate, source.frames), (44_100, 4_410));
-        let kept = std::fs::read(library.path(&first.song, &source.file)).unwrap();
+        let kept = std::fs::read(library.path(&first.song, &source.file).unwrap()).unwrap();
         assert_eq!(kept, std::fs::read(&file).unwrap());
         let second = import_song(&library, &client, &cache, location)
             .await

@@ -7,10 +7,6 @@ on:
         description: The verify run that failed
         required: true
         type: string
-      branch:
-        description: The branch the failed run verified
-        required: true
-        type: string
       sha:
         description: The commit the failed run verified
         required: true
@@ -30,17 +26,16 @@ jobs:
       actions: write
       id-token: write
     concurrency:
-      group: verify-autofix-${{ inputs.branch }}
+      group: verify-autofix-${{ github.ref_name }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ inputs.branch }}
           persist-credentials: false
       - uses: $/.github/actions/setup
       - uses: masseater/typescript-template/.github/actions/autofix@c116d175574f2f6917e2aa39caf83a141ef4bd94
         with:
           run-id: ${{ inputs.run_id }}
-          branch: ${{ inputs.branch }}
+          branch: ${{ github.ref_name }}
           sha: ${{ inputs.sha }}
           github-token: ${{ github.token }}
 

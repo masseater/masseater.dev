@@ -1,1 +1,6 @@
-export { SloppediaGitHub, dispatchExposure, mintGitHubToken } from "./model/github-token.ts";
+export {
+  SloppediaGitHub,
+  dispatchExposure,
+  mintGitHubToken,
+  ownsSource,
+} from "./model/github-token.ts";

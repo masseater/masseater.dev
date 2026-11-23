@@ -13,6 +13,8 @@ export const site = {
   tracesPath: "/otlp/v1/traces",
   telemetryService: "masseater-dev-web",
   robotsPath: "/robots.txt",
+  securityTxtPath: "/.well-known/security.txt",
+  securityContact: "https://github.com/masseater/masseater.dev/security/advisories/new",
   sitemapFile: "sitemap.xml",
   externalPaths: ["/decision-bench/"],
   xHandle: `@${portfolio.xUser}`,

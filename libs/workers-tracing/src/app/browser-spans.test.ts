@@ -1,5 +1,5 @@
 import { browserSpans } from "@r_masseater/workers-tracing/browser-spans";
-import { Array, Effect, Predicate, Schema, String, pipe } from "effect";
+import { Array, Effect, MutableRef, Option, Predicate, Schema, String, pipe } from "effect";
 import { expect, test, vi } from "vite-plus/test";
 
 const SERVICE = "mosaic-web";
@@ -8,6 +8,12 @@ const ACCEPTED = 202;
 const REJECTED = 400;
 const TOO_LARGE = 413;
 const NOT_ALLOWED = 405;
+const FORBIDDEN = 403;
+const CHUNK = 16_384;
+const CHUNKS = 64;
+const READ_AT_MOST = 8;
+const WIDE = 30_000;
+const SPACE = 32;
 const MANY = 300;
 const LARGE = 70_000;
 const ONE = 1;
@@ -17,7 +23,33 @@ const receive = browserSpans({ service: SERVICE });
 
 const encodeJson = Schema.encodeEffect(Schema.fromJsonString(Schema.Unknown));
 
-const post = (body: string): Request => new Request(URL_PATH, { method: "POST", body });
+const ORIGIN = "https://masseater.dev";
+
+const postFrom = (headers: Readonly<Record<string, string>>, body: string): Request =>
+  new Request(URL_PATH, { method: "POST", headers, body });
+
+const post = (body: string): Request => postFrom({ origin: ORIGIN }, body);
+
+const streamed = (produce: () => Option.Option<Uint8Array>): Request => {
+  const init: RequestInit & Readonly<{ duplex: "half" }> = {
+    method: "POST",
+    headers: { origin: ORIGIN },
+    body: new ReadableStream<Uint8Array>({
+      pull: (controller): void => {
+        Option.match(produce(), {
+          onNone: () => {
+            controller.close();
+          },
+          onSome: (chunk) => {
+            controller.enqueue(chunk);
+          },
+        });
+      },
+    }),
+    duplex: "half",
+  };
+  return new Request(URL_PATH, init);
+};
 
 const span = (name: string): Readonly<Record<string, unknown>> => ({
   traceId: "0af7651916cd43dd8448eb211c80319c",
@@ -28,7 +60,7 @@ const span = (name: string): Readonly<Record<string, unknown>> => ({
   attributes: [{ key: "mosaic.gpu.live_devices", value: { intValue: "0" } }],
 });
 
-const traces = (service: string, names: readonly string[]): Effect.Effect<Request> =>
+const tracesText = (service: string, names: readonly string[]): Effect.Effect<string> =>
   encodeJson({
     resourceSpans: [
       {
@@ -36,7 +68,10 @@ const traces = (service: string, names: readonly string[]): Effect.Effect<Reques
         scopeSpans: [{ scope: { name: "mosaic" }, spans: pipe(names, Array.map(span)) }],
       },
     ],
-  }).pipe(Effect.orDie, Effect.map(post));
+  }).pipe(Effect.orDie);
+
+const traces = (service: string, names: readonly string[]): Effect.Effect<Request> =>
+  tracesText(service, names).pipe(Effect.map(post));
 
 const isSpanLog = (line: unknown): boolean =>
   Predicate.hasProperty(line, "message") && line.message === "otlp.span";
@@ -85,4 +120,44 @@ test("OTLP でない本文・大きすぎる本文・多すぎるスパン・POS
       [TOO_LARGE, NONE],
       [NOT_ALLOWED, NONE],
     ]);
+  }).pipe(Effect.runPromise));
+
+test("別のオリジンからの送信と、Origin の無い送信を断る", () =>
+  Effect.gen(function* rejectsOtherOrigins() {
+    const text = yield* tracesText(SERVICE, ["mosaic.page.hide"]);
+    const results = yield* Effect.forEach(
+      [
+        postFrom({ origin: "https://attacker.example" }, text),
+        postFrom({ origin: "null" }, text),
+        postFrom({}, text),
+      ],
+      received,
+      { concurrency: 1 },
+    );
+    expect(results).toStrictEqual([
+      [FORBIDDEN, NONE],
+      [FORBIDDEN, NONE],
+      [FORBIDDEN, NONE],
+    ]);
+  }).pipe(Effect.runPromise));
+
+test("Content-Length の無い大きな本文は、上限を超えたところで読むのをやめて断る", () =>
+  Effect.gen(function* stopsReading() {
+    const pulled = MutableRef.make(NONE);
+    const request = streamed(() =>
+      Option.liftPredicate(
+        new Uint8Array(CHUNK).fill(SPACE),
+        () => MutableRef.incrementAndGet(pulled) <= CHUNKS,
+      ),
+    );
+    const result = yield* received(request);
+    expect(result).toStrictEqual([TOO_LARGE, NONE]);
+    expect(MutableRef.get(pulled)).toBeLessThan(READ_AT_MOST);
+  }).pipe(Effect.runPromise));
+
+test("上限は文字数ではなくバイト数で数える", () =>
+  Effect.gen(function* countsBytes() {
+    const request = yield* traces(SERVICE, [String.repeat(WIDE)("あ")]);
+    const result = yield* received(request);
+    expect(result).toStrictEqual([TOO_LARGE, NONE]);
   }).pipe(Effect.runPromise));

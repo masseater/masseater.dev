@@ -85,7 +85,18 @@ const authorized: Readonly<Record<string, Handler>> = {
   "GET /status": () => status,
 };
 
+const UNKNOWN_CALLER = "unknown";
+
+const flooded = (request: Request): Effect.Effect<boolean> =>
+  Effect.promise(() =>
+    env.LIMITER.limit({ key: request.headers.get("cf-connecting-ip") ?? UNKNOWN_CALLER }),
+  ).pipe(Effect.map((outcome) => !outcome.success));
+
 const route = Effect.fn("three-twelve.route")(function* route(request: Request) {
+  const over = yield* flooded(request);
+  if (over) {
+    return yield* Rejected.make({ status: 429, reason: "too many requests" });
+  }
   const path = Str.replace(BASE_PATH, "")(new URL(request.url).pathname);
   const action = `${request.method} ${path}`;
   if (action === "PUT /token") {

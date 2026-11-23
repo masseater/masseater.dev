@@ -81,7 +81,7 @@ jobs:
           FAILED_RUN_ID: ${{ github.run_id }}
         run: >-
           gh workflow run autofix.yml --repo "$GITHUB_REPOSITORY" --ref "$HEAD_BRANCH"
-          -f run_id="$FAILED_RUN_ID" -f branch="$HEAD_BRANCH" -f sha="$HEAD_SHA"
+          -f run_id="$FAILED_RUN_ID" -f sha="$HEAD_SHA"
 
   deploy:
     if: github.event_name == 'push'

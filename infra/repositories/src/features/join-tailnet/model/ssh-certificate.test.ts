@@ -62,11 +62,7 @@ test("CA の鍵で署名を確かめられる利用者の証明書を作る", ()
       expect(issued.certifiedKey).toBe(issued.subjectKey);
       expect(issued.principals).toStrictEqual([PRINCIPAL]);
       expect(issued.lifetimeMs).toBeGreaterThan(LIFETIME_SECONDS * MS_PER_SECOND);
-      expect(issued.extensions).toStrictEqual([
-        "permit-port-forwarding",
-        "permit-pty",
-        "permit-user-rc",
-      ]);
+      expect(issued.extensions).toStrictEqual(["permit-pty", "permit-user-rc"]);
     }),
   ));
 

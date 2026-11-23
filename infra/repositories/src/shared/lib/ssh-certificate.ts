@@ -13,7 +13,7 @@ const MS_PER_SECOND = 1000;
 const CLOCK_SKEW_SECONDS = 60;
 const BLOB_START = 0;
 const ENCODED_FIELD = 1;
-const EXTENSIONS = ["permit-port-forwarding", "permit-pty", "permit-user-rc"] as const;
+const EXTENSIONS = ["permit-pty", "permit-user-rc"] as const;
 
 const taggedError = Schema.TaggedError;
 
