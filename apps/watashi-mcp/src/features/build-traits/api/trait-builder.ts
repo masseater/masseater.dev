@@ -53,10 +53,8 @@ export class TraitBuilder extends DurableObject {
   public run(): Promise<RunResult> {
     const session = this.harness.session();
     const conversation: Conversation = {
-      reset: async () => {
-        await session.setModel(this.model);
-        await session.reset();
-      },
+      pickModel: () => session.setModel(this.model),
+      reset: () => session.reset(),
       prompt: (input) => session.prompt(input),
     };
     const guarded = buildTraits({ conversation, translator: env.AI, ai: env.AI }).pipe(
