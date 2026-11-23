@@ -3816,7 +3816,7 @@ importers:
     devDependencies:
       '@effect/vitest':
         specifier: 'catalog:'
-        version: 4.1.4(@vitest/browser-playwright@5.1.0)(@vitest/ui@5.1.0)(effect@4.1.4)(vitest@5.1.1)
+        version: 4.1.4(@vitest/browser-playwright@5.1.1)(@vitest/browser-preview@5.1.1)(@vitest/ui@5.1.1)(effect@4.1.4)(vitest@5.1.1)
       '@r_masseater/vitest-otlp':
         specifier: workspace:*
         version: link:../vitest-otlp
