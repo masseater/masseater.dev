@@ -123,7 +123,7 @@ export default defineConfig({
       skills: ["typescript-discriminated-unions", "typescript-variables"],
     },
     "nanaism/yomiyasu": {
-      commit: "3042154ee537c1b7093eefed00a97b40aae9446d",
+      commit: "ddf365b5d5b36a7aa4ffab798dce1b694dbb1afd",
       root: "skills",
       skills: ["yomiyasu"],
     },
@@ -162,7 +162,7 @@ export default defineConfig({
       ],
     },
     "shadcn-ui/ui": {
-      commit: "968d8cb9dc42ae5d52e8fd356cf84596ec832a26",
+      commit: "bfa64ff4d1cb7317d2403ecb176df6826d4caffc",
       root: "skills",
       skills: ["shadcn"],
     },

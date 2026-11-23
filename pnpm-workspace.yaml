@@ -16,23 +16,23 @@ catalogMode: prefer
 catalog:
   chokidar: 6.0.0
   cborg: 7.0.0
-  msw: 3.0.6
+  msw: 3.0.7
   effector: 23.4.4
   empathic: 2.1.0
   globby: 16.2.4
   immer: 11.2.10
   micromatch: 4.0.8
   patronum: 2.3.0
-  "@pnpm/deps.path": 1101.0.9
-  "@pnpm/lockfile.fs": 1100.2.18
+  "@pnpm/deps.path": 1101.0.10
+  "@pnpm/lockfile.fs": 1100.2.19
   "@pnpm/logger": 1100.0.0
-  "@pnpm/workspace.projects-reader": 1101.1.7
-  "@pnpm/workspace.workspace-manifest-reader": 1100.3.2
-  "@pnpm/workspace.workspace-manifest-writer": 1100.2.11
+  "@pnpm/workspace.projects-reader": 1101.1.8
+  "@pnpm/workspace.workspace-manifest-reader": 1100.3.3
+  "@pnpm/workspace.workspace-manifest-writer": 1100.2.12
   "@textlint-ja/textlint-rule-preset-ai-writing": 1.7.0
   textlint-rule-preset-ja-technical-writing: 12.0.2
-  "@textlint/ast-node-types": 16.0.0
-  "@textlint/types": 16.0.0
+  "@textlint/ast-node-types": 16.1.1
+  "@textlint/types": 16.1.1
   "@bufbuild/buf": 1.75.0
   "@bufbuild/protobuf": 2.17.0
   "@opentelemetry/api": 1.10.0
@@ -47,8 +47,8 @@ catalog:
   wordnet-db: 3.1.14
   lighthouse: 13.6.0
   miniflare: 4.20260730.0
-  puppeteer-core: 25.17.0
-  tonal: 6.6.0
+  puppeteer-core: 25.18.1
+  tonal: 6.7.1
   midi-file: 1.2.4
   langium: 4.4.2
   langium-cli: 4.4.1
@@ -64,21 +64,21 @@ catalog:
   codemirror: 6.0.2
   comlink: 4.4.2
   typescript-wasm: npm:typescript@7.1.0-dev.20261106.1
-  "@better-auth/drizzle-adapter": 1.7.25
-  "@better-auth/mcp": 1.7.25
-  "@better-auth/oauth-provider": 1.7.25
-  "@better-auth/passkey": 1.7.25
+  "@better-auth/drizzle-adapter": 1.7.26
+  "@better-auth/mcp": 1.7.26
+  "@better-auth/oauth-provider": 1.7.26
+  "@better-auth/passkey": 1.7.26
   "@modelcontextprotocol/client": 2.4.0
   "@modelcontextprotocol/server": 2.4.0
-  auth: 1.7.25
-  "@r_masseater/oxlint-typed-rules": 0.4.1
-  "@r_masseater/vite-plus-adopt": 0.10.2
+  auth: 1.7.26
+  "@r_masseater/oxlint-typed-rules": 0.4.3
+  "@r_masseater/vite-plus-adopt": 0.11.0
   "@discordjs/voice": 0.19.2
   "@snazzah/davey": 0.2.0
   discord.js: 14.28.1
   discord-api-types: 0.38.59
   oxlint-plugin-eslint: 1.94.0
-  "@cloudflare/workers-types": 5.20261116.1
+  "@cloudflare/workers-types": 5.20261120.1
   "@effect/platform-node": 4.1.4
   "@effect/platform-node-shared": 4.1.4
   "@effect/sql-sqlite-node": 4.1.4
@@ -86,7 +86,7 @@ catalog:
   "@effect/opentelemetry": 4.1.4
   "@zip.js/zip.js": 2.25.0
   sharp: 0.35.5
-  hyparquet: 1.33.0
+  hyparquet: 1.33.1
   fzstd: 0.1.1
   "@types/three": 0.187.0
   "@pixiv/three-vrm": 3.5.5
@@ -99,7 +99,7 @@ catalog:
   eslint-plugin-baseline-js: 0.7.7
   "@html-eslint/eslint-plugin-react": 0.68.0
   "@commitlint/config-conventional": 21.2.4
-  "@tanstack/react-query-devtools": 5.107.1
+  "@tanstack/react-query-devtools": 5.108.1
   "@vitejs/plugin-react": 6.3.0
   "@vitejs/plugin-rsc": 0.5.39
   "@tanstack/intent": 0.5.6
@@ -115,10 +115,10 @@ catalog:
   "@types/mdast": 4.0.4
   unified: 11.0.5
   vfile: 6.0.3
-  simple-git: 4.0.2
+  simple-git: 4.1.0
   feed: 6.0.0
   "@yarnpkg/parsers": 3.1.0
-  jose: 6.2.17
+  jose: 6.2.18
   "@stefanprobst/rehype-extract-toc": 3.0.0
   rehype-slug: 6.0.0
   satori: 0.63.2
@@ -130,8 +130,8 @@ catalog:
   yaml: 2.9.1
   mdast-util-directive: 3.2.0
   remark-directive: 4.0.0
-  "@xyflow/react": 12.12.1
-  lucide-react: 1.73.0
+  "@xyflow/react": 13.0.2
+  lucide-react: 1.76.0
   niconico-embed-player: 0.1.2
   budoux: 0.10.4
   mdast-util-to-string: 4.0.0
@@ -152,14 +152,14 @@ catalog:
   universal-github-app-jwt: 2.2.2
   "@octokit/rest": 22.0.1
   simple-icons: 16.38.0
-  "@peculiar/asn1-pkcs8": 3.0.0
-  "@peculiar/asn1-rsa": 3.0.0
-  "@peculiar/asn1-schema": 3.0.0
+  "@peculiar/asn1-pkcs8": 3.1.0
+  "@peculiar/asn1-rsa": 3.1.0
+  "@peculiar/asn1-schema": 3.1.0
   size-limit: 14.3.0
   "@size-limit/file": 14.3.0
   publint: 0.3.25
   sequoia-cli: 0.5.8
-  "@atproto/api": 0.32.0
+  "@atproto/api": 0.32.3
   "@effect/ai-openrouter": 4.1.4
   parse5: 8.1.1
   mdast-util-from-markdown: 2.1.0
@@ -184,7 +184,7 @@ catalog:
   "@tesseract.js-data/eng": 1.0.0
   playwright-core: 1.65.1
   "@kenjiuno/msgreader": 1.29.0
-  officeparser: 8.8.0
+  officeparser: 8.9.0
   file-type: 22.3.0
   xlsx: https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz
   cfb: 1.2.2
@@ -198,8 +198,8 @@ catalog:
   "@fontsource/zen-kurenaido": 5.3.1
   fastest-levenshtein: 1.0.16
   "@cfworker/json-schema": 4.1.6
-  "@openrouter/sdk": 1.5.105
-  recharts: 3.10.1
+  "@openrouter/sdk": 1.5.123
+  recharts: 3.11.0
   ml-confusion-matrix: 2.0.0
   forecast-calibration-kit: 0.1.2
   seedrandom: 3.0.5
@@ -210,16 +210,16 @@ catalog:
   "@oxlint/plugins": 1.94.0
   oxlint: 1.94.0
   oxlint-tsgolint: 7.0.2007
-  "@eslint-react/eslint-plugin": 5.30.3
-  "@remotion/eslint-plugin": 4.0.544
-  "@tanstack/eslint-plugin-query": 5.107.1
+  "@eslint-react/eslint-plugin": 5.30.5
+  "@remotion/eslint-plugin": 4.0.545
+  "@tanstack/eslint-plugin-query": 5.108.1
   "@tanstack/eslint-plugin-router": 1.162.0
   "@tanstack/eslint-plugin-start": 0.1.0
   "@tsconfig/strictest": 2.0.9
-  "@typescript-eslint/parser": 8.72.2
-  "@typescript-eslint/types": 8.72.2
-  "@typescript-eslint/typescript-estree": 8.72.2
-  "@typescript-eslint/utils": 8.72.2
+  "@typescript-eslint/parser": 8.73.0
+  "@typescript-eslint/types": 8.73.0
+  "@typescript-eslint/typescript-estree": 8.73.0
+  "@typescript-eslint/utils": 8.73.0
   combinate: 1.1.11
   dedent: 1.7.2
   eslint: 10.15.0
@@ -230,16 +230,16 @@ catalog:
   "@commitlint/load": 21.2.4
   "@commitlint/types": 21.2.3
   "@loaderkit/resolve": 1.0.6
-  "@textlint/config-loader": 16.0.0
-  "@textlint/kernel": 16.0.0
-  "@textlint/utils": 16.0.0
+  "@textlint/config-loader": 16.1.1
+  "@textlint/kernel": 16.1.1
+  "@textlint/utils": 16.1.1
   cjs-module-lexer: 2.3.0
-  markdownlint: 0.42.1
-  minimatch: 11.0.8
+  markdownlint: 0.42.2
+  minimatch: 11.0.9
   pluralize: 8.0.0
   semver: 7.8.6
   steiger: 0.10.0
-  textlint: 16.0.0
+  textlint: 16.1.1
   tsconfck: 3.1.6
   validate-npm-package-name: 8.0.0
   web-tree-sitter: 0.27.2
@@ -253,21 +253,21 @@ catalog:
   "@types/react-dom": 19.3.0
   scheduler: 0.28.0
   "@tanstack/react-router": 1.170.46
-  "@tanstack/react-router-devtools": 1.167.3
+  "@tanstack/react-router-devtools": 1.167.4
   "@tanstack/react-router-ssr-query": 1.167.3
-  "@tanstack/react-devtools": 0.10.14
-  "@tanstack/devtools-vite": 0.8.6
+  "@tanstack/react-devtools": 0.10.15
+  "@tanstack/devtools-vite": 0.8.7
   "@tailwindcss/vite": 4.3.5
   class-variance-authority: 0.7.1
   tw-animate-css: 1.4.0
   "@digital-go-jp/tailwind-theme-plugin": 2.0.0
   clsx: 2.1.1
-  tailwind-merge: 3.7.0
+  tailwind-merge: 3.7.1
   happy-dom: 21.0.4
-  "@tauri-apps/api": 2.12.4
-  "@tauri-apps/cli": 2.12.4
+  "@tauri-apps/api": 2.12.5
+  "@tauri-apps/cli": 2.12.6
   "@tauri-apps/plugin-opener": 2.7.3
-  "@anthropic-ai/claude-agent-sdk": 0.3.325
+  "@anthropic-ai/claude-agent-sdk": 0.3.329
   "@types/dom-speech-recognition": 0.0.12
   oauth4webapi: 3.8.8
   agents: 0.33.0
@@ -291,11 +291,11 @@ catalogs:
     "@distilled.cloud/cloudflare": 1.0.0-rc.20
     "@effect/atom-react": 4.1.4
     "@huggingface/transformers": 4.3.2
-    "@effect/tsgo": 0.70.0
+    "@effect/tsgo": 0.73.2
     "@elysiajs/eden": 1.4.9
-    "@tanstack/react-query": 5.107.1
-    "@tanstack/react-start": 1.169.5
-    better-auth: 1.7.25
+    "@tanstack/react-query": 5.108.1
+    "@tanstack/react-start": 1.169.7
+    better-auth: 1.7.26
     "@alchemy.run/cloudflare": 2.0.0-beta.87
     "@alchemy.run/github": 2.0.0-beta.87
     alchemy: 2.0.0-beta.87
@@ -304,9 +304,9 @@ catalogs:
     eden-tanstack-react-query: 0.5.1
     effect: 4.1.4
     elysia: 1.4.32
-    fallow: 3.43.1
-    fallow-type-aware: 3.43.1
-    fallow-similar-code: 3.43.1
+    fallow: 3.44.0
+    fallow-type-aware: 3.44.0
+    fallow-similar-code: 3.44.0
     radix-ui: 1.8.1
     tailwindcss: 4.3.5
     typescript: 7.1.0-beta
@@ -316,7 +316,7 @@ overrides:
   "langium>vscode-languageserver": "catalog:" # exit: npm:langium allows vscode-languageserver@>=11
   "@remotion/eslint-plugin>@typescript-eslint/utils": "-" # exit: npm:@remotion/eslint-plugin allows @typescript-eslint/utils@>=8
   "@remotion/eslint-plugin>typescript": "-" # exit: npm:@remotion/eslint-plugin drops typescript || npm:@remotion/eslint-plugin allows typescript@>=7
-  workerd: 1.20261116.1 # exit: npm:miniflare requires workerd@>=1.20261115.1
+  workerd: 1.20261120.1 # exit: npm:miniflare requires workerd@>=1.20261115.1
   vite@*: "catalog:" # exit: unused
   fflate@>=0.7.0 <0.7.5: ^0.8.0 # exit: unused
   glob@>=9.0.0 <=14.0.1: ^14.0.2 # exit: unused

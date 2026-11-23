@@ -9,12 +9,12 @@ publish = false
 name = "aredoko_desktop"
 
 [build-dependencies]
-tauri-build = { version = "=2.7.4", features = [] }
+tauri-build = { version = "=2.7.6", features = [] }
 
 [dependencies]
 desktop-shell = { path = "../../../libs/desktop-shell" }
 dunce = "=1.0.5"
-tauri = { version = "=2.12.5", features = ["protocol-asset", "tray-icon"] }
+tauri = { version = "=2.12.7", features = ["protocol-asset", "tray-icon"] }
 tauri-plugin-autostart = "=2.7.0"
 tauri-plugin-dialog = "=2.8.4"
 tauri-plugin-opener = "=2.7.3"

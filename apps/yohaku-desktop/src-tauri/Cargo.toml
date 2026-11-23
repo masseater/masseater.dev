@@ -9,7 +9,7 @@ publish = false
 name = "yohaku_desktop"
 
 [build-dependencies]
-tauri-build = { version = "=2.7.4", features = [] }
+tauri-build = { version = "=2.7.6", features = [] }
 
 [dependencies]
 axum = "=0.8.9"
@@ -18,7 +18,7 @@ dunce = "=1.0.5"
 keyring = "=4.2.0"
 log = "=0.4.35"
 oauth2 = { version = "=5.0.0", default-features = false }
-regex = "=1.13.1"
+regex = "=1.13.2"
 reqwest = { version = "=0.13.5", default-features = false, features = [
   "form",
   "query",
@@ -26,14 +26,14 @@ reqwest = { version = "=0.13.5", default-features = false, features = [
   "rustls",
   "system-proxy",
 ] }
-rmcp = { version = "=3.10.0", features = ["macros", "server", "transport-streamable-http-server"] }
+rmcp = { version = "=3.11.0", features = ["macros", "server", "transport-streamable-http-server"] }
 rusqlite = { version = "=0.43.0", features = ["bundled"] }
 schemars = "=1.2.3"
 serde = { version = "=1.0.229", features = ["derive"] }
 serde_json = "=1.0.154"
 specta = { version = "=2.0.0-rc.28", features = ["derive"] }
 specta-typescript = "=0.0.15"
-tauri = { version = "=2.12.5", features = [] }
+tauri = { version = "=2.12.7", features = [] }
 tauri-plugin-dialog = "=2.8.4"
 tauri-plugin-opener = "=2.7.3"
 tauri-plugin-single-instance = "=2.5.5"
@@ -50,7 +50,7 @@ tokio = { version = "=1.54.1", features = [
   "time",
 ] }
 url = "=2.5.8"
-uuid = { version = "=1.29.2", features = ["v7"] }
+uuid = { version = "=1.29.3", features = ["v7"] }
 
 [lints.rust]
 unsafe_code = "forbid"
