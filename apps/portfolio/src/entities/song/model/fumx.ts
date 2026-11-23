@@ -26,7 +26,7 @@ const partsWorkers = import.meta.glob<string>("./fumx-parts-worker.ts", {
 
 const partsWorker = pipe(Rec.values(partsWorkers), Arr.join(""));
 
-const sampleUrls = import.meta.glob<string>("../catalog/*/samples/*.flac", {
+const sampleUrls = import.meta.glob<string>("./catalog/*/samples/*.flac", {
   query: "?url",
   import: "default",
   eager: true,
@@ -39,7 +39,7 @@ const samplesOf =
       sampleFilesOf(song),
       Arr.flatMap((file) =>
         pipe(
-          Rec.get(sampleUrls, `../catalog/${slug}/${file}`),
+          Rec.get(sampleUrls, `./catalog/${slug}/${file}`),
           Option.map((url) => [file, url] as const),
           Option.toArray,
         ),

@@ -13,7 +13,7 @@ import {
 } from "effect";
 import { afterAll, expect, test } from "vite-plus/test";
 
-import { AUDITS } from "#/features/audit-workflows/concerns/index.ts";
+import { AUDITS } from "#/features/audit-workflows/model/concerns/index.ts";
 
 import { parseRepository } from "./common.ts";
 import { loadConfig } from "./config-decode.ts";
