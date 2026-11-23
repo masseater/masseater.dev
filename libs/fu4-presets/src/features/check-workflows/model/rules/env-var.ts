@@ -4,7 +4,7 @@ import { containsExpression } from "#/entities/workflow/index.ts";
 import type { Container, Env } from "#/entities/workflow/index.ts";
 import { NOOP, workflowRule } from "#/features/check-workflows/lib/workflow-rule.ts";
 import type { Fail, Visitor } from "#/features/check-workflows/lib/workflow-rule.ts";
-import { servicesOf } from "#/features/check-workflows/rules/credentials.ts";
+import { servicesOf } from "#/features/check-workflows/model/rules/credentials.ts";
 import { quote } from "#/shared/text/index.ts";
 
 const INVALID = /[\t &=]/u;
