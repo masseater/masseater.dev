@@ -1,14 +1,13 @@
 import { expect, it } from "@effect/vitest";
-import { Effect, Exit, Schema } from "effect";
+import { Array as Arr, Effect, Exit, Record as Rec, Schema, String as Str } from "effect";
 import { vi } from "vite-plus/test";
 
-import { DecideInput } from "./decide-input.ts";
+import { MAX_QUESTIONS, DecideInput } from "./decide-input.ts";
+import { decide } from "./decide-tools.ts";
 
-const run = vi.hoisted(() => vi.fn());
+const run = vi.hoisted(() => vi.fn<(...args: readonly unknown[]) => Promise<unknown>>());
 
 vi.mock("cloudflare:workers", () => ({ env: { AI: { run } } }));
-
-const { decide } = await import("./decide-tools.ts");
 
 const QUESTION = {
   type: "choice",
@@ -20,21 +19,28 @@ const INPUT = { snippets: { s0: "完了：PR を作成した。" }, questions: {
 
 const ANSWER = { answers: { s0: { choice: "done", probabilities: { done: 0.93, detail: 0.07 } } } };
 
+const NEARLY_FULL = 7000;
+const SNIPPETS = 4;
+const OVER = 1;
+
+const questions = (count: number): (typeof DecideInput.Type)["questions"] =>
+  Rec.fromEntries(Arr.makeBy(count, (index) => [`q${String(index)}`, QUESTION] as const));
+
+const decodes = (input: unknown): boolean =>
+  Exit.isSuccess(Schema.decodeUnknownExit(DecideInput)(input));
+
 it.effect("sends the snippets and questions to Clef Flash through the gateway", () =>
   Effect.gen(function* sends() {
     run.mockResolvedValueOnce(ANSWER);
     const decided = yield* decide(INPUT);
     expect(decided).toStrictEqual(ANSWER);
-    expect(run).toHaveBeenCalledWith(
-      "@cf/cloudflare/clef-flash",
-      { model: "clef-flash", state: { snippets: INPUT.snippets }, questions: INPUT.questions },
-      {
-        gateway: {
-          id: "default",
-          metadata: expect.objectContaining({ caller: "sundries.decide" }),
-        },
-      },
-    );
+    expect(run.mock.calls).toMatchObject([
+      [
+        "@cf/cloudflare/clef-flash",
+        { model: "clef-flash", state: { snippets: INPUT.snippets }, questions: INPUT.questions },
+        { gateway: { id: "default", metadata: { caller: "sundries.decide" } } },
+      ],
+    ]);
   }),
 );
 
@@ -46,21 +52,17 @@ it.effect("fails when the model answers in another shape", () =>
   }),
 );
 
-it("accepts 64 questions and refuses 65", () => {
-  const questions = (count: number): Record<string, typeof QUESTION> =>
-    Object.fromEntries(
-      Array.from({ length: count }, (_, index) => [`q${String(index)}`, QUESTION]),
-    );
-  const decodes = (count: number): boolean =>
-    Schema.decodeUnknownExit(DecideInput)({ snippets: {}, questions: questions(count) })._tag ===
-    "Success";
-  expect([decodes(64), decodes(65), decodes(0)]).toStrictEqual([true, false, false]);
+it("accepts the most questions the model takes and refuses one more or none", () => {
+  expect([
+    decodes({ snippets: {}, questions: questions(MAX_QUESTIONS) }),
+    decodes({ snippets: {}, questions: questions(MAX_QUESTIONS + OVER) }),
+    decodes({ snippets: {}, questions: {} }),
+  ]).toStrictEqual([true, false, false]);
 });
 
 it("refuses a state larger than the model reads", () => {
-  const snippets = Object.fromEntries(
-    Array.from({ length: 4 }, (_, index) => [`s${String(index)}`, "x".repeat(7000)]),
+  const snippets = Rec.fromEntries(
+    Arr.makeBy(SNIPPETS, (index) => [`s${String(index)}`, Str.repeat(NEARLY_FULL)("x")] as const),
   );
-  const exit = Schema.decodeUnknownExit(DecideInput)({ snippets, questions: { q: QUESTION } });
-  expect(exit._tag).toBe("Failure");
+  expect(decodes({ snippets, questions: questions(OVER) })).toBe(false);
 });

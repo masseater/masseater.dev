@@ -2,7 +2,7 @@ import { READ_ONLY, compactInput, failedAt } from "@masseater.dev/mcp-tool-call"
 import type { McpServer } from "@modelcontextprotocol/server";
 import { runWorkersAi } from "@r_masseater/workers-tracing/workers-ai";
 import { env } from "cloudflare:workers";
-import { Effect, Schema } from "effect";
+import { Effect, Record as Rec, Schema } from "effect";
 
 import { runTool } from "#/shared/api/index.ts";
 
@@ -43,7 +43,7 @@ export const registerDecideTools = (server: McpServer): McpServer => {
       inputSchema: compactInput(INPUT_SCHEMA),
       annotations: READ_ONLY,
     },
-    (input) => decide(input).pipe(runTool({ count: ({ answers }) => Object.keys(answers).length })),
+    (input) => decide(input).pipe(runTool({ count: ({ answers }) => Rec.size(answers) })),
   );
   return server;
 };
