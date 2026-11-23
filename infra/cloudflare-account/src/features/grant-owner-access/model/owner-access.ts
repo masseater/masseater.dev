@@ -59,6 +59,8 @@ const ownerApplication = Effect.fn("ownerApplication")(function* ownerApplicatio
     sessionDuration: SESSION_DURATION,
     allowedIdps: [google.identityProviderId],
     autoRedirectToIdentity: true,
+    sameSiteCookieAttribute: "lax",
+    httpOnlyCookieAttribute: true,
     policies: [owner],
     oauthConfiguration: {
       enabled: true,

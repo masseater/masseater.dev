@@ -14,6 +14,7 @@ export {
   grantKeys,
   isGranted,
   repositoryName,
+  sourceWorkflows,
   verify,
   workflowGrant,
 } from "./model/github-oidc.ts";

@@ -63,13 +63,10 @@ const cacheOf = (deck: BlockSource): Cache => {
           Arr.range(first, Math.floor((to - ONE) / deck.frames)),
           Arr.filter((index) => !held.has(index)),
         );
-        const blocks = yield* Effect.promise(() =>
-          Promise.all(
-            pipe(
-              wanted,
-              Arr.map((index) => deck.block(index)),
-            ),
-          ),
+        const blocks = yield* Effect.forEach(
+          wanted,
+          (index) => Effect.promise(() => deck.block(index)),
+          { concurrency: "unbounded" },
         );
         for (const [at, index] of wanted.entries()) {
           held.set(index, blocks[at] ?? []);

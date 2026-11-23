@@ -20,7 +20,7 @@
     "vite-plus": "catalog:stack"
   },
   "upstream": {
-    "effect": "@effect/tsgo@0.70.0",
+    "effect": "@effect/tsgo@0.73.2",
     "tsrs": "v7.1.0-beta.tsrs2",
     "skip": [
       "160-bolt-extra-workload.patch"

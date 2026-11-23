@@ -2,7 +2,8 @@ import { run } from "@r_masseater/workers-tracing/effect";
 import { Elysia } from "@r_masseater/workers-tracing/elysia";
 import { env } from "cloudflare:workers";
 import { Effect, Option, Schema } from "effect";
-import { Hex } from "effect/encoding";
+import { status } from "elysia";
+import type { ElysiaCustomStatusResponse } from "elysia";
 import { CloudflareAdapter } from "elysia/adapter/cloudflare-worker";
 
 import { categories } from "#/entities/entry/index.ts";
@@ -10,6 +11,7 @@ import { site } from "#/shared/config/index.ts";
 
 import { addStar, read, readCounts, removeStar } from "./stars-store.server.ts";
 import type { Change, Counts, Stars, Target } from "./stars-store.server.ts";
+import { flooded, visitorOf } from "./visitor.server.ts";
 
 const Slug = Schema.String.check(Schema.isPattern(/^[\w-]+$/u));
 
@@ -23,12 +25,9 @@ const decodeCategory = Schema.decodeUnknownOption(
 
 const missing: Stars = { status: "missing" };
 
-const visitorOf = Effect.fn("stars.visitor")(function* visitorOf(request: Request) {
-  const ip = request.headers.get("cf-connecting-ip") ?? "";
-  const salted = new TextEncoder().encode(`${env.VISITOR_SALT}:${ip}`);
-  const digest = yield* Effect.promise(() => crypto.subtle.digest("SHA-256", salted));
-  return Hex.encode(new Uint8Array(digest));
-});
+const TOO_MANY = 429;
+
+type TooMany = ElysiaCustomStatusResponse<typeof TOO_MANY, "too many requests">;
 
 const exists = Effect.fn("stars.exists")(function* exists(request: Request, target: Target) {
   const url = new URL(`/${target.category}/${target.slug}`, request.url);
@@ -49,16 +48,37 @@ const changed = Effect.fn("stars.change")(function* changed(
   return yield* read(target, visitor);
 });
 
+const answered = (
+  effect: (target: Target) => Effect.Effect<Stars>,
+  params: unknown,
+): Effect.Effect<Stars> =>
+  Option.match(decodeTarget(params), {
+    onNone: () => Effect.succeed(missing),
+    onSome: effect,
+  });
+
 const respond = (
   effect: (target: Target) => Effect.Effect<Stars>,
   params: unknown,
-): Promise<Stars> =>
-  run(
-    Option.match(decodeTarget(params), {
-      onNone: () => Effect.succeed(missing),
-      onSome: effect,
-    }),
-  );
+): Promise<Stars> => run(answered(effect, params));
+
+const written = Effect.fn("stars.write")(function* written(
+  request: Request,
+  params: unknown,
+  change: Change,
+) {
+  const over = yield* flooded(request);
+  if (over) {
+    return status(TOO_MANY, "too many requests" as const);
+  }
+  return yield* answered((target) => changed(request, target, change), params);
+});
+
+const respondWrite = (
+  request: Request,
+  params: unknown,
+  change: Change,
+): Promise<Stars | TooMany> => run(written(request, params, change));
 
 const missingCounts: Counts = { status: "missing" };
 
@@ -78,12 +98,8 @@ const starRoutes = new Elysia({ prefix: site.starsApiPath, adapter: CloudflareAd
       params,
     ),
   )
-  .put("/:category/:slug", ({ request, params }) =>
-    respond((target) => changed(request, target, addStar), params),
-  )
-  .delete("/:category/:slug", ({ request, params }) =>
-    respond((target) => changed(request, target, removeStar), params),
-  );
+  .put("/:category/:slug", ({ request, params }) => respondWrite(request, params, addStar))
+  .delete("/:category/:slug", ({ request, params }) => respondWrite(request, params, removeStar));
 
 export const handleStars = starRoutes.handle;
 

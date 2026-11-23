@@ -4,8 +4,8 @@ import {
 } from "@distilled.cloud/github/actions";
 import { listReposAccessibleToInstallation } from "@distilled.cloud/github/apps";
 import { CredentialsFromEnv } from "@distilled.cloud/github/Credentials";
-import type { GithubOpContext } from "@distilled.cloud/github/Protocol";
-import { update } from "@distilled.cloud/github/repos";
+import type { GithubOpContext, GithubOpError } from "@distilled.cloud/github/Protocol";
+import { enablePrivateVulnerabilityReporting, update } from "@distilled.cloud/github/repos";
 import type { UpdateRequest } from "@distilled.cloud/github/repos";
 import { Array as Arr, Effect, Layer, ManagedRuntime, Option, pipe } from "effect";
 import { layer as fetchHttpClient } from "effect/http/FetchHttpClient";
@@ -70,6 +70,8 @@ export type RepositorySettingsProps = Readonly<{
   allowUpdateBranch: boolean;
   secretScanning: boolean;
   actionsCreatePullRequests: boolean;
+  collaboratorPullRequests: boolean;
+  vulnerabilityReporting: boolean;
 }>;
 
 const ENABLED = { status: "enabled" } as const;
@@ -86,6 +88,23 @@ const securityOf = (secretScanning: boolean): Pick<UpdateRequest, "security_and_
   };
 };
 
+const pullRequestsOf = (
+  collaboratorPullRequests: boolean,
+): Pick<UpdateRequest, "pull_request_creation_policy"> => {
+  if (!collaboratorPullRequests) {
+    return {};
+  }
+  return { pull_request_creation_policy: "collaborators_only" };
+};
+
+const reportVulnerabilities = (
+  settings: RepositorySettingsProps,
+): Effect.Effect<unknown, GithubOpError, GithubOpContext> =>
+  Effect.when(
+    enablePrivateVulnerabilityReporting({ owner: settings.owner, repo: settings.name }),
+    Effect.succeed(settings.vulnerabilityReporting),
+  );
+
 const applySettings = (
   settings: RepositorySettingsProps,
 ): Effect.Effect<void, never, GithubOpContext> =>
@@ -95,13 +114,14 @@ const applySettings = (
       repo: settings.name,
       allow_update_branch: settings.allowUpdateBranch,
       ...securityOf(settings.secretScanning),
+      ...pullRequestsOf(settings.collaboratorPullRequests),
     }),
     setGithubActionsDefaultWorkflowPermissionsRepository({
       owner: settings.owner,
       repo: settings.name,
       can_approve_pull_request_reviews: settings.actionsCreatePullRequests,
     }),
-  ).pipe(Effect.orDie, Effect.asVoid);
+  ).pipe(Effect.andThen(reportVulnerabilities(settings)), Effect.orDie, Effect.asVoid);
 
 export const updateRepository = (settings: RepositorySettingsProps): Effect.Effect<void> =>
   Effect.promise(() => gitHubApi.runPromise(applySettings(settings)));

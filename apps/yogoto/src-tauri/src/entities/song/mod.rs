@@ -1,6 +1,6 @@
 use std::path::{Path, PathBuf};
 
-use media_notes::{Outcome, fresh_id, now};
+use media_notes::{Failure, Outcome, fresh_id, is_id, now};
 
 use crate::shared::protocol::{SONG_MANIFEST, Song};
 
@@ -19,14 +19,15 @@ impl Library {
         })
     }
 
-    #[must_use]
-    pub fn folder(&self, id: &str) -> PathBuf {
-        self.root.join(SONGS).join(id)
+    pub fn folder(&self, id: &str) -> Outcome<PathBuf> {
+        if !is_id(id) {
+            return Err(Failure::new("not a song id"));
+        }
+        Ok(self.root.join(SONGS).join(id))
     }
 
-    #[must_use]
-    pub fn path(&self, song: &Song, relative: &str) -> PathBuf {
-        self.folder(&song.id).join(relative)
+    pub fn path(&self, song: &Song, relative: &str) -> Outcome<PathBuf> {
+        Ok(self.folder(&song.id)?.join(relative))
     }
 
     pub fn list(&self) -> Outcome<Vec<Song>> {
@@ -42,7 +43,7 @@ impl Library {
     }
 
     pub fn get(&self, id: &str) -> Outcome<Option<Song>> {
-        let manifest = self.folder(id).join(SONG_MANIFEST);
+        let manifest = self.folder(id)?.join(SONG_MANIFEST);
         if !manifest.is_file() {
             return Ok(None);
         }
@@ -50,7 +51,7 @@ impl Library {
     }
 
     pub fn save(&self, song: &Song) -> Outcome<()> {
-        let folder = self.folder(&song.id);
+        let folder = self.folder(&song.id)?;
         std::fs::create_dir_all(&folder)?;
         let staging = folder.join(format!("{SONG_MANIFEST}.partial"));
         std::fs::write(&staging, serde_json::to_vec_pretty(song)?)?;
@@ -69,12 +70,12 @@ impl Library {
             separations: Vec::new(),
             analysis: None,
         };
-        std::fs::create_dir_all(self.folder(&song.id))?;
+        std::fs::create_dir_all(self.folder(&song.id)?)?;
         Ok(song)
     }
 
     pub fn remove(&self, id: &str) -> Outcome<bool> {
-        let folder = self.folder(id);
+        let folder = self.folder(id)?;
         if !folder.join(SONG_MANIFEST).is_file() {
             return Ok(false);
         }
@@ -93,7 +94,24 @@ impl Library {
 #[cfg(test)]
 mod tests {
     use super::Library;
-    use crate::shared::protocol::{Origin, SongSource};
+    use crate::shared::protocol::{Origin, SONG_MANIFEST, SongSource};
+
+    #[test]
+    fn ids_the_app_did_not_make_never_reach_the_file_system() {
+        let directory = tempfile::tempdir().unwrap();
+        let library = Library::open(&directory.path().join("library")).unwrap();
+        let outside = directory.path().join("outside");
+        std::fs::create_dir_all(&outside).unwrap();
+        std::fs::write(outside.join(SONG_MANIFEST), "{}").unwrap();
+        let mut song = library.create("Song", "").unwrap();
+        for id in [outside.to_str().unwrap(), "../../outside", "..", ""] {
+            assert!(library.get(id).is_err());
+            assert!(library.remove(id).is_err());
+            song.id = id.to_owned();
+            assert!(library.save(&song).is_err());
+        }
+        assert!(outside.join(SONG_MANIFEST).is_file());
+    }
 
     #[test]
     fn saved_songs_list_newest_first_and_match_by_digest() {

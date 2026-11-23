@@ -15,7 +15,7 @@ export class ClaudeRequests extends WorkerEntrypoint implements ClaudeRequestsRp
   public send(request: ClaudeRequest): Promise<Readonly<{ id: number; woke: Woken }>> {
     return runLogged(
       enqueue(request).pipe(
-        Effect.flatMap(({ id }) => wakeProject.pipe(Effect.map((woke) => ({ id, woke })))),
+        Effect.zipWith(wakeProject, ({ id }, woke) => ({ id, woke })),
         Effect.orDie,
         Effect.annotateLogs({ entrypoint: this.ctx.props }),
       ),
