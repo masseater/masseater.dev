@@ -79,11 +79,11 @@ catalog:
   discord-api-types: 0.38.59
   oxlint-plugin-eslint: 1.94.0
   "@cloudflare/workers-types": 5.20261120.1
-  "@effect/platform-node": 4.1.4
-  "@effect/platform-node-shared": 4.1.4
-  "@effect/sql-sqlite-node": 4.1.4
-  "@effect/vitest": 4.1.4
-  "@effect/opentelemetry": 4.1.4
+  "@effect/platform-node": 4.1.5
+  "@effect/platform-node-shared": 4.1.5
+  "@effect/sql-sqlite-node": 4.1.5
+  "@effect/vitest": 4.1.5
+  "@effect/opentelemetry": 4.1.5
   "@zip.js/zip.js": 2.25.0
   sharp: 0.35.5
   hyparquet: 1.33.1
@@ -160,7 +160,7 @@ catalog:
   publint: 0.3.25
   sequoia-cli: 0.5.8
   "@atproto/api": 0.32.3
-  "@effect/ai-openrouter": 4.1.4
+  "@effect/ai-openrouter": 4.1.5
   parse5: 8.1.1
   mdast-util-from-markdown: 2.1.0
   mdast-util-frontmatter: 2.0.1
@@ -289,7 +289,7 @@ catalog:
 catalogs:
   stack:
     "@distilled.cloud/cloudflare": 1.0.0-rc.20
-    "@effect/atom-react": 4.1.4
+    "@effect/atom-react": 4.1.5
     "@huggingface/transformers": 4.3.2
     "@effect/tsgo": 0.73.2
     "@elysiajs/eden": 1.4.9
@@ -302,7 +302,7 @@ catalogs:
     drizzle-kit: 1.0.0-rc.5-ab785fc
     drizzle-orm: 1.0.0-rc.5-ab785fc
     eden-tanstack-react-query: 0.5.1
-    effect: 4.1.4
+    effect: 4.1.5
     elysia: 1.4.32
     fallow: 3.45.0
     fallow-type-aware: 3.45.0
