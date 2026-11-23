@@ -8,27 +8,38 @@ const MESSAGE =
 
 const ONE = 1;
 
+const DeclarationSchema = Schema.Struct({
+  type: Schema.Literal("VariableDeclaration"),
+  declarations: Schema.Array(Schema.Unknown),
+});
+
 const decodeLoop = Schema.decodeUnknownOption(
   Schema.Struct({
     type: Schema.Literal("ForOfStatement"),
     await: Schema.Literal(true),
-    left: Schema.Struct({
-      type: Schema.Literal("VariableDeclaration"),
-      declarations: Schema.Array(Schema.Unknown),
-    }),
+    left: DeclarationSchema,
     body: Schema.Unknown,
   }),
 );
 
+const PushNameSchema = Schema.Struct({
+  type: Schema.Literal("Identifier"),
+  name: Schema.Literal("push"),
+});
+
+const PushCalleeSchema = Schema.Struct({
+  type: Schema.Literal("MemberExpression"),
+  computed: Schema.Literal(false),
+  property: PushNameSchema,
+});
+
+const ArgumentSchema = Schema.Struct({ type: Schema.String });
+
 const decodePush = Schema.decodeUnknownOption(
   Schema.Struct({
     type: Schema.Literal("CallExpression"),
-    callee: Schema.Struct({
-      type: Schema.Literal("MemberExpression"),
-      computed: Schema.Literal(false),
-      property: Schema.Struct({ type: Schema.Literal("Identifier"), name: Schema.Literal("push") }),
-    }),
-    arguments: Schema.Array(Schema.Struct({ type: Schema.String })),
+    callee: PushCalleeSchema,
+    arguments: Schema.Array(ArgumentSchema),
   }),
 );
 
