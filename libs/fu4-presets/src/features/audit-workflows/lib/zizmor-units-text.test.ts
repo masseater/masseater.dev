@@ -11,7 +11,7 @@ import {
 } from "effect";
 import { afterAll, expect, test } from "vite-plus/test";
 
-import { splitPatterns } from "#/features/audit-workflows/rules/artipacked-steps.ts";
+import { splitPatterns } from "#/features/audit-workflows/model/rules/artipacked-steps.ts";
 
 import { asBare, envIsStatic, extractAllFenced, extractFenced } from "./expressions.ts";
 import type { FencedAt } from "./expressions.ts";
