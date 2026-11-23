@@ -13,6 +13,10 @@ import { conversation, memoDetail, timeline } from "./watashi-reads.server.ts";
 
 const RECENT_SESSIONS = { limit: RECENT_SESSION_LIMIT } as const;
 
+const JsonBody = Schema.Struct({
+  "content-type": Schema.String.check(Schema.isPattern(/^application\/json(?:;|$)/iu)),
+});
+
 export const watashiRoutes = createRouter("/api/watashi")
   .get("/timeline", () => respond(timeline))
   .get(
@@ -30,7 +34,10 @@ export const watashiRoutes = createRouter("/api/watashi")
   .post(
     "/memos",
     ({ body }) => respond(rpcBody({ schema: Written, call: () => watashi().memoryWrite(body) })),
-    { body: Schema.toStandardSchemaV1(MemoChange) },
+    {
+      body: Schema.toStandardSchemaV1(MemoChange),
+      headers: Schema.toStandardSchemaV1(JsonBody),
+    },
   )
   .get("/memo-projects", () =>
     respond(rpcBody({ schema: MemoProjects, call: () => watashi().memoryProjects() })),

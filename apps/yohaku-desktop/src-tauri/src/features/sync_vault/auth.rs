@@ -223,6 +223,12 @@ fn code_of(callback: &str, expected_state: &str) -> Outcome<String> {
     query("code").ok_or_else(|| Failure::new("the sign-in returned no code"))
 }
 
+pub fn claim(waiting: &mut Option<Login>, callback: &str) -> Outcome<Login> {
+    let waiting_for = || Failure::new("no sign-in is waiting");
+    code_of(callback, &waiting.as_ref().ok_or_else(waiting_for)?.state)?;
+    waiting.take().ok_or_else(waiting_for)
+}
+
 pub async fn exchange_code(
     http: &Client,
     store: &Store,
@@ -270,7 +276,7 @@ pub async fn refresh(
 
 #[cfg(test)]
 mod tests {
-    use super::{ACCESS_ISSUER, code_of};
+    use super::{ACCESS_ISSUER, Login, claim, code_of};
 
     #[test]
     fn accepts_only_cloudflare_access_issuers() {
@@ -283,5 +289,27 @@ mod tests {
         let callback = "http://127.0.0.1:47210/oauth/callback?code=abc&state=s1";
         assert_eq!(code_of(callback, "s1").ok().as_deref(), Some("abc"));
         assert!(code_of(callback, "other").is_err());
+    }
+
+    #[test]
+    fn a_callback_without_the_state_leaves_the_sign_in_waiting() {
+        let mut waiting = Some(Login {
+            state: "s1".into(),
+            verifier: "v1".into(),
+        });
+        assert!(claim(&mut waiting, "http://127.0.0.1:47210/oauth/callback?x").is_err());
+        assert!(
+            claim(
+                &mut waiting,
+                "http://127.0.0.1:47210/oauth/callback?code=abc&state=other"
+            )
+            .is_err()
+        );
+        let callback = "http://127.0.0.1:47210/oauth/callback?code=abc&state=s1";
+        let login = claim(&mut waiting, callback)
+            .ok()
+            .map(|login| login.verifier);
+        assert_eq!(login.as_deref(), Some("v1"));
+        assert!(claim(&mut waiting, callback).is_err());
     }
 }

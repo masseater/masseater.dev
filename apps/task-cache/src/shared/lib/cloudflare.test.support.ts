@@ -53,6 +53,10 @@ export const env = { DB: database.env.DB, BUCKET, LIMITER };
 
 export const objectCount = (): number => stores.objects.size;
 
+export const objectReadRows: Effect.Effect<number> = Effect.promise(() =>
+  database.env.DB.prepare("SELECT id FROM object_reads").all(),
+).pipe(Effect.map(({ results }) => results.length));
+
 export const flood: Effect.Effect<void> = Effect.sync(() => {
   stores.flooded = true;
 });

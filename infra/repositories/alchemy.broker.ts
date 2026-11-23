@@ -55,6 +55,7 @@ const broker: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: 
       main: "./src/app/credential-broker.ts",
       logpush: true,
       domain: CREDENTIAL_BROKER_HOST,
+      workersDev: false,
       crons: ["41 * * * *"],
       env: {
         ROOT_TOKEN,

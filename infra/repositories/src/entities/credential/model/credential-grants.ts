@@ -139,7 +139,7 @@ export const WORKFLOW_GITHUB_GRANTS: Readonly<Record<string, Readonly<Record<str
 
 const NPM_GRANTS: readonly string[] = ["masseater.dev/npm"];
 
-const ATPROTO_GRANTS: readonly string[] = ["masseater.dev"];
+const ATPROTO_GRANTS: readonly string[] = ["masseater.dev/bootstrap"];
 
 const ACCOUNT_SCOPE = "com.cloudflare.api.account";
 const ZONE_SCOPE = "com.cloudflare.api.account.zone";

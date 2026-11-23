@@ -1,6 +1,6 @@
 {
   "name": "@r_masseater/fu4",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "The engine of a GitHub Actions linter: Rust parses workflows and TypeScript rules from @r_masseater/fu4-presets check them, configured from vite.config.ts.",
   "keywords": [
     "actionlint",
