@@ -72,7 +72,11 @@ const textOf: From<Placed, Option.Option<KindedText>> = ({ tick, event }) =>
 const tempoOf: From<Placed, Option.Option<TempoChange>> = ({ tick, event }) =>
   Match.value(event).pipe(
     Match.when({ type: "setTempo" }, (tempo) =>
-      Option.some<TempoChange>({ tick, microseconds: tempo.microsecondsPerBeat }),
+      Option.some<TempoChange>({
+        tick,
+        microseconds: tempo.microsecondsPerBeat,
+        target: Option.none(),
+      }),
     ),
     Match.orElse(() => Option.none<TempoChange>()),
   );

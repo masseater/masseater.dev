@@ -159,21 +159,28 @@ const actualControlsOf: From<Song, readonly string[]> = (song) =>
     ),
   );
 
-type TempoPoint = readonly [number, number];
+type TempoPoint = readonly [number, number, Option.Option<number>];
+
+const FLAT = "-";
+
+const isFlatRepeat = (point: TempoPoint, previous: TempoPoint): boolean =>
+  Option.isNone(point[2]) && Option.isNone(previous[2]) && previous[1] === point[1];
 
 const changesOf: From<readonly TempoPoint[], readonly string[]> = (points) =>
   pipe(
     points,
-    Arr.filter(([, microseconds], index) =>
+    Arr.filter((point, index) =>
       pipe(
         Arr.get(points, index - NEXT),
         Option.match({
           onNone: () => true,
-          onSome: ([, previous]) => previous !== microseconds,
+          onSome: (previous) => !isFlatRepeat(point, previous),
         }),
       ),
     ),
-    Arr.map((point) => keyOf(point)),
+    Arr.map(([tick, microseconds, target]) =>
+      keyOf([tick, microseconds, Option.getOrElse(target, () => FLAT)]),
+    ),
   );
 
 const expectedTempoOf: From<readonly LaidBar[], readonly string[]> = (bars) =>
@@ -183,7 +190,7 @@ const expectedTempoOf: From<readonly LaidBar[], readonly string[]> = (bars) =>
       Arr.flatMap((bar) =>
         pipe(
           bar.tempo,
-          Arr.map((step): TempoPoint => [bar.start + step.offset, step.microseconds]),
+          Arr.map((step): TempoPoint => [bar.start + step.offset, step.microseconds, step.target]),
         ),
       ),
     ),
@@ -195,10 +202,14 @@ const barPointsOf: From<Song["bars"][number], readonly TempoPoint[]> = (bar) => 
   if (Arr.isReadonlyArrayNonEmpty(bar.tempoSteps)) {
     return pipe(
       bar.tempoSteps,
-      Arr.map((step): TempoPoint => [bar.start + step.offset, microsecondsOf(step.bpm)]),
+      Arr.map((step): TempoPoint => [
+        bar.start + step.offset,
+        microsecondsOf(step.bpm),
+        Option.map(step.target, microsecondsOf),
+      ]),
     );
   }
-  return [[bar.start, microsecondsOf(bar.tempo.bpm)]];
+  return [[bar.start, microsecondsOf(bar.tempo.bpm), Option.none()]];
 };
 
 const actualTempoOf: From<Song, readonly string[]> = (song) =>

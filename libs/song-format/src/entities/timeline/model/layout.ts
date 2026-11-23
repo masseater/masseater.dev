@@ -17,6 +17,7 @@ export interface LaidTempo {
   readonly offset: number;
   readonly length: number;
   readonly microseconds: number;
+  readonly target: Option.Option<number>;
 }
 
 export interface Span {
@@ -59,12 +60,64 @@ const meterText =
     return fractionOf(length);
   };
 
-const tempoAt =
-  (tempos: readonly TempoChange[]): From<number, number> =>
+const bpmOf: From<number, number> = (microseconds) => MICROSECONDS_PER_MINUTE / microseconds;
+
+const microsecondsOf: From<number, number> = (bpm) => Math.round(MICROSECONDS_PER_MINUTE / bpm);
+
+interface Ramp {
+  readonly start: TempoChange;
+  readonly end: number;
+  readonly target: number;
+}
+
+const rampAt =
+  (tempos: readonly TempoChange[]): From<number, Option.Option<Ramp>> =>
   (tick) =>
     pipe(
       latestAt(tick)(tempos),
-      Option.match({ onNone: () => DEFAULT_MICROSECONDS, onSome: (tempo) => tempo.microseconds }),
+      Option.flatMap((start) =>
+        pipe(
+          start.target,
+          Option.flatMap((target) =>
+            pipe(
+              Arr.findFirst(tempos, (tempo) => tempo.tick > start.tick),
+              Option.map((next) => ({ start, end: next.tick, target })),
+            ),
+          ),
+        ),
+      ),
+    );
+
+const interpolated =
+  (ramp: Ramp): From<number, number> =>
+  (tick) => {
+    const from = bpmOf(ramp.start.microseconds);
+    const to = bpmOf(ramp.target);
+    const share = (tick - ramp.start.tick) / (ramp.end - ramp.start.tick);
+    return microsecondsOf(from + (to - from) * share);
+  };
+
+const tempoAt =
+  (tempos: readonly TempoChange[]): From<number, number> =>
+  (tick) =>
+    Option.match(rampAt(tempos)(tick), {
+      onSome: (ramp) => interpolated(ramp)(tick),
+      onNone: () =>
+        pipe(
+          latestAt(tick)(tempos),
+          Option.match({
+            onNone: () => DEFAULT_MICROSECONDS,
+            onSome: (tempo) => tempo.microseconds,
+          }),
+        ),
+    });
+
+const targetAt =
+  (tempos: readonly TempoChange[]): From<readonly [number, number], Option.Option<number>> =>
+  ([tick, end]) =>
+    pipe(
+      rampAt(tempos)(tick),
+      Option.map((ramp) => interpolated(ramp)(end)),
     );
 
 const tempoStepsOf =
@@ -82,11 +135,15 @@ const tempoStepsOf =
     ];
     return pipe(
       points,
-      Arr.map((tick, index) => ({
-        offset: tick - bar.start,
-        length: Option.getOrElse(Arr.get(points, index + NEXT), () => end) - tick,
-        microseconds: tempoAt(tempos)(tick),
-      })),
+      Arr.map((tick, index) => {
+        const stepEnd = Option.getOrElse(Arr.get(points, index + NEXT), () => end);
+        return {
+          offset: tick - bar.start,
+          length: stepEnd - tick,
+          microseconds: tempoAt(tempos)(tick),
+          target: targetAt(tempos)([tick, stepEnd]),
+        };
+      }),
     );
   };
 

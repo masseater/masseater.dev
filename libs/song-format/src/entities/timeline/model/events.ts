@@ -39,6 +39,7 @@ export interface Meter extends Timed {
 
 export interface TempoChange extends Timed {
   readonly microseconds: number;
+  readonly target: Option.Option<number>;
 }
 
 export interface Timeline {
