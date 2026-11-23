@@ -1,7 +1,10 @@
 <!doctype html>
 <meta charset="utf-8" />
+<script type="importmap">
+  { "imports": { "@mediapipe/tasks-vision": "/vision/vision_bundle.mjs" } }
+</script>
 <script type="module">
-  import { FilesetResolver, PoseLandmarker } from "/vision/vision_bundle.mjs";
+  import { FilesetResolver, PoseLandmarker } from "@mediapipe/tasks-vision";
 
   const post = (path, body, headers = {}) => fetch(path, { method: "POST", body, headers });
 
