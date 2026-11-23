@@ -14,6 +14,7 @@ export interface Draft {
   readonly start: bigint;
   readonly end: Option.Option<bigint>;
   readonly attributes: readonly TailStream.Attribute[];
+  readonly links: readonly TailStream.SpanLink[];
   readonly status: Status_StatusCode;
 }
 
@@ -135,6 +136,10 @@ const withAttributes =
   (attributes: readonly Attribute[]) =>
   (draft: Draft): Draft => ({ ...draft, attributes: [...draft.attributes, ...attributes] });
 
+const withLinks =
+  (links: readonly TailStream.SpanLink[]) =>
+  (draft: Draft): Draft => ({ ...draft, links: [...draft.links, ...links] });
+
 const closed =
   (end: bigint, outcome: TailStream.EventOutcome) =>
   (draft: Draft): Draft => ({
@@ -161,6 +166,7 @@ const opened = (tail: TailEvent, opening: Opening): Draft => ({
   start: nanos(tail.timestamp),
   end: Option.none(),
   attributes: [],
+  links: [],
   status: Status_StatusCode.UNSET,
 });
 
@@ -206,12 +212,12 @@ const step = (invocation: Invocation, tail: TailEvent): Invocation => {
       spanClose: ({ outcome }) => updateSpan(own, closed(end, outcome))(invocation),
       outcome: ({ outcome }) => updateSpan(own, closed(end, outcome))(invocation),
       spanUpdate: ({ info }) => updateSpan(own, updated(info))(invocation),
+      spanLinks: ({ links }) => updateSpan(own, withLinks(links))(invocation),
       return: ({ info }) => updateSpan(own, withAttributes(returnAttributes(info)))(invocation),
       exception: (exception) =>
         updateSpan(own, withAttributes(exceptionAttributes(exception)))(invocation),
       log: (log) => onLog(tail, log)(invocation),
       diagnosticChannel: () => invocation,
-      spanLinks: () => invocation,
       streamDiagnostic: () => invocation,
     }),
   );
