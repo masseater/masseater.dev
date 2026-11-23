@@ -82,6 +82,27 @@ opt-level = 3
 [profile.dev.package.rustfft]
 opt-level = 3
 
+[profile.dev.package.beat-this]
+opt-level = 3
+
+[profile.dev.package.rten]
+opt-level = 3
+
+[profile.dev.package.rten-base]
+opt-level = 3
+
+[profile.dev.package.rten-gemm]
+opt-level = 3
+
+[profile.dev.package.rten-simd]
+opt-level = 3
+
+[profile.dev.package.rten-tensor]
+opt-level = 3
+
+[profile.dev.package.rten-vecmath]
+opt-level = 3
+
 [patch.crates-io]
 proc-macro-crate = { path = "patches/crates/proc-macro-crate" } # exit: crate:tao requires gtk@>=0.19
 tauri-macros = { path = "patches/crates/tauri-macros" } # exit: crate:tauri-macros@>2.7.6
