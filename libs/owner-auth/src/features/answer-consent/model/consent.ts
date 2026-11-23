@@ -12,7 +12,13 @@ export interface ConsentView {
 
 const CLIENT_ID_LABEL = "クライアント ID";
 
+const REGISTRATION_LABEL = "登録";
+
+const SELF_REGISTERED = "未認証の自己登録";
+
 const REDIRECT_LABEL = "リダイレクト先";
+
+const REDIRECT_URI_LABEL = "リダイレクト URI";
 
 const SCOPES_LABEL = "スコープ";
 
@@ -57,9 +63,17 @@ export const consentView = ({
   details: Arr.filter(
     [
       { label: CLIENT_ID_LABEL, values: [clientId] },
+      { label: REGISTRATION_LABEL, values: [SELF_REGISTERED] },
       {
         label: REDIRECT_LABEL,
         values: redirectUri.pipe(Option.map(redirectTargetOf), Option.toArray),
+      },
+      {
+        label: REDIRECT_URI_LABEL,
+        values: redirectUri.pipe(
+          Option.filter((uri) => redirectTargetOf(uri) !== uri),
+          Option.toArray,
+        ),
       },
       {
         label: SCOPES_LABEL,

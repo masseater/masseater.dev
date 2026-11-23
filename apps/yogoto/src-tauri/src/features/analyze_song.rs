@@ -95,7 +95,7 @@ fn instrumental(
     let mut sum: Option<(Stereo, u32)> = None;
     for stem in separation.stems.iter().filter(|stem| stem.stem != VOCALS) {
         let (audio, rate) =
-            decode(&library.path(song, &stem.file)).map_err(|error| failure(&error))?;
+            decode(&library.path(song, &stem.file)?).map_err(|error| failure(&error))?;
         sum = Some(match sum {
             None => (audio, rate),
             Some((mut total, total_rate)) => {
@@ -159,7 +159,8 @@ pub fn analyze_song(
         .find(|source| source.id == song.primary)
         .ok_or_else(|| Failure::new("song has no primary source"))?;
     progress(0.0, "decoding");
-    let (mix, rate) = decode(&library.path(song, &source.file)).map_err(|error| failure(&error))?;
+    let (mix, rate) =
+        decode(&library.path(song, &source.file)?).map_err(|error| failure(&error))?;
     let mix = mono(&mix, rate)?;
     progress(0.2, "beats");
     let found = analyzer.beats(&mix)?;
@@ -230,9 +231,9 @@ mod tests {
         let library = Library::open(directory.path()).unwrap();
         let mut song = library.create("Groove", "").unwrap();
         let wave = groove(24, 120.0);
-        std::fs::create_dir_all(library.path(&song, "sources")).unwrap();
+        std::fs::create_dir_all(library.path(&song, "sources").unwrap()).unwrap();
         write_flac(
-            &library.path(&song, "sources/a.flac"),
+            &library.path(&song, "sources/a.flac").unwrap(),
             &[wave.clone(), wave],
             RATE,
         )

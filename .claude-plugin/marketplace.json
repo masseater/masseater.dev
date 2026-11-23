@@ -4,6 +4,9 @@
     "name": "masseater",
     "url": "https://github.com/masseater"
   },
+  "metadata": {
+    "description": "masseater's monorepo: the masseater.dev sites, the owner's tools and published libraries."
+  },
   "plugins": [
     {
       "name": "kogane",

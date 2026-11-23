@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
-import { ErrorBar, type ErrorBarDirection } from "recharts";
+import { ErrorBar } from "recharts";
+import type { ErrorBarDirection } from "recharts";
 
 import { ERROR_WIDTH, REFERENCE_COLOR } from "./chart-style.ts";
 

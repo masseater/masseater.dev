@@ -21,6 +21,7 @@ export default defineConfig({
     dts: {
       generator: "tsgo",
     },
+    publint: { strict: true },
   },
   test: {
     include: ["src/**/*.test.ts"],

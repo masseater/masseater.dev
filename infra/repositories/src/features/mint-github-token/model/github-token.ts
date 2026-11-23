@@ -1,15 +1,10 @@
-import {
-  Credentials,
-  DEFAULT_API_BASE_URL,
-  DEFAULT_USER_AGENT,
-  repos,
-} from "@distilled.cloud/github";
-import type { Config, GithubOpContext } from "@distilled.cloud/github";
+import { Credentials, repos } from "@distilled.cloud/github";
+import type { GithubOpContext } from "@distilled.cloud/github";
 import { createInstallationAccessToken, getUserInstallation } from "@distilled.cloud/github/apps";
 import type { Installation } from "@distilled.cloud/github/apps";
 import { runner } from "@r_masseater/workers-tracing/effect";
 import { WorkerEntrypoint } from "cloudflare:workers";
-import { DateTime, Effect, Layer, Logger, Option, Redacted, pipe } from "effect";
+import { DateTime, Effect, Layer, Logger, Option, pipe } from "effect";
 import { layer as fetchHttpClient } from "effect/http/FetchHttpClient";
 
 import {
@@ -19,6 +14,8 @@ import {
   OWNER,
 } from "#/entities/credential/index.ts";
 import type { GitHubGrant, GitHubAppEnv, GitHubAppFailed } from "#/entities/credential/index.ts";
+
+import { installationCredentials, isSourceRepository } from "./installation-repository.ts";
 
 export type MintInput = Readonly<{ env: GitHubAppEnv; grant: GitHubGrant }>;
 
@@ -87,18 +84,10 @@ const DISPATCH_GRANT: GitHubGrant = {
   repositories: [EXPOSURE_REPOSITORY],
 };
 
-const installationCredentials = (token: string, issuedAt: number): Effect.Effect<Config> =>
-  Effect.succeed({
-    token: Redacted.make(token),
-    apiBaseUrl: DEFAULT_API_BASE_URL,
-    userAgent: DEFAULT_USER_AGENT,
-    issuedAt,
-  });
-
 const dispatchAs = (token: string): Effect.Effect<void, never, GithubOpContext> =>
   Effect.gen(function* dispatchEvent() {
     const now = yield* DateTime.now;
-    const credentials = installationCredentials(token, DateTime.toEpochMillis(now));
+    const credentials = installationCredentials({ token, issuedAt: DateTime.toEpochMillis(now) });
     const request = { owner: OWNER, repo: EXPOSURE_REPOSITORY, event_type: "exposure" };
     yield* repos
       .createDispatchEvent(request)
@@ -121,6 +110,24 @@ export const dispatchExposure = (env: GitHubAppEnv): Promise<void> => runMint(en
 
 export const mintGitHubToken = (input: MintInput): Promise<Option.Option<string>> =>
   runMint(input.env, mint(input).pipe(Effect.orDie));
+
+export type SourceInput = Readonly<{ env: GitHubAppEnv; repository: string }>;
+
+const isSource = ({
+  env,
+  repository,
+}: SourceInput): Effect.Effect<boolean, GitHubAppFailed, GithubOpContext> =>
+  mint({ env, grant: { permissions: { metadata: "read" }, repositories: [repository] } }).pipe(
+    Effect.flatMap(
+      Option.match({
+        onNone: () => Effect.succeed(false),
+        onSome: (token) => Effect.promise(() => isSourceRepository({ token, repository })),
+      }),
+    ),
+  );
+
+export const ownsSource = (input: SourceInput): Promise<boolean> =>
+  runMint(input.env, isSource(input).pipe(Effect.orDie));
 
 const BAD_GATEWAY = 502;
 

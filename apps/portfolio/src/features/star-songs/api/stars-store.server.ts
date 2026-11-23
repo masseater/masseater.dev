@@ -2,7 +2,7 @@ import { env } from "cloudflare:workers";
 import { and, count, eq } from "drizzle-orm";
 import type { SQL } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/d1";
-import { Array as Arr, Effect, Record, pipe } from "effect";
+import { Array as Arr, Effect, Number as Num, Record, pipe } from "effect";
 
 import type { Entry } from "#/entities/entry/index.ts";
 import { star } from "#/features/star-songs/model/star.table.ts";
@@ -19,21 +19,36 @@ export type Counts =
 
 export type Change = (target: Target, visitor: string) => Effect.Effect<void>;
 
+const NONE = 0;
+
 const db = drizzle(env.STARS);
 
 const ofTarget = (target: Target): SQL | undefined =>
   and(eq(star.category, target.category), eq(star.slug, target.slug));
 
+const ofVisitor = (target: Target, visitor: string): SQL | undefined =>
+  and(ofTarget(target), eq(star.visitor, visitor));
+
 export const read = Effect.fn("stars.read")(function* read(target: Target, visitor: string) {
   const rows = yield* Effect.promise(() =>
-    db.select({ visitor: star.visitor }).from(star).where(ofTarget(target)),
+    db
+      .select({
+        count: count(),
+        own: db.$count(star, ofVisitor(target, visitor)),
+      })
+      .from(star)
+      .where(ofTarget(target)),
   );
   return {
     status: "found",
-    count: rows.length,
+    count: pipe(
+      rows,
+      Arr.map((row) => row.count),
+      Num.sumAll,
+    ),
     starred: pipe(
       rows,
-      Arr.some((row) => row.visitor === visitor),
+      Arr.some((row) => row.own > NONE),
     ),
   } satisfies Stars;
 });
@@ -72,7 +87,5 @@ export const removeStar = Effect.fn("stars.remove")(function* removeStar(
   target: Target,
   visitor: string,
 ) {
-  yield* Effect.promise(() =>
-    db.delete(star).where(and(ofTarget(target), eq(star.visitor, visitor))),
-  );
+  yield* Effect.promise(() => db.delete(star).where(ofVisitor(target, visitor)));
 });
