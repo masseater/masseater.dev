@@ -323,10 +323,8 @@ overrides:
   "@vitest/browser-preview": 5.1.1 # exit: npm:vite-plus requires vitest@>=5.1.1
   "@vitest/mocker": 5.1.1 # exit: npm:vite-plus requires vitest@>=5.1.1
   "@vitest/pretty-format": 5.1.1 # exit: npm:vite-plus requires vitest@>=5.1.1
-  "@vitest/snapshot": 5.1.1 # exit: npm:vite-plus requires vitest@>=5.1.1
   "@vitest/spy": 5.1.1 # exit: npm:vite-plus requires vitest@>=5.1.1
   "@vitest/utils": 5.1.1 # exit: npm:vite-plus requires vitest@>=5.1.1
-  "@vitest/ui": 5.1.1 # exit: npm:vite-plus requires vitest@>=5.1.1
   fflate@>=0.7.0 <0.7.5: ^0.8.0 # exit: unused
   glob@>=9.0.0 <=14.0.1: ^14.0.2 # exit: unused
   "capnp-es>typescript": "-" # exit: npm:capnp-es drops typescript || npm:capnp-es allows typescript@>=7

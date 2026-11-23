@@ -1072,10 +1072,8 @@ overrides:
   '@vitest/browser-preview': 5.1.1
   '@vitest/mocker': 5.1.1
   '@vitest/pretty-format': 5.1.1
-  '@vitest/snapshot': 5.1.1
   '@vitest/spy': 5.1.1
   '@vitest/utils': 5.1.1
-  '@vitest/ui': 5.1.1
   fflate@>=0.7.0 <0.7.5: ^0.8.0
   glob@>=9.0.0 <=14.0.1: ^14.0.2
   capnp-es>typescript: '-'
@@ -1534,6 +1532,9 @@ importers:
       scheduler:
         specifier: 'catalog:'
         version: 0.28.0
+      security-headers:
+        specifier: workspace:*
+        version: link:../../libs/security-headers
       tailwindcss:
         specifier: catalog:stack
         version: 4.3.5
@@ -3254,6 +3255,9 @@ importers:
       effect:
         specifier: catalog:stack
         version: 4.1.4
+      security-headers:
+        specifier: workspace:*
+        version: link:../../libs/security-headers
     devDependencies:
       '@alchemy.run/cloudflare':
         specifier: catalog:stack
@@ -12542,8 +12546,8 @@ packages:
   '@vitest/pretty-format@5.1.1':
     resolution: {integrity: sha512-25VrNCa2fxNyRv7VTtYBjJnC7hQkAzDLuSWJb8kHJATfCPe+5YPferPPDrSO7pcxik4+cBo4IXS2H7rf4OOXgg==}
 
-  '@vitest/snapshot@5.1.1':
-    resolution: {integrity: sha512-SIk7xA0A1VnFfa5oAZ6cRZ6eOJp+quXzbowRmow7jVGjEG+l4ToGOQi2LHEFCqJWC5tbK2hLYe2QnPYIuFpW7w==}
+  '@vitest/snapshot@5.1.0':
+    resolution: {integrity: sha512-6tLM70+37LVXz+A6QmOlMQUuj+taODAyXZhz58lNNNNKHH0D81yzPBEezKQQGPlABc8OpAQBOBVvssVLLQqixw==}
 
   '@vitest/spy@5.1.1':
     resolution: {integrity: sha512-6K8C6alQG1/Yc8/ZI22iJS7JEsxPdVzqtqDq+/xM4Z0mGVykemMVjLhqMy/q6/IHYG3kKD8hKSwRen/ZdyI9vQ==}
@@ -25262,7 +25266,7 @@ snapshots:
     dependencies:
       tinyrainbow: 3.2.0
 
-  '@vitest/snapshot@5.1.1':
+  '@vitest/snapshot@5.1.0':
     dependencies:
       '@vitest/pretty-format': 5.1.1
       '@vitest/utils': 5.1.1
@@ -31673,7 +31677,7 @@ snapshots:
       '@vitest/browser-preview': 5.1.1(@vitest/browser-playwright@5.1.1)(@vitest/ui@5.1.1)(@voidzero-dev/vite-plus-core@8.3.8000(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(msw@3.0.7(@types/node@26.6.6)(@voidzero-dev/vite-plus-core@8.3.8000(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(vitest@5.1.1)
       '@vitest/mocker': 5.1.1(@voidzero-dev/vite-plus-core@8.3.8000(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(msw@3.0.7(@types/node@26.6.6)(@voidzero-dev/vite-plus-core@8.3.8000(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))
       '@vitest/pretty-format': 5.1.1
-      '@vitest/snapshot': 5.1.1
+      '@vitest/snapshot': 5.1.0
       '@vitest/spy': 5.1.1
       '@vitest/utils': 5.1.1
       oxfmt: 0.79.0(vite-plus@1.7.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.1)(@vitest/browser-preview@5.1.1)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.6)(@voidzero-dev/vite-plus-core@8.3.8000(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2007)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(vitest@5.1.1)(yaml@2.9.1))

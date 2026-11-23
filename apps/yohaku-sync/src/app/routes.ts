@@ -1,8 +1,8 @@
 import { CHANGES_PATH, DOCUMENTS_PATH, Pushed } from "@masseater.dev/yohaku-protocol/sync";
 import { Effect, Option, Schema, pipe } from "effect";
+import { writesFromAnotherSite, writesWithoutJson } from "security-headers/request";
 
 import { changesAfter, store } from "#/entities/document/index.ts";
-import { writesFromAnotherSite, writesWithoutJson } from "#/shared/lib/write-guard.ts";
 
 const BAD_REQUEST = 400;
 const FORBIDDEN = 403;

@@ -2,6 +2,7 @@ import { browserSpans } from "@r_masseater/workers-tracing/browser-spans";
 import { runner } from "@r_masseater/workers-tracing/effect";
 import { DurableObject, env } from "cloudflare:workers";
 import { Duration, Effect, Logger, Option, Schedule } from "effect";
+import { writesFromAnotherSite, writesWithoutJson } from "security-headers/request";
 
 import { researched, isSessionsPath, sessionRoutes } from "#/entities/session/index.ts";
 import { CORRECTION_PATH, QUESTION_PATH, RESEARCH_PATH, SUMMARY_PATH } from "#/shared/api/index.ts";
@@ -15,7 +16,6 @@ import {
   TRACES_PATH,
 } from "#/shared/config/index.ts";
 import { withoutCredentials } from "#/shared/lib/caller-credentials.ts";
-import { writesFromAnotherSite, writesWithoutJson } from "#/shared/lib/write-guard.ts";
 
 import { down } from "./interviewer-down.ts";
 import type { InterviewerDown } from "./interviewer-down.ts";
