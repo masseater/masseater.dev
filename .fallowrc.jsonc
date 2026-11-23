@@ -46,7 +46,6 @@
     "@effect/language-service",
     "@masseater.dev/tsrs-effect",
     "fallow-similar-code",
-    "oxlint-tsgolint",
   ],
   "workspaces": {
     "settings": {
