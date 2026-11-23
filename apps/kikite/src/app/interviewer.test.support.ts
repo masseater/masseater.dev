@@ -1,8 +1,12 @@
+import { makeD1 } from "@masseater.dev/d1-test";
 import { Array as Arr, MutableRef } from "effect";
 
-import { env as stores } from "#/shared/lib/d1.test.support.ts";
+const testD1 = makeD1({
+  migrations: new URL("../../migrations/", import.meta.url).href,
+  tables: ["sessions"],
+});
 
-export { closeDatabase, resetDatabase } from "#/shared/lib/d1.test.support.ts";
+export const { closeDatabase, resetDatabase } = testD1;
 
 export const reached = MutableRef.make<readonly string[]>([]);
 
@@ -13,6 +17,9 @@ const interviewer = {
   },
 };
 
-export const env = { ...stores, INTERVIEWER: { getByName: (): typeof interviewer => interviewer } };
+export const env = {
+  SESSIONS: testD1.env.DB,
+  INTERVIEWER: { getByName: (): typeof interviewer => interviewer },
+};
 
 export const DurableObject = Object;
