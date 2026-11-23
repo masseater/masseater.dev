@@ -15,6 +15,7 @@ export default defineConfig({
     entry: { main: "bin/web-vitals-flow.ts" },
     platform: "node",
     sourcemap: true,
+    publint: { strict: true },
   },
   test: {
     include: ["src/**/*.test.ts", "bin/**/*.test.ts"],

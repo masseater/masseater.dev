@@ -11,6 +11,7 @@ import type {
   KeyValueSchema,
   LogRecordSchema,
   SpanSchema,
+  Span_LinkSchema,
 } from "#/shared/api/index.ts";
 import {
   ExportLogsServiceRequestSchema,
@@ -68,6 +69,14 @@ const keyValue = (attribute: Attribute): KeyValueInit => ({
 const idBytes = (hex: string): Uint8Array =>
   Result.getOrElse(Hex.decode(hex), () => new Uint8Array());
 
+const linkInit = (link: TailStream.SpanLink): MessageInitShape<typeof Span_LinkSchema> => ({
+  traceId: idBytes(link.context.traceId),
+  spanId: idBytes(link.context.spanId),
+  flags: link.context.traceFlags,
+  attributes: pipe(link.attributes, Array.map(keyValue)),
+  droppedAttributesCount: link.droppedAttributesCount,
+});
+
 const spanInit =
   (traceId: string) =>
   (draft: Draft): MessageInitShape<typeof SpanSchema> => ({
@@ -79,6 +88,7 @@ const spanInit =
     startTimeUnixNano: draft.start,
     endTimeUnixNano: Option.getOrElse(draft.end, () => draft.start),
     attributes: pipe(draft.attributes, Array.map(keyValue)),
+    links: pipe(draft.links, Array.map(linkInit)),
     status: { code: draft.status },
   });
 
