@@ -92,7 +92,12 @@ const reportedJobs = Effect.fn("reportedJobs")(function* reportedJobs(number: nu
   );
   const bodies = pipe(
     comments,
-    Arr.filter(({ user }) => user?.login === REPORTER),
+    Arr.filter(({ user }) =>
+      pipe(
+        Option.fromNullOr(user),
+        Option.exists(({ login }) => login === REPORTER),
+      ),
+    ),
     Arr.map(({ body }) => body),
   );
   return pipe(
