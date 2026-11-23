@@ -1,15 +1,17 @@
-import { Array as Arr, Number as Num, Option, Record as Rec, pipe } from "effect";
+import { Array as Arr, Number as Num, Option, Record as Rec, Schema, pipe } from "effect";
 
 import type { Step } from "./degrees.ts";
 
-export type Transitions = Readonly<Record<string, Readonly<Record<string, number>>>>;
+export const StyleTableSchema = Schema.Struct({
+  name: Schema.String,
+  source: Schema.String,
+  order: Schema.Int,
+  transitions: Schema.Record(Schema.String, Schema.Record(Schema.String, Schema.Int)),
+});
 
-export interface StyleTable {
-  readonly name: string;
-  readonly source: string;
-  readonly order: number;
-  readonly transitions: Transitions;
-}
+export type StyleTable = typeof StyleTableSchema.Type;
+
+export type Transitions = StyleTable["transitions"];
 
 export interface Context {
   readonly words: string;

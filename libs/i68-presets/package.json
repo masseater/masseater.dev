@@ -57,6 +57,7 @@
     "@masseater.dev/song-format": "workspace:*",
     "@r_masseater/i68": "workspace:*",
     "@types/node": "catalog:",
+    "csv-parse": "catalog:",
     "effect": "catalog:stack",
     "verovio": "catalog:",
     "vite-plus": "catalog:stack"

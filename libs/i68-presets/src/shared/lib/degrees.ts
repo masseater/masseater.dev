@@ -55,7 +55,7 @@ const kindOf = (type: string, quality: string): Option.Option<string> =>
     Option.orElse(() => Rec.get(TRIADS, quality)),
   );
 
-const majorTonicOf = (key: KeySpan): number => {
+const majorTonicOf = (key: Pick<KeySpan, "mode" | "pitchClass">): number => {
   if (key.mode === "minor") {
     return key.pitchClass + RELATIVE_MAJOR;
   }
@@ -63,7 +63,7 @@ const majorTonicOf = (key: KeySpan): number => {
 };
 
 export const tokenOf =
-  (key: KeySpan) =>
+  (key: Pick<KeySpan, "mode" | "pitchClass">) =>
   (symbol: string): Option.Option<string> => {
     const chord = Chord.get(symbol);
     return pipe(
