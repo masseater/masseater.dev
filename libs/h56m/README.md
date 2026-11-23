@@ -1,5 +1,7 @@
 # @r_masseater/h56m
 
+<img src="logo.svg" alt="h56m logo" width="256">
+
 A secret scanner written in Rust and configured from `vite.config.ts`.
 
 Its matching engine follows [Betterleaks](https://github.com/betterleaks/betterleaks)
