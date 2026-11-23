@@ -1,7 +1,7 @@
 import { scoreOf } from "@masseater.dev/fumx-studio/studio/score";
 import { Schema } from "effect";
 
-import mastering from "#/entities/song/catalog/kuraku-narikake/plugins/mix/score/mastering.json";
+import mastering from "#/entities/song/model/catalog/kuraku-narikake/plugins/mix/score/mastering.json";
 
 const KneeSchema = Schema.Struct({ threshold: Schema.Finite, knee: Schema.Finite });
 

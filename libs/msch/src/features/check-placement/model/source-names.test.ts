@@ -65,8 +65,35 @@ const reportsDeployNames = Effect.gen(function* reportsDeployNames() {
   ]);
 });
 
+const reportsSegmentFolders = Effect.gen(function* reportsSegmentFolders() {
+  const found = yield* locationsIn({
+    "apps/site/package.json": `{ "name": "site" }`,
+    "apps/site/src/features/sync-manuscripts/index.ts": MODULE,
+    "apps/site/src/features/sync-manuscripts/rules/first.ts": MODULE,
+    "apps/site/src/features/sync-manuscripts/rules/second.ts": MODULE,
+    "apps/site/src/entities/manuscript/index.ts": MODULE,
+    "apps/site/src/entities/manuscript/catalog/deep/entry.ts": MODULE,
+    "apps/site/src/entities/manuscript/model/shape.ts": MODULE,
+    "apps/site/src/entities/manuscript/lib/format/dates.ts": MODULE,
+    "apps/site/src/entities/manuscript/@x/library.ts": MODULE,
+    "apps/site/src/entities/manuscript/data/entries.json": "{}",
+    "apps/site/src/features/check-code/check-first/model/first.ts": MODULE,
+    "apps/site/src/features/check-code/check-first/index.ts": MODULE,
+    "apps/site/src/features/check-code/check-first/finders/first.ts": MODULE,
+    "apps/site/src/features/check-code/finders/first.ts": MODULE,
+    "apps/site/src/shared/rules/first.ts": MODULE,
+    "apps/site/src/app/rules/first.ts": MODULE,
+  });
+  expect(found).toStrictEqual([
+    "slice-segment-name apps/site/src/entities/manuscript/catalog",
+    "slice-segment-name apps/site/src/features/check-code/check-first/finders",
+    "slice-segment-name apps/site/src/features/sync-manuscripts/rules",
+  ]);
+});
+
 layer(fixtureLayer)("checkSourceNames", (it) => {
   it.effect("reports feature slices that do not start with a verb", () => reportsNounSlices);
   it.effect("accepts <verb>-<object> slices and other layers", () => acceptsVerbObjectSlices);
+  it.effect("reports slice folders that are not segments", () => reportsSegmentFolders);
   it.effect("reports files and folders named after the deploy target", () => reportsDeployNames);
 });
