@@ -1,4 +1,4 @@
-import { Schema } from "effect";
+import { Option, Schema, SchemaGetter } from "effect";
 import type { ReactElement } from "react";
 
 import { ORIGIN, REFERENCE_COLOR } from "./chart-style.ts";
@@ -19,6 +19,18 @@ const MarkSchema = Schema.Struct({
 
 const isMarked = Schema.is(MarkSchema);
 
+const colorOf = SchemaGetter.transform(({ color }: { readonly color: string }) => color);
+const fillOf = SchemaGetter.transform((color: string) => ({ color }));
+
+const FillObjectSchema = Schema.Struct({ color: Schema.String }).pipe(
+  Schema.decodeTo(Schema.String, { decode: colorOf, encode: fillOf }),
+);
+
+const PaintSchema = Schema.Union([Schema.String, FillObjectSchema]);
+
+const paintOf = (fill: unknown): string | undefined =>
+  Option.getOrUndefined(Schema.decodeUnknownOption(PaintSchema)(fill));
+
 export const MarkedPoint = ({
   cx = ORIGIN,
   cy = ORIGIN,
@@ -27,11 +39,11 @@ export const MarkedPoint = ({
 }: Readonly<{
   cx: number | undefined;
   cy: number | undefined;
-  fill?: string | undefined;
+  fill?: unknown;
   payload?: unknown;
 }>): ReactElement => {
   if (!isMarked(payload)) {
-    return <circle cx={cx} cy={cy} r={RADIUS} fill={fill} />;
+    return <circle cx={cx} cy={cy} r={RADIUS} fill={paintOf(fill)} />;
   }
   const { mark, spot, color } = payload;
   const leader = {
