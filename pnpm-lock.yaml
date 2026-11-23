@@ -753,8 +753,8 @@ catalogs:
       specifier: 0.42.2
       version: 0.42.2
     mdast-util-directive:
-      specifier: 3.2.0
-      version: 3.2.0
+      specifier: 3.2.1
+      version: 3.2.1
     mdast-util-from-markdown:
       specifier: 2.1.0
       version: 2.1.0
@@ -2380,7 +2380,7 @@ importers:
         version: 1.0.0-rc.5-ab785fc
       mdast-util-directive:
         specifier: 'catalog:'
-        version: 3.2.0(supports-color@10.2.2)
+        version: 3.2.1(supports-color@10.2.2)
       mdast-util-mdx-jsx:
         specifier: 'catalog:'
         version: 3.2.1(supports-color@10.2.2)
@@ -15668,8 +15668,8 @@ packages:
   md5@2.3.0:
     resolution: {integrity: sha512-T1GITYmFaKuO91vxyoQMFETst+O71VUPEU3ze5GNzDm0OWdP8v1ziTaAEPUr/3kLsY3Sftgz242A1SetQiDL7g==}
 
-  mdast-util-directive@3.2.0:
-    resolution: {integrity: sha512-Yxq+hH4pBEmtaLIJyMVcNbtBiCIKzdOK3HvDeM+JAqC8XVAT1e5PUYbHBpwFvQLIJuJfO2zCu7aNUXWoyZLmhw==}
+  mdast-util-directive@3.2.1:
+    resolution: {integrity: sha512-KAzmHyiPBxPEgX9dh+uk6a9xivmiQIqAvRnQSMm3xkk+iX/EsXEXHT1CTGsMc3jerKDCbQbOgLEejfrUjRTnaw==}
 
   mdast-util-find-and-replace@1.1.1:
     resolution: {integrity: sha512-9cKl33Y21lyckGzpSmEQnIDjEfeeWelN5s1kUW1LwdB0Fkuq2u+4GdqcGEygYxJE8GVqCl0741bYXHgamfWAZA==}
@@ -28358,7 +28358,7 @@ snapshots:
       crypt: 0.0.2
       is-buffer: 1.1.6
 
-  mdast-util-directive@3.2.0(supports-color@10.2.2):
+  mdast-util-directive@3.2.1(supports-color@10.2.2):
     dependencies:
       '@types/mdast': 4.0.4
       '@types/unist': 3.0.3
@@ -30021,7 +30021,7 @@ snapshots:
   remark-directive@4.0.0(supports-color@10.2.2):
     dependencies:
       '@types/mdast': 4.0.4
-      mdast-util-directive: 3.2.0(supports-color@10.2.2)
+      mdast-util-directive: 3.2.1(supports-color@10.2.2)
       micromark-extension-directive: 4.0.0
       unified: 11.0.5
     transitivePeerDependencies:
