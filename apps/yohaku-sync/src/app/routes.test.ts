@@ -102,7 +102,9 @@ describe("sync", () => {
       expect(fieldOf("body")(changes)).toStrictEqual(["second"]);
     }),
   );
+});
 
+describe("pushes the sync worker refuses", () => {
   it.effect("refuses a push a page on another site makes the browser send", () =>
     Effect.gen(function* test() {
       const refused = yield* putWith(

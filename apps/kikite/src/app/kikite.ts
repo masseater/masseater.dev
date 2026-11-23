@@ -1,7 +1,7 @@
 import { browserSpans } from "@r_masseater/workers-tracing/browser-spans";
 import { runner } from "@r_masseater/workers-tracing/effect";
 import { DurableObject, env } from "cloudflare:workers";
-import { Duration, Effect, Logger, Option, Schedule, String as Str } from "effect";
+import { Duration, Effect, Logger, Option, Schedule } from "effect";
 
 import { researched, isSessionsPath, sessionRoutes } from "#/entities/session/index.ts";
 import { CORRECTION_PATH, QUESTION_PATH, RESEARCH_PATH, SUMMARY_PATH } from "#/shared/api/index.ts";
@@ -14,6 +14,7 @@ import {
   TELEMETRY_SERVICE,
   TRACES_PATH,
 } from "#/shared/config/index.ts";
+import { withoutCredentials } from "#/shared/lib/caller-credentials.ts";
 import { writesFromAnotherSite, writesWithoutJson } from "#/shared/lib/write-guard.ts";
 
 import { down } from "./interviewer-down.ts";
@@ -67,15 +68,6 @@ const containerUrl = (url: string): string => {
   return `${CONTAINER_ORIGIN}${pathname}${search}`;
 };
 
-const CALLER_CREDENTIALS: ReadonlySet<string> = new Set(["authorization", "cookie"]);
-
-const withoutCredentials = (headers: Headers): Headers =>
-  new Headers(
-    [...headers].filter(
-      ([name]) => !CALLER_CREDENTIALS.has(name) && !Str.startsWith("cf-access-")(name),
-    ),
-  );
-
 const containerOf = (ctx: DurableObjectState): Effect.Effect<Container, InterviewerDown> =>
   Effect.fromOption(Option.fromUndefinedOr(ctx.container), () =>
     down("the durable object has no container"),
@@ -91,7 +83,7 @@ const forward = Effect.fn("kikite.forward")(function* forward(
     try: () =>
       container.getTcpPort(API_PORT).fetch(containerUrl(request.url), {
         method: request.method,
-        headers: withoutCredentials(request.headers),
+        headers: withoutCredentials(request),
         body,
       }),
     catch: down,
@@ -126,29 +118,46 @@ const INTERVIEWER_PATHS: ReadonlySet<string> = new Set([
 const refused = (status: number): Promise<Response> =>
   Promise.resolve(new Response("", { status }));
 
+const reachesInterviewer = (request: Request, pathname: string): boolean =>
+  request.method === "POST" && INTERVIEWER_PATHS.has(pathname);
+
+const refusal = (request: Request, pathname: string): Option.Option<number> => {
+  if (writesFromAnotherSite(request)) {
+    return Option.some(FORBIDDEN);
+  }
+  if (pathname === TRACES_PATH) {
+    return Option.none();
+  }
+  if (writesWithoutJson(request)) {
+    return Option.some(UNSUPPORTED_MEDIA_TYPE);
+  }
+  if (isSessionsPath(pathname) || reachesInterviewer(request, pathname)) {
+    return Option.none();
+  }
+  return Option.some(NOT_FOUND);
+};
+
+const admitted = (request: Request, pathname: string): Promise<Response> => {
+  if (pathname === TRACES_PATH) {
+    return receiveSpans(request);
+  }
+  if (isSessionsPath(pathname)) {
+    return runLogged(sessionRoutes(request));
+  }
+  const interviewer = env.INTERVIEWER.getByName("interviewer");
+  if (pathname === RESEARCH_PATH) {
+    return runLogged(researched((next) => interviewer.fetch(next))(request));
+  }
+  return interviewer.fetch(request);
+};
+
 const worker = {
   fetch: (request: Request): Promise<Response> => {
     const { pathname } = new URL(request.url);
-    if (writesFromAnotherSite(request)) {
-      return refused(FORBIDDEN);
-    }
-    if (pathname === TRACES_PATH) {
-      return receiveSpans(request);
-    }
-    if (writesWithoutJson(request)) {
-      return refused(UNSUPPORTED_MEDIA_TYPE);
-    }
-    if (isSessionsPath(pathname)) {
-      return runLogged(sessionRoutes(request));
-    }
-    if (request.method !== "POST" || !INTERVIEWER_PATHS.has(pathname)) {
-      return refused(NOT_FOUND);
-    }
-    const interviewer = env.INTERVIEWER.getByName("interviewer");
-    if (pathname === RESEARCH_PATH) {
-      return runLogged(researched((next) => interviewer.fetch(next))(request));
-    }
-    return interviewer.fetch(request);
+    return Option.match(refusal(request, pathname), {
+      onSome: refused,
+      onNone: () => admitted(request, pathname),
+    });
   },
 };
 
