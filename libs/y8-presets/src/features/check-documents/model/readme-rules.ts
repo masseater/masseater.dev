@@ -10,6 +10,7 @@ import {
   isExternal,
   isPublished,
   joinPath,
+  isImageBlock,
   leadingBlocks,
   linksOf,
   localTargetOf,
@@ -66,7 +67,7 @@ export const readmeSummary: Rule = defineRule({
       const next = pipe(
         leadingBlocks(context),
         Arr.drop(ONE),
-        Arr.dropWhile((node) => node.type === "blockQuote"),
+        Arr.dropWhile((node) => node.type === "blockQuote" || isImageBlock(context)(node)),
         Arr.head,
       );
       const isSummary = pipe(

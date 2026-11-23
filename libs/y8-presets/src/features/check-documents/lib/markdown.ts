@@ -131,6 +131,13 @@ const isBadge = (node: MarkdownNode): boolean =>
     ),
   );
 
+const HTML_IMAGES = /^(?:\s*<img\b[^>]*>)+\s*$/iu;
+
+export const isImageBlock =
+  (context: RuleContext) =>
+  (node: MarkdownNode): boolean =>
+    isBadge(node) || (node.type === "htmlBlock" && HTML_IMAGES.test(context.textOf(node)));
+
 export const leadingBlocks = (context: RuleContext): readonly MarkdownNode[] =>
   pipe(context.root.children, Arr.dropWhile(isBadge));
 
