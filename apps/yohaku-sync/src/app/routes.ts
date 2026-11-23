@@ -2,9 +2,12 @@ import { CHANGES_PATH, DOCUMENTS_PATH, Pushed } from "@masseater.dev/yohaku-prot
 import { Effect, Option, Schema, pipe } from "effect";
 
 import { changesAfter, store } from "#/entities/document/index.ts";
+import { writesFromAnotherSite, writesWithoutJson } from "#/shared/lib/write-guard.ts";
 
 const BAD_REQUEST = 400;
+const FORBIDDEN = 403;
 const NOT_FOUND = 404;
+const UNSUPPORTED_MEDIA_TYPE = 415;
 const SERVER_ERROR = 500;
 const FIRST = 0;
 
@@ -53,7 +56,7 @@ const ROUTES: ReadonlyMap<string, Route> = new Map([
   [`PUT ${DOCUMENTS_PATH}`, push],
 ]);
 
-export const routed = (request: Request): Effect.Effect<Response> =>
+const served = (request: Request): Effect.Effect<Response> =>
   pipe(
     routeKey(request),
     (key) => Option.fromUndefinedOr(ROUTES.get(key)),
@@ -62,3 +65,13 @@ export const routed = (request: Request): Effect.Effect<Response> =>
       onSome: (route) => route(request),
     }),
   );
+
+export const routed = (request: Request): Effect.Effect<Response> => {
+  if (writesFromAnotherSite(request)) {
+    return Effect.succeed(status(FORBIDDEN, "Forbidden"));
+  }
+  if (writesWithoutJson(request)) {
+    return Effect.succeed(status(UNSUPPORTED_MEDIA_TYPE, "Unsupported Media Type"));
+  }
+  return served(request);
+};

@@ -12,6 +12,9 @@ vi.mock("cloudflare:workers", () => import("#/shared/lib/d1.test.support.ts"));
 
 const OK = 200;
 const BAD_REQUEST = 400;
+const FORBIDDEN = 403;
+const UNSUPPORTED_MEDIA_TYPE = 415;
+const NO_DOCUMENTS = '{"documents":[]}';
 const EARLY = 100;
 const LATE = 200;
 const START = 0;
@@ -27,8 +30,15 @@ const manuscript = (body: string, updatedAt: number): typeof SyncDocument.Type =
   body,
 });
 
-const put = (body: string): Effect.Effect<Response> =>
-  routed(new Request(`${SYNC_ORIGIN}/api/documents`, { method: "PUT", body }));
+const JSON_BODY = { "content-type": "application/json" };
+
+const putWith = (
+  headers: Readonly<Record<string, string>>,
+  body: string,
+): Effect.Effect<Response> =>
+  routed(new Request(`${SYNC_ORIGIN}/api/documents`, { method: "PUT", headers, body }));
+
+const put = (body: string): Effect.Effect<Response> => putWith(JSON_BODY, body);
 
 const push = (
   documents: readonly (typeof SyncDocument.Type)[],
@@ -90,6 +100,30 @@ describe("sync", () => {
       yield* push([manuscript("second", LATE)]);
       const changes = yield* changesAfter(lastRevision(seen));
       expect(fieldOf("body")(changes)).toStrictEqual(["second"]);
+    }),
+  );
+
+  it.effect("refuses a push a page on another site makes the browser send", () =>
+    Effect.gen(function* test() {
+      const refused = yield* putWith(
+        { ...JSON_BODY, origin: "https://evil.example" },
+        NO_DOCUMENTS,
+      );
+      expect(refused.status).toBe(FORBIDDEN);
+    }),
+  );
+
+  it.effect("takes a push that names its own origin", () =>
+    Effect.gen(function* test() {
+      const taken = yield* putWith({ ...JSON_BODY, origin: SYNC_ORIGIN }, NO_DOCUMENTS);
+      expect(taken.status).toBe(OK);
+    }),
+  );
+
+  it.effect("refuses a push whose body is not sent as JSON", () =>
+    Effect.gen(function* test() {
+      const refused = yield* putWith({ "content-type": "text/plain" }, NO_DOCUMENTS);
+      expect(refused.status).toBe(UNSUPPORTED_MEDIA_TYPE);
     }),
   );
 
