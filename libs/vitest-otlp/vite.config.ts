@@ -43,6 +43,7 @@ export default defineConfig({
       ],
       platform: "node",
       sourcemap: true,
+      publint: { strict: true },
       dts: true,
     },
     { entry: ["src/app/tail-to-otlp.ts"], platform: "neutral", sourcemap: true, dts: false },
