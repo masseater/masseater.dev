@@ -13,7 +13,7 @@
 edition = "2024"
 rust-version = "1.90"
 name = "tauri-macros"
-version = "2.7.4"
+version = "2.7.6"
 authors = ["Tauri Programme within The Commons Conservancy"]
 build = false
 exclude = ["CHANGELOG.md", "/target"]
@@ -57,10 +57,13 @@ version = "2"
 features = ["full"]
 
 [dependencies.tauri-codegen]
-version = "~2.7.4"
+version = "~2.7.6"
 
 [dependencies.tauri-utils]
-version = "~2.10.2"
+version = "~2.10.4"
+
+[lints.cargo]
+unused_dependencies = "deny"
 
 [lints.clippy]
 assigning_clones = "warn"
