@@ -48,6 +48,7 @@ tauri = { version = "=2.12.7", features = ["protocol-asset"] }
 cuda = ["candle-core/cuda", "roformer/cuda"]
 
 [dev-dependencies]
+tauri = { version = "=2.12.7", features = ["test"] }
 opentelemetry = "=0.33.1"
 opentelemetry_sdk = { version = "=0.33.1", features = ["testing"] }
 tracing-opentelemetry = "=0.34.0"

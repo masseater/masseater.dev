@@ -14,6 +14,7 @@ use crate::shared::config::DATABASE;
 
 const SITES: &[Site] = &[Site::Youtube, Site::Niconico, Site::Soundcloud, Site::File];
 const SCREEN_PORT: u16 = 47_231;
+const CAPABILITY: &str = include_str!("../../capabilities/default.json");
 const CHANGED: &str = "shirushi://taste-changed";
 
 fn builder() -> Builder<tauri::Wry> {
@@ -69,7 +70,7 @@ fn setup(app: &App, port: u16) -> Setup {
     app.manage(store);
     app.manage(taste);
     app.manage(stills);
-    open_window(app, port)
+    open_window(app, port, CAPABILITY)
 }
 
 pub fn run() -> tauri::Result<()> {
@@ -92,8 +93,14 @@ mod tests {
 
     use specta_typescript::Typescript;
 
-    use super::builder;
+    use tauri::ipc::{CallbackFn, InvokeBody};
+    use tauri::test::{INVOKE_KEY, get_ipc_response, mock_builder};
+    use tauri::webview::InvokeRequest;
+    use tauri::{WebviewUrl, WebviewWindowBuilder};
 
+    use super::{CAPABILITY, SCREEN_PORT, builder};
+
+    const COMMAND: &str = "list_marks";
     const BINDINGS: &str = "../src/shared/api/generated/bindings.ts";
 
     #[test]
@@ -117,5 +124,39 @@ mod tests {
             current == fresh,
             "{BINDINGS} is stale: run UPDATE_BINDINGS=1 cargo test -p shirushi"
         );
+    }
+
+    #[test]
+    fn only_the_origin_the_screen_is_served_from_may_call_commands() {
+        let app = mock_builder()
+            .build(tauri::generate_context!(test = true))
+            .expect("app");
+        let window = WebviewWindowBuilder::new(&app, "main", WebviewUrl::default())
+            .build()
+            .expect("window");
+        let allowed = |origin: String| {
+            let answer = get_ipc_response(
+                &window,
+                InvokeRequest {
+                    cmd: COMMAND.into(),
+                    callback: CallbackFn(0),
+                    error: CallbackFn(1),
+                    url: origin.parse().expect("origin"),
+                    body: InvokeBody::default(),
+                    headers: tauri::http::HeaderMap::default(),
+                    invoke_key: INVOKE_KEY.to_owned(),
+                },
+            );
+            answer
+                .err()
+                .and_then(|error| error.as_str().map(str::to_owned))
+                == Some(format!("Command {COMMAND} not found"))
+        };
+        let served = format!("http://127.0.0.1:{SCREEN_PORT}/");
+        let other = format!("http://127.0.0.1:{}/", SCREEN_PORT + 1);
+        assert!(!allowed(served.clone()));
+        desktop_shell::allow_screen(app.handle(), SCREEN_PORT, CAPABILITY).expect("capability");
+        assert!(allowed(served));
+        assert!(!allowed(other));
     }
 }

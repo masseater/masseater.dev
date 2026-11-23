@@ -6,7 +6,7 @@ use reqwest::Client;
 use tauri::async_runtime;
 
 use crate::shared::db::{Store, now};
-use crate::shared::lib::{Failure, Outcome};
+use crate::shared::lib::Outcome;
 use crate::shared::protocol::SyncStatus;
 
 use super::apply::apply_remote;
@@ -225,9 +225,7 @@ impl Syncer {
     }
 
     pub async fn callback(&self, url: &str) -> Outcome<()> {
-        let login = self
-            .shared(|shared| shared.login.take())
-            .ok_or_else(|| Failure::new("no sign-in is waiting"))?;
+        let login = self.shared(|shared| auth::claim(&mut shared.login, url))?;
         let issued = auth::exchange_code(&self.http, &self.store, self.port, url, login).await?;
         let grant = self.granted(issued)?;
         self.shared(|shared| shared.grant = Some(grant));
