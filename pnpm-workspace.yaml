@@ -48,7 +48,7 @@ catalog:
   lighthouse: 13.6.0
   miniflare: 4.20260730.0
   puppeteer-core: 25.18.1
-  tonal: 6.7.1
+  tonal: 6.8.0
   midi-file: 1.2.4
   langium: 4.4.2
   langium-cli: 4.4.1
