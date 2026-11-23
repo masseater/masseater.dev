@@ -5,7 +5,12 @@ import { afterAll, beforeEach, vi } from "vite-plus/test";
 
 import { sweep } from "#/features/sweep-entries/index.ts";
 import { Limits } from "#/shared/config/index.ts";
-import { closeDatabase, objectCount, resetStores } from "#/shared/lib/cloudflare.test.support.ts";
+import {
+  closeDatabase,
+  objectCount,
+  objectReadRows,
+  resetStores,
+} from "#/shared/lib/cloudflare.test.support.ts";
 
 import { blobResponse, found, lookup, store } from "./routes.test.support.ts";
 
@@ -109,6 +114,53 @@ const stopsReadingObjectsPastTheDailyCap = Effect.gen(
   },
 );
 
+const MISSING_BLOB = "999";
+
+const NO_BLOB = "";
+
+const INLINE = new Uint8Array([FIRST_VERSION]);
+
+const storedBlobId = Effect.gen(function* storedBlobId() {
+  yield* store({ key: keyOf(FIRST_VERSION), value: INLINE, blob: Option.some(INLINE) });
+  const hit = yield* found(keyOf(FIRST_VERSION));
+  return pipe(
+    Arr.head(hit.entries),
+    Option.flatMapNullishOr((entry) => entry.blob_id),
+    Option.getOrElse(() => NO_BLOB),
+  );
+});
+
+const chargesNothingForAMissingBlob = Effect.gen(function* chargesNothingForAMissingBlob() {
+  const id = yield* storedBlobId;
+  const missing = yield* Effect.forEach(
+    Arr.range(FIRST_VERSION, OBJECT_READS_ALLOWED + FIRST_VERSION),
+    () => blobResponse(MISSING_BLOB),
+    { concurrency: 1 },
+  );
+  expect(pipe(missing, Arr.map(statusOf), Arr.dedupe)).toStrictEqual([NOT_FOUND]);
+  const rows = yield* objectReadRows;
+  expect(rows).toBe(NO_OBJECTS);
+  const blob = yield* blobResponse(id);
+  expect(blob.status).toBe(OK);
+});
+
+const stopsRecordingReadsPastTheDailyCap = Effect.gen(
+  function* stopsRecordingReadsPastTheDailyCap() {
+    const id = yield* storedBlobId;
+    const reads = yield* Effect.forEach(
+      Arr.range(FIRST_VERSION, OBJECT_READS_ALLOWED + STORED),
+      () => blobResponse(id),
+      { concurrency: 1 },
+    );
+    expect(pipe(reads, Arr.map(statusOf))).toStrictEqual([
+      ...Arr.replicate(OK, OBJECT_READS_ALLOWED),
+      ...Arr.replicate(NOT_FOUND, STORED),
+    ]);
+    const rows = yield* objectReadRows;
+    expect(rows).toBe(OBJECT_READS_ALLOWED);
+  },
+);
+
 const refusesAnOversizedBody = Effect.gen(function* refusesAnOversizedBody() {
   const refused = yield* store({
     key: keyOf(FIRST_VERSION),
@@ -133,6 +185,12 @@ describe("task cache caps", () => {
   );
   it.effect("stops reading stored objects beyond the daily cap", () =>
     withSmallLimits(stopsReadingObjectsPastTheDailyCap),
+  );
+  it.effect("charges no object read for a blob that does not exist", () =>
+    withSmallLimits(chargesNothingForAMissingBlob),
+  );
+  it.effect("stops recording object reads once the daily cap is spent", () =>
+    withSmallLimits(stopsRecordingReadsPastTheDailyCap),
   );
   it.effect("refuses a request body over the size limit", () =>
     withSmallLimits(refusesAnOversizedBody),

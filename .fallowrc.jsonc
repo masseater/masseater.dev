@@ -131,6 +131,8 @@
     "libs/oxlint-typed-rules/upstream/{react,tanstack-query,tanstack-router,drizzle,remotion}/**",
     "libs/vite-plus-adopt/upstream/**",
     "libs/textlint-rule-preset-ja/upstream/**",
+    // The page is served by the Rust tracker, and /vision/ is one of its routes, not a file.
+    "tools/seikin-dance/src/features/track_poses/landmark.html",
   ],
   "audit": { "gate": "all" },
   "security": {

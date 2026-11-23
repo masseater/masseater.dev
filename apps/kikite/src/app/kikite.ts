@@ -2,9 +2,10 @@ import { browserSpans } from "@r_masseater/workers-tracing/browser-spans";
 import { runner } from "@r_masseater/workers-tracing/effect";
 import { DurableObject, env } from "cloudflare:workers";
 import { Duration, Effect, Logger, Option, Schedule } from "effect";
+import { writesFromAnotherSite, writesWithoutJson } from "security-headers/request";
 
 import { researched, isSessionsPath, sessionRoutes } from "#/entities/session/index.ts";
-import { RESEARCH_PATH } from "#/shared/api/index.ts";
+import { CORRECTION_PATH, QUESTION_PATH, RESEARCH_PATH, SUMMARY_PATH } from "#/shared/api/index.ts";
 import {
   API_PORT,
   INTERVIEWER_IDLE,
@@ -14,6 +15,7 @@ import {
   TELEMETRY_SERVICE,
   TRACES_PATH,
 } from "#/shared/config/index.ts";
+import { withoutCredentials } from "#/shared/lib/caller-credentials.ts";
 
 import { down } from "./interviewer-down.ts";
 import type { InterviewerDown } from "./interviewer-down.ts";
@@ -21,6 +23,9 @@ import type { InterviewerDown } from "./interviewer-down.ts";
 const logger = Logger.layer([Logger.withLeveledConsole(Logger.formatStructured)]);
 const runLogged = runner(logger);
 
+const FORBIDDEN = 403;
+const NOT_FOUND = 404;
+const UNSUPPORTED_MEDIA_TYPE = 415;
 const SERVICE_UNAVAILABLE = 503;
 const CONTAINER_ORIGIN = "http://interviewer";
 
@@ -78,7 +83,7 @@ const forward = Effect.fn("kikite.forward")(function* forward(
     try: () =>
       container.getTcpPort(API_PORT).fetch(containerUrl(request.url), {
         method: request.method,
-        headers: request.headers,
+        headers: withoutCredentials(request),
         body,
       }),
     catch: down,
@@ -103,20 +108,56 @@ export class Interviewer extends DurableObject {
 
 const receiveSpans = browserSpans({ service: TELEMETRY_SERVICE });
 
+const INTERVIEWER_PATHS: ReadonlySet<string> = new Set([
+  SUMMARY_PATH,
+  QUESTION_PATH,
+  RESEARCH_PATH,
+  CORRECTION_PATH,
+]);
+
+const refused = (status: number): Promise<Response> =>
+  Promise.resolve(new Response("", { status }));
+
+const reachesInterviewer = (request: Request, pathname: string): boolean =>
+  request.method === "POST" && INTERVIEWER_PATHS.has(pathname);
+
+const refusal = (request: Request, pathname: string): Option.Option<number> => {
+  if (writesFromAnotherSite(request)) {
+    return Option.some(FORBIDDEN);
+  }
+  if (pathname === TRACES_PATH) {
+    return Option.none();
+  }
+  if (writesWithoutJson(request)) {
+    return Option.some(UNSUPPORTED_MEDIA_TYPE);
+  }
+  if (isSessionsPath(pathname) || reachesInterviewer(request, pathname)) {
+    return Option.none();
+  }
+  return Option.some(NOT_FOUND);
+};
+
+const admitted = (request: Request, pathname: string): Promise<Response> => {
+  if (pathname === TRACES_PATH) {
+    return receiveSpans(request);
+  }
+  if (isSessionsPath(pathname)) {
+    return runLogged(sessionRoutes(request));
+  }
+  const interviewer = env.INTERVIEWER.getByName("interviewer");
+  if (pathname === RESEARCH_PATH) {
+    return runLogged(researched((next) => interviewer.fetch(next))(request));
+  }
+  return interviewer.fetch(request);
+};
+
 const worker = {
   fetch: (request: Request): Promise<Response> => {
     const { pathname } = new URL(request.url);
-    if (pathname === TRACES_PATH) {
-      return receiveSpans(request);
-    }
-    if (isSessionsPath(pathname)) {
-      return runLogged(sessionRoutes(request));
-    }
-    const interviewer = env.INTERVIEWER.getByName("interviewer");
-    if (pathname === RESEARCH_PATH) {
-      return runLogged(researched((next) => interviewer.fetch(next))(request));
-    }
-    return interviewer.fetch(request);
+    return Option.match(refusal(request, pathname), {
+      onSome: refused,
+      onNone: () => admitted(request, pathname),
+    });
   },
 };
 

@@ -2,7 +2,13 @@ import { describe, expect, it } from "@effect/vitest";
 import { Array as Arr, Effect, Option, pipe } from "effect";
 import { afterAll, beforeEach, vi } from "vite-plus/test";
 
-import { BRANCH_CI_TOKEN, PRIVATE_CI_TOKEN } from "#/app/token.test.support.ts";
+import {
+  BRANCH_CI_TOKEN,
+  COMMENT_CI_TOKEN,
+  PRIVATE_CI_TOKEN,
+  STORING_EVENTS,
+  eventToken,
+} from "#/app/token.test.support.ts";
 import {
   closeDatabase,
   flood,
@@ -105,7 +111,12 @@ const listsTheNewestFirst = Effect.gen(function* listsTheNewestFirst() {
 const refusesAStoreWithoutAMainBranchRun = Effect.gen(
   function* refusesAStoreWithoutAMainBranchRun() {
     const entry = { key: KEY, value: BINARY, blob: Option.none() };
-    const callers = [anonymous, Option.some("forged"), Option.some(BRANCH_CI_TOKEN)];
+    const callers = [
+      anonymous,
+      Option.some("forged"),
+      Option.some(BRANCH_CI_TOKEN),
+      Option.some(COMMENT_CI_TOKEN),
+    ];
     const refused = yield* Effect.forEach(callers, (caller) => storeAs(caller)(entry), {
       concurrency: 1,
     });
@@ -116,6 +127,16 @@ const refusesAStoreWithoutAMainBranchRun = Effect.gen(
     expect(missed.status).toBe(NOT_FOUND);
   },
 );
+
+const admitsEveryStoringEvent = Effect.gen(function* admitsEveryStoringEvent() {
+  const entry = { key: KEY, value: BINARY, blob: Option.none() };
+  const admitted = yield* Effect.forEach(
+    STORING_EVENTS,
+    (event) => storeAs(Option.some(eventToken(event)))(entry),
+    { concurrency: 1 },
+  );
+  expect(pipe(admitted, Arr.map(statusOf))).toStrictEqual(Arr.replicate(OK, STORING_EVENTS.length));
+});
 
 const hidesAPrivateRepository = Effect.gen(function* hidesAPrivateRepository() {
   const privateRun = Option.some(PRIVATE_CI_TOKEN);
@@ -150,8 +171,12 @@ describe("task cache", () => {
     () => listsTheNewestFirst,
   );
   it.effect(
-    "refuses a store from a caller without a CI run on the main branch",
+    "refuses a store from a caller without a storing CI run on the main branch",
     () => refusesAStoreWithoutAMainBranchRun,
+  );
+  it.effect(
+    "admits a store from a scheduled, manual or dispatched run on the main branch",
+    () => admitsEveryStoringEvent,
   );
   it.effect(
     "hides a private repository from anonymous readers and opens a public one",

@@ -18,6 +18,7 @@ const COLOR = "B60205";
 const FAILURE = "failure";
 const SUCCESS = "success";
 const JOB_LINE = /^- `(?<job>[^`]+)`$/u;
+const REPORTER = "github-actions[bot]";
 
 const Result = Schema.Struct({ result: Schema.String });
 
@@ -27,7 +28,10 @@ const Numbered = Schema.Struct({ number: Schema.Int });
 
 const Issue = Schema.Struct({ body: Schema.NullOr(Schema.String) });
 
-const Comment = Schema.Struct({ body: Schema.String });
+const Comment = Schema.Struct({
+  body: Schema.String,
+  user: Schema.NullOr(Schema.Struct({ login: Schema.String })),
+});
 
 const Named = Schema.Struct({ name: Schema.String });
 
@@ -88,6 +92,12 @@ const reportedJobs = Effect.fn("reportedJobs")(function* reportedJobs(number: nu
   );
   const bodies = pipe(
     comments,
+    Arr.filter(({ user }) =>
+      pipe(
+        Option.fromNullOr(user),
+        Option.exists(({ login }) => login === REPORTER),
+      ),
+    ),
     Arr.map(({ body }) => body),
   );
   return pipe(
