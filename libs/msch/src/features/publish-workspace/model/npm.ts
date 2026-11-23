@@ -173,8 +173,8 @@ export const publishToNpm = Effect.fn("publish.npm")(function* publishToNpm(dire
   if (yield* onNpm({ directory, ...manifest })) {
     return yield* Console.log(`${manifest.name}@${manifest.version} is already published`);
   }
-  const env = yield* authEnv();
   yield* verifyPackage(directory, manifest);
+  const env = yield* authEnv();
   yield* publishNatives(directory, manifest, env);
   const tarball = yield* pack(directory);
   return yield* mustSucceed({

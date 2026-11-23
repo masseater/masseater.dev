@@ -27,6 +27,8 @@ const REGISTERED_PASSKEY: Passkey = {
 
 const REJECTED = { status: "FORBIDDEN", body: { message: "invalid_invite" } };
 
+const UNVERIFIABLE_HASH = "not-a-hash";
+
 const optionsWith =
   ({ query, passkeys }: Attempt) =>
   (inviteHash: string): Promise<unknown> =>
@@ -59,6 +61,11 @@ test("正しい招待で、パスキーがまだ無ければ持ち主として�
 test("正しい招待でも、パスキーが 1 つ登録済みなら拒む", () =>
   expect(
     registrationOptions({ query: { context: INVITE }, passkeys: [REGISTERED_PASSKEY] }),
+  ).rejects.toMatchObject(REJECTED));
+
+test("パスキーが 1 つ登録済みなら、招待のハッシュを照合せずに同じ応答で拒む", () =>
+  expect(
+    optionsWith({ query: { context: INVITE }, passkeys: [REGISTERED_PASSKEY] })(UNVERIFIABLE_HASH),
   ).rejects.toMatchObject(REJECTED));
 
 test("招待が違えば、パスキーがまだ無くても拒む", () =>

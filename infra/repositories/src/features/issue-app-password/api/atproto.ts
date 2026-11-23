@@ -13,6 +13,7 @@ export const APP_PASSWORD_KEY = "atp_app_password";
 const ATTEMPTS_KEY = "atp_attempts";
 const APP_PASSWORD_PATH = "/atproto/app-password";
 const NO_CONTENT = 204;
+const NO_BODY = Option.getOrNull(Option.none());
 const UNAUTHORIZED = 401;
 const TOO_MANY_REQUESTS = 429;
 
@@ -69,24 +70,27 @@ const limited: Effect.Effect<Response> = Effect.logWarning("atproto.app_password
 );
 
 const accept = (
-  request: Request,
   env: AppStoreEnv,
+  password: string,
 ): Effect.Effect<Response, SealFailed | SignInFailed> =>
-  Effect.promise(() => request.text()).pipe(
-    Effect.flatMap(submitted),
-    Effect.tap(({ password }) => signIn(password)),
-    Effect.flatMap(({ password }) => storePassword(env, password)),
-    Effect.as(new Response("", { status: NO_CONTENT })),
+  signIn(password).pipe(
+    Effect.andThen(storePassword(env, password)),
+    Effect.as(new Response(NO_BODY, { status: NO_CONTENT })),
   );
 
 const submit = (request: Request, env: AppStoreEnv): Effect.Effect<Response> =>
-  admitAttempt(env).pipe(
-    Effect.flatMap((admitted) => {
-      if (admitted) {
-        return accept(request, env);
-      }
-      return limited;
-    }),
+  Effect.promise(() => request.text()).pipe(
+    Effect.flatMap(submitted),
+    Effect.flatMap(({ password }) =>
+      admitAttempt(env).pipe(
+        Effect.flatMap((admitted) => {
+          if (admitted) {
+            return accept(env, password);
+          }
+          return limited;
+        }),
+      ),
+    ),
     Effect.catchCause((cause) =>
       Effect.logWarning("atproto.app_password_rejected", cause).pipe(
         Effect.as(new Response("", { status: UNAUTHORIZED })),

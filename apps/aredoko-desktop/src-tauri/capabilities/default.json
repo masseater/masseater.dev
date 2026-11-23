@@ -6,7 +6,17 @@
   "permissions": [
     "core:default",
     "dialog:allow-open",
-    "opener:allow-open-url",
+    {
+      "identifier": "opener:allow-open-url",
+      "allow": [
+        {
+          "url": "https://booth.pm/*"
+        },
+        {
+          "url": "https://*.booth.pm/*"
+        }
+      ]
+    },
     {
       "identifier": "opener:allow-open-path",
       "allow": [

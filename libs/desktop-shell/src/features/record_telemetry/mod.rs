@@ -23,6 +23,7 @@ const FOLDER: &str = "telemetry";
 const SCHEME: &str = "otlp";
 const TRACES: &str = "traces";
 const LOGS: &str = "logs";
+const BATCH_LIMIT: usize = 4 * 1024 * 1024;
 const TRACED_CRATES: &[&str] = &["tauri", "tauri_runtime_wry"];
 
 struct Recording {
@@ -85,6 +86,13 @@ fn start<R: Runtime>(app: &AppHandle<R>) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
+fn batch(body: &[u8]) -> Result<serde_json::Value, StatusCode> {
+    if body.len() > BATCH_LIMIT {
+        return Err(StatusCode::PAYLOAD_TOO_LARGE);
+    }
+    serde_json::from_slice(body).map_err(|_| StatusCode::BAD_REQUEST)
+}
+
 fn record<R: Runtime>(app: &AppHandle<R>, request: &Request<Vec<u8>>) -> StatusCode {
     if request.method() == Method::OPTIONS {
         return StatusCode::NO_CONTENT;
@@ -98,12 +106,10 @@ fn record<R: Runtime>(app: &AppHandle<R>, request: &Request<Vec<u8>>) -> StatusC
     let Some(appender) = recording.screen(request.uri().path()) else {
         return StatusCode::NOT_FOUND;
     };
-    let Ok(batch) = serde_json::from_slice::<serde_json::Value>(request.body()) else {
-        return StatusCode::BAD_REQUEST;
-    };
-    match appender.line(&batch) {
-        Ok(()) => StatusCode::OK,
-        Err(_) => StatusCode::INTERNAL_SERVER_ERROR,
+    match batch(request.body()).map(|batch| appender.line(&batch)) {
+        Ok(Ok(())) => StatusCode::OK,
+        Ok(Err(_)) => StatusCode::INTERNAL_SERVER_ERROR,
+        Err(status) => status,
     }
 }
 
@@ -144,7 +150,7 @@ mod tests {
 
     use tracing_subscriber::layer::SubscriberExt;
 
-    use super::{recording, spans};
+    use super::{BATCH_LIMIT, StatusCode, batch, recording, spans};
 
     #[test]
     fn writes_spans_from_the_app_and_its_tauri_runtime_to_the_trace_file() {
@@ -182,5 +188,14 @@ mod tests {
         assert_eq!(written, "{\"resourceLogs\":[]}\n");
         assert!(recording.screen("/v1/metrics").is_none());
         assert!(recording.screen("/logs").is_none());
+    }
+
+    #[test]
+    fn refuses_batches_that_are_too_large_or_not_json() {
+        assert!(batch(b"{\"resourceSpans\":[]}").is_ok());
+        assert_eq!(batch(b"not json"), Err(StatusCode::BAD_REQUEST));
+        let mut large = vec![b' '; BATCH_LIMIT];
+        large.extend_from_slice(b"{}");
+        assert_eq!(batch(&large), Err(StatusCode::PAYLOAD_TOO_LARGE));
     }
 }

@@ -1,9 +1,10 @@
 import type { ReactNode } from "react";
 import { ErrorBar } from "recharts";
+import type { ErrorBarDirection } from "recharts";
 
 import { ERROR_WIDTH, REFERENCE_COLOR } from "./chart-style.ts";
 
-export const intervalBar = (direction: "x" | "y"): ReactNode => (
+export const intervalBar = (direction: ErrorBarDirection): ReactNode => (
   <ErrorBar
     isAnimationActive={false}
     dataKey="error"

@@ -23,7 +23,7 @@ pub async fn list_songs(workshop: State<'_, Workshop>) -> Answer<Vec<Song>> {
 #[tauri::command]
 #[specta::specta]
 pub async fn song_folder(workshop: State<'_, Workshop>, id: String) -> Answer<String> {
-    Ok(workshop.library.folder(&id).to_string_lossy().into_owned())
+    Ok(workshop.library.folder(&id)?.to_string_lossy().into_owned())
 }
 
 #[tauri::command]

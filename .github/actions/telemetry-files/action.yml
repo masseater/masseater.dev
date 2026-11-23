@@ -8,7 +8,7 @@ runs:
         OTEL_FILES: ${{ runner.temp }}/otel
       run: |
         mkdir -p "$OTEL_FILES"
-        ps -eo pid,ppid,etimes,stat,pcpu,wchan:32,args --forest --width 240 > "$OTEL_FILES/processes.txt"
+        ps -eo pid,ppid,etimes,stat,pcpu,wchan:32,comm --forest --width 240 > "$OTEL_FILES/processes.txt"
         for pid in $(pgrep -u "$(id -u)"); do
           echo "== $pid $(cat "/proc/$pid/comm" 2>/dev/null)"
           sudo cat "/proc/$pid/syscall" 2>/dev/null

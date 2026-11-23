@@ -33,7 +33,8 @@ pub fn separate_song(
         .find(|source| source.id == song.primary)
         .ok_or_else(|| Failure::new("song has no primary source"))?;
     progress(0.0, "decoding");
-    let (mix, rate) = decode(&library.path(song, &source.file)).map_err(|error| failure(&error))?;
+    let (mix, rate) =
+        decode(&library.path(song, &source.file)?).map_err(|error| failure(&error))?;
     let frames = mix[0].len();
     let model_rate = separator.sample_rate();
     let input = resample(&mix, rate, model_rate).map_err(|error| failure(&error))?;
@@ -50,7 +51,7 @@ pub fn separate_song(
         .map_err(|error| failure(&error))?;
     let id = fresh_id();
     let folder = format!("{STEMS}/{id}");
-    std::fs::create_dir_all(library.path(song, &folder))?;
+    std::fs::create_dir_all(library.path(song, &folder)?)?;
     let mut files = Vec::new();
     for (name, audio) in separator.stems().into_iter().zip(stems) {
         progress(0.95, "writing stems");
@@ -59,7 +60,7 @@ pub fn separate_song(
             frames,
         );
         let file = format!("{folder}/{name}.flac");
-        write_flac(&library.path(song, &file), &back, rate).map_err(|error| failure(&error))?;
+        write_flac(&library.path(song, &file)?, &back, rate).map_err(|error| failure(&error))?;
         files.push(StemFile { stem: name, file });
     }
     let mut updated = library.get(&song.id)?.unwrap_or_else(|| song.clone());
@@ -97,9 +98,9 @@ mod tests {
         let wave: Vec<f32> = (0..48_017u32)
             .map(|index| (f32::from(u16::try_from(index % 109).unwrap()) / 109.0 - 0.5) * 0.4)
             .collect();
-        std::fs::create_dir_all(library.path(&song, "sources")).unwrap();
+        std::fs::create_dir_all(library.path(&song, "sources").unwrap()).unwrap();
         write_flac(
-            &library.path(&song, "sources/a.flac"),
+            &library.path(&song, "sources/a.flac").unwrap(),
             &[wave.clone(), wave],
             48_000,
         )
@@ -123,7 +124,7 @@ mod tests {
         let separation = &separated.separations[0];
         assert_eq!(separation.stems.len(), MODELS[0].stems.len());
         for stem in &separation.stems {
-            let (audio, rate) = decode(&library.path(&separated, &stem.file)).unwrap();
+            let (audio, rate) = decode(&library.path(&separated, &stem.file).unwrap()).unwrap();
             assert_eq!((rate, audio[0].len()), (48_000, frames), "{}", stem.stem);
         }
         let names: Vec<&str> = separation
