@@ -123,8 +123,7 @@ const exchange = (
       resource: request.metadata.resource,
     },
   }).pipe(
-    Effect.flatMap((token) => Clock.currentTimeMillis.pipe(Effect.map((now) => ({ token, now })))),
-    Effect.map(({ token, now }) => {
+    Effect.zipWith(Clock.currentTimeMillis, (token, now) => {
       const base = {
         tokenEndpoint: request.metadata.token_endpoint,
         clientId: request.clientId,

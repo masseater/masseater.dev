@@ -39,6 +39,9 @@ export const mount = (engine: Engine): Effect.Effect<void, never, Scope.Scope> =
     }),
   ).pipe(
     Effect.andThen(
-      Effect.promise(() => Promise.all(Array.from(document.fonts, (face) => face.load()))),
+      Effect.forEach(document.fonts, (face) => Effect.promise(() => face.load()), {
+        concurrency: "unbounded",
+        discard: true,
+      }),
     ),
   );
