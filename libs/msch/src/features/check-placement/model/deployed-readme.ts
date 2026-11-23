@@ -1,4 +1,4 @@
-import { Array as Arr, Effect, Option, Predicate, Schema, pipe } from "effect";
+import { Array as Arr, Effect, Option, Predicate, Result, Schema, pipe } from "effect";
 import { parse } from "vite-plus";
 
 import {
@@ -8,14 +8,19 @@ import {
   owningWorkspace,
   workspaceDirectories,
 } from "#/entities/workspace/index.ts";
-import type { Problem, RuleName } from "#/shared/lib/problem.ts";
+import type { RuleName } from "#/shared/lib/problem.ts";
 import { RepositoryFiles } from "#/shared/lib/repository-files.ts";
 
+import { fileProblem } from "./member-sources.ts";
+import { readReadme } from "./readme-file.ts";
+
 const RULE: RuleName = "deployed-readme";
-const README_FILE = "README.md";
 const ROOT_DIRECTORY = "";
 const READ_CONCURRENCY = 16;
-const FILE_START = 1;
+const MISSING_MESSAGE =
+  "is missing. This workspace has an Alchemy stack that serves an address, so give it a README.md that says what it is and links its URL.";
+const NO_URL_MESSAGE =
+  "has no https:// URL. This workspace has an Alchemy stack that serves an address, so link the URL it is served at.";
 const ADDRESS_KEYS = ["domain", "domains", "routes", "hostname"];
 const URL_KEY = "url";
 const STACK_FILE = /(?:^|\/)alchemy\.(?![^/]*\.test\.)[^/]+\.[cm]?ts$/u;
@@ -36,20 +41,20 @@ const propertyNamed =
 const isAddressProperty = propertyNamed(ADDRESS_KEYS);
 const isUrlProperty = propertyNamed([URL_KEY]);
 
-const decodeReturnedObject = Schema.decodeUnknownOption(
-  Schema.Struct({
-    type: Schema.Literal("ReturnStatement"),
-    argument: Schema.Struct({
-      type: Schema.Literal("ObjectExpression"),
-      properties: Schema.Array(Schema.Unknown),
-    }),
+const ReturnedObject = Schema.Struct({
+  type: Schema.Literal("ReturnStatement"),
+  argument: Schema.Struct({
+    type: Schema.Literal("ObjectExpression"),
+    properties: Schema.Array(Schema.Unknown),
   }),
-);
+});
+
+const decodeReturnedObject = Schema.decodeUnknownOption(ReturnedObject);
 
 const returnsUrl = (node: unknown): boolean =>
   pipe(
     decodeReturnedObject(node),
-    Option.exists(({ argument }) => Arr.some(argument.properties, isUrlProperty)),
+    Option.exists(({ argument }) => pipe(argument.properties, Arr.some(isUrlProperty))),
   );
 
 const servesAddress = (node: unknown): boolean =>
@@ -66,29 +71,19 @@ const deploysTo = Effect.fn("deploysTo")(function* deploysTo(root: string, file:
 });
 
 const problemIn = Effect.fn("problemIn")(function* problemIn(root: string, directory: string) {
-  const files = yield* RepositoryFiles;
-  const file = files.join(root, directory, README_FILE);
-  const text = yield* files.readFile(file);
-  if (Option.isNone(text)) {
-    return Option.some<Problem>({
-      file,
-      line: FILE_START,
-      column: FILE_START,
-      rule: RULE,
-      message:
-        "is missing. This workspace has an Alchemy stack that serves an address, so give it a README.md that says what it is and links its URL.",
-    });
-  }
-  if (URL_PATTERN.test(text.value)) {
-    return Option.none<Problem>();
-  }
-  return Option.some<Problem>({
-    file,
-    line: FILE_START,
-    column: FILE_START,
+  const readme = yield* readReadme({
+    root,
+    directory,
     rule: RULE,
-    message:
-      "has no https:// URL. This workspace has an Alchemy stack that serves an address, so link the URL it is served at.",
+    missingMessage: MISSING_MESSAGE,
+  });
+  return Result.match(readme, {
+    onFailure: Option.some,
+    onSuccess: ({ file, source }) =>
+      pipe(
+        Option.liftPredicate(source, (text) => !URL_PATTERN.test(text)),
+        Option.map(() => fileProblem({ file, rule: RULE, message: NO_URL_MESSAGE })),
+      ),
   });
 });
 

@@ -35,7 +35,7 @@ const flagsMissingReadme = Effect.gen(function* flagsMissingReadme() {
       'import { Worker } from "alchemy/cloudflare";\nawait Worker("site", { main: "./src/app/server.ts", domain: HOST });\n',
     "apps/routed/package.json": '{ "name": "routed", "private": true }',
     "apps/routed/alchemy.run.ts":
-      'import { Worker } from "alchemy/cloudflare";\nawait Worker("routed", { routes: [{ pattern: `${ZONE}/routed*`, zoneName: ZONE }] });\n',
+      'import { Worker } from "alchemy/cloudflare";\nawait Worker("routed", { routes: [{ pattern: "example.com/routed*", zoneName: "example.com" }] });\n',
     "apps/routed/README.md":
       "# routed\n\nServed at [example.com/routed](https://example.com/routed).\n",
   });

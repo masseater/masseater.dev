@@ -49,34 +49,43 @@ const misnamedSlice = ({ workspace, inner }: Owned): Option.Option<string> =>
   );
 
 const SLICE_LAYERS: readonly string[] = ["features", "entities", "widgets", "pages"];
-const sliceDepths: readonly number[] = [3, 4];
+const SLICE_DEPTH = 3;
+const GROUPED_SLICE_DEPTH = 4;
+const SLICE_DEPTHS: readonly number[] = [SLICE_DEPTH, GROUPED_SLICE_DEPTH];
 
 const pathPrefix = (parts: readonly string[], depth: number): string =>
   Arr.join(Arr.take(parts, depth), SEPARATOR);
 
-const indexedSlice = (owned: Owned): Option.Option<string> =>
-  pipe(
-    Str.split(owned.inner, SEPARATOR),
+const isInSliceLayer = (parts: readonly string[]): boolean => {
+  const [source, layer] = parts;
+  return `${source}${SEPARATOR}` === SOURCE && Arr.contains(SLICE_LAYERS, layer ?? "");
+};
+
+const indexedSlice = (owned: Owned): Option.Option<string> => {
+  const parts = Str.split(owned.inner, SEPARATOR);
+  const depth = parts.length - NEXT;
+  return pipe(
     Option.liftPredicate(
-      ([source, layer, ...rest]) =>
-        `${source}${SEPARATOR}` === SOURCE &&
-        Arr.contains(SLICE_LAYERS, layer ?? "") &&
-        INDEX.test(owned.inner) &&
-        Arr.contains(sliceDepths, rest.length + 2),
+      depth,
+      () => isInSliceLayer(parts) && INDEX.test(owned.inner) && Arr.contains(SLICE_DEPTHS, depth),
     ),
-    Option.map((parts) => `${owned.workspace}${SEPARATOR}${pathPrefix(parts, parts.length - 1)}`),
+    Option.map(() => `${owned.workspace}${SEPARATOR}${pathPrefix(parts, depth)}`),
   );
+};
 
 const misnamedSegment =
   (slices: ReadonlySet<string>) =>
   ({ workspace, inner }: Owned): Option.Option<string> => {
     const parts = Str.split(inner, SEPARATOR);
+    const insideSlice = (depth: number): boolean =>
+      slices.has(`${workspace}${SEPARATOR}${pathPrefix(parts, depth)}`);
+    const isSegmentFolder = (depth: number): boolean =>
+      parts.length > depth + NEXT && SCRIPT.test(inner) && !SEGMENTS.has(parts[depth] ?? "");
     return pipe(
-      sliceDepths,
-      Arr.findFirst((depth) => slices.has(`${workspace}${SEPARATOR}${pathPrefix(parts, depth)}`)),
-      Option.filter((depth) => parts.length > depth + 1 && SCRIPT.test(inner)),
-      Option.filter((depth) => !SEGMENTS.has(parts[depth] ?? "")),
-      Option.map((depth) => `${workspace}${SEPARATOR}${pathPrefix(parts, depth + 1)}`),
+      SLICE_DEPTHS,
+      Arr.findFirst(insideSlice),
+      Option.filter(isSegmentFolder),
+      Option.map((depth) => `${workspace}${SEPARATOR}${pathPrefix(parts, depth + NEXT)}`),
     );
   };
 
@@ -108,12 +117,12 @@ export const checkSourceNames = Effect.fn("checkSourceNames")(function* checkSou
         Arr.dedupe(found),
         Arr.map((name) => fileProblem({ file: files.join(root, name), rule, message })),
       );
+  const misnamedSlices = pipe(owned, Arr.map(misnamedSlice), Arr.getSomes);
+  const misnamedSegments = pipe(owned, Arr.map(misnamedSegment(slices)), Arr.getSomes);
+  const deployNames = pipe(owned, Arr.map(deployNamed), Arr.getSomes);
   return [
-    ...report(SLICE_RULE, SLICE_MESSAGE)(pipe(owned, Arr.map(misnamedSlice), Arr.getSomes)),
-    ...report(
-      SEGMENT_RULE,
-      SEGMENT_MESSAGE,
-    )(pipe(owned, Arr.map(misnamedSegment(slices)), Arr.getSomes)),
-    ...report(ENTRY_RULE, ENTRY_MESSAGE)(pipe(owned, Arr.map(deployNamed), Arr.getSomes)),
+    ...report(SLICE_RULE, SLICE_MESSAGE)(misnamedSlices),
+    ...report(SEGMENT_RULE, SEGMENT_MESSAGE)(misnamedSegments),
+    ...report(ENTRY_RULE, ENTRY_MESSAGE)(deployNames),
   ];
 });
