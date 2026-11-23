@@ -6,3 +6,4 @@ This workspace holds the official i68 rule presets, one per concern: `pop`, `har
 - Every rule warns by default and its `detail` says how to fix the finding.
 - Before changing a threshold, run the presets on real songs and compare the counts.
 - `bach` reads a precomputed table of chord transitions. Regenerate it with `vp run build-style-tables`, which downloads the corpus; commit only the table, never the scores.
+- `node bin/find-habits.ts <songs...>` reads the songs of one style (`.fumx` or Ableton `.als`) and lists the chord changes they share that the Bach table rarely makes, with where each one occurs. It is a development tool and is not published.
