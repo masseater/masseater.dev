@@ -312,6 +312,7 @@ catalogs:
     typescript: 7.1.0-beta
     vite-plus: 1.7.0
 overrides:
+  "@vitest/browser-playwright": 5.1.0 # exit: npm:vite-plus allows @vitest/browser-playwright@>=5.1.1
   "@feature-sliced/filesystem>typescript": "catalog:stack" # exit: npm:@feature-sliced/filesystem allows typescript@>=7
   "langium>vscode-languageserver": "catalog:" # exit: npm:langium allows vscode-languageserver@>=11
   "@remotion/eslint-plugin>@typescript-eslint/utils": "-" # exit: npm:@remotion/eslint-plugin allows @typescript-eslint/utils@>=8

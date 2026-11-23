@@ -2,6 +2,7 @@ import { Array as Arr, Effect } from "effect";
 
 import { checkEffectDiagnostics } from "#/features/check-effect-diagnostics/index.ts";
 import { checkExactVersions } from "#/features/check-exact-versions/index.ts";
+import { checkPackSettings } from "#/features/check-pack-settings/index.ts";
 import { checkPackageScope } from "#/features/check-package-scope/index.ts";
 import { checkPluginMarketplace } from "#/features/check-plugin-marketplace/index.ts";
 import { checkNodeVersion } from "#/features/check-runtime-version/index.ts";
@@ -18,6 +19,7 @@ export const checkManifests = Effect.fn("checkManifests")(function* checkManifes
     [
       checkNodeVersion(root),
       checkPackageScope(root),
+      checkPackSettings(root),
       checkUnusedWorkspaces(root),
       checkExactVersions(root),
       checkUpstreamExits(root),
