@@ -1,6 +1,6 @@
 # @r_masseater/y8
 
-![y8 logo](logo.svg)
+<img src="logo.svg" alt="y8 logo" width="256">
 
 A Markdown linter written in Rust and configured from `vite.config.ts`.
 
