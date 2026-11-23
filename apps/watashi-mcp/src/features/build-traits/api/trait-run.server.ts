@@ -35,7 +35,7 @@ export type RunSummary = BuildSummary &
 
 const AGENT = "trait-builder";
 
-const BUDGET_MINUTES = 10;
+const BUDGET_MINUTES = 5;
 
 const BUDGET = Duration.minutes(BUDGET_MINUTES);
 
