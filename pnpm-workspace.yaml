@@ -78,7 +78,7 @@ catalog:
   discord.js: 14.28.1
   discord-api-types: 0.38.60
   oxlint-plugin-eslint: 1.94.0
-  "@cloudflare/workers-types": 5.20261120.1
+  "@cloudflare/workers-types": 5.20261121.1
   "@effect/platform-node": 4.1.5
   "@effect/platform-node-shared": 4.1.5
   "@effect/sql-sqlite-node": 4.1.5
@@ -198,7 +198,7 @@ catalog:
   "@fontsource/zen-kurenaido": 5.3.1
   fastest-levenshtein: 1.0.16
   "@cfworker/json-schema": 4.1.6
-  "@openrouter/sdk": 1.5.125
+  "@openrouter/sdk": 1.5.127
   recharts: 3.11.0
   ml-confusion-matrix: 2.0.0
   forecast-calibration-kit: 0.1.2
@@ -317,7 +317,7 @@ overrides:
   "langium>vscode-languageserver": "catalog:" # exit: npm:langium allows vscode-languageserver@>=11
   "@remotion/eslint-plugin>@typescript-eslint/utils": "-" # exit: npm:@remotion/eslint-plugin allows @typescript-eslint/utils@>=8
   "@remotion/eslint-plugin>typescript": "-" # exit: npm:@remotion/eslint-plugin drops typescript || npm:@remotion/eslint-plugin allows typescript@>=7
-  workerd: 1.20261120.1 # exit: npm:miniflare requires workerd@>=1.20261115.1
+  workerd: 1.20261121.1 # exit: npm:miniflare requires workerd@>=1.20261115.1
   vite@*: "catalog:" # exit: unused
   vitest: 5.1.1 # exit: npm:vite-plus requires vitest@>=5.1.1
   "@vitest/browser": 5.1.1 # exit: npm:vite-plus requires vitest@>=5.1.1
