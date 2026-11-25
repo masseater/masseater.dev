@@ -18,6 +18,6 @@ serde_json = { version = "=1.0.154", features = ["preserve_order"] }
 tracing = "=0.1.44"
 unicode-width = "=0.2.3"
 
-lindera = { version = "=6.2.0", default-features = false, features = ["embed-ipadic"] }
+lindera = { version = "=7.0.0", default-features = false, features = ["embed-ipadic"] }
 [lints]
 workspace = true
