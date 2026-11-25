@@ -151,7 +151,7 @@ catalog:
   "@distilled.cloud/tailscale": 1.0.0-rc.20
   universal-github-app-jwt: 2.2.2
   "@octokit/rest": 22.0.1
-  simple-icons: 16.38.0
+  simple-icons: 16.38.1
   "@peculiar/asn1-pkcs8": 3.1.0
   "@peculiar/asn1-rsa": 3.1.0
   "@peculiar/asn1-schema": 3.1.0
@@ -210,7 +210,7 @@ catalog:
   "@oxlint/plugins": 1.94.0
   oxlint: 1.94.0
   oxlint-tsgolint: 7.0.2007
-  "@eslint-react/eslint-plugin": 5.30.5
+  "@eslint-react/eslint-plugin": 5.30.6
   "@remotion/eslint-plugin": 4.0.545
   "@tanstack/eslint-plugin-query": 5.108.2
   "@tanstack/eslint-plugin-router": 1.162.0
