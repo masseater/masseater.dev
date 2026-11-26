@@ -17,7 +17,7 @@ catalog:
   chokidar: 6.0.0
   cborg: 7.0.0
   msw: 3.0.7
-  effector: 23.5.0
+  effector: 23.5.1
   empathic: 2.1.0
   globby: 16.2.4
   immer: 11.2.10
@@ -29,7 +29,7 @@ catalog:
   "@pnpm/workspace.projects-reader": 1101.1.9
   "@pnpm/workspace.workspace-manifest-reader": 1100.3.4
   "@pnpm/workspace.workspace-manifest-writer": 1100.2.13
-  "@textlint-ja/textlint-rule-preset-ai-writing": 1.7.1
+  "@textlint-ja/textlint-rule-preset-ai-writing": 1.7.2
   textlint-rule-preset-ja-technical-writing: 12.1.0
   "@textlint/ast-node-types": 16.1.3
   "@textlint/types": 16.1.3
@@ -72,12 +72,12 @@ catalog:
   "@modelcontextprotocol/server": 2.4.0
   auth: 1.7.27
   "@r_masseater/oxlint-typed-rules": 0.4.3
-  "@r_masseater/vite-plus-adopt": 0.11.0
+  "@r_masseater/vite-plus-adopt": 0.11.1
   "@discordjs/voice": 0.19.2
   "@snazzah/davey": 0.2.0
   discord.js: 14.28.1
   discord-api-types: 0.38.60
-  oxlint-plugin-eslint: 1.94.0
+  oxlint-plugin-eslint: 1.95.0
   "@cloudflare/workers-types": 5.20261123.1
   "@effect/platform-node": 4.1.5
   "@effect/platform-node-shared": 4.1.5
@@ -99,7 +99,7 @@ catalog:
   eslint-plugin-baseline-js: 0.7.7
   "@html-eslint/eslint-plugin-react": 0.68.0
   "@commitlint/config-conventional": 21.2.4
-  "@tanstack/react-query-devtools": 5.108.3
+  "@tanstack/react-query-devtools": 5.108.4
   "@vitejs/plugin-react": 6.3.0
   "@vitejs/plugin-rsc": 0.5.39
   "@tanstack/intent": 0.5.6
@@ -130,8 +130,8 @@ catalog:
   yaml: 2.9.1
   mdast-util-directive: 3.2.1
   remark-directive: 4.0.0
-  "@xyflow/react": 13.0.2
-  lucide-react: 1.77.0
+  "@xyflow/react": 13.0.3
+  lucide-react: 1.78.0
   niconico-embed-player: 0.1.2
   budoux: 0.10.4
   mdast-util-to-string: 4.0.0
@@ -170,7 +170,7 @@ catalog:
   jsonc-parser: 3.3.1
   htmlparser2: 12.0.0
   "@vscode/tree-sitter-wasm": 0.3.1
-  sql-parser-cst: 0.44.1
+  sql-parser-cst: 0.45.0
   toml-eslint-parser: 1.0.3
   dockerfile-ast: 0.7.1
   domhandler: 6.0.1
@@ -178,7 +178,7 @@ catalog:
   refractor: 5.0.0
   fflate: 0.8.3
   postal-mime: 4.2.1
-  unpdf: 2.2.1
+  unpdf: 2.2.2
   fast-png: 8.0.0
   tesseract.js: 7.0.0
   "@tesseract.js-data/eng": 1.0.0
@@ -198,7 +198,7 @@ catalog:
   "@fontsource/zen-kurenaido": 5.3.1
   fastest-levenshtein: 1.0.16
   "@cfworker/json-schema": 4.1.6
-  "@openrouter/sdk": 1.5.129
+  "@openrouter/sdk": 1.5.130
   recharts: 3.11.0
   ml-confusion-matrix: 2.0.0
   forecast-calibration-kit: 0.1.2
@@ -211,8 +211,8 @@ catalog:
   oxlint: 1.94.0
   oxlint-tsgolint: 7.0.2007
   "@eslint-react/eslint-plugin": 5.30.6
-  "@remotion/eslint-plugin": 4.0.545
-  "@tanstack/eslint-plugin-query": 5.108.3
+  "@remotion/eslint-plugin": 4.0.546
+  "@tanstack/eslint-plugin-query": 5.108.4
   "@tanstack/eslint-plugin-router": 1.162.0
   "@tanstack/eslint-plugin-start": 0.1.0
   "@tsconfig/strictest": 2.0.9
@@ -284,7 +284,7 @@ catalog:
   hast-util-to-string: 3.0.1
   unist-util-visit: 5.2.0
   verovio: 6.4.1
-  modern-web-guidance: 1.0.1
+  modern-web-guidance: 1.0.2
   smol-toml: 1.9.1
 catalogs:
   stack:
@@ -293,7 +293,7 @@ catalogs:
     "@huggingface/transformers": 4.3.2
     "@effect/tsgo": 0.73.2
     "@elysiajs/eden": 1.4.9
-    "@tanstack/react-query": 5.108.3
+    "@tanstack/react-query": 5.108.4
     "@tanstack/react-start": 1.169.7
     better-auth: 1.7.27
     "@alchemy.run/cloudflare": 2.0.0-beta.87
@@ -304,9 +304,9 @@ catalogs:
     eden-tanstack-react-query: 0.5.1
     effect: 4.1.5
     elysia: 1.4.32
-    fallow: 3.46.0
-    fallow-type-aware: 3.46.0
-    fallow-similar-code: 3.46.0
+    fallow: 3.47.0
+    fallow-type-aware: 3.47.0
+    fallow-similar-code: 3.47.0
     radix-ui: 1.8.1
     tailwindcss: 4.3.5
     typescript: 7.1.0-beta

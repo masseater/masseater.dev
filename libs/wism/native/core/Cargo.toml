@@ -8,11 +8,11 @@ rust-version.workspace = true
 publish = false
 
 [dependencies]
-oxc_allocator = "=0.159.0"
-oxc_parser = "=0.159.0"
+oxc_allocator = "=0.160.0"
+oxc_parser = "=0.160.0"
 oxc_resolver = "=11.24.3"
-oxc_span = "=0.159.0"
-oxc_syntax = "=0.159.0"
+oxc_span = "=0.160.0"
+oxc_syntax = "=0.160.0"
 proc-macro2 = { version = "=1.0.107", features = ["span-locations"] }
 pulldown-cmark = { version = "=0.13.6", default-features = false }
 rayon = "=1.12.0"
