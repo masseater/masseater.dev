@@ -13,8 +13,8 @@ crate-type = ["cdylib"]
 [dependencies]
 init-tracing-opentelemetry = { version = "=0.44.0", features = ["otlp", "tracing_subscriber_ext"] }
 wism-core = { path = "../core" }
-napi = { version = "=3.16.2", default-features = false, features = ["napi6"] }
-napi-derive = "=3.7.1"
+napi = { version = "=3.16.3", default-features = false, features = ["napi6"] }
+napi-derive = "=3.7.2"
 opentelemetry = "=0.33.1"
 opentelemetry_sdk = "=0.33.1"
 tracing = "=0.1.44"
@@ -37,4 +37,4 @@ many_single_char_names = "allow"
 needless_range_loop = "allow"
 
 [build-dependencies]
-napi-build = "=2.6.0"
+napi-build = "=2.7.0"
