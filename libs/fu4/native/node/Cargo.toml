@@ -13,8 +13,8 @@ crate-type = ["cdylib"]
 [dependencies]
 fu4-core = { path = "../core" }
 napi-telemetry = { path = "../../../napi-telemetry" }
-napi = { version = "=3.16.2", default-features = false, features = ["napi6"] }
-napi-derive = "=3.7.1"
+napi = { version = "=3.16.3", default-features = false, features = ["napi6"] }
+napi-derive = "=3.7.2"
 rayon = "=1.12.0"
 tracing = "=0.1.44"
 
@@ -34,4 +34,4 @@ many_single_char_names = "allow"
 needless_range_loop = "allow"
 
 [build-dependencies]
-napi-build = "=2.6.0"
+napi-build = "=2.7.0"

@@ -389,6 +389,6 @@ backend = "go:github.com/boostsecurityio/poutine"
 specifiers = ["1.1.6"]
 
 [[tools."go:github.com/sisaku-security/sisakulint/cmd/sisakulint"]]
-version = "0.3.8"
+version = "0.4.0"
 backend = "go:github.com/sisaku-security/sisakulint/cmd/sisakulint"
-specifiers = ["0.3.8"]
+specifiers = ["v0.4.0"]
