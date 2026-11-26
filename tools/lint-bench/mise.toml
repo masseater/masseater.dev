@@ -2,7 +2,7 @@
 "aqua:sharkdp/hyperfine" = "2.0.0"
 "aqua:rvben/rumdl" = "0.3.5"
 "aqua:rhysd/actionlint" = "1.7.12"
-"aqua:zizmorcore/zizmor" = "1.32.0"
+"aqua:zizmorcore/zizmor" = "1.33.1"
 "aqua:suzuki-shunsuke/ghalint" = "1.6.0"
 "go:github.com/boostsecurityio/poutine" = "1.1.6"
 "go:github.com/sisaku-security/sisakulint/cmd/sisakulint" = "0.3.8"

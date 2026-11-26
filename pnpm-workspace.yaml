@@ -17,18 +17,18 @@ catalog:
   chokidar: 6.0.0
   cborg: 7.0.0
   msw: 3.0.7
-  effector: 23.4.4
+  effector: 23.5.0
   empathic: 2.1.0
   globby: 16.2.4
   immer: 11.2.10
   micromatch: 4.0.8
   patronum: 2.3.0
-  "@pnpm/deps.path": 1101.0.10
-  "@pnpm/lockfile.fs": 1100.2.19
+  "@pnpm/deps.path": 1101.0.11
+  "@pnpm/lockfile.fs": 1100.2.20
   "@pnpm/logger": 1100.0.0
-  "@pnpm/workspace.projects-reader": 1101.1.8
-  "@pnpm/workspace.workspace-manifest-reader": 1100.3.3
-  "@pnpm/workspace.workspace-manifest-writer": 1100.2.12
+  "@pnpm/workspace.projects-reader": 1101.1.9
+  "@pnpm/workspace.workspace-manifest-reader": 1100.3.4
+  "@pnpm/workspace.workspace-manifest-writer": 1100.2.13
   "@textlint-ja/textlint-rule-preset-ai-writing": 1.7.1
   textlint-rule-preset-ja-technical-writing: 12.1.0
   "@textlint/ast-node-types": 16.1.2
@@ -48,7 +48,7 @@ catalog:
   lighthouse: 13.6.0
   miniflare: 4.20260730.0
   puppeteer-core: 25.18.1
-  tonal: 6.8.0
+  tonal: 6.9.0
   midi-file: 1.2.4
   langium: 4.4.2
   langium-cli: 4.4.1
@@ -78,7 +78,7 @@ catalog:
   discord.js: 14.28.1
   discord-api-types: 0.38.60
   oxlint-plugin-eslint: 1.94.0
-  "@cloudflare/workers-types": 5.20261121.1
+  "@cloudflare/workers-types": 5.20261123.1
   "@effect/platform-node": 4.1.5
   "@effect/platform-node-shared": 4.1.5
   "@effect/sql-sqlite-node": 4.1.5
@@ -99,7 +99,7 @@ catalog:
   eslint-plugin-baseline-js: 0.7.7
   "@html-eslint/eslint-plugin-react": 0.68.0
   "@commitlint/config-conventional": 21.2.4
-  "@tanstack/react-query-devtools": 5.108.2
+  "@tanstack/react-query-devtools": 5.108.3
   "@vitejs/plugin-react": 6.3.0
   "@vitejs/plugin-rsc": 0.5.39
   "@tanstack/intent": 0.5.6
@@ -198,7 +198,7 @@ catalog:
   "@fontsource/zen-kurenaido": 5.3.1
   fastest-levenshtein: 1.0.16
   "@cfworker/json-schema": 4.1.6
-  "@openrouter/sdk": 1.5.128
+  "@openrouter/sdk": 1.5.129
   recharts: 3.11.0
   ml-confusion-matrix: 2.0.0
   forecast-calibration-kit: 0.1.2
@@ -212,7 +212,7 @@ catalog:
   oxlint-tsgolint: 7.0.2007
   "@eslint-react/eslint-plugin": 5.30.6
   "@remotion/eslint-plugin": 4.0.545
-  "@tanstack/eslint-plugin-query": 5.108.2
+  "@tanstack/eslint-plugin-query": 5.108.3
   "@tanstack/eslint-plugin-router": 1.162.0
   "@tanstack/eslint-plugin-start": 0.1.0
   "@tsconfig/strictest": 2.0.9
@@ -293,7 +293,7 @@ catalogs:
     "@huggingface/transformers": 4.3.2
     "@effect/tsgo": 0.73.2
     "@elysiajs/eden": 1.4.9
-    "@tanstack/react-query": 5.108.2
+    "@tanstack/react-query": 5.108.3
     "@tanstack/react-start": 1.169.7
     better-auth: 1.7.27
     "@alchemy.run/cloudflare": 2.0.0-beta.87
@@ -317,7 +317,7 @@ overrides:
   "langium>vscode-languageserver": "catalog:" # exit: npm:langium allows vscode-languageserver@>=11
   "@remotion/eslint-plugin>@typescript-eslint/utils": "-" # exit: npm:@remotion/eslint-plugin allows @typescript-eslint/utils@>=8
   "@remotion/eslint-plugin>typescript": "-" # exit: npm:@remotion/eslint-plugin drops typescript || npm:@remotion/eslint-plugin allows typescript@>=7
-  workerd: 1.20261121.1 # exit: npm:miniflare requires workerd@>=1.20261115.1
+  workerd: 1.20261123.1 # exit: npm:miniflare requires workerd@>=1.20261115.1
   vite@*: "catalog:" # exit: unused
   vitest: 5.1.1 # exit: npm:vite-plus requires vitest@>=5.1.1
   "@vitest/browser": 5.1.1 # exit: npm:vite-plus requires vitest@>=5.1.1
