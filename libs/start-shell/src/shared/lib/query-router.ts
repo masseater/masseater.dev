@@ -3,7 +3,6 @@ import {
   createRouter,
   defaultParseSearch,
   defaultStringifySearch,
-  parseSearchWith,
   stringifySearchWith,
 } from "@tanstack/react-router";
 import type { AnyRoute, Router } from "@tanstack/react-router";
@@ -14,7 +13,8 @@ type SearchCodec = Readonly<{
   stringifySearch: typeof defaultStringifySearch;
 }>;
 
-const keepText = (text: string): string => text;
+const parseText = (searchStr: string): Record<string, string> =>
+  Object.fromEntries(new URLSearchParams(searchStr));
 
 const JSON_SEARCH: SearchCodec = {
   parseSearch: defaultParseSearch,
@@ -22,7 +22,7 @@ const JSON_SEARCH: SearchCodec = {
 };
 
 const TEXT_SEARCH: SearchCodec = {
-  parseSearch: parseSearchWith(keepText),
+  parseSearch: parseText,
   stringifySearch: stringifySearchWith(JSON.stringify),
 };
 
