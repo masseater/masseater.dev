@@ -25,7 +25,7 @@ if ! dpkg -s "${linux_packages[@]}" >/dev/null 2>&1; then
   apt-get install -y -qq "${linux_packages[@]}" >&2
 fi
 if ! command -v mise >/dev/null 2>&1; then
-  curl -fsSL https://mise.run | MISE_VERSION=v2026.11.12 sh >&2
+  curl -fsSL https://mise.run | MISE_VERSION=v2026.11.13 sh >&2
   export PATH="$HOME/.local/bin:$PATH"
 fi
 mise trust --quiet mise.toml
