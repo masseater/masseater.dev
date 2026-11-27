@@ -1,7 +1,7 @@
 import { Array as Arr, Effect, Option, Order, pipe } from "effect";
 
 import { SCAN_LIMIT, scanCapped } from "#/entities/life-record/index.server.ts";
-import { contains, itemOf, todayJst } from "#/entities/life-record/index.ts";
+import { itemOf, scoreText, todayJst } from "#/entities/life-record/index.ts";
 import type { Body, Entry } from "#/entities/life-record/index.ts";
 import { memoryItem, searchMemories } from "#/entities/memory/index.server.ts";
 import { DEFAULT_MEMORY_LIMIT } from "#/entities/memory/index.ts";
@@ -17,15 +17,6 @@ const SEARCHED_RECORDS = pipe(
   LIFE_RECORDS,
   Arr.filter((record) => record !== "event_kind" && record !== "metric_definition"),
 );
-
-const scoreText =
-  (terms: readonly string[]) =>
-  (text: string): number =>
-    pipe(
-      terms,
-      Arr.filter((term) => contains(term)(text)),
-      Arr.length,
-    );
 
 const lifeScored =
   (terms: readonly string[], today: string) =>
