@@ -160,7 +160,7 @@ const filesOf = ({ transport, api }: Session): Files => {
     program: (source) => {
       write(source);
       return Option.getOrElse(program, () => {
-        const created = api.createProgram(Arr.fromIterable(HashMap.keys(contents)), OPTIONS);
+        const created = api.createProgram(contents.pipe(HashMap.keys, Arr.fromIterable), OPTIONS);
         program = Option.some(created);
         return created;
       });
