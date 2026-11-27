@@ -1,5 +1,5 @@
-import { or } from "drizzle-orm";
-import type { SQL } from "drizzle-orm";
+import { or, sql } from "drizzle-orm";
+import type { SQL, SQLWrapper } from "drizzle-orm";
 import {
   Array as Arr,
   DateTime,
@@ -52,12 +52,15 @@ export const nowIso = DateTime.now.pipe(Effect.map(DateTime.formatIso));
 export const termsOf = (text: string): readonly string[] =>
   pipe(text, Str.split(/\s+/u), Arr.filter(Str.isNonEmpty), Arr.dedupe);
 
+const contains = (column: SQLWrapper, term: string): SQL =>
+  sql`instr(lower(${column}), lower(${term})) > 0`;
+
 export const anyTermMatches =
-  (matchesOf: (pattern: string) => SQL[]) =>
+  (columns: readonly SQLWrapper[]) =>
   (terms: readonly string[]): Option.Option<SQL> => {
     const matches = pipe(
       terms,
-      Arr.flatMap((term) => matchesOf(`%${term}%`)),
+      Arr.flatMap((term) => Arr.map(columns, (column) => contains(column, term))),
     );
     return Option.fromNullishOr(or(...matches));
   };

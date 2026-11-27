@@ -9,7 +9,7 @@ export const MoreLink = ({
   sessionId,
 }: Readonly<{ cursor: number; sessionId: string }>): ReactNode => {
   const params = useMemo(() => ({ session: sessionId }), [sessionId]);
-  const search = useMemo(() => ({ cursor }), [cursor]);
+  const search = useMemo(() => ({ cursor: String(cursor) }), [cursor]);
   return (
     <Link
       className="text-link self-end underline underline-offset-3"
