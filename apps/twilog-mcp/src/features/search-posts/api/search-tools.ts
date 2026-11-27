@@ -2,10 +2,9 @@ import type { UpstreamFailed } from "@masseater.dev/mcp-tool-call";
 import { failedAt, compactInput } from "@masseater.dev/mcp-tool-call";
 import type { SiteToken } from "@masseater.dev/repositories/credential-broker";
 import { TWILOG_ACCOUNTS, twilogTarget } from "@masseater.dev/repositories/oauth-targets";
-import type { TwilogAccount } from "@masseater.dev/repositories/oauth-targets";
+import type { OAuthTargetId, TwilogAccount } from "@masseater.dev/repositories/oauth-targets";
 import type { McpServer } from "@modelcontextprotocol/server";
-import { env } from "cloudflare:workers";
-import { Array as Arr, Effect, Match, Number as Num, Option, Schema, pipe } from "effect";
+import { Array as Arr, Context, Effect, Match, Number as Num, Option, Schema, pipe } from "effect";
 
 import { runTool } from "#/shared/api/index.ts";
 
@@ -43,11 +42,19 @@ const INPUT_SCHEMA = SearchInput.pipe(Schema.toStandardSchemaV1, Schema.toStanda
 
 const brokerFailed = failedAt("credential broker");
 
-const brokerToken = (account: TwilogAccount): Effect.Effect<SiteToken, UpstreamFailed> =>
-  Effect.tryPromise({
-    try: (): Promise<SiteToken> => env.ACCESS_OAUTH.token(twilogTarget(account)),
+export type TokenBroker = Readonly<{ token: (site: OAuthTargetId) => Promise<SiteToken> }>;
+
+class Broker extends Context.Service<Broker, TokenBroker>()(
+  "twilog-mcp/features/search-posts/api/search-tools/Broker",
+) {}
+
+const brokerToken = Effect.fn("brokerToken")(function* brokerToken(account: TwilogAccount) {
+  const broker = yield* Broker;
+  return yield* Effect.tryPromise({
+    try: (): Promise<SiteToken> => broker.token(twilogTarget(account)),
     catch: brokerFailed,
   });
+});
 
 const linkedAccount = (posts: TwilogPosts): Option.Option<string> =>
   pipe(
@@ -88,7 +95,7 @@ const withToken =
       }),
     );
 
-const searchAccount = (search: AccountSearch): Effect.Effect<AccountResult> =>
+const searchAccount = (search: AccountSearch): Effect.Effect<AccountResult, never, Broker> =>
   brokerToken(search.account).pipe(
     Effect.flatMap(withToken(search)),
     Effect.catchTag("UpstreamFailed", ({ message }) =>
@@ -96,7 +103,7 @@ const searchAccount = (search: AccountSearch): Effect.Effect<AccountResult> =>
     ),
   );
 
-const search = (request: SearchRequest): Effect.Effect<SearchResult> => {
+const search = (request: SearchRequest): Effect.Effect<SearchResult, never, Broker> => {
   const searches = pipe(
     request.accounts ?? TWILOG_ACCOUNTS,
     Arr.dedupe,
@@ -116,15 +123,18 @@ const postsIn = (result: AccountResult): number =>
 const postCount = ({ results }: SearchResult): number =>
   pipe(results, Arr.map(postsIn), Num.sumAll);
 
-export const registerSearchTools = (server: McpServer): McpServer => {
-  server.registerTool(
-    TOOL,
-    {
-      description: DESCRIPTION,
-      inputSchema: compactInput(INPUT_SCHEMA),
-      annotations: { readOnlyHint: true, openWorldHint: true },
-    },
-    (input) => search(input).pipe(runTool({ count: postCount })),
-  );
-  return server;
-};
+export const registerSearchTools =
+  (broker: TokenBroker) =>
+  (server: McpServer): McpServer => {
+    server.registerTool(
+      TOOL,
+      {
+        description: DESCRIPTION,
+        inputSchema: compactInput(INPUT_SCHEMA),
+        annotations: { readOnlyHint: true, openWorldHint: true },
+      },
+      (input) =>
+        search(input).pipe(Effect.provideService(Broker, broker), runTool({ count: postCount })),
+    );
+    return server;
+  };

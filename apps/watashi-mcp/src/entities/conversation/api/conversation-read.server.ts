@@ -1,11 +1,11 @@
 import type { UpstreamFailed } from "@masseater.dev/mcp-tool-call";
 import { failedAt } from "@masseater.dev/mcp-tool-call";
-import { env } from "cloudflare:workers";
 import { Array as Arr, Effect, Match, Number as Num, Option, pipe } from "effect";
 
 import type { ConversationChunk } from "#/shared/db/index.ts";
 
 import type { ReadRequest, View } from "./conversation-input.ts";
+import { ConversationObjects } from "./conversation-objects.server.ts";
 import { chunksFrom, filesOf } from "./conversation-store.server.ts";
 import type { FileSummary } from "./conversation-store.server.ts";
 import { ownerUtterances } from "./owner-utterance.ts";
@@ -32,16 +32,17 @@ const fail = failedAt("r2");
 
 const sizeOf = (chunk: ConversationChunk): number => chunk.end - chunk.start;
 
-const objectOf = (chunk: ConversationChunk): Effect.Effect<R2ObjectBody, UpstreamFailed> =>
-  Effect.tryPromise({ try: () => env.CONVERSATIONS.get(chunk.objectKey), catch: fail }).pipe(
-    Effect.flatMap((object) =>
-      Effect.fromOption(Option.fromNullishOr(object)).pipe(
-        Effect.mapError(() => fail(new Error(`${chunk.objectKey} is missing`))),
-      ),
-    ),
+const objectOf = Effect.fn("conversation.object")(function* objectOf(chunk: ConversationChunk) {
+  const objects = yield* ConversationObjects;
+  const found = yield* Effect.tryPromise({ try: () => objects.get(chunk.objectKey), catch: fail });
+  return yield* Effect.fromOption(Option.fromNullishOr(found)).pipe(
+    Effect.mapError(() => fail(new Error(`${chunk.objectKey} is missing`))),
   );
+});
 
-export const chunkText = (chunk: ConversationChunk): Effect.Effect<string, UpstreamFailed> =>
+export const chunkText = (
+  chunk: ConversationChunk,
+): Effect.Effect<string, UpstreamFailed, ConversationObjects> =>
   objectOf(chunk).pipe(
     Effect.flatMap((object) =>
       Effect.tryPromise({

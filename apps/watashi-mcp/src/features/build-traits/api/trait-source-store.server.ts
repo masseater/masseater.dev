@@ -4,7 +4,8 @@ import type { Effect } from "effect";
 
 import { SELF } from "#/entities/life-record/index.ts";
 import type { ChunkPositionValue, RowPositionValue } from "#/entities/trait/index.ts";
-import { db, query } from "#/shared/db/index.server.ts";
+import type { Database } from "#/shared/db/index.server.ts";
+import { query } from "#/shared/db/index.server.ts";
 import { conversationChunk, lifeRecord, memory } from "#/shared/db/index.ts";
 import type { ConversationChunk, LifeRow, Memory, StorageFailed } from "#/shared/db/index.ts";
 
@@ -36,8 +37,8 @@ const chunkAfter = ({ at, sessionId, file, start }: ChunkPositionValue): SQL | u
 export const memoriesAfter = ({
   position,
   before,
-}: Window<RowPositionValue>): Effect.Effect<readonly Memory[], StorageFailed> =>
-  query(() =>
+}: Window<RowPositionValue>): Effect.Effect<readonly Memory[], StorageFailed, Database> =>
+  query((db) =>
     db
       .select()
       .from(memory)
@@ -54,8 +55,8 @@ const traitBearing = or(
 export const lifeAfter = ({
   position,
   before,
-}: Window<RowPositionValue>): Effect.Effect<readonly LifeRow[], StorageFailed> =>
-  query(() =>
+}: Window<RowPositionValue>): Effect.Effect<readonly LifeRow[], StorageFailed, Database> =>
+  query((db) =>
     db
       .select()
       .from(lifeRecord)
@@ -67,8 +68,12 @@ export const lifeAfter = ({
 export const chunksAfter = ({
   position,
   before,
-}: Window<ChunkPositionValue>): Effect.Effect<readonly ConversationChunk[], StorageFailed> =>
-  query(() =>
+}: Window<ChunkPositionValue>): Effect.Effect<
+  readonly ConversationChunk[],
+  StorageFailed,
+  Database
+> =>
+  query((db) =>
     db
       .select()
       .from(conversationChunk)

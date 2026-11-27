@@ -1,18 +1,17 @@
 import { Effect } from "effect";
-import { beforeEach, expect, test, vi } from "vite-plus/test";
+import { beforeEach, expect, test } from "vite-plus/test";
 
 import { BASE_PATH } from "#/shared/config/index.ts";
 
+import { Stage, respond } from "./routes.ts";
 import {
   KNOWN_TOKEN,
   flood,
   limitedKeys,
   recordedCalls,
   resetCalls,
+  stage,
 } from "./three-twelve.test.support.ts";
-import worker from "./three-twelve.ts";
-
-vi.mock("cloudflare:workers", () => import("./three-twelve.test.support.ts"));
 
 beforeEach(resetCalls);
 
@@ -33,8 +32,8 @@ const call = (
   path: string,
   headers: Readonly<Record<string, string>>,
 ): Effect.Effect<Response> =>
-  Effect.promise(() =>
-    worker.fetch(new Request(`${ORIGIN}${BASE_PATH}${path}`, { method, headers })),
+  respond(new Request(`${ORIGIN}${BASE_PATH}${path}`, { method, headers })).pipe(
+    Effect.provideService(Stage, stage),
   );
 
 const jsonOf = (response: Response): Effect.Effect<unknown> =>

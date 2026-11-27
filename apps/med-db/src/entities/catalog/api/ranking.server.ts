@@ -1,7 +1,7 @@
 import { asc, count, countDistinct, desc, eq } from "drizzle-orm";
 import { Effect } from "effect";
 
-import { catalogDb } from "#/shared/db/index.server.ts";
+import { fromCatalog } from "#/shared/db/index.server.ts";
 import { part, partStaff, person, song, video } from "#/shared/db/index.ts";
 
 const songUses = countDistinct(part.videoId);
@@ -11,8 +11,8 @@ const videoParts = count(part.id);
 const personCredits = count(partStaff.id);
 
 export const rankSongs = Effect.fn("catalog.ranking.songs")(function* rankSongs(limit: number) {
-  return yield* Effect.promise(() =>
-    catalogDb
+  return yield* fromCatalog((db) =>
+    db
       .select({ id: song.id, title: song.title, useCount: songUses })
       .from(song)
       .leftJoin(part, eq(part.songId, song.id))
@@ -23,8 +23,8 @@ export const rankSongs = Effect.fn("catalog.ranking.songs")(function* rankSongs(
 });
 
 export const rankVideos = Effect.fn("catalog.ranking.videos")(function* rankVideos(limit: number) {
-  return yield* Effect.promise(() =>
-    catalogDb
+  return yield* fromCatalog((db) =>
+    db
       .select({
         id: video.id,
         title: video.title,
@@ -41,8 +41,8 @@ export const rankVideos = Effect.fn("catalog.ranking.videos")(function* rankVide
 });
 
 export const rankPeople = Effect.fn("catalog.ranking.people")(function* rankPeople(limit: number) {
-  return yield* Effect.promise(() =>
-    catalogDb
+  return yield* fromCatalog((db) =>
+    db
       .select({ id: person.id, name: person.name, creditCount: personCredits })
       .from(person)
       .leftJoin(partStaff, eq(partStaff.personId, person.id))

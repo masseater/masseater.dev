@@ -34,7 +34,9 @@ export const readonlyParameterAllow = [
     package: "@cloudflare/workers-types",
     name: [
       "AnalyticsEngineDataset",
+      "Ai",
       "Container",
+      "D1Database",
       "DurableObjectState",
       "DurableObjectStorage",
       "CryptoKey",
@@ -42,6 +44,7 @@ export const readonlyParameterAllow = [
       "R2Bucket",
       "SecretsStoreSecret",
       "TailEvent",
+      "VectorizeIndex",
       "Onset",
       "Log",
       "Exception",
@@ -76,7 +79,7 @@ export const readonlyParameterAllow = [
   {
     from: "package" as const,
     package: "drizzle-orm",
-    name: ["DrizzleSqliteDODatabase", "SQL"],
+    name: ["DrizzleD1Database", "DrizzleSqliteDODatabase", "SQL"],
   },
   { from: "package" as const, package: "@tanstack/query-core", name: "QueryClient" },
   {

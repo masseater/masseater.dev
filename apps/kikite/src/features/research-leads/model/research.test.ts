@@ -3,9 +3,9 @@ import { Array as Arr, Effect, Layer, MutableRef, Option, String as Str, pipe } 
 import { HttpClient, HttpClientResponse } from "effect/http";
 import type { HttpClientRequest } from "effect/http";
 import { AtomRegistry } from "effect/reactivity";
-import { vi } from "vite-plus/test";
 
 import { leadsAtom, summaryAtom } from "#/entities/interview/index.ts";
+import { ApiOrigin } from "#/shared/api/index.ts";
 import { read, write } from "#/shared/lib/registry.ts";
 
 import { research } from "./research.ts";
@@ -27,22 +27,23 @@ const fakeServer = HttpClient.make((request) => Effect.sync(() => answered(reque
 
 const SUMMARY = { theme: "3D 酔い", points: ["エルデンリングで酔う"], open: [], next: [] };
 
-layer(Layer.merge(AtomRegistry.layer, Layer.succeed(HttpClient.HttpClient, fakeServer)))(
-  "research",
-  (it) => {
-    it.effect("researches a summary once and keeps the leads it found", () =>
-      Effect.gen(function* test() {
-        vi.stubGlobal("location", { origin: ORIGIN });
-        MutableRef.set(sent, []);
-        yield* write(summaryAtom, { status: "ready", summary: Option.some(SUMMARY) });
-        yield* research();
-        yield* research();
-        const leads = yield* read(leadsAtom);
-        expect(leads).toStrictEqual([LEAD]);
-        const researched = pipe(MutableRef.get(sent), Arr.filter(Str.endsWith("/api/research")));
-        expect(researched).toHaveLength(ONCE);
-        vi.unstubAllGlobals();
-      }),
-    );
-  },
-);
+layer(
+  Layer.mergeAll(
+    AtomRegistry.layer,
+    Layer.succeed(HttpClient.HttpClient, fakeServer),
+    Layer.succeed(ApiOrigin, ORIGIN),
+  ),
+)("research", (it) => {
+  it.effect("researches a summary once and keeps the leads it found", () =>
+    Effect.gen(function* test() {
+      MutableRef.set(sent, []);
+      yield* write(summaryAtom, { status: "ready", summary: Option.some(SUMMARY) });
+      yield* research();
+      yield* research();
+      const leads = yield* read(leadsAtom);
+      expect(leads).toStrictEqual([LEAD]);
+      const researched = pipe(MutableRef.get(sent), Arr.filter(Str.endsWith("/api/research")));
+      expect(researched).toHaveLength(ONCE);
+    }),
+  );
+});

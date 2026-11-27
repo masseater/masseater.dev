@@ -1,7 +1,7 @@
 import { describe, expect, it } from "@effect/vitest";
 import { Array as Arr, Effect, Option, String as Str, pipe } from "effect";
 import { TestClock } from "effect/testing";
-import { afterAll, beforeEach, vi } from "vite-plus/test";
+import { afterAll, beforeEach } from "vite-plus/test";
 
 import { sweep } from "#/features/sweep-entries/index.ts";
 import { Limits } from "#/shared/config/index.ts";
@@ -10,12 +10,11 @@ import {
   objectCount,
   objectReadRows,
   resetStores,
+  withStore,
 } from "#/shared/lib/cloudflare.test.support.ts";
 
 import { blobResponse, candidatesOf, found, lookup, store } from "./routes.test.support.ts";
 import type { Found } from "./routes.test.support.ts";
-
-vi.mock("cloudflare:workers", () => import("#/shared/lib/cloudflare.test.support.ts"));
 
 const SMALL_LIMITS = {
   requestBytes: 4096,
@@ -73,7 +72,7 @@ const statusOf = (response: Response): number => response.status;
 
 const dropsTheOldestPastTheStoredBytes = Effect.gen(function* dropsTheOldestPastTheStoredBytes() {
   yield* storeVersions(STORED);
-  yield* sweep;
+  yield* withStore(sweep);
   const oldest = yield* lookup(keyOf(FIRST_VERSION));
   expect(oldest.status).toBe(NOT_FOUND);
   const kept = yield* found(keyOf(STORED));
@@ -82,16 +81,18 @@ const dropsTheOldestPastTheStoredBytes = Effect.gen(function* dropsTheOldestPast
     Arr.map((entry) => entry.value),
   );
   expect(values).toStrictEqual([valueOf(STORED)]);
-  expect(objectCount()).toBe(KEPT_OBJECTS);
+  const objectsLeft = yield* objectCount;
+  expect(objectsLeft).toBe(KEPT_OBJECTS);
 });
 
 const dropsEntriesPastRetention = Effect.gen(function* dropsEntriesPastRetention() {
   yield* storeVersions(FIRST_VERSION);
   yield* TestClock.adjust(PAST_RETENTION);
-  yield* sweep;
+  yield* withStore(sweep);
   const expired = yield* lookup(keyOf(FIRST_VERSION));
   expect(expired.status).toBe(NOT_FOUND);
-  expect(objectCount()).toBe(NO_OBJECTS);
+  const objectsLeft = yield* objectCount;
+  expect(objectsLeft).toBe(NO_OBJECTS);
 });
 
 const refusesUploadsPastTheDailyCap = Effect.gen(function* refusesUploadsPastTheDailyCap() {

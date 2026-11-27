@@ -1,11 +1,9 @@
 import { expect, it } from "@effect/vitest";
 import { Effect, MutableRef } from "effect";
-import { afterAll, beforeEach, vi } from "vite-plus/test";
+import { afterAll, beforeEach } from "vite-plus/test";
 
-import { closeDatabase, reached, resetDatabase } from "./interviewer.test.support.ts";
-import worker from "./kikite.ts";
-
-vi.mock("cloudflare:workers", () => import("./interviewer.test.support.ts"));
+import { frontDoor } from "./front-door.ts";
+import { bindings, closeDatabase, reached, resetDatabase } from "./interviewer.test.support.ts";
 
 type Sent = Readonly<{
   path: string;
@@ -29,9 +27,14 @@ const WRITES = [
 ];
 
 const statusOf = ({ path, method, headers }: Sent): Effect.Effect<number> =>
-  Effect.promise(() =>
-    worker.fetch(new Request(`${ORIGIN}${path}`, { method, headers, body: "{}" })),
-  ).pipe(Effect.map(({ status }) => status));
+  bindings.pipe(
+    Effect.flatMap((bound) =>
+      Effect.promise(() =>
+        frontDoor(bound)(new Request(`${ORIGIN}${path}`, { method, headers, body: "{}" })),
+      ),
+    ),
+    Effect.map(({ status }) => status),
+  );
 
 const statusesWith = (
   headers: Readonly<Record<string, string>>,

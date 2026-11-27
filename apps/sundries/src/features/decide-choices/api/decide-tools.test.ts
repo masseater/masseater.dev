@@ -1,13 +1,21 @@
 import { expect, it } from "@effect/vitest";
 import { Array as Arr, Effect, Exit, Record as Rec, Schema, String as Str } from "effect";
-import { vi } from "vite-plus/test";
 
 import { MAX_QUESTIONS, DecideInput } from "./decide-input.ts";
 import { decide } from "./decide-tools.ts";
 
-const run = vi.hoisted(() => vi.fn<(...args: readonly unknown[]) => Promise<unknown>>());
+const calls: unknown[][] = [];
 
-vi.mock("cloudflare:workers", () => ({ env: { AI: { run } } }));
+const answers: unknown[] = [];
+
+const decideWith = decide({
+  AI: {
+    run: (...call) => {
+      calls.push(call);
+      return Promise.resolve(answers.shift());
+    },
+  },
+});
 
 const QUESTION = {
   type: "choice",
@@ -31,10 +39,10 @@ const decodes = (input: unknown): boolean =>
 
 it.effect("sends the snippets and questions to Clef Flash through the gateway", () =>
   Effect.gen(function* sends() {
-    run.mockResolvedValueOnce(ANSWER);
-    const decided = yield* decide(INPUT);
+    answers.push(ANSWER);
+    const decided = yield* decideWith(INPUT);
     expect(decided).toStrictEqual(ANSWER);
-    expect(run.mock.calls).toMatchObject([
+    expect(calls).toMatchObject([
       [
         "@cf/cloudflare/clef-flash",
         { model: "clef-flash", state: { snippets: INPUT.snippets }, questions: INPUT.questions },
@@ -46,8 +54,8 @@ it.effect("sends the snippets and questions to Clef Flash through the gateway", 
 
 it.effect("fails when the model answers in another shape", () =>
   Effect.gen(function* malformed() {
-    run.mockResolvedValueOnce({ answers: { s0: { probabilities: {} } } });
-    const exit = yield* Effect.exit(decide(INPUT));
+    answers.push({ answers: { s0: { probabilities: {} } } });
+    const exit = yield* Effect.exit(decideWith(INPUT));
     expect(Exit.isFailure(exit)).toBe(true);
   }),
 );

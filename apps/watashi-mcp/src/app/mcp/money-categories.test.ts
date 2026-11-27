@@ -1,12 +1,10 @@
 import { expect, it } from "@effect/vitest";
 import { Array as Arr, Effect, Option, pipe } from "effect";
-import { afterAll, beforeEach, vi } from "vite-plus/test";
+import { afterAll, beforeEach } from "vite-plus/test";
 
 import { value, write, read } from "./money-client.test.support.ts";
 import { closeDatabase, resetDatabase } from "./money-d1.test.support.ts";
 import { allRows, importBank, rowOf, setUpAccounts } from "./money-fixtures.test.support.ts";
-
-vi.mock("cloudflare:workers", () => import("./money-d1.test.support.ts"));
 
 beforeEach(() => Effect.runPromise(resetDatabase));
 afterAll(() => Effect.runPromise(closeDatabase));

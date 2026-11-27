@@ -3,6 +3,7 @@ import { Effect, Option, Schema, pipe } from "effect";
 import { writesFromAnotherSite, writesWithoutJson } from "security-headers/request";
 
 import { changesAfter, store } from "#/entities/document/index.ts";
+import type { DocumentsDb } from "#/entities/document/index.ts";
 
 const BAD_REQUEST = 400;
 const FORBIDDEN = 403;
@@ -31,14 +32,14 @@ const afterOf = (request: Request): Effect.Effect<number, Schema.SchemaError> =>
     Option.match({ onNone: () => Effect.succeed(FIRST), onSome: decodeAfter }),
   );
 
-const changes = (request: Request): Effect.Effect<Response> =>
+const changes = (request: Request): Effect.Effect<Response, never, DocumentsDb> =>
   afterOf(request).pipe(
     Effect.flatMap(changesAfter),
     Effect.map((page) => Response.json(page)),
     Effect.catchTags({ SchemaError: badRequest, StoreFailed: storeFailed("sync.changes_failed") }),
   );
 
-const push = (request: Request): Effect.Effect<Response> =>
+const push = (request: Request): Effect.Effect<Response, never, DocumentsDb> =>
   Effect.promise(() => request.text()).pipe(
     Effect.flatMap(decodePushed),
     Effect.flatMap(({ documents }) =>
@@ -49,14 +50,14 @@ const push = (request: Request): Effect.Effect<Response> =>
 
 const routeKey = (request: Request): string => `${request.method} ${new URL(request.url).pathname}`;
 
-type Route = (request: Request) => Effect.Effect<Response>;
+type Route = (request: Request) => Effect.Effect<Response, never, DocumentsDb>;
 
 const ROUTES: ReadonlyMap<string, Route> = new Map([
   [`GET ${CHANGES_PATH}`, changes],
   [`PUT ${DOCUMENTS_PATH}`, push],
 ]);
 
-const served = (request: Request): Effect.Effect<Response> =>
+const served = (request: Request): Effect.Effect<Response, never, DocumentsDb> =>
   pipe(
     routeKey(request),
     (key) => Option.fromUndefinedOr(ROUTES.get(key)),
@@ -66,7 +67,7 @@ const served = (request: Request): Effect.Effect<Response> =>
     }),
   );
 
-export const routed = (request: Request): Effect.Effect<Response> => {
+export const routed = (request: Request): Effect.Effect<Response, never, DocumentsDb> => {
   if (writesFromAnotherSite(request)) {
     return Effect.succeed(status(FORBIDDEN, "Forbidden"));
   }

@@ -8,7 +8,8 @@ import { loadTraits } from "#/entities/trait/index.server.ts";
 import { GLOBAL, idOf, isActive, supportsOf } from "#/entities/trait/index.ts";
 import type { TraitState } from "#/entities/trait/index.ts";
 import type { TraitInput } from "#/features/build-traits/model/profile-outline.ts";
-import { db, query } from "#/shared/db/index.server.ts";
+import type { Database } from "#/shared/db/index.server.ts";
+import { query } from "#/shared/db/index.server.ts";
 import { memory, NOT_RETRACTED } from "#/shared/db/index.ts";
 import type { StorageFailed } from "#/shared/db/index.ts";
 
@@ -47,12 +48,12 @@ const isOwnerFact =
   (entry: Entry): boolean =>
     entry.row.about === SELF && factStateOf(today)(entry) !== "ended";
 
-const ownerFacts = (today: string): Effect.Effect<readonly Body[], StorageFailed> =>
+const ownerFacts = (today: string): Effect.Effect<readonly Body[], StorageFailed, Database> =>
   scanAll(["profile_fact"]).pipe(
     Effect.map((entries) => pipe(entries, Arr.filter(isOwnerFact(today)), Arr.map(itemOf(today)))),
   );
 
-const recentMemos: Effect.Effect<readonly Body[], StorageFailed> = query(() =>
+const recentMemos: Effect.Effect<readonly Body[], StorageFailed, Database> = query((db) =>
   db
     .select({
       name: memory.name,
@@ -71,7 +72,7 @@ export type ProfileSource = Readonly<{
   traits: readonly TraitInput[];
 }>;
 
-export const profileSource: Effect.Effect<ProfileSource, StorageFailed> = Effect.gen(
+export const profileSource: Effect.Effect<ProfileSource, StorageFailed, Database> = Effect.gen(
   function* profileSourceOf() {
     const today = yield* todayJst;
     const traits = yield* loadTraits;

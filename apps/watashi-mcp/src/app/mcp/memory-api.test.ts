@@ -1,15 +1,13 @@
 import { afterAll, expect, it } from "@effect/vitest";
 import { Effect } from "effect";
-import { vi } from "vite-plus/test";
 
 import { mintToken } from "#/features/issue-tokens/index.test.support.ts";
 import { readMemory } from "#/features/manage-memory/index.test.support.ts";
+import type { Database } from "#/shared/db/index.server.ts";
 import type { TokenScope } from "#/shared/db/index.ts";
 
 import { serveMemories } from "./conversation-api.server.ts";
-import { closeDatabase, resetDatabase } from "./upload.test.support.ts";
-
-vi.mock("cloudflare:workers", () => import("./upload.test.support.ts"));
+import { closeDatabase, resetDatabase, provided, gate } from "./upload.test.support.ts";
 
 afterAll(() => Effect.runPromise(closeDatabase));
 
@@ -53,78 +51,90 @@ const put =
             body: text,
           }),
       ),
-      Effect.flatMap((request) => Effect.promise(() => serveMemories(request))),
+      Effect.flatMap((request) => Effect.promise(() => serveMemories(gate)(request))),
       Effect.flatMap(replyOf),
     );
 
-const issued = (scope: TokenScope): Effect.Effect<Issued> =>
+const issued = (scope: TokenScope): Effect.Effect<Issued, never, Database> =>
   resetDatabase.pipe(Effect.andThen(mintToken({ scope, label: "test" })), Effect.orDie);
 
-const revisionsOf = (name: string): Effect.Effect<unknown> =>
+const revisionsOf = (name: string): Effect.Effect<unknown, never, Database> =>
   readMemory({ project: "個人PJ", name, revisions: true }).pipe(
     Effect.map((read) => read["revisions"]),
     Effect.orDie,
   );
 
 it.effect("memory:write のトークンで作業メモをまとめて書く", () =>
-  Effect.gen(function* importsMemos() {
-    const { token } = yield* issued("memory:write");
-    const reply = yield* put(token)({ memos: [bicycle, train] });
-    expect(reply).toStrictEqual({ status: OK, body: { written: ["memory:1", "memory:2"] } });
-    const read = yield* readMemory({ project: "個人PJ", name: "train" });
-    expect(read).toMatchObject({ items: [{ content: "平日に乗る" }] });
-  }),
+  provided(
+    Effect.gen(function* importsMemos() {
+      const { token } = yield* issued("memory:write");
+      const reply = yield* put(token)({ memos: [bicycle, train] });
+      expect(reply).toStrictEqual({ status: OK, body: { written: ["memory:1", "memory:2"] } });
+      const read = yield* readMemory({ project: "個人PJ", name: "train" });
+      expect(read).toMatchObject({ items: [{ content: "平日に乗る" }] });
+    }),
+  ),
 );
 
 it.effect("同じ内容を送り直してもリビジョンを増やさず、変えた項目だけ書き換える", () =>
-  Effect.gen(function* skipsUnchanged() {
-    const { token } = yield* issued("memory:write");
-    yield* put(token)({ memos: [bicycle] });
-    const again = yield* put(token)({ memos: [bicycle] });
-    expect(again).toStrictEqual({ status: OK, body: { written: ["memory:1"] } });
-    const once = yield* revisionsOf("bicycle");
-    expect(once).toHaveLength(ONE_REVISION);
-    yield* put(token)({ memos: [{ ...bicycle, content: "毎日乗る" }] });
-    const twice = yield* revisionsOf("bicycle");
-    expect(twice).toHaveLength(TWO_REVISIONS);
-  }),
+  provided(
+    Effect.gen(function* skipsUnchanged() {
+      const { token } = yield* issued("memory:write");
+      yield* put(token)({ memos: [bicycle] });
+      const again = yield* put(token)({ memos: [bicycle] });
+      expect(again).toStrictEqual({ status: OK, body: { written: ["memory:1"] } });
+      const once = yield* revisionsOf("bicycle");
+      expect(once).toHaveLength(ONE_REVISION);
+      yield* put(token)({ memos: [{ ...bicycle, content: "毎日乗る" }] });
+      const twice = yield* revisionsOf("bicycle");
+      expect(twice).toHaveLength(TWO_REVISIONS);
+    }),
+  ),
 );
 
 it.effect("書けない要素があれば 422 で理由と書けた ref を返す", () =>
-  Effect.gen(function* reportsPartial() {
-    const { token } = yield* issued("memory:write");
-    const missing = { project: "個人PJ", name: "missing", retract: true, reason: "不要" };
-    const reply = yield* put(token)({ memos: [bicycle, missing, train] });
-    expect(reply).toMatchObject({
-      status: UNPROCESSABLE,
-      body: { errorTag: "MemoryNotFound", written: ["memory:1"] },
-    });
-  }),
+  provided(
+    Effect.gen(function* reportsPartial() {
+      const { token } = yield* issued("memory:write");
+      const missing = { project: "個人PJ", name: "missing", retract: true, reason: "不要" };
+      const reply = yield* put(token)({ memos: [bicycle, missing, train] });
+      expect(reply).toMatchObject({
+        status: UNPROCESSABLE,
+        body: { errorTag: "MemoryNotFound", written: ["memory:1"] },
+      });
+    }),
+  ),
 );
 
 it.effect("形の違う body は 400 で断る", () =>
-  Effect.gen(function* refusesShape() {
-    const { token } = yield* issued("memory:write");
-    const empty = yield* put(token)({ memos: [] });
-    expect(empty.status).toBe(BAD_REQUEST);
-    const noContent = yield* put(token)({ memos: [{ project: "個人PJ" }] });
-    expect(noContent.status).toBe(BAD_REQUEST);
-  }),
+  provided(
+    Effect.gen(function* refusesShape() {
+      const { token } = yield* issued("memory:write");
+      const empty = yield* put(token)({ memos: [] });
+      expect(empty.status).toBe(BAD_REQUEST);
+      const noContent = yield* put(token)({ memos: [{ project: "個人PJ" }] });
+      expect(noContent.status).toBe(BAD_REQUEST);
+    }),
+  ),
 );
 
 it.effect("conversation:write のトークンは 403 で断る", () =>
-  Effect.gen(function* refusesOtherScope() {
-    const { token } = yield* issued("conversation:write");
-    const reply = yield* put(token)({ memos: [bicycle] });
-    expect(reply).toStrictEqual({ status: FORBIDDEN, body: { error: "insufficient scope" } });
-  }),
+  provided(
+    Effect.gen(function* refusesOtherScope() {
+      const { token } = yield* issued("conversation:write");
+      const reply = yield* put(token)({ memos: [bicycle] });
+      expect(reply).toStrictEqual({ status: FORBIDDEN, body: { error: "insufficient scope" } });
+    }),
+  ),
 );
 
 it.effect("PUT 以外のメソッドには 405 を返す", () =>
-  Effect.gen(function* refusesOtherMethods() {
-    const { token } = yield* issued("memory:write");
-    const request = new Request(ENDPOINT, { headers: { authorization: `Bearer ${token}` } });
-    const response = yield* Effect.promise(() => serveMemories(request));
-    expect(response.status).toBe(METHOD_NOT_ALLOWED);
-  }),
+  provided(
+    Effect.gen(function* refusesOtherMethods() {
+      const { token } = yield* issued("memory:write");
+      const request = new Request(ENDPOINT, { headers: { authorization: `Bearer ${token}` } });
+      const response = yield* Effect.promise(() => serveMemories(gate)(request));
+      expect(response.status).toBe(METHOD_NOT_ALLOWED);
+    }),
+  ),
 );

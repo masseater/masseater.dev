@@ -2,20 +2,20 @@
   "name": "@masseater.dev/d1-test",
   "version": "0.0.0",
   "private": true,
-  "description": "Local SQLite stand-in for Cloudflare D1 used by tests.",
+  "description": "Real Cloudflare D1 and R2 from Miniflare, migrated and reset for tests.",
   "type": "module",
   "imports": {
     "#/*": "./src/*"
   },
   "exports": {
-    ".": "./src/features/fake-d1/index.ts"
+    ".": "./src/app/index.ts"
   },
   "dependencies": {
     "@effect/platform-node": "catalog:",
-    "@effect/sql-sqlite-node": "catalog:",
     "effect": "catalog:stack"
   },
   "devDependencies": {
+    "miniflare": "catalog:",
     "typescript": "catalog:stack",
     "vite-plus": "catalog:stack"
   }

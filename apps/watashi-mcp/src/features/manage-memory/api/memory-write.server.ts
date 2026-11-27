@@ -12,6 +12,7 @@ import type { MemoryResult, MemorySnapshotValue, Writer } from "#/entities/memor
 import type { MemoryWriteValue } from "#/entities/memory/index.ts";
 import { InvalidRecord, MemoryNotFound } from "#/shared/api/index.ts";
 import type { StoreFailure } from "#/shared/api/index.ts";
+import type { Database } from "#/shared/db/index.server.ts";
 import { findRevision, nowIso } from "#/shared/db/index.server.ts";
 import { NOT_RETRACTED } from "#/shared/db/index.ts";
 import type { Memory } from "#/shared/db/index.ts";
@@ -28,7 +29,7 @@ const required = (value: string | undefined, field: string): Effect.Effect<strin
 
 const create =
   (writer: Writer) =>
-  (input: MemoryWriteValue): Effect.Effect<MemoryResult, StoreFailure> =>
+  (input: MemoryWriteValue): Effect.Effect<MemoryResult, StoreFailure, Database> =>
     Effect.gen(function* createMemory() {
       const description = yield* required(input.description, "description");
       const content = yield* required(input.content, "content");
@@ -45,7 +46,7 @@ const create =
 
 const restore =
   (writer: Writer, row: Memory) =>
-  (rev: number): Effect.Effect<MemoryResult, StoreFailure> =>
+  (rev: number): Effect.Effect<MemoryResult, StoreFailure, Database> =>
     findRevision({ entity: "memory", id: row.id, rev }).pipe(
       Effect.flatMap((revision) => decodeSnapshot(revision.body).pipe(Effect.orDie)),
       Effect.flatMap((snapshot) => save({ writer, op: "restore" })({ id: row.id, snapshot })),
@@ -53,7 +54,7 @@ const restore =
 
 const retract =
   (writer: Writer, row: Memory) =>
-  (input: MemoryWriteValue): Effect.Effect<MemoryResult, StoreFailure> =>
+  (input: MemoryWriteValue): Effect.Effect<MemoryResult, StoreFailure, Database> =>
     Effect.gen(function* retractMemory() {
       const retractReason = yield* Effect.fromOption(Option.fromUndefinedOr(input.reason)).pipe(
         Effect.mapError(() =>
@@ -79,7 +80,7 @@ const isUnchanged = (current: MemorySnapshotValue, next: MemorySnapshotValue): b
 
 const update =
   (writer: Writer, row: Memory) =>
-  (input: MemoryWriteValue): Effect.Effect<MemoryResult, StoreFailure> => {
+  (input: MemoryWriteValue): Effect.Effect<MemoryResult, StoreFailure, Database> => {
     const current = snapshotOf(row);
     const next = {
       ...current,
@@ -97,7 +98,7 @@ const update =
 
 const change =
   (writer: Writer, input: MemoryWriteValue) =>
-  (row: Memory): Effect.Effect<MemoryResult, StoreFailure> => {
+  (row: Memory): Effect.Effect<MemoryResult, StoreFailure, Database> => {
     const restoreTo = Option.fromUndefinedOr(input.restoreTo);
     if (Option.isSome(restoreTo)) {
       return restore(writer, row)(restoreTo.value);
@@ -113,7 +114,7 @@ const needsExisting = (input: MemoryWriteValue): boolean =>
 
 const createOrFail =
   (writer: Writer) =>
-  (input: MemoryWriteValue): Effect.Effect<MemoryResult, StoreFailure> => {
+  (input: MemoryWriteValue): Effect.Effect<MemoryResult, StoreFailure, Database> => {
     if (needsExisting(input)) {
       return Effect.fail(notFound(input));
     }
@@ -122,7 +123,7 @@ const createOrFail =
 
 export const writeMemory =
   (writer: Writer) =>
-  (input: MemoryWriteValue): Effect.Effect<MemoryResult, StoreFailure> => {
+  (input: MemoryWriteValue): Effect.Effect<MemoryResult, StoreFailure, Database> => {
     const created = createOrFail(writer);
     const changed = change(writer, input);
     return findMemory(input).pipe(

@@ -1,7 +1,7 @@
 import { Effect } from "effect";
 
-import { db, attempt } from "#/shared/db/index.server.ts";
-import type { WriteFailure } from "#/shared/db/index.server.ts";
+import type { Database, WriteFailure } from "#/shared/db/index.server.ts";
+import { attempt } from "#/shared/db/index.server.ts";
 import { conversationChunk, conversationSession } from "#/shared/db/index.ts";
 import type { ConversationChunk, ConversationSession } from "#/shared/db/index.ts";
 
@@ -13,8 +13,8 @@ export const appendChunk = ({
   source,
   remoteSession,
   ...chunk
-}: ChunkRecord): Effect.Effect<void, WriteFailure> =>
-  attempt(() =>
+}: ChunkRecord): Effect.Effect<void, WriteFailure, Database> =>
+  attempt((db) =>
     db.batch([
       db
         .insert(conversationSession)

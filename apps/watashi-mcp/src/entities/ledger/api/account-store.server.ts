@@ -3,7 +3,8 @@ import { Array as Arr, Effect, Number as Num, Option, Order, pipe } from "effect
 
 import type { AccountPosition, Snapshot } from "#/entities/ledger/model/balance-sheet.ts";
 import { InvalidRecord } from "#/shared/api/index.ts";
-import { db, query } from "#/shared/db/index.server.ts";
+import type { Database } from "#/shared/db/index.server.ts";
+import { query } from "#/shared/db/index.server.ts";
 import type { StorageFailed } from "#/shared/db/index.ts";
 
 import { summedAmount, yenOf } from "./database.server.ts";
@@ -18,8 +19,8 @@ const ONE_ROW = 1;
 
 type DailyMovement = Readonly<{ accountId: string; date: string; amount: number | null }>;
 
-export const accountNamed = (id: string): Effect.Effect<Account, Failure> =>
-  query(() => db.select().from(accounts).where(eq(accounts.id, id)).limit(ONE_ROW)).pipe(
+export const accountNamed = (id: string): Effect.Effect<Account, Failure, Database> =>
+  query((db) => db.select().from(accounts).where(eq(accounts.id, id)).limit(ONE_ROW)).pipe(
     Effect.flatMap((rows) =>
       Effect.fromOption(Arr.head(rows)).pipe(
         Effect.mapError(() =>
@@ -31,8 +32,8 @@ export const accountNamed = (id: string): Effect.Effect<Account, Failure> =>
     ),
   );
 
-export const upsertAccount = (account: Account): Effect.Effect<Account, StorageFailed> =>
-  query(() =>
+export const upsertAccount = (account: Account): Effect.Effect<Account, StorageFailed, Database> =>
+  query((db) =>
     db
       .insert(accounts)
       .values(account)
@@ -44,7 +45,7 @@ export const upsertAccount = (account: Account): Effect.Effect<Account, StorageF
 
 export const recordBalance = Effect.fn("recordBalance")(function* recordBalance(balance: Balance) {
   yield* accountNamed(balance.accountId);
-  yield* query(() =>
+  yield* query((db) =>
     db
       .insert(balances)
       .values(balance)
@@ -83,7 +84,7 @@ const movementOf = (
   );
 
 export const positions = Effect.fn("positions")(function* positions(asOf: string) {
-  const [accountRows, balanceRows, dailyRows] = yield* query(() =>
+  const [accountRows, balanceRows, dailyRows] = yield* query((db) =>
     db.batch([
       db.select().from(accounts).orderBy(asc(accounts.id)),
       db.select().from(balances).where(lte(balances.date, asOf)),
@@ -108,4 +109,4 @@ export const positions = Effect.fn("positions")(function* positions(asOf: string
   );
 });
 
-export const listAccounts = query(() => db.select().from(accounts).orderBy(asc(accounts.id)));
+export const listAccounts = query((db) => db.select().from(accounts).orderBy(asc(accounts.id)));

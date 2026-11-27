@@ -4,16 +4,17 @@ import type { McpServer, StandardSchemaWithJSON } from "@modelcontextprotocol/se
 import { Array as Arr, Effect, Layer, pipe } from "effect";
 import { Digest, SecureRandom } from "effect/crypto";
 
+import type { Database } from "#/shared/db/index.server.ts";
 import type { StorageFailed } from "#/shared/db/index.ts";
 
 import { InvalidRecord } from "./invalid-record.ts";
-import { runToolIn } from "./tool-call.server.ts";
+import type { ToolRun } from "./tool-call.server.ts";
 
 /** @internal */
 export type Failure = StorageFailed | InvalidRecord;
 
 /** @internal */
-export type Services = Digest.Digest | SecureRandom.SecureRandom;
+export type Services = Database | Digest.Digest | SecureRandom.SecureRandom;
 
 /** @internal */
 export type Annotations =
@@ -35,17 +36,18 @@ export type Tool<Input, Output, Value> = Readonly<{
 export type Register = (server: McpServer) => McpServer;
 
 /** @internal */
+export type Registers = (runTool: ToolRun<Services>) => Register;
+
+/** @internal */
 export type DefinedTool = Readonly<{
   name: string;
   annotations: Annotations;
-  register: Register;
+  register: Registers;
   call: (input: unknown) => Effect.Effect<unknown, Failure, Services>;
 }>;
 
 /** @internal */
 export const services = Layer.mergeAll(Digest.layerWebCrypto, SecureRandom.layerWebCrypto);
-
-const runMoneyTool = runToolIn(services);
 
 const issuesOf = (issues: readonly Readonly<{ message: string }>[]): string =>
   pipe(
@@ -70,7 +72,7 @@ const validated =
 export const tool = <Input, Output, Value>(spec: Tool<Input, Output, Value>): DefinedTool => ({
   name: spec.name,
   annotations: spec.annotations,
-  register: (server) => {
+  register: (runTool) => (server) => {
     server.registerTool(
       spec.name,
       {
@@ -78,7 +80,7 @@ export const tool = <Input, Output, Value>(spec: Tool<Input, Output, Value>): De
         inputSchema: compactInput(spec.input),
         annotations: spec.annotations,
       },
-      (input) => pipe(spec.run(input), runMoneyTool({ count: spec.count })),
+      (input) => pipe(spec.run(input), runTool({ count: spec.count })),
     );
     return server;
   },
@@ -87,10 +89,11 @@ export const tool = <Input, Output, Value>(spec: Tool<Input, Output, Value>): De
 
 /** @internal */
 export const registerAll =
-  (tools: readonly DefinedTool[]): Register =>
+  (tools: readonly DefinedTool[]): Registers =>
+  (runTool) =>
   (server) => {
     for (const { register } of tools) {
-      register(server);
+      register(runTool)(server);
     }
     return server;
   };

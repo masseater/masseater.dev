@@ -13,8 +13,8 @@ import type { Body } from "#/entities/life-record/@x/trait.ts";
 import { timeOut } from "#/entities/life-record/@x/trait.ts";
 import { RecordNotFound } from "#/shared/api/index.ts";
 import type { StoreFailure } from "#/shared/api/index.ts";
+import type { Database, HistoryEntry } from "#/shared/db/index.server.ts";
 import { listHistory } from "#/shared/db/index.server.ts";
-import type { HistoryEntry } from "#/shared/db/index.server.ts";
 import { TRAIT_KINDS } from "#/shared/db/index.ts";
 import type { Store } from "#/shared/db/index.ts";
 
@@ -134,7 +134,7 @@ const grouped = (
 const relatedOf = (
   traits: readonly TraitState[],
   topic: Option.Option<Vector>,
-): Effect.Effect<Option.Option<HashSet.HashSet<string>>, StoreFailure> =>
+): Effect.Effect<Option.Option<HashSet.HashSet<string>>, StoreFailure, Database> =>
   Option.match(topic, {
     onNone: () => Effect.succeedNone,
     onSome: (vector) =>
@@ -145,7 +145,7 @@ const relatedOf = (
 
 export const profileTraits = (
   wanted: Wanted,
-): Effect.Effect<Readonly<Record<string, readonly Body[]>>, StoreFailure> =>
+): Effect.Effect<Readonly<Record<string, readonly Body[]>>, StoreFailure, Database> =>
   Effect.gen(function* traitsOfOwner() {
     const traits = yield* loadTraits;
     const rows = yield* loadTraitJa;
@@ -180,7 +180,7 @@ const idOf = (ref: string): Option.Option<number> =>
 
 const missing = (ref: string) => (): RecordNotFound => RecordNotFound.make({ ref });
 
-export const traitDetail = (ref: string): Effect.Effect<Body, StoreFailure> =>
+export const traitDetail = (ref: string): Effect.Effect<Body, StoreFailure, Database> =>
   Effect.gen(function* readTraitDetail() {
     const id = yield* Effect.fromOption(idOf(ref)).pipe(Effect.mapError(missing(ref)));
     const traits = yield* loadTraits;

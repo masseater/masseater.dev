@@ -1,7 +1,6 @@
 import { Schema } from "effect";
 
-import { createRouter } from "#/shared/api/index.server.ts";
-import { runRequest } from "#/shared/observability/index.server.ts";
+import { createRouter, respond } from "#/shared/api/index.server.ts";
 
 import { rankPeople, rankSongs, rankVideos } from "./ranking.server.ts";
 
@@ -15,6 +14,12 @@ const Limit = Schema.FiniteFromString.check(Schema.isInt(), LimitRange);
 const RankingSearch = Schema.toStandardSchemaV1(Schema.Struct({ limit: Limit }));
 
 export const rankingRoutes = createRouter("/ranking")
-  .get("/songs", ({ query }) => runRequest(rankSongs(query.limit)), { query: RankingSearch })
-  .get("/videos", ({ query }) => runRequest(rankVideos(query.limit)), { query: RankingSearch })
-  .get("/people", ({ query }) => runRequest(rankPeople(query.limit)), { query: RankingSearch });
+  .get("/songs", ({ query, request }) => respond(request)(rankSongs(query.limit)), {
+    query: RankingSearch,
+  })
+  .get("/videos", ({ query, request }) => respond(request)(rankVideos(query.limit)), {
+    query: RankingSearch,
+  })
+  .get("/people", ({ query, request }) => respond(request)(rankPeople(query.limit)), {
+    query: RankingSearch,
+  });

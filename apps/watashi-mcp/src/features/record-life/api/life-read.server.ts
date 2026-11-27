@@ -18,6 +18,7 @@ import {
 } from "#/entities/life-record/index.ts";
 import type { Body, Entry, LifeReadValue } from "#/entities/life-record/index.ts";
 import type { StoreFailure } from "#/shared/api/index.ts";
+import type { Database } from "#/shared/db/index.server.ts";
 import { termsOf } from "#/shared/db/index.server.ts";
 
 import { extrasOf } from "./life-read-extras.server.ts";
@@ -81,7 +82,7 @@ const projectedItems =
 
 const readList =
   (input: LifeReadValue) =>
-  (today: string): Effect.Effect<Body, StoreFailure> =>
+  (today: string): Effect.Effect<Body, StoreFailure, Database> =>
     Effect.gen(function* readLifeRecords() {
       const scan = scanOf(input);
       const scanned = yield* scanCapped(scan);
@@ -101,13 +102,13 @@ const readList =
 
 const readOne =
   (today: string) =>
-  (ref: string): Effect.Effect<Body, StoreFailure> =>
+  (ref: string): Effect.Effect<Body, StoreFailure, Database> =>
     lifeKeyOf(ref).pipe(
       Effect.flatMap(findRecord),
       Effect.map((entry) => ({ total: 1, items: [itemOf(today)(entry)] })),
     );
 
-export const lifeRead = (input: LifeReadValue): Effect.Effect<Body, StoreFailure> =>
+export const lifeRead = (input: LifeReadValue): Effect.Effect<Body, StoreFailure, Database> =>
   todayJst.pipe(
     Effect.flatMap((today) =>
       Option.match(Option.fromUndefinedOr(input.ref), {

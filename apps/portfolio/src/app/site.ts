@@ -1,11 +1,11 @@
 import { browserSpans } from "@r_masseater/workers-tracing/browser-spans";
 import { run } from "@r_masseater/workers-tracing/effect";
-import { env } from "cloudflare:workers";
 import { Array as Arr, Effect, Option, Record as Rec, String as Str, pipe } from "effect";
 import { Base64 } from "effect/encoding";
 
 import { isUnindexedPath } from "#/entities/entry/index.ts";
 import { handleStars } from "#/features/star-songs/index.server.ts";
+import type { StarBindings } from "#/features/star-songs/index.server.ts";
 import {
   IMAGE_HEADERS,
   SECURITY_HEADERS,
@@ -79,31 +79,46 @@ const receiveSpans = browserSpans({ service: site.telemetryService });
 
 const isTraces = (request: Request): boolean => new URL(request.url).pathname === site.tracesPath;
 
-const page = (request: Request): Promise<Response> | Response =>
+export type SiteBindings = StarBindings &
+  Readonly<{ ASSETS: Readonly<{ fetch: (request: Request) => Promise<Response> }> }>;
+
+export type Rewriter = Readonly<{
+  on: (
+    selector: string,
+    handlers: Readonly<{
+      element: (element: Readonly<{ setAttribute: (name: string, value: string) => void }>) => void;
+    }>,
+  ) => Rewriter;
+  transform: (response: Response) => Response;
+}>;
+
+export type SiteDependencies = Readonly<{ bindings: SiteBindings; rewriter: () => Rewriter }>;
+
+const page = (bindings: SiteBindings, request: Request): Promise<Response> =>
   Option.match(Option.liftPredicate(request, isStarsApi), {
-    onNone: () => env.ASSETS.fetch(assetRequest(request)),
-    onSome: (api) => handleStars(api),
+    onNone: () => bindings.ASSETS.fetch(assetRequest(request)),
+    onSome: handleStars(bindings),
   });
 
 const isSecurityTxt = (request: Request): boolean =>
   new URL(request.url).pathname === site.securityTxtPath;
 
-const served = (request: Request): Promise<Response> | Response =>
+const served = (bindings: SiteBindings, request: Request): Promise<Response> | Response =>
   Option.match(Option.liftPredicate(request, isSecurityTxt), {
-    onNone: () => page(request),
+    onNone: () => page(bindings, request),
     onSome: () => run(securityTxt),
   });
 
-const upstream = (request: Request): Promise<Response> | Response =>
+const upstream = (bindings: SiteBindings, request: Request): Promise<Response> | Response =>
   Option.match(Option.liftPredicate(request, isTraces), {
-    onNone: () => served(request),
+    onNone: () => served(bindings, request),
     onSome: receiveSpans,
   });
 
 const newNonce = (): string => Base64.encode(crypto.getRandomValues(new Uint8Array(NONCE_BYTES)));
 
-const nonceRewriter = (nonce: string): HTMLRewriter =>
-  new HTMLRewriter().on("script, style", {
+const nonceRewriter = (rewriter: () => Rewriter, nonce: string): Rewriter =>
+  rewriter().on("script, style", {
     element: (element) => {
       element.setAttribute("nonce", nonce);
     },
@@ -114,10 +129,11 @@ const cspHeader = (nonce: string): [string, string] => [
   contentSecurityPolicy(nonce),
 ];
 
-const worker = {
-  fetch: (request: Request): Promise<Response> =>
+export const serveSite =
+  ({ bindings, rewriter }: SiteDependencies) =>
+  (request: Request): Promise<Response> =>
     run(
-      Effect.promise(() => Promise.resolve(upstream(request))).pipe(
+      Effect.promise(() => Promise.resolve(upstream(bindings, request))).pipe(
         Effect.map((response) => {
           const fixed = fixedHeaders(new URL(request.url).pathname);
           const init = { status: response.status, statusText: response.statusText };
@@ -137,14 +153,18 @@ const worker = {
                   ...fixed,
                   cspHeader(nonce),
                 ]);
-                const { body } = nonceRewriter(nonce).transform(document);
+                const { body } = nonceRewriter(rewriter, nonce).transform(document);
                 return new Response(body, { ...init, headers });
               },
             },
           );
         }),
       ),
-    ),
+    );
+
+const worker: ExportedHandler<SiteBindings> = {
+  fetch: (request, env) =>
+    serveSite({ bindings: env, rewriter: () => new HTMLRewriter() })(request),
 };
 
 export default worker;

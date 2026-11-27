@@ -4,11 +4,16 @@ import { WorkerEntrypoint } from "cloudflare:workers";
 import { Effect, Logger, Option } from "effect";
 
 import { searchSlides } from "#/features/search-slides/index.ts";
+import type { SlideBindings } from "#/features/search-slides/index.ts";
 
 const runLogged = runner(Logger.layer([Logger.withLeveledConsole(Logger.formatStructured)]));
 
-const searched = (query: string, limit: number): Effect.Effect<PortalResult> =>
-  searchSlides({ query, limit, deck: Option.none() }).pipe(
+const searched = (
+  bindings: SlideBindings,
+  query: string,
+  limit: number,
+): Effect.Effect<PortalResult> =>
+  searchSlides(bindings, { query, limit, deck: Option.none() }).pipe(
     Effect.matchEffect({
       onFailure: ({ message }) =>
         Effect.logWarning("sundries.slides.failed").pipe(
@@ -22,7 +27,7 @@ const searched = (query: string, limit: number): Effect.Effect<PortalResult> =>
 export class Slides extends WorkerEntrypoint implements SlidesRpc {
   public search(query: string, limit: number): Promise<PortalResult> {
     return runLogged(
-      searched(query, limit).pipe(Effect.annotateLogs({ entrypoint: this.ctx.props })),
+      searched(this.env, query, limit).pipe(Effect.annotateLogs({ entrypoint: this.ctx.props })),
     );
   }
 }

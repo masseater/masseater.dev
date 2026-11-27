@@ -5,6 +5,7 @@ import { saveProfile } from "#/entities/owner-profile/index.server.ts";
 import { renderUserMd } from "#/entities/owner-profile/index.ts";
 import type { ProfileLine, ProfileSection, ProfileTopic } from "#/entities/owner-profile/index.ts";
 import { TraitTranslator } from "#/entities/trait/index.ts";
+import type { Database } from "#/shared/db/index.server.ts";
 import { nowIso } from "#/shared/db/index.server.ts";
 import type { StorageFailed } from "#/shared/db/index.ts";
 
@@ -94,7 +95,7 @@ export const saveTranslated = ({
 }: Readonly<{
   sections: readonly ProfileSection[];
   sourceHash: string;
-}>): Effect.Effect<ProfileOutcome, ProfileFailure, TraitTranslator> =>
+}>): Effect.Effect<ProfileOutcome, ProfileFailure, TraitTranslator | Database> =>
   Effect.gen(function* saveWritten() {
     const japanese = yield* Effect.forEach(sections, translateSection, { concurrency: 1 });
     const builtAt = yield* nowIso;

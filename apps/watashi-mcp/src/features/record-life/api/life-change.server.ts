@@ -24,15 +24,16 @@ import {
 } from "#/entities/life-record/index.ts";
 import type { ItemResult, ChangeValue, Body } from "#/entities/life-record/index.ts";
 import type { StoreFailure } from "#/shared/api/index.ts";
+import type { Database } from "#/shared/db/index.server.ts";
 import { findRevision, nowIso } from "#/shared/db/index.server.ts";
 
 export type ChangeFailure = Exclude<StoreFailure, Readonly<{ _tag: "MemoryNotFound" }>>;
 
 type LifeRecordName = LifeEntry["row"]["record"];
 
-type Action = (entry: LifeEntry) => Effect.Effect<ItemResult, ChangeFailure>;
+type Action = (entry: LifeEntry) => Effect.Effect<ItemResult, ChangeFailure, Database>;
 
-type Check = (entry: LifeEntry) => Effect.Effect<void, ChangeFailure>;
+type Check = (entry: LifeEntry) => Effect.Effect<void, ChangeFailure, Database>;
 
 type Merged = Readonly<{ record: LifeRecordName; body: Body; assumed: readonly string[] }>;
 
@@ -63,14 +64,17 @@ const mergedBody = (body: Body, change: ChangeValue): Body =>
 
 const vocabularyFor =
   (writer: Writer, record: LifeRecordName) =>
-  (body: Body): Effect.Effect<readonly Notice[], ChangeFailure> => {
+  (body: Body): Effect.Effect<readonly Notice[], ChangeFailure, Database> => {
     if (record === "life_event") {
       return vocabularyNotices(writer)(body);
     }
     return Effect.succeed<readonly Notice[]>([]);
   };
 
-const mergedOf = (entry: LifeEntry, change: ChangeValue): Effect.Effect<Merged, ChangeFailure> =>
+const mergedOf = (
+  entry: LifeEntry,
+  change: ChangeValue,
+): Effect.Effect<Merged, ChangeFailure, Database> =>
   Effect.gen(function* mergeLifeRecord() {
     const { record } = entry.row;
     const { body, assumed } = yield* normalize(record)(mergedBody(entry.body, change));
@@ -78,12 +82,15 @@ const mergedOf = (entry: LifeEntry, change: ChangeValue): Effect.Effect<Merged, 
     return { record, body: valid, assumed };
   });
 
-const reasonOf = (reason: Option.Option<string>): Effect.Effect<string, ChangeFailure> =>
+const reasonOf = (reason: Option.Option<string>): Effect.Effect<string, ChangeFailure, Database> =>
   Effect.fromOption(reason).pipe(
     Effect.mapError(() => invalid("Pass reason together with retract.")),
   );
 
-const restoredOf = (entry: LifeEntry, rev: number): Effect.Effect<SnapshotValue, ChangeFailure> => {
+const restoredOf = (
+  entry: LifeEntry,
+  rev: number,
+): Effect.Effect<SnapshotValue, ChangeFailure, Database> => {
   const { record, id } = entry.row;
   return findRevision({ entity: record, id, rev }).pipe(
     Effect.flatMap((revision) => decodeSnapshot(revision.body).pipe(Effect.orDie)),
@@ -147,15 +154,15 @@ const checkOf = (checkValues: ValuesCheck, change: ChangeValue): Check =>
     update: () => (entry) => mergedOf(entry, change).pipe(Effect.flatMap(checkValues)),
   });
 
-const entryOf = (change: ChangeValue): Effect.Effect<LifeEntry, ChangeFailure> =>
+const entryOf = (change: ChangeValue): Effect.Effect<LifeEntry, ChangeFailure, Database> =>
   lifeKeyOf(change.ref).pipe(Effect.flatMap(findRecord));
 
 export const checkChange =
   (checkValues: ValuesCheck) =>
-  (change: ChangeValue): Effect.Effect<void, ChangeFailure> =>
+  (change: ChangeValue): Effect.Effect<void, ChangeFailure, Database> =>
     entryOf(change).pipe(Effect.flatMap(checkOf(checkValues, change)));
 
 export const changeItem =
   (writer: Writer) =>
-  (change: ChangeValue): Effect.Effect<ItemResult, ChangeFailure> =>
+  (change: ChangeValue): Effect.Effect<ItemResult, ChangeFailure, Database> =>
     entryOf(change).pipe(Effect.flatMap(actionOf(writer, change)));

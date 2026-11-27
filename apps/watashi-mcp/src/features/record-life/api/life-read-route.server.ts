@@ -3,6 +3,7 @@ import { Option, pipe } from "effect";
 
 import type { LifeReadValue, Body } from "#/entities/life-record/index.ts";
 import type { StoreFailure } from "#/shared/api/index.ts";
+import type { Database } from "#/shared/db/index.server.ts";
 
 import { lifeDigest } from "./life-digest.server.ts";
 import { lifeRead } from "./life-read.server.ts";
@@ -14,14 +15,14 @@ const revisionsRef = (input: LifeReadValue): Option.Option<string> =>
     Option.filter(() => input.revisions === true),
   );
 
-const listing = (input: LifeReadValue): Effect.Effect<Body, StoreFailure> => {
+const listing = (input: LifeReadValue): Effect.Effect<Body, StoreFailure, Database> => {
   if (input.record === "digest") {
     return lifeDigest(input);
   }
   return lifeRead(input);
 };
 
-export const routeLifeRead = (input: LifeReadValue): Effect.Effect<Body, StoreFailure> =>
+export const routeLifeRead = (input: LifeReadValue): Effect.Effect<Body, StoreFailure, Database> =>
   Option.match(revisionsRef(input), {
     onSome: lifeRevisions,
     onNone: () => listing(input),

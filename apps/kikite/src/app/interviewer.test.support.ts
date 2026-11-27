@@ -1,5 +1,7 @@
 import { makeD1 } from "@masseater.dev/d1-test";
-import { Array as Arr, MutableRef } from "effect";
+import { Array as Arr, Effect, MutableRef } from "effect";
+
+import type { FrontDoorBindings } from "./front-door.ts";
 
 const testD1 = makeD1({
   migrations: new URL("../../migrations/", import.meta.url).href,
@@ -17,9 +19,9 @@ const interviewer = {
   },
 };
 
-export const env = {
-  SESSIONS: testD1.env.DB,
-  INTERVIEWER: { getByName: (): typeof interviewer => interviewer },
-};
-
-export const DurableObject = Object;
+export const bindings: Effect.Effect<FrontDoorBindings> = testD1.database.pipe(
+  Effect.map((sessions) => ({
+    SESSIONS: sessions,
+    INTERVIEWER: { getByName: (): typeof interviewer => interviewer },
+  })),
+);

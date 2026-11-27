@@ -17,7 +17,7 @@ const FORBIDDEN = 403;
 
 const runLogged = runner(Logger.layer([Logger.withLeveledConsole(Logger.formatStructured)]));
 
-export const accessMcpEndpoint = ({ teamDomain, audience, register, dataset }: AccessMcp) => {
+const accessMcpEndpoint = ({ teamDomain, audience, register, dataset }: AccessMcp) => {
   const verifier = { keys: createRemoteJWKSet(certsUrl(teamDomain)), teamDomain, audience };
   const serve = meteredMcpHandler(dataset)(register);
   return (request: Request): Promise<Response> =>
@@ -32,4 +32,11 @@ export const accessMcpEndpoint = ({ teamDomain, audience, register, dataset }: A
         ),
       ),
     );
+};
+
+export const accessMcpRoute = <Env extends object>(
+  configOf: (env: Env) => AccessMcp,
+): ((env: Env) => (request: Request) => Promise<Response>) => {
+  const endpoints = new WeakMap<Env, (request: Request) => Promise<Response>>();
+  return (env) => endpoints.getOrInsertComputed(env, (found) => accessMcpEndpoint(configOf(found)));
 };
