@@ -1,6 +1,6 @@
 import type { VideoScript } from "@masseater.dev/video-kit/script";
 
-import { IMAGES } from "#/shared/config/index.ts";
+import { BGM, IMAGES } from "#/shared/config/index.ts";
 
 export const script: VideoScript = {
   title: "pnpm",
@@ -12,7 +12,7 @@ export const script: VideoScript = {
     npm: "エヌピーエム",
     "performant npm": "パフォーマント エヌピーエム",
   },
-  bgm: { url: "https://amachamusic.chagasi.com/mp3/simplestyle.mp3", credit: "甘茶の音楽工房" },
+  bgm: BGM,
   images: { ...IMAGES },
   cuts: [
     { id: "ask", say: ["ねえpnpmって知ってる？"] },
