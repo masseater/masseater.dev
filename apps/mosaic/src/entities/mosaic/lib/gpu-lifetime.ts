@@ -31,7 +31,7 @@ export const releaseOnUnmount =
     return gpu;
   };
 
-type PageEvents = Readonly<Pick<EventTarget, "addEventListener" | "removeEventListener">>;
+export type PageEvents = Readonly<Pick<EventTarget, "addEventListener" | "removeEventListener">>;
 
 const whenPersisted =
   (type: "pagehide" | "pageshow") =>

@@ -11,7 +11,7 @@ import {
   ExportTraceServiceRequestSchema,
 } from "#/shared/api/index.ts";
 
-interface Env {
+export interface Env {
   readonly OTEL_EXPORTER_OTLP_ENDPOINT: string;
   readonly OTEL_SERVICE_NAME: string;
 }

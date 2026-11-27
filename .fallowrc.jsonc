@@ -42,7 +42,18 @@
       "exports": ["traceServerFn"],
     },
   ],
-  "overrides": [{ "files": ["**/generated/**"], "rules": { "unused-enum-members": "off" } }],
+  "overrides": [
+    { "files": ["**/generated/**"], "rules": { "unused-enum-members": "off" } },
+    {
+      "files": [
+        "libs/github-workflow/src/shared/**",
+        "libs/local-server/src/shared/lib/sqlite-layer.ts",
+        "libs/node-main/src/features/run-main/model/run-main.ts",
+        "tools/exposure-check/src/features/report-exposures/api/broker.ts",
+      ],
+      "rules": { "private-type-leaks": "off" },
+    },
+  ],
   "ignoreDependencies": ["@effect/language-service", "fallow-similar-code"],
   "workspaces": {
     "settings": {

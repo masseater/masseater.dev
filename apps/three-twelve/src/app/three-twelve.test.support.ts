@@ -8,7 +8,7 @@ const record = (call: string): void => {
   MutableRef.update(calls, Arr.append(call));
 };
 
-type FakePlayer = Readonly<{
+export type FakePlayer = Readonly<{
   isToken: (token: string) => Promise<boolean>;
   lastRun: () => Promise<unknown>;
   arm: () => Promise<void>;

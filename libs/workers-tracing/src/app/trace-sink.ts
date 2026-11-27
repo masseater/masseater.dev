@@ -3,7 +3,7 @@ import { Mac } from "effect/crypto";
 
 import { TraceRequest, UnreadableBody, bodyOf, logTraceRequest } from "#/entities/span/index.ts";
 
-type TraceSinkEnv = Readonly<{ TRACE_SINK_TOKEN: string }>;
+export type TraceSinkEnv = Readonly<{ TRACE_SINK_TOKEN: string }>;
 
 const runtime = ManagedRuntime.make(
   Logger.layer([Logger.withLeveledConsole(Logger.formatStructured)]),
