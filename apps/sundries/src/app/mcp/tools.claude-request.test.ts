@@ -15,10 +15,19 @@ import { afterAll, beforeEach } from "vite-plus/test";
 
 import { registerClaudeRequestTools } from "#/features/request-claude/index.ts";
 
-import { bindings, closeDatabase, resetDatabase } from "./claude-request-tools.test.support.ts";
+import {
+  bindings,
+  closeDatabase,
+  resetDatabase,
+  wakes,
+} from "./claude-request-tools.test.support.ts";
 import { serverOf } from "./tools.ts";
 
-beforeEach(() => Effect.runPromise(resetDatabase));
+beforeEach(() => {
+  wakes.outcome = "rejected";
+  wakes.texts = [];
+  return Effect.runPromise(resetDatabase);
+});
 afterAll(() => Effect.runPromise(closeDatabase));
 
 type Args = Readonly<Record<string, unknown>>;
@@ -32,6 +41,8 @@ const THREAD = "claude-code";
 const THREAD_URL = "https://claude.ai/code/project/p?thread=t";
 
 const MISSING_ID = 99;
+
+const SENT_ONCE = 1;
 
 const DATA_LINE = /^data: (?<json>.+)$/mu;
 
@@ -203,13 +214,37 @@ it.effect("空の依頼は受け付けない", () =>
   }),
 );
 
-it.effect("送った依頼は積んだ直後にプロジェクトを起こす", () =>
+it.effect("送った依頼は本文をそのまま添えてプロジェクトを起こし、受け取り済みにする", () =>
   Effect.gen(function* woken() {
+    wakes.outcome = "fired";
     const sent = yield* value(MUSE, "send_to_claude", { text: "記事を直して" }).pipe(
       Effect.flatMap(decodeSent),
       Effect.orDie,
     );
+    const taken = yield* take;
     expect(sent.woke).toBe("fired");
+    const sentText = Arr.join(wakes.texts, "");
+    expect(wakes.texts).toHaveLength(SENT_ONCE);
+    expect(sentText).toContain("記事を直して");
+    expect(sentText).toContain(`依頼 id: ${sent.id}`);
+    expect(taken).toStrictEqual([]);
+  }),
+);
+
+it.effect("起こせなかった依頼は未取得のまま残り、受け取りタスクが拾える", () =>
+  Effect.gen(function* rejected() {
+    const sent = yield* value(MUSE, "send_to_claude", { text: "記事を直して" }).pipe(
+      Effect.flatMap(decodeSent),
+      Effect.orDie,
+    );
+    const taken = yield* take;
+    expect(sent.woke).toBe("rejected");
+    expect(
+      pipe(
+        taken,
+        Arr.map(({ id }) => id),
+      ),
+    ).toStrictEqual([sent.id]);
   }),
 );
 

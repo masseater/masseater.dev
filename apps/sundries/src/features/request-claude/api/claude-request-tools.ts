@@ -11,10 +11,11 @@ import {
   SendInput,
   TakeInput,
 } from "./claude-request-input.ts";
-import { RequestsDb, answer, enqueue, listed, requestsDbOf, take } from "./claude-requests.ts";
+import { RequestsDb, answer, listed, requestsDbOf, take } from "./claude-requests.ts";
 import type { ClaudeRequest } from "./claude-requests.ts";
-import { RoutineService, registerRoutine, wakeProject } from "./claude-routine.ts";
+import { RoutineService, registerRoutine } from "./claude-routine.ts";
 import type { RoutineBroker } from "./claude-routine.ts";
+import { sendRequest } from "./send-request.ts";
 
 export type RequestBindings = Readonly<{
   CLAUDE_REQUESTS: D1Database;
@@ -65,8 +66,7 @@ const registerSend =
         annotations: WRITE,
       },
       (input, ctx) =>
-        enqueue({ text: input.text, sender: clientOf(ctx) }).pipe(
-          Effect.zipWith(wakeProject, ({ id }, woke) => ({ id, woke })),
+        sendRequest({ text: input.text, sender: clientOf(ctx) }).pipe(
           provide,
           runTool({ count: one }),
         ),

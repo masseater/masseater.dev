@@ -17,6 +17,7 @@ export const tauriAppTasks = ({
   NonNullable<UserConfig["run"]>["tasks"]
 > => ({
   cargo: { command: cargoCommand(crate), cache: { input: [...input, ...GENERATED], output: [] } },
+  screen: { command: "vp build" },
 });
 
 const WINDOWS_INSTALLER =
