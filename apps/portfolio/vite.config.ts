@@ -43,7 +43,7 @@ export default defineConfig({
       "deploy:production": {
         command: [
           "alchemy deploy --config alchemy.traces.ts --stage prod --yes",
-          "WORKERS_TRACES_SINK=masseater-dev-trace-sink workers-traces --request https://masseater.dev/ --expect GET --wait 600",
+          "WORKERS_TRACES_SINK=masseater-dev-trace-sink workers-traces --request https://masseater.dev/ --expect GET --wait 300",
         ],
         cache: false,
       },

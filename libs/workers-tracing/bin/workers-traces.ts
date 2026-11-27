@@ -51,14 +51,12 @@ type Query = Readonly<{
 const equals = (key: string, value: string) =>
   ({ key, operation: "eq", type: "string", value }) as const;
 
-const query = Effect.fn("workers-traces.query")(function* query({
-  account,
-  sink,
-  service,
-  minutes,
-  limit,
-  since,
-}: Query) {
+type Filter = ReturnType<typeof equals>;
+
+const spansWhere = Effect.fn("workers-traces.spansWhere")(function* spansWhere(
+  { account, sink, service, minutes, limit, since }: Query,
+  narrowed: readonly Filter[],
+) {
   const to = yield* Clock.currentTimeMillis;
   const from = Option.match(since, {
     onNone: () => to - Duration.toMillis(Duration.minutes(minutes)),
@@ -81,6 +79,7 @@ const query = Effect.fn("workers-traces.query")(function* query({
           Option.map((name) => equals("annotations.service", name)),
           Option.toArray,
         ),
+        ...narrowed,
       ],
     },
   });
@@ -93,23 +92,56 @@ const query = Effect.fn("workers-traces.query")(function* query({
   );
 });
 
+const traceIdsOf = (spans: readonly ReceivedSpan[]): readonly string[] =>
+  pipe(
+    spans,
+    Arr.map(({ traceId }) => traceId),
+    Arr.dedupe,
+  );
+
+const query = Effect.fn("workers-traces.query")(function* query(
+  options: Query,
+  marked: Option.Option<string>,
+) {
+  if (Option.isNone(marked)) {
+    return yield* spansWhere(options, []);
+  }
+  const started = yield* spansWhere(options, [
+    equals("annotations.attributes.url.full", marked.value),
+  ]);
+  const traces = yield* Effect.forEach(
+    traceIdsOf(started),
+    (traceId) => spansWhere(options, [equals("annotations.traceId", traceId)]),
+    { concurrency: "unbounded" },
+  );
+  return Arr.flatten(traces);
+});
+
 type Select = (spans: readonly ReceivedSpan[]) => readonly ReceivedSpan[];
 
-type Sent = Readonly<{ select: Select; since: Option.Option<number> }>;
+type Sent = Readonly<{
+  select: Select;
+  since: Option.Option<number>;
+  marked: Option.Option<string>;
+}>;
 
 const send = Effect.fn("workers-traces.send")(function* send(url: string) {
   const sentAt = yield* Clock.currentTimeMillis;
   const marked = markedAt(sentAt)(url);
   yield* HttpClient.get(marked);
-  return { select: traceOf(marked), since: Option.some(sentAt) } satisfies Sent;
+  return {
+    select: traceOf(marked),
+    since: Option.some(sentAt),
+    marked: Option.some(marked),
+  } satisfies Sent;
 });
 
 const check = Effect.fn("workers-traces.check")(function* check(
   options: Omit<Query, "since">,
-  { select, since }: Sent,
+  { select, since, marked }: Sent,
   expected: readonly string[],
 ) {
-  const traces = yield* query({ ...options, since });
+  const traces = yield* query({ ...options, since }, marked);
   const spans = select(traces);
   const missing = missingOf(expected)(spans);
   if (Arr.isReadonlyArrayNonEmpty(missing)) {
@@ -169,7 +201,12 @@ const command = Command.make(
   ({ expect, wait, request, ...options }) =>
     Effect.gen(function* run() {
       const sent = yield* Option.match(request, {
-        onNone: () => Effect.succeed<Sent>({ select: (spans) => spans, since: Option.none() }),
+        onNone: () =>
+          Effect.succeed<Sent>({
+            select: (spans) => spans,
+            since: Option.none(),
+            marked: Option.none(),
+          }),
         onSome: send,
       });
       const spans = yield* check(options, sent, expect).pipe(
