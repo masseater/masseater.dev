@@ -3,9 +3,9 @@ import { Argument, Command } from "effect/cli";
 
 import { checkVideo } from "#/features/check-video/index.ts";
 import { fetchAssets } from "#/features/fetch-assets/index.ts";
-import { narrate } from "#/features/narrate/index.ts";
+import { narrate } from "#/features/narrate-script/index.ts";
 import { renderReview, renderVideo } from "#/features/render-video/index.ts";
-import { createVideo, ejectScene } from "#/features/scaffold/index.ts";
+import { createVideo, ejectScene } from "#/features/scaffold-video/index.ts";
 
 import { report } from "./report.ts";
 

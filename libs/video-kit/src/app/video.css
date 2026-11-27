@@ -7,7 +7,6 @@
 
 @source "../";
 
-/* Vertical is the default; these apply inside a horizontal video. */
 @custom-variant horizontal (&:where([data-format="horizontal"], [data-format="horizontal"] *));
 
 @theme {
