@@ -1,10 +1,11 @@
-import { AnalyticsEngine, R2, Workers } from "@alchemy.run/cloudflare";
+import { AnalyticsEngine, Workers } from "@alchemy.run/cloudflare";
 import type { InferEnv } from "@alchemy.run/cloudflare";
 import { authSite } from "@masseater.dev/cloudflare-account/auth-site";
 import { JAPAN_PLACEMENT } from "@masseater.dev/cloudflare-account/japan";
+import { japanBucket } from "@masseater.dev/cloudflare-account/japan-bucket";
 import { japanDatabase } from "@masseater.dev/cloudflare-account/japan-database";
 import { tracedStackProps } from "@masseater.dev/cloudflare-account/traced-providers";
-import { RemovalPolicy, Stack } from "alchemy";
+import { Stack } from "alchemy";
 import { Effect, Option } from "effect";
 
 import { APP_NAME, PREFIX, requireAppPrefix } from "./src/shared/config/app-name.ts";
@@ -22,9 +23,10 @@ const web = Effect.gen(function* web() {
     migrations: "./drizzle",
   });
   const TOOL_CALLS = yield* AnalyticsEngine.Dataset("ToolCalls", { dataset: TOOL_CALL_DATASET });
-  const CONVERSATIONS = yield* R2.Bucket("Conversations", { name: `${PREFIX}conversations` }).pipe(
-    RemovalPolicy.protect(),
-  );
+  const CONVERSATIONS = yield* japanBucket("Conversations", {
+    name: `${PREFIX}conversations`,
+    lifecycleRules: Option.none(),
+  });
   const CONVERSATION_UPLOADS = yield* AnalyticsEngine.Dataset("ConversationUploads", {
     dataset: CONVERSATION_UPLOAD_DATASET,
   });

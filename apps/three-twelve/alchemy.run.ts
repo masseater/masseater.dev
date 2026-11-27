@@ -1,9 +1,10 @@
-import { Containers, R2, Workers } from "@alchemy.run/cloudflare";
+import { Containers, Workers } from "@alchemy.run/cloudflare";
+import { japanBucket } from "@masseater.dev/cloudflare-account/japan-bucket";
 import { tracedStackProps } from "@masseater.dev/cloudflare-account/traced-providers";
 import davey from "@snazzah/davey/package.json" with { type: "json" };
-import { RemovalPolicy, Stack } from "alchemy";
+import { Stack } from "alchemy";
 import { Build } from "alchemy/Command";
-import { Effect, Hash } from "effect";
+import { Effect, Hash, Option } from "effect";
 
 import { APP_NAME, PREFIX, requireAppPrefix } from "./src/shared/config/app-name.ts";
 import { BASE_PATH, CRON, PLAYER_IMAGE, ZONE } from "./src/shared/config/three-twelve.ts";
@@ -48,9 +49,10 @@ export default Stack(
   APP_NAME,
   tracedStackProps,
   Effect.gen(function* stack() {
-    const AUDIO = yield* R2.Bucket("Audio", { name: `${PREFIX}audio` }).pipe(
-      RemovalPolicy.protect(),
-    );
+    const AUDIO = yield* japanBucket("Audio", {
+      name: `${PREFIX}audio`,
+      lifecycleRules: Option.none(),
+    });
     const { url } = yield* Workers.Worker("ThreeTwelve", {
       limits: { cpuMs: 200 },
       name: `${PREFIX}worker`,

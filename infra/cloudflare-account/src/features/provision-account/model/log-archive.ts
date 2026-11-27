@@ -1,8 +1,10 @@
-import { ApiToken, CloudflareEnvironment, Logpush, R2 } from "@alchemy.run/cloudflare";
-import { RemovalPolicy } from "alchemy";
+import { ApiToken, CloudflareEnvironment, Logpush } from "@alchemy.run/cloudflare";
+import type { R2 } from "@alchemy.run/cloudflare";
 import { all, map, mapEffect } from "alchemy/Output";
 import { sha256 } from "alchemy/Util";
-import { Effect, Redacted } from "effect";
+import { Effect, Option, Redacted } from "effect";
+
+import { japanBucket, japanBucketName } from "#/shared/api/index.ts";
 
 const RETENTION_DAYS = 30;
 
@@ -53,7 +55,7 @@ const bucketNameOf = (appName: string): string => `${appName}-worker-logs`;
 
 const writerToken = Effect.fn("writerToken")(function* writerToken(appName: string) {
   const { accountId } = yield* yield* CloudflareEnvironment;
-  const bucketKey = `${accountId}_${DEFAULT_JURISDICTION}_${bucketNameOf(appName)}`;
+  const bucketKey = `${accountId}_${DEFAULT_JURISDICTION}_${japanBucketName(bucketNameOf(appName))}`;
   return yield* ApiToken.AccountApiToken("WorkerLogsWriter", {
     name: `${appName}-worker-logs-writer`,
     accountId,
@@ -69,10 +71,10 @@ const writerToken = Effect.fn("writerToken")(function* writerToken(appName: stri
 
 export const logArchive = Effect.fn("logArchive")(function* logArchive(appName: string) {
   const { accountId } = yield* yield* CloudflareEnvironment;
-  const bucket = yield* R2.Bucket("WorkerLogs", {
+  const bucket = yield* japanBucket("WorkerLogs", {
     name: bucketNameOf(appName),
-    lifecycleRules: LIFECYCLE_RULES,
-  }).pipe(RemovalPolicy.protect());
+    lifecycleRules: Option.some(LIFECYCLE_RULES),
+  });
   const token = yield* writerToken(appName);
   const credentials = all(token.tokenId, token.value, bucket.bucketName).pipe(
     mapEffect(([tokenId, value, bucketName]) =>
