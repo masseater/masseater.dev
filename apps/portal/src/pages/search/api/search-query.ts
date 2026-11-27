@@ -1,7 +1,7 @@
 import { run } from "@r_masseater/workers-tracing/effect";
 import type { QueryClient } from "@tanstack/react-query";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { Effect } from "effect";
+import { Effect, String as Str } from "effect";
 
 import { slidesQueries } from "#/entities/slide/index.ts";
 import type { HitValue } from "#/entities/slide/index.ts";
@@ -13,8 +13,11 @@ type SearchLoad = Readonly<{ queryClient: QueryClient; keyword: string }>;
 const settle = (load: () => Promise<unknown>): Effect.Effect<unknown> =>
   Effect.promise(load).pipe(Effect.catchCause(() => Effect.void));
 
-export const loadSearchPage = ({ queryClient, keyword }: SearchLoad): Promise<unknown> =>
-  run(
+export const loadSearchPage = ({ queryClient, keyword }: SearchLoad): Promise<unknown> => {
+  if (Str.isEmpty(keyword)) {
+    return Promise.resolve();
+  }
+  return run(
     Effect.all(
       [
         settle(() => queryClient.query(watashiQueries.records.get.queryOptions({ keyword }))),
@@ -24,6 +27,7 @@ export const loadSearchPage = ({ queryClient, keyword }: SearchLoad): Promise<un
       { concurrency: "unbounded" },
     ),
   );
+};
 
 export const useFoundRecords = (keyword: string): readonly LifeItemValue[] =>
   useSuspenseQuery(watashiQueries.records.get.queryOptions({ keyword })).data.items;
