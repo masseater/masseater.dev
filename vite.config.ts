@@ -160,6 +160,18 @@ export default defineConfig({
         "typescript-monorepo",
       ],
     },
+    "remotion-dev/skills": {
+      commit: "a3f4098a2afd0e13f6a6f8c8760e275f75457ea9",
+      root: "skills",
+      skills: [
+        "remotion-best-practices",
+        "remotion-captions",
+        "remotion-markup",
+        "remotion-multimedia",
+        "remotion-render",
+        "remotion-studio",
+      ],
+    },
     "shadcn-ui/ui": {
       commit: "0e5b2e621a9ee4cf6a604bbe6c5c0d5b70561eb4",
       root: "skills",

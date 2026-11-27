@@ -1,0 +1,135 @@
+@import "tailwindcss";
+@import "@fontsource/dela-gothic-one/400.css";
+@import "@fontsource/mochiy-pop-one/400.css";
+@import "@fontsource/m-plus-rounded-1c/500.css";
+@import "@fontsource/m-plus-rounded-1c/800.css";
+@import "@fontsource/ibm-plex-mono/latin-500.css";
+
+@source "../";
+
+/* Vertical is the default; these apply inside a horizontal video. */
+@custom-variant horizontal (&:where([data-format="horizontal"], [data-format="horizontal"] *));
+
+@theme {
+  --color-paper: #f4f1ea;
+  --color-ink: #1c1b19;
+  --color-muted: #6b675f;
+  --color-rule: #d9d3c7;
+  --color-accent: #2f5bd3;
+  --color-telop: #ffffff;
+  --color-highlight: #ffd60a;
+  --color-code-ink: #f4f1ea;
+  --color-code-prompt: #8fb3ff;
+  --color-code-output: #b9b4a8;
+
+  --text-label: 60px;
+  --text-label-h: 40px;
+  --text-meta: 46px;
+  --text-meta-h: 32px;
+  --text-caption: 70px;
+  --text-caption-h: 56px;
+  --text-code: 40px;
+  --text-code-h: 34px;
+  --text-star: 150px;
+  --text-star-h: 120px;
+  --text-credit: 32px;
+  --text-credit-h: 22px;
+  --text-quote: 96px;
+  --text-quote-h: 80px;
+
+  --font-impact: "Dela Gothic One", "M PLUS Rounded 1c", sans-serif;
+  --font-pop: "Mochiy Pop One", "M PLUS Rounded 1c", sans-serif;
+  --font-text: "M PLUS Rounded 1c", sans-serif;
+  --font-code: "IBM Plex Mono", "M PLUS Rounded 1c", monospace;
+}
+
+@utility motion {
+  translate: var(--x, 0) var(--y, 0);
+  scale: var(--scale, 1);
+  opacity: var(--shown, 1);
+  filter: blur(var(--blur, 0px));
+}
+
+@utility fitted {
+  font-size: calc(var(--size) * 1px);
+}
+
+@utility telop {
+  -webkit-text-stroke: 0.24em var(--color-ink);
+  paint-order: stroke fill;
+  text-shadow: 0 0.12em 0 color-mix(in srgb, var(--color-ink) 28%, transparent);
+}
+
+@utility marker {
+  background-image: linear-gradient(var(--color-highlight), var(--color-highlight));
+  background-repeat: no-repeat;
+  background-position: 0 88%;
+  background-size: calc(var(--mark, 1) * 100%) 42%;
+  box-decoration-break: clone;
+}
+
+@utility sticker {
+  border: 5px solid var(--color-ink);
+  box-shadow: 10px 10px 0 var(--color-ink);
+}
+
+@utility dot-grid {
+  background-image: radial-gradient(var(--color-rule) 3px, transparent 3.5px);
+  background-size: 44px 44px;
+  background-position: var(--drift, 0) var(--drift, 0);
+}
+
+@utility japanese {
+  word-break: auto-phrase;
+  text-wrap: balance;
+  letter-spacing: 0.02em;
+}
+
+@utility safe-area {
+  position: absolute;
+  inset: 288px 192px 672px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
+@utility safe-area-h {
+  inset: 54px 96px;
+  gap: 24px;
+}
+
+@utility progress {
+  width: calc(var(--progress, 0) * 100%);
+}
+
+@utility shake {
+  translate: var(--x, 0) var(--y, 0);
+}
+
+@utility stage {
+  translate: var(--whip, 0) 0;
+  scale: var(--zoom, 1);
+  filter: blur(var(--blur, 0px));
+  transform-origin: 50% 45%;
+}
+
+@utility star-outline {
+  -webkit-text-stroke: 0.07em var(--color-ink);
+  paint-order: stroke fill;
+}
+
+@utility blurred-fill {
+  filter: blur(48px) brightness(0.9);
+  scale: 1.15;
+}
+
+@utility inline-code {
+  font-family: var(--font-code);
+  font-weight: 500;
+  font-size: 0.86em;
+  background: var(--color-ink);
+  color: var(--color-code-ink);
+  padding: 0.04em 0.32em;
+  border-radius: 0.18em;
+  margin: 0 0.12em;
+}

@@ -1,0 +1,9 @@
+export const CHARACTERS_PER_SECOND = 7;
+export const MAX_CHARACTERS_PER_SECOND = 11;
+export const MIN_LINE_SECONDS = 1.5;
+export const MAX_LINE_SECONDS = 6;
+export const SCENE_PADDING_SECONDS = 0.25;
+export const EMPTY_SCENE_SECONDS = 2.5;
+export const LENGTH_TOLERANCE = 0.1;
+export const SPEED_SCALE = 1.3;
+export const LINE_GAP_SECONDS = 0.08;
