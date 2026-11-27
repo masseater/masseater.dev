@@ -34,6 +34,7 @@ const parser = new XMLParser({
   attributesGroupName: ATTRIBUTES,
   parseTagValue: false,
   parseAttributeValue: false,
+  jPath: false,
   isArray: (name: string): boolean => REPEATED.has(name),
 });
 
