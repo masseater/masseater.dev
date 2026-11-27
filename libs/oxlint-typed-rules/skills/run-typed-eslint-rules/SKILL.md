@@ -4,11 +4,12 @@ description: >
   Use when running ESLint rules that need type information inside oxlint with
   @r_masseater/oxlint-typed-rules: the bundled TanStack Start, TanStack Query, TanStack Router,
   Drizzle, Remotion and ESLint React plugins, wrapping another typed ESLint plugin with typedRules,
-  and choosing between this package and tsgolint.
+  writing a typed rule with withTypeInformation, and choosing between this package and
+  tsgolint.
 metadata:
   type: core
   library: "@r_masseater/oxlint-typed-rules"
-  library_version: 0.4.2
+  library_version: 0.5.0
 sources:
   - src/app/**
   - src/entities/typed-rule/**
@@ -71,6 +72,34 @@ export default {
   meta: { name: "upstream" },
   rules: typedRules(upstream.rules),
 };
+```
+
+## Write a typed rule
+
+`withTypeInformation(rule)` gives a rule of your own the same `parserServices`.
+`parserServices.program.native` is the TypeScript 7 `Project` of the linted file. Read its `checker` and `program` for what the ESLint-shaped services do not answer.
+
+```ts
+import { withTypeInformation } from "@r_masseater/oxlint-typed-rules";
+
+export const noAnyParameter = withTypeInformation({
+  meta: { type: "problem", messages: { any: "Give the parameter a type." } },
+  create: (context) => {
+    const services = context.sourceCode.parserServices;
+    if (services === undefined) {
+      return {};
+    }
+    const { checker } = services.program.native;
+    return {
+      Identifier: (node) => {
+        const type = services.getTypeAtLocation(node).native;
+        if (checker.typeToString(type) === "any") {
+          context.report({ node, messageId: "any" });
+        }
+      },
+    };
+  },
+});
 ```
 
 ## Choose the tool
