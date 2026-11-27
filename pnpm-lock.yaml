@@ -924,6 +924,9 @@ catalogs:
     sqlite-vec:
       specifier: 0.1.9
       version: 0.1.9
+    srvx:
+      specifier: 1.0.8
+      version: 1.0.8
     sshpk:
       specifier: 1.18.0
       version: 1.18.0
@@ -1491,6 +1494,9 @@ importers:
       '@effect/atom-react':
         specifier: catalog:stack
         version: 4.1.5(effect@4.1.5)(react@19.3.1)(scheduler@0.28.0)
+      '@masseater.dev/ui':
+        specifier: workspace:*
+        version: link:../../libs/ui
       '@masseater.dev/web-ui':
         specifier: workspace:*
         version: link:../../libs/web-ui
@@ -1588,6 +1594,9 @@ importers:
       '@effect/platform-node':
         specifier: 'catalog:'
         version: 4.1.5(effect@4.1.5)(redis@6.2.1(@opentelemetry/api@1.10.0))
+      '@masseater.dev/local-server':
+        specifier: workspace:*
+        version: link:../../libs/local-server
       '@masseater.dev/ui':
         specifier: workspace:*
         version: link:../../libs/ui
@@ -4262,6 +4271,9 @@ importers:
       effect:
         specifier: catalog:stack
         version: 4.1.5
+      srvx:
+        specifier: 'catalog:'
+        version: 1.0.8
     devDependencies:
       vite-plus:
         specifier: catalog:stack
@@ -4854,6 +4866,10 @@ importers:
         version: 1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.6)(@vitest/browser-playwright@5.1.1)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.6)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
 
   libs/sloppedia:
+    dependencies:
+      '@masseater.dev/ui':
+        specifier: workspace:*
+        version: link:../ui
     devDependencies:
       '@types/react':
         specifier: 'catalog:'
@@ -5332,6 +5348,9 @@ importers:
 
   libs/watashi:
     dependencies:
+      '@masseater.dev/local-server':
+        specifier: workspace:*
+        version: link:../local-server
       '@r_masseater/h56m':
         specifier: workspace:*
         version: link:../h56m

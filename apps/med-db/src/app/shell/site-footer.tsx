@@ -1,11 +1,8 @@
+import { PageFooter } from "@masseater.dev/ui/page-footer";
 import type { ReactNode } from "react";
 
 import { SITE_DESCRIPTION, SITE_NAME } from "#/shared/config/index.ts";
 
 export const SiteFooter = (): ReactNode => (
-  <footer className="mt-16 border-t">
-    <p className="text-muted-foreground mx-auto max-w-6xl px-4 py-8 text-sm">
-      {`${SITE_NAME} ― ${SITE_DESCRIPTION}`}
-    </p>
-  </footer>
+  <PageFooter variant="rule">{`${SITE_NAME} ― ${SITE_DESCRIPTION}`}</PageFooter>
 );

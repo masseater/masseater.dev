@@ -26,10 +26,6 @@ export default defineConfig({
             ],
           },
         },
-        {
-          files: ["src/app/server/serve.ts"],
-          rules: { "effecttsgo/node-builtin-import": "off" },
-        },
       ],
     },
   },

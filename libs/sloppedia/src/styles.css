@@ -28,6 +28,11 @@
   --color-wiki-chrome: var(--wiki-chrome);
 }
 
+.wiki-root {
+  --border: var(--wiki-divider);
+  --muted-foreground: var(--wiki-subtle);
+}
+
 .wiki-prose {
   @apply text-wiki-text text-base leading-relaxed;
 }

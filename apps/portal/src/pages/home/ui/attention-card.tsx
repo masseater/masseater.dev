@@ -3,9 +3,9 @@ import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
 import { useCredentials } from "#/pages/home/api/home-query.ts";
-import { Card, CardHeader } from "#/shared/ui/index.ts";
+import { Card, CardHeader, RowList } from "#/shared/ui/index.ts";
 
-import { AttentionList } from "./attention-list.tsx";
+import { AttentionRow } from "./attention-row.tsx";
 
 const TEXT = {
   title: "要対応",
@@ -28,7 +28,12 @@ export const AttentionCard = (): ReactNode => {
       {Arr.isReadonlyArrayEmpty(missing) && (
         <p className="text-muted-foreground text-sm">{TEXT.clear}</p>
       )}
-      <AttentionList label={TEXT.title} states={missing} />
+      <RowList label={TEXT.title}>
+        {pipe(
+          missing,
+          Arr.map((state) => <AttentionRow key={state.id} state={state} />),
+        )}
+      </RowList>
     </Card>
   );
 };

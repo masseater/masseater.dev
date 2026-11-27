@@ -20,6 +20,9 @@
     "./schema": "./src/app/frontmatter.ts",
     "./styles.css": "./src/styles.css"
   },
+  "dependencies": {
+    "@masseater.dev/ui": "workspace:*"
+  },
   "devDependencies": {
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",

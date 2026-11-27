@@ -1,9 +1,7 @@
-import { createServer } from "node:http";
-
-import { make } from "@effect/platform-node/NodeHttpServer";
+import { serveWeb } from "@masseater.dev/local-server/serve";
 import { Deferred, Effect, Option, Record as Rec } from "effect";
 import type { Scope } from "effect";
-import { HttpServer, HttpServerRequest, HttpServerResponse } from "effect/http";
+import { HttpEffect, HttpServerRequest, HttpServerResponse } from "effect/http";
 
 import { WatashiFailed } from "#/shared/lib/errors.ts";
 
@@ -61,12 +59,13 @@ const handlerOf = (
 export const listenForCode = (expectedState: string): Effect.Effect<Callback, never, Scope.Scope> =>
   Effect.gen(function* listen() {
     const code = yield* Deferred.make<string, WatashiFailed>();
-    const server = yield* Effect.orDie(
-      make(() => createServer(), { port: ANY_FREE_PORT, host: LOOPBACK }),
-    );
-    yield* server.serve(handlerOf(expectedState, code));
+    const address = yield* serveWeb({
+      handler: HttpEffect.toWebHandler(handlerOf(expectedState, code)),
+      port: ANY_FREE_PORT,
+      host: LOOPBACK,
+    });
     return {
-      redirectUri: `${HttpServer.formatAddress(server.address)}${CALLBACK_PATH}`,
+      redirectUri: `${address.origin}${CALLBACK_PATH}`,
       code: Deferred.await(code).pipe(
         Effect.timeoutOrElse({
           duration: LOGIN_TIMEOUT,
