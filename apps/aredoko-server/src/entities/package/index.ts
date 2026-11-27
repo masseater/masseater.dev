@@ -6,7 +6,7 @@ export {
   mentionedIn,
 } from "./model/companions.ts";
 export type { Folder } from "./model/companions.ts";
-export { hasExtension, isPackage, isZip, partsOf } from "./model/file-name.ts";
+export { hasExtension, isPackage, isZip } from "./model/file-name.ts";
 export { kindOf } from "./model/kind.ts";
 export { isCompanion, isLoose } from "./model/loose.ts";
 export { packagesWhere } from "./model/packages.ts";

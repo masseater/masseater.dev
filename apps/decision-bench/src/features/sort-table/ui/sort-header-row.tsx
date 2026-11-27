@@ -1,5 +1,6 @@
 "use client";
 
+import { TableHead, TableRow } from "@masseater.dev/ui/table";
 import { Button } from "@masseater.dev/web-ui";
 import { Array as Arr, pipe } from "effect";
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
@@ -12,8 +13,6 @@ import {
   useSortClick,
 } from "#/features/sort-table/model/sorting.ts";
 import type { TableColumn } from "#/features/sort-table/model/sorting.ts";
-import { TableHead } from "#/shared/ui/table-head.tsx";
-import { TableRow } from "#/shared/ui/table-row.tsx";
 
 const ARIA_SORT = { asc: "ascending", desc: "descending", none: "none" } as const;
 

@@ -5,6 +5,7 @@ import type { Bus } from "@masseater.dev/fumx-studio/studio/bus";
 
 import type { Life } from "./context.ts";
 import { LEVEL } from "./levels.ts";
+import { shaped } from "./shaping.ts";
 import { kept } from "./tone.ts";
 
 const ORGAN = {
@@ -42,40 +43,29 @@ const MIXED = [
 
 const organ = (life: Life, duck: Float32Array): void => {
   const bus = life.rack.get("ORGAN");
-  life.studio.each({
-    frames: life.studio.frames,
-    edit: (channel, from, to) => {
-      svf({ ...ORGAN.rumble, from, to })(channel);
-      drive({ ...ORGAN.drive, from, to })(channel);
-      svf({ ...ORGAN.fizz, from, to })(channel);
-      biquad({ ...ORGAN.honk, from, to })(channel);
-    },
-  })(bus);
+  shaped(life)((span) => [
+    svf({ ...ORGAN.rumble, ...span }),
+    drive({ ...ORGAN.drive, ...span }),
+    svf({ ...ORGAN.fizz, ...span }),
+    biquad({ ...ORGAN.honk, ...span }),
+  ])(bus);
   life.studio.chorus(ORGAN.chorus)(bus);
   life.studio.envelope({ envelope: duck, depth: ORGAN.duck })(bus);
 };
 
 const piano = (life: Life, duck: Float32Array): void => {
   const bus = life.rack.get("FM PIANO");
-  life.studio.each({
-    frames: life.studio.frames,
-    edit: (channel, from, to) => {
-      svf({ ...PIANO.rumble, from, to })(channel);
-      biquad({ ...PIANO.presence, from, to })(channel);
-    },
-  })(bus);
+  shaped(life)((span) => [
+    svf({ ...PIANO.rumble, ...span }),
+    biquad({ ...PIANO.presence, ...span }),
+  ])(bus);
   life.studio.chorus(PIANO.chorus)(bus);
   life.studio.envelope({ envelope: duck, depth: PIANO.duck })(bus);
 };
 
 const pad = (life: Life, duck: Float32Array): void => {
   const bus = life.rack.get("PAD");
-  life.studio.each({
-    frames: life.studio.frames,
-    edit: (channel, from, to) => {
-      svf({ ...PAD.rumble, from, to })(channel);
-    },
-  })(bus);
+  shaped(life)((span) => [svf({ ...PAD.rumble, ...span })])(bus);
   life.studio.chorus(PAD.chorus)(bus);
   life.studio.widen(PAD.width)(bus);
   life.studio.envelope({ envelope: duck, depth: PAD.duck })(bus);

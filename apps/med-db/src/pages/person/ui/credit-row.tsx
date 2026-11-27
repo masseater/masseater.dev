@@ -1,9 +1,9 @@
+import { TableRow } from "@masseater.dev/ui/table";
 import type { ReactNode } from "react";
 
 import { VideoLink } from "#/entities/video/index.ts";
 import { Badge } from "#/shared/ui/badge.tsx";
 import { TableCell } from "#/shared/ui/table-cell.tsx";
-import { TableRow } from "#/shared/ui/table-row.tsx";
 
 import { CreditMaterial } from "./credit-material.tsx";
 

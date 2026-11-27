@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@effect/atom-react": "catalog:stack",
+    "@masseater.dev/ui": "workspace:*",
     "@masseater.dev/web-ui": "workspace:*",
     "@tanstack/react-query": "catalog:stack",
     "@tanstack/react-router": "catalog:",
