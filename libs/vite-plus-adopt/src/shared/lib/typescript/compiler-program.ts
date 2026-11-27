@@ -53,7 +53,7 @@ export const createProgram: {
   return {
     program: { getSourceFiles: () => programFiles.files, getTypeChecker: openCheckerOnce },
     resolvedModules: programFiles.resolvedModules,
-    dispose: () => {
+    dispose: (): void => {
       for (const created of checker.pipe(MutableRef.get, Option.toArray)) {
         created.dispose();
       }

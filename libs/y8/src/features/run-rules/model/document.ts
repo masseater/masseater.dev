@@ -135,13 +135,13 @@ const nodeOf = (tree: Tree, view: SourceView, id: number): MarkdownNode => {
     id,
     start: tree.field(id, FIELD.start),
     end: tree.field(id, FIELD.end),
-    get parent() {
+    get parent(): MarkdownNode | undefined {
       return pipe(linked(tree)(tree.field(id, FIELD.parent)), Option.getOrUndefined);
     },
-    get children() {
+    get children(): readonly MarkdownNode[] {
       return children();
     },
-    get data() {
+    get data(): Data {
       return data();
     },
   };

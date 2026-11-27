@@ -8,7 +8,7 @@ import { serveApi } from "./serve.ts";
 export const interviewerDev = (): Plugin => ({
   name: "kikite-interviewer",
   apply: "serve",
-  configureServer(server) {
+  configureServer(server): void {
     Option.map(Option.fromNullishOr(server.httpServer), (httpServer) => {
       const running = serveApi(DEV_API_PORT).pipe(Layer.launch, Effect.runFork);
       httpServer.once("close", () => {

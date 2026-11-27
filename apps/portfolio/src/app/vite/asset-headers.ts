@@ -20,7 +20,7 @@ const HEADERS_FILE = pipe(
 export const assetHeaders = (): Plugin => ({
   name: "asset-headers",
   apply: "build",
-  generateBundle() {
+  generateBundle(): void {
     if (this.environment.name === CLIENT_ENVIRONMENT) {
       this.emitFile({ type: "asset", fileName: "_headers", source: HEADERS_FILE });
     }

@@ -232,7 +232,7 @@ const spacer = (): Spacer => {
   const taken = new Map<number, number>();
   return {
     free: (index, left) => left >= (taken.get(index) ?? Number.NEGATIVE_INFINITY),
-    take: (index, right) => {
+    take: (index, right): void => {
       taken.set(index, right);
     },
   };

@@ -47,10 +47,10 @@ export const permissions = workflowRule({
   docs: "https://github.com/rhysd/actionlint/blob/main/docs/checks.md#permissions",
   visitor: (fail): Visitor => ({
     ...NOOP,
-    workflowPre: (workflow) => {
+    workflowPre: (workflow): void => {
       check(fail)(workflow.permissions);
     },
-    jobPre: (job) => {
+    jobPre: (job): void => {
       check(fail)(job.permissions);
     },
   }),

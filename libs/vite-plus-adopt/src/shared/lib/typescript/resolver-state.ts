@@ -59,19 +59,19 @@ export const ALL_FEATURES: Features = {
 };
 
 const OPTIONAL_CONDITIONS: readonly OptionalCondition[] = [
-  ["types", (options) => !options.noDtsResolution],
-  ["node", (options) => options.moduleResolution !== "Bundler"],
+  ["types", (options): boolean => !options.noDtsResolution],
+  ["node", (options): boolean => options.moduleResolution !== "Bundler"],
 ];
 
 export const createOutcome = (): Outcome => {
   const packageDirectory = MutableRef.make(false);
   const cached = MutableRef.make(Option.none<ResolutionResult>());
   return {
-    markResolvedPackageDirectory: () => {
+    markResolvedPackageDirectory: (): void => {
       MutableRef.set(packageDirectory, true);
     },
     resolvedPackageDirectory: () => MutableRef.get(packageDirectory),
-    rememberResultFromCache: (result) => {
+    rememberResultFromCache: (result): void => {
       MutableRef.set(cached, Option.some(result));
     },
     resultFromCache: () => MutableRef.get(cached),

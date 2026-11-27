@@ -23,16 +23,16 @@ export const createLoop = (): Loop => {
   };
   return {
     kick,
-    paint: () => {
+    paint: (): void => {
       if (state.frame()) {
         kick();
       }
     },
-    start: (next) => {
+    start: (next): void => {
       state.frame = next;
       kick();
     },
-    stop: () => {
+    stop: (): void => {
       state.frame = idle;
       cancelAnimationFrame(state.pending);
       state.pending = NONE;

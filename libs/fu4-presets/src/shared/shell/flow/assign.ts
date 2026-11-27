@@ -200,7 +200,8 @@ const declare: Execute = (analysis, flow, node) => {
 export const ASSIGN_HANDLERS: ReadonlyMap<string, Execute> = new Map<string, Execute>([
   [
     "variable_assignment",
-    (analysis, flow, node) => assign(analysis, flow, { node, integer: false }),
+    (analysis, flow, node): Option.Option<Scope> =>
+      assign(analysis, flow, { node, integer: false }),
   ],
   ["declaration_command", declare],
 ]);

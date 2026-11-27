@@ -276,21 +276,21 @@ export const createTransport = ({
   const bench = { player, onLost };
   const within = clamp({ low: START, high: duration });
   return {
-    press: () => {
+    press: (): void => {
       press(bench);
     },
-    seek: (seconds) => {
+    seek: (seconds): void => {
       seek(player, clamp({ low: START, high: duration - TAIL })(seconds));
     },
     load: (mixdown, live) => load(bench, mixdown, live),
-    mix: (mixing) => {
+    mix: (mixing): void => {
       mix(player, mixing);
     },
     position: () => within(positionOf(player.read().playback)),
     playing: () => player.read().playback.status === "playing",
     waiting: () => waitingIn(player.read()),
     levels: () => pipe(player.read().deck, Option.map(levelsOf)),
-    close: () => {
+    close: (): void => {
       halt(player.read().playback);
       shut(player.read().deck);
     },

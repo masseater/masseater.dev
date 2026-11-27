@@ -41,20 +41,20 @@ const callsOf = (): Calls => {
   const calling = new Set<string>();
   const frames: Set<string>[] = [];
   return {
-    define: (name, body) => {
+    define: (name, body): void => {
       functions.set(name, body);
     },
     bodyOf: (name) => Option.fromNullishOr(functions.get(name)),
     isCalling: (name) => calling.has(name),
-    enter: (name) => {
+    enter: (name): void => {
       calling.add(name);
       frames.push(new Set());
     },
-    leave: (name) => {
+    leave: (name): ReadonlySet<string> => {
       calling.delete(name);
       return frames.pop() ?? new Set();
     },
-    addLocal: (name) => {
+    addLocal: (name): void => {
       for (const frame of Option.toArray(Arr.last(frames))) {
         frame.add(name);
       }
@@ -71,7 +71,7 @@ interface Reads {
 const readsOf = (): Reads => {
   const reads = new Map<number, boolean>();
   return {
-    record: (node, clean) => {
+    record: (node, clean): void => {
       reads.set(node.id, (reads.get(node.id) ?? true) && clean);
     },
     cleanReads: () =>

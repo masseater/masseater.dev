@@ -102,7 +102,7 @@ export const jobNeeds = workflowRule({
     const index = new Map<string, number>();
     return {
       ...NOOP,
-      jobPre: (job) => {
+      jobPre: (job): void => {
         const needs = uniqueNeeds(fail, job);
         const id = Str.toLowerCase(job.id.value);
         if (Str.isEmpty(id)) {
@@ -117,7 +117,7 @@ export const jobNeeds = workflowRule({
         index.set(id, nodes.length);
         nodes.push({ id, needs, position: job.id });
       },
-      workflowPost: () => {
+      workflowPost: (): void => {
         const order = pipe(
           Arr.sort(
             [...index.entries()],

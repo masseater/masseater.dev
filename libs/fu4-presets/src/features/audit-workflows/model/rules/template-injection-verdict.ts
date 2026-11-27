@@ -71,10 +71,13 @@ const matrixVerdict: Judge = (context, view) =>
   );
 
 const JUDGES: readonly (readonly [(context: ContextExpr) => boolean, Judge])[] = [
-  [(context) => isSecret(context) || isSafe(context), () => Option.none()],
-  [isInput, (context, view) => Option.some(inputVerdict(context, view))],
-  [isEnv, (context, view) => Option.some(envVerdict(context, view))],
-  [isGithub, () => Option.some(["high", "high", "regular"])],
+  [
+    (context): boolean => isSecret(context) || isSafe(context),
+    (): Option.Option<Verdict> => Option.none(),
+  ],
+  [isInput, (context, view): Option.Option<Verdict> => Option.some(inputVerdict(context, view))],
+  [isEnv, (context, view): Option.Option<Verdict> => Option.some(envVerdict(context, view))],
+  [isGithub, (): Option.Option<Verdict> => Option.some(["high", "high", "regular"])],
   [isMatrix, matrixVerdict],
 ];
 
