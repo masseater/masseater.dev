@@ -76,7 +76,9 @@ export const logArchive = Effect.fn("logArchive")(function* logArchive(appName: 
   const token = yield* writerToken(appName);
   const credentials = all(token.tokenId, token.value, bucket.bucketName).pipe(
     mapEffect(([tokenId, value, bucketName]) =>
-      sha256(Redacted.value(value)).pipe(
+      value.pipe(
+        Redacted.value,
+        sha256,
         Effect.map((secretAccessKey) => ({ tokenId, bucketName, secretAccessKey })),
       ),
     ),

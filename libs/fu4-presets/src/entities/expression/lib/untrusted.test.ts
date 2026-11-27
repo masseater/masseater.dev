@@ -42,7 +42,7 @@ const walk =
 
 const errorsOf = (src: string): readonly string[] => {
   const checker = untrusted();
-  walk(checker)(Result.getOrThrow(parse(src).result));
+  parse(src).result.pipe(Result.getOrThrow, walk(checker));
   return Arr.map(checker.finish(), (found) => found.message);
 };
 

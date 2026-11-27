@@ -90,7 +90,7 @@ const CheckSchema = Schema.Struct({
   id: Schema.String,
   src: Schema.String,
   untrusted: Schema.Boolean,
-  configVars: Schema.NullOr(Schema.Array(Schema.String)),
+  configVars: Schema.String.pipe(Schema.Array, Schema.NullOr),
   contexts: Schema.Array(Schema.String),
   specialFunctions: Schema.Array(Schema.String),
   updates: Schema.Array(UpdateSchema),

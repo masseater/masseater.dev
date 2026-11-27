@@ -14,7 +14,7 @@ export const useFollowing = ({ event, refresh }: Following): void => {
   useEffect(() => {
     const fiber = Effect.runFork(following({ event, refresh }));
     return (): void => {
-      Effect.runFork(Fiber.interrupt(fiber));
+      fiber.pipe(Fiber.interrupt, Effect.runFork);
     };
   }, [event, refresh]);
 };

@@ -31,7 +31,8 @@ const runWithTracingAnd =
     );
     const provided = Layer.provideMerge(services, platform);
     nodeRuntimeRunMain(
-      Layer.build(Layer.mergeAll(tracing, provided)).pipe(
+      Layer.mergeAll(tracing, provided).pipe(
+        Layer.build,
         Effect.flatMap((context) => Effect.provideContext(program, context)),
         Effect.scoped,
       ),

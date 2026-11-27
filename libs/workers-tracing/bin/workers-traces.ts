@@ -182,7 +182,8 @@ const command = Command.make(
 const services = Layer.mergeAll(CredentialsFromEnv, FetchHttpClient.layer, nodeServices);
 
 runMain(
-  Layer.build(services).pipe(
+  services.pipe(
+    Layer.build,
     Effect.flatMap((context) =>
       Effect.provideContext(Command.run(command, { version: packageJson.version }), context),
     ),

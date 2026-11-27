@@ -29,7 +29,7 @@ const GlobSchema = Schema.Struct({
 
 type Glob = typeof GlobSchema.Type;
 
-const Recorded = Schema.fromJsonString(Schema.Array(GlobSchema));
+const Recorded = GlobSchema.pipe(Schema.Array, Schema.fromJsonString);
 
 interface Outcome {
   readonly id: string;

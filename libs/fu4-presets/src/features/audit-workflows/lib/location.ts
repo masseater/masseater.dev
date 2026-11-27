@@ -210,5 +210,5 @@ export const subfeatureLocation =
   (document: Document) =>
   (symbolic: SymbolicLocation, part: Subfeature): Location => ({
     symbolic,
-    concrete: spanFeature(document)(Option.getOrThrow(locateWithin(part)(document.text))),
+    concrete: locateWithin(part)(document.text).pipe(Option.getOrThrow, spanFeature(document)),
   });

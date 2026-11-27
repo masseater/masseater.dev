@@ -38,7 +38,7 @@ export const githubFor =
       Effect.flatMap(
         Option.match({
           onNone: () => Effect.succeedNone,
-          onSome: (token) => Effect.asSome(clientFor(host, root)(token)),
+          onSome: (token) => token.pipe(clientFor(host, root), Effect.asSome),
         }),
       ),
     );

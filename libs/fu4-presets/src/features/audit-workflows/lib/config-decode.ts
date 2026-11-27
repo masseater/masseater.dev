@@ -41,13 +41,13 @@ const Policies = Schema.Literals(USES_POLICIES);
 const PositiveInt = Schema.Int.check(Schema.isGreaterThan(NONE));
 const RawMapping = Schema.Record(Schema.String, Schema.Unknown);
 const Remap = Schema.Struct({
-  severity: Schema.optionalKey(Schema.NullOr(Severities)),
+  severity: Severities.pipe(Schema.NullOr, Schema.optionalKey),
 });
 const RawRule = Schema.Struct({
   disable: Schema.optionalKey(Schema.Boolean),
   ignore: Schema.optionalKey(Strings),
-  config: Schema.optionalKey(Schema.NullOr(RawMapping)),
-  remap: Schema.optionalKey(Schema.NullOr(Remap)),
+  config: RawMapping.pipe(Schema.NullOr, Schema.optionalKey),
+  remap: Remap.pipe(Schema.NullOr, Schema.optionalKey),
 });
 const RawRules = Schema.NullishOr(Schema.Record(Schema.String, RawRule));
 const Cooldown = Schema.Struct({

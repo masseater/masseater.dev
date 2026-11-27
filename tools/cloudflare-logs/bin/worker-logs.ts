@@ -77,9 +77,9 @@ const workerLogs = Effect.gen(function* workerLogs() {
 
 const services = CredentialsFromEnv.pipe(Layer.provideMerge(FetchHttpClient.layer));
 
-runMain("worker-logs")(
-  Layer.build(services).pipe(
-    Effect.flatMap((context) => Effect.provideContext(workerLogs, context)),
-    Effect.scoped,
-  ),
+services.pipe(
+  Layer.build,
+  Effect.flatMap((context) => Effect.provideContext(workerLogs, context)),
+  Effect.scoped,
+  runMain("worker-logs"),
 );

@@ -51,7 +51,8 @@ const command = Command.make(
 const program = Command.run(command, { version: pkg.version });
 
 runMain(
-  Layer.build(nodeServices).pipe(
+  nodeServices.pipe(
+    Layer.build,
     Effect.flatMap((context) => Effect.provideContext(program, context)),
     Effect.scoped,
   ),

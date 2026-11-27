@@ -66,7 +66,7 @@ const isStaticEcho = (command: SyntaxNode): boolean =>
 
 const isFlaggedCommand = (command: SyntaxNode): boolean =>
   command.type === "command" &&
-  Option.isSome(ofType("command_name")(fieldOf("name")(command))) &&
+  fieldOf("name")(command).pipe(ofType("command_name"), Option.isSome) &&
   !isStaticEcho(command);
 
 const bashRedirects = (statement: SyntaxNode): readonly string[] =>
@@ -120,7 +120,7 @@ const pwshArgument = (argument: SyntaxNode): readonly SyntaxNode[] =>
   );
 
 const pwshRedirects = (redirection: SyntaxNode): readonly string[] => {
-  if (Option.isNone(ofType("file_redirection_operator")(fieldOf("operator")(redirection)))) {
+  if (fieldOf("operator")(redirection).pipe(ofType("file_redirection_operator"), Option.isNone)) {
     return [];
   }
   return pipe(
@@ -136,7 +136,7 @@ const pwshParameterArgument = (child: SyntaxNode): readonly SyntaxNode[] => {
     return [child];
   }
   if (child.type === "command_parameter") {
-    return Option.toArray(ofType("command_argument")(fieldOf("value")(child)));
+    return fieldOf("value")(child).pipe(ofType("command_argument"), Option.toArray);
   }
   return [];
 };

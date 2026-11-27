@@ -15,10 +15,12 @@ const MESSAGE =
 
 const HookSchema = Schema.Struct({
   command: Schema.optional(Schema.String),
-  args: Schema.optional(Schema.Array(Schema.String)),
+  args: Schema.String.pipe(Schema.Array, Schema.optional),
 });
 const MatcherSchema = Schema.Struct({ hooks: Schema.Array(HookSchema) });
-const HooksSchema = Schema.Struct({ SessionStart: Schema.optional(Schema.Array(MatcherSchema)) });
+const HooksSchema = Schema.Struct({
+  SessionStart: MatcherSchema.pipe(Schema.Array, Schema.optional),
+});
 const SettingsSchema = Schema.Struct({ hooks: Schema.optional(HooksSchema) });
 const decodeSettings = Schema.decodeOption(Schema.fromJsonString(SettingsSchema));
 

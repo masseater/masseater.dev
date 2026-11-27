@@ -97,7 +97,7 @@ const jstIso = (utc: string): string =>
   pipe(
     inJst(utc),
     Option.map((zoned) =>
-      Str.concat(JST_SUFFIX)(pipe(DateTime.formatIsoOffset(zoned), Str.takeLeft(MINUTES_END))),
+      zoned.pipe(DateTime.formatIsoOffset, Str.takeLeft(MINUTES_END), Str.concat(JST_SUFFIX)),
     ),
     Option.getOrElse(() => utc),
   );
@@ -151,7 +151,7 @@ export const dayRangeOf = (stored: string): DayRange => {
 };
 
 export const todayJst: Effect.Effect<string> = DateTime.now.pipe(
-  Effect.map((now) => jstDayOf(DateTime.formatIso(now))),
+  Effect.map((now) => now.pipe(DateTime.formatIso, jstDayOf)),
 );
 
 export const dayBound =

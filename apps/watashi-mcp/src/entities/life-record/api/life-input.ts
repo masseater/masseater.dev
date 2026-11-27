@@ -205,7 +205,7 @@ export const LifeStatsInput = Schema.Struct({
   to: Time,
   bucket: Schema.optionalKey(Schema.Literals(BUCKETS)),
   compareTo: Schema.optionalKey(CompareTo),
-  where: Schema.optionalKey(Schema.Array(Condition)),
+  where: Condition.pipe(Schema.Array, Schema.optionalKey),
   groupBy: Schema.optionalKey(GroupBy),
 });
 

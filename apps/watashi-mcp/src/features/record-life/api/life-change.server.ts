@@ -143,7 +143,7 @@ const actionOf = (writer: Writer, change: ChangeValue): Action =>
 const checkOf = (checkValues: ValuesCheck, change: ChangeValue): Check =>
   stepOf(change, {
     restore: (rev) => (entry) => Effect.asVoid(restoredOf(entry, rev)),
-    retract: (reason) => () => Effect.asVoid(reasonOf(reason)),
+    retract: (reason) => () => reason.pipe(reasonOf, Effect.asVoid),
     update: () => (entry) => mergedOf(entry, change).pipe(Effect.flatMap(checkValues)),
   });
 

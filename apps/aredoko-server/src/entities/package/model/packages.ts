@@ -14,7 +14,7 @@ const PackageRow = Schema.Struct({
   name: Schema.String,
   assets: Schema.Int,
   summary: Schema.fromJsonString(StoredSummary),
-  booth_item: Schema.NullOr(Schema.fromJsonString(BoothItem)),
+  booth_item: BoothItem.pipe(Schema.fromJsonString, Schema.NullOr),
 });
 
 const decodeSummary = Schema.decodeUnknownEffect(Summary);

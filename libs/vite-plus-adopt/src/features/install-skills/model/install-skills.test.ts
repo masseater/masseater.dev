@@ -270,7 +270,7 @@ layer(fixtureLayer)("installing skills", (it) => {
     Effect.scoped(rejectsACommitOnALocalFolder),
   );
   it.effect("downloads again after GitHub answers 503", () =>
-    TestClock.withLive(Effect.scoped(retriesAnUnavailableDownload)),
+    retriesAnUnavailableDownload.pipe(Effect.scoped, TestClock.withLive),
   );
   it.effect("does nothing without a skills section", () =>
     Effect.scoped(doesNothingWithoutASection),

@@ -15,5 +15,5 @@ const stillAtom = Atom.family(stillOf);
 
 export const useStill = (id: string): Option.Option<string> => {
   const still = useAtomValue(stillAtom(id));
-  return Option.flatten(AsyncResult.value(still));
+  return still.pipe(AsyncResult.value, Option.flatten);
 };

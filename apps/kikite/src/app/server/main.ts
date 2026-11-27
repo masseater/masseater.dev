@@ -5,4 +5,4 @@ import { API_PORT } from "#/shared/config/index.ts";
 
 import { serveApi } from "./serve.ts";
 
-runMain(Layer.launch(serveApi(API_PORT)));
+runMain(serveApi(API_PORT).pipe(Layer.launch));

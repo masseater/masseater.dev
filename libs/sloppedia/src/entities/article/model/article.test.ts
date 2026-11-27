@@ -43,7 +43,7 @@ describe("articlesOf", () => {
     ]));
 
   test("日付の形が違う frontmatter は失敗にする", () => {
-    const failure = Effect.runPromise(Effect.flip(articlesOf(malformed)));
+    const failure = articlesOf(malformed).pipe(Effect.flip, Effect.runPromise);
     return expect(failure).resolves.toBeInstanceOf(Schema.SchemaError);
   });
 });

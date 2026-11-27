@@ -79,7 +79,7 @@ const groupsOf = (mesh: MeshData): readonly Group[] => {
   return pipe(
     buckets,
     Array.map((indices, slot) => ({
-      surface: surfaceOf(Option.flatten(Array.get(mesh.slots, slot))),
+      surface: Array.get(mesh.slots, slot).pipe(Option.flatten, surfaceOf),
       indices: Uint32Array.from(indices),
     })),
     Array.filter(({ indices }) => indices.length > NONE),

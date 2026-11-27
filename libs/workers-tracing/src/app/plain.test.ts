@@ -16,7 +16,7 @@ test("in Node.js, run and runner run Effects without tracing", () =>
   Effect.gen(function* plainRun() {
     const runWithGreeting = runner(Layer.succeed(Greeting, GREETING));
     const greetings = yield* Effect.promise(() =>
-      Promise.all([run(Effect.succeed(GREETING)), runWithGreeting(Effect.service(Greeting))]),
+      Promise.all([run(Effect.succeed(GREETING)), Greeting.pipe(Effect.service, runWithGreeting)]),
     );
     expect(greetings).toStrictEqual([GREETING, GREETING]);
   }).pipe(Effect.runPromise));
