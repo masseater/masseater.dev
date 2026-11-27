@@ -1,27 +1,10 @@
 import { useAtomValue } from "@effect/atom-react";
-import { Effect } from "effect";
+import { holdRender } from "@masseater.dev/tachie";
 import { AsyncResult, Atom } from "effect/reactivity";
-import { cancelRender, continueRender, delayRender } from "remotion";
 
 import { loadFonts } from "./fonts.ts";
 
-const fontsAtom = Atom.make(
-  Effect.suspend(() => {
-    const handle = delayRender("Loading fonts");
-    return loadFonts.pipe(
-      Effect.tap(() =>
-        Effect.sync(() => {
-          continueRender(handle);
-        }),
-      ),
-      Effect.tapError((failure) =>
-        Effect.sync(() => {
-          cancelRender(failure);
-        }),
-      ),
-    );
-  }),
-);
+const fontsAtom = Atom.make(loadFonts.pipe(holdRender("Loading fonts")));
 
 export const useFonts = (): boolean => {
   const result = useAtomValue(fontsAtom);
