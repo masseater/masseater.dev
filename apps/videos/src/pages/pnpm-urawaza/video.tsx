@@ -56,7 +56,7 @@ export const look: Partial<Look> = {
         </div>
       </div>
       <div className="font-jp absolute inset-x-0 top-[300px] flex h-[130px] items-center justify-between bg-[#ffd200] pr-6 pl-8">
-        <span className="text-[56px] font-black text-[#e60012]">知らないと損する pnpm</span>
+        <span className="text-[56px] font-black text-[#e60012]">知らないと損するpnpm</span>
         <Img
           className="h-[130px] w-[170px] self-end object-cover object-top"
           src={imageOf("zun-stand")(timeline)}

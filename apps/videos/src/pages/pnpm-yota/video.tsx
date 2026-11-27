@@ -58,26 +58,26 @@ export const draw: Readonly<Record<string, Draw>> = {
   hook: (shot) => (
     <>
       <Phone name="pnpm-home" scroll={300} shot={shot} />
-      <Heading sub="乗り換えてよかった道具" title="pnpm" />
+      <Heading sub="乗り換えてよかったツール" title="pnpm" />
       <Sfx at={0} kind="hook" shot={shot} />
     </>
   ),
   point1: (shot) => (
     <>
       <Phone name="pnpm-bench2" scroll={200} shot={shot} tilt="rotate-3" />
-      <Heading sub="ポイント 1" title="Fast" />
+      <Heading sub="ポイント1" title="Fast" />
     </>
   ),
   point2: (shot) => (
     <>
       <Phone name="pnpm-motivation" scroll={160} shot={shot} />
-      <Heading sub="ポイント 2" title="Light" />
+      <Heading sub="ポイント2" title="Light" />
     </>
   ),
   point3: (shot) => (
     <>
       <Phone name="pnpm-bench" scroll={220} shot={shot} tilt="rotate-3" />
-      <Heading sub="ポイント 3" title="Easy" />
+      <Heading sub="ポイント3" title="Easy" />
     </>
   ),
   ending: (shot) => (

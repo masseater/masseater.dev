@@ -128,7 +128,7 @@ export const draw: Readonly<Record<string, Draw>> = {
           pnpm
         </div>
         <p className="text-[54px] leading-snug font-bold">
-          Node.js の部品（パッケージ）を入れたり消したりする道具。npm より速く、容量も節約できる。
+          Node.jsのパッケージを入れたり消したりするツール。npmより速く、容量も節約できる。
         </p>
       </div>
     </Panel>

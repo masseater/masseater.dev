@@ -115,7 +115,7 @@ export const draw: Readonly<Record<string, Draw>> = {
   cache: () => <Top text="Done in 175ms" />,
   link: () => <Top text="hard link" />,
   why: () => <Top text="store/v11" />,
-  catch: () => <Top text={"node_modules が\nフラットじゃない"} />,
+  catch: () => <Top text={"node_modulesが\nフラットじゃない"} />,
   ending: (shot) => (
     <>
       <Top text={"本日のツール\npnpm"} />

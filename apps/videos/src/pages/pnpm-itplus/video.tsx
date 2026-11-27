@@ -99,7 +99,7 @@ export const draw: Readonly<Record<string, Draw>> = {
         <div className="caption-outline font-sans text-[190px] leading-none font-black [--fill:#f69220] [--outline:#ffffff] [--stroke:0.12em]">
           pnpm
         </div>
-        <Bullets items={["Node.js のパッケージを管理", "npm と同じコマンドで使える"]} />
+        <Bullets items={["Node.jsのパッケージを管理", "npmと同じコマンドで使える"]} />
       </Stage>
     </WithCaption>
   ),

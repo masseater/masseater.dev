@@ -15,12 +15,12 @@ export const script: VideoScript = {
   bgm: { url: "https://amachamusic.chagasi.com/mp3/simplestyle.mp3", credit: "甘茶の音楽工房" },
   images: { ...IMAGES, ...SHOTS },
   cuts: [
-    { id: "hook", say: ["npm のインストール\n遅すぎない！？"] },
-    { id: "try", say: ["で、噂の pnpm\n入れてみた"] },
+    { id: "hook", say: ["npmのインストール\n遅すぎない！？"] },
+    { id: "try", say: ["で、噂のpnpm\n入れてみた"] },
     { id: "wow", say: ["えっ\nもう終わった！？"], hold: 0.5 },
     { id: "again", say: ["2回目なんて\n0.2秒"] },
     { id: "disk", say: ["しかも容量も\nほぼ増えないらしい"] },
     { id: "caveat", say: ["ただ古いツールだと\n動かないこともあるっぽい", "そこだけ注意っす"] },
-    { id: "ending", say: ["もう npm には\n戻れないっすねぇ"], hold: 0.8 },
+    { id: "ending", say: ["もうnpmには\n戻れないっすねぇ"], hold: 0.8 },
   ],
 };
