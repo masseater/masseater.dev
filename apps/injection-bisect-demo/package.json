@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@effect/atom-react": "catalog:stack",
+    "@masseater.dev/ui": "workspace:*",
     "@masseater.dev/web-ui": "workspace:*",
     "@r_masseater/injection-bisect": "workspace:*",
     "@tanstack/react-devtools": "catalog:",

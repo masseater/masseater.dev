@@ -2,7 +2,6 @@ import { Array, Effect, MutableHashMap, Number as Num, Option, Order, pipe } fro
 
 import { runtime } from "#/shared/lib/telemetry.ts";
 
-import { drawGroup } from "./gpu-pipelines.ts";
 import type { Pipelines } from "./gpu-pipelines.ts";
 
 const MAX_MIP_LEVELS = 4;
@@ -107,7 +106,7 @@ const register =
   (context: Context, slots: Slots) =>
   (image: HTMLImageElement): Effect.Effect<void> =>
     Effect.map(uploadImage(context.device)(image), (texture) => {
-      const group = drawGroup({ device: context.device, pipelines: context.pipelines, texture });
+      const group = context.pipelines.drawGroup(texture);
       slots.set(image, {
         status: "ready",
         uploaded: { texture, group },

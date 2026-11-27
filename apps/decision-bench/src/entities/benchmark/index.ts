@@ -8,7 +8,6 @@ export { colorOf } from "./model/model-color.ts";
 export type { ChartRow } from "./ui/charts/chart-row.ts";
 export { indexDetail } from "./ui/charts/model-detail.ts";
 export { BarChart } from "./ui/charts/bar-chart.tsx";
-export { ChartFigure } from "./ui/charts/chart-figure.tsx";
 export { TaskNav } from "./ui/task-nav.tsx";
 export { ReliabilityChart } from "./ui/charts/reliability-chart.tsx";
 export { gap, usd, decimal, withInterval } from "./lib/format.ts";

@@ -1,9 +1,9 @@
+import { Titled } from "@masseater.dev/ui/titled";
 import type { ReactNode } from "react";
 
 import type { TaskEntry } from "#/entities/benchmark/model/ranking.ts";
 
 import { BarChart } from "./bar-chart.tsx";
-import { ChartFigure } from "./chart-figure.tsx";
 import { ModelKey } from "./model-key.tsx";
 import { COST_AXIS, LATENCY_AXIS, scatterPoints } from "./scatter-points.ts";
 import { ScoreScatter } from "./score-scatter.tsx";
@@ -15,10 +15,10 @@ const COST_TITLE = "skill × タスク全体の費用";
 
 export const TaskCharts = ({ entries }: Readonly<{ entries: readonly TaskEntry[] }>): ReactNode => (
   <div className="flex flex-col gap-10">
-    <ChartFigure title={SKILL_TITLE}>
+    <Titled kind="figure" title={SKILL_TITLE}>
       <BarChart title={SKILL_TITLE} rows={skillRows(entries)} />
-    </ChartFigure>
-    <ChartFigure title={LATENCY_TITLE}>
+    </Titled>
+    <Titled kind="figure" title={LATENCY_TITLE}>
       <ScoreScatter
         title={LATENCY_TITLE}
         axis={LATENCY_AXIS}
@@ -28,8 +28,8 @@ export const TaskCharts = ({ entries }: Readonly<{ entries: readonly TaskEntry[]
           measureOf: ({ result }) => result.p50Ms,
         })}
       />
-    </ChartFigure>
-    <ChartFigure title={COST_TITLE}>
+    </Titled>
+    <Titled kind="figure" title={COST_TITLE}>
       <ScoreScatter
         title={COST_TITLE}
         axis={COST_AXIS}
@@ -39,7 +39,7 @@ export const TaskCharts = ({ entries }: Readonly<{ entries: readonly TaskEntry[]
           measureOf: ({ result }) => result.costUsd,
         })}
       />
-    </ChartFigure>
+    </Titled>
     <ModelKey entries={entries} />
   </div>
 );

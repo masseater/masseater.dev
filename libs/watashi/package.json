@@ -41,6 +41,7 @@
     "prepublishOnly": "vp run build"
   },
   "dependencies": {
+    "@masseater.dev/local-server": "workspace:*",
     "@r_masseater/h56m": "workspace:*",
     "@r_masseater/h56m-presets": "workspace:*"
   },

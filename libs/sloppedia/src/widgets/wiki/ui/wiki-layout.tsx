@@ -8,7 +8,7 @@ export const WikiLayout = ({
   config,
   children,
 }: Readonly<{ config: SloppediaConfig; children: ReactNode }>): ReactNode => (
-  <div className="bg-wiki-paper text-wiki-text flex min-h-dvh flex-col font-sans">
+  <div className="wiki-root bg-wiki-paper text-wiki-text flex min-h-dvh flex-col font-sans">
     <WikiHeader config={config} />
     {children}
   </div>
