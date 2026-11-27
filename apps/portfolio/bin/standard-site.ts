@@ -21,7 +21,7 @@ import type { Dates } from "#/app/vite/markdown/remark-git-date.ts";
 import { Frontmatter } from "#/entities/entry/index.server.ts";
 
 const SOURCE_DIR = "content/slog";
-const OUTPUT_DIR = "node_modules/.cache/standard-site/blogs";
+const OUTPUT_DIR = "node_modules/.cache/standard-site/slog";
 const FRONTMATTER = /^---\n(?<yaml>[\s\S]*?)\n---\n(?<body>[\s\S]*)$/u;
 
 const BlogFrontmatter = Schema.Struct(Struct.omit(Frontmatter.fields, ["date", "updated"]));
