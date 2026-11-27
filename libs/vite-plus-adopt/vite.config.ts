@@ -76,19 +76,6 @@ const attwUpstream = {
   load: (id: string): string | undefined => VIRTUAL_MODULES[id],
 } as const;
 
-const typescriptShim = {
-  name: "typescript-shim",
-  enforce: "pre",
-  resolveId: {
-    order: "pre",
-    handler: (id: string): string | undefined =>
-      Option.liftPredicate(id, (candidate) => candidate === "typescript").pipe(
-        Option.map(() => local("src/app/fsd-typescript.ts")),
-        Option.getOrUndefined,
-      ),
-  },
-} as const;
-
 interface BuiltAttw {
   readonly checkPackage: typeof checkPackage;
   readonly createPackageFromTarballData: typeof createPackageFromTarballData;
@@ -118,42 +105,29 @@ export default defineConfig({
       ignorePatterns: ["upstream/**"],
       overrides: [
         {
-          files: ["src/{shared/lib/typescript/index,app/fsd-typescript}.ts"],
+          files: ["src/shared/lib/typescript/index.ts"],
           rules: { "import/no-default-export": "off" },
         },
       ],
     },
   },
   tsconfig: "tsconfig.json",
-  plugins: [attwUpstream, typescriptShim],
+  plugins: [attwUpstream],
   pack: {
-    entry: ["src/app/index.ts", "src/app/cli.ts", "src/app/fsd.ts", "src/app/attw.ts"],
+    entry: ["src/app/index.ts", "src/app/cli.ts", "src/app/attw.ts"],
     platform: "node",
-    plugins: [attwUpstream, typescriptShim],
-    deps: {
-      alwaysBundle: [/^@feature-sliced\//u, /^steiger$/u, /^zod$/u],
-    },
-    copy: [
-      {
-        from: local("node_modules/@feature-sliced/steiger-plugin/dist/parsers"),
-        to: local("dist"),
-      },
-    ],
+    plugins: [attwUpstream],
     sourcemap: true,
-    dts: { generator: "tsgo", resolve: [/^steiger$/u] },
+    dts: { generator: "tsgo" },
     publint: { strict: true },
     attw: { module: builtAttw, profile: "esm-only", level: "error" },
     outputOptions: {
-      codeSplitting: {
-        groups: [{ name: "steiger", test: /node_modules[\\/](?:steiger|zod)[\\/].*\.[cm]?js$/u }],
-      },
       banner: (chunk) => Option.getOrElse(Rec.get(BANNERS, chunk.name), () => ""),
     },
   },
   resolve: {
     dedupe: ["vitest"],
     alias: [
-      { find: /^\.\.\/index\.js$/u, replacement: "@feature-sliced/filesystem" },
       { find: /^@arethetypeswrong\/core$/u, replacement: local("src/app/attw.ts") },
       { find: /^@arethetypeswrong\/core\/utils$/u, replacement: `${ATTW_LIB}utils.js` },
       { find: /^#internal\/(?<path>.*)$/u, replacement: `${ATTW_LIB}internal/$<path>` },
@@ -164,14 +138,10 @@ export default defineConfig({
   test: {
     testTimeout: 600_000,
     hookTimeout: 600_000,
-    include: [
-      "src/**/*.test.ts",
-      "upstream/filesystem/specs/*.spec.ts",
-      "upstream/attw-core/test/**/*.test.ts",
-    ],
+    include: ["src/**/*.test.ts", "upstream/attw-core/test/**/*.test.ts"],
     server: {
       deps: {
-        inline: ["@effect/vitest", /@feature-sliced\//u],
+        inline: ["@effect/vitest"],
       },
     },
   },

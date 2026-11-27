@@ -1,8 +1,9 @@
 # @r_masseater/vite-plus-adopt
 
-`vpa` is a CLI that brings secret scanning with h56m, commitlint, textlint, Steiger, fallow and agent skill installation into Vite+. Write their settings and your dependency rules in `vite.config.ts`, and `vpa` reads them from there.
+`vpa` is a CLI that brings secret scanning with h56m, commitlint, textlint, fallow and agent skill installation into Vite+. Write their settings and your dependency rules in `vite.config.ts`, and `vpa` reads them from there.
 Running `vpa` once with no arguments runs every configured check in parallel and prints the results together.
-It also bundles a Feature-Sliced Design plugin for Steiger and @arethetypeswrong/core, both running on TypeScript 7 alone.
+It also bundles @arethetypeswrong/core running on TypeScript 7 alone.
+For Feature-Sliced Design and other structure rules, use [wism](https://www.npmjs.com/package/@r_masseater/wism).
 
 ## Published to
 
@@ -17,7 +18,6 @@ vp add -D @r_masseater/vite-plus-adopt @r_masseater/h56m-presets
 ```ts
 import { betterleaks } from "@r_masseater/h56m-presets";
 import type {} from "@r_masseater/vite-plus-adopt";
-import fsd from "@r_masseater/vite-plus-adopt/fsd";
 import { defineConfig } from "vite-plus";
 
 export default defineConfig({
@@ -31,7 +31,6 @@ export default defineConfig({
     filter: 'matchesAny(finding.line, [`\\bCF_BEACON_TOKEN = "[0-9a-f]{32}"`])',
     ignoredSecrets: ["<SHA-256 of the secret>"],
   },
-  steiger: { paths: ["apps/*/src"], rules: [...fsd.configs.recommended] },
   textlint: {
     ignores: ["CHANGELOG.md"],
     rules: { "preset-ja-technical-writing": true },
@@ -41,9 +40,8 @@ export default defineConfig({
 });
 ```
 
-`import type {} from "@r_masseater/vite-plus-adopt"` types the 8 keys above on `defineConfig`.
+`import type {} from "@r_masseater/vite-plus-adopt"` types the keys vpa reads (`commitlint`, `dependencyRules`, `fallow`, `h56m`, `skills` and `textlint`) on `defineConfig`.
 textlint checks the Markdown files Git tracks. To check other files too, list their globs (`files`) and the settings for them in `textlint.sources`. `presets` work there as well.
-Steiger checks only the directories matching `steiger.paths` that directly contain FSD layer folders (`app`, `pages`, `widgets`, `features`, `entities`, `shared` and so on).
 
 Write the Git hooks like this.
 
@@ -82,19 +80,6 @@ Put `vpa --prepare` in `prepare`. To let Renovate update the commits, extend thi
 { "extends": ["github>masseater/masseater.dev//libs/vite-plus-adopt/renovate"] }
 ```
 
-## Feature-Sliced Design plugin
-
-`@r_masseater/vite-plus-adopt/fsd` bundles [@feature-sliced/steiger-plugin][fsd-plugin] 0.8.2, with the same rules and `configs.recommended` as the original.
-steiger itself also depends on `@feature-sliced/steiger-plugin`, which pulls in TypeScript 5.
-vpa does not use the steiger CLI, so you can drop it with `overrides` in `pnpm-workspace.yaml`.
-
-```yaml
-overrides:
-  "steiger>@feature-sliced/steiger-plugin": "-"
-```
-
-[fsd-plugin]: https://github.com/feature-sliced/steiger/tree/master/packages/steiger-plugin-fsd
-
 ## Replacement for @arethetypeswrong/core
 
 `@r_masseater/vite-plus-adopt/attw` provides the same API as [@arethetypeswrong/core][attw] 0.18.5, on TypeScript 7.1 alone.
@@ -115,4 +100,4 @@ export default defineConfig({
 
 ## License
 
-MIT. The licenses of the original packages bundled in `dist/fsd.mjs`, `dist/parsers` and `dist/attw.mjs` are in `THIRD-PARTY-NOTICES`.
+MIT. The licenses of the original packages bundled in `dist/attw.mjs` are in `THIRD-PARTY-NOTICES`.

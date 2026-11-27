@@ -2,15 +2,12 @@ import type { UserConfig as CommitlintUserConfig } from "@commitlint/types";
 import type { H56mConfig } from "@r_masseater/h56m";
 import type { TextlintRcConfig } from "@textlint/config-loader";
 import type { TextlintKernelRule } from "@textlint/kernel";
-import type { defineConfig as defineSteigerConfig } from "steiger";
 
 import type { DependencyField } from "#/shared/lib/workspace.ts";
 
 import type { SkillsSection } from "./skills.ts";
 
 export interface CommitlintConfig extends Readonly<CommitlintUserConfig> {}
-
-export type SteigerConfig = readonly ReturnType<typeof defineSteigerConfig>[number][];
 
 export type TextlintRuleOptions = NonNullable<TextlintKernelRule["options"]>;
 
@@ -27,11 +24,6 @@ export interface TextlintConfig extends TextlintRcConfig {
   readonly ignores?: readonly string[];
   readonly presets?: Readonly<Record<string, TextlintPreset>>;
   readonly sources?: readonly TextlintSource[];
-}
-
-export interface SteigerSection {
-  readonly paths: readonly string[];
-  readonly rules: SteigerConfig;
 }
 
 export type FallowConfig = Readonly<Record<string, unknown>>;
@@ -57,7 +49,6 @@ export interface ToolSections {
   readonly fallow?: FallowConfig;
   readonly h56m?: H56mConfig;
   readonly skills?: SkillsSection;
-  readonly steiger?: SteigerSection;
   readonly textlint?: TextlintConfig;
 }
 

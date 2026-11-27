@@ -30,13 +30,6 @@ const CONFIG = lines(
   '  commitlint: { rules: { "type-empty": [2, "never"] } },',
   '  dependencyRules: { banned: { "use the stack": ["left-pad"] } },',
   `  h56m: { extend: { path: "${betterleaks}" }, ignoredSecrets: ["0".repeat(64)] },`,
-  "  steiger: {",
-  '    paths: ["src"],',
-  "    rules: [",
-  '      { meta: { name: "none", version: "0.0.0" }, ruleDefinitions: [{ name: "none/ok", check: () => ({ diagnostics: [] }) }] },',
-  '      { rules: { "none/ok": "error" } },',
-  "    ],",
-  "  },",
   '  textlint: { ignores: ["skip/**"], rules: {} },',
   "};",
 );
@@ -52,7 +45,6 @@ const REPOSITORY = {
   "libs/a/package.json": manifest({ effect: "4.1.2" }),
   "docs/guide.md": "# Guide\n",
   "skip/notes.md": "#Notes\n",
-  "src/shared/index.ts": "export {};\n",
 };
 
 const ORIGIN_MAIN: readonly (readonly string[])[] = [

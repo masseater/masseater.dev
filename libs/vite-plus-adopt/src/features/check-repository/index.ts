@@ -1,1 +1,1 @@
-export { dependenciesCheck, steigerCheck } from "./model/repository-checks.ts";
+export { dependenciesCheck } from "./model/repository-checks.ts";

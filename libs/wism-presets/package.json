@@ -1,6 +1,6 @@
 {
   "name": "@r_masseater/wism-presets",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Official rule presets for wism: Feature-Sliced Design layers, file placement and Markdown links, for workspaces, Rust crates and Agent Skills.",
   "keywords": [
     "feature-sliced-design",

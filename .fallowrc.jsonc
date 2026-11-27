@@ -10,7 +10,6 @@
     "libs/oxlint-typed-rules/src/shared/lib/typescript-eslint-utils.ts",
     "libs/vite-plus-adopt/src/shared/lib/typescript/compiler-hosts.ts",
     "libs/vite-plus-adopt/src/shared/lib/typescript/index.ts",
-    "libs/vite-plus-adopt/src/app/fsd-typescript.ts",
   ],
   "usedClassMembers": [
     { "implements": "LegacySymbol", "members": ["getName", "getDeclarations"] },
@@ -64,22 +63,10 @@
       "libs/vite-plus-adopt": {
         "ignoreDependencies": [
           "@andrewbranch/untar.js",
-          "@feature-sliced/filesystem",
           "@loaderkit/resolve",
-          "chokidar",
           "cjs-module-lexer",
-          "effector",
-          "empathic",
-          "fastest-levenshtein",
           "fflate",
-          "globby",
-          "immer",
-          "micromatch",
-          "patronum",
-          "pluralize",
-          "tsconfck",
           "validate-npm-package-name",
-          "web-tree-sitter",
         ],
       },
       "tools/seikin-dance": {

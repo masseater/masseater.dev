@@ -14,6 +14,7 @@ import {
 
 import { brokerCredential } from "./broker.ts";
 import { onNpm } from "./dependencies.ts";
+import { checkExportTargets } from "./export-targets.ts";
 import { manifestIn } from "./manifest.ts";
 import type { Manifest } from "./manifest.ts";
 import { nativeFields, nativeFileOf, nativeReadme } from "./platforms.ts";
@@ -56,6 +57,7 @@ const verifyPackage = Effect.fn("publish.verify")(function* verifyPackage(
     (task) => mustSucceed({ command: "vp", args: ["run", task], cwd: directory }),
     { concurrency: 1, discard: true },
   );
+  yield* checkExportTargets(directory);
 });
 
 const keptFields = Effect.fn("publish.keptFields")(function* keptFields(directory: string) {
