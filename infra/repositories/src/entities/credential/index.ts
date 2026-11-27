@@ -3,6 +3,7 @@ export {
   WORKFLOW_GITHUB_GRANTS,
   grantBindings,
   EXPOSURE_GRANT_KEY,
+  RED_MAIN_GRANT_KEYS,
 } from "./model/credential-grants.ts";
 export type { GitHubGrant } from "./model/credential-grants.ts";
 export { issueKinds, selectKinds } from "./model/credential-kinds.ts";
@@ -17,6 +18,8 @@ export {
   repositoryName,
   sourceWorkflows,
   verify,
+  workflowFile,
   workflowGrant,
 } from "./model/github-oidc.ts";
 export type { Claims } from "./model/github-oidc.ts";
+export { answeredAs } from "./model/route-response.ts";
