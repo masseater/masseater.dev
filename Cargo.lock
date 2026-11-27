@@ -3362,6 +3362,7 @@ dependencies = [
  "specta-typescript",
  "tauri",
  "tauri-build",
+ "tauri-plugin-dialog",
  "tauri-specta",
 ]
 

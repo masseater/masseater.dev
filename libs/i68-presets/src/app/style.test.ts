@@ -3,8 +3,8 @@ import { format, lintText } from "@r_masseater/i68";
 import type { I68Config, I68Error } from "@r_masseater/i68";
 import { Array as Arr, Effect, Record as Rec, pipe } from "effect";
 
-import { bach, progressions, stylePluginOf } from "./index.ts";
-import type { StyleTable } from "./index.ts";
+import { bach, progressions, styleRules, stylePluginOf } from "./index.ts";
+import type { StyleRules, StyleTable } from "./index.ts";
 
 const PATH = "/song.fumx";
 
@@ -99,5 +99,43 @@ it.effect("bach leaves a plain cadence alone", () =>
   Effect.gen(function* cadence() {
     const found = yield* messagesOf(song(["C3 E3 G3", "F3 A3 C4", "G3 B3 D4", "C3 E3 G3"]), bach());
     expect(found).toStrictEqual([]);
+  }),
+);
+
+const RULES: StyleRules = {
+  name: "test style",
+  habits: [
+    { context: "I", next: "IV", kind: "keep", aim: "softer turns", reason: "warm" },
+    { context: "IV", next: "V", kind: "fix", aim: "fewer cadences" },
+    { context: "V", next: "VIm", kind: "suggest", aim: "deceptive turns" },
+  ],
+};
+
+const HABITS: I68Config = styleRules({ plugin: "mine", rules: RULES });
+
+it.effect("style rules flag a kept habit the song skips and name the aim", () =>
+  Effect.gen(function* kept() {
+    const text = song(["C3 E3 G3", "F3 A3 C4", "C3 E3 G3", "G3 B3 D4", "C3 E3 G3"]);
+    const found = yield* pipe(
+      lintText({ path: PATH, text, config: HABITS }),
+      Effect.map(Arr.map(format)),
+    );
+    expect(found).toStrictEqual([
+      "/song.fumx:18:9 warn mine/keep test style goes I → IV here [softer turns: warm]",
+      "/song.fumx:21:9 warn mine/suggest V → VIm would fit test style here [deceptive turns]",
+    ]);
+  }),
+);
+
+it.effect("style rules flag a habit being fixed and leave the kept ones alone", () =>
+  Effect.gen(function* fixed() {
+    const text = song(["C3 E3 G3", "F3 A3 C4", "G3 B3 D4", "A3 C4 E4"]);
+    const found = yield* pipe(
+      lintText({ path: PATH, text, config: HABITS }),
+      Effect.map(Arr.map(format)),
+    );
+    expect(found).toStrictEqual([
+      "/song.fumx:15:9 error mine/fix IV → V is a habit test style is fixing [fewer cadences]",
+    ]);
   }),
 );

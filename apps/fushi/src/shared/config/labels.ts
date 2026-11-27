@@ -35,6 +35,7 @@ export const LABELS = {
   timeline: "タイムライン",
   sections: "区間",
   removeSong: "このスタイルから外す",
+  exportPreset: "i68 プリセットを書き出す",
   unreadable: "この曲の .fumx を読めません",
   play: "鳴らす",
   stop: "止める",

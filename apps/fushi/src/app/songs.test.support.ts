@@ -24,4 +24,6 @@ export const SONG_FILES: readonly File[] = [
   ),
 ];
 
-export const HABIT = "I V I → bVII";
+export const TRANSITION = { context: "I V I", next: "bVII" } as const;
+
+export const HABIT = `${TRANSITION.context} → ${TRANSITION.next}`;
