@@ -1,4 +1,4 @@
-import { Array as Arr, Effect, Option, Ref, String as Str } from "effect";
+import { Array as Arr, Effect, Option, Predicate, Ref, String as Str, pipe } from "effect";
 import { HttpClient, HttpClientResponse } from "effect/http";
 import type { HttpClientRequest } from "effect/http";
 import { expect, test } from "vite-plus/test";
@@ -14,12 +14,31 @@ const FIRE_URL = `https://api.anthropic.com/v1/claude_code/routines/${TRIGGER}/f
 const OK = 200;
 const FORBIDDEN = 403;
 
-type Sent = Readonly<{ url: string; authorization: string; version: string }>;
+type Sent = Readonly<{
+  url: string;
+  authorization: string;
+  version: string;
+  carriesText: boolean;
+}>;
+
+const REQUEST_TEXT = "記事を直して";
+
+const decoder = new TextDecoder();
+
+const carriesText = (request: HttpClientRequest.HttpClientRequest): boolean =>
+  pipe(
+    request.body,
+    Option.liftPredicate(Predicate.hasProperty("body")),
+    Option.map(({ body }) => body),
+    Option.filter(Predicate.isUint8Array),
+    Option.exists((bytes) => Str.includes(REQUEST_TEXT)(decoder.decode(bytes))),
+  );
 
 const sentOf = (request: HttpClientRequest.HttpClientRequest): Sent => ({
   url: request.url,
   authorization: request.headers["authorization"] ?? "",
   version: request.headers["anthropic-version"] ?? "",
+  carriesText: carriesText(request),
 });
 
 const responding =
@@ -38,7 +57,7 @@ const recording = (
     Effect.map((sent) => ({ sent, client: HttpClient.make(responding(sent, status)) })),
   );
 
-test("登録したルーティンを封をして置き、押すと API に Bearer で送る", () =>
+test("登録したルーティンを封をして置き、押すと API に Bearer で依頼の本文を送る", () =>
   Effect.runPromise(
     Effect.gen(function* registerAndFire() {
       const { env, rows } = memoryStore();
@@ -47,7 +66,7 @@ test("登録したルーティンを封をして置き、押すと API に Beare
         routine: { triggerId: TRIGGER, token: TOKEN },
       });
       const { client, sent } = yield* recording(OK);
-      const outcome = yield* fireRoutine(env).pipe(
+      const outcome = yield* fireRoutine(env, REQUEST_TEXT).pipe(
         Effect.provideService(HttpClient.HttpClient, client),
       );
       expect(registered).toBe(true);
@@ -55,7 +74,12 @@ test("登録したルーティンを封をして置き、押すと API に Beare
       expect(outcome).toBe("fired");
       const requests = yield* Ref.get(sent);
       expect(requests).toStrictEqual([
-        { url: FIRE_URL, authorization: `Bearer ${TOKEN}`, version: "2023-06-01" },
+        {
+          url: FIRE_URL,
+          authorization: `Bearer ${TOKEN}`,
+          version: "2023-06-01",
+          carriesText: true,
+        },
       ]);
     }),
   ));
@@ -78,7 +102,7 @@ test("未登録なら送らずに missing を返す", () =>
     Effect.gen(function* missing() {
       const { env } = memoryStore();
       const { client, sent } = yield* recording(OK);
-      const outcome = yield* fireRoutine(env).pipe(
+      const outcome = yield* fireRoutine(env, REQUEST_TEXT).pipe(
         Effect.provideService(HttpClient.HttpClient, client),
       );
       const requests = yield* Ref.get(sent);
@@ -93,7 +117,7 @@ test("API が拒んだら rejected を返す", () =>
       const { env } = memoryStore();
       yield* registerRoutine({ env, routine: { triggerId: TRIGGER, token: TOKEN } });
       const { client } = yield* recording(FORBIDDEN);
-      const outcome = yield* fireRoutine(env).pipe(
+      const outcome = yield* fireRoutine(env, REQUEST_TEXT).pipe(
         Effect.provideService(HttpClient.HttpClient, client),
       );
       expect(outcome).toBe("rejected");
