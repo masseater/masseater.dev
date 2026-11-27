@@ -67,7 +67,7 @@ catalog:
   "@modelcontextprotocol/server": 2.4.0
   auth: 1.7.27
   "@r_masseater/oxlint-typed-rules": 0.5.0
-  "@r_masseater/vite-plus-adopt": 0.12.0
+  "@r_masseater/vite-plus-adopt": 0.13.0
   "@discordjs/voice": 0.19.2
   "@snazzah/davey": 0.2.0
   discord.js: 14.28.1
@@ -330,6 +330,65 @@ overrides:
   undici@>=7.0.0 <7.30.1: ^7.30.1 # exit: unused
   katex@>=0.11.0 <0.18.2: ^0.19.0 # exit: unused
   ws@<8.22.1: ^8.22.1 # exit: unused
+permissions:
+  "@masseater.dev/effect2rs":
+    skills: true
+  "@r_masseater/fu4":
+    skills: true
+  "@r_masseater/fu4-presets":
+    skills: true
+  "@r_masseater/fumx-parser":
+    skills: true
+  "@r_masseater/h56m":
+    skills: true
+  "@r_masseater/h56m-presets":
+    skills: true
+  "@r_masseater/i68":
+    skills: true
+  "@r_masseater/i68-presets":
+    skills: true
+  "@r_masseater/injection-bisect":
+    skills: true
+  "@r_masseater/msch":
+    skills: true
+  "@r_masseater/ocr-decide":
+    skills: true
+  "@r_masseater/oxlint-plugin-decision":
+    skills: true
+  "@r_masseater/oxlint-typed-rules":
+    skills: true
+  "@r_masseater/textlint-rule-preset-ja":
+    skills: true
+  "@r_masseater/vite-plus-adopt":
+    skills: true
+  "@r_masseater/vitest-otlp":
+    skills: true
+  "@r_masseater/web-vitals-flow":
+    skills: true
+  "@r_masseater/wism":
+    skills: true
+  "@r_masseater/wism-presets":
+    skills: true
+  "@r_masseater/workers-tracing":
+    skills: true
+  "@r_masseater/y8":
+    skills: true
+  "@r_masseater/y8-presets":
+    skills: true
+  "@tanstack/devtools-vite":
+    skills: true
+  "@tanstack/react-router":
+    skills: true
+  "@tanstack/react-start":
+    skills: true
+  "@tanstack/router-core":
+    skills: true
+  drizzle-kit:
+    skills: true
+  fallow:
+    skills: true
+  modern-web-guidance:
+    skills: false
 peerDependencyRules:
   allowAny:
     - vite
@@ -384,8 +443,9 @@ minimumReleaseAgeExclude:
   - "@r_masseater/h56m-linux-x64-gnu@0.2.0"
   - "@r_masseater/h56m-win32-x64-msvc@0.2.0"
   - "@r_masseater/h56m@0.2.0"
-  - "@r_masseater/vite-plus-adopt@0.12.0"
+  - "@r_masseater/vite-plus-adopt@0.13.0"
   - "@r_masseater/oxlint-typed-rules@0.5.0"
+  - "@r_masseater/node-main@0.1.0"
 
 cargo:
   enabled: true

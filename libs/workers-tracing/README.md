@@ -73,7 +73,7 @@ withWorkersTracing({ destinations: ["workers-tracing"] })(providers());
 
 ## Agent skills
 
-The package ships TanStack Intent skills for coding agents. Load one with `vp exec intent load @r_masseater/workers-tracing#<skill>`.
+The package ships agent skills in `skills/`. Add `permissions: { "@r_masseater/workers-tracing": { skills: true } }` to `pnpm-workspace.yaml` and `vp install` links them into the skill directories of your agents.
 
 ## License
 
