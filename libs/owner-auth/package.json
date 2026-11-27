@@ -21,7 +21,8 @@
     "@masseater.dev/ui": "workspace:*",
     "@r_masseater/workers-tracing": "workspace:*",
     "@tanstack/react-query": "catalog:stack",
-    "better-auth": "catalog:stack"
+    "better-auth": "catalog:stack",
+    "reflect-metadata": "catalog:"
   },
   "devDependencies": {
     "@types/react": "catalog:",
