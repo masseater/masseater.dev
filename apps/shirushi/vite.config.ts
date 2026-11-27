@@ -11,7 +11,7 @@ export default defineConfig({
         crate: "shirushi",
         input: await cargoInputs({ directory: import.meta.dirname }),
       }),
-      verify: { command: [], dependsOn: ["cargo"] },
+      verify: { command: [], dependsOn: ["cargo", "screen"] },
       ...tauriReleaseTasks(),
     },
   },

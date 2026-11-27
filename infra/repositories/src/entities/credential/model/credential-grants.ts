@@ -52,6 +52,7 @@ const PROFILES = {
 
 const REPOSITORY_IDS = {
   "ai-produced": "1403877758",
+  ecosystems: "1473813525",
   "geigeki-kaiiki": "1443911830",
   konomi: "1443059710",
   "lint-kit": "1413881435",
@@ -84,6 +85,7 @@ const CREDENTIAL_GRANTS: Readonly<Record<string, keyof typeof PROFILES>> = {
   [grantKeyOf("masseater.dev", "zone")]: "transforms",
   [grantKeyOf("masseater.dev", "mcp-portal")]: "access",
   [grantKeyOf("masseater.dev", "production")]: "access",
+  [grantKeyOf("ecosystems")]: "deploy",
   [grantKeyOf("mirucord")]: "deploy",
   [grantKeyOf("msa")]: "deploy",
   [grantKeyOf("typescript-template")]: "deploy",
