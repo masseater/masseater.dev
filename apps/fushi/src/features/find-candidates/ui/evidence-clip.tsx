@@ -1,4 +1,4 @@
-import type { Place } from "@r_masseater/i68-presets/habits";
+import type { Place } from "@r_masseater/i68/habits";
 import { Option, pipe } from "effect";
 import type { ReactNode } from "react";
 

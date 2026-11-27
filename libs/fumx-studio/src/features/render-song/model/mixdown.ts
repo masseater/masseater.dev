@@ -1,4 +1,4 @@
-import type { Mixer } from "@r_masseater/fumx-parser";
+import type { Mixer } from "@r_masseater/song-format";
 
 import { decibels } from "#/shared/lib/dsp/number.ts";
 import type { PlayedTrack } from "#/shared/lib/plugin/plugin.ts";

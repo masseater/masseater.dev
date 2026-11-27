@@ -1,4 +1,4 @@
-import { runMain } from "@masseater.dev/node-main";
+import { runMain } from "@r_masseater/node-main";
 import { Match, pipe } from "effect";
 
 import { cargo } from "./lib/bundled.ts";

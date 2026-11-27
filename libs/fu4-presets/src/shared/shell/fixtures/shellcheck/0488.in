@@ -1,4 +1,0 @@
-./tools/dep_updaters/update-v8-patch.sh > temp-output
-cat temp-output
-tail -n1 temp-output | grep "NEW_VERSION=" >> "$GITHUB_ENV" || true
-rm temp-output

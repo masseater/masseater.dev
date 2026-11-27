@@ -1,4 +1,4 @@
-import { outputOf } from "@masseater.dev/github-workflow";
+import { outputOf } from "@r_masseater/github-workflow";
 import { Array as Arr, Effect, Option, Schema, String as Str, pipe } from "effect";
 import type { ChildProcessSpawner } from "effect/process";
 

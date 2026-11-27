@@ -29,6 +29,7 @@
     "skills/detect-prompt-injection"
   ],
   "type": "module",
+  "sideEffects": false,
   "imports": {
     "#package.json": "./package.json",
     "#/*": "./src/*"

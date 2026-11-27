@@ -1,4 +1,4 @@
-import type { Mixer, PluginUse, Song } from "@r_masseater/fumx-parser";
+import type { Mixer, PluginUse, Song } from "@r_masseater/song-format";
 import { Array as Arr, Effect, Option, pipe } from "effect";
 import type { Scope } from "effect";
 

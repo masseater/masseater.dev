@@ -1,1 +1,0 @@
-SC2164:warning:2:1: Use 'cd ... || exit' or 'cd ... || return' in case cd fails

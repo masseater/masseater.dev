@@ -4,7 +4,7 @@ import { stretch } from "@masseater.dev/fumx-studio/dsp/stretch";
 import type { Stretching } from "@masseater.dev/fumx-studio/dsp/stretch";
 import { numberIn, textIn } from "@masseater.dev/fumx-studio/plugin/args";
 import type { Voice } from "@masseater.dev/fumx-studio/plugin/plugin";
-import type { PluginArgument } from "@r_masseater/fumx-parser";
+import type { PluginArgument } from "@r_masseater/song-format";
 import { Option } from "effect";
 
 const NOTHING = 0;

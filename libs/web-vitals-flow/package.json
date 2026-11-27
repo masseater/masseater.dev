@@ -53,7 +53,7 @@
   },
   "devDependencies": {
     "@effect/platform-node": "catalog:",
-    "@r_masseater/vitest-otlp": "workspace:*",
+    "@r_masseater/vitest-otlp": "catalog:",
     "@types/node": "catalog:",
     "effect": "catalog:stack",
     "vite-plus": "catalog:stack"

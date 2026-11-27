@@ -1,4 +1,4 @@
-import type { Song } from "@r_masseater/fumx-parser";
+import type { Song } from "@r_masseater/song-format";
 import { Array as Arr, Effect, Option, Predicate, pipe } from "effect";
 
 import type { PlayedEvent, PlayedTrack } from "#/shared/lib/plugin/plugin.ts";

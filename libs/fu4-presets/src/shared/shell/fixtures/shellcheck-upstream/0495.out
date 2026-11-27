@@ -1,1 +1,0 @@
-SC2010:warning:1:1: Don't use ls | grep. Use a glob or a for loop with a condition to allow non-alphanumeric filenames

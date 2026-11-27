@@ -1,1 +1,0 @@
-echo "NODE=$(which node)" >> $GITHUB_ENV

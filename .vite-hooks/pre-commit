@@ -1,3 +1,2 @@
-vp run @r_masseater/h56m-presets#native
 GOMEMLIMIT=4GiB vp staged
 vp exec msch --staged

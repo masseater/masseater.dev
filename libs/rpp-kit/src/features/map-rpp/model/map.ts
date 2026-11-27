@@ -1,4 +1,4 @@
-import { renderSegments } from "mapped-import";
+import { renderSegments } from "@r_masseater/mapped-import";
 
 import { parseRpp, outlineSong, segmentsOf } from "#/entities/song/index.ts";
 import type { ParseError } from "#/entities/song/index.ts";

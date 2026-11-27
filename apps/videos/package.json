@@ -12,9 +12,9 @@
     "#package.json": "./package.json"
   },
   "dependencies": {
-    "@masseater.dev/node-main": "workspace:*",
     "@masseater.dev/tachie": "workspace:*",
     "@masseater.dev/video-kit": "workspace:*",
+    "@r_masseater/node-main": "catalog:",
     "effect": "catalog:stack",
     "playwright-core": "catalog:",
     "react": "catalog:",

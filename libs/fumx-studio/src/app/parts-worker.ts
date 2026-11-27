@@ -1,4 +1,4 @@
-import type { Song } from "@r_masseater/fumx-parser";
+import type { Song } from "@r_masseater/song-format";
 import { Effect, Function as Fn, Option, Schema, pipe } from "effect";
 
 import { renderPart } from "#/features/render-song/index.ts";

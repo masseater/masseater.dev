@@ -1,8 +1,0 @@
-SC2129:style:2:1: Consider using { cmd1; cmd2; } >> file instead of individual redirects
-SC2086:info:2:36: Double quote to prevent globbing and word splitting
-SC2086:info:3:12: Double quote to prevent globbing and word splitting
-SC2086:info:4:116: Double quote to prevent globbing and word splitting
-SC2129:style:17:5: Consider using { cmd1; cmd2; } >> file instead of individual redirects
-SC2086:info:17:16: Double quote to prevent globbing and word splitting
-SC2086:info:18:106: Double quote to prevent globbing and word splitting
-SC2086:info:19:85: Double quote to prevent globbing and word splitting

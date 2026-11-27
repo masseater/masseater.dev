@@ -13,8 +13,8 @@
   },
   "dependencies": {
     "@distilled.cloud/github": "catalog:",
-    "@masseater.dev/node-main": "workspace:*",
-    "@r_masseater/vitest-otlp": "workspace:*",
+    "@r_masseater/node-main": "catalog:",
+    "@r_masseater/vitest-otlp": "catalog:",
     "effect": "catalog:stack"
   },
   "devDependencies": {

@@ -1,2 +1,0 @@
-make lint-yaml-build || true
-make lint-yaml

@@ -1,5 +1,5 @@
 import type { LiveMix } from "@masseater.dev/daw-view";
-import type { PluginArgument, Song } from "@r_masseater/fumx-parser";
+import type { PluginArgument, Song } from "@r_masseater/song-format";
 import type { Effect, Option, Scope } from "effect";
 
 import type { Lane } from "#/shared/lib/daw/view.ts";

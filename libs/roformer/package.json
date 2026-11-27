@@ -5,7 +5,7 @@
   "description": "Rust library that runs BS-RoFormer source separation models from community PyTorch checkpoints without conversion.",
   "type": "module",
   "devDependencies": {
-    "@r_masseater/msch": "workspace:*",
+    "@r_masseater/msch": "catalog:",
     "vite-plus": "catalog:stack"
   }
 }

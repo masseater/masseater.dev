@@ -1,4 +1,4 @@
-import type { Effect as SongEffect, Song } from "@r_masseater/fumx-parser";
+import type { Effect as SongEffect, Song } from "@r_masseater/song-format";
 import { Array as Arr, Option, pipe } from "effect";
 
 interface Chain {

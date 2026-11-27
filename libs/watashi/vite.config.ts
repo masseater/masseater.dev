@@ -3,7 +3,7 @@ import { defineConfig } from "vite-plus";
 
 export default defineConfig({
   msch: {
-    publish: { installSize: "78 MB" },
+    publish: { installSize: "96 MB" },
   },
   pack: {
     entry: { main: "src/app/main.ts" },

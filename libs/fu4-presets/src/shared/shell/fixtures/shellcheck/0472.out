@@ -1,2 +1,0 @@
-SC2012:info:1:21: Use find instead of ls to better handle non-alphanumeric filenames
-SC2086:info:1:62: Double quote to prevent globbing and word splitting

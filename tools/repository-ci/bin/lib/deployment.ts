@@ -1,4 +1,4 @@
-import { getJson, post, postJson, warn } from "@masseater.dev/github-workflow";
+import { getJson, post, postJson, warn } from "@r_masseater/github-workflow";
 import { Array as Arr, Config, Effect, Option, Schema, pipe } from "effect";
 
 const Deployments = Schema.Array(Schema.Struct({ sha: Schema.String }));

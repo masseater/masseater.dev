@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-import { mask, setEnv } from "@masseater.dev/github-workflow";
-import { runMain } from "@masseater.dev/node-main";
+import { mask, setEnv } from "@r_masseater/github-workflow";
+import { runMain } from "@r_masseater/node-main";
 import { Console, Effect, Option } from "effect";
 
 import { brokerIdToken, issued } from "./lib/broker-client.ts";

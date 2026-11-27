@@ -1,1 +1,0 @@
-typeset -r x=$(false);

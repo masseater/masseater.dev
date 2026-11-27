@@ -1,2 +1,0 @@
-SC2034:warning:1:12: x appears unused. Verify use (or export if used externally)
-SC2155:warning:1:12: Declare and assign separately to avoid masking return values

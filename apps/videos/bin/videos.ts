@@ -1,4 +1,4 @@
-import { runMain } from "@masseater.dev/node-main";
+import { runMain } from "@r_masseater/node-main";
 import { Command } from "effect/cli";
 
 import { cli } from "#/app/cli.ts";

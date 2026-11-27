@@ -1,2 +1,0 @@
-rustup override set "$RUSTC_VERSION"
-rustup --version

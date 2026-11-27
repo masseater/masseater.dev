@@ -1,2 +1,0 @@
-git add -A deps/openssl
-git commit -m "deps: update archs files for openssl-$NEW_VERSION"

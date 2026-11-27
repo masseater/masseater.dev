@@ -1,5 +1,5 @@
 import { layer as nodeWorkerRunner } from "@effect/platform-node/NodeWorkerRunner";
-import { runMain } from "@masseater.dev/node-main";
+import { runMain } from "@r_masseater/node-main";
 import { Array, Effect, Layer, pipe } from "effect";
 import { RpcServer } from "effect/rpc";
 

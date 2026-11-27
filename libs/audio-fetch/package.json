@@ -5,7 +5,7 @@
   "description": "Rust library that downloads the original audio from YouTube, Niconico and SoundCloud, falling back to a pinned yt-dlp.",
   "type": "module",
   "devDependencies": {
-    "@r_masseater/msch": "workspace:*",
+    "@r_masseater/msch": "catalog:",
     "vite-plus": "catalog:stack"
   }
 }

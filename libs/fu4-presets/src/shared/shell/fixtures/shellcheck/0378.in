@@ -1,1 +1,0 @@
-./vcbuild.bat noprojgen nobuild test-ci-js; node -e 'process.exit(0)'

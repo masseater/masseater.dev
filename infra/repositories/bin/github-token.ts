@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { Credentials } from "@distilled.cloud/github/Credentials";
-import { fail, mask, setEnv } from "@masseater.dev/github-workflow";
-import { runMain } from "@masseater.dev/node-main";
+import { fail, mask, setEnv } from "@r_masseater/github-workflow";
+import { runMain } from "@r_masseater/node-main";
 import { Array as Arr, Effect, Option, Redacted, pipe } from "effect";
 
 import { brokerIdToken, issued } from "./lib/broker-client.ts";

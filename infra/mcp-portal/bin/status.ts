@@ -5,7 +5,7 @@ import {
   listAccessApplicationsForAccount,
   syncAccessAiControlMcpServer,
 } from "@distilled.cloud/cloudflare/zero-trust";
-import { runMain } from "@masseater.dev/node-main";
+import { runMain } from "@r_masseater/node-main";
 import { Config, Console, Effect, Layer, Schema, Stream } from "effect";
 
 const encodeJson = Schema.encodeEffect(Schema.fromJsonString(Schema.Unknown));

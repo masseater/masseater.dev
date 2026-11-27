@@ -1,1 +1,0 @@
-SC2129:style:1:1: Consider using { cmd1; cmd2; } >> file instead of individual redirects

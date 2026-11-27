@@ -1,4 +1,4 @@
-import type { Hit, Note, PluginArgument, PluginUse, Slice, Song } from "@r_masseater/fumx-parser";
+import type { Hit, Note, PluginArgument, PluginUse, Slice, Song } from "@r_masseater/song-format";
 import { Array as Arr, Option, pipe } from "effect";
 
 import type { Clock } from "#/entities/clock/index.ts";

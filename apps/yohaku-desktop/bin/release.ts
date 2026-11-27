@@ -1,5 +1,5 @@
 import { gh, succeeds } from "@masseater.dev/component-release";
-import { runMain } from "@masseater.dev/node-main";
+import { runMain } from "@r_masseater/node-main";
 import { Config, DateTime, Effect, FileSystem, Path, Schema } from "effect";
 
 import { installers } from "./lib/installers.ts";

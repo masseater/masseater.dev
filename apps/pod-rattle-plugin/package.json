@@ -6,8 +6,8 @@
   "type": "module",
   "devDependencies": {
     "@masseater.dev/component-release": "workspace:*",
-    "@masseater.dev/node-main": "workspace:*",
-    "@r_masseater/msch": "workspace:*",
+    "@r_masseater/msch": "catalog:",
+    "@r_masseater/node-main": "catalog:",
     "@types/node": "catalog:",
     "effect": "catalog:stack",
     "vite-plus": "catalog:stack"
