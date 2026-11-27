@@ -3,7 +3,7 @@ import { runner } from "@r_masseater/workers-tracing/effect";
 import { WorkerEntrypoint } from "cloudflare:workers";
 import { Effect, Layer, Logger, Match } from "effect";
 
-import { watashiLayer } from "#/app/mcp/bindings.server.ts";
+import { watashiLayer } from "#/app/mcp/layer.server.ts";
 import { MONEY_READ } from "#/app/mcp/money-tools.server.ts";
 import type { Failure, Services } from "#/entities/ledger/index.server.ts";
 

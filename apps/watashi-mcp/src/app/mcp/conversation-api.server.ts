@@ -7,7 +7,7 @@ import { importMemos } from "#/features/manage-memory/index.server.ts";
 import { offset, upload } from "#/features/store-conversations/index.server.ts";
 import { methodNotAllowed, storageFailed } from "#/shared/api/index.ts";
 
-import type { WatashiServices } from "./bindings.server.ts";
+import type { WatashiServices } from "./layer.server.ts";
 
 const conversations = (
   request: Request,
