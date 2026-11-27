@@ -14,13 +14,17 @@ env:
   VP_REMOTE_CACHE: ${{ github.event_name == 'schedule' && 'off' || 'read-write' }}
 
 jobs:
-  verify:
+  shard:
     runs-on: ubuntu-latest
     permissions:
       contents: read
       id-token: write
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5]
     concurrency:
-      group: verify-${{ github.ref }}
+      group: verify-${{ github.ref }}-${{ matrix.shard }}
     env:
       OTEL_TRACES_EXPORTER: otlp
       OTEL_EXPORTER_OTLP_ENDPOINT: http://127.0.0.1:4318
@@ -44,28 +48,43 @@ jobs:
         uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: node_modules/.cache/msch
-          key: msch-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}
+          key: msch-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}-${{ matrix.shard }}
           restore-keys: msch-
-      - uses: masseater/typescript-template/.github/actions/verify@74fa338c10f00d153d76acad7b13b21d027d4483
+      - uses: masseater/typescript-template/.github/actions/verify@b1a8d96e78c5009696da80b5ecf5a814551966b8
         timeout-minutes: 30
         with:
           github-token: ${{ github.token }}
           full-history: "true"
+          shard: ${{ strategy.job-index }}
+          shards: ${{ strategy.job-total }}
+          share: ${{ strategy.job-index == 0 }}
       - if: always()
         uses: $/.github/actions/telemetry-files
+        with:
+          suffix: -${{ matrix.shard }}
       - if: always()
         uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: node_modules/.cache/msch
-          key: msch-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}
+          key: msch-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}-${{ matrix.shard }}
       - if: failure()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: screenshots
+          name: screenshots-${{ matrix.shard }}
           path: |
             .vitest/attachments/
             apps/*/.vitest/attachments/
           if-no-files-found: ignore
+
+  verify:
+    needs: shard
+    if: always() && needs.shard.result != 'cancelled'
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - uses: masseater/typescript-template/.github/actions/verify-shards@b1a8d96e78c5009696da80b5ecf5a814551966b8
+        with:
+          result: ${{ needs.shard.result }}
 
   autofix:
     needs: verify
@@ -172,13 +191,13 @@ jobs:
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}
 
   ci-telemetry:
-    needs: [verify, autofix, deploy, private-names, exposure, deploy-failure]
+    needs: [shard, verify, autofix, deploy, private-names, exposure, deploy-failure]
     if: always()
     runs-on: ubuntu-latest
     permissions:
       actions: read
       contents: read
     steps:
-      - uses: masseater/typescript-template/.github/actions/ci-telemetry@74fa338c10f00d153d76acad7b13b21d027d4483
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@b1a8d96e78c5009696da80b5ecf5a814551966b8
         with:
           github-token: ${{ github.token }}
