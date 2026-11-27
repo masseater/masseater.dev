@@ -6,7 +6,7 @@ import type { Inventory, Probe, ProbeOutcome, Surface } from "#/entities/exposur
 
 import { findExposures } from "./findings.ts";
 
-type Answers = Partial<Record<Probe["purpose"], ProbeOutcome>>;
+type Answers = Readonly<Partial<Record<Probe["purpose"], ProbeOutcome>>>;
 
 const NONCE = "nonce";
 const NOTHING: Surface = { hosts: [], workers: [], repositories: [] };

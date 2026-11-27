@@ -4,7 +4,7 @@ import { expect } from "vite-plus/test";
 
 import { fixtureLayer } from "#/shared/lib/repository.test.support.ts";
 
-import { findingsIn } from "./findings.test.support.ts";
+import { dependingOn, findingsIn, jsonOf } from "./findings.test.support.ts";
 
 const lines = (...text: readonly string[]): string => pipe([...text, ""], Arr.join("\n"));
 
@@ -107,6 +107,84 @@ const ignoresListsInModulesThatDoNotImportEachOther = Effect.gen(
   },
 );
 
+const reportsTypesTheLanguageDeclares = Effect.gen(function* reportsTypesTheLanguageDeclares() {
+  const findings = yield* findingsIn({
+    "src/handles.ts": lines(
+      'export const HANDLES = ["HTMLElement", "Worker", "ReadableStream"] as const;',
+    ),
+  });
+  expect(findings).toStrictEqual(["src/handles.ts:1 hand-written-names"]);
+});
+
+const reportsTypesAPackageDeclares = Effect.gen(function* reportsTypesAPackageDeclares() {
+  const manifest = yield* jsonOf({ name: "markup", types: "./index.d.ts" });
+  const packageJson = yield* dependingOn("markup");
+  const findings = yield* findingsIn({
+    "node_modules/markup/package.json": manifest,
+    "node_modules/markup/index.d.ts": lines(
+      "export interface AnyNode { kind: string }",
+      "export interface Fragment<Child> { children: Child[] }",
+      "export declare function parse(text: string): AnyNode;",
+    ),
+    "package.json": packageJson,
+    "src/skipped.ts": lines(
+      'export const SKIPPED = [{ from: "package", package: "markup", name: ["AnyNode", "Fragment"] }];',
+    ),
+  });
+  expect(findings).toStrictEqual(["src/skipped.ts:1 hand-written-names"]);
+});
+
+const acceptsTagsOfTheTypesAPackageDeclares = Effect.gen(
+  function* acceptsTagsOfTheTypesAPackageDeclares() {
+    const manifest = yield* jsonOf({ name: "tree", types: "./index.d.ts" });
+    const packageJson = yield* dependingOn("tree");
+    const findings = yield* findingsIn({
+      "node_modules/tree/package.json": manifest,
+      "node_modules/tree/index.d.ts": lines(
+        'export interface Leaf { type: "Leaf" }',
+        'export interface Branch { type: "Branch"; children: Leaf[] }',
+        'export type Flow = "Stream" | "Batch";',
+        "export interface Stream { size: number }",
+        "export interface Batch { size: number }",
+      ),
+      "package.json": packageJson,
+      "src/kinds.ts": lines(
+        'export const KINDS = ["Leaf", "Branch"];',
+        'export const FLOWS: readonly string[] = ["Stream", "Batch"];',
+      ),
+    });
+    expect(findings).toStrictEqual([]);
+  },
+);
+
+const reportsAListThatIsHalfOutsideTypes = Effect.gen(
+  function* reportsAListThatIsHalfOutsideTypes() {
+    const findings = yield* findingsIn({
+      "src/handles.ts": lines(
+        'export const HANDLES: readonly string[] = ["HTMLElement", "Worker", "Gadget", "Widget"];',
+      ),
+    });
+    expect(findings).toStrictEqual(["src/handles.ts:1 hand-written-names"]);
+  },
+);
+
+const acceptsNamesThatNoTypeDeclares = Effect.gen(function* acceptsNamesThatNoTypeDeclares() {
+  const findings = yield* findingsIn({
+    "src/levels.ts": lines(
+      'export const LEVELS = ["Gentle", "Harsh", "parse"] as const;',
+      'export const MIXED = ["HTMLElement", "gadget", "widget"] as const;',
+    ),
+  });
+  expect(findings).toStrictEqual([]);
+});
+
+const acceptsAListThatNamesOneType = Effect.gen(function* acceptsAListThatNamesOneType() {
+  const findings = yield* findingsIn({
+    "src/mark.ts": lines('export type Mark = "Text" | "heading" | "quote";'),
+  });
+  expect(findings).toStrictEqual([]);
+});
+
 layer(fixtureLayer)("hand-written names", (it) => {
   it.effect(
     "reports names that modules declare one by one",
@@ -123,4 +201,16 @@ layer(fixtureLayer)("hand-written names", (it) => {
   it.effect("accepts a selection from another list", () => acceptsASelectionFromAnotherList);
   it.effect("reports lists that enumerate a directory", () => reportsListsThatEnumerateADirectory);
   it.effect("accepts named files among other entries", () => acceptsNamedFilesAmongOtherEntries);
+});
+
+layer(fixtureLayer)("hand-written names of outside types", (it) => {
+  it.effect("reports types the language declares", () => reportsTypesTheLanguageDeclares);
+  it.effect("reports types a package declares", () => reportsTypesAPackageDeclares);
+  it.effect(
+    "accepts tags of the types a package declares",
+    () => acceptsTagsOfTheTypesAPackageDeclares,
+  );
+  it.effect("reports a list that is half outside types", () => reportsAListThatIsHalfOutsideTypes);
+  it.effect("accepts names that no type declares", () => acceptsNamesThatNoTypeDeclares);
+  it.effect("accepts a list that names one type", () => acceptsAListThatNamesOneType);
 });

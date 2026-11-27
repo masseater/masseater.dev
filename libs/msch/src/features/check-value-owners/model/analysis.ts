@@ -6,6 +6,7 @@ import type { Problem } from "#/shared/lib/problem.ts";
 import { flowsIn } from "./flows.ts";
 import { fileFactsIn } from "./free-literals.ts";
 import type { FileFacts } from "./free-literals.ts";
+import { outsideNameProblemsIn } from "./outside-names.ts";
 import { ownerDeclarationsIn } from "./owners.ts";
 import type { Owner } from "./owners.ts";
 import { shapeProblemsIn } from "./shapes.ts";
@@ -43,6 +44,22 @@ export interface ProjectChecks {
   readonly sourceChecks: readonly SourceCheck[];
 }
 
+const fileChecksOf = (
+  project: Project,
+  sourceChecks: readonly SourceCheck[],
+): readonly ReturnType<SourceCheck>[] => [
+  shapeProblemsIn({
+    checker: project.checker,
+    program: project.program,
+    shapes: project.library.shapes,
+  }),
+  outsideNameProblemsIn(project),
+  ...pipe(
+    sourceChecks,
+    Arr.map((check) => check(project.checker)),
+  ),
+];
+
 export const analyzeProject =
   ({ owners, sourceChecks }: ProjectChecks) =>
   (project: Project): ProjectAnalysis => {
@@ -67,7 +84,7 @@ export const analyzeProject =
       Arr.map((site) => siteVerdict(context)(site)),
     );
     const excluded = [...ownerDeclarations, ...nodesOf(sites)];
-    const shapeContext = { checker, program: project.program, shapes: project.library.shapes };
+    const fileChecks = fileChecksOf(project, sourceChecks);
     return {
       problems: [
         ...pipe(
@@ -78,10 +95,9 @@ export const analyzeProject =
           project.sourceFiles,
           Arr.flatMap((sourceFile) => [
             ...ownedLiteralProblems(context)(sourceFile, excluded),
-            ...shapeProblemsIn(shapeContext)(sourceFile),
             ...pipe(
-              sourceChecks,
-              Arr.flatMap((check) => check(checker)(sourceFile)),
+              fileChecks,
+              Arr.flatMap((check) => check(sourceFile)),
             ),
           ]),
         ),
