@@ -57,7 +57,7 @@ const recording = (
     Effect.map((sent) => ({ sent, client: HttpClient.make(responding(sent, status)) })),
   );
 
-test("登録したルーティンを封をして置き、押すと API に Bearer で依頼の本文を送る", () =>
+test("登録したルーティンを封をして置き、押すと API に Bearer で本文なしの起動を送る", () =>
   Effect.runPromise(
     Effect.gen(function* registerAndFire() {
       const { env, rows } = memoryStore();
@@ -66,7 +66,7 @@ test("登録したルーティンを封をして置き、押すと API に Beare
         routine: { triggerId: TRIGGER, token: TOKEN },
       });
       const { client, sent } = yield* recording(OK);
-      const outcome = yield* fireRoutine(env, REQUEST_TEXT).pipe(
+      const outcome = yield* fireRoutine(env).pipe(
         Effect.provideService(HttpClient.HttpClient, client),
       );
       expect(registered).toBe(true);
@@ -78,7 +78,7 @@ test("登録したルーティンを封をして置き、押すと API に Beare
           url: FIRE_URL,
           authorization: `Bearer ${TOKEN}`,
           version: "2023-06-01",
-          carriesText: true,
+          carriesText: false,
         },
       ]);
     }),
@@ -102,7 +102,7 @@ test("未登録なら送らずに missing を返す", () =>
     Effect.gen(function* missing() {
       const { env } = memoryStore();
       const { client, sent } = yield* recording(OK);
-      const outcome = yield* fireRoutine(env, REQUEST_TEXT).pipe(
+      const outcome = yield* fireRoutine(env).pipe(
         Effect.provideService(HttpClient.HttpClient, client),
       );
       const requests = yield* Ref.get(sent);
@@ -117,7 +117,7 @@ test("API が拒んだら rejected を返す", () =>
       const { env } = memoryStore();
       yield* registerRoutine({ env, routine: { triggerId: TRIGGER, token: TOKEN } });
       const { client } = yield* recording(FORBIDDEN);
-      const outcome = yield* fireRoutine(env, REQUEST_TEXT).pipe(
+      const outcome = yield* fireRoutine(env).pipe(
         Effect.provideService(HttpClient.HttpClient, client),
       );
       expect(outcome).toBe("rejected");

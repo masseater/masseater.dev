@@ -25,7 +25,7 @@ import { serverOf } from "./tools.ts";
 
 beforeEach(() => {
   wakes.outcome = "rejected";
-  wakes.texts = [];
+  wakes.count = 0;
   return Effect.runPromise(resetDatabase);
 });
 afterAll(() => Effect.runPromise(closeDatabase));
@@ -214,7 +214,7 @@ it.effect("空の依頼は受け付けない", () =>
   }),
 );
 
-it.effect("送った依頼は本文をそのまま添えてプロジェクトを起こし、受け取り済みにする", () =>
+it.effect("送った依頼は未取得のまま残し、本文なしでプロジェクトを起こす", () =>
   Effect.gen(function* woken() {
     wakes.outcome = "fired";
     const sent = yield* value(MUSE, "send_to_claude", { text: "記事を直して" }).pipe(
@@ -223,11 +223,13 @@ it.effect("送った依頼は本文をそのまま添えてプロジェクトを
     );
     const taken = yield* take;
     expect(sent.woke).toBe("fired");
-    const sentText = Arr.join(wakes.texts, "");
-    expect(wakes.texts).toHaveLength(SENT_ONCE);
-    expect(sentText).toContain("記事を直して");
-    expect(sentText).toContain(`依頼 id: ${sent.id}`);
-    expect(taken).toStrictEqual([]);
+    expect(wakes.count).toBe(SENT_ONCE);
+    expect(
+      pipe(
+        taken,
+        Arr.map(({ id, text }) => ({ id, text })),
+      ),
+    ).toStrictEqual([{ id: sent.id, text: "記事を直して" }]);
   }),
 );
 

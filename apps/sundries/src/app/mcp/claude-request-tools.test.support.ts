@@ -9,14 +9,14 @@ const d1 = makeD1({ migrations: MIGRATIONS, tables: ["claude_requests"] });
 
 export const { closeDatabase, resetDatabase } = d1;
 
-export const wakes: { outcome: "fired" | "rejected"; texts: string[] } = {
+export const wakes: { outcome: "fired" | "rejected"; count: number } = {
   outcome: "fired",
-  texts: [],
+  count: 0,
 };
 
 const routine: RequestBindings["CLAUDE_ROUTINE"] = {
-  fire: (text) => {
-    wakes.texts.push(text);
+  fire: () => {
+    wakes.count += 1;
     return Promise.resolve(wakes.outcome);
   },
   register: () => Promise.resolve(true),
