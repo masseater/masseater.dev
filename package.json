@@ -9,7 +9,7 @@
   },
   "type": "module",
   "scripts": {
-    "prepare": "vp config && effect-tsgo patch --typescript --oxlint && msch --prepare"
+    "prepare": "vp config && effect-tsgo patch --typescript --oxlint --tsrs && msch --prepare"
   },
   "devDependencies": {
     "@effect/tsgo": "catalog:stack",
