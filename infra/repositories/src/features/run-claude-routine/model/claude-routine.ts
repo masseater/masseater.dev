@@ -8,7 +8,6 @@ const ROUTINE_KEY = "claude_routine";
 const FIRE_BASE = "https://api.anthropic.com/v1/claude_code/routines/";
 const ANTHROPIC_VERSION = "2023-06-01";
 const ROUTINE_BETA = "experimental-cc-routine-2026-04-01";
-const WAKE_TEXT = "sundries に新しい依頼があります。";
 
 const RoutineSchema = Schema.Struct({
   triggerId: Schema.String.check(Schema.isPattern(/^trig_[0-9A-Za-z]+$/u)),
@@ -25,7 +24,7 @@ export type FireOutcome = "fired" | "missing" | "rejected";
 
 export interface ClaudeRoutineRpc extends Rpc.WorkerEntrypointBranded {
   register: (routine: unknown) => Promise<boolean>;
-  fire: () => Promise<FireOutcome>;
+  fire: (text: string) => Promise<FireOutcome>;
 }
 
 export const registerRoutine = ({
@@ -55,14 +54,21 @@ const readRoutine = (env: AppStoreEnv): Effect.Effect<Option.Option<Routine>> =>
     ),
   );
 
-const post = (routine: Routine): Effect.Effect<FireOutcome, never, HttpClient.HttpClient> =>
+const post = ({
+  routine,
+  text,
+}: Readonly<{ routine: Routine; text: string }>): Effect.Effect<
+  FireOutcome,
+  never,
+  HttpClient.HttpClient
+> =>
   HttpClientRequest.post(`${FIRE_BASE}${routine.triggerId}/fire`).pipe(
     HttpClientRequest.bearerToken(routine.token),
     HttpClientRequest.setHeaders({
       "anthropic-version": ANTHROPIC_VERSION,
       "anthropic-beta": ROUTINE_BETA,
     }),
-    HttpClientRequest.schemaBodyJson(WakeBody)({ text: WAKE_TEXT }),
+    HttpClientRequest.schemaBodyJson(WakeBody)({ text }),
     Effect.flatMap((request) => HttpClient.execute(request)),
     Effect.flatMap(HttpClientResponse.filterStatusOk),
     Effect.as<FireOutcome>("fired"),
@@ -74,11 +80,14 @@ const post = (routine: Routine): Effect.Effect<FireOutcome, never, HttpClient.Ht
   );
 
 /** @internal */
-export const fireRoutine = Effect.fn("claude_routine.fire")(function* fire(env: AppStoreEnv) {
-  const routine = yield* readRoutine(env);
-  return yield* Option.match(routine, {
+export const fireRoutine = Effect.fn("claude_routine.fire")(function* fire(
+  env: AppStoreEnv,
+  text: string,
+) {
+  const stored = yield* readRoutine(env);
+  return yield* Option.match(stored, {
     onNone: () =>
       Effect.logWarning("claude_routine.missing").pipe(Effect.as<FireOutcome>("missing")),
-    onSome: post,
+    onSome: (routine) => post({ routine, text }),
   });
 });

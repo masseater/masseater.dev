@@ -11,14 +11,15 @@ export type Woken = Awaited<ReturnType<ClaudeRoutine["fire"]>>;
 
 const broker = (): Service<ClaudeRoutine> => env.CLAUDE_ROUTINE;
 
-export const wakeProject: Effect.Effect<Woken> = Effect.tryPromise({
-  try: () => broker().fire(),
-  catch: brokerFailed,
-}).pipe(
-  Effect.catchCause((cause) =>
-    Effect.logWarning("claude_routine.wake_failed", cause).pipe(Effect.as<Woken>("rejected")),
-  ),
-);
+export const wakeProject = (text: string): Effect.Effect<Woken> =>
+  Effect.tryPromise({
+    try: () => broker().fire(text),
+    catch: brokerFailed,
+  }).pipe(
+    Effect.catchCause((cause) =>
+      Effect.logWarning("claude_routine.wake_failed", cause).pipe(Effect.as<Woken>("rejected")),
+    ),
+  );
 
 export const registerRoutine = (
   routine: Routine,

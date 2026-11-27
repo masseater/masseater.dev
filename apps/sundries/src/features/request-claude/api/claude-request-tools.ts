@@ -1,6 +1,6 @@
 import { READ_ONLY, WRITE, one, compactInput, clientOf } from "@masseater.dev/mcp-tool-call";
 import type { McpServer } from "@modelcontextprotocol/server";
-import { Effect, Option, Schema, pipe } from "effect";
+import { Option, Schema, pipe } from "effect";
 
 import { runTool } from "#/shared/api/index.ts";
 
@@ -11,9 +11,10 @@ import {
   SendInput,
   TakeInput,
 } from "./claude-request-input.ts";
-import { answer, enqueue, listed, take } from "./claude-requests.ts";
+import { answer, listed, take } from "./claude-requests.ts";
 import type { ClaudeRequest } from "./claude-requests.ts";
-import { registerRoutine, wakeProject } from "./claude-routine.ts";
+import { registerRoutine } from "./claude-routine.ts";
+import { sendRequest } from "./send-request.ts";
 
 export type Register = (server: McpServer) => McpServer;
 
@@ -51,10 +52,7 @@ const registerSend: Register = (server) => {
       annotations: WRITE,
     },
     (input, ctx) =>
-      enqueue({ text: input.text, sender: clientOf(ctx) }).pipe(
-        Effect.zipWith(wakeProject, ({ id }, woke) => ({ id, woke })),
-        runTool({ count: one }),
-      ),
+      sendRequest({ text: input.text, sender: clientOf(ctx) }).pipe(runTool({ count: one })),
   );
   return server;
 };
