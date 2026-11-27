@@ -1,8 +1,8 @@
 {
   "siteUrl": "https://masseater.dev",
-  "contentDir": "node_modules/.cache/standard-site/blogs",
+  "contentDir": "node_modules/.cache/standard-site/slog",
   "publicDir": "public",
   "outputDir": "dist/client",
-  "pathPrefix": "/blogs",
+  "pathPrefix": "/slog",
   "publicationUri": "at://did:plc:sz2kxumpsjbch3kgnsjjed5z/site.standard.publication/3mzjmnt2xkf2d"
 }
