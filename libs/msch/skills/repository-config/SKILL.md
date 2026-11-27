@@ -59,6 +59,9 @@ The `verify` task depends on every workspace's `verify` and on every root task.
 A task added to `run.tasks` is therefore verified without listing it anywhere.
 The root `check` and `test` tasks run through `msch-changed`.
 It passes them only the workspaces whose files, dependencies or installed packages changed since the last pass.
+The `check` task passes `--batch-sources 1000` and runs the command once per batch of at most 1000 source files.
+The peak memory of the type-aware lint then follows the largest batch, not the size of the repository.
+A batch that passes is recorded on its own, so a later run repeats only the batches that failed.
 It records passes under `node_modules/.cache/msch/changed`; delete that directory to check everything again.
 `msch` checks the pnpm overrides again only when a file that pnpm resolves from changed since they last passed.
 It records that pass under `node_modules/.cache/msch/overrides`; delete that directory to check them again.

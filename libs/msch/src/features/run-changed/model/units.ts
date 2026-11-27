@@ -9,6 +9,7 @@ const FIELD_SEPARATOR = "\0";
 const LINE_SEPARATOR = "\n";
 const EMPTY = "";
 const READ_CONCURRENCY = 16;
+const SOURCE_FILE = /\.[cm]?[jt]sx?$/u;
 const SHARED_CONFIG = /^(?:[^/]+\.config\.[cm]?[jt]s|tsconfig(?:\.[^/]+)?\.json|\.gitignore)$/u;
 
 export const ROOT_UNIT = ".";
@@ -17,10 +18,12 @@ export interface Unit {
   readonly name: string;
   readonly paths: readonly string[];
   readonly key: string;
+  readonly sources: number;
 }
 
 interface Member {
   readonly name: string;
+  readonly sources: number;
   readonly digest: string;
   readonly installed: readonly string[];
   readonly closure: readonly string[];
@@ -63,6 +66,12 @@ const ownedBy = (listing: Listing, name: string): readonly Entry[] =>
 const entriesIn = (listing: Listing, name: string): readonly string[] =>
   pipe(ownedBy(listing, name), Arr.map(entryOf));
 
+const sourcesIn = (listing: Listing, name: string): number =>
+  pipe(
+    ownedBy(listing, name),
+    Arr.filter(([file]) => SOURCE_FILE.test(file)),
+  ).length;
+
 const closureOf = Effect.fn("closureOf")(function* closureOf(root: string, name: string) {
   const files = yield* RepositoryFiles;
   const directories = yield* workspaceClosure(files.join(root, name));
@@ -81,6 +90,7 @@ const memberIn =
       const files = yield* RepositoryFiles;
       return {
         name,
+        sources: sourcesIn(listing, name),
         digest: yield* hashed(entriesIn(listing, name)),
         installed: yield* installedPackages(listing.root, files.join(listing.root, name)),
         closure: yield* closureOf(listing.root, name),
@@ -142,14 +152,24 @@ const rootPaths = (listing: Listing): readonly string[] =>
 
 const rootUnit = Effect.fn("rootUnit")(function* rootUnit(listing: Listing, shared: string) {
   const key = yield* hashed([shared, ROOT_UNIT, ...entriesIn(listing, ROOT_UNIT)]);
-  return { name: ROOT_UNIT, paths: rootPaths(listing), key } satisfies Unit;
+  return {
+    name: ROOT_UNIT,
+    paths: rootPaths(listing),
+    key,
+    sources: sourcesIn(listing, ROOT_UNIT),
+  } satisfies Unit;
 });
 
 const memberUnit =
   (shared: string, members: readonly Member[]) =>
   (member: Member): Effect.Effect<Unit, never, RepositoryFiles> =>
     hashed([shared, member.name, ...linesOf(reached(members)(member.closure))]).pipe(
-      Effect.map((key) => ({ name: member.name, paths: [member.name], key })),
+      Effect.map((key) => ({
+        name: member.name,
+        paths: [member.name],
+        key,
+        sources: member.sources,
+      })),
     );
 
 export const unitsOf = Effect.fn("unitsOf")(function* unitsOf(root: string) {
