@@ -2,8 +2,7 @@ name: up-to-date
 
 on:
   pull_request:
-    types:
-      [opened, synchronize, reopened, ready_for_review, auto_merge_enabled, auto_merge_disabled]
+    types: [opened, synchronize, reopened, ready_for_review]
   workflow_dispatch:
 
 permissions: {}
@@ -18,7 +17,6 @@ jobs:
       contents: read
       pull-requests: read
     steps:
-      - uses: masseater/typescript-template/.github/actions/auto-merge-gate@b1a8d96e78c5009696da80b5ecf5a814551966b8
       - id: lockfile
         if: github.event_name == 'pull_request'
         uses: masseater/typescript-template/.github/actions/pr-changed@b1a8d96e78c5009696da80b5ecf5a814551966b8
@@ -37,7 +35,7 @@ jobs:
 
   wake:
     needs: [up-to-date]
-    if: always() && github.event_name == 'pull_request' && github.event.pull_request.auto_merge
+    if: always() && github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     permissions:
       actions: write

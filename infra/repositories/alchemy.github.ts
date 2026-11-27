@@ -107,7 +107,7 @@ const rulesOf = (
     ...protection,
     requiredStatusChecks: {
       checks: [{ context: "up-to-date", integrationId: GITHUB_ACTIONS_APP_ID }],
-      strictRequiredStatusChecksPolicy: true,
+      strictRequiredStatusChecksPolicy: false,
     },
   };
 };
