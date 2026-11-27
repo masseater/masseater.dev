@@ -2,7 +2,7 @@ import { NodeFileSystem, NodePath } from "@effect/platform-node-shared";
 import { expect, layer } from "@effect/vitest";
 import { Effect, Exit, FileSystem, Layer, Path, String as Str, pipe } from "effect";
 
-import { liveElevenSet } from "./als-to-fumx.test.support.ts";
+import { LIVE_ELEVEN_TEMPLATE, liveElevenSet } from "./als-to-fumx.test.support.ts";
 import type { SetSpec } from "./als-to-fumx.test.support.ts";
 import { convertLiveSetFile } from "./als-to-fumx.ts";
 
@@ -10,14 +10,14 @@ const PATH = "/song.fumx";
 
 const files = Layer.mergeAll(NodeFileSystem.layer, NodePath.layer);
 
-const dawtool = Effect.fn("dawtool")(function* dawtool(file: string) {
+const fixtureBytes = Effect.fn("fixtureBytes")(function* fixtureBytes(relative: string) {
   const fileSystem = yield* FileSystem.FileSystem;
   const path = yield* Path.Path;
-  const fixture = yield* path.fromFileUrl(
-    new URL(`../features/convert-als/model/fixtures/dawtool/${file}`, import.meta.url),
-  );
+  const fixture = yield* path.fromFileUrl(new URL(relative, import.meta.url));
   return yield* fileSystem.readFile(fixture);
 });
+
+const DAWTOOL = "../features/convert-als/model/fixtures/dawtool/";
 
 const KEYS = {
   name: "Keys",
@@ -82,7 +82,8 @@ const OLDER = [
 layer(files)("Ableton Live Sets", (it) => {
   it.effect("writes a .fumx that reproduces the clips, tempo, meters and locators", () =>
     Effect.gen(function* everything() {
-      const bytes = yield* liveElevenSet(SET);
+      const template = yield* fixtureBytes(LIVE_ELEVEN_TEMPLATE);
+      const bytes = yield* liveElevenSet(template, SET);
       const converted = yield* convertLiveSetFile({ bytes, title: "fixture", path: PATH });
       expect({
         matches: converted.comparison.matches,
@@ -107,7 +108,7 @@ layer(files)("Ableton Live Sets", (it) => {
   it.effect("reproduces the MIDI clips of sets saved by Live 8 and Live 9", () =>
     Effect.gen(function* older() {
       for (const { file, notes } of OLDER) {
-        const bytes = yield* dawtool(file);
+        const bytes = yield* fixtureBytes(`${DAWTOOL}${file}`);
         const converted = yield* convertLiveSetFile({ bytes, title: "dawtool", path: PATH });
         expect({
           file,
@@ -120,7 +121,7 @@ layer(files)("Ableton Live Sets", (it) => {
 
   it.effect("rejects a file that is not a Live Set", () =>
     Effect.gen(function* junk() {
-      const bytes = yield* dawtool("junk.als");
+      const bytes = yield* fixtureBytes(`${DAWTOOL}junk.als`);
       const exit = yield* Effect.exit(convertLiveSetFile({ bytes, title: "junk", path: PATH }));
       expect(Exit.isFailure(exit)).toBe(true);
     }),

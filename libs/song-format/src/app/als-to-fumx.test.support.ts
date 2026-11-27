@@ -1,5 +1,5 @@
 import { escapeXml, validateGeneratedSet } from "ableton-als";
-import { Array as Arr, Effect, FileSystem, Option, Path, String as Str, pipe } from "effect";
+import { Array as Arr, Effect, Option, String as Str, pipe } from "effect";
 
 export interface NoteSpec {
   readonly time: number;
@@ -49,10 +49,8 @@ export interface SetSpec {
   readonly locators?: readonly LocatorSpec[];
 }
 
-const TEMPLATE = new URL(
-  "../features/convert-als/model/fixtures/als-parser/live11-template.als",
-  import.meta.url,
-);
+export const LIVE_ELEVEN_TEMPLATE =
+  "../features/convert-als/model/fixtures/als-parser/live11-template.als";
 const SONG_START = -63_072_000;
 const TEMPO_ENVELOPE = '<PointeeId Value="8" />';
 const METER_ENVELOPE = '<PointeeId Value="10" />';
@@ -247,16 +245,11 @@ const gzipOf = (text: string): Effect.Effect<Uint8Array> =>
     Effect.map((buffer) => new Uint8Array(buffer)),
   );
 
-const readTemplate = Effect.gen(function* readTemplate() {
-  const fileSystem = yield* FileSystem.FileSystem;
-  const path = yield* Path.Path;
-  const file = yield* path.fromFileUrl(TEMPLATE);
-  const gzipped = yield* fileSystem.readFile(file);
-  return yield* textOfGzip(gzipped);
-});
-
-export const liveElevenSet = Effect.fn("liveElevenSet")(function* liveElevenSet(spec: SetSpec) {
-  const template = yield* readTemplate;
+export const liveElevenSet = Effect.fn("liveElevenSet")(function* liveElevenSet(
+  gzippedTemplate: Uint8Array,
+  spec: SetSpec,
+) {
+  const template = yield* textOfGzip(gzippedTemplate);
   const xml = xmlOf(template, spec);
   const problems = validateGeneratedSet(xml);
   if (Arr.isReadonlyArrayNonEmpty(problems)) {
