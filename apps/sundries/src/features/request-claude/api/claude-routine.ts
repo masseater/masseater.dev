@@ -8,7 +8,7 @@ export type Routine = Readonly<{ triggerId: string; token: string }>;
 export type Woken = Awaited<ReturnType<ClaudeRoutine["fire"]>>;
 
 export type RoutineBroker = Readonly<{
-  fire: (text: string) => Promise<Woken>;
+  fire: () => Promise<Woken>;
   register: (routine: Routine) => Promise<boolean>;
 }>;
 
@@ -16,17 +16,16 @@ export class RoutineService extends Context.Service<RoutineService, RoutineBroke
   "sundries/features/request-claude/api/claude-routine/RoutineService",
 ) {}
 
-const fired = Effect.fn("fired")(function* fired(text: string) {
+const fired = Effect.fn("fired")(function* fired() {
   const broker = yield* RoutineService;
-  return yield* Effect.tryPromise({ try: () => broker.fire(text), catch: brokerFailed });
+  return yield* Effect.tryPromise({ try: () => broker.fire(), catch: brokerFailed });
 });
 
-export const wakeProject = (text: string): Effect.Effect<Woken, never, RoutineService> =>
-  fired(text).pipe(
-    Effect.catchCause((cause) =>
-      Effect.logWarning("claude_routine.wake_failed", cause).pipe(Effect.as<Woken>("rejected")),
-    ),
-  );
+export const wakeProject: Effect.Effect<Woken, never, RoutineService> = fired().pipe(
+  Effect.catchCause((cause) =>
+    Effect.logWarning("claude_routine.wake_failed", cause).pipe(Effect.as<Woken>("rejected")),
+  ),
+);
 
 export const registerRoutine = Effect.fn("registerRoutine")(function* registerRoutine(
   routine: Routine,
