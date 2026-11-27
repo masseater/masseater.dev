@@ -18,6 +18,8 @@ import { ciKeys, encodedGrants, githubAppStore } from "./src/app/broker-env.ts";
 import { tailnetFederation } from "./src/features/join-tailnet/model/tailnet-federation.ts";
 import {
   CREDENTIAL_BROKER_AUDIENCE,
+  HOURLY_CRON,
+  IDLE_CHECK_CRON,
   PREFIX,
   TRACE_DESTINATION,
 } from "./src/shared/config/broker-names.ts";
@@ -56,7 +58,7 @@ const broker: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: 
       logpush: true,
       domain: CREDENTIAL_BROKER_HOST,
       workersDev: false,
-      crons: ["41 * * * *"],
+      crons: [HOURLY_CRON, IDLE_CHECK_CRON],
       env: {
         ROOT_TOKEN,
         ...keys,
