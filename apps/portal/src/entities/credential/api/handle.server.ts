@@ -1,5 +1,9 @@
-import { createRouter } from "#/shared/api/index.server.ts";
+import { env } from "cloudflare:workers";
+
+import { createRouter, servingUpstreams } from "#/shared/api/index.server.ts";
 
 import { credentialsRoutes } from "./credentials-routes.server.ts";
 
-export const handleCredentials = createRouter("").use(credentialsRoutes).handle;
+export const handleCredentials = servingUpstreams(env)(
+  createRouter("").use(credentialsRoutes).handle,
+);
