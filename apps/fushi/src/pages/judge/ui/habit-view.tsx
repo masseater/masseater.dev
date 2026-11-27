@@ -35,7 +35,7 @@ export const HabitView = ({
       <HabitVerdict
         library={library}
         current={style}
-        habit={candidate.key}
+        candidate={candidate}
         next={nextOf(judging.split)(candidate.key)}
       />
     </div>

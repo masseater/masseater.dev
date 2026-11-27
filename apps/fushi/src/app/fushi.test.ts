@@ -1,11 +1,15 @@
 import { describe, expect, it } from "@effect/vitest";
-import { Effect, Option } from "effect";
+import { StyleRulesSchema } from "@r_masseater/i68-presets/habits";
+import { Effect, Option, Schema } from "effect";
 import { page, userEvent } from "vite-plus/test/browser";
 import type { Locator } from "vite-plus/test/browser";
 
 import { fakeCommands } from "./fake-commands.test.support.ts";
+import type { FakeDisk } from "./fake-commands.test.support.ts";
 import { mount } from "./mount.test.support.tsx";
-import { HABIT, SONG_FILES } from "./songs.test.support.ts";
+import { HABIT, SONG_FILES, TRANSITION } from "./songs.test.support.ts";
+
+const decodeRules = Schema.decodeEffect(Schema.fromJsonString(StyleRulesSchema));
 
 const act = (step: () => Promise<unknown>): Effect.Effect<unknown> => Effect.promise(step);
 
@@ -36,6 +40,13 @@ const seeRuleUnderAim = Effect.gen(function* steps() {
   yield* visible(page.getByText("2 曲で 2 回"));
 });
 
+const exportPreset = Effect.fnUntraced(function* steps(disk: FakeDisk) {
+  yield* act(() => userEvent.click(page.getByRole("link", { name: "癖", exact: true })));
+  yield* act(() => userEvent.click(page.getByRole("button", { name: "i68 プリセットを書き出す" })));
+  yield* act(() => expect.poll(() => Option.isSome(disk.exported())).toBe(true));
+  return yield* decodeRules(Option.getOrElse(disk.exported(), () => ""));
+});
+
 describe("fushi", () => {
   it.live("imports songs and shows their timeline", () =>
     Effect.gen(function* test() {
@@ -59,6 +70,21 @@ describe("fushi", () => {
       yield* keepUnderNewAim;
       yield* seeRuleUnderAim;
       expect(Option.getOrElse(disk.saved(), () => "")).toContain("解決を遅らせる");
+    }),
+  );
+
+  it.live("exports the kept habit as an i68 preset", () =>
+    Effect.gen(function* test() {
+      const disk = fakeCommands();
+      yield* mount;
+      yield* importSongs;
+      yield* act(() => userEvent.click(page.getByRole("link", { name: "癖の候補を判定する" })));
+      yield* keepUnderNewAim;
+      const exported = yield* exportPreset(disk);
+      expect(exported).toStrictEqual({
+        name: "歌もの",
+        habits: [{ ...TRANSITION, kind: "keep", aim: "解決を遅らせる" }],
+      });
     }),
   );
 });

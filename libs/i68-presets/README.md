@@ -72,6 +72,30 @@ Chords are read as degrees of the key each section implies, so the table works i
 
 The table in `src/features/check-style/data/bach-chorales.json` holds only counts of chord transitions. `vp run build-style-tables` builds it from the Humdrum kern files of [craigsapp/bach-370-chorales](https://github.com/craigsapp/bach-370-chorales). The scores themselves are not in this package. For another composer, build a `StyleTable` the same way and pass it to `stylePluginOf(table)`.
 
+## Style rules
+
+Turns the chord-change habits you judged for a style into rules. `styleRules({ plugin, rules })` takes a `StyleRules` object, which the fushi app exports as JSON. Each habit is a chord change after 1-3 chords, judged `keep`, `fix` or `suggest`, with the aim it serves.
+
+| Rule               | What it catches                                           | How to fix it                                      |
+| ------------------ | --------------------------------------------------------- | -------------------------------------------------- |
+| `<plugin>/keep`    | A kept habit's chords, followed by a different chord      | Go to the chord the habit names, or ignore it here |
+| `<plugin>/fix`     | A habit being fixed, made again                           | Pick another chord                                 |
+| `<plugin>/suggest` | A suggested habit's chords, followed by a different chord | Try the chord the suggestion names                 |
+
+`keep` and `suggest` warn and `fix` is an error. The detail names the aim and, when given, the reason.
+
+```ts
+import "@r_masseater/i68/vite";
+import { styleRules } from "@r_masseater/i68-presets";
+import { defineConfig } from "vite-plus";
+
+import rules from "./my-style.json" with { type: "json" };
+
+export default defineConfig({
+  i68: { extends: [styleRules({ plugin: "mine", rules })] },
+});
+```
+
 Rules find parts by the `role` of their track (`melody`, `countermelody`, `harmony`, `bass`, `drums`), so give each track a role.
 
 ## Agent skills
