@@ -283,6 +283,8 @@ catalog:
   "@remotion/player": 4.0.547
   "@remotion/renderer": 4.0.547
   "@remotion/tailwind-v4": 4.0.547
+  "@remotion/media-utils": 4.0.547
+  ag-psd: 34.2.3
 catalogs:
   stack:
     "@distilled.cloud/cloudflare": 1.0.0-rc.20

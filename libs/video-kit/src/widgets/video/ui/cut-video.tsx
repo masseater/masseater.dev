@@ -25,7 +25,7 @@ export const CutVideo = ({
           Arr.map((cut) => ({ ...cut, format, sfx, credits })),
           Arr.map((shot) => <CutSequence draw={draw} key={shot.id} shot={shot} />),
         )}
-      <Tachie cuts={timeline.cuts} images={timeline.tachie} />
+      <Tachie art={timeline.tachie} cuts={timeline.cuts} />
     </AbsoluteFill>
   );
 };
