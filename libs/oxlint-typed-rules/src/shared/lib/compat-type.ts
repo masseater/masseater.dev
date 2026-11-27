@@ -137,23 +137,20 @@ export class CompatType implements LegacyType {
     return this.#types;
   }
 
-  public getSymbol(): CompatSymbol | undefined {
-    return this.symbol;
-  }
+  public readonly getSymbol = (): CompatSymbol | undefined => this.symbol;
 
-  public getProperty(name: string): CompatSymbol | undefined {
-    return CompatSymbol.optional(this.#project, this.native.getProperty(name));
-  }
+  public readonly getProperty = (name: string): CompatSymbol | undefined =>
+    CompatSymbol.optional(this.#project, this.native.getProperty(name));
 
-  public getProperties(): readonly CompatSymbol[] {
+  public readonly getProperties = (): readonly CompatSymbol[] => {
     const project = this.#project;
     return pipe(
       this.native.getProperties(),
       Arr.map((property) => CompatSymbol.intern(project, property)),
     );
-  }
+  };
 
-  public getCallSignatures(): readonly CompatSignature[] {
+  public readonly getCallSignatures = (): readonly CompatSignature[] => {
     const project = this.#project;
     return pipe(
       this.native.getCallSignatures(),
@@ -162,5 +159,5 @@ export class CompatType implements LegacyType {
         getReturnType: () => CompatType.intern(project, signature.getReturnType()),
       })),
     );
-  }
+  };
 }

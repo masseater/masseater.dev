@@ -55,11 +55,7 @@ export class CompatSymbol implements LegacySymbol {
     return this.#declarations;
   }
 
-  public getName(): string {
-    return this.name;
-  }
+  public readonly getName = (): string => this.name;
 
-  public getDeclarations(): readonly Node[] {
-    return this.declarations;
-  }
+  public readonly getDeclarations = (): readonly Node[] => this.declarations;
 }
