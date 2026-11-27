@@ -2,8 +2,6 @@ import {
   deleteToken as deleteAccountToken,
   getToken as getAccountToken,
   listTokens as listAccountTokens,
-  listTokensPermissionGroups,
-  updateToken as updateAccountToken,
   verifyToken as verifyAccountToken,
 } from "@distilled.cloud/cloudflare/accounts";
 import type { CloudflareOpContext } from "@distilled.cloud/cloudflare/accounts";
@@ -23,14 +21,15 @@ import {
   Effect,
   Layer,
   ManagedRuntime,
-  Option,
   Record as Rec,
   Stream,
   String as Str,
   pipe,
 } from "effect";
+import type { ConfigError } from "effect/Config";
 import { layer as fetchHttpClient } from "effect/http/FetchHttpClient";
 
+import { grantPermissions } from "#/features/grant-token-permissions/index.ts";
 import { ISSUED_TOKEN_PREFIX } from "#/features/issue-cloudflare-token/index.ts";
 
 type Token = Readonly<{
@@ -129,92 +128,33 @@ const revoke = (
     Effect.flatMap((line) => Console.log(line)),
   );
 
-const ACCOUNT_SCOPE = "com.cloudflare.api.account";
+const settingNames = (setting: string): readonly string[] =>
+  pipe(setting, Str.split(","), Arr.map(Str.trim), Arr.filter(Str.isNonEmpty));
 
-const grantPermissions = (
-  accountId: string,
-  tokenId: string,
-  names: readonly string[],
-): Effect.Effect<void, never, CloudflareOpContext> =>
-  Effect.gen(function* grant() {
-    const token = yield* getAccountToken({ accountId, tokenId });
-    const groups = yield* listTokensPermissionGroups({ accountId });
-    const held = pipe(
-      token.policies ?? [],
-      Arr.flatMap((policy) => policy.permissionGroups),
-      Arr.map((group) => group.name ?? group.id),
-    );
-    const wanted = pipe(
-      names,
-      Arr.filter((name) => !Arr.contains(held, name)),
-      Arr.flatMap((name) =>
-        pipe(
-          groups,
-          Arr.findFirst((group) => group.name === name && group.id !== undefined),
-          Option.flatMapNullishOr((group) => group.id),
-          Option.toArray,
-        ),
-      ),
-    );
-    if (Arr.isReadonlyArrayEmpty(wanted)) {
-      return yield* Console.log(`account\t${tokenId}\tgrant\tnothing to add`);
+const grant = (accountId: string): Effect.Effect<void, ConfigError, CloudflareOpContext> =>
+  Effect.gen(function* grantFromSettings() {
+    const tokenId = yield* Config.String("GRANT_TOKEN_ID").pipe(Config.withDefault(""));
+    const groups = yield* Config.String("GRANT_GROUPS").pipe(Config.withDefault(""));
+    const names = settingNames(groups);
+    if (Str.isEmpty(tokenId) || Arr.isReadonlyArrayEmpty(names)) {
+      return;
     }
-    yield* updateAccountToken({
-      accountId,
-      tokenId,
-      name: token.name ?? tokenId,
-      status: token.status,
-      condition: token.condition ?? undefined,
-      expiresOn: token.expiresOn ?? undefined,
-      notBefore: token.notBefore ?? undefined,
-      policies: pipe(
-        token.policies ?? [],
-        Arr.map((policy) => ({
-          effect: policy.effect,
-          permissionGroups: pipe(
-            policy.permissionGroups,
-            Arr.map(({ id }) => ({ id })),
-          ),
-          resources: policy.resources,
-        })),
-        Arr.append({
-          effect: "allow" as const,
-          permissionGroups: pipe(
-            wanted,
-            Arr.map((id) => ({ id })),
-          ),
-          resources: { [`${ACCOUNT_SCOPE}.${accountId}`]: "*" },
-        }),
+    const line = yield* grantPermissions({ accountId, tokenId, names }).pipe(
+      Effect.map((added) => `account\t${tokenId}\tgranted\t${Arr.join(added, ",")}`),
+      Effect.catchCause((cause) =>
+        Effect.succeed(`account\t${tokenId}\tgrant failed\t${Cause.pretty(cause)}`),
       ),
-    });
-    yield* Console.log(`account\t${tokenId}\tgrant\t${Arr.join(names, ",")}`);
-  }).pipe(
-    Effect.catchCause((cause) =>
-      Console.log(`account\t${tokenId}\tgrant failed\t${Cause.pretty(cause)}`),
-    ),
-  );
+    );
+    yield* Console.log(line);
+  });
 
 const program = Effect.gen(function* tokens() {
   const accountId = yield* Config.String("CLOUDFLARE_ACCOUNT_ID");
   const deleteTokenIds = yield* Config.String("DELETE_TOKEN_IDS").pipe(Config.withDefault(""));
-  const targets = pipe(
-    deleteTokenIds,
-    Str.split(","),
-    Arr.map(Str.trim),
-    Arr.filter(Str.isNonEmpty),
-  );
-  yield* Effect.forEach(targets, (tokenId) => revoke(accountId, tokenId), { concurrency: 1 });
-  const grantTokenId = yield* Config.String("GRANT_TOKEN_ID").pipe(Config.withDefault(""));
-  const grantGroups = yield* Config.String("GRANT_GROUPS").pipe(Config.withDefault(""));
-  const groupNames = pipe(
-    grantGroups,
-    Str.split(","),
-    Arr.map(Str.trim),
-    Arr.filter(Str.isNonEmpty),
-  );
-  if (Str.isNonEmpty(grantTokenId) && Arr.isReadonlyArrayNonEmpty(groupNames)) {
-    yield* grantPermissions(accountId, grantTokenId, groupNames);
-  }
+  yield* Effect.forEach(settingNames(deleteTokenIds), (tokenId) => revoke(accountId, tokenId), {
+    concurrency: 1,
+  });
+  yield* grant(accountId);
   yield* ownPolicies(accountId);
   yield* inventory("account", () => listAccountTokens.items({ accountId }));
   yield* inventory("user", () => listUserTokens.items({}));
