@@ -12,7 +12,7 @@ export const createStore = <State>({ initial, onChange }: StoreOptions<State>): 
   let state = initial;
   return {
     read: () => state,
-    step: (change) => {
+    step: (change): void => {
       state = change(state);
       onChange();
     },

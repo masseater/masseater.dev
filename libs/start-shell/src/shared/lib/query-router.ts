@@ -5,7 +5,7 @@ import {
   defaultStringifySearch,
   stringifySearchWith,
 } from "@tanstack/react-router";
-import type { AnyRoute, Router } from "@tanstack/react-router";
+import type { AnyRoute } from "@tanstack/react-router";
 import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query";
 import { Record } from "effect";
 
@@ -29,7 +29,9 @@ const TEXT_SEARCH: SearchCodec = {
 
 const routerWith =
   ({ parseSearch, stringifySearch }: SearchCodec) =>
-  <TRouteTree extends AnyRoute>(routeTree: TRouteTree): Router<TRouteTree> => {
+  <TRouteTree extends AnyRoute>(
+    routeTree: TRouteTree,
+  ): ReturnType<typeof createRouter<TRouteTree>> => {
     const queryClient = new QueryClient();
     const router = createRouter({
       routeTree,

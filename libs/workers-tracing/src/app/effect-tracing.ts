@@ -1,4 +1,3 @@
-import type { Span as WorkersSpan } from "@cloudflare/workers-types/index.ts";
 import { tracing } from "cloudflare:workers";
 import { Exit, Layer, Logger, Option, Predicate, Tracer, pipe } from "effect";
 import type { Fiber } from "effect";
@@ -11,7 +10,7 @@ import type { Run, Runner } from "#/shared/lib/run.ts";
 
 interface Mirror {
   readonly runInContext: RunInContext;
-  readonly span: WorkersSpan;
+  readonly span: Span;
 }
 
 const mirrors = new WeakMap<Tracer.AnySpan, Mirror>();

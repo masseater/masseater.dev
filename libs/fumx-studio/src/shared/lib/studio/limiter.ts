@@ -61,14 +61,14 @@ const dequeOf = (wanted: Float32Array): Deque => {
   const ends = { head: NONE, tail: NONE };
   const valueAt = (slot: number): number => wanted[queue[slot] ?? NONE] ?? NONE;
   return {
-    push: (at) => {
+    push: (at): void => {
       while (ends.tail > ends.head && valueAt(ends.tail - ONE) >= (wanted[at] ?? NONE)) {
         ends.tail -= ONE;
       }
       queue[ends.tail] = at;
       ends.tail += ONE;
     },
-    front: (index) => {
+    front: (index): number => {
       while ((queue[ends.head] ?? NONE) < index) {
         ends.head += ONE;
       }

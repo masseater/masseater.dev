@@ -7,6 +7,7 @@ import type { Category, Entry } from "#/entities/entry/index.ts";
 import { TagFilter, tagCounts, withTag } from "#/features/filter-by-tag/index.ts";
 import type { TagSearch } from "#/features/filter-by-tag/index.ts";
 
+import { FeedView } from "./feed-view.tsx";
 import { IdeaList } from "./idea-list.tsx";
 
 export const CollectionView = ({
@@ -22,6 +23,9 @@ export const CollectionView = ({
   onSelectTag: (search: TagSearch) => void;
   starCounts: Option.Option<Record.ReadonlyRecord<string, number>>;
 }>): ReactNode => {
+  if (categoryMeta[category].layout === "feed") {
+    return <FeedView category={category} entries={entries} />;
+  }
   const counts = tagCounts(entries);
   const shown = withTag(activeTag)(entries);
   const listed = pipe(

@@ -65,10 +65,10 @@ export const mountYoutube = (mount: Mount): Effect.Effect<Player, never, Scope.S
     Effect.andThen(owned(mount)),
     Effect.map(({ player }) => ({
       time: () => ({ current: player.getCurrentTime(), duration: player.getDuration() }),
-      seek: (seconds: number) => {
+      seek: (seconds: number): void => {
         player.seekTo(seconds, true);
       },
-      toggle: () => {
+      toggle: (): void => {
         if (player.getPlayerState() === YT.PlayerState.PLAYING) {
           player.pauseVideo();
           return;

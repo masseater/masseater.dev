@@ -1,9 +1,8 @@
 import { createQueryRouter } from "@masseater.dev/start-shell/query-router";
-import type { Router } from "@tanstack/react-router";
 
 import { routeTree } from "./routeTree.gen.ts";
 
-export type AppRouter = Router<typeof routeTree>;
+export type AppRouter = ReturnType<typeof createQueryRouter<typeof routeTree>>;
 
 declare module "@tanstack/react-router" {
   interface Register {

@@ -17,21 +17,15 @@ export type Services = FileSystem.FileSystem | Path.Path | HttpClient.HttpClient
 /** @internal */
 export type Failure = VideoError | PlatformError.PlatformError | Config.ConfigError;
 
-const bgmOf = (script: VideoScript): readonly Asset[] =>
-  pipe(
-    Option.fromNullishOr(script.bgm),
-    Option.map(({ url }): Asset => ({ url, page: Option.none() })),
-    Option.toArray,
-  );
+interface Source {
+  readonly url: string;
+  readonly page?: string;
+}
 
-const assetsOf = (script: VideoScript): readonly Asset[] => [
-  ...pipe(
-    SFX,
-    Rec.values,
-    Arr.map(({ url, page }): Asset => ({ url, page: Option.some(page) })),
-  ),
-  ...bgmOf(script),
-];
+const assetOf = ({ url, page }: Source): Asset => ({ url, page: Option.fromNullishOr(page) });
+
+const assetsOf = (script: VideoScript): readonly Asset[] =>
+  pipe([...Rec.values(SFX), ...Arr.fromNullishOr(script.bgm)], Arr.map(assetOf));
 
 const fileOf = (url: string): Effect.Effect<string, never, Path.Path> =>
   Effect.gen(function* file() {

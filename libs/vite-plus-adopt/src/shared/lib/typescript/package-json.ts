@@ -59,7 +59,7 @@ export const createPackageJsonCache = (): PackageJsonCache => {
   const entries = new Map<string, PackageJsonCacheEntry>();
   return {
     get: (packageJsonPath) => Option.fromNullishOr(entries.get(toPath(packageJsonPath))),
-    set: (packageJsonPath, entry) => {
+    set: (packageJsonPath, entry): void => {
       entries.set(toPath(packageJsonPath), entry);
     },
   };

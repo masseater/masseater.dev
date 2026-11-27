@@ -70,7 +70,7 @@ export const globOf = ({ pattern, isRef }: GlobInput): Glob => {
   return {
     isRef,
     peek,
-    next: () => {
+    next: (): Option.Option<string> => {
       const char = peek();
       for (const found of Option.toArray(char)) {
         place = after(place, found);
@@ -82,7 +82,7 @@ export const globOf = ({ pattern, isRef }: GlobInput): Glob => {
     },
     fail,
     prec: () => prec,
-    setPrec: (value) => {
+    setPrec: (value): void => {
       prec = value;
     },
     errors: () => errors,

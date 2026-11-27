@@ -77,7 +77,10 @@ type Case = Readonly<{
 }>;
 
 const outcomeOf =
-  ({ answers = {}, override = () => Option.none() }: Case): ((probe: Probe) => ProbeOutcome) =>
+  ({
+    answers = {},
+    override = (): Option.Option<ProbeOutcome> => Option.none(),
+  }: Case): ((probe: Probe) => ProbeOutcome) =>
   (probe: Probe): ProbeOutcome =>
     Option.getOrElse(
       override(probe),

@@ -14,10 +14,14 @@
     "./button": "./src/shared/ui/button.tsx",
     "./cn": "./src/shared/lib/cn.ts",
     "./color-scheme": "./src/shared/lib/color-scheme.ts",
+    "./heading": "./src/shared/ui/heading.tsx",
+    "./page-footer": "./src/shared/ui/page-footer.tsx",
+    "./page-header": "./src/shared/ui/page-header.tsx",
     "./portfolio": "./src/shared/lib/portfolio.ts",
     "./styles.css": "./src/app/styles.css",
     "./table": "./src/shared/ui/table/index.ts",
     "./theme.css": "./src/app/theme.css",
+    "./titled": "./src/shared/ui/titled.tsx",
     "./web-analytics": "./src/shared/lib/web-analytics.ts"
   },
   "dependencies": {

@@ -1,3 +1,4 @@
+import { PageHeader } from "@masseater.dev/ui/page-header";
 import type { ReactNode } from "react";
 
 import { useTheme } from "#/entities/interview/index.ts";
@@ -7,11 +8,10 @@ import { CopyButton } from "./copy-button.tsx";
 import { RestartButton } from "./restart-button.tsx";
 
 export const ReportHeader = (): ReactNode => (
-  <header className="flex items-center gap-3">
-    <h1 className="flex-1 text-xl font-semibold">{useTheme()}</h1>
+  <PageHeader layout="bar" title={useTheme()}>
     <SaveStatus />
     <CopyButton />
     <SaveButton />
     <RestartButton />
-  </header>
+  </PageHeader>
 );

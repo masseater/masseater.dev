@@ -36,7 +36,7 @@ const swapping = (
   rows: Rows,
   [name = "", value = "", expected = ""]: readonly string[],
 ): BoundStatement => ({
-  first: () => {
+  first: (): Promise<unknown> => {
     const swapped = Option.liftPredicate(name, () => isSwappable(rows.get(name), expected));
     if (Option.isSome(swapped)) {
       rows.set(name, value);
@@ -48,14 +48,14 @@ const swapping = (
 
 const upserting = (rows: Rows, [name = "", value = ""]: readonly string[]): BoundStatement => ({
   first: () => unsupported("upsert with first"),
-  run: () => {
+  run: (): Promise<unknown> => {
     rows.set(name, value);
     return Promise.resolve({});
   },
 });
 
 const taking = (rows: Rows, [name = "", expected = ""]: readonly string[]): BoundStatement => ({
-  first: () => {
+  first: (): Promise<unknown> => {
     const taken = Option.liftPredicate(name, () =>
       Option.exists(rows.get(name), (value) => value === expected),
     );
@@ -69,7 +69,7 @@ const taking = (rows: Rows, [name = "", expected = ""]: readonly string[]): Boun
 
 const sweeping = (rows: Rows, [from = "", to = ""]: readonly string[]): BoundStatement => ({
   first: () => unsupported("sweep with first"),
-  run: () => {
+  run: (): Promise<unknown> => {
     const swept = pipe(
       rows.names(),
       Arr.filter((name) => name >= from && name < to),
@@ -107,10 +107,10 @@ const rowsOf = (seed: Readonly<Record<string, string>>): Rows => {
   const stored = new Map(Rec.toEntries(seed));
   return {
     get: (name) => Option.fromNullishOr(stored.get(name)),
-    set: (name, value) => {
+    set: (name, value): void => {
       stored.set(name, value);
     },
-    remove: (name) => {
+    remove: (name): void => {
       stored.delete(name);
     },
     names: () => [...stored.keys()],

@@ -55,7 +55,7 @@ export const streamOf = (src: string): Stream => {
     current: () => state.cur.token,
     peek: () => state.cur.token.kind,
     next: () => advanceFrom(state.cur.end),
-    fail: (message) => {
+    fail: (message): void => {
       state.parseError = pipe(
         state.parseError,
         Option.orElse(() => Option.some(errorAt(state.cur.token, message))),
@@ -65,7 +65,7 @@ export const streamOf = (src: string): Stream => {
     lexError: () => state.lexError,
     parseError: () => state.parseError,
     offset: () => state.cur.end.offset,
-    drain: () => {
+    drain: (): TokenKind[] => {
       const kinds: TokenKind[] = [];
       for (
         state.cur = lex(state.cur.end);

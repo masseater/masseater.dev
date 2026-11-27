@@ -1,4 +1,3 @@
-import type { Span } from "@cloudflare/workers-types/index.ts";
 import { Array, Cause, Effect, Inspectable, Option, Predicate, Schema, pipe } from "effect";
 
 import { failures, isServerError, responseStatus } from "#/shared/lib/failure.ts";

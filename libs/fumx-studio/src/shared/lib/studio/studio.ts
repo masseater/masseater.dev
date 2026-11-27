@@ -43,7 +43,7 @@ const deskOf = (session: Session): Desk => {
     frames: Math.ceil(session.seconds * SAMPLE_RATE),
     samples: session.samples,
     table: session.table,
-    labelOf: (sample) => {
+    labelOf: (sample): Label => {
       const label = session.labelOf(sample);
       return { ...label, ...fieldOf("name")(names.get(sample) ?? label.name) };
     },

@@ -37,7 +37,7 @@ const loadCatalog = (read: Read, path: string): Promise<string> =>
 export const techniqueCatalog = (): Plugin => ({
   name: "technique-catalog",
   enforce: "pre",
-  resolveId(source, importer) {
+  resolveId(source, importer): Promise<string | undefined> | undefined {
     return pipe(
       Option.liftPredicate(source, Str.endsWith(QUERY)),
       Option.map((found) =>
@@ -46,7 +46,7 @@ export const techniqueCatalog = (): Plugin => ({
       Option.getOrUndefined,
     );
   },
-  load(id) {
+  load(id): Promise<string> | undefined {
     const { fs } = this;
     return pipe(
       Option.liftPredicate(id, Str.startsWith(PREFIX)),

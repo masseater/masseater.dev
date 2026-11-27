@@ -3,7 +3,7 @@ import { SecureRandom } from "effect/crypto";
 import { Atom, AtomRegistry } from "effect/reactivity";
 
 import { changed, withAim, withJudgment, withoutJudgment } from "#/entities/library/index.ts";
-import type { Aim, Change } from "#/entities/library/index.ts";
+import type { Aim, Change, Judgment } from "#/entities/library/index.ts";
 import { HARMONY } from "#/shared/config/index.ts";
 import type { Verdict } from "#/shared/config/index.ts";
 import { navigate, runtime } from "#/shared/lib/index.ts";
@@ -36,19 +36,26 @@ export const chosenAim = ({
     Option.getOrElse(() => NEW_AIM),
   );
 
+export type Transition = Readonly<{ context: string; next: string }>;
+
 export type Decision = Readonly<{
   style: string;
   habit: string;
+  transition: Transition;
   aims: readonly Aim[];
-  next: Route;
+  after: Route;
 }>;
+
+const judgedOf = (decision: Decision): Pick<Judgment, "style" | "habit" | "context" | "next"> => ({
+  style: decision.style,
+  habit: decision.habit,
+  ...decision.transition,
+});
 
 type Picked = Readonly<{ decision: Decision; verdict: Verdict; text: string; aim: string }>;
 
 const rejected = ({ decision, verdict, text }: Picked): Effect.Effect<Option.Option<Change>> =>
-  Effect.succeedSome(
-    withJudgment({ style: decision.style, habit: decision.habit, verdict, reason: text }),
-  );
+  Effect.succeedSome(withJudgment({ ...judgedOf(decision), verdict, reason: text }));
 
 const intoNewAim = Effect.fnUntraced(function* intoNewAim({ decision, verdict, text }: Picked) {
   if (Str.isEmpty(text)) {
@@ -57,12 +64,12 @@ const intoNewAim = Effect.fnUntraced(function* intoNewAim({ decision, verdict, t
   const random = yield* SecureRandom.SecureRandom;
   const id = yield* random.uuidV4();
   const aim = withAim({ id, style: decision.style, category: HARMONY, name: text });
-  const judged = withJudgment({ style: decision.style, habit: decision.habit, verdict, aim: id });
+  const judged = withJudgment({ ...judgedOf(decision), verdict, aim: id });
   return Option.some<Change>((library) => judged(aim(library)));
 });
 
 const intoAim = ({ decision, verdict, aim }: Picked): Effect.Effect<Option.Option<Change>> =>
-  Effect.succeedSome(withJudgment({ style: decision.style, habit: decision.habit, verdict, aim }));
+  Effect.succeedSome(withJudgment({ ...judgedOf(decision), verdict, aim }));
 
 const changeOf = (
   picked: Picked,
@@ -98,7 +105,7 @@ const judged = Effect.fnUntraced(function* judged(decision: Decision) {
     return;
   }
   yield* changed(change.value);
-  navigate(decision.next);
+  navigate(decision.after);
 });
 
 /** @internal */

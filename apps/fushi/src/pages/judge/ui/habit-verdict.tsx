@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 
 import { aimsOf, judgmentOf } from "#/entities/library/index.ts";
 import type { Library, Style } from "#/entities/library/index.ts";
+import type { Candidate } from "#/features/find-candidates/index.ts";
 import { Decide } from "#/features/judge-habit/index.ts";
 import type { Decision } from "#/features/judge-habit/index.ts";
 import { HARMONY } from "#/shared/config/index.ts";
@@ -13,22 +14,24 @@ import { JudgedRow } from "./judged-row.tsx";
 export const HabitVerdict = ({
   library,
   current: style,
-  habit,
+  candidate,
   next,
 }: Readonly<{
   library: Library;
   current: Style;
-  habit: string;
+  candidate: Candidate;
   next: Option.Option<string>;
 }>): ReactNode => {
+  const habit = candidate.key;
   const decision = useMemo(
     (): Decision => ({
       style: style.id,
       habit,
+      transition: { context: candidate.context, next: candidate.next },
       aims: aimsOf(library)({ style: style.id, category: HARMONY }),
-      next: { page: "judge", style: style.id, habit: next },
+      after: { page: "judge", style: style.id, habit: next },
     }),
-    [library, style.id, habit, next],
+    [library, style.id, habit, candidate.context, candidate.next, next],
   );
   return Option.match(judgmentOf(library)({ style: style.id, habit }), {
     onNone: () => <Decide decision={decision} />,

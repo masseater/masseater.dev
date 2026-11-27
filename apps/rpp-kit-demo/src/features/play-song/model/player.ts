@@ -68,7 +68,7 @@ export const startPlayer = ({ from, onTick, onEnd }: StartOptions): Player => {
   });
   const fiber = Effect.runFork(Effect.repeat(tick, Schedule.spaced(TICK)));
   return {
-    stop: () => {
+    stop: (): void => {
       const close = Effect.promise(engine.close);
       fiber.pipe(Fiber.interrupt, Effect.andThen(close), Effect.runFork);
     },

@@ -2,7 +2,7 @@ use desktop_shell::{Setup, Shell, open_window, screen_port};
 use tauri::App;
 use tauri_specta::{Builder, ErrorHandlingMode, collect_commands};
 
-use crate::features::{keep_library, read_baselines};
+use crate::features::{export_preset, keep_library, read_baselines};
 
 const SCREEN_PORT: u16 = 47_251;
 const CAPABILITY: &str = include_str!("../../capabilities/default.json");
@@ -11,6 +11,7 @@ fn builder() -> Builder<tauri::Wry> {
     Builder::<tauri::Wry>::new()
         .error_handling(ErrorHandlingMode::Result)
         .commands(collect_commands![
+            export_preset::export_preset,
             keep_library::load_library,
             keep_library::save_library,
             read_baselines::list_baselines,

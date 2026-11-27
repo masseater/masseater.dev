@@ -26,8 +26,10 @@ import {
   String as Str,
   pipe,
 } from "effect";
+import type { ConfigError } from "effect/Config";
 import { layer as fetchHttpClient } from "effect/http/FetchHttpClient";
 
+import { grantPermissions } from "#/features/grant-token-permissions/index.ts";
 import { ISSUED_TOKEN_PREFIX } from "#/features/issue-cloudflare-token/index.ts";
 
 type Token = Readonly<{
@@ -126,16 +128,33 @@ const revoke = (
     Effect.flatMap((line) => Console.log(line)),
   );
 
+const settingNames = (setting: string): readonly string[] =>
+  pipe(setting, Str.split(","), Arr.map(Str.trim), Arr.filter(Str.isNonEmpty));
+
+const grant = (accountId: string): Effect.Effect<void, ConfigError, CloudflareOpContext> =>
+  Effect.gen(function* grantFromSettings() {
+    const tokenId = yield* Config.String("GRANT_TOKEN_ID").pipe(Config.withDefault(""));
+    const groups = yield* Config.String("GRANT_GROUPS").pipe(Config.withDefault(""));
+    const names = settingNames(groups);
+    if (Str.isEmpty(tokenId) || Arr.isReadonlyArrayEmpty(names)) {
+      return;
+    }
+    const line = yield* grantPermissions({ accountId, tokenId, names }).pipe(
+      Effect.map((added) => `account\t${tokenId}\tgranted\t${Arr.join(added, ",")}`),
+      Effect.catchCause((cause) =>
+        Effect.succeed(`account\t${tokenId}\tgrant failed\t${Cause.pretty(cause)}`),
+      ),
+    );
+    yield* Console.log(line);
+  });
+
 const program = Effect.gen(function* tokens() {
   const accountId = yield* Config.String("CLOUDFLARE_ACCOUNT_ID");
   const deleteTokenIds = yield* Config.String("DELETE_TOKEN_IDS").pipe(Config.withDefault(""));
-  const targets = pipe(
-    deleteTokenIds,
-    Str.split(","),
-    Arr.map(Str.trim),
-    Arr.filter(Str.isNonEmpty),
-  );
-  yield* Effect.forEach(targets, (tokenId) => revoke(accountId, tokenId), { concurrency: 1 });
+  yield* Effect.forEach(settingNames(deleteTokenIds), (tokenId) => revoke(accountId, tokenId), {
+    concurrency: 1,
+  });
+  yield* grant(accountId);
   yield* ownPolicies(accountId);
   yield* inventory("account", () => listAccountTokens.items({ accountId }));
   yield* inventory("user", () => listUserTokens.items({}));

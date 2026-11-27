@@ -36,6 +36,8 @@ export type Aim = typeof AimSchema.Type;
 const JudgmentSchema = Schema.Struct({
   style: Schema.String,
   habit: Schema.String,
+  context: Schema.String,
+  next: Schema.String,
   verdict: Schema.Literals(VERDICTS),
   aim: Schema.optionalKey(Schema.String),
   reason: Schema.optionalKey(Schema.String),

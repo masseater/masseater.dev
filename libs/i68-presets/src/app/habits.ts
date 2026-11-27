@@ -15,6 +15,8 @@ export type {
   SongText,
   StyleSong,
 } from "#/features/find-habits/index.ts";
+export { HABIT_KINDS, StyleRulesSchema } from "#/shared/lib/style-rules.ts";
+export type { HabitKind, HabitRule, StyleRules } from "#/shared/lib/style-rules.ts";
 export { StyleTableSchema } from "#/shared/lib/style-table.ts";
 export type { StyleTable } from "#/shared/lib/style-table.ts";
 

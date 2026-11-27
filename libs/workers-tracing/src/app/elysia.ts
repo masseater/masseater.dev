@@ -1,4 +1,3 @@
-import type { Span } from "@cloudflare/workers-types/index.ts";
 import { tracing } from "cloudflare:workers";
 import { Option, Predicate, pipe } from "effect";
 import { Elysia as PlainElysia } from "elysia";
@@ -58,7 +57,7 @@ const install = (app: object, inner: Fetch): Handle => {
 };
 
 export const Elysia: typeof PlainElysia = new Proxy(PlainElysia, {
-  construct: (_target, [config]: readonly ElysiaConfig<string>[]) => {
+  construct: (_target, [config]: readonly ElysiaConfig<string>[]): object => {
     const app = new PlainElysia(config);
     const compile = app.compile.bind(app);
     Object.defineProperty(app, "fetch", {

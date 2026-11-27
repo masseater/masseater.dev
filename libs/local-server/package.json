@@ -9,12 +9,14 @@
   },
   "exports": {
     ".": "./src/app/index.ts",
-    "./node": "./src/app/node.ts"
+    "./node": "./src/app/node.ts",
+    "./serve": "./src/app/serve.ts"
   },
   "dependencies": {
     "@effect/platform-node": "catalog:",
     "@effect/sql-sqlite-node": "catalog:",
-    "effect": "catalog:stack"
+    "effect": "catalog:stack",
+    "srvx": "catalog:"
   },
   "devDependencies": {
     "vite-plus": "catalog:stack"

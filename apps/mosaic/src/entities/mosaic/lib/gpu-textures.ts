@@ -2,7 +2,6 @@ import { Array, Effect, MutableHashMap, Number as Num, Option, Order, pipe } fro
 
 import { runtime } from "#/shared/lib/telemetry.ts";
 
-import { drawGroup } from "./gpu-pipelines.ts";
 import type { Pipelines } from "./gpu-pipelines.ts";
 
 const MAX_MIP_LEVELS = 4;
@@ -107,7 +106,7 @@ const register =
   (context: Context, slots: Slots) =>
   (image: HTMLImageElement): Effect.Effect<void> =>
     Effect.map(uploadImage(context.device)(image), (texture) => {
-      const group = drawGroup({ device: context.device, pipelines: context.pipelines, texture });
+      const group = context.pipelines.drawGroup(texture);
       slots.set(image, {
         status: "ready",
         uploaded: { texture, group },
@@ -167,10 +166,10 @@ const createSlots = (): Slots => {
   const map = MutableHashMap.empty<string, readonly [HTMLImageElement, Slot]>();
   return {
     get: (image) => Option.map(MutableHashMap.get(map, image.src), ([, slot]) => slot),
-    set: (image, slot) => {
+    set: (image, slot): void => {
       MutableHashMap.set(map, image.src, [image, slot]);
     },
-    remove: (image) => {
+    remove: (image): void => {
       MutableHashMap.remove(map, image.src);
     },
     entries: () => map.pipe(MutableHashMap.values, Array.fromIterable),
@@ -183,7 +182,7 @@ export const createTextures = (context: Context): Textures => {
   return {
     get: lookup(context, slots),
     ensure: register(context, slots),
-    sweep: (frame) => {
+    sweep: (frame): void => {
       if (slots.size() > TEXTURE_LIMIT) {
         evict(slots, frame);
       }
