@@ -7,7 +7,7 @@ import { notFound, redirect } from "@tanstack/router-core";
 import { Array as Arr, Effect, Option, Schema, String, pipe } from "effect";
 import { CloudflareAdapter } from "elysia/adapter/cloudflare-worker";
 
-export interface Env {
+interface Env {
   readonly CACHE: KVNamespace;
 }
 
@@ -154,5 +154,6 @@ const route: Route = (env, request) => {
 };
 
 export const worker = {
-  fetch: (request: Request, env: Env): Promise<Response> => run(route(env, request)),
+  fetch: (request: Request, env: Readonly<{ CACHE: KVNamespace }>): Promise<Response> =>
+    run(route(env, request)),
 };

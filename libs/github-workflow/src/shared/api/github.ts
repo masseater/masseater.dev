@@ -10,9 +10,14 @@ const HEADERS = {
   "x-github-api-version": "2022-11-28",
 };
 
-type Failure = Config.ConfigError | HttpBody.HttpBodyError | HttpClientError.HttpClientError;
+/** @internal */
+export type GitHubFailure =
+  | Config.ConfigError
+  | HttpBody.HttpBodyError
+  | HttpClientError.HttpClientError;
 
-type Sent<Success> = Effect.Effect<Success, Failure, HttpClient.HttpClient>;
+/** @internal */
+export type GitHubRequest<Success> = Effect.Effect<Success, GitHubFailure, HttpClient.HttpClient>;
 
 const requestTo = Effect.fn("requestTo")(function* requestTo(
   method: HttpMethod.HttpMethod,
@@ -52,7 +57,7 @@ const getJsonOf =
     path: string,
   ): Effect.Effect<
     Codec["Type"],
-    Failure | Schema.SchemaError,
+    GitHubFailure | Schema.SchemaError,
     HttpClient.HttpClient | Codec["DecodingServices"]
   > =>
     requestTo("GET", path).pipe(
@@ -65,25 +70,26 @@ const postJsonOf =
   ({
     path,
     body,
-  }: Write): Effect.Effect<
+  }: GitHubWrite): Effect.Effect<
     Codec["Type"],
-    Failure | Schema.SchemaError,
+    GitHubFailure | Schema.SchemaError,
     HttpClient.HttpClient | Codec["DecodingServices"]
   > =>
     withBody("POST", path, body).pipe(Effect.flatMap(HttpClientResponse.schemaBodyJson(schema)));
 
-const removeAt = (path: string): Sent<void> =>
+const removeAt = (path: string): GitHubRequest<void> =>
   requestTo("DELETE", path).pipe(Effect.flatMap(execute), Effect.asVoid);
 
-interface Write {
+/** @internal */
+export interface GitHubWrite {
   readonly path: string;
   readonly body: unknown;
 }
 
-const postTo = ({ path, body }: Write): Sent<void> =>
+const postTo = ({ path, body }: GitHubWrite): GitHubRequest<void> =>
   withBody("POST", path, body).pipe(Effect.asVoid);
 
-const patchAt = ({ path, body }: Write): Sent<void> =>
+const patchAt = ({ path, body }: GitHubWrite): GitHubRequest<void> =>
   withBody("PATCH", path, body).pipe(Effect.asVoid);
 
 /** @internal */

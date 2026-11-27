@@ -6,9 +6,11 @@ import { FetchHttpClient } from "effect/http";
 import type { HttpClient } from "effect/http";
 import { OtlpSerialization, OtlpTracer } from "effect/observability";
 
-type Platform = NodeServices | HttpClient.HttpClient;
+/** @internal */
+export type Platform = NodeServices | HttpClient.HttpClient;
 
-type Run<Provided> = <Success, Failure>(
+/** @internal */
+export type Run<Provided> = <Success, Failure>(
   program: Effect.Effect<Success, Failure, Platform | Provided>,
 ) => void;
 

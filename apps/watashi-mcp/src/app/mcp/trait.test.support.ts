@@ -22,8 +22,6 @@ const { env: database } = testD1;
 
 export const { closeDatabase, resetDatabase } = testD1;
 
-export type Embedded = Readonly<{ data: number[][]; shape: number[] }>;
-
 const DIMENSIONS = 64;
 
 export const transcripts = new Map<string, string>();
@@ -54,7 +52,7 @@ const vectorOf = (text: string): number[] => {
   );
 };
 
-export type Stored = Readonly<{ body: ReadableStream<Uint8Array> }>;
+type Stored = Readonly<{ body: ReadableStream<Uint8Array> }>;
 
 const storedAt = (key: string): Stored | null =>
   pipe(
@@ -64,11 +62,14 @@ const storedAt = (key: string): Stored | null =>
   );
 
 const CONVERSATIONS = {
-  get: (key: string): Promise<Stored | null> => Promise.resolve(storedAt(key)),
+  get: (key: string): Promise<ReturnType<typeof storedAt>> => Promise.resolve(storedAt(key)),
 };
 
 const AI = {
-  run: (_model: string, input: Readonly<{ text: readonly string[] }>): Promise<Embedded> => {
+  run: (
+    _model: string,
+    input: Readonly<{ text: readonly string[] }>,
+  ): Promise<Readonly<{ data: number[][]; shape: number[] }>> => {
     embeddedTexts.push(...input.text);
     const data = pipe(input.text, Arr.map(vectorOf));
     return Promise.resolve({ data, shape: [data.length, DIMENSIONS] });

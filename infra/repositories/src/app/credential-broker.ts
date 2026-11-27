@@ -26,7 +26,7 @@ import {
   verify,
   workflowGrant,
 } from "#/entities/credential/index.ts";
-import type { GitHubAppEnv, GitHubAppFailed, Claims } from "#/entities/credential/index.ts";
+import type { GitHubAppFailed, Claims } from "#/entities/credential/index.ts";
 import { issueAppPassword } from "#/features/issue-app-password/index.ts";
 import {
   ISSUED_TOKEN_PREFIX,
@@ -35,23 +35,11 @@ import {
 } from "#/features/issue-cloudflare-token/index.ts";
 import { mintGitHubToken, ownsSource } from "#/features/mint-github-token/index.ts";
 
+import type { CredentialBrokerEnv } from "./credential-broker-env.ts";
 import { hourlyJobs } from "./hourly-jobs.ts";
 import { sideRoute } from "./side-routes.ts";
-import type { SideRouteInput } from "./side-routes.ts";
 
 const TOKEN_LIFETIME = { hours: 1 } as const;
-
-export type CredentialBrokerEnv = GitHubAppEnv &
-  SideRouteInput["env"] &
-  Readonly<{
-    ROOT_TOKEN: SecretsStoreSecret;
-    CLAUDE_CODE_OAUTH_TOKEN: SecretsStoreSecret;
-    NPM_TOKEN?: SecretsStoreSecret;
-    ACCOUNT_ID: string;
-    GRANTS: string;
-    GRANT_PROFILES: string;
-    WORKFLOW_GRANTS: string;
-  }>;
 
 const PermissionGroups = Schema.mutable(Schema.Array(Schema.Struct({ id: Schema.String })));
 

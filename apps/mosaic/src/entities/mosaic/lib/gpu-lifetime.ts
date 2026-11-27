@@ -31,11 +31,9 @@ export const releaseOnUnmount =
     return gpu;
   };
 
-export type PageEvents = Readonly<Pick<EventTarget, "addEventListener" | "removeEventListener">>;
-
 const whenPersisted =
   (type: "pagehide" | "pageshow") =>
-  (page: PageEvents) =>
+  (page: Readonly<Pick<EventTarget, "addEventListener" | "removeEventListener">>) =>
   (run: () => void): (() => void) => {
     const listener = (event: unknown): void => {
       if (Predicate.hasProperty(event, "persisted") && event.persisted === true) {

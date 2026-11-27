@@ -1,7 +1,7 @@
 import { makeD1 } from "@masseater.dev/d1-test";
 import { Effect, Option, pipe } from "effect";
 
-export interface Range {
+interface Range {
   readonly offset: number;
   readonly length: number;
 }
@@ -26,7 +26,10 @@ const BUCKET = {
     stores.objects.set(key, new Uint8Array(value));
     return Promise.resolve({});
   },
-  get: (key: string, options: Readonly<{ range: Range }>): Promise<object | null> => {
+  get: (
+    key: string,
+    options: Readonly<{ range: Readonly<{ offset: number; length: number }> }>,
+  ): Promise<object | null> => {
     const found = pipe(
       Option.fromNullishOr(stores.objects.get(key)),
       Option.map((stored) => ranged(stored, options.range)),
