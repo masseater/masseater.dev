@@ -15,7 +15,7 @@ export default defineConfig({
         crate: "aredoko-desktop",
         input: await cargoInputs({ directory: import.meta.dirname }),
       }),
-      verify: { command: [], dependsOn: ["cargo"] },
+      verify: { command: [], dependsOn: ["cargo", "screen"] },
       installer: {
         command: "tauri build --config src-tauri/tauri.release.conf.json",
         dependsOn: ["aredoko-server#installer:resources"],
