@@ -71,7 +71,7 @@ catalog:
   discord.js: 14.28.1
   discord-api-types: 0.38.60
   oxlint-plugin-eslint: 1.95.0
-  "@cloudflare/workers-types": 5.20261123.1
+  "@cloudflare/workers-types": 5.20261124.1
   "@effect/platform-node": 4.1.5
   "@effect/platform-node-shared": 4.1.5
   "@effect/sql-sqlite-node": 4.1.5
@@ -302,7 +302,7 @@ overrides:
   "langium>vscode-languageserver": "catalog:" # exit: npm:langium allows vscode-languageserver@>=11
   "@remotion/eslint-plugin>@typescript-eslint/utils": "-" # exit: npm:@remotion/eslint-plugin allows @typescript-eslint/utils@>=8
   "@remotion/eslint-plugin>typescript": "-" # exit: npm:@remotion/eslint-plugin drops typescript || npm:@remotion/eslint-plugin allows typescript@>=7
-  workerd: 1.20261123.1 # exit: npm:miniflare requires workerd@>=1.20261115.1
+  workerd: 1.20261124.1 # exit: npm:miniflare requires workerd@>=1.20261115.1
   "@r_masseater/vite-plus-adopt>@r_masseater/h56m": "workspace:*" # exit: npm:@r_masseater/vite-plus-adopt requires @r_masseater/h56m@>=0.2.0
   vite@*: "catalog:" # exit: unused
   vitest: 5.1.1 # exit: npm:vite-plus requires vitest@>=5.1.1

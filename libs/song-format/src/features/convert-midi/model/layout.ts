@@ -111,13 +111,8 @@ const spanAt =
     return { start, length: end - start, signature };
   };
 
-export interface Cursor {
-  readonly start: number;
-  readonly first: boolean;
-}
-
 export const barsOf: From<Timeline, readonly LaidBar[]> = (timeline) =>
-  Arr.unfold({ start: NONE, first: true }, (cursor: Cursor) => {
+  Arr.unfold({ start: NONE, first: true }, (cursor) => {
     if (!cursor.first && cursor.start >= timeline.end) {
       return Option.none();
     }
