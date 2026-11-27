@@ -108,6 +108,21 @@ const readsTasks = Effect.gen(function* readsTasks() {
   expect(settings.tasks).toStrictEqual({ verify: ["own#verify"], native: [] });
 });
 
+const ADDON_MANIFEST = `{ "name": "addon", "native": { "binary": "addon", "targets": ["linux-x64-gnu"] } }`;
+const ADDON_CONFIG = `import { addonTasks } from "./tasks.ts";\nexport default { run: { tasks: { ...addonTasks() } } };\n`;
+
+const readsNativeOfAddons = Effect.gen(function* readsNativeOfAddons() {
+  const settings = yield* settingsOf({
+    "libs/addon/package.json": ADDON_MANIFEST,
+    "libs/addon/vite.config.ts": ADDON_CONFIG,
+    "libs/presets/package.json": `{ "name": "presets" }`,
+    "libs/presets/vite.config.ts": `export default { run: { tasks: { native: "node bin/extract.ts" } } };\n`,
+    "libs/plain/package.json": `{ "name": "plain" }`,
+    "libs/plain/vite.config.ts": ADDON_CONFIG,
+  });
+  expect(settings.tasks.native).toStrictEqual(["addon#native", "presets#native"]);
+});
+
 const sharesTestWorkers = Effect.gen(function* sharesTestWorkers() {
   const settings = yield* settingsOf({
     "apps/shared/package.json": `{ "name": "shared" }`,
@@ -193,6 +208,10 @@ layer(fixtureLayer)("workspace settings", (it) => {
   it.effect(
     "names the verify task of each workspace and the build of each workspace that exports dist",
     () => readsTasks,
+  );
+  it.effect(
+    "names the native task of each workspace whose config writes one or whose manifest ships a native addon",
+    () => readsNativeOfAddons,
   );
   it.effect(
     "shares test workers between the files of a workspace unless its config sets test.isolate to true, and leaves out a workspace whose verify runs its own test task",

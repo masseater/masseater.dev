@@ -1,1 +1,1 @@
-export { changesAfter, store } from "./api/documents.ts";
+export { DocumentsDb, changesAfter, documentsDbOf, store } from "./api/documents.ts";

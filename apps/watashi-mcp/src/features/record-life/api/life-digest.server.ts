@@ -13,6 +13,7 @@ import {
 } from "#/entities/life-record/index.ts";
 import type { Period, Body, Entry, MetricStats, StatsData } from "#/entities/life-record/index.ts";
 import type { StoreFailure } from "#/shared/api/index.ts";
+import type { Database } from "#/shared/db/index.server.ts";
 
 export type DigestInput = Readonly<{ from?: string; to?: string }>;
 
@@ -161,7 +162,7 @@ const digestOf = (context: DigestContext, data: StatsData): Body => {
   };
 };
 
-export const lifeDigest = (input: DigestInput): Effect.Effect<Body, StoreFailure> =>
+export const lifeDigest = (input: DigestInput): Effect.Effect<Body, StoreFailure, Database> =>
   Effect.gen(function* readDigest() {
     const today = yield* todayJst;
     const entries = yield* scanAll([

@@ -1,14 +1,12 @@
 import { describe, expect, it } from "@effect/vitest";
 import { Array as Arr, Effect, Option, Schema, pipe } from "effect";
-import { afterAll, beforeEach, vi } from "vite-plus/test";
+import { afterAll, beforeEach } from "vite-plus/test";
 
 import { SessionListing, SessionRecord } from "#/shared/api/index.ts";
 import type { RecordedSession } from "#/shared/api/index.ts";
-import { closeDatabase, resetDatabase } from "#/shared/lib/d1.test.support.ts";
 
 import { sessionRoutes } from "./session-routes.ts";
-
-vi.mock("cloudflare:workers", () => import("#/shared/lib/d1.test.support.ts"));
+import { closeDatabase, resetDatabase, withSessions } from "./sessions.test.support.ts";
 
 const ORIGIN = "https://kikite.test";
 const ID = "0b6f7c1e-2f3a-4d5b-8c9d-0e1f2a3b4c5d";
@@ -50,10 +48,10 @@ const recordWith = (texts: readonly string[], theme: Option.Option<string>): Rec
 });
 
 const call = (path: string): Effect.Effect<Response> =>
-  sessionRoutes(new Request(`${ORIGIN}${path}`));
+  withSessions(sessionRoutes(new Request(`${ORIGIN}${path}`)));
 
 const put = (id: string, body: string): Effect.Effect<Response> =>
-  sessionRoutes(new Request(`${ORIGIN}/api/sessions/${id}`, { method: "PUT", body }));
+  withSessions(sessionRoutes(new Request(`${ORIGIN}/api/sessions/${id}`, { method: "PUT", body })));
 
 const save = (record: RecordedSession): Effect.Effect<Response, Schema.SchemaError> =>
   encodeRecord(record).pipe(Effect.flatMap((body) => put(ID, body)));

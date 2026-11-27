@@ -5,8 +5,8 @@ import type { IdKey } from "#/entities/life-record/index.server.ts";
 import { lifeKeyOf, timesOut, timeOut } from "#/entities/life-record/index.ts";
 import type { Body } from "#/entities/life-record/index.ts";
 import type { StoreFailure } from "#/shared/api/index.ts";
+import type { Database, HistoryEntry } from "#/shared/db/index.server.ts";
 import { listHistory } from "#/shared/db/index.server.ts";
-import type { HistoryEntry } from "#/shared/db/index.server.ts";
 
 const HISTORY_LIMIT = 100;
 
@@ -29,8 +29,10 @@ const revisionOf =
       })),
     );
 
-const revisionsOf = (key: IdKey): Effect.Effect<readonly Body[], StoreFailure> => {
-  const toRevisions = (entries: readonly HistoryEntry[]): Effect.Effect<readonly Body[]> =>
+const revisionsOf = (key: IdKey): Effect.Effect<readonly Body[], StoreFailure, Database> => {
+  const toRevisions = (
+    entries: readonly HistoryEntry[],
+  ): Effect.Effect<readonly Body[], never, Database> =>
     Effect.forEach(entries, revisionOf(key), { concurrency: 1 });
   return findRecord(key).pipe(
     Effect.andThen(listHistory({ entity: key.record, id: key.id, limit: HISTORY_LIMIT })),
@@ -38,7 +40,7 @@ const revisionsOf = (key: IdKey): Effect.Effect<readonly Body[], StoreFailure> =
   );
 };
 
-export const lifeRevisions = (ref: string): Effect.Effect<Body, StoreFailure> =>
+export const lifeRevisions = (ref: string): Effect.Effect<Body, StoreFailure, Database> =>
   pipe(
     lifeKeyOf(ref),
     Effect.flatMap(revisionsOf),

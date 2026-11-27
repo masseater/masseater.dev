@@ -1,11 +1,14 @@
 import { Array as Arr, Effect, Option, String as Str, pipe } from "effect";
 import { TestClock } from "effect/testing";
 
+import type { ConversationObjects } from "#/entities/conversation/index.server.ts";
+import type { Embedder } from "#/entities/trait/index.server.ts";
 import type { ObservationValue } from "#/entities/trait/index.test.support.ts";
 import type { AnalysisRequestValue } from "#/entities/trait/index.ts";
 import { TraitAnalyst } from "#/entities/trait/index.ts";
 import { buildStep } from "#/features/build-traits/index.test.support.ts";
 import type { StepFailure, StepOutcome } from "#/features/build-traits/index.test.support.ts";
+import type { Database } from "#/shared/db/index.server.ts";
 
 export type Respond = (request: AnalysisRequestValue) => readonly ObservationValue[];
 
@@ -27,7 +30,9 @@ const PAST_BUDGET = "11 minutes";
 
 export const pastBudget = TestClock.adjust(PAST_BUDGET);
 
-export const step = (respond: Respond): Effect.Effect<StepOutcome, StepFailure> =>
+export const step = (
+  respond: Respond,
+): Effect.Effect<StepOutcome, StepFailure, Database | Embedder | ConversationObjects> =>
   buildStep.pipe(
     Effect.provideService(
       TraitAnalyst,
@@ -41,7 +46,9 @@ export const step = (respond: Respond): Effect.Effect<StepOutcome, StepFailure> 
     ),
   );
 
-export const drain = (respond: Respond): Effect.Effect<readonly StepOutcome[], StepFailure> =>
+export const drain = (
+  respond: Respond,
+): Effect.Effect<readonly StepOutcome[], StepFailure, Database | Embedder | ConversationObjects> =>
   Effect.gen(function* drainSteps() {
     yield* settle;
     const outcomes: StepOutcome[] = [];

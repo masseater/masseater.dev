@@ -1,8 +1,7 @@
 import { failedAt, READ_ONLY, compactInput } from "@masseater.dev/mcp-tool-call";
 import type { McpServer } from "@modelcontextprotocol/server";
 import { runWorkersAi } from "@r_masseater/workers-tracing/workers-ai";
-import { env } from "cloudflare:workers";
-import { Array as Arr, Effect, Option, Order, Schema, pipe } from "effect";
+import { Array as Arr, Effect, Option, Order, Schema, flow, pipe } from "effect";
 
 import { runTool } from "#/shared/api/index.ts";
 
@@ -44,13 +43,18 @@ const withUrl = (slide: Slide): Slide & Readonly<{ url: string }> => ({
 const slideOf = (stored: Readonly<{ metadata?: unknown }>): Option.Option<Slide> =>
   Schema.decodeUnknownOption(SlideMetadata)(stored.metadata);
 
-const embed = (query: string): Effect.Effect<number[], ReturnType<typeof fail>> =>
+export type SlideBindings = Readonly<{ AI: Ai; SLIDE_INDEX: VectorizeIndex }>;
+
+const embed = (
+  { AI }: SlideBindings,
+  query: string,
+): Effect.Effect<number[], ReturnType<typeof fail>> =>
   runWorkersAi({
     operation: "embeddings",
     model: EMBEDDING_MODEL,
     caller: "sundries.slides-search",
     call: (options) =>
-      env.AI.run(EMBEDDING_MODEL, { queries: query, instruction: QUERY_INSTRUCTION }, options),
+      AI.run(EMBEDDING_MODEL, { queries: query, instruction: QUERY_INSTRUCTION }, options),
   }).pipe(
     Effect.mapError(({ cause }) => fail(cause)),
     Effect.flatMap(({ data }) =>
@@ -74,11 +78,12 @@ const queryOptions = ({
   });
 
 export const searchSlides = Effect.fn("searchSlides")(function* searchSlides(
+  bindings: SlideBindings,
   query: Readonly<{ query: string; limit: number; deck: Option.Option<string> }>,
 ) {
-  const vector = yield* embed(query.query);
+  const vector = yield* embed(bindings, query.query);
   const { matches } = yield* Effect.tryPromise({
-    try: () => env.SLIDE_INDEX.query(vector, queryOptions(query)),
+    try: () => bindings.SLIDE_INDEX.query(vector, queryOptions(query)),
     catch: fail,
   });
   return pipe(
@@ -93,19 +98,21 @@ export const searchSlides = Effect.fn("searchSlides")(function* searchSlides(
   );
 });
 
-const byIds = (ids: readonly string[]): Effect.Effect<readonly Slide[], ReturnType<typeof fail>> =>
-  Effect.tryPromise({ try: () => env.SLIDE_INDEX.getByIds([...ids]), catch: fail }).pipe(
-    Effect.map(Arr.flatMap((stored) => Option.toArray(slideOf(stored)))),
-  );
+const byIds =
+  ({ SLIDE_INDEX }: SlideBindings) =>
+  (ids: readonly string[]): Effect.Effect<readonly Slide[], ReturnType<typeof fail>> =>
+    Effect.tryPromise({ try: () => SLIDE_INDEX.getByIds([...ids]), catch: fail }).pipe(
+      Effect.map(Arr.flatMap((stored) => Option.toArray(slideOf(stored)))),
+    );
 
-const getDeck = Effect.fn("getDeck")(function* getDeck(deck: string) {
-  const opening = yield* byIds([slideId(deck, FIRST_PAGE)]);
+const getDeck = Effect.fn("getDeck")(function* getDeck(bindings: SlideBindings, deck: string) {
+  const opening = yield* byIds(bindings)([slideId(deck, FIRST_PAGE)]);
   const pages = pipe(
     Arr.head(opening),
     Option.match({ onNone: () => NO_PAGES, onSome: (first) => first.pages }),
   );
   const ids = Arr.makeBy(pages, (index) => slideId(deck, index + FIRST_PAGE));
-  const batches = yield* Effect.forEach(Arr.chunksOf(ids, GET_BY_IDS_LIMIT), byIds, {
+  const batches = yield* Effect.forEach(Arr.chunksOf(ids, GET_BY_IDS_LIMIT), byIds(bindings), {
     concurrency: "unbounded",
   });
   return pipe(
@@ -116,36 +123,40 @@ const getDeck = Effect.fn("getDeck")(function* getDeck(deck: string) {
   );
 });
 
-const registerSearch = (server: McpServer): McpServer => {
-  server.registerTool(
-    "search_slides",
-    {
-      description: "Search the owner's slide decks by meaning, one slide per result.",
-      inputSchema: compactInput(SEARCH_SCHEMA),
-      annotations: READ_ONLY,
-    },
-    (input) =>
-      searchSlides({
-        query: input.query,
-        limit: input.limit ?? DEFAULT_SLIDE_LIMIT,
-        deck: Option.fromNullishOr(input.deck),
-      }).pipe(runTool({ count: (slides) => slides.length })),
-  );
-  return server;
-};
+const registerSearch =
+  (bindings: SlideBindings) =>
+  (server: McpServer): McpServer => {
+    server.registerTool(
+      "search_slides",
+      {
+        description: "Search the owner's slide decks by meaning, one slide per result.",
+        inputSchema: compactInput(SEARCH_SCHEMA),
+        annotations: READ_ONLY,
+      },
+      (input) =>
+        searchSlides(bindings, {
+          query: input.query,
+          limit: input.limit ?? DEFAULT_SLIDE_LIMIT,
+          deck: Option.fromNullishOr(input.deck),
+        }).pipe(runTool({ count: (slides) => slides.length })),
+    );
+    return server;
+  };
 
-const registerGetDeck = (server: McpServer): McpServer => {
-  server.registerTool(
-    "get_deck",
-    {
-      description: "Return the text of every slide in a deck, in page order.",
-      inputSchema: compactInput(DECK_SCHEMA),
-      annotations: READ_ONLY,
-    },
-    (input) => getDeck(input.deck).pipe(runTool({ count: (slides) => slides.length })),
-  );
-  return server;
-};
+const registerGetDeck =
+  (bindings: SlideBindings) =>
+  (server: McpServer): McpServer => {
+    server.registerTool(
+      "get_deck",
+      {
+        description: "Return the text of every slide in a deck, in page order.",
+        inputSchema: compactInput(DECK_SCHEMA),
+        annotations: READ_ONLY,
+      },
+      (input) => getDeck(bindings, input.deck).pipe(runTool({ count: (slides) => slides.length })),
+    );
+    return server;
+  };
 
-export const registerSlideTools = (server: McpServer): McpServer =>
-  pipe(server, registerSearch, registerGetDeck);
+export const registerSlideTools = (bindings: SlideBindings): ((server: McpServer) => McpServer) =>
+  flow(registerSearch(bindings), registerGetDeck(bindings));

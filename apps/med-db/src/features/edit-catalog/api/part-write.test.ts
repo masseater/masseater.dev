@@ -1,17 +1,15 @@
 import { afterAll, expect, it } from "@effect/vitest";
 import { Array as Arr, Effect, pipe, String as Str } from "effect";
 import type { Cause } from "effect";
-import { vi } from "vite-plus/test";
 
 import type { VideoPartsInput } from "#/entities/catalog/index.ts";
 import { getVideo } from "#/entities/video/index.server.ts";
-import { catalogDb } from "#/shared/db/index.server.ts";
-import { closeDatabase, resetDatabase } from "#/shared/db/index.test.support.ts";
+import { fromCatalog } from "#/shared/db/index.server.ts";
+import type { CatalogDb } from "#/shared/db/index.server.ts";
+import { closeDatabase, resetDatabase, withCatalog } from "#/shared/db/index.test.support.ts";
 import { partStaff, video } from "#/shared/db/index.ts";
 
 import { addParts, setVideoParts, updatePart } from "./part-write.server.ts";
-
-vi.mock("cloudflare:workers", () => import("#/shared/db/index.test.support.ts"));
 
 afterAll(() => Effect.runPromise(closeDatabase));
 
@@ -27,7 +25,8 @@ type Stored = Readonly<{
 
 const NO_MATERIAL = "each part needs a song, a quoted video or a label";
 
-const REJECTED_BY_DATABASE = "Failed to execute statement";
+const REJECTED_BY_DATABASE =
+  "D1_ERROR: FOREIGN KEY constraint failed: SQLITE_CONSTRAINT (extended: SQLITE_CONSTRAINT_FOREIGNKEY)";
 
 const FIRST = 1;
 
@@ -77,8 +76,8 @@ const UNKNOWN_SONG = { label: "無い曲", songId: UNKNOWN_SONG_ID, audioStaff: 
 
 const seedVideo = resetDatabase.pipe(
   Effect.andThen(
-    Effect.promise(() =>
-      catalogDb
+    fromCatalog((db) =>
+      db
         .insert(video)
         .values({ title: "テストメドレー", url: "https://example.com/watch/1" })
         .returning({ id: video.id })
@@ -88,7 +87,9 @@ const seedVideo = resetDatabase.pipe(
   Effect.map((row) => row.id),
 );
 
-const storedParts = (videoId: number): Effect.Effect<readonly Stored[], Cause.NoSuchElementError> =>
+const storedParts = (
+  videoId: number,
+): Effect.Effect<readonly Stored[], Cause.NoSuchElementError, CatalogDb> =>
   getVideo(videoId).pipe(
     Effect.flatMap(Effect.fromOption),
     Effect.map((found) =>
@@ -117,7 +118,7 @@ const storedParts = (videoId: number): Effect.Effect<readonly Stored[], Cause.No
 const rejectionOf = (
   write: typeof setVideoParts,
   parts: Parts,
-): Effect.Effect<string, Cause.NoSuchElementError> =>
+): Effect.Effect<string, Cause.NoSuchElementError, CatalogDb> =>
   Effect.gen(function* keepsParts() {
     const videoId = yield* seedVideo;
     yield* setVideoParts({ videoId, parts: ORIGINAL_PARTS }).pipe(Effect.orDie);
@@ -135,8 +136,8 @@ it.effect("setVideoParts は既存のパートと担当を新しいものに入�
     yield* setVideoParts({ videoId, parts: ORIGINAL_PARTS });
     yield* setVideoParts({ videoId, parts: [NEW_INTRO, NEW_CHORUS] });
     const stored = yield* storedParts(videoId);
-    const staffRows = yield* Effect.promise(() =>
-      catalogDb.select({ id: partStaff.id }).from(partStaff).all(),
+    const staffRows = yield* fromCatalog((db) =>
+      db.select({ id: partStaff.id }).from(partStaff).all(),
     );
     expect(stored).toMatchObject([
       {
@@ -148,28 +149,28 @@ it.effect("setVideoParts は既存のパートと担当を新しいものに入�
       { position: SECOND, label: "新サビ", songs: [], staff: ["audio:新しい音声"] },
     ]);
     expect(staffRows).toHaveLength(REPLACED_STAFF_ROWS);
-  }),
+  }).pipe(withCatalog),
 );
 
 it.effect("setVideoParts は素材の無いパートが混じると失敗し、元のパートと担当を残す", () =>
   Effect.gen(function* keepsPartsOnSet() {
     const message = yield* rejectionOf(setVideoParts, [NEW_INTRO, {}, NEW_CHORUS]);
     expect(message).toBe(NO_MATERIAL);
-  }),
+  }).pipe(withCatalog),
 );
 
 it.effect("addParts は素材の無いパートが混じると失敗し、パートを 1 つも足さない", () =>
   Effect.gen(function* keepsPartsOnAdd() {
     const message = yield* rejectionOf(addParts, [NEW_INTRO, {}, NEW_CHORUS]);
     expect(message).toBe(NO_MATERIAL);
-  }),
+  }).pipe(withCatalog),
 );
 
 it.effect("setVideoParts は batch の途中で D1 が拒むと、元のパートと担当を残す", () =>
   Effect.gen(function* keepsPartsOnBatchFailure() {
     const message = yield* rejectionOf(setVideoParts, [NEW_INTRO, UNKNOWN_SONG]);
     expect(message).toBe(REJECTED_BY_DATABASE);
-  }),
+  }).pipe(withCatalog),
 );
 
 it.effect("updatePart は指定したパートの音声の担当だけを入れ替える", () =>
@@ -187,5 +188,5 @@ it.effect("updatePart は指定したパートの音声の担当だけを入れ�
       ORIGINAL_INTRO,
       { ...ORIGINAL_CHORUS, staff: ["audio:差し替えた音声", "video:元の映像"] },
     ]);
-  }),
+  }).pipe(withCatalog),
 );

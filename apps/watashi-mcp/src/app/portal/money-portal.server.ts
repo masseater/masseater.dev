@@ -3,15 +3,13 @@ import { runner } from "@r_masseater/workers-tracing/effect";
 import { WorkerEntrypoint } from "cloudflare:workers";
 import { Effect, Layer, Logger, Match } from "effect";
 
+import { watashiLayer } from "#/app/mcp/bindings.server.ts";
 import { MONEY_READ } from "#/app/mcp/money-tools.server.ts";
 import type { Failure, Services } from "#/entities/ledger/index.server.ts";
-import { services } from "#/shared/api/index.server.ts";
 
 type Described = Readonly<{ errorTag: string; text: string }>;
 
 const logger = Logger.layer([Logger.withLeveledConsole(Logger.formatStructured)]);
-
-const runLogged = runner(Layer.mergeAll(logger, services));
 
 const describe = Match.type<Failure>().pipe(
   Match.tagsExhaustive({
@@ -40,6 +38,7 @@ const readWith = (input: unknown): Effect.Effect<PortalResult, never, Services> 
 
 export class MoneyPortal extends WorkerEntrypoint implements MoneyPortalRpc {
   public read(input: unknown): Promise<PortalResult> {
+    const runLogged = runner(Layer.mergeAll(logger, watashiLayer(this.env)));
     return runLogged(readWith(input).pipe(Effect.annotateLogs({ entrypoint: this.ctx.props })));
   }
 }

@@ -1,6 +1,7 @@
 import type { UpstreamFailed } from "@masseater.dev/mcp-tool-call";
 import { Array as Arr, Effect, Option, Record as Rec, pipe } from "effect";
 
+import type { Embedder } from "#/entities/trait/index.server.ts";
 import { embedTexts, loadTraitVectors, loadTraits } from "#/entities/trait/index.server.ts";
 import type {
   AnalystFailed,
@@ -16,6 +17,7 @@ import {
   candidatesOf,
   unionOf,
 } from "#/entities/trait/index.ts";
+import type { Database } from "#/shared/db/index.server.ts";
 import type { StorageFailed } from "#/shared/db/index.ts";
 
 export type Asked = Readonly<{ traits: readonly TraitState[]; checked: Checked }>;
@@ -33,7 +35,7 @@ const presentOf = (batch: readonly BatchSource[]): readonly BatchSource[] =>
 const candidatesFor = (
   traits: readonly TraitState[],
   present: Present,
-): Effect.Effect<Candidates, StorageFailed | UpstreamFailed> =>
+): Effect.Effect<Candidates, StorageFailed | UpstreamFailed, Database | Embedder> =>
   Effect.gen(function* findCandidates() {
     const vectors = yield* loadTraitVectors;
     const embedded = yield* embedTexts(
@@ -53,7 +55,11 @@ const askAnalyst = (
   traits: readonly TraitState[],
   batch: readonly BatchSource[],
   present: Present,
-): Effect.Effect<Checked, AnalystFailed | StorageFailed | UpstreamFailed, TraitAnalyst> =>
+): Effect.Effect<
+  Checked,
+  AnalystFailed | StorageFailed | UpstreamFailed,
+  TraitAnalyst | Database | Embedder
+> =>
   Effect.gen(function* askTraitAnalyst() {
     const candidates = yield* candidatesFor(traits, present);
     const analyst = yield* TraitAnalyst;
@@ -76,7 +82,11 @@ const askAnalyst = (
 
 export const askAbout = (
   batch: readonly BatchSource[],
-): Effect.Effect<Asked, AnalystFailed | StorageFailed | UpstreamFailed, TraitAnalyst> =>
+): Effect.Effect<
+  Asked,
+  AnalystFailed | StorageFailed | UpstreamFailed,
+  TraitAnalyst | Database | Embedder
+> =>
   Effect.gen(function* askAboutBatch() {
     const traits = yield* loadTraits;
     const checked = yield* Arr.match(presentOf(batch), {

@@ -1,4 +1,4 @@
-import { Effect, FiberHandle, Option, Result } from "effect";
+import { Context, Effect, FiberHandle, Option, Result } from "effect";
 import type { Scope } from "effect";
 
 import { transcriptsOf } from "./transcripts.ts";
@@ -15,7 +15,7 @@ export interface Recognition {
   readonly unmute: () => void;
 }
 
-type Recognizer = Pick<
+export type Recognizer = Pick<
   SpeechRecognition,
   | "lang"
   | "continuous"
@@ -26,7 +26,7 @@ type Recognizer = Pick<
   | "removeEventListener"
 >;
 
-type RecognizerClass = new () => Recognizer;
+export type RecognizerClass = new () => Recognizer;
 
 type Later = (effect: Effect.Effect<void>) => unknown;
 
@@ -40,11 +40,16 @@ const FATAL_ERRORS: ReadonlySet<string> = new Set([
   "audio-capture",
 ]);
 
-const recognizerClass = (): Option.Option<RecognizerClass> =>
-  Option.firstSomeOf([
-    Option.fromUndefinedOr(globalThis.SpeechRecognition),
-    Option.fromUndefinedOr(globalThis.webkitSpeechRecognition),
-  ]);
+export const SpeechRecognizer = Context.Reference<Option.Option<RecognizerClass>>(
+  "kikite/shared/lib/recognition/SpeechRecognizer",
+  {
+    defaultValue: () =>
+      Option.firstSomeOf([
+        Option.fromUndefinedOr(globalThis.SpeechRecognition),
+        Option.fromUndefinedOr(globalThis.webkitSpeechRecognition),
+      ]),
+  },
+);
 
 class Listener implements Recognition {
   readonly #Recognizer: RecognizerClass;
@@ -195,7 +200,11 @@ const listenWith = (
 export const listen = (
   handlers: RecognitionHandlers,
 ): Effect.Effect<Option.Option<Recognition>, never, Scope.Scope> =>
-  Option.match(recognizerClass(), {
-    onNone: () => Effect.succeedNone,
-    onSome: (Recognizer) => Effect.asSome(listenWith({ Recognizer, handlers })),
-  });
+  SpeechRecognizer.pipe(
+    Effect.flatMap(
+      Option.match({
+        onNone: () => Effect.succeedNone,
+        onSome: (Recognizer) => Effect.asSome(listenWith({ Recognizer, handlers })),
+      }),
+    ),
+  );

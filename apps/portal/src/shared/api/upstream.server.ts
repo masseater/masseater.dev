@@ -1,6 +1,8 @@
 import type { PortalResult } from "@masseater.dev/portal-protocol";
 import { Effect, Schema } from "effect";
 
+import { Upstreams } from "./bindings.server.ts";
+import type { UpstreamBindings } from "./bindings.server.ts";
 import { PortalFailed } from "./portal-failed.ts";
 
 const decodeFailed = ({ message }: Readonly<{ message: string }>): PortalFailed =>
@@ -9,8 +11,12 @@ const decodeFailed = ({ message }: Readonly<{ message: string }>): PortalFailed 
 const callFailed = (error: unknown): PortalFailed =>
   PortalFailed.make({ errorTag: "UpstreamFailed", text: String(error) });
 
-export const attempt = <Result>(call: () => Promise<Result>): Effect.Effect<Result, PortalFailed> =>
-  Effect.tryPromise({ try: call, catch: callFailed });
+export type Call<Result> = (bindings: UpstreamBindings) => Promise<Result>;
+
+export const attempt = Effect.fn("portal.attempt")(function* attempt<Result>(call: Call<Result>) {
+  const bindings = yield* Upstreams;
+  return yield* Effect.tryPromise({ try: () => call(bindings), catch: callFailed });
+});
 
 const decoded =
   <Codec extends Schema.Top & Readonly<{ DecodingServices: never }>>(schema: Codec) =>
@@ -29,19 +35,23 @@ const bodyOf =
 export const rpcBody = <Codec extends Schema.Top & Readonly<{ DecodingServices: never }>>({
   schema,
   call,
-}: Readonly<{ schema: Codec; call: () => Promise<PortalResult> }>): Effect.Effect<
+}: Readonly<{ schema: Codec; call: Call<PortalResult> }>): Effect.Effect<
   Codec["Type"],
-  PortalFailed
+  PortalFailed,
+  Upstreams
 > => attempt(call).pipe(Effect.flatMap(bodyOf(schema)));
 
 export const jsonBody = <Codec extends Schema.Top & Readonly<{ DecodingServices: never }>>({
   schema,
   call,
-}: Readonly<{ schema: Codec; call: () => Promise<Response> }>): Effect.Effect<
+}: Readonly<{ schema: Codec; call: Call<Response> }>): Effect.Effect<
   Codec["Type"],
-  PortalFailed
+  PortalFailed,
+  Upstreams
 > =>
   attempt(call).pipe(
-    Effect.flatMap((response) => attempt(() => response.json())),
+    Effect.flatMap((response) =>
+      Effect.tryPromise({ try: () => response.json(), catch: callFailed }),
+    ),
     Effect.flatMap(decoded(schema)),
   );

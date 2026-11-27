@@ -1,9 +1,9 @@
 import { describe, expect, it } from "@effect/vitest";
 import { Array as Arr, Effect, Function as Fn, Option } from "effect";
 import { TestClock } from "effect/testing";
-import { afterEach, vi } from "vite-plus/test";
 
-import { listen } from "./recognition.ts";
+import { SpeechRecognizer, listen } from "./recognition.ts";
+import type { RecognizerClass } from "./recognition.ts";
 
 type Behavior = "starts" | "throws" | "silent";
 
@@ -21,7 +21,7 @@ const handlers = {
 
 const browser = (
   behaviors: readonly Behavior[],
-): Readonly<{ Recognizer: new () => EventTarget; starts: () => number; end: () => void }> => {
+): Readonly<{ Recognizer: RecognizerClass; starts: () => number; end: () => void }> => {
   const state = { queue: [...behaviors], made: Arr.empty<EventTarget>(), starts: 0 };
   class FakeRecognizer extends EventTarget {
     public lang = "";
@@ -60,16 +60,10 @@ const browser = (
   };
 };
 
-const listening = (fake: ReturnType<typeof browser>): ReturnType<typeof listen> => {
-  vi.stubGlobal("SpeechRecognition", fake.Recognizer);
-  return listen(handlers);
-};
+const listening = (fake: ReturnType<typeof browser>): ReturnType<typeof listen> =>
+  listen(handlers).pipe(Effect.provideService(SpeechRecognizer, Option.some(fake.Recognizer)));
 
 describe("listen", () => {
-  afterEach(() => {
-    vi.unstubAllGlobals();
-  });
-
   it.effect("starts again after the browser ends recognition", () =>
     Effect.scoped(
       Effect.gen(function* restarts() {

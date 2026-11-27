@@ -1,14 +1,41 @@
-import { env } from "cloudflare:workers";
+import type {
+  CredentialStatusRpc,
+  MoneyPortalRpc,
+  SlidesRpc,
+  WatashiPortalRpc,
+} from "@masseater.dev/portal-protocol";
+import { Context, Effect, Option, pipe } from "effect";
 
 import { PERSONAL_ORIGIN } from "#/shared/config/index.ts";
 
-export const personal = (path: string): Promise<Response> =>
-  env.PERSONAL.fetch(`${PERSONAL_ORIGIN}${path}`);
+export type Methods<Entrypoint> = Readonly<Omit<Entrypoint, keyof Rpc.WorkerEntrypointBranded>>;
 
-export const watashi = (): typeof env.WATASHI => env.WATASHI;
+export type UpstreamBindings = Readonly<{
+  PERSONAL: Readonly<{ fetch: (input: string) => Promise<Response> }>;
+  WATASHI: Methods<WatashiPortalRpc>;
+  MONEY: Methods<MoneyPortalRpc>;
+  SLIDES: Methods<SlidesRpc>;
+  CREDENTIALS: Methods<CredentialStatusRpc>;
+}>;
 
-export const money = (): typeof env.MONEY => env.MONEY;
+export class Upstreams extends Context.Service<Upstreams, UpstreamBindings>()(
+  "portal/shared/api/bindings.server/Upstreams",
+) {}
 
-export const slides = (): typeof env.SLIDES => env.SLIDES;
+export const personal =
+  (path: string) =>
+  ({ PERSONAL }: UpstreamBindings): Promise<Response> =>
+    PERSONAL.fetch(`${PERSONAL_ORIGIN}${path}`);
 
-export const credentials = (): typeof env.CREDENTIALS => env.CREDENTIALS;
+const bindingsOf = new WeakMap<Request, UpstreamBindings>();
+
+export const upstreamsFor = (request: Request): Effect.Effect<UpstreamBindings> =>
+  pipe(bindingsOf.get(request), Option.fromUndefinedOr, Effect.fromOption, Effect.orDie);
+
+export const servingUpstreams =
+  (bindings: UpstreamBindings) =>
+  (handle: (request: Request) => Promise<Response>) =>
+  (request: Request): Promise<Response> => {
+    bindingsOf.set(request, bindings);
+    return handle(request);
+  };

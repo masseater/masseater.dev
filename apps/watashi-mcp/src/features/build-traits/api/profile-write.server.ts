@@ -5,6 +5,7 @@ import type { TraitTranslator } from "#/entities/trait/index.ts";
 import { assemble } from "#/features/build-traits/model/profile-assemble.ts";
 import { Edited, Merged } from "#/features/build-traits/model/profile-outline.ts";
 import { editInputOf, rulesOf } from "#/features/build-traits/model/profile-rules.ts";
+import type { Database } from "#/shared/db/index.server.ts";
 import { encodeJson } from "#/shared/db/index.server.ts";
 
 import { EDIT_INSTRUCTIONS, MERGE_INSTRUCTIONS } from "./profile-prompt.ts";
@@ -15,7 +16,7 @@ import type { ProfileSource } from "./profile-source.server.ts";
 export type Writing = Effect.Effect<
   ProfileOutcome,
   ProfileFailure,
-  ProfileAuthor | TraitTranslator
+  ProfileAuthor | TraitTranslator | Database
 >;
 
 type Draft = Readonly<{
@@ -40,7 +41,9 @@ const rejected = (step: string, text: string): Effect.Effect<ProfileOutcome> =>
 
 const saveAssembled =
   ({ source, sourceHash, merged }: Draft) =>
-  (edited: typeof Edited.Type): Effect.Effect<ProfileOutcome, ProfileFailure, TraitTranslator> => {
+  (
+    edited: typeof Edited.Type,
+  ): Effect.Effect<ProfileOutcome, ProfileFailure, TraitTranslator | Database> => {
     const rules = rulesOf({ merged, traits: source.traits });
     const bare = Arr.isReadonlyArrayNonEmpty(source.ownerFacts);
     const { sections, used, rescued } = assemble({ rules, edited, bare });

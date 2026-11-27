@@ -1,7 +1,8 @@
 import { READ_ONLY, compactInput, failedAt } from "@masseater.dev/mcp-tool-call";
+import type { UpstreamFailed } from "@masseater.dev/mcp-tool-call";
 import type { McpServer } from "@modelcontextprotocol/server";
 import { runWorkersAi } from "@r_masseater/workers-tracing/workers-ai";
-import { env } from "cloudflare:workers";
+import type { GatewayOptions } from "@r_masseater/workers-tracing/workers-ai";
 import { Effect, Record as Rec, Schema } from "effect";
 
 import { runTool } from "#/shared/api/index.ts";
@@ -20,30 +21,54 @@ const fail = failedAt("decision model");
 
 const decode = Schema.decodeUnknownEffect(Decided);
 
-export const decide = Effect.fn("decide")(function* decide(input: typeof DecideInput.Type) {
-  const output = yield* runWorkersAi({
-    operation: "decision",
-    model: MODEL,
-    caller: "sundries.decide",
-    call: (options) =>
-      env.AI.run(
-        MODEL,
-        { model: MODEL_SELECTOR, state: { snippets: input.snippets }, questions: input.questions },
-        options,
-      ),
-  }).pipe(Effect.mapError(({ cause }) => fail(cause)));
-  return yield* decode(output).pipe(Effect.mapError(fail));
-});
+export type DecisionRequest = Readonly<{
+  model: string;
+  state: Readonly<{ snippets: (typeof DecideInput.Type)["snippets"] }>;
+  questions: (typeof DecideInput.Type)["questions"];
+}>;
 
-export const registerDecideTools = (server: McpServer): McpServer => {
-  server.registerTool(
-    "decide",
-    {
-      description: DESCRIPTION,
-      inputSchema: compactInput(INPUT_SCHEMA),
-      annotations: READ_ONLY,
-    },
-    (input) => decide(input).pipe(runTool({ count: ({ answers }) => Rec.size(answers) })),
-  );
-  return server;
-};
+export type DecideBindings = Readonly<{
+  AI: Readonly<{
+    run: (model: string, request: DecisionRequest, options: GatewayOptions) => Promise<unknown>;
+  }>;
+}>;
+
+export type Decide = (
+  input: typeof DecideInput.Type,
+) => Effect.Effect<typeof Decided.Type, UpstreamFailed>;
+
+export const decide = ({ AI }: DecideBindings): Decide =>
+  Effect.fn("decide")(function* decideWith(input: typeof DecideInput.Type) {
+    const output = yield* runWorkersAi({
+      operation: "decision",
+      model: MODEL,
+      caller: "sundries.decide",
+      call: (options) =>
+        AI.run(
+          MODEL,
+          {
+            model: MODEL_SELECTOR,
+            state: { snippets: input.snippets },
+            questions: input.questions,
+          },
+          options,
+        ),
+    }).pipe(Effect.mapError(({ cause }) => fail(cause)));
+    return yield* decode(output).pipe(Effect.mapError(fail));
+  });
+
+export const registerDecideTools =
+  (bindings: DecideBindings) =>
+  (server: McpServer): McpServer => {
+    server.registerTool(
+      "decide",
+      {
+        description: DESCRIPTION,
+        inputSchema: compactInput(INPUT_SCHEMA),
+        annotations: READ_ONLY,
+      },
+      (input) =>
+        decide(bindings)(input).pipe(runTool({ count: ({ answers }) => Rec.size(answers) })),
+    );
+    return server;
+  };

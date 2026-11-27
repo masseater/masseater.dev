@@ -1,6 +1,9 @@
 import type { CallToolResult } from "@modelcontextprotocol/server";
+import type { DrizzleD1Database } from "drizzle-orm/d1";
 import { Effect, Option, Predicate, Schema } from "effect";
 
+import { CatalogDb } from "#/shared/db/index.server.ts";
+import type { CatalogRelations } from "#/shared/db/index.server.ts";
 import { runRequest } from "#/shared/observability/index.server.ts";
 
 import { ToolError } from "./tool-error.ts";
@@ -18,27 +21,36 @@ const errorResult = ({ message }: Readonly<{ message: string }>): CallToolResult
   isError: true,
 });
 
-export const runTool = <Value>(effect: Effect.Effect<Value, ToolError>): Promise<CallToolResult> =>
-  runRequest(
-    effect.pipe(
-      Effect.flatMap(encodeJson),
-      Effect.match({ onFailure: errorResult, onSuccess: textResult }),
-    ),
-  );
+export const runTool =
+  (db: DrizzleD1Database<CatalogRelations>) =>
+  <Value>(effect: Effect.Effect<Value, ToolError, CatalogDb>): Promise<CallToolResult> =>
+    runRequest(
+      effect.pipe(
+        Effect.flatMap(encodeJson),
+        Effect.match({ onFailure: errorResult, onSuccess: textResult }),
+        Effect.provideService(CatalogDb, db),
+      ),
+    );
 
 const messageOf = (cause: unknown): string =>
   Option.liftPredicate(cause, Predicate.isError).pipe(
     Option.match({ onNone: () => UNKNOWN_FAILURE, onSome: (error) => error.message }),
   );
 
-export const query = <Row>(run: () => Promise<Row>): Effect.Effect<Row, ToolError> =>
-  Effect.tryPromise({ try: run, catch: (cause) => ToolError.make({ message: messageOf(cause) }) });
+const failed = (cause: unknown): ToolError => ToolError.make({ message: messageOf(cause) });
+
+export const query = Effect.fn("catalog.write")(function* query<Row>(
+  run: (db: DrizzleD1Database<CatalogRelations>) => Promise<Row>,
+) {
+  const db = yield* CatalogDb;
+  return yield* Effect.tryPromise({ try: () => run(db), catch: failed });
+});
 
 export const orMissing =
   (missing: string) =>
-  <Value, Failure>(
-    effect: Effect.Effect<Option.Option<Value>, Failure>,
-  ): Effect.Effect<Value, Failure | ToolError> =>
+  <Value, Failure, Services>(
+    effect: Effect.Effect<Option.Option<Value>, Failure, Services>,
+  ): Effect.Effect<Value, Failure | ToolError, Services> =>
     effect.pipe(
       Effect.flatMap(
         Option.match({

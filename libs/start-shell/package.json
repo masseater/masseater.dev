@@ -29,6 +29,7 @@
     "security-headers": "workspace:*"
   },
   "devDependencies": {
+    "@effect/vitest": "catalog:",
     "@types/react": "catalog:",
     "react": "catalog:",
     "vite": "catalog:"

@@ -1,10 +1,11 @@
-import { floodGuarded } from "@masseater.dev/owner-auth/server";
 import { env } from "cloudflare:workers";
 
 import { catalogRoutes } from "#/entities/catalog/index.server.ts";
-import { createRouter } from "#/shared/api/index.server.ts";
-import { createAuth } from "#/shared/auth/index.server.ts";
+import { createRouter, servingCatalog } from "#/shared/api/index.server.ts";
+import { catalogDbOf } from "#/shared/db/index.server.ts";
 
-export const api = createRouter("")
-  .mount(floodGuarded(env.AUTH_LIMITER)((request) => createAuth().handler(request)))
-  .use(catalogRoutes);
+import { handleAuth } from "./auth.server.ts";
+
+const api = createRouter("").mount(handleAuth).use(catalogRoutes);
+
+export const handleApi = servingCatalog(catalogDbOf(env.DB))(api.handle);

@@ -1,8 +1,11 @@
 import type { UpstreamFailed } from "@masseater.dev/mcp-tool-call";
 import { Effect, Option } from "effect";
 
+import type { ConversationObjects } from "#/entities/conversation/index.server.ts";
+import type { Embedder } from "#/entities/trait/index.server.ts";
 import { saveTraits } from "#/entities/trait/index.server.ts";
 import type { AnalystFailed, TraitAnalyst, Collected } from "#/entities/trait/index.ts";
+import type { Database } from "#/shared/db/index.server.ts";
 import type { StorageFailed } from "#/shared/db/index.ts";
 
 import { askAbout } from "./trait-ask.server.ts";
@@ -24,6 +27,8 @@ export type StepOutcome =
 
 export type StepFailure = StorageFailed | UpstreamFailed | AnalystFailed;
 
+export type StepServices = Database | Embedder | ConversationObjects;
+
 const ACTOR = "trait-builder";
 
 const IDLE: StepOutcome = { status: "idle" };
@@ -32,7 +37,7 @@ const advance = ({
   origin,
   batch,
   position,
-}: Collected): Effect.Effect<StepOutcome, StepFailure, TraitAnalyst> =>
+}: Collected): Effect.Effect<StepOutcome, StepFailure, TraitAnalyst | Database | Embedder> =>
   Effect.gen(function* advanceTraits() {
     const { traits, checked } = yield* askAbout(batch);
     const { plan, vectors } = yield* settle({ traits, batch, observations: checked.accepted });
@@ -50,7 +55,11 @@ const advance = ({
     return outcome;
   });
 
-export const buildStep: Effect.Effect<StepOutcome, StepFailure, TraitAnalyst> = collectSources.pipe(
+export const buildStep: Effect.Effect<
+  StepOutcome,
+  StepFailure,
+  TraitAnalyst | Database | Embedder | ConversationObjects
+> = collectSources.pipe(
   Effect.flatMap(
     Option.match({
       onNone: () => Effect.succeed(IDLE),

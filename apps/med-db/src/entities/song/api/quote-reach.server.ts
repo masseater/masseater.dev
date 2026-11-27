@@ -2,7 +2,8 @@ import { inArray } from "drizzle-orm";
 import { Array as Arr, Effect, pipe } from "effect";
 
 import type { VideoKind } from "#/entities/video/@x/song.ts";
-import { catalogDb } from "#/shared/db/index.server.ts";
+import { fromCatalog } from "#/shared/db/index.server.ts";
+import type { CatalogDb } from "#/shared/db/index.server.ts";
 import { part } from "#/shared/db/index.ts";
 
 export type QuotePair = readonly [videoId: number, source: number];
@@ -29,12 +30,14 @@ const FIRST_DEPTH = 1;
 const NO_VIDEO = -1;
 const NO_SOURCES: readonly number[] = [];
 
-const quotingRows = (videoIds: readonly number[]): Effect.Effect<readonly QuoteRow[]> =>
+const quotingRows = (
+  videoIds: readonly number[],
+): Effect.Effect<readonly QuoteRow[], never, CatalogDb> =>
   Effect.forEach(
     Arr.chunksOf(Arr.dedupe(videoIds), D1_MAX_PARAMS),
     (chunk) =>
-      Effect.promise(() =>
-        catalogDb
+      fromCatalog((db) =>
+        db
           .selectDistinct({ videoId: part.videoId, refVideoId: part.refVideoId })
           .from(part)
           .where(inArray(part.refVideoId, [...chunk])),
@@ -78,7 +81,7 @@ const nextFrontier = (state: Expansion, rows: readonly QuoteRow[]): readonly Quo
   );
 };
 
-const expand = (state: Expansion): Effect.Effect<readonly QuotePair[]> => {
+const expand = (state: Expansion): Effect.Effect<readonly QuotePair[], never, CatalogDb> => {
   if (Arr.isReadonlyArrayEmpty(state.frontier) || state.depth > MAX_QUOTE_DEPTH) {
     return Effect.succeed(state.reached);
   }
@@ -100,7 +103,9 @@ const expand = (state: Expansion): Effect.Effect<readonly QuotePair[]> => {
   );
 };
 
-export const quoteReach = (sources: readonly number[]): Effect.Effect<readonly QuotePair[]> =>
+export const quoteReach = (
+  sources: readonly number[],
+): Effect.Effect<readonly QuotePair[], never, CatalogDb> =>
   expand({
     sources,
     frontier: pipe(
@@ -113,12 +118,12 @@ export const quoteReach = (sources: readonly number[]): Effect.Effect<readonly Q
 
 export const videoSummaries = (
   videoIds: readonly number[],
-): Effect.Effect<ReadonlyMap<number, VideoSummary>> =>
+): Effect.Effect<ReadonlyMap<number, VideoSummary>, never, CatalogDb> =>
   Effect.forEach(
     Arr.chunksOf(Arr.dedupe(videoIds), D1_MAX_PARAMS),
     (chunk) =>
-      Effect.promise(() =>
-        catalogDb.query.video.findMany({
+      fromCatalog((db) =>
+        db.query.video.findMany({
           columns: { id: true, title: true, kind: true, thumbnailUrl: true },
           where: { id: { in: [...chunk] } },
         }),

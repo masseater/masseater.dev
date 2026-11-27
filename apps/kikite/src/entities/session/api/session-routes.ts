@@ -4,11 +4,12 @@ import type { StoreFailed } from "#/entities/session/model/store-failed.ts";
 import { SESSIONS_PATH, SessionId, SessionListing, SessionRecord } from "#/shared/api/index.ts";
 
 import { allRecords, listSessions, readSession, storeSession } from "./session-store.ts";
+import type { SessionsDb } from "./session-store.ts";
 
 type Handler = (
   request: Request,
   id: string,
-) => Effect.Effect<Response, Schema.SchemaError | StoreFailed>;
+) => Effect.Effect<Response, Schema.SchemaError | StoreFailed, SessionsDb>;
 
 const BAD_REQUEST = 400;
 const NOT_FOUND = 404;
@@ -85,7 +86,7 @@ const ONE_ROUTES: ReadonlyMap<string, Handler> = new Map([
 const oneSession = (
   request: Request,
   raw: string,
-): Effect.Effect<Response, Schema.SchemaError | StoreFailed> =>
+): Effect.Effect<Response, Schema.SchemaError | StoreFailed, SessionsDb> =>
   Option.match(Option.fromUndefinedOr(ONE_ROUTES.get(request.method)), {
     onNone: notFound,
     onSome: (handler) => decodeId(raw).pipe(Effect.flatMap((id) => handler(request, id))),
@@ -94,7 +95,9 @@ const oneSession = (
 const idIn = (pathname: string): Option.Option<string> =>
   pipe(Option.liftPredicate(pathname, Str.startsWith(ONE)), Option.map(Str.slice(ONE.length)));
 
-const answered = (request: Request): Effect.Effect<Response, Schema.SchemaError | StoreFailed> => {
+const answered = (
+  request: Request,
+): Effect.Effect<Response, Schema.SchemaError | StoreFailed, SessionsDb> => {
   const { pathname } = new URL(request.url);
   if (pathname === SESSIONS_PATH && request.method === "GET") {
     return listed;
@@ -108,7 +111,7 @@ const answered = (request: Request): Effect.Effect<Response, Schema.SchemaError 
   });
 };
 
-export const sessionRoutes = (request: Request): Effect.Effect<Response> =>
+export const sessionRoutes = (request: Request): Effect.Effect<Response, never, SessionsDb> =>
   answered(request).pipe(Effect.catchTags({ SchemaError: badRequest, StoreFailed: storeFailed }));
 
 export const isSessionsPath = (pathname: string): boolean =>

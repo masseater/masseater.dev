@@ -2,6 +2,7 @@ import type { UpstreamFailed } from "@masseater.dev/mcp-tool-call";
 import { Array as Arr, Effect, pipe } from "effect";
 import type { Option } from "effect";
 
+import type { ConversationObjects } from "#/entities/conversation/index.server.ts";
 import { chunkText } from "#/entities/conversation/index.server.ts";
 import { ownerUtterances } from "#/entities/conversation/index.ts";
 import type { Utterance } from "#/entities/conversation/index.ts";
@@ -14,6 +15,7 @@ import {
   GLOBAL,
 } from "#/entities/trait/index.ts";
 import type { Collected, BatchSource } from "#/entities/trait/index.ts";
+import type { Database } from "#/shared/db/index.server.ts";
 import type { ConversationChunk, StorageFailed } from "#/shared/db/index.ts";
 
 import { chunksAfter } from "./trait-source-store.server.ts";
@@ -49,7 +51,9 @@ const sourcesOf = (chunk: ConversationChunk, jsonl: string): readonly BatchSourc
       pipe(Arr.groupWith(utterances, sameTurn), Arr.map(turnSource(chunk.sessionId))),
   });
 
-const readChunk = (chunk: ConversationChunk): Effect.Effect<ReadChunk, UpstreamFailed> =>
+const readChunk = (
+  chunk: ConversationChunk,
+): Effect.Effect<ReadChunk, UpstreamFailed, ConversationObjects> =>
   chunkText(chunk).pipe(Effect.map((jsonl) => ({ chunk, batch: sourcesOf(chunk, jsonl) })));
 
 const batchOfChunk = (item: ReadChunk): readonly BatchSource[] => item.batch;
@@ -64,7 +68,8 @@ const positionOfChunk = ({ chunk }: ReadChunk): Effect.Effect<string> =>
 
 export const collectConversations: Effect.Effect<
   Option.Option<Collected>,
-  StorageFailed | UpstreamFailed
+  StorageFailed | UpstreamFailed,
+  Database | ConversationObjects
 > = Effect.gen(function* collectConversations() {
   const stored = yield* cursorOf("conversation");
   const before = yield* settledBefore;

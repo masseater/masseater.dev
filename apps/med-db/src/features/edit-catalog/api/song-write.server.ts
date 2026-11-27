@@ -1,5 +1,6 @@
 import { and, eq } from "drizzle-orm";
 import type { BatchItem } from "drizzle-orm/batch";
+import type { DrizzleD1Database } from "drizzle-orm/d1";
 import { Array as Arr, Effect, Option, pipe, Struct } from "effect";
 
 import type {
@@ -12,7 +13,7 @@ import type {
 import { getSong } from "#/entities/song/index.server.ts";
 import { orMissing, query } from "#/shared/api/index.server.ts";
 import { ToolError } from "#/shared/api/index.ts";
-import { catalogDb } from "#/shared/db/index.server.ts";
+import type { CatalogRelations, CatalogDb } from "#/shared/db/index.server.ts";
 import { part, song, songAlias } from "#/shared/db/index.ts";
 
 type Statement = BatchItem<"sqlite">;
@@ -20,23 +21,24 @@ type Statement = BatchItem<"sqlite">;
 const SONG_MISSING = "song not found";
 const SAME_SONG = "sourceId and targetId must differ";
 
-const songDetail = (id: number): Effect.Effect<SongDetail, ToolError> =>
+const songDetail = (id: number): Effect.Effect<SongDetail, ToolError, CatalogDb> =>
   getSong(id).pipe(orMissing(SONG_MISSING));
 
-const aliasInserts = (songId: number, aliases: readonly string[]): readonly Statement[] =>
-  pipe(
-    aliases,
-    Arr.map((alias) => catalogDb.insert(songAlias).values({ songId, alias }).onConflictDoNothing()),
-  );
+const aliasInserts =
+  (db: DrizzleD1Database<CatalogRelations>) =>
+  (songId: number, aliases: readonly string[]): readonly Statement[] =>
+    pipe(
+      aliases,
+      Arr.map((alias) => db.insert(songAlias).values({ songId, alias }).onConflictDoNothing()),
+    );
 
 const addAliases = (
   songId: number,
   aliases: readonly string[],
-): Effect.Effect<unknown, ToolError> =>
+): Effect.Effect<unknown, ToolError, CatalogDb> =>
   Effect.forEach(
     aliases,
-    (alias) =>
-      query(() => catalogDb.insert(songAlias).values({ songId, alias }).onConflictDoNothing()),
+    (alias) => query((db) => db.insert(songAlias).values({ songId, alias }).onConflictDoNothing()),
     { concurrency: 1 },
   );
 
@@ -44,8 +46,8 @@ export const createSong = Effect.fn("mcp.song.create")(function* createSong(
   input: typeof CreateSongInput.Type,
 ) {
   const { aliases, ...fields } = input;
-  const created = yield* query(() =>
-    catalogDb.insert(song).values(fields).returning({ id: song.id }).get(),
+  const created = yield* query((db) =>
+    db.insert(song).values(fields).returning({ id: song.id }).get(),
   );
   yield* addAliases(
     created.id,
@@ -59,14 +61,14 @@ export const updateSong = Effect.fn("mcp.song.update")(function* updateSong(
 ) {
   const { id, ...patch } = input;
   if (Arr.isReadonlyArrayNonEmpty(Struct.keys(patch))) {
-    yield* query(() => catalogDb.update(song).set(patch).where(eq(song.id, id)));
+    yield* query((db) => db.update(song).set(patch).where(eq(song.id, id)));
   }
   return yield* songDetail(id);
 });
 
 export const deleteSong = Effect.fn("mcp.song.delete")(function* deleteSong(id: number) {
-  const deleted = yield* query(() =>
-    catalogDb.delete(song).where(eq(song.id, id)).returning({ id: song.id }).get(),
+  const deleted = yield* query((db) =>
+    db.delete(song).where(eq(song.id, id)).returning({ id: song.id }).get(),
   );
   return yield* Effect.succeed(Option.fromUndefinedOr(deleted)).pipe(orMissing(SONG_MISSING));
 });
@@ -81,8 +83,8 @@ export const addSongAlias = Effect.fn("mcp.song.alias.add")(function* addSongAli
 export const removeSongAlias = Effect.fn("mcp.song.alias.remove")(function* removeSongAlias(
   input: typeof SongAliasInput.Type,
 ) {
-  yield* query(() =>
-    catalogDb
+  yield* query((db) =>
+    db
       .delete(songAlias)
       .where(and(eq(songAlias.songId, input.songId), eq(songAlias.alias, input.alias))),
   );
@@ -97,11 +99,11 @@ export const mergeSongs = Effect.fn("mcp.song.merge")(function* mergeSongs(
   }
   const source = yield* songDetail(input.sourceId);
   yield* songDetail(input.targetId);
-  yield* query(() =>
-    catalogDb.batch([
-      catalogDb.update(part).set({ songId: input.targetId }).where(eq(part.songId, input.sourceId)),
-      ...aliasInserts(input.targetId, [source.title, ...source.aliases]),
-      catalogDb.delete(song).where(eq(song.id, input.sourceId)),
+  yield* query((db) =>
+    db.batch([
+      db.update(part).set({ songId: input.targetId }).where(eq(part.songId, input.sourceId)),
+      ...aliasInserts(db)(input.targetId, [source.title, ...source.aliases]),
+      db.delete(song).where(eq(song.id, input.sourceId)),
     ]),
   );
   return yield* songDetail(input.targetId);

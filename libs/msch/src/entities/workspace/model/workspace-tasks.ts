@@ -1,4 +1,4 @@
-import { Array as Arr, Effect, Option, Schema, pipe } from "effect";
+import { Array as Arr, Effect, Option, Predicate, Schema, pipe } from "effect";
 import { resolveConfigFromFile } from "vite-plus";
 
 import type { Manifest } from "#/entities/package/@x/workspace.ts";
@@ -49,6 +49,9 @@ export const hasVerifyTask = Effect.fn("hasVerifyTask")(function* hasVerifyTask(
   return Option.exists(config, isVerified);
 });
 
+const shipsAddon = (manifest: Option.Option<Manifest>): boolean =>
+  Option.exists(manifest, (found) => Predicate.isNotUndefined(found.native));
+
 export const tasksOf =
   (manifest: Option.Option<Manifest>) =>
   (program: unknown): WorkspaceTasks =>
@@ -62,7 +65,10 @@ export const tasksOf =
             Option.liftPredicate(`${name}#verify`, () => definesTask(VERIFY_TASK)(program)),
             Option.liftPredicate(`${name}#test`, () => definesTask(TEST_TASK)(program)),
           ]),
-          native: Arr.filter([`${name}#native`], () => definesTask(NATIVE_TASK)(program)),
+          native: Arr.filter(
+            [`${name}#native`],
+            () => definesTask(NATIVE_TASK)(program) || shipsAddon(manifest),
+          ),
         }),
       }),
     );

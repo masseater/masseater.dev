@@ -1,76 +1,81 @@
-import { makeD1 } from "@masseater.dev/d1-test";
-import { Effect, Option, pipe } from "effect";
+import { makeD1, makeR2 } from "@masseater.dev/d1-test";
+import { Effect, MutableRef, Option, pipe } from "effect";
 
-interface Range {
-  readonly offset: number;
-  readonly length: number;
-}
-
-interface Stores {
-  readonly objects: Map<string, Uint8Array>;
-  flooded: boolean;
-}
-
-const stores: Stores = { objects: new Map(), flooded: false };
+import { CacheStore, cacheStoreOf } from "./cache-store.ts";
+import type { Limiter, ObjectStore, StoredObject } from "./cache-store.ts";
 
 const database = makeD1({
   migrations: new URL("../../../drizzle/", import.meta.url).href,
   tables: ["entries", "public_namespaces", "uploads", "object_reads"],
 });
 
-const ranged = (bytes: Uint8Array, range: Range): Uint8Array<ArrayBuffer> =>
-  new Uint8Array(bytes.subarray(range.offset, range.offset + range.length));
+const objects = makeR2();
 
-const BUCKET = {
-  put: (key: string, value: Uint8Array): Promise<object> => {
-    stores.objects.set(key, new Uint8Array(value));
-    return Promise.resolve({});
-  },
-  get: (
-    key: string,
-    options: Readonly<{ range: Readonly<{ offset: number; length: number }> }>,
-  ): Promise<object | null> => {
-    const found = pipe(
-      Option.fromNullishOr(stores.objects.get(key)),
-      Option.map((stored) => ranged(stored, options.range)),
-      Option.map((bytes) => ({
-        body: new Response(bytes).body,
-        arrayBuffer: (): Promise<ArrayBuffer> => Promise.resolve(bytes.buffer),
-      })),
-    );
-    return Promise.resolve(Option.getOrNull(found));
-  },
-  delete: (keys: readonly string[]): Promise<void> => {
-    for (const key of keys) {
-      stores.objects.delete(key);
-    }
-    return Promise.resolve();
-  },
+const flooded = MutableRef.make(false);
+
+const LIMITER: Limiter = {
+  limit: () => Promise.resolve({ success: !MutableRef.get(flooded) }),
 };
 
-const LIMITER = {
-  limit: (): Promise<{ success: boolean }> => Promise.resolve({ success: !stores.flooded }),
-};
+type Readable = Readonly<{ arrayBuffer: () => Promise<ArrayBuffer> }>;
 
-export const env = { DB: database.env.DB, BUCKET, LIMITER };
+const storedOf = (object: Readable): Effect.Effect<StoredObject> =>
+  Effect.promise(() => object.arrayBuffer()).pipe(
+    Effect.map((bytes) => ({
+      body: new Blob([bytes]).stream(),
+      arrayBuffer: () => Promise.resolve(bytes),
+    })),
+  );
 
-export const objectCount = (): number => stores.objects.size;
+const readObject = (object: Readable | null): Effect.Effect<StoredObject | null> =>
+  pipe(
+    Option.fromNullishOr(object),
+    Option.map(storedOf),
+    Effect.transposeOption,
+    Effect.map(Option.getOrNull),
+  );
 
-export const objectReadRows: Effect.Effect<number> = Effect.promise(() =>
-  database.env.DB.prepare("SELECT id FROM object_reads").all(),
-).pipe(Effect.map(({ results }) => results.length));
+const bucket = objects.bucket.pipe(
+  Effect.map((found): ObjectStore => ({
+    get: (key, options) =>
+      Effect.runPromise(
+        Effect.promise(() => found.get(key, options)).pipe(Effect.flatMap(readObject)),
+      ),
+    put: (key, value) => found.put(key, value),
+    delete: (keys) => found.delete([...keys]),
+  })),
+);
+
+const store = Effect.all(
+  { DB: database.database, BUCKET: bucket },
+  { concurrency: "unbounded" },
+).pipe(Effect.map((bindings) => cacheStoreOf({ ...bindings, LIMITER })));
+
+export const withStore = <Success, Failure>(
+  effect: Effect.Effect<Success, Failure, CacheStore>,
+): Effect.Effect<Success, Failure> => effect.pipe(Effect.provideServiceEffect(CacheStore, store));
+
+export const { objectCount } = objects;
+
+export const objectReadRows: Effect.Effect<number> = database.database.pipe(
+  Effect.flatMap((db) => Effect.promise(() => db.prepare("SELECT id FROM object_reads").all())),
+  Effect.map(({ results }) => results.length),
+);
 
 export const flood: Effect.Effect<void> = Effect.sync(() => {
-  stores.flooded = true;
+  MutableRef.set(flooded, true);
 });
 
-export const resetStores = database.resetDatabase.pipe(
+export const resetStores = Effect.all([database.resetDatabase, objects.resetBucket], {
+  concurrency: "unbounded",
+}).pipe(
   Effect.andThen(
     Effect.sync(() => {
-      stores.objects.clear();
-      stores.flooded = false;
+      MutableRef.set(flooded, false);
     }),
   ),
 );
 
-export const { closeDatabase } = database;
+export const closeDatabase = Effect.all([database.closeDatabase, objects.closeBucket], {
+  concurrency: "unbounded",
+}).pipe(Effect.asVoid);

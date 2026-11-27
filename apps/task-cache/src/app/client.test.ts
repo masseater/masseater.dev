@@ -1,6 +1,6 @@
 import { layer } from "@effect/vitest";
 import { Effect } from "effect";
-import { afterAll, beforeEach, expect, vi } from "vite-plus/test";
+import { afterAll, beforeEach, expect } from "vite-plus/test";
 
 import { closeDatabase, resetStores } from "#/shared/lib/cloudflare.test.support.ts";
 
@@ -11,8 +11,6 @@ import {
   outputOf,
   runTask,
 } from "./client.test.support.ts";
-
-vi.mock("cloudflare:workers", () => import("#/shared/lib/cloudflare.test.support.ts"));
 
 const TIMEOUT = 60_000;
 const SUCCEEDED = 0;
