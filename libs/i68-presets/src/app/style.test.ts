@@ -105,9 +105,18 @@ it.effect("bach leaves a plain cadence alone", () =>
 const RULES: StyleRules = {
   name: "test style",
   habits: [
-    { context: "I", next: "IV", kind: "keep", aim: "softer turns", reason: "warm" },
-    { context: "IV", next: "V", kind: "fix", aim: "fewer cadences" },
-    { context: "V", next: "VIm", kind: "suggest", aim: "deceptive turns" },
+    {
+      habit: { type: "chord", context: "I", next: "IV" },
+      kind: "keep",
+      aim: "softer turns",
+      reason: "warm",
+    },
+    { habit: { type: "chord", context: "IV", next: "V" }, kind: "fix", aim: "fewer cadences" },
+    {
+      habit: { type: "chord", context: "V", next: "VIm" },
+      kind: "suggest",
+      aim: "deceptive turns",
+    },
   ],
 };
 
@@ -121,7 +130,7 @@ it.effect("style rules flag a kept habit the song skips and name the aim", () =>
       Effect.map(Arr.map(format)),
     );
     expect(found).toStrictEqual([
-      "/song.fumx:18:9 warn mine/keep test style goes I → IV here [softer turns: warm]",
+      "/song.fumx:18:9 warn mine/keep test style keeps I → IV here [softer turns: warm]",
       "/song.fumx:21:9 warn mine/suggest V → VIm would fit test style here [deceptive turns]",
     ]);
   }),

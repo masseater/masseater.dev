@@ -1,10 +1,10 @@
+import type { Subject } from "@r_masseater/i68-presets/habits";
 import { Array as Arr, Effect, Option, String as Str, pipe } from "effect";
 import { SecureRandom } from "effect/crypto";
 import { Atom, AtomRegistry } from "effect/reactivity";
 
 import { changed, withAim, withJudgment, withoutJudgment } from "#/entities/library/index.ts";
 import type { Aim, Change, Judgment } from "#/entities/library/index.ts";
-import { HARMONY } from "#/shared/config/index.ts";
 import type { Verdict } from "#/shared/config/index.ts";
 import { navigate, runtime } from "#/shared/lib/index.ts";
 import type { Route } from "#/shared/lib/index.ts";
@@ -36,20 +36,19 @@ export const chosenAim = ({
     Option.getOrElse(() => NEW_AIM),
   );
 
-export type Transition = Readonly<{ context: string; next: string }>;
-
 export type Decision = Readonly<{
   style: string;
   habit: string;
-  transition: Transition;
+  subject: Subject;
+  category: string;
   aims: readonly Aim[];
   after: Route;
 }>;
 
-const judgedOf = (decision: Decision): Pick<Judgment, "style" | "habit" | "context" | "next"> => ({
+const judgedOf = (decision: Decision): Pick<Judgment, "style" | "habit" | "subject"> => ({
   style: decision.style,
   habit: decision.habit,
-  ...decision.transition,
+  subject: decision.subject,
 });
 
 type Picked = Readonly<{ decision: Decision; verdict: Verdict; text: string; aim: string }>;
@@ -63,7 +62,7 @@ const intoNewAim = Effect.fnUntraced(function* intoNewAim({ decision, verdict, t
   }
   const random = yield* SecureRandom.SecureRandom;
   const id = yield* random.uuidV4();
-  const aim = withAim({ id, style: decision.style, category: HARMONY, name: text });
+  const aim = withAim({ id, style: decision.style, category: decision.category, name: text });
   const judged = withJudgment({ ...judgedOf(decision), verdict, aim: id });
   return Option.some<Change>((library) => judged(aim(library)));
 });

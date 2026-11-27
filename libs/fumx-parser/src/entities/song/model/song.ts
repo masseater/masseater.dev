@@ -132,6 +132,11 @@ const AmountSchema = Schema.Struct({
 
 export type Amount = typeof AmountSchema.Type;
 
+/** @msch fumx.mixer-parameter */
+export const MIXER_PARAMETERS = ["volume", "pan"] as const;
+
+export type MixerParameter = (typeof MIXER_PARAMETERS)[number];
+
 const AutomationSchema = Schema.Struct({
   target: Name,
   parameter: Name,
