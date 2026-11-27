@@ -2403,6 +2403,9 @@ importers:
         specifier: catalog:stack
         version: 4.3.5
     devDependencies:
+      '@atproto/api':
+        specifier: 'catalog:'
+        version: 0.32.7
       '@cloudflare/workers-types':
         specifier: 'catalog:'
         version: 5.20261124.1
