@@ -111,7 +111,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: masseater/typescript-template/.github/actions/credentials@c116d175574f2f6917e2aa39caf83a141ef4bd94
+      - uses: masseater/typescript-template/.github/actions/credentials@74fa338c10f00d153d76acad7b13b21d027d4483
       - uses: $/.github/actions/setup
         with:
           native: "false"
@@ -143,7 +143,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - uses: masseater/typescript-template/.github/actions/credentials@c116d175574f2f6917e2aa39caf83a141ef4bd94
+      - uses: masseater/typescript-template/.github/actions/credentials@74fa338c10f00d153d76acad7b13b21d027d4483
       - uses: $/.github/actions/setup
         with:
           native: "false"
