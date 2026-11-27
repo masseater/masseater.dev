@@ -19,6 +19,7 @@ import type { Tasks } from "./lib/changes.ts";
 
 const FINALLY = ":finally";
 const DEPLOY = ":deploy";
+const PERSIST = ":persist";
 const ITEMS = ":items";
 const ITEMS_OUTPUT = "items=";
 const NO_ITEM = "";
@@ -30,6 +31,7 @@ const Entry = Schema.Struct({
   item: Schema.String,
   finally: Schema.Boolean,
   deploy: Schema.Boolean,
+  persist: Schema.Boolean,
 });
 
 const Entries = Entry.pipe(Schema.Array, Schema.fromJsonString);
@@ -98,6 +100,7 @@ const entriesOf = Effect.fn("entriesOf")(function* entriesOf(
     item,
     finally: defines(directory, `${task}${FINALLY}`),
     deploy: defines(directory, `${task}${DEPLOY}`),
+    persist: defines(directory, `${task}${PERSIST}`),
   });
   if (defines(directory, `${task}${ITEMS}`)) {
     const items = yield* Effect.scoped(itemsOf(root, directory, task));

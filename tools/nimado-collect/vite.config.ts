@@ -15,6 +15,7 @@ export default defineConfig({
         dependsOn: ["nimado#deploy:data"],
         cache: false,
       },
+      "daily:persist": { command: [], cache: false },
       "daily:finally": { command: `node bin/nimado-collect.ts save ${STATE}`, cache: false },
     },
   },

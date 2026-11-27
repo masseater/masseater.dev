@@ -15,9 +15,11 @@ const CENTS_PER_THOUSAND_NEURONS = 1.1;
 
 const NEURONS_PER_PRICE_UNIT = 1000;
 
-const DAILY_SPEND_CENTS = Math.round(
-  (FREE_NEURONS_PER_DAY / NEURONS_PER_PRICE_UNIT) * CENTS_PER_THOUSAND_NEURONS,
-);
+const CENTS_PER_DOLLAR = 100;
+
+const DAILY_SPEND_DOLLARS =
+  Math.round((FREE_NEURONS_PER_DAY / NEURONS_PER_PRICE_UNIT) * CENTS_PER_THOUSAND_NEURONS) /
+  CENTS_PER_DOLLAR;
 
 export const aiGateway = AI.Gateway("DefaultAiGateway", {
   id: DEFAULT_GATEWAY_ID,
@@ -29,6 +31,6 @@ export const aiGateway = AI.Gateway("DefaultAiGateway", {
   logManagementStrategy: "DELETE_OLDEST",
   spendLimits: {
     enabled: true,
-    rules: [{ limitType: "cost", limit: DAILY_SPEND_CENTS, window: "1 day" }],
+    rules: [{ limitType: "cost", limit: DAILY_SPEND_DOLLARS, window: "1 day" }],
   },
 }).pipe(adopt(true));

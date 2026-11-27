@@ -58,7 +58,8 @@ jobs:
         with:
           shared-key: daily-${{ matrix.package.name }}
           save-if: ${{ strategy.job-index == 0 }}
-      - uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      - if: matrix.package.persist
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ${{ matrix.package.directory }}/.persist
           key: persist-${{ matrix.package.key }}-${{ github.run_id }}
@@ -84,7 +85,7 @@ jobs:
           DIRECTORY: ${{ matrix.package.directory }}
           ITEM: ${{ matrix.package.item }}
           GH_TOKEN: ${{ github.token }}
-      - if: ${{ !cancelled() && hashFiles(format('{0}/.persist/**', matrix.package.directory)) != '' }}
+      - if: ${{ !cancelled() && matrix.package.persist }}
         uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         with:
           path: ${{ matrix.package.directory }}/.persist
