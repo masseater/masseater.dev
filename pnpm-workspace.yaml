@@ -126,7 +126,7 @@ catalog:
   mdast-util-directive: 3.2.1
   remark-directive: 4.0.0
   "@xyflow/react": 13.0.3
-  lucide-react: 1.78.0
+  lucide-react: 1.79.0
   niconico-embed-player: 0.1.2
   budoux: 0.10.4
   mdast-util-to-string: 4.0.0
