@@ -1,5 +1,7 @@
 import type { VideoScript } from "@masseater.dev/video-kit/script";
 
+import { BGM } from "#/shared/config/index.ts";
+
 export const script: VideoScript = {
   title: "pnpm",
   formats: ["vertical"],
@@ -10,7 +12,7 @@ export const script: VideoScript = {
     npm: "エヌピーエム",
     node_modules: "ノードモジュールズ",
   },
-  bgm: { url: "https://amachamusic.chagasi.com/mp3/simplestyle.mp3", credit: "甘茶の音楽工房" },
+  bgm: BGM,
   cuts: [
     { id: "opening", say: ["npmの代わり、**pnpm**って知ってる？"], hold: 0.6 },
     { id: "features", say: ["とにかく**速くて軽い**。"], hold: 1.6 },

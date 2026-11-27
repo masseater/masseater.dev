@@ -1,6 +1,6 @@
 import type { VideoScript } from "@masseater.dev/video-kit/script";
 
-import { IMAGES, SHOTS, ZUNDAMON } from "#/shared/config/index.ts";
+import { BGM, IMAGES, SHOTS, ZUNDAMON } from "#/shared/config/index.ts";
 
 export const script: VideoScript = {
   title: "容量不足を一発で解決する裏技",
@@ -13,7 +13,7 @@ export const script: VideoScript = {
     node_modules: "ノードモジュールズ",
     PC: "ピーシー",
   },
-  bgm: { url: "https://amachamusic.chagasi.com/mp3/simplestyle.mp3", credit: "甘茶の音楽工房" },
+  bgm: BGM,
   images: { ...IMAGES, ...SHOTS, ...ZUNDAMON },
   cuts: [
     { id: "problem", say: ["PCの容量が\nいつの間にか**いっぱい**なのだ…"], voice: 76 },

@@ -15,7 +15,11 @@ const CutSchema = Schema.Struct({
 });
 
 const LengthSchema = Schema.Struct({ vertical: Seconds, horizontal: Seconds });
-const BgmSchema = Schema.Struct({ url: Schema.String, credit: Schema.String });
+const BgmSchema = Schema.Struct({
+  url: Schema.String,
+  credit: Schema.String,
+  page: Schema.optionalKey(Schema.String),
+});
 const Readings = Schema.Record(Schema.String, Schema.String);
 const Cuts = Schema.Array(CutSchema);
 
