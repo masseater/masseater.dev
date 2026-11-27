@@ -1,3 +1,4 @@
+import { JAPAN_GENERATION, JAPAN_OBJECT } from "@masseater.dev/cloudflare-account/japan";
 import { browserSpans } from "@r_masseater/workers-tracing/browser-spans";
 import { runner } from "@r_masseater/workers-tracing/effect";
 import { Effect, Logger, Option } from "effect";
@@ -17,7 +18,9 @@ export type Interviewer = Readonly<{ fetch: (request: Request) => Promise<Respon
 
 export type FrontDoorBindings = Readonly<{
   SESSIONS: D1Database;
-  INTERVIEWER: Readonly<{ getByName: (name: string) => Interviewer }>;
+  INTERVIEWER: Readonly<{
+    getByName: (name: string, options: typeof JAPAN_OBJECT) => Interviewer;
+  }>;
 }>;
 
 const logger = Logger.layer([Logger.withLeveledConsole(Logger.formatStructured)]);
@@ -76,7 +79,10 @@ const admitted = (
   if (isSessionsPath(pathname)) {
     return withSessions(bindings.SESSIONS)(sessionRoutes(request));
   }
-  const interviewer = bindings.INTERVIEWER.getByName("interviewer");
+  const interviewer = bindings.INTERVIEWER.getByName(
+    `interviewer${JAPAN_GENERATION}`,
+    JAPAN_OBJECT,
+  );
   if (pathname === RESEARCH_PATH) {
     return withSessions(bindings.SESSIONS)(researched((next) => interviewer.fetch(next))(request));
   }

@@ -1,9 +1,10 @@
-import { D1, Website, Workers } from "@alchemy.run/cloudflare";
+import { Website, Workers } from "@alchemy.run/cloudflare";
 import type { InferEnv } from "@alchemy.run/cloudflare";
 import { accountResources } from "@masseater.dev/cloudflare-account/account";
 import { edgeGuard } from "@masseater.dev/cloudflare-account/edge-guard";
+import { japanDatabase } from "@masseater.dev/cloudflare-account/japan-database";
 import { tracedStackProps } from "@masseater.dev/cloudflare-account/traced-providers";
-import { makeRandom, RemovalPolicy, Stack, Stage } from "alchemy";
+import { makeRandom, Stack, Stage } from "alchemy";
 import type { CompiledStack } from "alchemy";
 import { Effect, Hash, Option } from "effect";
 import type { ConfigError } from "effect/Config";
@@ -26,9 +27,7 @@ const STARS_LIMITER = Workers.RateLimit("STARS_LIMITER", {
 
 const web = Effect.gen(function* web() {
   const production = (yield* Stage) === PRODUCTION_STAGE;
-  const STARS = yield* D1.Database("Stars", { migrations: "./drizzle" }).pipe(
-    RemovalPolicy.protect(),
-  );
+  const STARS = yield* japanDatabase("Stars", { migrations: "./drizzle", name: Option.none() });
   const VISITOR_SALT = yield* makeRandom("VisitorSalt");
   return yield* Website.StaticSite("Web", {
     limits: { cpuMs: 200 },

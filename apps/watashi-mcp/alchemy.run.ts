@@ -1,6 +1,8 @@
-import { AnalyticsEngine, D1, R2, Workers } from "@alchemy.run/cloudflare";
+import { AnalyticsEngine, R2, Workers } from "@alchemy.run/cloudflare";
 import type { InferEnv } from "@alchemy.run/cloudflare";
 import { authSite } from "@masseater.dev/cloudflare-account/auth-site";
+import { JAPAN_PLACEMENT } from "@masseater.dev/cloudflare-account/japan";
+import { japanDatabase } from "@masseater.dev/cloudflare-account/japan-database";
 import { tracedStackProps } from "@masseater.dev/cloudflare-account/traced-providers";
 import { RemovalPolicy, Stack } from "alchemy";
 import { Effect, Option } from "effect";
@@ -15,9 +17,10 @@ import {
 } from "./src/shared/config/index.ts";
 
 const web = Effect.gen(function* web() {
-  const DB = yield* D1.Database("DB", { name: `${PREFIX}db`, migrations: "./drizzle" }).pipe(
-    RemovalPolicy.protect(),
-  );
+  const DB = yield* japanDatabase("DB", {
+    name: Option.some(`${PREFIX}db`),
+    migrations: "./drizzle",
+  });
   const TOOL_CALLS = yield* AnalyticsEngine.Dataset("ToolCalls", { dataset: TOOL_CALL_DATASET });
   const CONVERSATIONS = yield* R2.Bucket("Conversations", { name: `${PREFIX}conversations` }).pipe(
     RemovalPolicy.protect(),
@@ -30,6 +33,7 @@ const web = Effect.gen(function* web() {
     name: `${PREFIX}trait-builder`,
     main: "./src/features/build-traits/api/trait-builder.ts",
     logpush: true,
+    placement: JAPAN_PLACEMENT,
     workersDev: false,
     crons: [TRAIT_CRON],
     env: {
@@ -44,6 +48,7 @@ const web = Effect.gen(function* web() {
     name: `${PREFIX}portal`,
     main: "./src/app/portal/portal.ts",
     logpush: true,
+    placement: JAPAN_PLACEMENT,
     workersDev: false,
     env: { DB, CONVERSATIONS, AI: Workers.AI() },
   });
