@@ -48,7 +48,7 @@ const holdingOf = ({ link, blocks }: TapeLayout): Holding => {
     }
   });
   return {
-    keep: (marks, center) => {
+    keep: (marks, center): void => {
       for (const index of held.keys()) {
         if (!near(marks.at)(index) && !near(marks.pin)(index)) {
           held.delete(index);
@@ -74,14 +74,14 @@ export const tapeReaderOf = (layout: TapeLayout): TapeReader => {
   const marks = { at: UNSET, pin: UNSET };
   return {
     frames: layout.frames,
-    block: (index) => {
+    block: (index): readonly TrackBlock[] => {
       if (index !== marks.at) {
         marks.at = index;
         keep(marks, index);
       }
       return Option.getOrElse(heldAt(index), () => NOTHING);
     },
-    ready: (frame) => {
+    ready: (frame): boolean => {
       const index = Math.floor(frame / layout.frames);
       if (index !== marks.pin) {
         marks.pin = index;

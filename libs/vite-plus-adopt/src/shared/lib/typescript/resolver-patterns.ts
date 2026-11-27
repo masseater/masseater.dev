@@ -25,10 +25,11 @@ interface KeyPair {
 }
 
 const KEY_ORDER_RULES: readonly ((pair: KeyPair) => Option.Option<number>)[] = [
-  ({ left, right }) =>
+  ({ left, right }): Option.Option<number> =>
     Option.liftPredicate(Math.sign(baseLength(right) - baseLength(left)), (sign) => sign !== EQUAL),
-  ({ left }) => Option.liftPredicate(AFTER, () => !Str.includes("*")(left)),
-  ({ right }) => Option.liftPredicate(BEFORE, () => !Str.includes("*")(right)),
+  ({ left }): Option.Option<number> => Option.liftPredicate(AFTER, () => !Str.includes("*")(left)),
+  ({ right }): Option.Option<number> =>
+    Option.liftPredicate(BEFORE, () => !Str.includes("*")(right)),
 ];
 
 export const comparePatternKeys: {

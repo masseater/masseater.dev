@@ -82,7 +82,7 @@ const countHeadings = (context: RuleContext): Visitors => {
   const found: string[] = [];
   const max = Number(context.options["max"] ?? DEFAULT_MAX);
   return {
-    heading: (node: MarkdownNode) => {
+    heading: (node: MarkdownNode): void => {
       const text = Str.trim(context.textOf(node));
       found.push(text);
       if (found.length > max) {

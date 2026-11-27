@@ -239,12 +239,12 @@ const STARTS: ReadonlyMap<string, (value: Value) => Value> = new Map<
   string,
   (value: Value) => Value
 >([
-  ["{", (value) => sequence("}", member(value), objectAfter)],
-  ["[", (value) => sequence("]", value, closes("]", "after array element"))],
-  ['"', () => string],
-  ["t", () => literal("true")],
-  ["f", () => literal("false")],
-  ["n", () => literal("null")],
+  ["{", (value): Value => sequence("}", member(value), objectAfter)],
+  ["[", (value): Value => sequence("]", value, closes("]", "after array element"))],
+  ['"', (): Value => string],
+  ["t", (): Value => literal("true")],
+  ["f", (): Value => literal("false")],
+  ["n", (): Value => literal("null")],
 ]);
 
 const value: Value = (scan) => {
@@ -270,7 +270,7 @@ const scannerOf = (text: string): Scanner => {
         Option.fromNullishOr(bytes[position]),
         Option.map((byte) => String.fromCodePoint(byte)),
       ),
-    skip: () => {
+    skip: (): void => {
       position += NEXT;
     },
     position: () => position,

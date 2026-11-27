@@ -74,10 +74,10 @@ export const useSeriesState = ({
   return (model) => ({
     hidden: hidden.includes(model),
     focus: focusOf({ focus, model }),
-    handleMouseEnter: () => {
+    handleMouseEnter: (): void => {
       setFocus({ status: "focused", model });
     },
-    handleMouseLeave: () => {
+    handleMouseLeave: (): void => {
       setFocus(NO_FOCUS);
     },
   });
@@ -90,16 +90,16 @@ export const useLegendHandlers = ({
   const setHidden = useAtomSet(hiddenAtom(task));
   const setFocus = useAtomSet(focusAtom(task));
   return {
-    handleClick: ({ value }) => {
+    handleClick: ({ value }): void => {
       const target = modelNamed({ series, name: value });
       if (target.status === "focused") {
         setHidden((hidden) => toggled({ hidden, model: target.model }));
       }
     },
-    handleMouseEnter: ({ value }) => {
+    handleMouseEnter: ({ value }): void => {
       setFocus(modelNamed({ series, name: value }));
     },
-    handleMouseLeave: () => {
+    handleMouseLeave: (): void => {
       setFocus(NO_FOCUS);
     },
   };

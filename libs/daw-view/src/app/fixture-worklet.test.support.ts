@@ -71,7 +71,7 @@ const fixturePlayer = ({ init }: PlayerSetup): MixPlayer => {
   );
   const state = { at: STOPPED, fresh: false };
   return {
-    msg: (message) => {
+    msg: (message): void => {
       gains.set(gainsOf(message.mixers ?? []));
       Option.map(Option.fromUndefinedOr(message.play), (play) => {
         state.at = play;
@@ -81,7 +81,7 @@ const fixturePlayer = ({ init }: PlayerSetup): MixPlayer => {
         state.at = STOPPED;
       }
     },
-    render: (left, right, frames) => {
+    render: (left, right, frames): number => {
       if (state.at < FIRST) {
         return silenced(left, right);
       }

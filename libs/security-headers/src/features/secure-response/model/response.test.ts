@@ -41,7 +41,7 @@ const encoder = new TextEncoder();
 
 const streamed = (): ReadableStream<Uint8Array> =>
   new ReadableStream({
-    start: (controller) => {
+    start: (controller): void => {
       for (const chunk of CHUNKS) {
         controller.enqueue(encoder.encode(chunk));
       }

@@ -117,7 +117,7 @@ const bunx: Publisher = (args) =>
 const PUBLISHERS: ReadonlyMap<string, Publisher> = new Map([
   [
     "cargo",
-    (args: readonly string[]) =>
+    (args: readonly string[]): boolean =>
       pipe(Option.some(args), passes(is("publish")), thenEvery(isNot("--dry-run", "-n"))),
   ],
   ["uv", uv],

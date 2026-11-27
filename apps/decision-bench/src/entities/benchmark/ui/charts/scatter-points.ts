@@ -25,7 +25,7 @@ const NO_SPOT: LabelSpot = { dx: ORIGIN, dy: ORIGIN, ring: "near" };
 
 export const LATENCY_AXIS: Axis = {
   name: "p50 ms",
-  domain: [ORIGIN, (max) => Math.ceil((max * HEADROOM) / LATENCY_STEP) * LATENCY_STEP],
+  domain: [ORIGIN, (max): number => Math.ceil((max * HEADROOM) / LATENCY_STEP) * LATENCY_STEP],
   format: String,
 };
 
@@ -33,7 +33,7 @@ export const COST_AXIS: Axis = {
   name: "USD",
   domain: [
     ORIGIN,
-    (max) => Math.max(Math.ceil(max * HEADROOM * COST_STEP) / COST_STEP, MIN_COST_USD),
+    (max): number => Math.max(Math.ceil(max * HEADROOM * COST_STEP) / COST_STEP, MIN_COST_USD),
   ],
   format: (value) => `$${Math.round(Number(value) * COST_PRECISION) / COST_PRECISION}`,
 };

@@ -127,9 +127,9 @@ const viaBroken: Route = (_env, request) =>
 
 const ROUTES: readonly (readonly [string, Route])[] = [
   ["/api/", viaStartRoute],
-  ["/items/", (env, request) => Effect.promise(() => items(env, request))],
+  ["/items/", (env, request): Effect.Effect<Response> => Effect.promise(() => items(env, request))],
   ["/start", viaStart],
-  ["/compiled/", (_env, request) => viaCompiled(request)],
+  ["/compiled/", (_env, request): Effect.Effect<Response> => viaCompiled(request)],
   ["/fail", failGreeting],
   ["/gated", viaGate],
   ["/missing", viaMissing],

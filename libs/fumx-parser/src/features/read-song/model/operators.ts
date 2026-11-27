@@ -205,7 +205,7 @@ const orderRule: From<Operands, Option.Option<Rule>> = ({ operator, left, right 
     ),
     Option.map((compare) => ({
       result: scalar("bool"),
-      apply: ({ left: first, right: second }: Pair) => {
+      apply: ({ left: first, right: second }: Pair): Outcome => {
         const holds = compare([amountOf(first), amountOf(second)]);
         return ok(boolValue(holds));
       },

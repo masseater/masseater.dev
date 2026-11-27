@@ -50,11 +50,11 @@ export const storageWith = (
   return {
     storage: {
       get: (key) => Promise.resolve(stored.get(key)),
-      put: (key, value) => {
+      put: (key, value): Promise<void> => {
         stored.set(key, value);
         return Promise.resolve();
       },
-      setAlarm: (scheduledTime) => {
+      setAlarm: (scheduledTime): Promise<void> => {
         MutableRef.set(alarm, Option.some(scheduledTime));
         return Promise.resolve();
       },
@@ -71,18 +71,18 @@ export const sceneAt = (startAt: number): Scene => {
     stage: {
       storage,
       container: {
-        get running() {
+        get running(): boolean {
           return MutableRef.get(running);
         },
         images: { [PLAYER_IMAGE]: "player:test" },
-        start: () => {
+        start: (): void => {
           MutableRef.set(running, true);
         },
-        destroy: () => {
+        destroy: (): Promise<void> => {
           MutableRef.set(running, false);
           return Promise.resolve();
         },
-        exec: (_command, options) => {
+        exec: (_command, options): Promise<PlayerProcess> => {
           if (Predicate.isNotUndefined(options)) {
             MutableRef.increment(plays);
           }

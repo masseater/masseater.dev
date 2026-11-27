@@ -33,7 +33,7 @@ export const credentials = workflowRule({
   docs: "https://github.com/rhysd/actionlint/blob/main/docs/checks.md#check-hardcoded-credentials",
   visitor: (fail): Visitor => ({
     ...NOOP,
-    jobPre: (job) => {
+    jobPre: (job): void => {
       for (const container of Option.toArray(Option.fromNullishOr(job.container))) {
         checkContainer(fail)('"container" section', container);
       }

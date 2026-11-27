@@ -52,10 +52,10 @@ const voiced =
     source.start(context.currentTime, offset);
     return {
       stem,
-      level: (value) => {
+      level: (value): void => {
         gain.gain.value = value;
       },
-      stop: () => {
+      stop: (): void => {
         source.stop();
         source.disconnect();
         gain.disconnect();
@@ -78,12 +78,12 @@ const started = ({ deck, mix, from, onTick }: Start): Running => {
   });
   const fiber = Effect.runFork(Effect.repeat(ticking, Schedule.spaced(TICK)));
   return {
-    remix: (next) => {
+    remix: (next): void => {
       for (const voice of voices) {
         voice.level(levelOf(next)(voice.stem));
       }
     },
-    stop: () => {
+    stop: (): void => {
       fiber.pipe(Fiber.interrupt, Effect.runFork);
       for (const voice of voices) {
         voice.stop();

@@ -1,6 +1,10 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "rangeStrategy": "pin",
+  "gitIgnoredAuthors": [
+    "41898282+github-actions[bot]@users.noreply.github.com",
+    "342306539+masseater-manager[bot]@users.noreply.github.com"
+  ],
   "packageRules": [
     {
       "description": "peerDependencies は利用側との互換の範囲を宣言するもので、版を選ばない。範囲のまま広げる。",
