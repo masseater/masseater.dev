@@ -1,3 +1,4 @@
+import { MemoView } from "@masseater.dev/watashi-protocol";
 import { and, desc, eq, like } from "drizzle-orm";
 import {
   Array as Arr,
@@ -43,6 +44,11 @@ const decodeEvidence = Schema.decodeUnknownOption(
   Schema.fromJsonString(Schema.Array(Schema.String)),
 );
 
+const decodeView = Schema.decodeUnknownOption(Schema.fromJsonString(MemoView));
+
+const viewOf = (row: Memory): Body =>
+  Option.match(decodeView(row.view), { onNone: () => ({}), onSome: (view) => ({ view }) });
+
 export const evidenceOf = (row: Memory): readonly string[] =>
   pipe(
     decodeEvidence(row.evidence),
@@ -57,6 +63,7 @@ export const memoryItem = (row: Memory): Body => ({
   description: row.description,
   content: row.content,
   evidence: evidenceOf(row),
+  ...viewOf(row),
   updatedAt: timeOut(row.updatedAt),
 });
 

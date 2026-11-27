@@ -2089,6 +2089,9 @@ importers:
       '@masseater.dev/ui':
         specifier: workspace:*
         version: link:../../libs/ui
+      '@masseater.dev/watashi-protocol':
+        specifier: workspace:*
+        version: link:../../libs/watashi-protocol
       '@r_masseater/workers-tracing':
         specifier: workspace:*
         version: link:../../libs/workers-tracing

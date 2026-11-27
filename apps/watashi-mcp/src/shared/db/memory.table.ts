@@ -11,6 +11,7 @@ export const memory = sqliteTable(
     description: text("description").notNull(),
     content: text("content").notNull(),
     evidence: text("evidence").notNull().default("[]"),
+    view: text("view").notNull().default(""),
     ...retractableColumns,
   },
   (table) => [uniqueIndex("memory_project_name_idx").on(table.project, table.name)],

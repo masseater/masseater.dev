@@ -1,3 +1,5 @@
+import { MemoView } from "@masseater.dev/watashi-protocol";
+import type { MemoViewValue } from "@masseater.dev/watashi-protocol";
 import { Array as Arr, Effect, Equal, Option, Schema } from "effect";
 
 import {
@@ -19,6 +21,16 @@ import type { Memory } from "#/shared/db/index.ts";
 
 const decodeSnapshot = Schema.decodeUnknownEffect(Schema.fromJsonString(MemorySnapshot));
 
+const encodeView = Schema.encodeEffect(Schema.fromJsonString(MemoView));
+
+const NO_VIEW = "";
+
+const viewOf = (view: MemoViewValue | undefined, current: string): Effect.Effect<string> =>
+  Option.match(Option.fromUndefinedOr(view), {
+    onNone: () => Effect.succeed(current),
+    onSome: (next) => encodeView(next).pipe(Effect.orDie),
+  });
+
 const notFound = (input: MemoryWriteValue): MemoryNotFound =>
   MemoryNotFound.make({ project: input.project, memoryName: input.name });
 
@@ -33,12 +45,14 @@ const create =
     Effect.gen(function* createMemory() {
       const description = yield* required(input.description, "description");
       const content = yield* required(input.content, "content");
+      const view = yield* viewOf(input.view, NO_VIEW);
       return yield* createMemo(writer)({
         project: input.project,
         name: input.name,
         description,
         content,
         evidence: input.evidence ?? [],
+        view,
         retractedAt: NOT_RETRACTED,
         retractReason: "",
       });
@@ -76,25 +90,29 @@ const isUnchanged = (current: MemorySnapshotValue, next: MemorySnapshotValue): b
   current.description === next.description &&
   current.content === next.content &&
   current.retractedAt === next.retractedAt &&
+  current.view === next.view &&
   Arr.makeEquivalence(Equal.equals)(current.evidence, next.evidence);
 
 const update =
   (writer: Writer, row: Memory) =>
-  (input: MemoryWriteValue): Effect.Effect<MemoryResult, StoreFailure, Database> => {
-    const current = snapshotOf(row);
-    const next = {
-      ...current,
-      description: input.description ?? current.description,
-      content: input.content ?? current.content,
-      evidence: input.evidence ?? current.evidence,
-      retractedAt: NOT_RETRACTED,
-      retractReason: "",
-    };
-    if (isUnchanged(current, next)) {
-      return Effect.succeed(resultOf(row.id));
-    }
-    return save({ writer, op: "update" })({ id: row.id, snapshot: next });
-  };
+  (input: MemoryWriteValue): Effect.Effect<MemoryResult, StoreFailure, Database> =>
+    Effect.gen(function* updateMemory() {
+      const current = snapshotOf(row);
+      const view = yield* viewOf(input.view, current.view ?? NO_VIEW);
+      const next = {
+        ...current,
+        description: input.description ?? current.description,
+        content: input.content ?? current.content,
+        evidence: input.evidence ?? current.evidence,
+        view,
+        retractedAt: NOT_RETRACTED,
+        retractReason: "",
+      };
+      if (isUnchanged(current, next)) {
+        return resultOf(row.id);
+      }
+      return yield* save({ writer, op: "update" })({ id: row.id, snapshot: next });
+    });
 
 const change =
   (writer: Writer, input: MemoryWriteValue) =>

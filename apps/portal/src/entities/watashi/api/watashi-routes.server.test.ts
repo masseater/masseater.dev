@@ -23,6 +23,7 @@ const upstreams: UpstreamBindings = {
     memoryRead: unused,
     memoryWrite: written,
     memoryProjects: unused,
+    memoryViews: unused,
     profile: unused,
     conversationRead: unused,
   },

@@ -1,0 +1,1 @@
+ALTER TABLE `memory` ADD `view` text DEFAULT '' NOT NULL;

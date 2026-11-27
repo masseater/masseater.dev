@@ -1,3 +1,4 @@
+import { MemoView } from "@masseater.dev/watashi-protocol";
 import { Schema } from "effect";
 
 import { Ref } from "#/entities/life-record/@x/memory.ts";
@@ -39,6 +40,7 @@ export const MemoryWriteInput = Schema.Struct({
   evidence: Schema.optionalKey(
     Schema.Array(Ref).annotate({ description: "Life records this memo is based on" }),
   ),
+  view: Schema.optionalKey(MemoView),
   retract: Schema.optionalKey(Schema.Literal(true)),
   reason: Schema.optionalKey(Schema.NonEmptyString),
   restoreTo: Schema.optionalKey(RestoreTo),
