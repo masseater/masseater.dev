@@ -2,9 +2,9 @@ import type { Bus } from "@masseater.dev/fumx-studio/studio/bus";
 
 import type { Life } from "./context.ts";
 
-type Span = Readonly<{ from: number; to: number }>;
+export type Span = Readonly<{ from: number; to: number }>;
 
-type Stage = (channel: Float32Array) => unknown;
+export type Stage = (channel: Float32Array) => unknown;
 
 export const shaped =
   (life: Life) =>

@@ -25,7 +25,7 @@ export type LabelKey = Readonly<{ record: LifeRecordName; label: string }>;
 
 export type OpenSpan = Readonly<{ about: string; startedBy: string }>;
 
-type Newest = LabelKey & Readonly<{ open?: OpenSpan }>;
+export type Newest = LabelKey & Readonly<{ open?: OpenSpan }>;
 
 type Wanted = Omit<RecordScan, "limit"> & Readonly<{ label: Option.Option<string> }>;
 
