@@ -1,30 +1,48 @@
 import { QueryClient } from "@tanstack/react-query";
-import { createRouter, parseSearchWith, stringifySearchWith } from "@tanstack/react-router";
+import {
+  createRouter,
+  defaultParseSearch,
+  defaultStringifySearch,
+  parseSearchWith,
+  stringifySearchWith,
+} from "@tanstack/react-router";
 import type { AnyRoute, Router } from "@tanstack/react-router";
 import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query";
 
+type SearchCodec = Readonly<{
+  parseSearch: typeof defaultParseSearch;
+  stringifySearch: typeof defaultStringifySearch;
+}>;
+
 const keepText = (text: string): string => text;
 
-const TEXT_SEARCH = {
+const JSON_SEARCH: SearchCodec = {
+  parseSearch: defaultParseSearch,
+  stringifySearch: defaultStringifySearch,
+};
+
+const TEXT_SEARCH: SearchCodec = {
   parseSearch: parseSearchWith(keepText),
   stringifySearch: stringifySearchWith(JSON.stringify),
-} as const;
-
-const JSON_SEARCH = {} as const;
-
-export const createQueryRouter = <TRouteTree extends AnyRoute>(
-  routeTree: TRouteTree,
-  { textSearch = false }: Readonly<{ textSearch?: boolean }> = {},
-): Router<TRouteTree> => {
-  const queryClient = new QueryClient();
-  const router = createRouter({
-    routeTree,
-    context: { queryClient },
-    scrollRestoration: true,
-    defaultPreload: "intent",
-    defaultPreloadStaleTime: 0,
-    ...(textSearch ? TEXT_SEARCH : JSON_SEARCH),
-  });
-  setupRouterSsrQueryIntegration({ router, queryClient });
-  return router;
 };
+
+const routerWith =
+  ({ parseSearch, stringifySearch }: SearchCodec) =>
+  <TRouteTree extends AnyRoute>(routeTree: TRouteTree): Router<TRouteTree> => {
+    const queryClient = new QueryClient();
+    const router = createRouter({
+      routeTree,
+      context: { queryClient },
+      scrollRestoration: true,
+      defaultPreload: "intent",
+      defaultPreloadStaleTime: 0,
+      parseSearch,
+      stringifySearch,
+    });
+    setupRouterSsrQueryIntegration({ router, queryClient });
+    return router;
+  };
+
+export const createQueryRouter = routerWith(JSON_SEARCH);
+
+export const createTextSearchRouter = routerWith(TEXT_SEARCH);
