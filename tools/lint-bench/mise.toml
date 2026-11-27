@@ -6,9 +6,9 @@
 "aqua:suzuki-shunsuke/ghalint" = "1.6.0"
 "go:github.com/boostsecurityio/poutine" = "1.1.6"
 "go:github.com/sisaku-security/sisakulint/cmd/sisakulint" = "v0.4.0"
-"go:github.com/betterleaks/betterleaks/v2" = "2.0.0-rc.9"
+"go:github.com/betterleaks/betterleaks/v2" = "v2.0.0-rc.11"
 "aqua:gitleaks/gitleaks" = "8.30.1"
-"aqua:trufflesecurity/trufflehog" = "3.100.0"
+"aqua:trufflesecurity/trufflehog" = "3.100.1"
 "aqua:mongodb/kingfisher" = "2.20.0"
 
 [settings]
