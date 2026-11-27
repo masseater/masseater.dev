@@ -4,7 +4,7 @@ import { acquireGpu } from "./gpu-device.ts";
 import type { Gpu } from "./gpu-device.ts";
 import { drawGpuFrame, isIntro } from "./gpu-frame.ts";
 import type { Bound, Color } from "./gpu-frame.ts";
-import { cellsBuffer, createPipelines, drawGroup, frameGroup } from "./gpu-pipelines.ts";
+import { cellsBuffer, createPipelines } from "./gpu-pipelines.ts";
 import type { Pipelines } from "./gpu-pipelines.ts";
 import { createTextures } from "./gpu-textures.ts";
 import type { Textures } from "./gpu-textures.ts";
@@ -50,15 +50,13 @@ const parseColor = (css: string): Color =>
   });
 
 const blankGroup = (gpu: Gpu, pipelines: Pipelines): GPUBindGroup =>
-  drawGroup({
-    device: gpu.device,
-    pipelines,
-    texture: gpu.device.createTexture({
+  pipelines.drawGroup(
+    gpu.device.createTexture({
       size: [ONE_PIXEL, ONE_PIXEL],
       format: "rgba8unorm",
       usage: GPUTextureUsage.TEXTURE_BINDING,
     }),
-  });
+  );
 
 const partsOf = (gpu: Gpu, target: Readonly<Target & { accent: string }>): Parts => {
   const pipelines = createPipelines(gpu);
@@ -85,11 +83,7 @@ const bindOverview = (parts: Parts, sprites: Sprites): Effect.Effect<Bound> =>
     );
     return {
       ...parts,
-      frameGroup: frameGroup({
-        device: parts.gpu.device,
-        pipelines: parts.pipelines,
-        cells: parts.cells,
-      }),
+      frameGroup: parts.pipelines.frameGroup(parts.cells),
     };
   });
 
