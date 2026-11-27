@@ -56,3 +56,11 @@ const byTick = Order.mapInput(Order.Number, (timed: Timed) => timed.tick);
 
 export const sortedByTick = <Item extends Timed>(items: readonly Item[]): readonly Item[] =>
   Arr.sort(items, byTick);
+
+const byTickThenPitch = Order.combine(
+  Order.mapInput(Order.Number, (note: TimelineNote) => note.tick),
+  Order.mapInput(Order.Number, (note: TimelineNote) => note.midi),
+);
+
+export const sortedNotes = (notes: readonly TimelineNote[]): readonly TimelineNote[] =>
+  Arr.sort(notes, byTickThenPitch);

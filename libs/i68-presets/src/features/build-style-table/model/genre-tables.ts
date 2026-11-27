@@ -1,17 +1,9 @@
 import { Readable } from "node:stream";
 
 import { parse } from "csv-parse";
-import {
-  Array as Arr,
-  Effect,
-  Order,
-  Record as Rec,
-  Schema,
-  Stream,
-  String as Str,
-  pipe,
-} from "effect";
+import { Array as Arr, Effect, Record as Rec, Schema, Stream, String as Str, pipe } from "effect";
 
+import { sortedRecord } from "#/shared/lib/sorted-record.ts";
 import type { StyleTable } from "#/shared/lib/style-table.ts";
 
 import { tokensOf } from "./chordonomicon.ts";
@@ -54,12 +46,6 @@ const countInto = (counts: Counts, genre: string, tokens: readonly string[], ord
     }
   }
 };
-
-const byKey = Order.mapInput(Str.Order, ([key]: readonly [string, unknown]) => key);
-
-const sortedRecord = <Value>(
-  entries: readonly (readonly [string, Value])[],
-): Readonly<Record<string, Value>> => Rec.fromEntries(Arr.sort(entries, byKey));
 
 const tableOf =
   (counts: Counts, limits: TableLimits) =>

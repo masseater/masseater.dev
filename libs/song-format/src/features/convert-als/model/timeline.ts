@@ -1,7 +1,7 @@
 import { TICKS_PER_WHOLE } from "@r_masseater/fumx-parser";
-import { Array as Arr, Option, Order, pipe } from "effect";
+import { Array as Arr, Option, pipe } from "effect";
 
-import { sortedByTick } from "#/entities/timeline/index.ts";
+import { sortedByTick, sortedNotes } from "#/entities/timeline/index.ts";
 import type { Part, TempoChange, Timeline, TimelineNote } from "#/entities/timeline/index.ts";
 import type { From } from "#/shared/lib/from.ts";
 
@@ -46,11 +46,6 @@ interface TrackNotes {
   readonly offGrid: number;
 }
 
-const byTickThenPitch = Order.combine(
-  Order.mapInput(Order.Number, (note: TimelineNote) => note.tick),
-  Order.mapInput(Order.Number, (note: TimelineNote) => note.midi),
-);
-
 const trackNotesOf: From<AlsMidiTrack, TrackNotes> = (track) => {
   const played: readonly PlayedNote[] = pipe(
     track.DeviceChain.MainSequencer.ClipTimeable.ArrangerAutomation.Events.MidiClip ?? [],
@@ -62,7 +57,7 @@ const trackNotesOf: From<AlsMidiTrack, TrackNotes> = (track) => {
     end: tickOf(note.beat + note.length),
   }));
   return {
-    notes: Arr.sort(
+    notes: sortedNotes(
       Arr.map(placed, ({ note, start, end }): TimelineNote => ({
         tick: start.tick,
         end: end.tick,
@@ -70,7 +65,6 @@ const trackNotesOf: From<AlsMidiTrack, TrackNotes> = (track) => {
         velocity: note.velocity,
         release: note.release,
       })),
-      byTickThenPitch,
     ),
     offGrid: Arr.countBy(placed, ({ start, end }) => !start.exact || !end.exact),
   };
