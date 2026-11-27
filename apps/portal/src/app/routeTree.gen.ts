@@ -11,6 +11,7 @@ import { Route as RecordsRouteImport } from './routes/records'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as SlidesRouteImport } from './routes/slides'
 import { Route as TimelineRouteImport } from './routes/timeline'
+import { Route as WeeksRouteImport } from './routes/weeks'
 import { Route as ApiSplatRouteImport } from './routes/api.$'
 import { Route as ConversationsIndexRouteImport } from './routes/conversations/index'
 import { Route as ConversationsSessionRouteImport } from './routes/conversations/$session'
@@ -57,6 +58,11 @@ const TimelineRoute = TimelineRouteImport.update({
   path: '/timeline',
   getParentRoute: () => rootRouteImport,
 } as any)
+const WeeksRoute = WeeksRouteImport.update({
+  id: '/weeks',
+  path: '/weeks',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiSplatRoute = ApiSplatRouteImport.update({
   id: '/api/$',
   path: '/api/$',
@@ -92,6 +98,7 @@ export interface FileRoutesByFullPath {
   '/search': typeof SearchRoute
   '/slides': typeof SlidesRoute
   '/timeline': typeof TimelineRoute
+  '/weeks': typeof WeeksRoute
   '/api/$': typeof ApiSplatRoute
   '/conversations/$session': typeof ConversationsSessionRoute
   '/conversations/': typeof ConversationsIndexRoute
@@ -107,6 +114,7 @@ export interface FileRoutesByTo {
   '/search': typeof SearchRoute
   '/slides': typeof SlidesRoute
   '/timeline': typeof TimelineRoute
+  '/weeks': typeof WeeksRoute
   '/api/$': typeof ApiSplatRoute
   '/conversations/$session': typeof ConversationsSessionRoute
   '/conversations': typeof ConversationsIndexRoute
@@ -123,6 +131,7 @@ export interface FileRoutesById {
   '/search': typeof SearchRoute
   '/slides': typeof SlidesRoute
   '/timeline': typeof TimelineRoute
+  '/weeks': typeof WeeksRoute
   '/api/$': typeof ApiSplatRoute
   '/conversations/$session': typeof ConversationsSessionRoute
   '/conversations/': typeof ConversationsIndexRoute
@@ -140,6 +149,7 @@ export interface FileRouteTypes {
     | '/search'
     | '/slides'
     | '/timeline'
+    | '/weeks'
     | '/api/$'
     | '/conversations/$session'
     | '/conversations/'
@@ -155,6 +165,7 @@ export interface FileRouteTypes {
     | '/search'
     | '/slides'
     | '/timeline'
+    | '/weeks'
     | '/api/$'
     | '/conversations/$session'
     | '/conversations'
@@ -170,6 +181,7 @@ export interface FileRouteTypes {
     | '/search'
     | '/slides'
     | '/timeline'
+    | '/weeks'
     | '/api/$'
     | '/conversations/$session'
     | '/conversations/'
@@ -186,6 +198,7 @@ export interface RootRouteChildren {
   SearchRoute: typeof SearchRoute
   SlidesRoute: typeof SlidesRoute
   TimelineRoute: typeof TimelineRoute
+  WeeksRoute: typeof WeeksRoute
   ApiSplatRoute: typeof ApiSplatRoute
   ConversationsSessionRoute: typeof ConversationsSessionRoute
   ConversationsIndexRoute: typeof ConversationsIndexRoute
@@ -251,6 +264,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TimelineRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/weeks': {
+      id: '/weeks'
+      path: '/weeks'
+      fullPath: '/weeks'
+      preLoaderRoute: typeof WeeksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/$': {
       id: '/api/$'
       path: '/api/$'
@@ -298,6 +318,7 @@ const rootRouteChildren: RootRouteChildren = {
   SearchRoute: SearchRoute,
   SlidesRoute: SlidesRoute,
   TimelineRoute: TimelineRoute,
+  WeeksRoute: WeeksRoute,
   ApiSplatRoute: ApiSplatRoute,
   ConversationsSessionRoute: ConversationsSessionRoute,
   ConversationsIndexRoute: ConversationsIndexRoute,
