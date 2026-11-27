@@ -2,7 +2,7 @@ name: up-to-date
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened, ready_for_review]
+    types: [opened, synchronize, reopened, ready_for_review, edited]
   workflow_dispatch:
 
 permissions: {}
@@ -17,21 +17,20 @@ jobs:
       contents: read
       pull-requests: read
     steps:
-      - id: lockfile
-        if: github.event_name == 'pull_request'
-        uses: masseater/typescript-template/.github/actions/pr-changed@b1a8d96e78c5009696da80b5ecf5a814551966b8
-        with:
-          file: pnpm-lock.yaml
-          github-token: ${{ github.token }}
-      - if: steps.lockfile.outputs.changed == 'true'
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - if: steps.lockfile.outputs.changed == 'true'
-        uses: $/.github/actions/setup
+      - uses: $/.github/actions/setup
         with:
           native: "false"
           cache: "false"
+      - if: github.event_name == 'pull_request'
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
+          NUMBER: ${{ github.event.pull_request.number }}
+        run: printf '%s (#%s)\n' "$TITLE" "$NUMBER" > "$RUNNER_TEMP/squash-message"
+      - if: github.event_name == 'pull_request'
+        run: vp exec msch --commit-msg "$RUNNER_TEMP/squash-message"
 
   wake:
     needs: [up-to-date]
