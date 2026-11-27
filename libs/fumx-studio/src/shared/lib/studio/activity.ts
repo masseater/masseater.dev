@@ -37,7 +37,7 @@ const collector = (padding: number): Collector => {
   const starts: number[] = [];
   const ends: number[] = [];
   return {
-    add: (from, to) => {
+    add: (from, to): void => {
       const last = ends.length - END;
       if (last >= FIRST && from <= (ends[last] ?? SILENT) + padding) {
         ends[last] = to;

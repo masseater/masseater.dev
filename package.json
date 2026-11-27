@@ -22,6 +22,7 @@
     "fallow-similar-code": "catalog:stack",
     "fallow-type-aware": "catalog:stack",
     "oxlint-tsgolint": "catalog:",
+    "tsrs": "catalog:stack",
     "typescript": "catalog:stack",
     "vite-plus": "catalog:stack"
   },

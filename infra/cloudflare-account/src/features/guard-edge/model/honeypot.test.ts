@@ -9,7 +9,7 @@ const recorder = (): Readonly<{ points: AnalyticsEngineDataPoint[]; env: Honeypo
     points,
     env: {
       HONEYPOT: {
-        writeDataPoint: (point) => {
+        writeDataPoint: (point): void => {
           points.push(point ?? {});
         },
       },

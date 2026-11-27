@@ -137,7 +137,7 @@ const make = (
     embed(() => Promise.resolve<unknown>(processor([queryPrompt(query)]))).pipe(
       Effect.flatMap(first),
     ),
-  embedDocuments: (texts) => {
+  embedDocuments: (texts): Effect.Effect<readonly Vector[], EmbeddingFailed> => {
     const prompts = pipe(texts, Array.map(documentPrompt));
     return embed(() => Promise.resolve<unknown>(processor(prompts)));
   },

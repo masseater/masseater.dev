@@ -54,7 +54,7 @@ const browser = (
   return {
     Recognizer: FakeRecognizer,
     starts: () => state.starts,
-    end: () => {
+    end: (): void => {
       Option.map(Arr.last(state.made), (recognizer) => recognizer.dispatchEvent(new Event("end")));
     },
   };

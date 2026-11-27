@@ -96,10 +96,10 @@ const queueOf = (keys: readonly string[]): Queue => {
   const working = new Set<string>();
   return {
     next: () => Option.fromUndefinedOr(waiting.shift()),
-    start: (key) => {
+    start: (key): void => {
       working.add(key);
     },
-    finish: (key) => {
+    finish: (key): void => {
       working.delete(key);
     },
     left: () => [...working, ...waiting],

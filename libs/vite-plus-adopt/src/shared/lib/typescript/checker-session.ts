@@ -45,7 +45,7 @@ export const openCheckerSession = (program: CheckerProgram): CheckerSession => {
     checker: project.checker,
     project,
     mountPath: program.mountPath,
-    dispose: () => {
+    dispose: (): void => {
       snapshot.dispose();
       moduleResolver.dispose();
     },

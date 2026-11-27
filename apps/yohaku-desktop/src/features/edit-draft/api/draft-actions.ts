@@ -61,18 +61,18 @@ const useDraftActions = (view: () => Option.Option<EditorView>): DraftActions =>
     Effect.runFork(yohaku.logReaction(reaction));
   };
   return {
-    accept: (paragraphId) => {
+    accept: (paragraphId): void => {
       withView(view(), (editor) => {
         accepted(editor, paragraphId);
       });
       setRequest(Option.none());
       log("draft-accepted");
     },
-    rewrite: (paragraphId) => {
+    rewrite: (paragraphId): void => {
       setRequest(retried(paragraphId));
       log("draft-rewritten");
     },
-    keep: (paragraphId) => {
+    keep: (paragraphId): void => {
       withView(view(), (editor) => {
         closed(editor, paragraphId);
       });
@@ -91,13 +91,13 @@ export const useStableDraftActions = (view: () => Option.Option<EditorView>): Dr
   });
   return useMemo(
     (): DraftActions => ({
-      accept: (paragraphId) => {
+      accept: (paragraphId): void => {
         latestRef.current.accept(paragraphId);
       },
-      rewrite: (paragraphId) => {
+      rewrite: (paragraphId): void => {
         latestRef.current.rewrite(paragraphId);
       },
-      keep: (paragraphId) => {
+      keep: (paragraphId): void => {
         latestRef.current.keep(paragraphId);
       },
     }),

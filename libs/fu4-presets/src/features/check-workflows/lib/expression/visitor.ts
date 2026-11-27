@@ -35,22 +35,22 @@ export const expressionVisitor = ({ fail, context }: Target): Visitor => {
   const env: ExprEnv = { fail, configVars: settingsOf(context).configVariables, vars: () => vars };
   const scope = { env, project: context.project };
   return {
-    workflowPre: (workflow) => {
+    workflowPre: (workflow): void => {
       vars = { ...EMPTY_VARS, ...checkWorkflow(env)(workflow) };
       infos = jobInfos(workflow);
     },
-    jobPre: (job) => {
+    jobPre: (job): void => {
       vars = { ...vars, ...jobVars(scope)(job, infos) };
       checkJobPre(scope)(job);
     },
-    step: (step) => {
+    step: (step): void => {
       vars = { ...vars, steps: checkStep(scope)(step, vars.steps) };
     },
-    jobPost: (job) => {
+    jobPost: (job): void => {
       checkJobPost(env)(job);
       vars = { ...vars, ...JOB_RESET };
     },
-    workflowPost: (workflow) => {
+    workflowPost: (workflow): void => {
       vars = { ...vars, jobs: callOutputsJobs(workflow) };
       checkCallOutputs(env)(workflow);
     },

@@ -191,7 +191,7 @@ export const sharedFile: {
     return batch;
   };
   return {
-    join: (context, id) => {
+    join: (context, id): RuleFile => {
       const batch = Option.match(current, {
         onNone: () => start(context),
         onSome: (open) => {
@@ -207,7 +207,7 @@ export const sharedFile: {
       batch.rules[id] = rule;
       return { batch, rule };
     },
-    leave: () => {
+    leave: (): void => {
       if (Option.isNone(current)) {
         return;
       }

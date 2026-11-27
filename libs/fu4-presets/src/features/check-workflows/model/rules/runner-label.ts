@@ -73,7 +73,7 @@ interface Tracker {
 const trackerOf = (fail: Fail): Tracker => {
   const seen: Seen[] = [];
   return {
-    conflictFree: (compat, label) => {
+    conflictFree: (compat, label): boolean => {
       const previous = pipe(
         seen,
         Arr.findFirst((each) => !overlaps(each.compat)(compat)),
@@ -86,7 +86,7 @@ const trackerOf = (fail: Fail): Tracker => {
       }
       return Option.isNone(previous);
     },
-    remember: (compat, label) => {
+    remember: (compat, label): void => {
       const known = pipe(
         seen,
         Arr.some((each) => sameCompat(each.compat)(compat)),

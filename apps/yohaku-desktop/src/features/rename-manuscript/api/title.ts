@@ -32,7 +32,7 @@ export const useTitle = (): TitleField => {
   const { mutate } = useMutation({ mutationFn: renamed });
   return {
     title,
-    rename: (text) => {
+    rename: (text): void => {
       if (Option.isSome(id)) {
         mutate(text);
       }
