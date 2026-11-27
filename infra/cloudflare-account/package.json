@@ -19,7 +19,8 @@
     "./run-tasks": "./src/features/run-owner-site/index.ts",
     "./app-name": "./src/features/name-app/index.ts",
     "./japan": "./src/shared/config/index.ts",
-    "./japan-database": "./src/features/relocate-database/index.ts"
+    "./japan-database": "./src/features/relocate-database/index.ts",
+    "./japan-bucket": "./src/shared/api/index.ts"
   },
   "dependencies": {
     "@alchemy.run/cloudflare": "catalog:stack",

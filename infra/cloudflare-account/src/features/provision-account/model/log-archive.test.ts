@@ -1,15 +1,20 @@
 import { ApiToken, CloudflareEnvironment, Providers, R2 } from "@alchemy.run/cloudflare";
+import { fromApiToken } from "@distilled.cloud/cloudflare/Credentials";
 import { Stack, isResourceOfType } from "alchemy";
 import { Stage } from "alchemy/Stage";
 import { inMemoryState } from "alchemy/State";
 import { Array as Arr, Effect, Layer, Option, Record as Rec, Redacted, Schema, pipe } from "effect";
+import { layer as fetchHttpClient } from "effect/http/FetchHttpClient";
 import { expect, test } from "vite-plus/test";
+
+import { copyObjectsProvider } from "#/shared/api/index.ts";
 
 import { logArchive } from "./log-archive.ts";
 
 const APP_NAME = "example";
 const ACCOUNT_ID = "0123456789abcdef0123456789abcdef";
 const BUCKET_NAME = `${APP_NAME}-worker-logs`;
+const JAPAN_BUCKET_NAME = `${BUCKET_NAME}-japan`;
 
 const Declared = Schema.Struct({
   name: Schema.String,
@@ -41,11 +46,18 @@ const archive = logArchive(APP_NAME).pipe(
 
 const REGISTERED: Readonly<Record<string, never>> = {};
 
-const NO_PROVIDERS = Layer.succeed(Providers, {
-  kind: "ProviderCollection",
-  get: (service: string) => REGISTERED[service],
-  providers: REGISTERED,
-});
+const CLOUDFLARE = Layer.mergeAll(fromApiToken({ apiToken: UNUSED_TOKEN }), fetchHttpClient);
+
+const NO_PROVIDERS = copyObjectsProvider.pipe(
+  Layer.provide(CLOUDFLARE),
+  Layer.provideMerge(
+    Layer.succeed(Providers, {
+      kind: "ProviderCollection",
+      get: (service: string) => REGISTERED[service],
+      providers: REGISTERED,
+    }),
+  ),
+);
 
 const declaredWith =
   <Decoded>(decode: (props: unknown) => Option.Option<Decoded>) =>
@@ -66,11 +78,30 @@ const declaredWith =
 
 const declared = declaredWith((props) => decodeProps(props));
 
-test("ログのバケットは、管轄を指定せずに決まった名前で作る", () =>
-  expect(declared(R2.Bucket.Type)).resolves.toStrictEqual([Option.some({ name: BUCKET_NAME })]));
+test("ログのバケットは、管轄を指定せずに決まった名前で作り、日本にも同じ設定の組を作る", () =>
+  expect(declared(R2.Bucket.Type)).resolves.toStrictEqual([
+    Option.some({ name: BUCKET_NAME }),
+    Option.some({ name: `${BUCKET_NAME}-japan` }),
+  ]));
 
-test("ログを書くトークンは、ログのバケットの中身を書く権限だけを持つ", () =>
+test("ログの移し替えと書き込みのトークンは、それぞれ決まったバケットの中身だけを扱う", () =>
   expect(declared(ApiToken.AccountApiToken.Type)).resolves.toStrictEqual([
+    Option.some({
+      name: `${BUCKET_NAME}-mover`,
+      policies: [
+        {
+          effect: "allow",
+          permissionGroups: [
+            "Workers R2 Storage Bucket Item Read",
+            "Workers R2 Storage Bucket Item Write",
+          ],
+          resources: {
+            [`com.cloudflare.edge.r2.bucket.${ACCOUNT_ID}_default_${BUCKET_NAME}`]: "*",
+            [`com.cloudflare.edge.r2.bucket.${ACCOUNT_ID}_default_${JAPAN_BUCKET_NAME}`]: "*",
+          },
+        },
+      ],
+    }),
     Option.some({
       name: `${APP_NAME}-worker-logs-writer`,
       policies: [
@@ -78,7 +109,7 @@ test("ログを書くトークンは、ログのバケットの中身を書く�
           effect: "allow",
           permissionGroups: ["Workers R2 Storage Bucket Item Write"],
           resources: {
-            [`com.cloudflare.edge.r2.bucket.${ACCOUNT_ID}_default_${BUCKET_NAME}`]: "*",
+            [`com.cloudflare.edge.r2.bucket.${ACCOUNT_ID}_default_${JAPAN_BUCKET_NAME}`]: "*",
           },
         },
       ],
@@ -87,5 +118,6 @@ test("ログを書くトークンは、ログのバケットの中身を書く�
 
 test("ログのバケットは、古いログと途中で止まったマルチパートアップロードを消す", () =>
   expect(declaredWith(decodeLifecycle)(R2.Bucket.Type)).resolves.toStrictEqual([
+    Option.some({ lifecycleRules: [{ id: "expire" }, { id: "abort-multipart" }] }),
     Option.some({ lifecycleRules: [{ id: "expire" }, { id: "abort-multipart" }] }),
   ]));
