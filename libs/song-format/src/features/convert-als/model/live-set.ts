@@ -56,8 +56,6 @@ const EnvelopeSchema = Schema.Struct({
   Automation: Schema.Struct({ Events: EventsSchema }),
 });
 
-export type Envelope = typeof EnvelopeSchema.Type;
-
 const EnvelopesSchema = Schema.Struct({
   Envelopes: Schema.Struct({
     AutomationEnvelope: Schema.optionalKey(Schema.Array(EnvelopeSchema)),
@@ -167,8 +165,6 @@ const DocumentSchema = Schema.Struct({
     LiveSet: LiveSetSchema,
   }),
 });
-
-export type AlsDocument = typeof DocumentSchema.Type;
 
 const decodeDocument = Schema.decodeUnknownEffect(DocumentSchema);
 

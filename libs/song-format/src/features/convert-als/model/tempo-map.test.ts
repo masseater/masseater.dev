@@ -5,13 +5,8 @@ import { Array as Arr, Effect, Exit } from "effect";
 
 import cases from "./fixtures/dawtool/cases.json" with { type: "json" };
 import { readAlsDocument } from "./live-set.ts";
-import {
-  locatorsOf,
-  secondsAt,
-  tempoEnvelopeOf,
-  tempoPointsOf,
-  tempoSegmentsOf,
-} from "./tempo-map.ts";
+import { secondsAt } from "./tempo-map.test.support.ts";
+import { locatorsOf, tempoEnvelopeOf, tempoPointsOf, tempoSegmentsOf } from "./tempo-map.ts";
 
 const DIGITS = 5;
 
