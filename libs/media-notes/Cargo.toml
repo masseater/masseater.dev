@@ -26,7 +26,7 @@ specta = { version = "=2.0.0-rc.28", features = ["derive", "function"] }
 specta-typescript = "=0.0.15"
 tauri = { version = "=2.12.7", features = ["protocol-asset"] }
 tauri-plugin-dialog = "=2.8.4"
-url = "=2.5.8"
+url = "=2.5.9"
 uuid = { version = "=1.29.3", features = ["v7"] }
 
 [dev-dependencies]

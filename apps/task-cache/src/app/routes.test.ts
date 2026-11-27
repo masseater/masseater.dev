@@ -1,5 +1,5 @@
 import { describe, expect, it } from "@effect/vitest";
-import { Array as Arr, Effect, Option, pipe } from "effect";
+import { Array as Arr, Effect, Option, String as Str, pipe } from "effect";
 import { afterAll, beforeEach, vi } from "vite-plus/test";
 
 import {
@@ -16,7 +16,15 @@ import {
   resetStores,
 } from "#/shared/lib/cloudflare.test.support.ts";
 
-import { anonymous, blob, found, lookup, store, storeAs } from "./routes.test.support.ts";
+import {
+  anonymous,
+  blob,
+  blobResponse,
+  found,
+  lookup,
+  store,
+  storeAs,
+} from "./routes.test.support.ts";
 import type { Found } from "./routes.test.support.ts";
 
 vi.mock("cloudflare:workers", () => import("#/shared/lib/cloudflare.test.support.ts"));
@@ -80,6 +88,21 @@ const handsBackABlob = Effect.gen(function* handsBackABlob() {
   const hit = yield* found(KEY);
   const bytes = yield* blob(blobIdOf(hit.entries));
   expect(bytes).toStrictEqual(BINARY);
+});
+
+const KEY_HEX = /[0-9a-f]{64}$/u;
+const KEY_HEX_LENGTH = 64;
+const WRONG_KEY = pipe("0", Str.repeat(KEY_HEX_LENGTH));
+
+const refusesABlobIdWithoutItsKey = Effect.gen(function* refusesABlobIdWithoutItsKey() {
+  yield* store({ key: KEY, value: SMALL, blob: Option.some(BINARY) });
+  const hit = yield* found(KEY);
+  const id = blobIdOf(hit.entries);
+  expect(id).toMatch(KEY_HEX);
+  const guessed = yield* blobResponse(Str.replace(KEY_HEX, WRONG_KEY)(id));
+  expect(guessed.status).toBe(NOT_FOUND);
+  const bare = yield* blobResponse(Str.replace(/-.*$/u, "")(id));
+  expect(bare.status).toBe(NOT_FOUND);
 });
 
 const keepsALargeValueAndItsBlobApart = Effect.gen(function* keepsALargeValueAndItsBlobApart() {
@@ -162,6 +185,7 @@ describe("task cache", () => {
   it.effect("returns a stored value to a lookup of the same key", () => returnsAStoredValue);
   it.effect("misses a key that was never stored", () => missesAnUnknownKey);
   it.effect("hands back the bytes of a stored blob unchanged", () => handsBackABlob);
+  it.effect("refuses a blob id that lacks the key of its entry", () => refusesABlobIdWithoutItsKey);
   it.effect(
     "keeps a large value and its blob apart in one object",
     () => keepsALargeValueAndItsBlobApart,

@@ -4,7 +4,7 @@ export const API_PORT = 8080;
 export const DEV_API_PORT = 5181;
 
 export const INTERVIEWER_IMAGE = "InterviewerImage";
-export const INTERVIEWER_INSTANCE = "standard-1";
+export const INTERVIEWER_INSTANCE = { vcpu: 0.5, memoryMib: 1280, diskMb: 2000 } as const;
 export const INTERVIEWER_IDLE = { minutes: 10 } as const;
 export const INTERVIEWER_STARTUP = { probes: 60, spacing: "500 millis" } as const;
 

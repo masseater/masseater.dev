@@ -15,6 +15,7 @@ export default defineConfig({
     entry: ["src/app/index.ts", "src/app/analysis.ts", "src/app/language.ts"],
     platform: "neutral",
     sourcemap: true,
+    publint: { strict: true },
     dts: true,
   },
   test: {

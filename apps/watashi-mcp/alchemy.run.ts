@@ -26,7 +26,7 @@ const web = Effect.gen(function* web() {
     dataset: CONVERSATION_UPLOAD_DATASET,
   });
   yield* Workers.Worker("TraitBuilder", {
-    limits: { cpuMs: 200 },
+    limits: { cpuMs: 2000 },
     name: `${PREFIX}trait-builder`,
     main: "./src/features/build-traits/api/trait-builder.ts",
     logpush: true,

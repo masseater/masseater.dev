@@ -60,7 +60,7 @@ test("every grant resolves to account and zone policies with known permission gr
   ).toBe(true);
 });
 
-const PRODUCTION = "masseater.dev/production";
+const PRODUCTION = "1411948414/production";
 
 const RULE_GROUP_NAMES: readonly string[] = ["Account Rulesets Write", "Account Rule Lists Write"];
 

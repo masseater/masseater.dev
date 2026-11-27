@@ -2,13 +2,13 @@ import { defineRule } from "@r_masseater/fu4";
 import type { InputKind, RuleContext } from "@r_masseater/fu4";
 import { Array as Arr, Effect, Option, Result, Schema, String as Str, pipe } from "effect";
 
-import { AUDITS } from "./concerns/index.ts";
 import { primaryLocation } from "./lib/finding.ts";
 import { inputOf } from "./lib/input.ts";
 import { findingsOf } from "./lib/run.ts";
 import { settingsOf } from "./lib/settings.ts";
 import type { ZizmorSettings } from "./lib/settings.ts";
 import type { Audit } from "./model/audit.ts";
+import { AUDITS } from "./model/concerns/index.ts";
 import type { Finding } from "./model/finding.ts";
 import type { AuditInput } from "./model/input.ts";
 
