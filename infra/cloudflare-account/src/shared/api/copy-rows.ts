@@ -5,6 +5,8 @@ import { Array as Arr, Effect, Match, Predicate, String as Str, pipe } from "eff
 const PAGE_SIZE = 200;
 const NONE = 0;
 const STATEMENTS_PER_REQUEST = 40;
+const MAX_PARAMETERS = 100;
+const ONE_ROW = 1;
 
 const TABLES = `select name from sqlite_master
   where type = 'table' and name not like 'sqlite_%' and name not like '_cf_%'
@@ -80,18 +82,29 @@ const clientOf = Effect.gen(function* clientOf() {
 
 const aliasOf = (index: number): string => `c${index}`;
 
-const insertion = (table: string, columns: readonly string[], row: Row): Statement => {
+const insertion = (table: string, columns: readonly string[], rows: readonly Row[]): Statement => {
   const names = pipe(columns, Arr.map(quoted), Arr.join(", "));
-  const marks = pipe(
+  const tuple = `(${pipe(
     columns,
     Arr.map(() => "?"),
     Arr.join(", "),
+  )})`;
+  const marks = pipe(
+    rows,
+    Arr.map(() => tuple),
+    Arr.join(", "),
   );
   return {
-    sql: `insert into ${quoted(table)} (${names}) values (${marks})`,
-    params: Arr.makeBy(columns.length, (index) => row[aliasOf(index)]),
+    sql: `insert or ignore into ${quoted(table)} (${names}) values ${marks}`,
+    params: pipe(
+      rows,
+      Arr.flatMap((row) => Arr.makeBy(columns.length, (index) => row[aliasOf(index)])),
+    ),
   };
 };
+
+const rowsPerStatement = (columns: readonly string[]): number =>
+  Math.max(ONE_ROW, Math.floor(MAX_PARAMETERS / columns.length));
 
 const selection = (columns: readonly string[]): string =>
   pipe(
@@ -109,6 +122,15 @@ const countIn = (client: Client, databaseId: string, table: string): Effect.Effe
       ),
     );
 
+const requestsOf = (route: CopyRoute, rows: readonly Row[]): readonly (readonly Statement[])[] => {
+  const statements = pipe(
+    rows,
+    Arr.chunksOf(rowsPerStatement(route.columns)),
+    Arr.map((group) => insertion(route.table, route.columns, group)),
+  );
+  return pipe(statements, Arr.chunksOf(STATEMENTS_PER_REQUEST));
+};
+
 const copyPage = (client: Client, route: CopyRoute, offset: number): Effect.Effect<void> =>
   client
     .rows(
@@ -120,15 +142,10 @@ const copyPage = (client: Client, route: CopyRoute, offset: number): Effect.Effe
         Match.value(rows.length).pipe(
           Match.when(NONE, () => Effect.void),
           Match.orElse(() =>
-            Effect.forEach(
-              pipe(
-                rows,
-                Arr.map((row) => insertion(route.table, route.columns, row)),
-                Arr.chunksOf(STATEMENTS_PER_REQUEST),
-              ),
-              (chunk) => client.insert(route.target, chunk),
-              { discard: true, concurrency: 1 },
-            ).pipe(Effect.andThen(copyPage(client, route, offset + rows.length))),
+            Effect.forEach(requestsOf(route, rows), (chunk) => client.insert(route.target, chunk), {
+              discard: true,
+              concurrency: 1,
+            }).pipe(Effect.andThen(copyPage(client, route, offset + rows.length))),
           ),
         ),
       ),
@@ -167,13 +184,14 @@ const copyTable = Effect.fn("copyTable")(function* copyTable(
   route: Readonly<{ source: string; target: string; table: string }>,
 ) {
   const columns = yield* columnsOf(client, route.source, route.table);
+  const expected = yield* countIn(client, route.source, route.table);
   const existing = yield* countIn(client, route.target, route.table);
-  yield* copyPage(client, { ...route, columns }, existing);
-  const [expected, actual] = yield* Effect.all(
-    [countIn(client, route.source, route.table), countIn(client, route.target, route.table)],
-    { concurrency: 1 },
+  yield* Match.value(existing >= expected).pipe(
+    Match.when(true, () => Effect.void),
+    Match.orElse(() => copyPage(client, { ...route, columns }, NONE)),
   );
-  yield* Match.value(expected === actual).pipe(
+  const actual = yield* countIn(client, route.target, route.table);
+  yield* Match.value(actual >= expected).pipe(
     Match.when(true, () => Effect.void),
     Match.orElse(() =>
       Effect.die(`Row count differs in ${route.table}: source ${expected}, target ${actual}`),
