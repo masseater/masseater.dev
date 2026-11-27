@@ -33,8 +33,9 @@ const timelineOf = (script: VideoScript): Effect.Effect<Timeline> =>
       narration: {},
       narrationSrc: (key: string) => key,
       assetSrc: (url: string) => url,
-      speakerName: Option.none(),
+      speakers: {},
       tachie: Option.none(),
+      portraits: {},
     },
   });
 

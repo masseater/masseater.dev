@@ -1,6 +1,15 @@
 import type { VideoScript } from "@masseater.dev/video-kit/script";
 import { SFX } from "@masseater.dev/video-kit/script";
-import { Array as Arr, Effect, FileSystem, Option, Path, Record as Rec, pipe } from "effect";
+import {
+  Array as Arr,
+  Effect,
+  FileSystem,
+  Option,
+  Path,
+  Record as Rec,
+  String as Str,
+  pipe,
+} from "effect";
 import type { Config, PlatformError } from "effect";
 import type { HttpClient } from "effect/http";
 
@@ -22,10 +31,24 @@ interface Source {
   readonly page?: string;
 }
 
+const REMOTE = "https://";
+const NO_IMAGES: Readonly<Record<string, string>> = {};
+
 const assetOf = ({ url, page }: Source): Asset => ({ url, page: Option.fromNullishOr(page) });
 
+const imagesOf = (script: VideoScript): readonly Source[] =>
+  pipe(
+    Option.getOrElse(Option.fromNullishOr(script.images), () => NO_IMAGES),
+    Rec.values,
+    Arr.filter(Str.startsWith(REMOTE)),
+    Arr.map((url): Source => ({ url })),
+  );
+
 const assetsOf = (script: VideoScript): readonly Asset[] =>
-  pipe([...Rec.values(SFX), ...Arr.fromNullishOr(script.bgm)], Arr.map(assetOf));
+  pipe(
+    [...Rec.values(SFX), ...Arr.fromNullishOr(script.bgm), ...imagesOf(script)],
+    Arr.map(assetOf),
+  );
 
 const fileOf = (url: string): Effect.Effect<string, never, Path.Path> =>
   Effect.gen(function* file() {
