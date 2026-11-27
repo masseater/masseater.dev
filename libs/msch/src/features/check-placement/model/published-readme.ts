@@ -1,40 +1,33 @@
-import { Array as Arr, Effect, Option, pipe } from "effect";
+import { Array as Arr, Effect, Option, Result, pipe } from "effect";
 
 import { publishedProjects } from "#/entities/workspace/index.ts";
 import type { WorkspaceProject } from "#/entities/workspace/index.ts";
 import { JAPANESE } from "#/shared/config/index.ts";
 import type { Problem, RuleName } from "#/shared/lib/problem.ts";
-import { RepositoryFiles } from "#/shared/lib/repository-files.ts";
 import { positionOf } from "#/shared/lib/text-position.ts";
 
+import { readReadme } from "./readme-file.ts";
+
 const RULE: RuleName = "published-readme";
-const README_FILE = "README.md";
 const READ_CONCURRENCY = 16;
 const MESSAGE =
   "contains Japanese. This package is published to npm, so write its README in English.";
 const MISSING_MESSAGE =
   "is missing. This package is published to npm, so give it an English README.md.";
-const FILE_START = 1;
 
 const problemIn = Effect.fn("problemIn")(function* problemIn(
   root: string,
   { directory }: WorkspaceProject,
 ) {
-  const files = yield* RepositoryFiles;
-  const file = files.join(root, directory, README_FILE);
-  const text = yield* files.readFile(file);
-  if (Option.isNone(text)) {
-    return Option.some<Problem>({
-      file,
-      line: FILE_START,
-      column: FILE_START,
-      rule: RULE,
-      message: MISSING_MESSAGE,
-    });
-  }
-  return pipe(
-    text,
-    Option.flatMap((source) =>
+  const readme = yield* readReadme({
+    root,
+    directory,
+    rule: RULE,
+    missingMessage: MISSING_MESSAGE,
+  });
+  return Result.match(readme, {
+    onFailure: Option.some,
+    onSuccess: ({ file, source }) =>
       pipe(
         Option.fromNullishOr(JAPANESE.exec(source)),
         Option.map((found): Problem => {
@@ -42,8 +35,7 @@ const problemIn = Effect.fn("problemIn")(function* problemIn(
           return { file, line, column, rule: RULE, message: MESSAGE };
         }),
       ),
-    ),
-  );
+  });
 });
 
 /** @internal */

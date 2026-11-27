@@ -2,6 +2,7 @@ export {
   MASSEATER_DEV_GITHUB_GRANT,
   WORKFLOW_GITHUB_GRANTS,
   grantBindings,
+  EXPOSURE_GRANT_KEY,
 } from "./model/credential-grants.ts";
 export type { GitHubGrant } from "./model/credential-grants.ts";
 export { issueKinds, selectKinds } from "./model/credential-kinds.ts";

@@ -51,10 +51,10 @@ export const sizeOf = (entry: Pick<Entry, "blobBytes" | "valueBytes">): number =
 export const isInline = (entry: Pick<Entry, "value">): boolean =>
   Option.isSome(Option.fromNullishOr(entry.value));
 
-export const blobIdOf = (entry: Pick<Entry, "blobBytes" | "id">): Option.Option<string> =>
+export const blobIdOf = (entry: Pick<Entry, "blobBytes" | "id" | "key">): Option.Option<string> =>
   pipe(
     blobBytesOf(entry),
-    Option.map(() => String(entry.id)),
+    Option.map(() => `${String(entry.id)}-${entry.key}`),
   );
 
 const queried = <Found>(query: () => Promise<Found>): Effect.Effect<Found, StoreFailed> =>
@@ -72,15 +72,17 @@ export const newest = Effect.fn("entries.newest")(function* newest(namespace: st
   );
 });
 
+export type BlobRef = Readonly<{ id: number; key: string }>;
+
 export const entryOf = Effect.fn("entries.entryOf")(function* entryOf(
   namespace: string,
-  id: number,
+  { id, key }: BlobRef,
 ) {
   const found = yield* queried(() =>
     db
       .select()
       .from(entries)
-      .where(and(eq(entries.namespace, namespace), eq(entries.id, id))),
+      .where(and(eq(entries.namespace, namespace), eq(entries.id, id), eq(entries.key, key))),
   );
   return Arr.head(found);
 });

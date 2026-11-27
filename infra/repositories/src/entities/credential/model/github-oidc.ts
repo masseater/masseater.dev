@@ -78,12 +78,10 @@ export const repositoryName = (claims: typeof Claims.Type): string =>
   Str.replace(`${OWNER}/`, "")(claims.repository);
 
 export const grantKeys = (claims: typeof Claims.Type): readonly string[] =>
-  Arr.flatMap([repositoryName(claims), claims.repository_id], (repository) =>
-    pipe(
-      Option.fromNullishOr(claims.environment),
-      Option.map((environment) => [`${repository}/${environment}`, repository]),
-      Option.getOrElse(() => [repository]),
-    ),
+  pipe(
+    Option.fromNullishOr(claims.environment),
+    Option.map((environment) => [`${claims.repository_id}/${environment}`, claims.repository_id]),
+    Option.getOrElse(() => [claims.repository_id]),
   );
 
 const WORKFLOWS_DIRECTORY = "/.github/workflows/";

@@ -7,9 +7,9 @@ import { dawSongOfFumx } from "./fumx.ts";
 import type { Listing } from "./fumx.ts";
 import type { Song, Work } from "./song.ts";
 
-const works = import.meta.glob<Work>("../catalog/*/work.ts", { eager: true, import: "work" });
+const works = import.meta.glob<Work>("./catalog/*/work.ts", { eager: true, import: "work" });
 
-const thumbnails = import.meta.glob<string>("../catalog/*/thumb.webp", {
+const thumbnails = import.meta.glob<string>("./catalog/*/thumb.webp", {
   eager: true,
   query: "?url",
   import: "default",
