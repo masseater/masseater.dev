@@ -3,8 +3,6 @@ export type {
   CommitlintConfig,
   DependencyRules,
   FallowConfig,
-  SteigerConfig,
-  SteigerSection,
   TextlintConfig,
   ToolSection,
   ToolSections,
