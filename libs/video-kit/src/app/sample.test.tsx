@@ -13,6 +13,7 @@ import { mountSheet } from "./sheet.test.support.tsx";
 const FONT_CHECK = `700 40px "${FONT.bold}"`;
 const SPEAKER = "見本";
 const FORMATS: readonly Format[] = ["vertical", "horizontal"];
+const FONT_TIMEOUT_MS = 15_000;
 
 const timelineOf = (format: Format): Effect.Effect<Timeline> =>
   planTimeline({
@@ -28,7 +29,9 @@ const timelineOf = (format: Format): Effect.Effect<Timeline> =>
   });
 
 const fontsReady = Effect.promise(() =>
-  expect.poll(() => document.fonts.check(FONT_CHECK, SPEAKER)).toBe(true),
+  expect
+    .poll(() => document.fonts.check(FONT_CHECK, SPEAKER), { timeout: FONT_TIMEOUT_MS })
+    .toBe(true),
 );
 
 test.each(FORMATS)("%s の全カットが基準の見た目と変わらない", (format) =>
