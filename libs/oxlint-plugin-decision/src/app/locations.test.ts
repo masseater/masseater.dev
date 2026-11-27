@@ -154,7 +154,7 @@ layer(nodeServices, { excludeTestServices: true })("locating a file rule's viola
   );
   it.effect.each([LINE_SEPARATOR, PARAGRAPH_SEPARATOR])(
     "reports the source span across %j",
-    (newline) => withMock(Effect.asVoid(spanAcross(newline))),
+    (newline) => spanAcross(newline).pipe(Effect.asVoid, withMock),
     TIMEOUT,
   );
   it.effect(

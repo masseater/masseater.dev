@@ -45,8 +45,10 @@ const traced = <Success, Failure>(
       },
     });
     vi.useFakeTimers();
-    const fiber = yield* Effect.forkChild(
-      Effect.result(effect).pipe(Effect.provideService(Tracer.Tracer, tracer)),
+    const fiber = yield* effect.pipe(
+      Effect.result,
+      Effect.provideService(Tracer.Tracer, tracer),
+      Effect.forkChild,
     );
     yield* Effect.promise(() => vi.advanceTimersByTimeAsync(ALL_BACKOFF_MS));
     const result = yield* Fiber.join(fiber);

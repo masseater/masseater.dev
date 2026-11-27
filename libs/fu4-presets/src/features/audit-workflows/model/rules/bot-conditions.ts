@@ -79,11 +79,12 @@ export const botConditions: Audit = {
       ),
     ]),
   reusableJob: (job) =>
-    process(
+    job.model.if.pipe(
+      Option.toArray,
       Arr.map(
-        Option.toArray(job.model.if),
         (condition) =>
           [condition, jobLocationWithGrip(job), withKeys("if")(jobLocation(job))] as const,
       ),
+      process,
     ),
 };

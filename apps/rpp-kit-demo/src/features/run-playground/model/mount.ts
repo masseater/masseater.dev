@@ -26,6 +26,6 @@ export const mountPlayground = ({ container, report }: Mount): (() => void) => {
     ),
   );
   return () => {
-    Effect.runFork(Fiber.interrupt(fiber));
+    fiber.pipe(Fiber.interrupt, Effect.runFork);
   };
 };

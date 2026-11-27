@@ -67,7 +67,7 @@ const packageManagerOf = (value: unknown): readonly VersionEntry[] =>
   );
 
 export const manifestEntries = (text: string): readonly VersionEntry[] => {
-  const manifest = fieldsOf(Option.getOrUndefined(decodeJson(text)));
+  const manifest = decodeJson(text).pipe(Option.getOrUndefined, fieldsOf);
   return [
     ...sectionsIn(MANIFEST_SECTIONS)(manifest),
     ...packageManagerOf(manifest["packageManager"]),
@@ -81,8 +81,9 @@ const catalogsIn = (held: unknown): readonly VersionEntry[] =>
   );
 
 export const workspaceEntries = (text: string): readonly VersionEntry[] => {
-  const settings = fieldsOf(
-    Option.getOrUndefined(Option.liftThrowable(() => parse(text) as unknown)()),
+  const settings = Option.liftThrowable(() => parse(text) as unknown)().pipe(
+    Option.getOrUndefined,
+    fieldsOf,
   );
   return [...sectionsIn(["catalog", "overrides"])(settings), ...catalogsIn(settings["catalogs"])];
 };

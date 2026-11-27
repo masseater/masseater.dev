@@ -10,7 +10,7 @@ import { provenanceCommit } from "./provenance.ts";
 const UNVERSIONED = "0.0.0";
 const LOOKUP_CONCURRENCY = 4;
 
-const Versions = Schema.fromJsonString(Schema.Array(Schema.String));
+const Versions = Schema.String.pipe(Schema.Array, Schema.fromJsonString);
 
 /** @internal */
 export interface Workspace {

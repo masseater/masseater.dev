@@ -17,7 +17,7 @@ export const stageOf =
       }),
     );
     return () => {
-      Effect.runFork(Fiber.interrupt(loading));
+      loading.pipe(Fiber.interrupt, Effect.runFork);
       if (Option.isSome(mounted.dispose)) {
         mounted.dispose.value();
       }

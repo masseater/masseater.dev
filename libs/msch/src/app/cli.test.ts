@@ -63,8 +63,9 @@ const CLEAN_SOURCE: Readonly<Record<string, string>> = {
   "src/a.ts": "export const answer = 42;\n",
 };
 
-const ReportedProblems = Schema.fromJsonString(
-  Schema.Array(Schema.Struct({ rule: Schema.String })),
+const ReportedProblems = Schema.Struct({ rule: Schema.String }).pipe(
+  Schema.Array,
+  Schema.fromJsonString,
 );
 
 const repositoryWith = Effect.fn("repositoryWith")(function* repositoryWith(

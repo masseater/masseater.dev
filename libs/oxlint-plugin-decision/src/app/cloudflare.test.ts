@@ -31,10 +31,10 @@ const BOTH = 2;
 const withCloudflare = <Value>(
   effect: Effect.Effect<Value, TestError, MockCloudflare | Services>,
 ): Effect.Effect<Value, TestError, Services> =>
-  Effect.scoped(
-    Effect.flatMap(Layer.build(MockCloudflareLayer), (context) =>
-      Effect.provideContext(effect, context),
-    ),
+  MockCloudflareLayer.pipe(
+    Layer.build,
+    Effect.flatMap((context) => Effect.provideContext(effect, context)),
+    Effect.scoped,
   );
 
 const lintWith = (

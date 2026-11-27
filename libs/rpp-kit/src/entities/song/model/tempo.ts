@@ -58,7 +58,9 @@ const meterOf = (line: Line, previous: Meter): Meter =>
   );
 
 const shapeOf = (line: Line): TempoPoint["shape"] =>
-  Match.value(numberOr(ZERO)(Arr.get(line.params, PT_INDEX.shape))).pipe(
+  Arr.get(line.params, PT_INDEX.shape).pipe(
+    numberOr(ZERO),
+    Match.value,
     Match.when(LINEAR_SHAPE, () => "linear" as const),
     Match.orElse(() => "square" as const),
   );

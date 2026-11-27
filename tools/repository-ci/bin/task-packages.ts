@@ -32,9 +32,9 @@ const Entry = Schema.Struct({
   deploy: Schema.Boolean,
 });
 
-const Entries = Schema.fromJsonString(Schema.Array(Entry));
+const Entries = Entry.pipe(Schema.Array, Schema.fromJsonString);
 
-const Items = Schema.fromJsonString(Schema.Array(Schema.String));
+const Items = Schema.String.pipe(Schema.Array, Schema.fromJsonString);
 
 const definesIn =
   (tasks: Tasks) =>

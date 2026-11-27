@@ -19,7 +19,7 @@ const MetRow = Schema.Struct({
   condition: Schema.String,
   outcome: Schema.Literals(["met", "unchecked"]),
 });
-const MetRows = Schema.fromJsonString(Schema.Array(MetRow));
+const MetRows = MetRow.pipe(Schema.Array, Schema.fromJsonString);
 
 type MetRowType = typeof MetRow.Type;
 

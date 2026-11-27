@@ -40,7 +40,7 @@ export const loadCatalog = Effect.fn("state.catalog.load")(function* loadCatalog
   const path = yield* Path.Path;
   const now = yield* DateTime.now;
   const stored = yield* readJson({ codec: Catalog, file: path.join(state, CATALOG_FILE) });
-  return Option.getOrElse(stored, () => emptyCatalog(DateTime.formatIso(now)));
+  return Option.getOrElse(stored, () => now.pipe(DateTime.formatIso, emptyCatalog));
 });
 
 /** @internal */

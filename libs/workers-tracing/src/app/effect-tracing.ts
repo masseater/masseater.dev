@@ -97,7 +97,7 @@ export const inSpanContext = <Message>(
     });
   });
 
-const consoleLogger = inSpanContext(Logger.withLeveledConsole(Logger.formatStructured));
+const consoleLogger = Logger.formatStructured.pipe(Logger.withLeveledConsole, inSpanContext);
 
 export const layer: Layer.Layer<never> = Layer.mergeAll(
   Layer.succeed(Tracer.Tracer, workersTracer),

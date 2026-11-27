@@ -23,7 +23,7 @@ const settingsMessage = RpcWorker.layerInitialMessage(
 const throughWorker = <Value>(
   request: Effect.Effect<Value, EmbeddingFailed | RpcClientError.RpcClientError>,
 ): Effect.Effect<Value, EmbeddingFailed> =>
-  request.pipe(Effect.catchTag("RpcClientError", (cause) => Effect.fail(failed(cause))));
+  request.pipe(Effect.catchTag("RpcClientError", (cause) => cause.pipe(failed, Effect.fail)));
 
 /** @internal */
 export const workerEmbedderLayer = Layer.effect(

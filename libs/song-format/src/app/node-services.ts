@@ -18,7 +18,8 @@ export const runWithNode = <Value, Failure>(
   program: Effect.Effect<Value, Failure, Layer.Success<typeof services>>,
 ): void => {
   runMain(
-    Layer.build(services).pipe(
+    services.pipe(
+      Layer.build,
       Effect.flatMap((context) => Effect.provideContext(program, context)),
       Effect.scoped,
     ),

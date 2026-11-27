@@ -48,9 +48,9 @@ const status = Effect.gen(function* status() {
   });
 });
 
-runMain("mcp-portal-status")(
-  Layer.build(CredentialsFromEnv).pipe(
-    Effect.flatMap((context) => Effect.provideContext(status, context)),
-    Effect.scoped,
-  ),
+CredentialsFromEnv.pipe(
+  Layer.build,
+  Effect.flatMap((context) => Effect.provideContext(status, context)),
+  Effect.scoped,
+  runMain("mcp-portal-status"),
 );

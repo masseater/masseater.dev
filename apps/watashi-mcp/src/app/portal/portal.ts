@@ -47,9 +47,11 @@ export class WatashiPortal extends WorkerEntrypoint implements WatashiPortalRpc 
     operation: string,
     effect: Effect.Effect<unknown, ToolFailure, WatashiServices>,
   ): Promise<PortalResult> {
-    const runLogged = runner(Layer.mergeAll(logger, watashiLayer(this.env)));
-    return runLogged(
-      settled(operation)(effect).pipe(Effect.annotateLogs({ entrypoint: this.ctx.props })),
+    const layer = Layer.mergeAll(logger, watashiLayer(this.env));
+    return effect.pipe(
+      settled(operation),
+      Effect.annotateLogs({ entrypoint: this.ctx.props }),
+      runner(layer),
     );
   }
 }

@@ -8,14 +8,14 @@ import type { DeploymentRecord } from "./deployment.ts";
 const ROOT = ".";
 
 const Package = Schema.Struct({
-  dependencies: Schema.optionalKey(Schema.Array(Schema.String)),
-  devDependencies: Schema.optionalKey(Schema.Array(Schema.String)),
+  dependencies: Schema.String.pipe(Schema.Array, Schema.optionalKey),
+  devDependencies: Schema.String.pipe(Schema.Array, Schema.optionalKey),
 });
 
 const Task = Schema.Struct({
   package: Schema.String,
   name: Schema.String,
-  dependsOn: Schema.optionalKey(Schema.Array(Schema.String)),
+  dependsOn: Schema.String.pipe(Schema.Array, Schema.optionalKey),
 });
 
 /** @internal */

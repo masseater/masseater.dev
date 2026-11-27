@@ -88,10 +88,10 @@ export const modelOf = (request: LoggedRequest): string => request.body.model;
 export const withMock = <Value>(
   effect: Effect.Effect<Value, TestError, MockTypesafe | Services>,
 ): Effect.Effect<Value, TestError, Services> =>
-  Effect.scoped(
-    Effect.flatMap(Layer.build(MockTypesafeLayer), (context) =>
-      Effect.provideContext(effect, context),
-    ),
+  MockTypesafeLayer.pipe(
+    Layer.build,
+    Effect.flatMap((context) => Effect.provideContext(effect, context)),
+    Effect.scoped,
   );
 
 /** @internal */

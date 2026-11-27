@@ -194,7 +194,7 @@ const download = (
   declared: Declared,
 ): Effect.Effect<Uint8Array, VpToolsError, HttpClient.HttpClient> =>
   Effect.gen(function* downloadArchive() {
-    const fromCodeload = yield* Effect.exit(fetchBytes(codeload(declared)));
+    const fromCodeload = yield* codeload(declared).pipe(fetchBytes, Effect.exit);
     const token = yield* githubToken;
     if (Exit.isSuccess(fromCodeload) || Option.isNone(token)) {
       return yield* fromCodeload;

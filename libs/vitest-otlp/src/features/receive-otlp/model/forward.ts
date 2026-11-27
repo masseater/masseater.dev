@@ -72,7 +72,7 @@ const exportTo =
             .on("trailers", remember)
             .on("error", broken)
             .on("close", () => {
-              resume(Effect.succeed(MutableRef.get(status)));
+              status.pipe(MutableRef.get, Effect.succeed, resume);
             })
             .resume()
             .end(frame(message));

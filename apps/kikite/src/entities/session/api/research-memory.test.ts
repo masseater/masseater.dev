@@ -45,7 +45,7 @@ const forward = (next: Request): Promise<Response> => {
   return Promise.resolve(Response.json({ leads: [] }));
 };
 
-const forwardedText = Effect.suspend(() => Effect.fromOption(MutableRef.get(forwarded))).pipe(
+const forwardedText = Effect.suspend(() => forwarded.pipe(MutableRef.get, Effect.fromOption)).pipe(
   Effect.flatMap((next) => Effect.promise(() => next.text())),
 );
 

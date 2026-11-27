@@ -29,7 +29,7 @@ const called = <Value>(
 ): Effect.Effect<Value, ApiFailed> =>
   Effect.tryPromise({ try: () => invoke<unknown>(command, input), catch: failed }).pipe(
     Effect.flatMap(decode),
-    Effect.catchTag("SchemaError", (cause) => Effect.fail(failed(cause))),
+    Effect.catchTag("SchemaError", (cause) => cause.pipe(failed, Effect.fail)),
   );
 
 const decodeOpened = Schema.decodeUnknownEffect(OpenedSchema);

@@ -9,7 +9,7 @@ import { WORKFLOW_SCHEMA } from "./sources.ts";
 const REFERENCE_PREFIX = "#/definitions/";
 const SCOPES = "permissions-event";
 
-const Levels = Schema.optionalKey(Schema.Array(Schema.String));
+const Levels = Schema.String.pipe(Schema.Array, Schema.optionalKey);
 
 const Scope = Schema.Struct({ enum: Levels, $ref: Schema.optionalKey(Schema.String) });
 

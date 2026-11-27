@@ -46,8 +46,10 @@ export const unsoundCondition: Audit = {
   ...meta,
   normalJob: (job) => process(jobConditions(job)),
   reusableJob: (job) =>
-    process(
-      Arr.map(Option.toArray(job.model.if), (condition) => [condition, jobLocation(job)] as const),
+    job.model.if.pipe(
+      Option.toArray,
+      Arr.map((condition) => [condition, jobLocation(job)] as const),
+      process,
     ),
   action: (action) => process(actionConditions(action)),
 };

@@ -23,7 +23,7 @@ import type { Vector } from "./trait-vector.ts";
 
 const ONE_ROW = 1;
 
-const VectorJson = Schema.fromJsonString(Schema.Array(Schema.Finite));
+const VectorJson = Schema.Finite.pipe(Schema.Array, Schema.fromJsonString);
 
 const decodeVector = Schema.decodeUnknownOption(VectorJson);
 

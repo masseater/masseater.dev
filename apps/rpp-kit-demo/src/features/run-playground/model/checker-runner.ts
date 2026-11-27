@@ -57,7 +57,7 @@ const load = (url: string): Effect.Effect<Checker, never, HttpClient.HttpClient>
   wasmBytes(url).pipe(Effect.flatMap((wasm) => createChecker({ wasm, files: files() })));
 
 const using = <Value>(use: (checker: Checker) => Value): Promise<Value> =>
-  Effect.runPromise(Deferred.await(ready).pipe(Effect.map(use)));
+  ready.pipe(Deferred.await, Effect.map(use), Effect.runPromise);
 
 const checker = {
   initialize: (wasmUrl: string): Promise<void> =>

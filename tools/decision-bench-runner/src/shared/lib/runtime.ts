@@ -216,7 +216,8 @@ export const runBench = <Failure>(
   >,
 ): void => {
   runMain(
-    Layer.build(benchLayer).pipe(
+    benchLayer.pipe(
+      Layer.build,
       Effect.flatMap((context) => Effect.provideContext(program, context)),
       Effect.scoped,
     ),

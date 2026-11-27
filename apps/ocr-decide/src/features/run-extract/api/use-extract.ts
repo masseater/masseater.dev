@@ -35,20 +35,20 @@ const outcomeOf = ({ bytes, apiKey, way }: Request): Promise<Outcome> => {
     method: way.method,
     model: way.model,
   });
-  return Effect.runPromise(
-    Layer.build(openRouterWithKey(apiKey)).pipe(
-      Effect.flatMap((context) => Effect.provideContext(Effect.timed(run), context)),
-      Effect.scoped,
-      Effect.match({
-        onFailure: (error): Outcome => ({ status: "failed", reason: reasonOf(error) }),
-        onSuccess: ([elapsed, { values, costUsd }]): Outcome => ({
-          status: "done",
-          values,
-          costUsd,
-          seconds: Duration.toSeconds(elapsed),
-        }),
+  return openRouterWithKey(apiKey).pipe(
+    Layer.build,
+    Effect.flatMap((context) => Effect.provideContext(Effect.timed(run), context)),
+    Effect.scoped,
+    Effect.match({
+      onFailure: (error): Outcome => ({ status: "failed", reason: reasonOf(error) }),
+      onSuccess: ([elapsed, { values, costUsd }]): Outcome => ({
+        status: "done",
+        values,
+        costUsd,
+        seconds: Duration.toSeconds(elapsed),
       }),
-    ),
+    }),
+    Effect.runPromise,
   );
 };
 

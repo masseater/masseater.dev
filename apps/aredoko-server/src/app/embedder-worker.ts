@@ -22,11 +22,11 @@ const handlersLayer = EmbedderRpcs.toLayer(
   }),
 );
 
-const embedderLayer = Layer.unwrap(
-  RpcWorker.initialMessage(WorkerSettings).pipe(
-    Effect.map(({ modelDirectory }) => localEmbedderLayer(modelDirectory)),
-    Effect.orDie,
-  ),
+const embedderLayer = WorkerSettings.pipe(
+  RpcWorker.initialMessage,
+  Effect.map(({ modelDirectory }) => localEmbedderLayer(modelDirectory)),
+  Effect.orDie,
+  Layer.unwrap,
 );
 
 const workerLayer = RpcServer.layer(EmbedderRpcs).pipe(
@@ -36,4 +36,4 @@ const workerLayer = RpcServer.layer(EmbedderRpcs).pipe(
   Layer.provide(nodeWorkerRunner),
 );
 
-runMain("aredoko-embedder")(Layer.launch(workerLayer));
+workerLayer.pipe(Layer.launch, runMain("aredoko-embedder"));

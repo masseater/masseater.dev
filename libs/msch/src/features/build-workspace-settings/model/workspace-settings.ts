@@ -52,7 +52,7 @@ const SeverityWithOptions = Schema.mutable(
 const RuleSetting = Schema.Union([Severity, SeverityWithOptions]);
 const Rules = Schema.Record(Schema.String, RuleSetting);
 const decodeRules = Schema.decodeUnknownEffect(Rules);
-const Names = Schema.optional(Schema.Array(Schema.String));
+const Names = Schema.String.pipe(Schema.Array, Schema.optional);
 const WorkspaceOverride = Schema.Struct({
   files: Schema.Array(Schema.String),
   excludeFiles: Names,
@@ -61,7 +61,7 @@ const WorkspaceOverride = Schema.Struct({
 });
 const WorkspaceLintSettings = Schema.Struct({
   ignorePatterns: Names,
-  overrides: Schema.optional(Schema.Array(WorkspaceOverride)),
+  overrides: WorkspaceOverride.pipe(Schema.Array, Schema.optional),
 });
 
 export interface WorkspaceLint {
