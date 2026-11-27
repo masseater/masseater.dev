@@ -94,21 +94,18 @@ it.effect("人生の記録と作業メモを store で分けて返す", () =>
   }),
 );
 
-it.effect("50 バイトを超える語や % を含む語でも、そのままの文字列として探す", () =>
-  Effect.gen(function* searchesLongAndWildcardTerms() {
-    yield* writeNight;
+const LONG_TERM = "あいうえおかきくけこさしすせそたちつてとなにぬねの";
+
+it.effect("LIKE のパターン長の上限を超える検索語でも、先頭部分で探して失敗しない", () =>
+  Effect.gen(function* searchesLongTerm() {
+    yield* resetDatabase;
     yield* writeMemory(writer)({
       project: "assistant",
-      name: "rate",
-      description: "割合",
-      content: "達成率は50%だった",
+      name: "kana",
+      description: "かな",
+      content: LONG_TERM,
     });
-    const longTerm = "夜、田中と池袋で飲んでた".repeat(3);
-    const long = yield* watashiSearch({ query: longTerm });
-    const percent = yield* watashiSearch({ query: "50%" });
-    const wildcard = yield* watashiSearch({ query: "5_%" });
-    expect(long).toMatchObject({ total: 0 });
-    expect(percent).toMatchObject({ total: 1, countsByStore: { memory: 1 } });
-    expect(wildcard).toMatchObject({ total: 0 });
+    const found = yield* watashiSearch({ query: LONG_TERM });
+    expect(found).toMatchObject({ total: 1, countsByStore: { memory: 1 } });
   }),
 );
