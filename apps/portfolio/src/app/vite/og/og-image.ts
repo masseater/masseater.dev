@@ -181,10 +181,10 @@ export const ogImage = (): Plugin => {
   return {
     name: "og-image",
     apply: "build",
-    configResolved: (config) => {
+    configResolved: (config): void => {
       ({ root } = config);
     },
-    generateBundle() {
+    generateBundle(): Promise<void> {
       if (this.environment.name !== CLIENT_ENVIRONMENT) {
         return Promise.resolve();
       }

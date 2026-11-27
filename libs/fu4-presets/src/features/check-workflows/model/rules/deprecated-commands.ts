@@ -28,7 +28,7 @@ export const deprecatedCommands = workflowRule({
   docs: "https://github.com/rhysd/actionlint/blob/main/docs/checks.md#check-deprecated-workflow-commands",
   visitor: (fail): Visitor => ({
     ...NOOP,
-    step: (step) => {
+    step: (step): void => {
       for (const script of scriptOf(step)) {
         for (const match of Str.matchAll(COMMAND)(script.value)) {
           const command = pipe(

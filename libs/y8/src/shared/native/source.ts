@@ -105,7 +105,7 @@ export const sourceView = (raw: Uint8Array): SourceView => {
     lineStarts: words(linesAt, lineCount),
     text: () => decoder.decode(bytes),
     slice: (start, end) => decode(bytes, start, end),
-    stringAt: (index) => {
+    stringAt: (index): string => {
       const offset = wordAt(strings)(index * STRING_WORDS);
       return decode(blob, offset, offset + wordAt(strings)(index * STRING_WORDS + LENGTH));
     },

@@ -29,14 +29,14 @@ export const id = workflowRule({
     const seen = new Map<string, Position>();
     return {
       ...NOOP,
-      jobPre: (job) => {
+      jobPre: (job): void => {
         seen.clear();
         validate(fail)(job.id, "job");
         for (const need of job.needs) {
           validate(fail)(need, "job");
         }
       },
-      step: (step) => {
+      step: (step): void => {
         for (const stepId of Option.toArray(Option.fromNullishOr(step.id))) {
           validate(fail)(stepId, "step");
           const key = Str.toLowerCase(stepId.value);

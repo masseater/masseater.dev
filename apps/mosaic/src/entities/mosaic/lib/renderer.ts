@@ -8,7 +8,7 @@ const ACCENT_PROPERTY = "--primary";
 
 const canvasRenderer = (canvas: HTMLCanvasElement, accent: string): Option.Option<Renderer> =>
   Option.map(Option.fromNullishOr(canvas.getContext("2d")), (context) => ({
-    draw: (frame) => {
+    draw: (frame): void => {
       drawScene({ ...frame, context, accent });
     },
     animating: isFading,

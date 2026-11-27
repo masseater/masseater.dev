@@ -1,9 +1,8 @@
 import { createRouter } from "@tanstack/react-router";
-import type { Router } from "@tanstack/react-router";
 
 import { routeTree } from "./routeTree.gen.ts";
 
-export type AppRouter = Router<typeof routeTree>;
+export type AppRouter = ReturnType<typeof createRouter<typeof routeTree>>;
 
 declare module "@tanstack/react-router" {
   interface Register {

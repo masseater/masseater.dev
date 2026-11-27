@@ -225,16 +225,16 @@ const blocksOf = (worker: Worker): ((index: number) => Promise<readonly TrackBlo
 const tapeOf = (worker: Worker, shape: TapeShape): Tape => ({
   frames: BLOCK_FRAMES,
   blocks: Math.ceil(shape.frames / BLOCK_FRAMES),
-  write: (track, left, right) => {
+  write: (track, left, right): void => {
     worker.postMessage({ write: track, left, right }, [...transferOf(left, right)]);
   },
   block: blocksOf(worker),
-  port: () => {
+  port: (): MessagePort => {
     const channel = new MessageChannel();
     worker.postMessage({ connect: channel.port1 }, [channel.port1]);
     return channel.port2;
   },
-  close: () => {
+  close: (): void => {
     worker.postMessage({ close: true }, []);
   },
 });

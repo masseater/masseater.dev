@@ -38,10 +38,25 @@ type Converter = (
 ) => Effect.Effect<string, Reason>;
 
 const CONVERTERS: readonly (readonly [string, Converter])[] = [
-  [".als", (input) => alsToFumx(input).pipe(Effect.map((written) => written.text))],
-  [".mid", (input) => midiToFumx(input).pipe(Effect.map((written) => written.text))],
-  [".midi", (input) => midiToFumx(input).pipe(Effect.map((written) => written.text))],
-  [".fumx", ({ bytes }) => Effect.succeed(new TextDecoder().decode(bytes))],
+  [
+    ".als",
+    (input): Effect.Effect<string, Reason> =>
+      alsToFumx(input).pipe(Effect.map((written) => written.text)),
+  ],
+  [
+    ".mid",
+    (input): Effect.Effect<string, Reason> =>
+      midiToFumx(input).pipe(Effect.map((written) => written.text)),
+  ],
+  [
+    ".midi",
+    (input): Effect.Effect<string, Reason> =>
+      midiToFumx(input).pipe(Effect.map((written) => written.text)),
+  ],
+  [
+    ".fumx",
+    ({ bytes }): Effect.Effect<string, Reason> => Effect.succeed(new TextDecoder().decode(bytes)),
+  ],
 ];
 
 const failed =

@@ -23,7 +23,7 @@ export const busesOf = (): Buses => {
   return {
     find,
     at: (role) => Option.getOrThrowWith(find(role), () => MissingBus.make({ role })),
-    put: (role, bus) => {
+    put: (role, bus): void => {
       held.set(role, bus);
     },
   };

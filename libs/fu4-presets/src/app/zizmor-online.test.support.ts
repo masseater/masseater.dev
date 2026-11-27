@@ -84,7 +84,7 @@ export const serverOf = (routes: Routes): Server => {
   return {
     routes,
     calls: () => calls,
-    record: (key) => {
+    record: (key): void => {
       calls.push(key);
     },
   };

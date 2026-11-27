@@ -120,19 +120,19 @@ export const untrusted = (): Untrusted => {
     errors.push(...Option.toArray(stepped.error));
   };
   return {
-    enter: (expr) => {
+    enter: (expr): void => {
       if (isSafeCall(expr)) {
         safeCalls += STEP;
       }
     },
-    leave: (expr) => {
+    leave: (expr): void => {
       if (safeCalls === NONE) {
         record(step(walk, expr));
       } else if (isSafeCall(expr)) {
         safeCalls -= STEP;
       }
     },
-    finish: () => {
+    finish: (): readonly ExprError[] => {
       record(end(walk));
       return errors;
     },
