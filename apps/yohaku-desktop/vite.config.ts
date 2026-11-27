@@ -15,7 +15,7 @@ export default defineConfig({
         crate: "yohaku-desktop",
         input: await cargoInputs({ directory: import.meta.dirname }),
       }),
-      verify: { command: [], dependsOn: ["cargo"] },
+      verify: { command: [], dependsOn: ["cargo", "screen"] },
       "release:windows": {
         command:
           "tauri build --bundles nsis --config src-tauri/tauri.release.conf.json && node bin/collect.ts",

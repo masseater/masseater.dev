@@ -11,7 +11,7 @@ export default defineConfig({
         crate: "yakusu",
         input: await cargoInputs({ directory: import.meta.dirname }),
       }),
-      verify: { command: [], dependsOn: ["cargo"] },
+      verify: { command: [], dependsOn: ["cargo", "screen"] },
       "release:linux": {
         command:
           "node bin/fetch-runtime.ts linux-x64 && cargo test --package yakusu --lib --locked -- --ignored translates_with_the_downloaded_model && tauri build --config src-tauri/tauri.release.conf.json --bundles deb,appimage && bundle-collect deb appimage",
