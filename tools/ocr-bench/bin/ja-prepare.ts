@@ -40,7 +40,7 @@ const SUBSETS = [
   { file: RECEIPT, category: "receipt-photo", direction: Option.none<string>() },
 ] as const;
 
-const Direction = Schema.optional(Schema.NullOr(Schema.String));
+const Direction = Schema.String.pipe(Schema.NullOr, Schema.optional);
 const Polygon = Schema.Struct({ direction: Direction, text: Schema.String });
 const Labels = Schema.Array(
   Schema.Struct({ image_id: Schema.String, polygons: Schema.Array(Polygon) }),

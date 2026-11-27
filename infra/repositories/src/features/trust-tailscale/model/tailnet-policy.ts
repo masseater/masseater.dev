@@ -17,7 +17,7 @@ export type PolicyEntries = Readonly<{
 
 const ParsedPolicy = Schema.Struct({
   tagOwners: Schema.optional(Schema.Record(Schema.String, Schema.Unknown)),
-  grants: Schema.optional(Schema.Array(Schema.Unknown)),
+  grants: Schema.Unknown.pipe(Schema.Array, Schema.optional),
 });
 
 const ParsedGrant = Schema.Struct({

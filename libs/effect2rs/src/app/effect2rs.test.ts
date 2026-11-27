@@ -45,7 +45,7 @@ it.effect("null becomes Option and a missing key is skipped when serializing", (
     const Draft = Schema.Struct({
       title: Schema.NullOr(Schema.String),
       note: Schema.optionalKey(Schema.String),
-      tags: Schema.optional(Schema.Array(Schema.String)),
+      tags: Schema.String.pipe(Schema.Array, Schema.optional),
     }).annotate({ identifier: "Draft" });
     const source = yield* rust({ Draft });
     expect(source).toContain(`pub struct Draft {

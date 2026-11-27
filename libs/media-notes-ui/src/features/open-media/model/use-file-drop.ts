@@ -26,7 +26,7 @@ export const useFileDrop = (enabled: boolean): void => {
     }
     const fiber = Effect.runFork(listening(open));
     return (): void => {
-      Effect.runFork(Fiber.interrupt(fiber));
+      fiber.pipe(Fiber.interrupt, Effect.runFork);
     };
   }, [enabled, open]);
 };

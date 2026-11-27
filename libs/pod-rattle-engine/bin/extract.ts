@@ -40,7 +40,8 @@ const program = Effect.gen(function* extractEngine() {
 });
 
 runMain(
-  Layer.build(nodeServices).pipe(
+  nodeServices.pipe(
+    Layer.build,
     Effect.flatMap((context) =>
       Effect.provideContext(
         program.pipe(Effect.withSpan("pod-rattle-engine.parity.extract")),

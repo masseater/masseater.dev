@@ -20,7 +20,7 @@ export const OpeningSchema = Schema.Struct({
 export const CommandSchema = Schema.Struct({
   play: Schema.optionalKey(Schema.Finite),
   stop: Schema.optionalKey(Schema.Literal(true)),
-  mixers: Schema.optionalKey(Schema.Array(MixerSchema)),
+  mixers: MixerSchema.pipe(Schema.Array, Schema.optionalKey),
 });
 
 export const TrackBlockSchema = Schema.Struct({

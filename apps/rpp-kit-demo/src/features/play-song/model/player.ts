@@ -70,7 +70,7 @@ export const startPlayer = ({ from, onTick, onEnd }: StartOptions): Player => {
   return {
     stop: () => {
       const close = Effect.promise(engine.close);
-      Effect.runFork(Effect.andThen(Fiber.interrupt(fiber), close));
+      fiber.pipe(Fiber.interrupt, Effect.andThen(close), Effect.runFork);
     },
   };
 };

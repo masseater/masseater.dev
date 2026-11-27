@@ -34,7 +34,7 @@ const Choice = Schema.Struct({ finish_reason: Schema.String });
 const Tokens = Schema.optional(Schema.Finite);
 const Usage = Schema.Struct({ prompt_tokens: Tokens, completion_tokens: Tokens });
 const Answer = Schema.Struct({
-  choices: Schema.optional(Schema.Array(Choice)),
+  choices: Choice.pipe(Schema.Array, Schema.optional),
   usage: Schema.optional(Usage),
 });
 

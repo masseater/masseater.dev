@@ -32,7 +32,7 @@ export type SourceServices = FileSystem.FileSystem | Path.Path | HttpClient.Http
 /** @internal */
 export type SourceError = VpToolsError | PlatformError.PlatformError;
 
-const Index = Schema.fromJsonString(Schema.Array(Schema.String));
+const Index = Schema.String.pipe(Schema.Array, Schema.fromJsonString);
 
 const readIndex = (
   directory: string,

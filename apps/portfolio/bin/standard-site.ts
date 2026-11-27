@@ -109,7 +109,8 @@ const program = Effect.gen(function* stageBlogs() {
 });
 
 runMain(
-  Layer.build(nodeServices).pipe(
+  nodeServices.pipe(
+    Layer.build,
     Effect.flatMap((context) =>
       Effect.provideContext(program.pipe(Effect.withSpan("standard-site.stage")), context),
     ),

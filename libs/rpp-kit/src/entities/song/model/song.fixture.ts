@@ -25,7 +25,7 @@ const TruthTrack = Schema.Struct({
   notes: Schema.Array(TruthNote),
 });
 
-const Truth = Schema.fromJsonString(Schema.Array(TruthTrack));
+const Truth = TruthTrack.pipe(Schema.Array, Schema.fromJsonString);
 
 type Played = typeof TruthNote.Type;
 

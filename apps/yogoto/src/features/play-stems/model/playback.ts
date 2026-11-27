@@ -84,7 +84,7 @@ const started = ({ deck, mix, from, onTick }: Start): Running => {
       }
     },
     stop: () => {
-      Effect.runFork(Fiber.interrupt(fiber));
+      fiber.pipe(Fiber.interrupt, Effect.runFork);
       for (const voice of voices) {
         voice.stop();
       }

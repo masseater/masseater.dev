@@ -173,7 +173,7 @@ const createSlots = (): Slots => {
     remove: (image) => {
       MutableHashMap.remove(map, image.src);
     },
-    entries: () => Array.fromIterable(MutableHashMap.values(map)),
+    entries: () => map.pipe(MutableHashMap.values, Array.fromIterable),
     size: () => MutableHashMap.size(map),
   };
 };

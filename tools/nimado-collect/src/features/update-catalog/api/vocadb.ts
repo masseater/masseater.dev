@@ -20,7 +20,7 @@ const Pv = Schema.Struct({
   service: Schema.String,
   pvType: Schema.String,
   disabled: Schema.optionalKey(Schema.Boolean),
-  publishDate: Schema.optionalKey(Schema.NullOr(Schema.String)),
+  publishDate: Schema.String.pipe(Schema.NullOr, Schema.optionalKey),
 });
 
 const Song = Schema.Struct({
@@ -28,7 +28,7 @@ const Song = Schema.Struct({
   defaultName: Schema.String,
   artistString: Schema.String,
   songType: Schema.String,
-  pvs: Schema.optionalKey(Schema.Array(Pv)),
+  pvs: Pv.pipe(Schema.Array, Schema.optionalKey),
 });
 
 const SongPage = Schema.Struct({ items: Schema.Array(Song) });

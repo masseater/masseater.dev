@@ -123,7 +123,7 @@ const spawnTunnel = Effect.fn("vm.spawnTunnel")(function* spawnTunnel(
     hostCommand(script, `-Mode tunnel -Ports ${portList}`),
   ]);
   const handle = yield* spawner.spawn(command).pipe(Scope.provide(scope), Effect.mapError(failed));
-  yield* tunnelReady(Stream.decodeText(handle.all));
+  yield* handle.all.pipe(Stream.decodeText, tunnelReady);
   const running = handle.isRunning.pipe(Effect.orElseSucceed(() => false));
   const tunnel: Tunnel = { instances, scope, running };
   return tunnel;

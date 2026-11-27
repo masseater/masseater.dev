@@ -33,7 +33,7 @@ export const useDroppedFiles = (onDrop: (paths: readonly string[]) => void): boo
   useEffect(() => {
     const fiber = Effect.runFork(listening({ onDrop, onHover }));
     return (): void => {
-      Effect.runFork(Fiber.interrupt(fiber));
+      fiber.pipe(Fiber.interrupt, Effect.runFork);
     };
   }, [onDrop, onHover]);
   return hovering;

@@ -168,7 +168,7 @@ const startWeaver = (
       Stream.runForEach((text) => Effect.sync(() => MutableRef.update(log, String.concat(text)))),
       Effect.forkScoped,
     );
-    return yield* Effect.sync(() => addressOf(MutableRef.get(log))).pipe(
+    return yield* Effect.sync(() => log.pipe(MutableRef.get, addressOf)).pipe(
       Effect.flatMap(Effect.fromOption),
       Effect.retry(READY_POLL),
       Effect.timeout(READY_TIMEOUT),

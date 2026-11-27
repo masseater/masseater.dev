@@ -13,7 +13,7 @@ const SubsectionSchema = Schema.Struct({ id: Schema.String, value: Schema.String
 const SectionSchema = Schema.Struct({
   id: Schema.String,
   value: Schema.String,
-  children: Schema.optionalKey(Schema.Array(SubsectionSchema)),
+  children: SubsectionSchema.pipe(Schema.Array, Schema.optionalKey),
 });
 
 const decodeToc = Schema.decodeUnknownOption(Schema.Array(SectionSchema));

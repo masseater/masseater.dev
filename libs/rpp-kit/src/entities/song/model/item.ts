@@ -130,7 +130,9 @@ const fileSource = (
 
 const sourceOf = (outer: Chunk, placement: Placement): Source => {
   const source = innermost(outer);
-  return Match.value(textOf(Arr.get(source.params, PARAM_INDEX.first))).pipe(
+  return Arr.get(source.params, PARAM_INDEX.first).pipe(
+    textOf,
+    Match.value,
     Match.when("MIDI", (): Source => ({
       kind: "midi",
       notes: placedNotes(midiNotes(source), placement),

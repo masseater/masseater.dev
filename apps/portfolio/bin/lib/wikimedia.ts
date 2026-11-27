@@ -27,13 +27,13 @@ const FILE_PREFIX = "File:";
 const INDENT = { space: 2 } as const;
 
 const Step = Schema.Struct({ from: Schema.String, to: Schema.String });
-const Steps = Schema.optionalKey(Schema.Array(Step));
+const Steps = Step.pipe(Schema.Array, Schema.optionalKey);
 
 const Page = Schema.Struct({ title: Schema.String, pageimage: Schema.optionalKey(Schema.String) });
 const PageQuery = Schema.Struct({
   normalized: Steps,
   redirects: Steps,
-  pages: Schema.optionalKey(Schema.Array(Page)),
+  pages: Page.pipe(Schema.Array, Schema.optionalKey),
 });
 const PageImages = Schema.Struct({ query: Schema.optionalKey(PageQuery) });
 
@@ -51,11 +51,11 @@ const ImageInfo = Schema.Struct({
 });
 const FilePage = Schema.Struct({
   title: Schema.String,
-  imageinfo: Schema.optionalKey(Schema.Array(ImageInfo)),
+  imageinfo: ImageInfo.pipe(Schema.Array, Schema.optionalKey),
 });
 const FileQuery = Schema.Struct({
   normalized: Steps,
-  pages: Schema.optionalKey(Schema.Array(FilePage)),
+  pages: FilePage.pipe(Schema.Array, Schema.optionalKey),
 });
 const Commons = Schema.Struct({ query: Schema.optionalKey(FileQuery) });
 

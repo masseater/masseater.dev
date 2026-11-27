@@ -124,7 +124,8 @@ const program = Effect.gen(function* collectExamples() {
 const services = Layer.mergeAll(nodeServices, FetchHttpClient.layer);
 
 runMain(
-  Layer.build(services).pipe(
+  services.pipe(
+    Layer.build,
     Effect.flatMap((context) => Effect.provideContext(program, context)),
     Effect.scoped,
   ),

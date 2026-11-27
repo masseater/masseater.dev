@@ -6,11 +6,11 @@ const MIN_ID = 1;
 
 const Id = Schema.Int.check(Schema.isGreaterThanOrEqualTo(MIN_ID));
 const Text = Schema.optionalKey(Schema.String);
-const ClearableText = Schema.optionalKey(Schema.NullOr(Schema.String));
+const ClearableText = Schema.String.pipe(Schema.NullOr, Schema.optionalKey);
 const Kind = Schema.Literals(video.kind.enumValues).annotate({
   description: "medley=メドレー、collab=合作、single=単品、other=その他",
 });
-const Names = Schema.optionalKey(Schema.Array(Schema.String));
+const Names = Schema.String.pipe(Schema.Array, Schema.optionalKey);
 
 export const IdInput = Schema.Struct({ id: Id });
 export const KeywordInput = Schema.Struct({

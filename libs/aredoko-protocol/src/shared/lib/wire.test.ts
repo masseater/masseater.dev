@@ -51,7 +51,7 @@ const sendFromCsharp = Effect.fn("sendFromCsharp")(function* sendFromCsharp(para
 const answerToCsharp = Effect.fn("answerToCsharp")(function* answerToCsharp(
   exit: Exit.Exit<typeof Sources.Type, RequestFailed>,
 ) {
-  const received = yield* sendFromCsharp(Option.getOrNull(Option.none()));
+  const received = yield* Option.none().pipe(Option.getOrNull, sendFromCsharp);
   const { id } = yield* Effect.fromOption(Array.head(received));
   const encoded = yield* encodeExit(exit);
   const text: unknown = RpcSerialization.jsonRpc()
@@ -64,7 +64,7 @@ test("サーバーが返す失敗を、C# が読む形の型で読み、RequestF
   Effect.runPromise(
     Effect.gen(function* readsFailure() {
       const failure = RequestFailed.make({ reason: "NotFound", message: NOT_FOUND });
-      const response = yield* answerToCsharp(Exit.fail(failure));
+      const response = yield* failure.pipe(Exit.fail, answerToCsharp);
       const error = yield* Effect.fromNullishOr(response.error);
       const reasons = yield* decodeReasons(error.data);
       const fail = yield* Effect.fromOption(pipe(reasons, Array.findFirst(isFail)));
