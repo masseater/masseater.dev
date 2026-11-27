@@ -11,6 +11,7 @@ const CutSchema = Schema.Struct({
   say: Lines,
   hold: Seconds,
   formats: Schema.optionalKey(Formats),
+  voice: Schema.optionalKey(Schema.Finite),
 });
 
 const LengthSchema = Schema.Struct({ vertical: Seconds, horizontal: Seconds });
@@ -25,6 +26,7 @@ const VideoScriptSchema = Schema.Struct({
   voice: Schema.Finite,
   readings: Readings,
   bgm: Schema.optionalKey(BgmSchema),
+  images: Schema.optionalKey(Schema.Record(Schema.String, Schema.String)),
   cuts: Cuts,
 });
 

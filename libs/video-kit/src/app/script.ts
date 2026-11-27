@@ -1,6 +1,8 @@
 export {
   estimateSeconds,
   isIn,
+  voiceOf,
+  voicesOf,
   narrationKey,
   planTimeline,
   spokenOf,

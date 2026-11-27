@@ -1,4 +1,4 @@
-import { Option } from "effect";
+import { Array as Arr, Option, pipe } from "effect";
 
 import type { Format } from "#/shared/config/index.ts";
 
@@ -7,6 +7,7 @@ export type Cut = Readonly<{
   say: readonly string[];
   hold?: number;
   formats?: readonly Format[];
+  voice?: number;
 }>;
 
 export type Bgm = Readonly<{ url: string; credit: string }>;
@@ -18,6 +19,7 @@ export type VideoScript = Readonly<{
   voice: number;
   readings: Readonly<Record<string, string>>;
   bgm?: Bgm;
+  images?: Readonly<Record<string, string>>;
   cuts: readonly Cut[];
 }>;
 
@@ -28,3 +30,11 @@ export const isIn =
       onNone: () => true,
       onSome: (formats) => formats.includes(format),
     });
+
+export const voiceOf =
+  (script: VideoScript) =>
+  (cut: Cut): number =>
+    cut.voice ?? script.voice;
+
+export const voicesOf = (script: VideoScript): readonly number[] =>
+  pipe(script.cuts, Arr.map(voiceOf(script)), Arr.prepend(script.voice), Arr.dedupe);

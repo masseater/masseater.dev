@@ -4,7 +4,7 @@ import type { Format } from "#/shared/config/index.ts";
 import { FPS, FRAMES, NOTHING, ONE, SFX, SFX_CREDIT, Timing } from "#/shared/config/index.ts";
 
 import type { Cut, VideoScript } from "./cut.ts";
-import { isIn } from "./cut.ts";
+import { isIn, voiceOf, voicesOf } from "./cut.ts";
 import { frames } from "./frames.ts";
 import { timeLines } from "./lines.ts";
 import type { Sources, TimedCut, TimedLine, Timeline } from "./timeline.ts";
@@ -23,6 +23,7 @@ const timeCut = (
   timeLines({ script, cut, sources }).pipe(
     Effect.map((lines) => ({
       id: cut.id,
+      voice: voiceOf(script)(cut),
       lines,
       duration: spokenLength(lines) + frames(cut.hold ?? NOTHING),
     })),
@@ -35,12 +36,15 @@ const bgmOf = (script: VideoScript, sources: Sources): Option.Option<string> =>
   );
 
 const NO_CREDITS: readonly string[] = [];
+const NO_IMAGES: Readonly<Record<string, string>> = {};
 
 const creditsOf = (script: VideoScript, sources: Sources): readonly string[] => [
-  ...Option.match(sources.speakerName, {
-    onNone: () => NO_CREDITS,
-    onSome: (name) => [`VOICEVOX:${name}`],
-  }),
+  ...pipe(
+    voicesOf(script),
+    Arr.flatMap((voice) => Option.toArray(Rec.get(sources.speakers, String(voice)))),
+    Arr.dedupe,
+    Arr.map((name) => `VOICEVOX:${name}`),
+  ),
   ...Option.match(Option.fromNullishOr(script.bgm), {
     onNone: () => NO_CREDITS,
     onSome: ({ credit }) => [`BGM:${credit}`],
@@ -92,6 +96,11 @@ export const planTimeline = ({ script, format, sources }: PlanRequest): Effect.E
         ),
         credits: creditsOf(script, sources),
         tachie: sources.tachie,
+        images: pipe(
+          Option.getOrElse(Option.fromNullishOr(script.images), () => NO_IMAGES),
+          Rec.map((url) => sources.assetSrc(url)),
+        ),
+        portraits: sources.portraits,
       };
     }),
   );

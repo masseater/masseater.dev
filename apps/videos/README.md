@@ -13,3 +13,15 @@ node bin/videos.ts render <名前>   # out/<名前>/ に MP4
 ```
 
 BGM、効果音、ナレーション、立ち絵は `public/cache/` に置き、Git には入れない。効果音ラボは直リンクを断るので、効果音は一覧ページを Chromium で開き、ダウンロードのリンクを押して取る。Chromium は `BROWSER_EXECUTABLE`（既定は `/opt/pw-browsers/chromium`）を使う。立ち絵は話者の公式立ち絵をキャッシュに置き、無いときは VOICEVOX の話者情報の画像を使う。
+
+## 素材
+
+`src/shared/config/stock.ts` に、台本の `images` に並べる素材の URL とキャッシュのパスを置く。
+
+| 名前       | 中身                                     | 取り方                                                      |
+| ---------- | ---------------------------------------- | ----------------------------------------------------------- |
+| `IMAGES`   | いらすとやのイラストと背景、ツールのロゴ | `make` が URL から落とす。いらすとやは 1 本につき 20 点まで |
+| `SHOTS`    | 紹介するツールのサイトの画面写真         | Playwright で撮って `public/cache/shots/` に置く            |
+| `ZUNDAMON` | ずんだもんの公式立ち絵（zunko.jp）       | 落として余白を切り、`public/cache/tachie/` に置く           |
+
+`video.tsx` はページ単位の画面設計なので、px 指定の Tailwind、インライン style、ページ内の小さなコンポーネントを許している（`vite.config.ts` の `src/pages/*/video.tsx` の上書き）。

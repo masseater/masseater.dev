@@ -1,6 +1,6 @@
 import type { Format, Tachie, Timeline, VideoScript } from "@masseater.dev/video-kit/script";
 import { planTimeline } from "@masseater.dev/video-kit/script";
-import { Effect, ManagedRuntime, Option, Record as Rec, Schema, pipe } from "effect";
+import { Effect, ManagedRuntime, Option, Record as Rec, Schema, String as Str, pipe } from "effect";
 import { FetchHttpClient, HttpClient } from "effect/http";
 import type { CalculateMetadataFunction } from "remotion";
 import { staticFile } from "remotion";
@@ -36,6 +36,23 @@ const tachieOf = (voice: number, found: Manifest["tachie"]): Option.Option<Tachi
   );
 };
 
+const NO_PORTRAITS: NonNullable<Manifest["tachie"]> = {};
+
+const portraitsOf = (found: Manifest["tachie"]): Readonly<Record<string, string>> =>
+  pipe(
+    Option.getOrElse(Option.fromNullishOr(found), () => NO_PORTRAITS),
+    Rec.map(({ closed }) => staticFile(closed)),
+  );
+
+const REMOTE = "https://";
+
+const publicSrc = (url: string): string => {
+  if (Str.startsWith(REMOTE)(url)) {
+    return staticFile(assetPath(url));
+  }
+  return staticFile(url);
+};
+
 const timelineOf = (
   script: VideoScript,
   format: Format,
@@ -48,9 +65,10 @@ const timelineOf = (
         sources: {
           narration,
           narrationSrc: (key: string) => staticFile(narrationPath(key)),
-          assetSrc: (url: string) => staticFile(assetPath(url)),
-          speakerName: Rec.get(speakers, String(script.voice)),
+          assetSrc: publicSrc,
+          speakers,
           tachie: tachieOf(script.voice, tachie),
+          portraits: portraitsOf(tachie),
         },
       }),
     ),

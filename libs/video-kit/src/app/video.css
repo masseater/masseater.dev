@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@import "@fontsource/noto-sans-jp/300.css";
+@import "@fontsource/noto-sans-jp/500.css";
 @import "@fontsource/noto-sans-jp/700.css";
 @import "@fontsource/noto-sans-jp/900.css";
 @import "@fontsource/ibm-plex-mono/latin-500.css";
@@ -115,4 +117,70 @@
   padding: 0.04em 0.32em;
   border-radius: 0.18em;
   margin: 0 0.12em;
+}
+
+@theme {
+  --text-shout: 200px;
+  --text-bar: 84px;
+  --text-telop-l: 84px;
+}
+
+@utility backdrop-blur-photo {
+  filter: blur(40px) brightness(1.04) saturate(0.85);
+  scale: 1.12;
+}
+
+@utility backdrop-dim-photo {
+  filter: brightness(0.42) saturate(0.9);
+}
+
+@utility caption-outline {
+  color: var(--fill, #ffffff);
+  -webkit-text-stroke: var(--stroke, 0.2em) var(--outline, var(--color-ink));
+  paint-order: stroke fill;
+
+  & .emphasis {
+    -webkit-text-stroke-color: var(--emphasis-outline, var(--outline, var(--color-ink)));
+  }
+}
+
+@utility caption-box {
+  color: var(--color-ink);
+  background: var(--fill, #ffffff);
+  border: 6px solid var(--outline, var(--color-ink));
+  border-radius: 18px;
+  padding: 0.3em 0.6em;
+  box-decoration-break: clone;
+}
+
+@utility caption-plain {
+  color: #ffffff;
+  text-shadow:
+    0 0 0.18em rgb(0 0 0 / 0.55),
+    0 0.04em 0.1em rgb(0 0 0 / 0.5);
+}
+
+@utility bar-dark {
+  color: #ffffff;
+  background: #2a2a2a;
+  font-size: var(--text-bar);
+}
+
+@utility character-center {
+  left: 0;
+  right: 0;
+  bottom: -380px;
+  height: 1200px;
+}
+
+@utility character-left {
+  left: -40px;
+  bottom: -60px;
+  height: 820px;
+}
+
+@utility character-right {
+  right: -40px;
+  bottom: -60px;
+  height: 820px;
 }

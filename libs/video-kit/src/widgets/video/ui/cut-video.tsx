@@ -7,25 +7,36 @@ import { useFonts } from "#/shared/ui/use-fonts.ts";
 
 import { BackgroundMusic } from "./background-music.tsx";
 import { CutSequence } from "./cut-sequence.tsx";
-import type { Draw } from "./draw.ts";
-import { Tachie } from "./tachie.tsx";
+import { DEFAULT_LOOK } from "./default-look.tsx";
+import type { Draw, Look } from "./draw.ts";
+
+const NO_CHANGE: Partial<Look> = {};
 
 export const CutVideo = ({
   timeline,
   draw,
-}: Readonly<{ timeline: Timeline; draw: Readonly<Record<string, Draw>> }>): ReactNode => {
+  look = NO_CHANGE,
+}: Readonly<{
+  timeline: Timeline;
+  draw: Readonly<Record<string, Draw>>;
+  look?: Partial<Look>;
+}>): ReactNode => {
   const ready = useFonts();
-  const { format, sfx, credits } = timeline;
+  const backdrop = look.backdrop ?? DEFAULT_LOOK.backdrop;
+  const frame = look.frame ?? DEFAULT_LOOK.frame;
+  const overlay = look.overlay ?? DEFAULT_LOOK.overlay;
+  const { format, sfx, credits, images, portraits } = timeline;
   return (
-    <AbsoluteFill className="bg-paper" data-format={format} lang="ja">
+    <AbsoluteFill data-format={format} lang="ja">
+      {backdrop(timeline)}
       <BackgroundMusic src={timeline.bgm} total={timeline.durationInFrames} />
       {ready &&
         pipe(
           timeline.cuts,
-          Arr.map((cut) => ({ ...cut, format, sfx, credits })),
-          Arr.map((shot) => <CutSequence draw={draw} key={shot.id} shot={shot} />),
+          Arr.map((cut) => ({ ...cut, format, sfx, credits, images, portraits })),
+          Arr.map((shot) => <CutSequence draw={draw} frame={frame} key={shot.id} shot={shot} />),
         )}
-      <Tachie cuts={timeline.cuts} images={timeline.tachie} />
+      {overlay(timeline)}
     </AbsoluteFill>
   );
 };

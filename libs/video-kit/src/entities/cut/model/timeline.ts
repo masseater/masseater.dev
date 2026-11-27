@@ -15,6 +15,7 @@ export interface TimedLine {
 
 export interface TimedCut {
   readonly id: string;
+  readonly voice: number;
   readonly from: number;
   readonly duration: number;
   readonly lines: readonly TimedLine[];
@@ -24,6 +25,8 @@ export interface Shot extends TimedCut {
   readonly format: Format;
   readonly sfx: Readonly<Record<SfxKind, string>>;
   readonly credits: readonly string[];
+  readonly images: Readonly<Record<string, string>>;
+  readonly portraits: Readonly<Record<string, string>>;
 }
 
 export interface Tachie {
@@ -42,12 +45,15 @@ export interface Timeline {
   readonly sfx: Readonly<Record<SfxKind, string>>;
   readonly credits: readonly string[];
   readonly tachie: Option.Option<Tachie>;
+  readonly images: Readonly<Record<string, string>>;
+  readonly portraits: Readonly<Record<string, string>>;
 }
 
 export interface Sources {
   readonly narration: Narration;
   readonly narrationSrc: (key: string) => string;
   readonly assetSrc: (url: string) => string;
-  readonly speakerName: Option.Option<string>;
+  readonly speakers: Readonly<Record<string, string>>;
   readonly tachie: Option.Option<Tachie>;
+  readonly portraits: Readonly<Record<string, string>>;
 }
