@@ -42,6 +42,14 @@ export const enqueue = ({
     ),
   );
 
+export const delivered = (id: number): Effect.Effect<void, UpstreamFailed> =>
+  Clock.currentTimeMillis.pipe(
+    Effect.flatMap((takenAt) =>
+      query(() => db.update(claudeRequests).set({ takenAt }).where(eq(claudeRequests.id, id))),
+    ),
+    Effect.asVoid,
+  );
+
 export const take: Effect.Effect<readonly ClaudeRequest[], UpstreamFailed> =
   Clock.currentTimeMillis.pipe(
     Effect.flatMap((takenAt) =>
