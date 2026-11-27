@@ -1,14 +1,12 @@
 import { expect, it } from "@effect/vitest";
-import { readSong } from "@r_masseater/fumx-parser";
-import { soundingsOf } from "@r_masseater/fumx-parser/analysis";
 import { Array as Arr, Effect, Option, Record as Rec, pipe } from "effect";
 
-import { progressionOf } from "#/shared/lib/degrees.ts";
 import { chordBars, songText } from "#/shared/lib/rule-cases.test.support.ts";
 import type { StyleTable } from "#/shared/lib/style-table.ts";
 
 import { habitsOf } from "./habits.ts";
 import type { Habit, HabitLimits, StyleSong } from "./habits.ts";
+import { styleSongFromText } from "./read.ts";
 
 const OFTEN = 18;
 const RARE = 1;
@@ -35,20 +33,8 @@ const BASELINE: StyleTable = {
 
 const LIMITS: HabitLimits = { songs: 2, share: 0.3, baseline: 0.1, seen: 5 };
 
-const songOf = Effect.fn("songOf")(function* songOf(name: string, chords: readonly string[]) {
-  const source = yield* readSong({
-    path: `/${name}.fumx`,
-    read: () => Effect.succeed(songText(chordBars(chords))),
-  });
-  if (source.status === "invalid") {
-    return yield* Effect.die(new Error(`${name} is not a valid song`));
-  }
-  const song: StyleSong = {
-    name,
-    steps: progressionOf(soundingsOf(source.song))(source.song),
-  };
-  return song;
-});
+const songOf = (name: string, chords: readonly string[]): Effect.Effect<StyleSong> =>
+  styleSongFromText({ name, text: songText(chordBars(chords)) }).pipe(Effect.orDie);
 
 interface Summary {
   readonly context: string;
