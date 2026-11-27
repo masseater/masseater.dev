@@ -1,4 +1,12 @@
 {
+  "source": "https://github.com/typescript-eslint/typescript-eslint/blob/5987e7c9768739cda34069ccd381be1d4e173119/packages/eslint-plugin/tests/rules/prefer-readonly-parameter-types.test.ts",
+  "version": "typescript-eslint v8.74.0",
+  "license": "MIT, see LICENSE in this directory",
+  "omitted": [
+    "cases that pass allow, checkParameterProperties: false or treatMethodsAsReadonly: true, because the rule has no options",
+    "two cases that expect a report on a parameter with no type annotation, because the rule reads only annotated parameters",
+    "two overload declarations without an implementation, because oxlint does not parse them"
+  ],
   "valid": [
     "\ndeclare const source: { a: number };\nconst value = { ...source } as const;\nfunction foo(arg: typeof value) {}\n      ",
     "\ntype Renamed<T> = { [K in keyof T as `x${string & K}`]: T[K] };\nfunction foo(arg: Renamed<{ readonly a: number }>) {}\n      ",

@@ -128,7 +128,7 @@ const reportsTypesAPackageDeclares = Effect.gen(function* reportsTypesAPackageDe
     ),
     "package.json": packageJson,
     "src/skipped.ts": lines(
-      'export const SKIPPED = [{ from: "package", package: "markup", name: ["AnyNode", "Fragment"] }];',
+      'export const SKIPPED = [{ reason: "markup", types: ["AnyNode", "Fragment"] }];',
     ),
   });
   expect(findings).toStrictEqual(["src/skipped.ts:1 hand-written-names"]);
