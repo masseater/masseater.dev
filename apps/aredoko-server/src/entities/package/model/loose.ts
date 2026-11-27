@@ -1,6 +1,7 @@
+import { pathPartsOf } from "@masseater.dev/aredoko-protocol";
 import { Array, String, pipe } from "effect";
 
-import { hasExtension, partsOf } from "./file-name.ts";
+import { hasExtension } from "./file-name.ts";
 import { kindOf } from "./kind.ts";
 
 const LOOSE_KINDS = ["texture", "model", "audio"] as const;
@@ -9,7 +10,7 @@ const HIDDEN = ".";
 
 const isHidden = (name: string): boolean =>
   pipe(
-    partsOf(name),
+    pathPartsOf(name),
     Array.some((part) => pipe(part, String.startsWith(HIDDEN))),
   );
 

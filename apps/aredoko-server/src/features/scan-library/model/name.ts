@@ -1,15 +1,9 @@
+import { fileNameOf } from "@masseater.dev/aredoko-protocol";
 import type { BoothItem } from "@masseater.dev/aredoko-protocol";
 import { Array, Option, String, pipe } from "effect";
 
-import { partsOf } from "#/entities/package/index.ts";
-
 export const nameOf = (path: string): string =>
-  pipe(
-    partsOf(path),
-    Array.last,
-    Option.getOrElse(() => path),
-    String.replace(/\.unitypackage$/iu, ""),
-  );
+  pipe(fileNameOf(path), String.replace(/\.unitypackage$/iu, ""));
 
 const boothWords = ({ name, shop, tags }: typeof BoothItem.Type): readonly string[] => [
   name,

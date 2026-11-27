@@ -16,6 +16,7 @@
     "@effect/atom-react": "catalog:stack",
     "@fontsource/ibm-plex-mono": "catalog:",
     "@fontsource/noto-sans-jp": "catalog:",
+    "@masseater.dev/tachie": "workspace:*",
     "@remotion/layout-utils": "catalog:",
     "@remotion/media": "catalog:"
   },

@@ -1,1 +1,1 @@
-export { registerObserveTools } from "./api/observe-tools.ts";
+export { observeTools } from "./api/observe-tools.ts";

@@ -1,7 +1,8 @@
+import { pathPartsOf } from "@masseater.dev/aredoko-protocol";
 import { Array, Effect, FileSystem, Path, Schema, String, pipe } from "effect";
 import { SqlClient } from "effect/sql";
 
-import { bundleFolder, companionsOf, kindOf, partsOf } from "#/entities/package/index.ts";
+import { bundleFolder, companionsOf, kindOf } from "#/entities/package/index.ts";
 import { decodeRows } from "#/shared/sql/index.ts";
 import type { LooseFile } from "#/shared/unitypackage/index.ts";
 
@@ -39,7 +40,7 @@ const guidOf = (pathname: string): Effect.Effect<string> =>
   );
 
 const unityPath = (packageName: string, relative: string): string =>
-  pipe([UNITY_ROOT, packageName, ...partsOf(relative)], Array.join(SEPARATOR));
+  pipe([UNITY_ROOT, packageName, ...pathPartsOf(relative)], Array.join(SEPARATOR));
 
 const looseFile = Effect.fn("looseFile")(function* looseFile(pathname: string, data: Uint8Array) {
   const guid = yield* guidOf(pathname);

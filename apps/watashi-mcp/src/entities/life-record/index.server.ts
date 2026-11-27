@@ -1,10 +1,9 @@
 export {
   findRecord,
-  findByLabel,
+  findNewest,
   scanAll,
   scanLabel,
   scanRecords,
-  findOpen,
   SCAN_LIMIT,
   scanCapped,
 } from "./api/life-store.server.ts";

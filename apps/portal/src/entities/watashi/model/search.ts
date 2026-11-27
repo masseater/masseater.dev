@@ -11,6 +11,11 @@ export const MemosSearch = Schema.Struct({
 
 const CursorText = Schema.FiniteFromString.check(Schema.isInt());
 
+export const WeeksSearch = Schema.Struct({
+  project: Schema.optionalKey(Schema.String),
+  keyword: Keyword,
+});
+
 export const ConversationSearch = Schema.Struct({ cursor: Schema.optionalKey(CursorText) });
 
 export const CursorQuery = Schema.Struct({ cursor: Schema.optionalKey(CursorText) });
@@ -18,5 +23,7 @@ export const CursorQuery = Schema.Struct({ cursor: Schema.optionalKey(CursorText
 export type RecordsSearchValue = typeof RecordsSearch.Type;
 
 export type MemosSearchValue = typeof MemosSearch.Type;
+
+export type WeeksSearchValue = typeof WeeksSearch.Type;
 
 export type ConversationSearchValue = typeof ConversationSearch.Type;

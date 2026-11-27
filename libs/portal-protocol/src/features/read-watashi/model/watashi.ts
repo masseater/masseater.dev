@@ -5,6 +5,7 @@ export interface WatashiPortalRpc extends Rpc.WorkerEntrypointBranded {
   memoryRead: (input: unknown) => Promise<PortalResult>;
   memoryWrite: (input: unknown) => Promise<PortalResult>;
   memoryProjects: () => Promise<PortalResult>;
+  memoryViews: (input: unknown) => Promise<PortalResult>;
   profile: () => Promise<PortalResult>;
   conversationRead: (input: unknown) => Promise<PortalResult>;
 }

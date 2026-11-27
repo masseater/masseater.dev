@@ -10,7 +10,7 @@ import { Effect, Option, Semaphore } from "effect";
 import { TRAIT_MODEL, traitRegistry } from "./trait-pi.ts";
 import { buildTraits } from "./trait-run.server.ts";
 import type { Conversation, RunSummary } from "./trait-run.server.ts";
-import { awaited, traitRunner } from "./trait-services.server.ts";
+import { awaited, ownerOf, traitRunner } from "./trait-services.server.ts";
 
 const MAX_TURNS = 3;
 
@@ -66,7 +66,7 @@ export class TraitBuilder extends DurableObject {
 
 const worker: ExportedHandler<typeof workerEnv> = {
   scheduled: (_controller, bindings) => {
-    const builder = bindings.TRAIT_BUILDER.getByName("owner");
+    const builder = ownerOf(bindings.TRAIT_BUILDER);
     return awaited(() => builder.run());
   },
 };

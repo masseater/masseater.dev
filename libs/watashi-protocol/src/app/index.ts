@@ -28,3 +28,5 @@ export {
   TokenSummary,
 } from "#/features/issue-token/index.ts";
 export type { TokenFields, TokenScope } from "#/features/issue-token/index.ts";
+export { MemoView } from "#/features/show-memo/index.ts";
+export type { MemoViewValue, ViewNode } from "#/features/show-memo/index.ts";

@@ -16,23 +16,21 @@ const isNumber = (value: PluginValue): value is Of<"number"> => value.kind === "
 
 const isText = (value: PluginValue): value is Of<"text"> => value.kind === "text";
 
-export const numberIn =
+const valueIn =
+  <Wanted extends PluginValue & Readonly<{ value: unknown }>>(
+    isWanted: (value: PluginValue) => value is Wanted,
+  ) =>
   (args: readonly PluginArgument[]) =>
-  (name: string): Option.Option<number> =>
+  (name: string): Option.Option<Wanted["value"]> =>
     pipe(
       valueOf(args)(name),
-      Option.filter(isNumber),
+      Option.filter(isWanted),
       Option.map((value) => value.value),
     );
 
-export const textIn =
-  (args: readonly PluginArgument[]) =>
-  (name: string): Option.Option<string> =>
-    pipe(
-      valueOf(args)(name),
-      Option.filter(isText),
-      Option.map((value) => value.value),
-    );
+export const numberIn = valueIn(isNumber);
+
+export const textIn = valueIn(isText);
 
 export const flagIn =
   (args: readonly PluginArgument[]) =>

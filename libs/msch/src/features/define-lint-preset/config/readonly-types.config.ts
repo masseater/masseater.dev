@@ -28,6 +28,8 @@ export const readonlyParameterAllow = [
   { from: "package" as const, package: "@webgpu/types", name: [...WEBGPU_HANDLES] },
   { from: "package" as const, package: "@vscode/tree-sitter-wasm", name: ["Language", "Node"] },
   { from: "package" as const, package: "domhandler", name: ["AnyNode", "Text", "Element"] },
+  { from: "package" as const, package: "ag-psd", name: ["Psd", "Layer"] },
+  { from: "package" as const, package: "@remotion/media-utils", name: ["MediaUtilsAudioData"] },
   { from: "package" as const, package: "msw", name: ["StrictRequest"] },
   {
     from: "package" as const,
