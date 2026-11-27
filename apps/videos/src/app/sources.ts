@@ -1,10 +1,6 @@
-import type { SceneOverride } from "@masseater.dev/video-kit";
+import type { Draw } from "@masseater.dev/video-kit";
+import type { VideoScript } from "@masseater.dev/video-kit/script";
 import { Array as Arr, Option, Record as Rec, String as Str, pipe } from "effect";
-
-interface Context {
-  readonly keys: () => readonly string[];
-  readonly load: (key: string) => unknown;
-}
 
 interface WebpackRequire {
   readonly context: (
@@ -16,20 +12,10 @@ interface WebpackRequire {
 
 declare const require: WebpackRequire;
 
-type Found = ReturnType<WebpackRequire["context"]>;
-
-const contextOf = (found: Found): Context => ({
-  keys: () => found.keys(),
-  load: (key) => found(key),
-});
-
-const scripts = contextOf(require.context("../pages", true, /^\.\/[a-z0-9-]+\/video\.md$/u));
-const ejected = contextOf(
-  require.context("../pages", true, /^\.\/[a-z0-9-]+\/scenes\/[a-z0-9-]+\.tsx$/u),
-);
+const scripts = require.context("../pages", true, /^\.\/[a-z0-9-]+\/script\.ts$/u);
+const videos = require.context("../pages", true, /^\.\/[a-z0-9-]+\/video\.tsx$/u);
 
 const SEPARATOR = "/";
-const EMPTY = "";
 const SLUG_AT = 1;
 
 const slugOf = (key: string): string =>
@@ -39,52 +25,50 @@ const slugOf = (key: string): string =>
     Option.getOrElse(() => key),
   );
 
-const textOf = (loaded: unknown): string => {
-  if (typeof loaded === "string") {
-    return loaded;
-  }
-  return EMPTY;
-};
-
-/** @internal */
-export interface VideoSource {
-  readonly slug: string;
-  readonly markdown: string;
-}
-
-/** @internal */
-export const videoSources = (): readonly VideoSource[] =>
-  pipe(
-    scripts.keys(),
-    Arr.map((key) => ({ slug: slugOf(key), markdown: textOf(scripts.load(key)) })),
-  );
-
-const isOverride = (value: unknown): value is SceneOverride => typeof value === "function";
-
-const overrideOf = (loaded: unknown): Option.Option<SceneOverride> =>
+const exportOf = (loaded: unknown, name: string): Option.Option<unknown> =>
   pipe(
     Option.liftPredicate(
       loaded,
       (module): module is Readonly<Record<string, unknown>> =>
         typeof module === "object" && module !== null,
     ),
-    Option.flatMap((module) => Rec.get(module, "Scene")),
-    Option.filter(isOverride),
+    Option.flatMap((module) => Rec.get(module, name)),
   );
 
-const SCENE_FILE = /^.*\/scenes\/|\.tsx$/gu;
+/** @internal */
+export interface VideoSource {
+  readonly slug: string;
+  readonly script: VideoScript;
+}
+
+const isScript = (value: unknown): value is VideoScript =>
+  typeof value === "object" && value !== null && "cuts" in value;
 
 /** @internal */
-export const overridesOf = (slug: string): Readonly<Record<string, SceneOverride>> =>
+export const videoSources = (): readonly VideoSource[] =>
   pipe(
-    ejected.keys(),
-    Arr.filter((key) => slugOf(key) === slug),
+    scripts.keys(),
     Arr.flatMap((key) =>
       pipe(
-        overrideOf(ejected.load(key)),
-        Option.map((override) => [Str.replaceAll(SCENE_FILE, EMPTY)(key), override] as const),
+        exportOf(scripts(key), "script"),
+        Option.filter(isScript),
+        Option.map((script) => ({ slug: slugOf(key), script })),
         Option.toArray,
       ),
     ),
-    Rec.fromEntries,
+  );
+
+const isDraw = (value: unknown): value is Readonly<Record<string, Draw>> =>
+  typeof value === "object" && value !== null;
+
+const NO_DRAW: Readonly<Record<string, Draw>> = {};
+
+/** @internal */
+export const drawOf = (slug: string): Readonly<Record<string, Draw>> =>
+  pipe(
+    videos.keys(),
+    Arr.findFirst((key) => slugOf(key) === slug),
+    Option.flatMap((key) => exportOf(videos(key), "draw")),
+    Option.filter(isDraw),
+    Option.getOrElse(() => NO_DRAW),
   );

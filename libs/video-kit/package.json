@@ -8,29 +8,21 @@
     "#/*": "./src/*"
   },
   "exports": {
-    ".": "./src/widgets/scenes/index.ts",
-    "./parts": "./src/shared/ui/index.ts",
+    ".": "./src/app/parts.ts",
     "./script": "./src/app/script.ts",
     "./video.css": "./src/app/video.css"
   },
   "dependencies": {
     "@effect/atom-react": "catalog:stack",
-    "@fontsource/dela-gothic-one": "catalog:",
     "@fontsource/ibm-plex-mono": "catalog:",
-    "@fontsource/m-plus-rounded-1c": "catalog:",
-    "@fontsource/mochiy-pop-one": "catalog:",
+    "@fontsource/noto-sans-jp": "catalog:",
     "@remotion/layout-utils": "catalog:",
-    "@remotion/media": "catalog:",
-    "mdast-util-from-markdown": "catalog:",
-    "mdast-util-frontmatter": "catalog:",
-    "micromark-extension-frontmatter": "catalog:",
-    "yaml": "catalog:"
+    "@remotion/media": "catalog:"
   },
   "devDependencies": {
     "@masseater.dev/browser-test": "workspace:*",
     "@remotion/player": "catalog:",
     "@tailwindcss/vite": "catalog:",
-    "@types/mdast": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "effect": "catalog:stack",

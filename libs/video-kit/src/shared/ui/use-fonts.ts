@@ -5,28 +5,25 @@ import { cancelRender, continueRender, delayRender } from "remotion";
 
 import { loadFonts } from "./fonts.ts";
 
-const fontsAtom = Atom.family((text: string) =>
-  Atom.make(
-    Effect.suspend(() => {
-      const handle = delayRender("Loading fonts");
-      return loadFonts(text).pipe(
-        Effect.tap(() =>
-          Effect.sync(() => {
-            continueRender(handle);
-          }),
-        ),
-        Effect.tapError((failure) =>
-          Effect.sync(() => {
-            cancelRender(failure);
-          }),
-        ),
-      );
-    }),
-  ),
+const fontsAtom = Atom.make(
+  Effect.suspend(() => {
+    const handle = delayRender("Loading fonts");
+    return loadFonts.pipe(
+      Effect.tap(() =>
+        Effect.sync(() => {
+          continueRender(handle);
+        }),
+      ),
+      Effect.tapError((failure) =>
+        Effect.sync(() => {
+          cancelRender(failure);
+        }),
+      ),
+    );
+  }),
 );
 
-export const useFonts = (text: string): boolean => {
-  const atom = fontsAtom(text);
-  const result = useAtomValue(atom);
+export const useFonts = (): boolean => {
+  const result = useAtomValue(fontsAtom);
   return AsyncResult.isSuccess(result);
 };

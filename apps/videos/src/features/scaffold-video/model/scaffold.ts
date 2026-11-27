@@ -1,11 +1,11 @@
-import { Array as Arr, Effect, FileSystem, Path, pipe } from "effect";
+import { Effect, FileSystem, Path } from "effect";
 import type { PlatformError } from "effect";
 
-import { projectPaths, readScript, scriptPath } from "#/shared/lib/project.ts";
+import { videoFile } from "#/shared/lib/project.ts";
 import { videoError } from "#/shared/lib/video-error.ts";
 import type { VideoError } from "#/shared/lib/video-error.ts";
 
-import { TEMPLATE, ejectedSource } from "./template.ts";
+import { SCRIPT_TEMPLATE, VIDEO_TEMPLATE } from "./template.ts";
 
 /** @internal */
 export type Services = FileSystem.FileSystem | Path.Path;
@@ -32,29 +32,11 @@ const writeNew = ({
 /** @internal */
 export const createVideo = (
   slug: string,
-): Effect.Effect<string, VideoError | PlatformError.PlatformError, Services> =>
-  scriptPath(slug).pipe(Effect.flatMap((file) => writeNew({ file, text: TEMPLATE })));
-
-/** @internal */
-export const ejectScene = ({
-  slug,
-  id,
-}: Readonly<{ slug: string; id: string }>): Effect.Effect<
-  string,
-  VideoError | PlatformError.PlatformError,
-  Services
-> =>
-  Effect.gen(function* eject() {
-    const path = yield* Path.Path;
-    const paths = yield* projectPaths;
-    const script = yield* readScript(slug);
-    const known = pipe(
-      script.scenes,
-      Arr.some((scene) => scene.id === id),
-    );
-    if (!known) {
-      return yield* videoError(`${slug} にシーン ${id} がない`);
-    }
-    const file = path.join(paths.root, "src/pages", slug, "scenes", `${id}.tsx`);
-    return yield* writeNew({ file, text: ejectedSource(id) });
+): Effect.Effect<readonly string[], VideoError | PlatformError.PlatformError, Services> =>
+  Effect.gen(function* create() {
+    const scriptFile = yield* videoFile({ slug, name: "script.ts" });
+    const videoTsx = yield* videoFile({ slug, name: "video.tsx" });
+    const written = yield* writeNew({ file: scriptFile, text: SCRIPT_TEMPLATE });
+    const drawn = yield* writeNew({ file: videoTsx, text: VIDEO_TEMPLATE });
+    return [written, drawn];
   });

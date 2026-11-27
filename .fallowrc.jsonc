@@ -211,7 +211,7 @@
       "name": "remotion-fsd",
       "enablers": ["@remotion/cli"],
       "entryPointRole": "runtime",
-      "entryPoints": ["src/app/index.{ts,tsx}"],
+      "entryPoints": ["src/app/index.{ts,tsx}", "src/pages/*/*.{ts,tsx}"],
     },
     {
       "name": "alchemy-stacks",

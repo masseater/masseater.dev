@@ -5,7 +5,7 @@ import { checkVideo } from "#/features/check-video/index.ts";
 import { fetchAssets } from "#/features/fetch-assets/index.ts";
 import { narrate } from "#/features/narrate-script/index.ts";
 import { renderReview, renderVideo } from "#/features/render-video/index.ts";
-import { createVideo, ejectScene } from "#/features/scaffold-video/index.ts";
+import { createVideo } from "#/features/scaffold-video/index.ts";
 
 import { report } from "./report.ts";
 
@@ -19,7 +19,7 @@ const checked = (value: string): ReturnType<typeof checkVideo> =>
   checkVideo(value).pipe(Effect.tap(report));
 
 const newCommand = Command.make("new", { slug }, ({ slug: value }) =>
-  createVideo(value).pipe(Effect.flatMap(Console.log)),
+  createVideo(value).pipe(Effect.flatMap(printAll)),
 );
 
 const checkCommand = Command.make("check", { slug }, ({ slug: value }) => checked(value));
@@ -59,13 +59,6 @@ const renderCommand = Command.make("render", { slug }, ({ slug: value }) =>
   ),
 );
 
-const ejectCommand = Command.make(
-  "eject",
-  { slug, scene: Argument.String("scene") },
-  ({ slug: value, scene }) =>
-    ejectScene({ slug: value, id: scene }).pipe(Effect.flatMap(Console.log)),
-);
-
 /** @internal */
 export const cli = Command.make("videos").pipe(
   Command.withSubcommands([
@@ -75,7 +68,6 @@ export const cli = Command.make("videos").pipe(
     voiceCommand,
     assetsCommand,
     reviewCommand,
-    ejectCommand,
     renderCommand,
   ]),
 );

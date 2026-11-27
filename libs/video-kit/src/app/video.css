@@ -1,8 +1,6 @@
 @import "tailwindcss";
-@import "@fontsource/dela-gothic-one/400.css";
-@import "@fontsource/mochiy-pop-one/400.css";
-@import "@fontsource/m-plus-rounded-1c/500.css";
-@import "@fontsource/m-plus-rounded-1c/800.css";
+@import "@fontsource/noto-sans-jp/700.css";
+@import "@fontsource/noto-sans-jp/900.css";
 @import "@fontsource/ibm-plex-mono/latin-500.css";
 
 @source "../";
@@ -36,17 +34,14 @@
   --text-quote: 96px;
   --text-quote-h: 80px;
 
-  --font-impact: "Dela Gothic One", "M PLUS Rounded 1c", sans-serif;
-  --font-pop: "Mochiy Pop One", "M PLUS Rounded 1c", sans-serif;
-  --font-text: "M PLUS Rounded 1c", sans-serif;
-  --font-code: "IBM Plex Mono", "M PLUS Rounded 1c", monospace;
+  --font-jp: "Noto Sans JP", sans-serif;
+  --font-code: "IBM Plex Mono", "Noto Sans JP", monospace;
 }
 
 @utility motion {
   translate: var(--x, 0) var(--y, 0);
   scale: var(--scale, 1);
   opacity: var(--shown, 1);
-  filter: blur(var(--blur, 0px));
 }
 
 @utility fitted {
@@ -54,9 +49,8 @@
 }
 
 @utility telop {
-  -webkit-text-stroke: 0.24em var(--color-ink);
+  -webkit-text-stroke: 0.16em var(--color-ink);
   paint-order: stroke fill;
-  text-shadow: 0 0.12em 0 color-mix(in srgb, var(--color-ink) 28%, transparent);
 }
 
 @utility marker {
@@ -65,17 +59,6 @@
   background-position: 0 88%;
   background-size: calc(var(--mark, 1) * 100%) 42%;
   box-decoration-break: clone;
-}
-
-@utility sticker {
-  border: 5px solid var(--color-ink);
-  box-shadow: 10px 10px 0 var(--color-ink);
-}
-
-@utility dot-grid {
-  background-image: radial-gradient(var(--color-rule) 3px, transparent 3.5px);
-  background-size: 44px 44px;
-  background-position: var(--drift, 0) var(--drift, 0);
 }
 
 @utility japanese {
@@ -97,29 +80,30 @@
   gap: 24px;
 }
 
-@utility progress {
-  width: calc(var(--progress, 0) * 100%);
-}
-
-@utility shake {
-  translate: var(--x, 0) var(--y, 0);
-}
-
 @utility stage {
-  translate: var(--whip, 0) 0;
   scale: var(--zoom, 1);
-  filter: blur(var(--blur, 0px));
   transform-origin: 50% 45%;
+}
+
+@utility tachie {
+  right: -60px;
+  bottom: -40px;
+  height: 780px;
+}
+
+@utility tachie-h {
+  right: 0;
+  bottom: 0;
+  height: 560px;
+}
+
+@utility emphasis {
+  color: var(--emphasis, currentColor);
 }
 
 @utility star-outline {
   -webkit-text-stroke: 0.07em var(--color-ink);
   paint-order: stroke fill;
-}
-
-@utility blurred-fill {
-  filter: blur(48px) brightness(0.9);
-  scale: 1.15;
 }
 
 @utility inline-code {

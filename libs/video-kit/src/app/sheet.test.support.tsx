@@ -5,9 +5,11 @@ import type { CSSProperties, ReactNode } from "react";
 import { useMemo } from "react";
 import { createRoot } from "react-dom/client";
 
-import type { Timeline } from "#/entities/script/index.ts";
+import type { Timeline } from "#/entities/cut/index.ts";
 import type { Format } from "#/shared/config/index.ts";
-import { StandardVideo } from "#/widgets/scenes/index.ts";
+import { CutVideo } from "#/widgets/video/index.ts";
+
+import { SAMPLE_DRAW } from "./sample.test.support.tsx";
 
 import styles from "./video.css?inline";
 
@@ -20,22 +22,22 @@ const sizeOf = ({ width, height, format }: Timeline): CSSProperties => ({
 });
 
 const Sheet = ({ timeline }: Readonly<{ timeline: Timeline }>): ReactNode => {
-  const inputProps = useMemo(() => ({ timeline }), [timeline]);
+  const inputProps = useMemo(() => ({ timeline, draw: SAMPLE_DRAW }), [timeline]);
   const fit = useMemo(() => sizeOf(timeline), [timeline]);
   return (
     <main className="flex items-start gap-2">
       {pipe(
-        timeline.scenes,
-        Arr.map(({ scene, from, duration }) => (
+        timeline.cuts,
+        Arr.map(({ id, from, duration }) => (
           <Thumbnail
-            component={StandardVideo}
+            component={CutVideo}
             compositionHeight={timeline.height}
             compositionWidth={timeline.width}
             durationInFrames={timeline.durationInFrames}
             fps={timeline.fps}
             frameToDisplay={from + Math.floor(duration * SHOWN_AT)}
             inputProps={inputProps}
-            key={scene.id}
+            key={id}
             style={fit}
           />
         )),

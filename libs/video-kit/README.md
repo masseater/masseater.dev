@@ -1,56 +1,67 @@
 # @masseater.dev/video-kit
 
-Markdown の台本から、いつもの体裁の解説・紹介動画を Remotion のシーンとして組み上げる部品である。縦（9:16）と横（16:9）の両方を同じ台本から出す。台本の読み込み、シーンと字幕の尺の計算、効果音の置き場所の計算、台本の検査、8 種類のシーンの描画を持つ。
+いつもの体裁の解説・紹介動画を Remotion で書くための部品である。縦（9:16）と横（16:9）の両方を同じ台本から出す。台本の型、カットと字幕の尺の計算、台本の検査、どの動画にも付く字幕、ナレーション、BGM、立ち絵と、見出しや項目などの部品を持つ。
 
 masseater.dev の中だけで使う workspace パッケージで、npm には出していない。動画そのものは [`apps/videos`](../../apps/videos/README.md) に置く。
 
-## 台本
+## 動画の書き方
 
-ツール紹介のショートは次の 6 部構成を標準にする。
+動画 1 本は `script.ts` と `video.tsx` の 2 ファイルで書く。
 
-```markdown
----
-title: pnpm
-formats: [vertical]
-length: { vertical: 30s }
-voice: 8
-readings: { pnpm: ピーエヌピーエム }
-bgm: { url: https://amachamusic.chagasi.com/mp3/simplestyle.mp3, credit: 甘茶の音楽工房 }
----
+`script.ts` は台詞と尺を持つ。カット 1 つが字幕 1 枚とナレーション 1 文に当たる。
 
-# pnpm {#opening}
+```ts
+import type { VideoScript } from "@masseater.dev/video-kit/script";
 
-- 2016年〜
-- OSS・Rico Sta. Cruz 発
-
-npm の代わり、**pnpm** って知ってる？
-
-## 特徴 {#features}
-
-- インストールが速い
-- 実体は PC に 1 つだけ
-
-とにかく**速くて軽い**。
-
-## おすすめ度 {#rating}
-
-★★★★☆
-
-星**4つ**！
-
-# 迷ったら **pnpm** でいい {#ending}
-
-迷ったら pnpm でいい。
+export const script: VideoScript = {
+  title: "pnpm",
+  formats: ["vertical"],
+  length: { vertical: 30 },
+  voice: 8,
+  readings: { pnpm: "ピーエヌピーエム" },
+  cuts: [
+    { id: "opening", say: ["npm の代わり、**pnpm** って知ってる？"], hold: 0.6 },
+    { id: "rating", say: ["星**4つ**！"], hold: 0.8 },
+  ],
+};
 ```
 
-- 最初と最後の `#` がタイトルと締め、`##` が 1 シーンになる。タイトル直下の箇条書きは、ツール名の下へ並ぶ札になる。
-- `##` の中身で場面の種類が決まる。箇条書きなら項目、`★☆` だけの段落ならおすすめ度、コードブロックなら端末、画像なら素材、引用なら引用、段落だけなら語りの場面を作る。
-- 箇条書きは画面にだけ出て、読み上げない。段落の 1 行がナレーション 1 文と字幕 1 枚になる。画面の詳しい内容を読み上げると、視聴者は同じ文を読みながら聞くことになる。
-- `**太字**` は字幕で色を変え、効果音を鳴らし、画面を揺らす。1 行に 1 か所までにする。
-- 見出しの `{#id}` がシーン ID で、`横のみ`・`縦のみ`・`6s` も同じ括弧に書ける。
+`video.tsx` はカットごとの絵を `draw` に書く。
 
-## 演出
+```tsx
+import type { Draw } from "@masseater.dev/video-kit";
+import { Headline, Rating, Sfx } from "@masseater.dev/video-kit";
 
-シーンは典型的なショート動画の演出で出る。シーンの頭は横から滑り込み、見出しと項目は判子のように押され、字幕は一言ずつ跳ねて出る。字幕の行が変わるたびに画面がわずかに寄る。フォントは場面ごとに、ツール名と見出しが Dela Gothic One、札と番号が Mochiy Pop One、項目と字幕が M PLUS Rounded 1c になる。
+export const draw: Readonly<Record<string, Draw>> = {
+  opening: (shot) => <Headline shot={shot} slot="name" text="**pnpm**" />,
+  rating: (shot) => (
+    <>
+      <Headline shot={shot} text="おすすめ度" />
+      <Sfx at={0} kind="stamp" shot={shot} />
+      <Rating at={[6, 10, 14, 18, 22, 30]} score={4} />
+    </>
+  ),
+};
+```
 
-効果音は [効果音ラボ](https://soundeffect-lab.info/agreement/) の素材を `src/shared/config/sfx.ts` に並べている。再配布が禁じられているので、ファイルはリポジトリに入れず、`apps/videos` が手元のキャッシュに落とす。
+- `say` の `**太字**` は字幕で色が変わる。`` `コード` `` は等幅で出る。
+- `hold` は台詞の後に絵だけを見せる秒数である。
+- `at` はカットの頭から数えたフレームで、部品はそこで出る。
+- 字幕、ナレーション、BGM、立ち絵、カットごとの軽い寄りは video-kit が付ける。`video.tsx` に書くのは画面の中身だけである。
+
+## 部品
+
+| 部品       | 用途                                     |
+| ---------- | ---------------------------------------- |
+| `Headline` | ツール名、見出し、締めの一文             |
+| `Tags`     | ツール名の下に並ぶ札                     |
+| `Points`   | 見出しの下の項目。最新の項目を目立たせる |
+| `Rating`   | 星のおすすめ度                           |
+| `Terminal` | コマンドと出力                           |
+| `Label`    | 締めの前の小見出し                       |
+| `Credits`  | BGM と効果音のクレジット                 |
+| `Sfx`      | 画面の出来事に合わせた効果音             |
+
+文字は Noto Sans JP の Black と Bold、コードは IBM Plex Mono だけを使う。画面を揺らす演出は持たない。
+
+効果音は効果音ラボの素材を `src/shared/config/sfx.ts` に並べている。再配布が禁じられているので、ファイルはリポジトリに入れず、`apps/videos` が手元のキャッシュに落とす。

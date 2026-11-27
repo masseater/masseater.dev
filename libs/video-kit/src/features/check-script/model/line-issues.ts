@@ -1,12 +1,12 @@
 import { Array as Arr, Number as Num, pipe } from "effect";
 
-import { textOf } from "#/entities/script/index.ts";
-import type { TimedLine } from "#/entities/script/index.ts";
+import type { TimedLine } from "#/entities/cut/index.ts";
 import type { Format } from "#/shared/config/index.ts";
 import { Timing } from "#/shared/config/index.ts";
+import { plainOf } from "#/shared/lib/segment.ts";
 
 import type { Issue } from "./issue.ts";
-import { issueIf, sceneError } from "./issue.ts";
+import { issueIf, cutError } from "./issue.ts";
 
 const CAPTION_LIMIT: Readonly<Record<Format, number>> = { vertical: 32, horizontal: 56 };
 const ASCII = /[\u0020-\u007E]/u;
@@ -25,29 +25,29 @@ const readingLength = (text: string): number =>
   pipe(Arr.fromIterable(text), Arr.map(widthOf), (widths) => Num.sumAll(widths));
 
 export interface LineCheck {
-  readonly scene: string;
+  readonly cut: string;
   readonly format: Format;
   readonly fps: number;
   readonly timed: TimedLine;
 }
 
-export const lineIssues = ({ scene, format, fps, timed }: LineCheck): readonly Issue[] => {
-  const text = textOf(timed.line);
+export const lineIssues = ({ cut, format, fps, timed }: LineCheck): readonly Issue[] => {
+  const text = plainOf(timed.segments);
   const speed = readingLength(text) / (timed.duration / fps);
   return [
     ...issueIf({
-      failed: timed.line.caption && text.length > CAPTION_LIMIT[format],
+      failed: text.length > CAPTION_LIMIT[format],
       issue: () =>
-        sceneError({
-          scene,
+        cutError({
+          cut,
           message: `${format} の字幕「${text}」が ${String(CAPTION_LIMIT[format])} 文字を超えている`,
         }),
     }),
     ...issueIf({
       failed: speed > Timing.MAX_CHARACTERS_PER_SECOND,
       issue: () =>
-        sceneError({
-          scene,
+        cutError({
+          cut,
           message: `「${text}」が 1 秒 ${speed.toFixed(DIGITS)} 文字で速すぎる。文を短くする`,
         }),
     }),

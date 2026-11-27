@@ -73,11 +73,11 @@ const stills = (
     const directory = path.join(paths.out, slug, "review", timeline.format);
     yield* fileSystem.makeDirectory(directory, { recursive: true });
     return yield* Effect.forEach(
-      timeline.scenes,
-      ({ scene, from, duration }, position) => {
+      timeline.cuts,
+      ({ id, from, duration }, position) => {
         const output = path.join(
           directory,
-          `${Str.padStart(DIGITS, "0")(String(position + ONE))}-${scene.id}.png`,
+          `${Str.padStart(DIGITS, "0")(String(position + ONE))}-${id}.png`,
         );
         const frame = from + Math.floor(duration * SHOWN_AT);
         return attempt(() =>

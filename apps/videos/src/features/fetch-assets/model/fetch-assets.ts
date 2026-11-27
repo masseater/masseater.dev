@@ -1,4 +1,4 @@
-import type { Script } from "@masseater.dev/video-kit/script";
+import type { VideoScript } from "@masseater.dev/video-kit/script";
 import { SFX } from "@masseater.dev/video-kit/script";
 import { Array as Arr, Effect, FileSystem, Option, Path, Record as Rec, pipe } from "effect";
 import type { Config, PlatformError } from "effect";
@@ -17,14 +17,14 @@ export type Services = FileSystem.FileSystem | Path.Path | HttpClient.HttpClient
 /** @internal */
 export type Failure = VideoError | PlatformError.PlatformError | Config.ConfigError;
 
-const bgmOf = (script: Script): readonly Asset[] => {
-  if ("bgm" in script) {
-    return [{ url: script.bgm.url, page: Option.none() }];
-  }
-  return [];
-};
+const bgmOf = (script: VideoScript): readonly Asset[] =>
+  pipe(
+    Option.fromNullishOr(script.bgm),
+    Option.map(({ url }): Asset => ({ url, page: Option.none() })),
+    Option.toArray,
+  );
 
-const assetsOf = (script: Script): readonly Asset[] => [
+const assetsOf = (script: VideoScript): readonly Asset[] => [
   ...pipe(
     SFX,
     Rec.values,

@@ -1,17 +1,17 @@
-import type { Script } from "@masseater.dev/video-kit/script";
+import type { VideoScript } from "@masseater.dev/video-kit/script";
 import { narrationKey, spokenOf } from "@masseater.dev/video-kit/script";
 import { Array as Arr, Effect, FileSystem, Option, Path, Record as Rec, pipe } from "effect";
 import type { Config, PlatformError } from "effect";
 import type { HttpClient } from "effect/http";
 
-import { narrationPath } from "#/shared/config/index.ts";
+import { narrationPath, tachiePath } from "#/shared/config/index.ts";
 import type { Manifest } from "#/shared/lib/manifest-schema.ts";
 import { readManifest, writeManifest } from "#/shared/lib/manifest.ts";
 import { projectPaths, readScript } from "#/shared/lib/project.ts";
 import { videoError } from "#/shared/lib/video-error.ts";
 import type { VideoError } from "#/shared/lib/video-error.ts";
 
-import { speakerName, synthesize } from "./voicevox.ts";
+import { speakerName, speakerPortrait, synthesize } from "./voicevox.ts";
 import { wavSeconds } from "./wav.ts";
 
 /** @internal */
@@ -30,8 +30,6 @@ export interface Narrated {
   readonly made: number;
   readonly kept: number;
 }
-
-const NOTHING_NARRATED: Narrated = { made: 0, kept: 0 };
 
 interface LineRequest {
   readonly voice: number;
@@ -86,17 +84,41 @@ const recordLine = ({
     return { key, seconds, made: true };
   });
 
-const spokenLines = (script: Script): readonly string[] =>
+const spokenLines = (script: VideoScript): readonly string[] =>
   pipe(
-    script.scenes,
-    Arr.flatMap(({ lines }) => lines),
-    Arr.map((line) => spokenOf({ line, readings: script.readings })),
+    script.cuts,
+    Arr.flatMap(({ say }) => say),
+    Arr.map((say) => spokenOf({ say, readings: script.readings })),
   );
 
-const narrateWith = (script: Script, voice: number): Effect.Effect<Narrated, Failure, Services> =>
+const savePortrait = (voice: number): Effect.Effect<string, Failure, Services> =>
+  Effect.gen(function* save() {
+    const fileSystem = yield* FileSystem.FileSystem;
+    const path = yield* Path.Path;
+    const paths = yield* projectPaths;
+    const relative = tachiePath(`voicevox-${String(voice)}`);
+    const file = path.join(paths.public, relative);
+    if (!(yield* fileSystem.exists(file))) {
+      const png = yield* speakerPortrait(voice);
+      yield* fileSystem.makeDirectory(path.dirname(file), { recursive: true });
+      yield* fileSystem.writeFile(file, png);
+    }
+    return relative;
+  });
+
+const NO_TACHIE: NonNullable<Manifest["tachie"]> = {};
+
+const tachieIn = (manifest: Manifest): NonNullable<Manifest["tachie"]> =>
+  Option.getOrElse(Option.fromNullishOr(manifest.tachie), () => NO_TACHIE);
+
+const narrateWith = (
+  script: VideoScript,
+  voice: number,
+): Effect.Effect<Narrated, Failure, Services> =>
   Effect.gen(function* narrateVoice() {
     const manifest = yield* readManifest;
     const name = yield* speakerName(voice);
+    const portrait = yield* savePortrait(voice);
     const recorded = yield* Effect.forEach(
       spokenLines(script),
       (spoken) => recordLine({ voice, spoken, manifest }),
@@ -112,6 +134,7 @@ const narrateWith = (script: Script, voice: number): Effect.Effect<Narrated, Fai
     yield* writeManifest({
       narration: { ...manifest.narration, ...fresh },
       speakers: { ...manifest.speakers, [String(voice)]: name },
+      tachie: { [String(voice)]: { closed: portrait }, ...tachieIn(manifest) },
     });
     const made = pipe(
       recorded,
@@ -124,8 +147,5 @@ const narrateWith = (script: Script, voice: number): Effect.Effect<Narrated, Fai
 export const narrate = (slug: string): Effect.Effect<Narrated, Failure, Services> =>
   Effect.gen(function* narrateVideo() {
     const script = yield* readScript(slug);
-    if (!("voice" in script)) {
-      return NOTHING_NARRATED;
-    }
     return yield* narrateWith(script, script.voice);
   });

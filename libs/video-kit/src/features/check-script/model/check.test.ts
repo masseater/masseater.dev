@@ -1,80 +1,117 @@
 import { Array as Arr, Effect, Option, String as Str, pipe } from "effect";
 import { expect, test } from "vite-plus/test";
 
-import { parseScript, planTimeline } from "#/entities/script/index.ts";
-import type { ScriptError } from "#/entities/script/index.ts";
+import { planTimeline } from "#/entities/cut/index.ts";
+import type { Cut, Timeline, VideoScript } from "#/entities/cut/index.ts";
 
 import { checkScript } from "./check.ts";
 
-const SHORT_SCENES = 5;
 const LONG_LINE = 30;
 const TOO_LONG_CAPTION = 40;
+const MANY_CUTS = 8;
+const SHORT_TARGET = 10;
+const LONG_TARGET = 60;
+const NO_ISSUES: readonly string[] = [];
 
-const issuesOf = (markdown: string): Effect.Effect<readonly string[], ScriptError> =>
-  Effect.gen(function* check() {
-    const script = yield* parseScript(markdown);
-    const timeline = yield* planTimeline({
-      script,
-      format: "vertical",
-      sources: {
-        narration: {},
-        narrationSrc: (key: string) => key,
-        assetSrc: (url: string) => url,
-        speakerName: Option.none(),
-      },
-    });
-    return pipe(
-      checkScript({ script, timelines: [timeline], assetExists: () => true }),
-      Arr.map(({ message }) => message),
-    );
+const scriptOf = ({
+  cuts,
+  length,
+}: Readonly<{ cuts: readonly Cut[]; length: number }>): VideoScript => ({
+  title: "t",
+  formats: ["vertical"],
+  length: { vertical: length },
+  voice: 0,
+  readings: {},
+  cuts,
+});
+
+const timelineOf = (script: VideoScript): Effect.Effect<Timeline> =>
+  planTimeline({
+    script,
+    format: "vertical",
+    sources: {
+      narration: {},
+      narrationSrc: (key: string) => key,
+      assetSrc: (url: string) => url,
+      speakerName: Option.none(),
+      tachie: Option.none(),
+    },
   });
 
-const scriptOf = ({ body, length }: Readonly<{ body: string; length: string }>): string =>
-  `---\ntitle: t\nformats: [vertical]\nlength: { vertical: ${length} }\nvoice: none\n---\n\n# 題名 {#opening}\n\n${body}\n\n# 締め {#ending}\n`;
+const idsOf = (script: VideoScript): readonly string[] =>
+  pipe(
+    script.cuts,
+    Arr.map(({ id }) => id),
+  );
 
-const run = (body: Effect.Effect<void, ScriptError>): Promise<void> => Effect.runPromise(body);
+const messagesOf = ({
+  script,
+  drawn,
+}: Readonly<{ script: VideoScript; drawn: readonly string[] }>): Effect.Effect<readonly string[]> =>
+  timelineOf(script).pipe(
+    Effect.map((timeline) => checkScript({ script, timelines: [timeline], drawn })),
+    Effect.map(Arr.map(({ message }) => message)),
+  );
 
-const NO_ISSUES: readonly string[] = [];
-const SETTINGS_ONLY =
-  "---\ntitle: t\nvoice: none\n---\n\n# 題名 {#opening}\n\n## 話 {#a}\n\n短い。\n";
+const issuesOf = (script: VideoScript): Effect.Effect<readonly string[]> =>
+  messagesOf({ script, drawn: idsOf(script) });
 
-const sceneOf = (position: number): string =>
-  `## 話 ${String(position)} {#s${String(position)}}\n\n${Str.repeat(LONG_LINE)("あ")}。`;
+const mentions = (issues: readonly string[], text: string): boolean =>
+  pipe(issues, Arr.some(Str.includes(text)));
 
-test("型どおりの短い台本は通る", () =>
-  run(
+const longCuts = (count: number): readonly Cut[] =>
+  Arr.makeBy(count, (position) => ({
+    id: `c${String(position)}`,
+    say: [`${Str.repeat(LONG_LINE)("あ")}。`],
+  }));
+
+test("短い台本は通る", () =>
+  Effect.runPromise(
     Effect.gen(function* passes() {
       const issues = yield* issuesOf(
-        scriptOf({ body: "## 結論 {#summary}\n\n短く言う。", length: "50s" }),
+        scriptOf({ cuts: [{ id: "a", say: ["**短く**言う。"] }], length: LONG_TARGET }),
       );
       expect(issues).toStrictEqual(NO_ISSUES);
     }),
   ));
 
-test("目標の長さを 10% 超えると止まる", () =>
-  run(
+test("目標の長さを超えると指摘する", () =>
+  Effect.runPromise(
     Effect.gen(function* tooLong() {
-      const body = pipe(Arr.makeBy(SHORT_SCENES, sceneOf), Arr.join("\n\n"));
-      const issues = yield* issuesOf(scriptOf({ body, length: "10s" }));
-      expect(issues).toContainEqual(expect.stringContaining("目標 10 秒"));
+      const issues = yield* issuesOf(scriptOf({ cuts: longCuts(MANY_CUTS), length: SHORT_TARGET }));
+      expect(mentions(issues, "目標 10 秒")).toBe(true);
     }),
   ));
 
-test("縦の字幕が 2 行に収まらないと止まる", () =>
-  run(
-    Effect.gen(function* longCaption() {
-      const caption = Str.repeat(TOO_LONG_CAPTION)("い");
+test("長すぎる字幕を指摘する", () =>
+  Effect.runPromise(
+    Effect.gen(function* caption() {
       const issues = yield* issuesOf(
-        scriptOf({ body: `## 長い {#long}\n\n${caption}`, length: "50s" }),
+        scriptOf({
+          cuts: [{ id: "a", say: [Str.repeat(TOO_LONG_CAPTION)("い")] }],
+          length: LONG_TARGET,
+        }),
       );
-      expect(issues).toContainEqual(expect.stringContaining("32 文字"));
+      expect(mentions(issues, "32 文字を超えている")).toBe(true);
     }),
   ));
 
-test("締めがない台本は止まる", () =>
-  run(
-    Effect.gen(function* noEnding() {
-      const issues = yield* issuesOf(SETTINGS_ONLY);
-      expect(issues).toContainEqual(expect.stringContaining("締め"));
+test("同じカット名と絵のないカットを指摘する", () =>
+  Effect.runPromise(
+    Effect.gen(function* ids() {
+      const issues = yield* messagesOf({
+        script: scriptOf({
+          cuts: [
+            { id: "a", say: ["一。"] },
+            { id: "a", say: ["二。"] },
+          ],
+          length: LONG_TARGET,
+        }),
+        drawn: [],
+      });
+      expect(issues).toStrictEqual([
+        "カット a が 2 回以上ある",
+        "カット a の絵が video.tsx にない",
+      ]);
     }),
   ));

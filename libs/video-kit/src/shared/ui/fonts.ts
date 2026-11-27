@@ -1,4 +1,4 @@
-import { Effect, Schema } from "effect";
+import { Array as Arr, Effect, Schema, pipe } from "effect";
 
 import { FONT } from "#/shared/config/index.ts";
 
@@ -13,20 +13,44 @@ export class FontError extends taggedError<FontError, { readonly brand: unique s
 ) {}
 
 const FACES = [
-  `400 64px "${FONT.impact}"`,
-  `400 64px "${FONT.pop}"`,
-  `500 64px "${FONT.text}"`,
-  `800 64px "${FONT.text}"`,
+  `900 64px "${FONT.heavy}"`,
+  `700 64px "${FONT.bold}"`,
   `500 64px "${FONT.code}"`,
 ] as const;
 
-const loadFace = (face: string, text: string): Effect.Effect<readonly FontFace[], FontError> =>
+const ASCII_FIRST = 32;
+const ASCII_LAST = 126;
+const KANA_FIRST = 12_288;
+const KANA_LAST = 12_543;
+const KANJI_FIRST = 19_968;
+const KANJI_LAST = 40_959;
+const WIDE_FIRST = 65_280;
+const WIDE_LAST = 65_519;
+const SYMBOL_FIRST = 9728;
+const SYMBOL_LAST = 10_175;
+const RANGES: readonly (readonly [number, number])[] = [
+  [ASCII_FIRST, ASCII_LAST],
+  [KANA_FIRST, KANA_LAST],
+  [KANJI_FIRST, KANJI_LAST],
+  [WIDE_FIRST, WIDE_LAST],
+  [SYMBOL_FIRST, SYMBOL_LAST],
+];
+
+const EVERY_GLYPH = pipe(
+  RANGES,
+  Arr.flatMap(([first, last]) => Arr.range(first, last)),
+  Arr.map((code) => String.fromCodePoint(code)),
+  Arr.join(""),
+);
+
+const loadFace = (face: string): Effect.Effect<readonly FontFace[], FontError> =>
   Effect.tryPromise({
-    try: () => document.fonts.load(face, text),
+    try: () => document.fonts.load(face, EVERY_GLYPH),
     catch: (reason) => FontError.make({ face, reason }),
   });
 
-export const loadFonts = (text: string): Effect.Effect<void, FontError> =>
-  Effect.forEach(FACES, (face) => loadFace(face, text), { concurrency: "unbounded" }).pipe(
-    Effect.asVoid,
-  );
+export const loadFonts: Effect.Effect<readonly (readonly FontFace[])[], FontError> = Effect.forEach(
+  FACES,
+  loadFace,
+  { concurrency: "unbounded" },
+);

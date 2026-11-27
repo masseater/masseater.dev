@@ -1,38 +1,52 @@
 import { Array as Arr, pipe } from "effect";
 
-import type { Scene, Script, Timeline } from "#/entities/script/index.ts";
+import type { Timeline, VideoScript } from "#/entities/cut/index.ts";
 
 import { formatIssues } from "./format-issues.ts";
 import type { Issue } from "./issue.ts";
-import { issueIf, sceneError } from "./issue.ts";
-import { structureIssues } from "./structure.ts";
+import { cutError } from "./issue.ts";
 
 export type { Issue } from "./issue.ts";
 
 export interface CheckRequest {
-  readonly script: Script;
+  readonly script: VideoScript;
   readonly timelines: readonly Timeline[];
-  readonly assetExists: (src: string) => boolean;
+  readonly drawn: readonly string[];
 }
 
-const assetIssues = (scene: Scene, assetExists: CheckRequest["assetExists"]): readonly Issue[] => {
-  if (scene.kind !== "media") {
-    return [];
-  }
-  return issueIf({
-    failed: !assetExists(scene.src),
-    issue: () => sceneError({ scene: scene.id, message: `素材 ${scene.src} がない` }),
-  });
+const ONCE = 1;
+
+const countOf = (ids: readonly string[], id: string): number =>
+  pipe(
+    ids,
+    Arr.filter((other) => other === id),
+  ).length;
+
+const idIssues = ({ script, drawn }: CheckRequest): readonly Issue[] => {
+  const ids = pipe(
+    script.cuts,
+    Arr.map(({ id }) => id),
+  );
+  return [
+    ...pipe(
+      ids,
+      Arr.dedupe,
+      Arr.filter((id) => countOf(ids, id) > ONCE),
+      Arr.map((id) => cutError({ cut: id, message: `カット ${id} が 2 回以上ある` })),
+    ),
+    ...pipe(
+      ids,
+      Arr.dedupe,
+      Arr.filter((id) => !drawn.includes(id)),
+      Arr.map((id) => cutError({ cut: id, message: `カット ${id} の絵が video.tsx にない` })),
+    ),
+  ];
 };
 
-export const checkScript = ({ script, timelines, assetExists }: CheckRequest): readonly Issue[] => [
-  ...structureIssues(script),
+export const checkScript = (request: CheckRequest): readonly Issue[] => [
+  ...idIssues(request),
   ...pipe(
-    script.scenes,
-    Arr.flatMap((scene) => assetIssues(scene, assetExists)),
-  ),
-  ...pipe(
-    timelines,
-    Arr.flatMap((timeline) => formatIssues({ script, timeline })),
+    request.timelines,
+    Arr.flatMap((timeline) => formatIssues({ script: request.script, timeline })),
   ),
 ];

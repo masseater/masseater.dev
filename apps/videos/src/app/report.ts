@@ -9,11 +9,11 @@ const DIGITS = 1;
 const MARK: Readonly<Record<Issue["severity"], string>> = { error: "✗", warning: "!" };
 const WHOLE = "全体";
 
-const summaryOf = ({ format, durationInFrames, fps, scenes }: Timeline): string =>
-  `${format}: ${(durationInFrames / fps).toFixed(DIGITS)} 秒、${String(scenes.length)} シーン`;
+const summaryOf = ({ format, durationInFrames, fps, cuts }: Timeline): string =>
+  `${format}: ${(durationInFrames / fps).toFixed(DIGITS)} 秒、${String(cuts.length)} カット`;
 
-const lineOf = ({ severity, scene, message }: Issue): string =>
-  `${MARK[severity]} ${Option.getOrElse(scene, () => WHOLE)}: ${message}`;
+const lineOf = ({ severity, cut, message }: Issue): string =>
+  `${MARK[severity]} ${Option.getOrElse(cut, () => WHOLE)}: ${message}`;
 
 /** @internal */
 export const report = ({ issues, timelines }: Checked): Effect.Effect<void, VideoError> =>

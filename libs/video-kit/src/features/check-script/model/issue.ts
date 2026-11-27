@@ -2,7 +2,7 @@ import { Option } from "effect";
 
 export interface Issue {
   readonly severity: "error" | "warning";
-  readonly scene: Option.Option<string>;
+  readonly cut: Option.Option<string>;
   readonly message: string;
 }
 
@@ -10,16 +10,13 @@ const NO_ISSUES: readonly Issue[] = [];
 
 export const scriptError = (message: string): Issue => ({
   severity: "error",
-  scene: Option.none(),
+  cut: Option.none(),
   message,
 });
 
-export const sceneError = ({
-  scene,
-  message,
-}: Readonly<{ scene: string; message: string }>): Issue => ({
+export const cutError = ({ cut, message }: Readonly<{ cut: string; message: string }>): Issue => ({
   severity: "error",
-  scene: Option.some(scene),
+  cut: Option.some(cut),
   message,
 });
 

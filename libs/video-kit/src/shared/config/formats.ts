@@ -19,8 +19,3 @@ export const FRAMES: Readonly<Record<Format, Frame>> = {
 };
 
 export const FPS = 30;
-
-export const DEFAULT_LENGTH_SECONDS: Readonly<Record<Format, number>> = {
-  vertical: 60,
-  horizontal: 300,
-};

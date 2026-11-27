@@ -1,4 +1,4 @@
-export { DEFAULT_LENGTH_SECONDS, FORMATS, FPS, FRAMES } from "./formats.ts";
+export { FORMATS, FPS, FRAMES } from "./formats.ts";
 export type { Format } from "./formats.ts";
 export { FONT } from "./theme.ts";
 export type { Face } from "./theme.ts";

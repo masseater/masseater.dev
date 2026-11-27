@@ -1,7 +1,6 @@
 export const FONT = {
-  impact: "Dela Gothic One",
-  pop: "Mochiy Pop One",
-  text: "M PLUS Rounded 1c",
+  heavy: "Noto Sans JP",
+  bold: "Noto Sans JP",
   code: "IBM Plex Mono",
 } as const;
 

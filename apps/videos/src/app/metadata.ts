@@ -1,5 +1,5 @@
-import type { Format, ScriptError, Timeline } from "@masseater.dev/video-kit/script";
-import { parseScript, planTimeline } from "@masseater.dev/video-kit/script";
+import type { Format, Tachie, Timeline, VideoScript } from "@masseater.dev/video-kit/script";
+import { planTimeline } from "@masseater.dev/video-kit/script";
 import { Effect, ManagedRuntime, Option, Record as Rec, Schema, pipe } from "effect";
 import { FetchHttpClient, HttpClient } from "effect/http";
 import type { CalculateMetadataFunction } from "remotion";
@@ -24,46 +24,47 @@ const manifest: Effect.Effect<Manifest, never, HttpClient.HttpClient> = HttpClie
   Effect.orElseSucceed(() => EMPTY_MANIFEST),
 );
 
-const speakerOf = (
-  voice: Option.Option<number>,
-  speakers: Manifest["speakers"],
-): Option.Option<string> =>
-  pipe(
-    voice,
-    Option.flatMap((style) => Rec.get(speakers, String(style))),
+const tachieOf = (voice: number, found: Manifest["tachie"]): Option.Option<Tachie> => {
+  const key = String(voice);
+  return pipe(
+    Option.fromNullishOr(found),
+    Option.flatMap(Rec.get(key)),
+    Option.map(({ closed, open }) => ({
+      closed: staticFile(closed),
+      open: Option.map(Option.fromNullishOr(open), (path) => staticFile(path)),
+    })),
   );
+};
 
 const timelineOf = (
-  markdown: string,
+  script: VideoScript,
   format: Format,
-): Effect.Effect<Timeline, ScriptError, HttpClient.HttpClient> =>
-  Effect.gen(function* plan() {
-    const script = yield* parseScript(markdown);
-    const { narration, speakers } = yield* manifest;
-    const voice = Option.liftPredicate(script, (value) => "voice" in value).pipe(
-      Option.flatMap((value) => Option.fromNullishOr(value.voice)),
-    );
-    return yield* planTimeline({
-      script,
-      format,
-      sources: {
-        narration,
-        narrationSrc: (key: string) => staticFile(narrationPath(key)),
-        assetSrc: (url: string) => staticFile(assetPath(url)),
-        speakerName: speakerOf(voice, speakers),
-      },
-    });
-  });
+): Effect.Effect<Timeline, never, HttpClient.HttpClient> =>
+  manifest.pipe(
+    Effect.flatMap(({ narration, speakers, tachie }) =>
+      planTimeline({
+        script,
+        format,
+        sources: {
+          narration,
+          narrationSrc: (key: string) => staticFile(narrationPath(key)),
+          assetSrc: (url: string) => staticFile(assetPath(url)),
+          speakerName: Rec.get(speakers, String(script.voice)),
+          tachie: tachieOf(script.voice, tachie),
+        },
+      }),
+    ),
+  );
 
 /** @internal */
 export const metadataFor =
   ({
-    markdown,
+    script,
     format,
-  }: Readonly<{ markdown: string; format: Format }>): CalculateMetadataFunction<VideoProps> =>
+  }: Readonly<{ script: VideoScript; format: Format }>): CalculateMetadataFunction<VideoProps> =>
   ({ props }) =>
     runtime.runPromise(
-      timelineOf(markdown, format).pipe(
+      timelineOf(script, format).pipe(
         Effect.map((timeline) => ({
           durationInFrames: timeline.durationInFrames,
           width: timeline.width,

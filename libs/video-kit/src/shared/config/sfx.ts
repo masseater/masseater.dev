@@ -4,11 +4,6 @@ export const SFX = {
     page: "https://soundeffect-lab.info/sound/anime/",
     volume: 0.45,
   },
-  whoosh: {
-    url: "https://soundeffect-lab.info/sound/battle/mp3/punch-real-swing3.mp3",
-    page: "https://soundeffect-lab.info/sound/battle/",
-    volume: 0.3,
-  },
   stamp: {
     url: "https://soundeffect-lab.info/sound/anime/mp3/peta1.mp3",
     page: "https://soundeffect-lab.info/sound/anime/",

@@ -12,7 +12,13 @@ const POST_PHONEME_SECONDS = 0.1;
 
 const Style = Schema.Struct({ id: Schema.Finite, name: Schema.String });
 
-const Speaker = Schema.Struct({ name: Schema.String, styles: Schema.Array(Style) });
+const Speaker = Schema.Struct({
+  name: Schema.String,
+  speaker_uuid: Schema.String,
+  styles: Schema.Array(Style),
+});
+
+const SpeakerInfo = Schema.Struct({ portrait: Schema.String });
 
 const Speakers = Schema.Array(Speaker);
 
@@ -21,10 +27,11 @@ const AudioQuery = Schema.Record(Schema.String, Schema.Unknown);
 const okClient: Effect.Effect<HttpClient.HttpClient, never, HttpClient.HttpClient> =
   HttpClient.HttpClient.pipe(Effect.map(HttpClient.filterStatusOk));
 
-/** @internal */
-export const speakerName = (
+type Found = typeof Speaker.Type;
+
+const speakerOf = (
   style: number,
-): Effect.Effect<string, VideoError | Config.ConfigError, HttpClient.HttpClient> =>
+): Effect.Effect<Found, VideoError | Config.ConfigError, HttpClient.HttpClient> =>
   Effect.gen(function* speaker() {
     const engine = yield* VOICEVOX_URL;
     const client = yield* okClient;
@@ -46,7 +53,33 @@ export const speakerName = (
     if (Option.isNone(found)) {
       return yield* videoError(`VOICEVOX に話者 ${String(style)} がない`);
     }
-    return found.value.name;
+    return found.value;
+  });
+
+/** @internal */
+export const speakerName = (
+  style: number,
+): Effect.Effect<string, VideoError | Config.ConfigError, HttpClient.HttpClient> =>
+  speakerOf(style).pipe(Effect.map(({ name }) => name));
+
+/** @internal */
+export const speakerPortrait = (
+  style: number,
+): Effect.Effect<Uint8Array, VideoError | Config.ConfigError, HttpClient.HttpClient> =>
+  Effect.gen(function* portrait() {
+    const engine = yield* VOICEVOX_URL;
+    const client = yield* okClient;
+    const speaker = yield* speakerOf(style);
+    const info = yield* HttpClientRequest.get(`${engine}/speaker_info`).pipe(
+      HttpClientRequest.setUrlParams({
+        speaker_uuid: speaker.speaker_uuid,
+        resource_format: "base64",
+      }),
+      client.execute,
+      Effect.flatMap(HttpClientResponse.schemaBodyJson(SpeakerInfo)),
+      Effect.mapError(failedWith),
+    );
+    return new Uint8Array(Buffer.from(info.portrait, "base64"));
   });
 
 /** @internal */

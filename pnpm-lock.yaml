@@ -312,9 +312,6 @@ catalogs:
     '@fontsource/m-plus-rounded-1c':
       specifier: 5.3.0
       version: 5.3.0
-    '@fontsource/mochiy-pop-one':
-      specifier: 5.3.0
-      version: 5.3.0
     '@fontsource/noto-sans-jp':
       specifier: 5.3.1
       version: 5.3.1
@@ -4997,36 +4994,18 @@ importers:
       '@effect/atom-react':
         specifier: catalog:stack
         version: 4.1.5(effect@4.1.5)(react@19.3.1)(scheduler@0.28.0)
-      '@fontsource/dela-gothic-one':
-        specifier: 'catalog:'
-        version: 5.3.0
       '@fontsource/ibm-plex-mono':
         specifier: 'catalog:'
         version: 5.3.0
-      '@fontsource/m-plus-rounded-1c':
+      '@fontsource/noto-sans-jp':
         specifier: 'catalog:'
-        version: 5.3.0
-      '@fontsource/mochiy-pop-one':
-        specifier: 'catalog:'
-        version: 5.3.0
+        version: 5.3.1
       '@remotion/layout-utils':
         specifier: 'catalog:'
         version: 4.0.547(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       '@remotion/media':
         specifier: 'catalog:'
         version: 4.0.547(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
-      mdast-util-from-markdown:
-        specifier: 'catalog:'
-        version: 2.1.0(supports-color@10.2.2)
-      mdast-util-frontmatter:
-        specifier: 'catalog:'
-        version: 2.0.1(supports-color@10.2.2)
-      micromark-extension-frontmatter:
-        specifier: 'catalog:'
-        version: 2.0.0
-      yaml:
-        specifier: 'catalog:'
-        version: 2.9.1
     devDependencies:
       '@masseater.dev/browser-test':
         specifier: workspace:*
@@ -5037,9 +5016,6 @@ importers:
       '@tailwindcss/vite':
         specifier: 'catalog:'
         version: 4.3.5(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.6)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))
-      '@types/mdast':
-        specifier: 'catalog:'
-        version: 4.0.4
       '@types/react':
         specifier: 'catalog:'
         version: 19.3.0
@@ -7674,9 +7650,6 @@ packages:
 
   '@fontsource/m-plus-rounded-1c@5.3.0':
     resolution: {integrity: sha512-eB/JxJBRXLdfTsBDElsAZDMtHXM58Hf1tKkHoDVZAaUN7a+qYfwNKh4Q2f7Fk9YNg4xPFjTwooVlQyqbhi8CWQ==}
-
-  '@fontsource/mochiy-pop-one@5.3.0':
-    resolution: {integrity: sha512-WBI8UEfHsARWhPod0OJ+kswlR68KRhmV8uciQhb4m0bxmt4qpeq9yOh0MM9S9QzwQxjbQNRIjHEXh2yk5xldTw==}
 
   '@fontsource/noto-sans-jp@5.3.1':
     resolution: {integrity: sha512-9NNBB/M9PextLYVXGSfIaLZsPnrt5UDw8g2B6T0M775H2yb/oekApSjuS1XKOP7FPcMMEnTavR5rJGDM66qKtA==}
@@ -20706,8 +20679,6 @@ snapshots:
   '@fontsource/klee-one@5.3.1': {}
 
   '@fontsource/m-plus-rounded-1c@5.3.0': {}
-
-  '@fontsource/mochiy-pop-one@5.3.0': {}
 
   '@fontsource/noto-sans-jp@5.3.1': {}
 
