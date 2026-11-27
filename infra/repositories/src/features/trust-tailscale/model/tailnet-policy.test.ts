@@ -1,7 +1,8 @@
+import { Option } from "effect";
 import { parse } from "jsonc-parser";
 import { expect, test } from "vite-plus/test";
 
-import { ensureEntries, removeEntries, replaceEntries } from "./tailnet-policy.ts";
+import { ensureEntries, grantFor, removeEntries, replaceEntries } from "./tailnet-policy.ts";
 
 const GRANT = { src: ["tag:agent"], dst: ["autogroup:member"], ip: ["tcp:22"] };
 
@@ -48,4 +49,13 @@ test("前に足した grant を新しい grant に差し替える", () => {
   const narrowed = { ...ENTRIES, grants: [{ ...GRANT, dst: ["100.64.0.1"] }] };
   const replaced = replaceEntries(ENTRIES)(narrowed)(ensureEntries(ENTRIES)(POLICY));
   expect(parse(replaced)).toStrictEqual(parse(ensureEntries(narrowed)(POLICY)));
+});
+
+test("方針にある grant から行き先を読む", () => {
+  const found = grantFor({ src: GRANT.src, ip: GRANT.ip })(ensureEntries(ENTRIES)(POLICY));
+  expect(Option.getOrThrow(found)).toStrictEqual(GRANT);
+});
+
+test("src と ip が合う grant が無ければ行き先は無い", () => {
+  expect(Option.isNone(grantFor({ src: GRANT.src, ip: GRANT.ip })(POLICY))).toBe(true);
 });

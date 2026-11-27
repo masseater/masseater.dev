@@ -1,5 +1,5 @@
 import { describe, expect, it } from "@effect/vitest";
-import { Array as Arr, Effect, Option, pipe } from "effect";
+import { Array as Arr, Effect, Option, String as Str, pipe } from "effect";
 import { TestClock } from "effect/testing";
 import { afterAll, beforeEach, vi } from "vite-plus/test";
 
@@ -12,7 +12,8 @@ import {
   resetStores,
 } from "#/shared/lib/cloudflare.test.support.ts";
 
-import { blobResponse, found, lookup, store } from "./routes.test.support.ts";
+import { blobResponse, candidatesOf, found, lookup, store } from "./routes.test.support.ts";
+import type { Found } from "./routes.test.support.ts";
 
 vi.mock("cloudflare:workers", () => import("#/shared/lib/cloudflare.test.support.ts"));
 
@@ -42,6 +43,17 @@ const UPLOADS_ALLOWED = 6;
 const OBJECT_READS_ALLOWED = 4;
 const OVERSIZED = 5000;
 const FIRST_VERSION = 1;
+
+const KEY_HEX_LENGTH = 64;
+
+const NO_BLOB = "";
+
+const blobIdOf = (hit: Found): string =>
+  pipe(
+    Arr.head(hit.entries),
+    Option.flatMapNullishOr((entry) => entry.blob_id),
+    Option.getOrElse(() => NO_BLOB),
+  );
 const STORED = 3;
 const KEPT_OBJECTS = 2;
 const NO_OBJECTS = 0;
@@ -109,25 +121,20 @@ const stopsReadingObjectsPastTheDailyCap = Effect.gen(
       ...Arr.replicate(OK, OBJECT_READS_ALLOWED),
       NOT_FOUND,
     ]);
-    const blob = yield* blobResponse(String(FIRST_VERSION));
+    const hit = yield* Effect.fromOption(Arr.head(reads)).pipe(Effect.flatMap(candidatesOf));
+    const blob = yield* blobResponse(blobIdOf(hit));
     expect(blob.status).toBe(NOT_FOUND);
   },
 );
 
-const MISSING_BLOB = "999";
-
-const NO_BLOB = "";
+const MISSING_BLOB = `999-${pipe("0", Str.repeat(KEY_HEX_LENGTH))}`;
 
 const INLINE = new Uint8Array([FIRST_VERSION]);
 
 const storedBlobId = Effect.gen(function* storedBlobId() {
   yield* store({ key: keyOf(FIRST_VERSION), value: INLINE, blob: Option.some(INLINE) });
   const hit = yield* found(keyOf(FIRST_VERSION));
-  return pipe(
-    Arr.head(hit.entries),
-    Option.flatMapNullishOr((entry) => entry.blob_id),
-    Option.getOrElse(() => NO_BLOB),
-  );
+  return blobIdOf(hit);
 });
 
 const chargesNothingForAMissingBlob = Effect.gen(function* chargesNothingForAMissingBlob() {

@@ -74,14 +74,16 @@ impl Recording {
     }
 }
 
+fn install(provider: &SdkTracerProvider) -> Result<(), tracing::subscriber::SetGlobalDefaultError> {
+    tracing::subscriber::set_global_default(tracing_subscriber::registry().with(spans(provider)))
+}
+
 fn start<R: Runtime>(app: &AppHandle<R>) -> Result<(), Box<dyn Error>> {
     let recording = recording(
         &app.path().app_log_dir()?.join(FOLDER),
         &app.config().identifier,
     )?;
-    tracing::subscriber::set_global_default(
-        tracing_subscriber::registry().with(spans(&recording.provider)),
-    )?;
+    install(&recording.provider)?;
     app.manage(recording);
     Ok(())
 }
@@ -150,7 +152,27 @@ mod tests {
 
     use tracing_subscriber::layer::SubscriberExt;
 
-    use super::{BATCH_LIMIT, StatusCode, batch, recording, spans};
+    use super::{BATCH_LIMIT, StatusCode, batch, install, recording, spans};
+
+    struct Silent;
+
+    impl tauri_plugin_log::log::Log for Silent {
+        fn enabled(&self, _metadata: &tauri_plugin_log::log::Metadata<'_>) -> bool {
+            false
+        }
+
+        fn log(&self, _record: &tauri_plugin_log::log::Record<'_>) {}
+
+        fn flush(&self) {}
+    }
+
+    #[test]
+    fn leaves_the_log_logger_to_the_log_plugin() {
+        let dir = tempfile::tempdir().unwrap();
+        let recording = recording(dir.path(), "app.test").unwrap();
+        install(&recording.provider).unwrap();
+        assert!(tauri_plugin_log::log::set_boxed_logger(Box::new(Silent)).is_ok());
+    }
 
     #[test]
     fn writes_spans_from_the_app_and_its_tauri_runtime_to_the_trace_file() {

@@ -183,7 +183,11 @@ export default defineConfig({
         dependsOn: [{ task: "build", from: "dependencies" }],
         cache: LOCKED,
       },
-      test: { command: "vp test run", dependsOn: ["build"], cache: LOCKED },
+      test: {
+        command: "vp test run",
+        dependsOn: ["build", "@r_masseater/h56m-presets#native"],
+        cache: LOCKED,
+      },
       size: { command: "size-limit", dependsOn: ["build"] },
     },
   },
