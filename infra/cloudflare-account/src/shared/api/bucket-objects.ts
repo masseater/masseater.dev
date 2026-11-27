@@ -6,13 +6,26 @@ import {
   listBucketObjects,
 } from "@distilled.cloud/cloudflare/r2";
 import type { BucketsObjectsListResultItem } from "@distilled.cloud/cloudflare/r2";
-import { Array as Arr, Duration, Effect, Match, Option, Schedule, Stream, pipe } from "effect";
+import {
+  Array as Arr,
+  Duration,
+  Effect,
+  Match,
+  Option,
+  Predicate,
+  Schedule,
+  Stream,
+  pipe,
+} from "effect";
 
 const PAGE_SIZE = 1000;
 const POLL_INTERVAL_SECONDS = 5;
 const SLURP_TIMEOUT_MINUTES = 30;
 const MISSING_SAMPLE = 5;
 const POLL = Schedule.spaced(Duration.seconds(POLL_INTERVAL_SECONDS));
+const KEY_PROPAGATION_SECONDS = 10;
+const KEY_PROPAGATION_RETRIES = 18;
+const KEY_PROPAGATION = Schedule.spaced(Duration.seconds(KEY_PROPAGATION_SECONDS));
 
 export type BucketRoute = Readonly<{ accountId: string; source: string; target: string }>;
 
@@ -101,7 +114,14 @@ const runJob = Effect.fn("runSlurperJob")(function* runJob(
     overwrite: false,
     source: { vendor: "r2", bucket: route.source, secret: credentials },
     target: { vendor: "r2", bucket: route.target, secret: credentials },
-  }).pipe(Effect.orDie);
+  }).pipe(
+    Effect.retry({
+      schedule: KEY_PROPAGATION,
+      times: KEY_PROPAGATION_RETRIES,
+      while: Predicate.isTagged("SuperSlurperPreconnectivityFailed"),
+    }),
+    Effect.orDie,
+  );
   yield* Option.match(Option.fromNullishOr(id), {
     onNone: () => Effect.die("Slurper created no job"),
     onSome: (jobId) =>
