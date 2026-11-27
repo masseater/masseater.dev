@@ -4,9 +4,15 @@ import type { PlatformError } from "effect";
 import { Migrator, SqlClient } from "effect/sql";
 import type { SqlError } from "effect/sql";
 
-const prepared = (
-  extensions: readonly string[],
-): Layer.Layer<never, SqlError.SqlError, SqliteClient.SqliteClient | SqlClient.SqlClient> =>
+/** @internal */
+export type Database = SqliteClient.SqliteClient | SqlClient.SqlClient;
+/** @internal */
+export type DatabaseFailure =
+  | Migrator.MigrationError
+  | SqlError.SqlError
+  | PlatformError.PlatformError;
+
+const prepared = (extensions: readonly string[]): Layer.Layer<never, SqlError.SqlError, Database> =>
   Layer.effectDiscard(
     Effect.gen(function* prepare() {
       const client = yield* SqliteClient.SqliteClient;
@@ -29,11 +35,7 @@ const databaseAt = ({
   file: string;
   migrations: Readonly<Record<string, Effect.Effect<void, unknown, SqlClient.SqlClient>>>;
   extensions: readonly string[];
-}>): Layer.Layer<
-  SqliteClient.SqliteClient | SqlClient.SqlClient,
-  Migrator.MigrationError | SqlError.SqlError | PlatformError.PlatformError,
-  FileSystem.FileSystem | Path.Path
-> =>
+}>): Layer.Layer<Database, DatabaseFailure, FileSystem.FileSystem | Path.Path> =>
   Layer.unwrap(
     Effect.gen(function* database() {
       const path = yield* Path.Path;

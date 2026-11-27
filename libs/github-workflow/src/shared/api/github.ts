@@ -10,6 +10,15 @@ const HEADERS = {
   "x-github-api-version": "2022-11-28",
 };
 
+/** @internal */
+export type GitHubFailure =
+  | Config.ConfigError
+  | HttpBody.HttpBodyError
+  | HttpClientError.HttpClientError;
+
+/** @internal */
+export type GitHubRequest<Success> = Effect.Effect<Success, GitHubFailure, HttpClient.HttpClient>;
+
 const requestTo = Effect.fn("requestTo")(function* requestTo(
   method: HttpMethod.HttpMethod,
   path: string,
@@ -48,10 +57,7 @@ const getJsonOf =
     path: string,
   ): Effect.Effect<
     Codec["Type"],
-    | Config.ConfigError
-    | HttpBody.HttpBodyError
-    | HttpClientError.HttpClientError
-    | Schema.SchemaError,
+    GitHubFailure | Schema.SchemaError,
     HttpClient.HttpClient | Codec["DecodingServices"]
   > =>
     requestTo("GET", path).pipe(
@@ -64,41 +70,27 @@ const postJsonOf =
   ({
     path,
     body,
-  }: Readonly<{ path: string; body: unknown }>): Effect.Effect<
+  }: GitHubWrite): Effect.Effect<
     Codec["Type"],
-    | Config.ConfigError
-    | HttpBody.HttpBodyError
-    | HttpClientError.HttpClientError
-    | Schema.SchemaError,
+    GitHubFailure | Schema.SchemaError,
     HttpClient.HttpClient | Codec["DecodingServices"]
   > =>
     withBody("POST", path, body).pipe(Effect.flatMap(HttpClientResponse.schemaBodyJson(schema)));
 
-const removeAt = (
-  path: string,
-): Effect.Effect<
-  void,
-  Config.ConfigError | HttpBody.HttpBodyError | HttpClientError.HttpClientError,
-  HttpClient.HttpClient
-> => requestTo("DELETE", path).pipe(Effect.flatMap(execute), Effect.asVoid);
+const removeAt = (path: string): GitHubRequest<void> =>
+  requestTo("DELETE", path).pipe(Effect.flatMap(execute), Effect.asVoid);
 
-const postTo = ({
-  path,
-  body,
-}: Readonly<{ path: string; body: unknown }>): Effect.Effect<
-  void,
-  Config.ConfigError | HttpBody.HttpBodyError | HttpClientError.HttpClientError,
-  HttpClient.HttpClient
-> => withBody("POST", path, body).pipe(Effect.asVoid);
+/** @internal */
+export interface GitHubWrite {
+  readonly path: string;
+  readonly body: unknown;
+}
 
-const patchAt = ({
-  path,
-  body,
-}: Readonly<{ path: string; body: unknown }>): Effect.Effect<
-  void,
-  Config.ConfigError | HttpBody.HttpBodyError | HttpClientError.HttpClientError,
-  HttpClient.HttpClient
-> => withBody("PATCH", path, body).pipe(Effect.asVoid);
+const postTo = ({ path, body }: GitHubWrite): GitHubRequest<void> =>
+  withBody("POST", path, body).pipe(Effect.asVoid);
+
+const patchAt = ({ path, body }: GitHubWrite): GitHubRequest<void> =>
+  withBody("PATCH", path, body).pipe(Effect.asVoid);
 
 /** @internal */
 export const getJson = getJsonOf;
