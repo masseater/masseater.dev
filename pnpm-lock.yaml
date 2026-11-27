@@ -586,8 +586,8 @@ catalogs:
       specifier: 2.25.0
       version: 2.25.0
     ableton-als:
-      specifier: 0.4.2
-      version: 0.4.2
+      specifier: 0.5.0
+      version: 0.5.0
     agents:
       specifier: 0.34.0
       version: 0.34.0
@@ -4721,7 +4721,7 @@ importers:
         version: link:../fumx-parser
       ableton-als:
         specifier: 'catalog:'
-        version: 0.4.2
+        version: 0.5.0
       effect:
         specifier: catalog:stack
         version: 4.1.5
@@ -12651,8 +12651,8 @@ packages:
     engines: {node: '>= 8'}
     hasBin: true
 
-  ableton-als@0.4.2:
-    resolution: {integrity: sha512-JPooDc2wUyRVU4RYt2zlxrDGSy2YI/3WZuHFdNG8z8zROoHCo1JqVIG3s1WIqWeGezwpMlQBY5CHUi+Sk2fcZA==}
+  ableton-als@0.5.0:
+    resolution: {integrity: sha512-TAytX7Xwhpmcw/ANEXx0vubXSOlPjadgAxIFSEpZSbEFcBsd8P0BDVBbY8o/OF8LiGv5Qt3OmaB3LPNEKw7Oxg==}
     engines: {node: '>=20.19.0'}
 
   abort-controller@3.0.0:
@@ -24904,7 +24904,7 @@ snapshots:
     dependencies:
       isexe: 2.0.0
 
-  ableton-als@0.4.2: {}
+  ableton-als@0.5.0: {}
 
   abort-controller@3.0.0:
     dependencies:
