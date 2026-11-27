@@ -1,4 +1,9 @@
-import { alchemyTasks, d1Tasks, deployTo } from "@masseater.dev/cloudflare-account/run-tasks";
+import {
+  alchemyTasks,
+  d1Tasks,
+  deployTo,
+  rejectsUnauthenticated,
+} from "@masseater.dev/cloudflare-account/run-tasks";
 import tailwindcss from "@tailwindcss/vite";
 import { devtools } from "@tanstack/devtools-vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
@@ -8,7 +13,7 @@ import { Option } from "effect";
 import { defineConfig } from "vite-plus";
 import type { PluginOption } from "vite-plus";
 
-import { SEARCH_INDEX_ORIGIN, SITEMAP_FILE } from "./src/shared/config/index.ts";
+import { MCP_URL, SEARCH_INDEX_ORIGIN, SITEMAP_FILE } from "./src/shared/config/index.ts";
 
 const appPlugins = (mode: string): PluginOption[] => {
   if (mode === "test") {
@@ -35,7 +40,10 @@ export default defineConfig(({ mode }) => ({
   run: {
     tasks: {
       ...alchemyTasks,
-      "deploy:production": deployTo("production"),
+      "deploy:production": {
+        command: [deployTo("production").command, rejectsUnauthenticated(MCP_URL)],
+        cache: false,
+      },
       verify: { command: [], dependsOn: ["auth:check"] },
       ...d1Tasks,
       "auth:generate":
