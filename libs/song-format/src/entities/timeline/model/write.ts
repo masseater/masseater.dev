@@ -7,7 +7,7 @@ import { quoted } from "./cells.ts";
 import { controlLinesOf } from "./control-lines.ts";
 import type { Timeline } from "./events.ts";
 import { barsOf, bpmText } from "./layout.ts";
-import type { LaidBar } from "./layout.ts";
+import type { LaidBar, LaidTempo } from "./layout.ts";
 import { planOf } from "./plan.ts";
 import type { Plan, PlannedPart } from "./plan.ts";
 import { voiceLinesOf } from "./voice-lines.ts";
@@ -28,14 +28,21 @@ interface Previous {
 
 const START: Previous = { meter: Option.none(), microseconds: Option.none() };
 
+const isRamp: From<LaidTempo, boolean> = (step) => Option.isSome(step.target);
+
+const stepText: From<LaidTempo, string> = (step) => {
+  const ramp = Option.match(step.target, {
+    onNone: () => "",
+    onSome: (target) => ` -> ${bpmText(target)}`,
+  });
+  return `${bpmText(step.microseconds)}${ramp} ${fractionOf(step.length)}`;
+};
+
 const tempoLineOf: From<LaidBar, Option.Option<string>> = (bar) => {
-  if (bar.tempo.length <= SINGLE) {
+  if (bar.tempo.length <= SINGLE && !pipe(bar.tempo, Arr.some(isRamp))) {
     return Option.none();
   }
-  const steps = pipe(
-    bar.tempo,
-    Arr.map((step) => `${bpmText(step.microseconds)} ${fractionOf(step.length)}`),
-  );
+  const steps = pipe(bar.tempo, Arr.map(stepText));
   return Option.some(`tempo: ${Arr.join(steps, ", ")}`);
 };
 
@@ -49,7 +56,7 @@ const headerTempoOf =
   (bar) =>
     pipe(
       Arr.head(bar.tempo),
-      Option.filter(() => bar.tempo.length === SINGLE),
+      Option.filter(() => bar.tempo.length === SINGLE && !pipe(bar.tempo, Arr.some(isRamp))),
       Option.map((step) => step.microseconds),
       Option.filter(differs(previous.microseconds)),
       Option.map((microseconds) => `tempo ${bpmText(microseconds)}`),
@@ -94,7 +101,7 @@ const afterBar: From<LaidBar, Previous> = (bar) => ({
   meter: Option.some(bar.meter),
   microseconds: pipe(
     Arr.last(bar.tempo),
-    Option.map((step) => step.microseconds),
+    Option.map((step) => Option.getOrElse(step.target, () => step.microseconds)),
   ),
 });
 

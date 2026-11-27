@@ -138,3 +138,5 @@ export const chordBars = (names: readonly string[]): string =>
     Arr.join("\n"),
     Str.replace("bar {", "bar meter 4/4 tempo 120bpm {"),
   );
+
+export const songText = (body: string): string => `${HEADER}${body}\n`;

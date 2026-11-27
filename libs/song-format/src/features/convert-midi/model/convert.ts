@@ -1,9 +1,10 @@
 import { Effect, Option, Schema, Predicate } from "effect";
 import { parseMidi } from "midi-file";
 
+import { writeFumx } from "#/entities/timeline/index.ts";
+import type { Written } from "#/entities/timeline/index.ts";
+
 import { timelineOf } from "./timeline.ts";
-import { writeFumx } from "./write.ts";
-import type { Written } from "./write.ts";
 
 const taggedError = Schema.TaggedError;
 

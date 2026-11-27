@@ -16,6 +16,8 @@ catalogMode: prefer
 catalog:
   cborg: 7.0.0
   msw: 3.0.7
+  fast-xml-parser: 5.12.1
+  ableton-als: 0.4.2
   "@pnpm/deps.path": 1101.0.11
   "@pnpm/lockfile.fs": 1100.2.20
   "@pnpm/logger": 1100.0.0
