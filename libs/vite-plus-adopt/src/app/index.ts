@@ -6,8 +6,6 @@ export type {
   DependencyRules,
   FallowConfig,
   SkillsSection,
-  SteigerConfig,
-  SteigerSection,
   TextlintConfig,
   ToolSections,
 } from "#/shared/config/index.ts";
