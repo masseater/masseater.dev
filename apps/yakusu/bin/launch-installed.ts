@@ -1,4 +1,4 @@
-import { runMain } from "@masseater.dev/node-main";
+import { runMain } from "@r_masseater/node-main";
 import { Duration, Effect, FileSystem, Option, Path, Schedule, String as Str } from "effect";
 import { Argument, Command } from "effect/cli";
 

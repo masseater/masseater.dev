@@ -1,4 +1,4 @@
-import type { Effect as SongEffect } from "@r_masseater/fumx-parser";
+import type { Effect as SongEffect } from "@r_masseater/song-format";
 import { Effect, Match } from "effect";
 
 import type { Bus } from "#/shared/lib/studio/bus.ts";

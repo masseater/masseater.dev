@@ -1,5 +1,5 @@
 import type { Song as DawSong } from "@masseater.dev/daw-view";
-import type { Song as FumxSong } from "@r_masseater/fumx-parser";
+import type { Song as FumxSong } from "@r_masseater/song-format";
 import { Array as Arr, Effect, Option, Order, pipe } from "effect";
 
 import { bySlug, fumxBySlug, pluginsOf } from "./fumx-sources.ts";

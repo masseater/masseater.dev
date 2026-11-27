@@ -1,2 +1,0 @@
-SC2168:error:1:1: 'local' is only valid in functions
-SC2034:warning:1:7: foo appears unused. Verify use (or export if used externally)

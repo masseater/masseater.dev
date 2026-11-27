@@ -1,5 +1,5 @@
 import { describe, expect, it } from "@effect/vitest";
-import { StyleRulesSchema } from "@r_masseater/i68-presets/habits";
+import { StyleRulesSchema } from "@r_masseater/i68/habits";
 import { Effect, Option, Schema } from "effect";
 import { page, userEvent } from "vite-plus/test/browser";
 import type { Locator } from "vite-plus/test/browser";

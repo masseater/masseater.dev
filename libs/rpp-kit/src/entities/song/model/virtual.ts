@@ -1,6 +1,6 @@
+import { nameLiteral, quoted, text } from "@r_masseater/mapped-import";
+import type { Segment } from "@r_masseater/mapped-import";
 import { Array as Arr, Option, pipe } from "effect";
-import { nameLiteral, quoted, text } from "mapped-import";
-import type { Segment } from "mapped-import";
 
 import type { SongOutline, Spanned } from "./outline.ts";
 import type { Param } from "./parse.ts";

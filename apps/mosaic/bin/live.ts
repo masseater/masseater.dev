@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-import { warn } from "@masseater.dev/github-workflow";
-import { runMain } from "@masseater.dev/node-main";
+import { warn } from "@r_masseater/github-workflow";
+import { runMain } from "@r_masseater/node-main";
 import { CHARACTERS, manifestPath, slugPath } from "@thumb-mosaic/mosaic";
 import { Effect, FileSystem, Option, Path, Schedule, Schema } from "effect";
 import { HttpClient, HttpClientResponse } from "effect/http";

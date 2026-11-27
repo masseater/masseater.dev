@@ -1,2 +1,0 @@
-curl -L https://github.com/nodejs/Release/raw/HEAD/schedule.json | \
-jq -r 'to_entries | map(select(.value.start | strptime("%Y-%m-%d") | mktime > now)) | first | "VERSION=" + .key + "\nRELEASE_DATE=" + .value.start' >> "$GITHUB_ENV"

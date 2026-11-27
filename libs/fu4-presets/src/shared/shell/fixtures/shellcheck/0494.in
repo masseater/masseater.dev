@@ -1,6 +1,0 @@
-{
-  printf '%s\n' "$MESSAGE"
-  if [ "$BUMPS_EMBEDDER_STRING" != 'true' ]; then
-    printf '\n%s\n' "$EMBEDDER_STRING_MESSAGE"
-  fi
-} | gh pr comment "$NUMBER" --repo "$GITHUB_REPOSITORY" --body-file -

@@ -5,7 +5,7 @@
   "description": "Bundles the Rust audio plugin for release.",
   "type": "module",
   "devDependencies": {
-    "@r_masseater/msch": "workspace:*",
+    "@r_masseater/msch": "catalog:",
     "vite-plus": "catalog:stack"
   }
 }

@@ -1,4 +1,4 @@
-import type { Song } from "@r_masseater/fumx-parser";
+import type { Song } from "@r_masseater/song-format";
 import { Effect } from "effect";
 
 import { breathe } from "#/shared/lib/studio/breathe.ts";

@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 import { createOrUpdateRepoSecret } from "@distilled.cloud/github/actions";
 import { CredentialsFromEnv } from "@distilled.cloud/github/Credentials";
-import { fail } from "@masseater.dev/github-workflow";
-import { runMainWith } from "@masseater.dev/node-main";
+import { fail } from "@r_masseater/github-workflow";
+import { runMainWith } from "@r_masseater/node-main";
 import { Array as Arr, Config, Console, Effect, Schema, String as Str, pipe } from "effect";
 
 import { OWNER } from "#/entities/credential/index.ts";

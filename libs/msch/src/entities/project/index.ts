@@ -1,7 +1,0 @@
-export { declarationKey, describeLibraryType, isObjectType, locationOf } from "./model/library.ts";
-export type { DeclarationLocation, LibraryShape, LibraryVocabulary } from "./model/library.ts";
-export { installedPackages, projectInputs, workspaceClosure } from "./model/inputs.ts";
-export type { ProjectInputs } from "./model/inputs.ts";
-export { implementationFingerprint } from "./model/implementation.ts";
-export { listConfigFiles, mentions, typeScriptCompiler, withProject } from "./model/project.ts";
-export type { Project, SourceCheck, Workspace } from "./model/project.ts";

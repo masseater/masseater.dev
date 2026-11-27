@@ -1,4 +1,4 @@
-import { fail, mask } from "@masseater.dev/github-workflow";
+import { fail, mask } from "@r_masseater/github-workflow";
 import { Array as Arr, Config, Effect, String as Str, pipe } from "effect";
 
 import { installedRepositories } from "./installed-repositories.ts";

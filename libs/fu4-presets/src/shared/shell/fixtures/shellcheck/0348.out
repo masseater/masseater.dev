@@ -1,2 +1,0 @@
-SC2155:warning:2:8: Declare and assign separately to avoid masking return values
-SC2155:warning:3:8: Declare and assign separately to avoid masking return values

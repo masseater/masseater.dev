@@ -1,4 +1,4 @@
-import { fumx } from "@masseater.dev/song-format/vite";
+import { fumx } from "@r_masseater/song-format/vite";
 import type { PluginOption } from "vite-plus";
 
 import mdx from "#/app/vite/markdown/mdx.config.ts";

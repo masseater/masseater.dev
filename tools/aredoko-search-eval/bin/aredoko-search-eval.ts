@@ -1,4 +1,4 @@
-import { runMain } from "@masseater.dev/node-main";
+import { runMain } from "@r_masseater/node-main";
 import { Effect, Layer, Record } from "effect";
 import { Command, Flag } from "effect/cli";
 import { FetchHttpClient } from "effect/http";

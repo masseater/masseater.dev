@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-import { mustSucceed, outputOf, sha256Of } from "@masseater.dev/github-workflow";
-import { runMain } from "@masseater.dev/node-main";
+import { mustSucceed, outputOf, sha256Of } from "@r_masseater/github-workflow";
+import { runMain } from "@r_masseater/node-main";
 import {
   Array as Arr,
   Config,

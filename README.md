@@ -6,7 +6,7 @@ masseater が作成したものの一覧は [masseater.dev/projects](https://mas
 
 ## 検査
 
-このリポジトリのすべての検査は [msch](libs/msch) で実行される。msch は masseater の他のリポジトリにも同様の検査を持ち込む。
+このリポジトリのすべての検査は [msch](https://github.com/masseater/ecosystems/tree/main/libs/msch) で実行される。msch は masseater の他のリポジトリにも同様の検査を持ち込む。
 
 ## ライセンス
 

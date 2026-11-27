@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-import { writeOutputs } from "@masseater.dev/github-workflow";
-import { runMain } from "@masseater.dev/node-main";
+import { writeOutputs } from "@r_masseater/github-workflow";
+import { runMain } from "@r_masseater/node-main";
 import { CHARACTERS } from "@thumb-mosaic/mosaic";
 import { Array as Arr, Effect, Schema, pipe } from "effect";
 

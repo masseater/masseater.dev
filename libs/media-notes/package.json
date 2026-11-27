@@ -5,7 +5,7 @@
   "description": "Rust side shared by desktop apps that mark and comment on ranges of media.",
   "type": "module",
   "devDependencies": {
-    "@r_masseater/msch": "workspace:*",
+    "@r_masseater/msch": "catalog:",
     "vite-plus": "catalog:stack"
   }
 }

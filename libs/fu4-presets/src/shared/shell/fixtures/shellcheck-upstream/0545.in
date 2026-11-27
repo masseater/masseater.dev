@@ -1,1 +1,0 @@
-a='cow moo'; echo $a

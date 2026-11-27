@@ -1,3 +1,0 @@
-read -r -a numbers <<< "$PULL_REQUESTS"
-curl -fsSL "https://github.com/${GITHUB_REPOSITORY}/raw/${GITHUB_SHA}/tools/actions/start-ci.sh" \
-| sh -s -- "${numbers[@]}"

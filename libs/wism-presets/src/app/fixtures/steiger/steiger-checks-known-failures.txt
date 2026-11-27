@@ -1,6 +1,0 @@
-typo-in-layer-name#3 # wism allows only the configured layer names; steiger accepts other folders as custom layers
-typo-in-layer-name#5 # wism has no prefixed layer names such as _pages or 6_shared
-typo-in-layer-name#6 # wism has no prefixed layer names such as _pages or 6_shared
-typo-in-layer-name#7 # wism has no prefixed layer names such as _pages or 6_shared
-typo-in-layer-name#8 # wism allows only the configured layer names; steiger accepts other folders as custom layers
-no-public-api-sidestep#6 # the workspace preset leaves shared/lib open, so a library's index is not its public API

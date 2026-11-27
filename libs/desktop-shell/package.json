@@ -5,7 +5,7 @@
   "description": "Window behavior, shared access token and local bearer-token MCP server for the Tauri desktop apps.",
   "type": "module",
   "devDependencies": {
-    "@r_masseater/msch": "workspace:*",
+    "@r_masseater/msch": "catalog:",
     "vite-plus": "catalog:stack"
   }
 }

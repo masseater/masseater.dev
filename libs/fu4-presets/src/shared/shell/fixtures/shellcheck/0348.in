@@ -1,4 +1,0 @@
-export DISTTYPE=nightly
-export DATESTRING=$(date "+%Y-%m-%d")
-export COMMIT=$(git rev-parse --short=10 "$GITHUB_SHA")
-./configure && make tar -j4 SKIP_XZ=1 GZIP_COMPRESSION=6

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "@effect/vitest";
-import { readSong } from "@r_masseater/fumx-parser";
-import type { Song, SourceIssue } from "@r_masseater/fumx-parser";
+import { readSong } from "@r_masseater/song-format";
+import type { Song, SourceIssue } from "@r_masseater/song-format";
 import { Array as Arr, Effect, pipe } from "effect";
 
 import { clockOf } from "./clock.ts";

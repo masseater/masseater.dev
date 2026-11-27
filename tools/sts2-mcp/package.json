@@ -9,9 +9,9 @@
   },
   "dependencies": {
     "@effect/platform-node": "catalog:",
-    "@masseater.dev/node-main": "workspace:*",
     "@masseater.dev/sts2-protocol": "workspace:*",
     "@modelcontextprotocol/server": "catalog:",
+    "@r_masseater/node-main": "catalog:",
     "effect": "catalog:stack"
   },
   "devDependencies": {

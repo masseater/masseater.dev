@@ -1,5 +1,0 @@
----
----
-# Heading
-
-# Another {MD025}

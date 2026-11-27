@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-import { fail, mustSucceed } from "@masseater.dev/github-workflow";
-import { runMain } from "@masseater.dev/node-main";
+import { fail, mustSucceed } from "@r_masseater/github-workflow";
+import { runMain } from "@r_masseater/node-main";
 import { Array as Arr, Config, Effect, Result, Schema, pipe } from "effect";
 
 import { workspace } from "./lib/changes.ts";

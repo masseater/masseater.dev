@@ -3,29 +3,7 @@
   "production": true,
   "entry": ["*/*/bin/*.ts"],
   "ignoreUnresolvedImports": ["/vision/**"],
-  "dynamicallyLoaded": [
-    "**/*.d.*.ts",
-    "libs/oxlint-typed-rules/src/shared/lib/ts-api-utils.ts",
-    "libs/oxlint-typed-rules/src/shared/lib/ts-compat.ts",
-    "libs/oxlint-typed-rules/src/shared/lib/typescript-eslint-utils.ts",
-    "libs/vite-plus-adopt/src/shared/lib/typescript/compiler-hosts.ts",
-    "libs/vite-plus-adopt/src/shared/lib/typescript/index.ts",
-  ],
-  "usedClassMembers": [
-    { "implements": "LegacySymbol", "members": ["getName", "getDeclarations"] },
-    {
-      "implements": "LegacyType",
-      "members": [
-        "symbol",
-        "aliasSymbol",
-        "types",
-        "getSymbol",
-        "getProperty",
-        "getProperties",
-        "getCallSignatures",
-      ],
-    },
-  ],
+  "dynamicallyLoaded": ["**/*.d.*.ts"],
   "ignoreExports": [
     { "file": "**/generated/**", "exports": ["*"] },
     {
@@ -45,30 +23,6 @@
   "ignoreDependencies": ["@effect/language-service", "fallow-similar-code", "oxlint-tsgolint"],
   "workspaces": {
     "settings": {
-      "libs/h56m-presets": {
-        "ignoreDependencies": ["betterleaks"],
-      },
-      "libs/msch": {
-        "ignoreDependencies": ["oxlint-plugin-eslint"],
-      },
-      "libs/oxlint-typed-rules": {
-        "ignoreDependencies": [
-          "@tsconfig/strictest",
-          "@typescript-eslint/parser",
-          "@typescript-eslint/typescript-estree",
-          "combinate",
-          "dedent",
-        ],
-      },
-      "libs/vite-plus-adopt": {
-        "ignoreDependencies": [
-          "@andrewbranch/untar.js",
-          "@loaderkit/resolve",
-          "cjs-module-lexer",
-          "fflate",
-          "validate-npm-package-name",
-        ],
-      },
       "tools/seikin-dance": {
         "ignoreDependencies": ["@mediapipe/tasks-vision"],
       },
@@ -108,11 +62,6 @@
     ".claude/**",
     "apps/aredoko-unity/**",
     "apps/zenn-articles/**",
-    "libs/fu4-presets/src/**/fixtures/**",
-    "libs/oxlint-plugin-decision/example*/**",
-    "libs/oxlint-typed-rules/upstream/{react,tanstack-query,tanstack-router,drizzle,remotion}/**",
-    "libs/vite-plus-adopt/upstream/**",
-    "libs/textlint-rule-preset-ja/upstream/**",
     // The page is served by the Rust tracker, and /vision/ is one of its routes, not a file.
     "tools/seikin-dance/src/features/track_poses/landmark.html",
   ],

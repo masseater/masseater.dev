@@ -1,5 +1,0 @@
-ncu-config set username "$USERNAME"
-ncu-config set token "$GH_TOKEN"
-ncu-config set jenkins_token "$JENKINS_TOKEN"
-ncu-config set owner "$GITHUB_REPOSITORY_OWNER"
-ncu-config set repo "${GITHUB_REPOSITORY#*/}"

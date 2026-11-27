@@ -1,1 +1,0 @@
-for file; do echo $file; done

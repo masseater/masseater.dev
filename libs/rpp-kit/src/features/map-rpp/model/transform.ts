@@ -1,7 +1,7 @@
 import { layer as nodeServices } from "@effect/platform-node/NodeServices";
+import { mappedOutput } from "@r_masseater/mapped-import/mapper";
+import type { Request } from "@r_masseater/mapped-import/mapper";
 import { Array as Arr, Effect, FileSystem, ManagedRuntime, Path, pipe } from "effect";
-import { mappedOutput } from "mapped-import/mapper";
-import type { Request } from "mapped-import/mapper";
 import type { TransformResult } from "ts-content-mapper";
 
 import { parseRpp, outlineSong, segmentsOf } from "#/entities/song/index.ts";

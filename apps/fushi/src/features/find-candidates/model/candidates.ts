@@ -5,7 +5,7 @@ import {
   habitsOf,
   mixHabitsOf,
   styleSongFromText,
-} from "@r_masseater/i68-presets/habits";
+} from "@r_masseater/i68/habits";
 import type {
   Habit,
   MixHabit,
@@ -15,7 +15,7 @@ import type {
   StyleTable,
   Subject,
   UnreadableSong,
-} from "@r_masseater/i68-presets/habits";
+} from "@r_masseater/i68/habits";
 import { Array as Arr, Effect, Option, Schema, pipe } from "effect";
 
 import { BACH } from "#/entities/library/index.ts";

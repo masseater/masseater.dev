@@ -1,1 +1,0 @@
-gcovr --object-directory=out -v --filter src --xml -o ./coverage/coverage-cxx.xml --root=./ --gcov-executable="llvm-cov-18 gcov"

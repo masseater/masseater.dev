@@ -1,5 +1,5 @@
 import { run } from "@masseater.dev/component-release";
-import { runMain } from "@masseater.dev/node-main";
+import { runMain } from "@r_masseater/node-main";
 import { Effect, FileSystem, Layer, Path, String as Str } from "effect";
 import { Command } from "effect/cli";
 import { Digest } from "effect/crypto";

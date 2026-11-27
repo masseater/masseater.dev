@@ -5,13 +5,13 @@
   "description": "Builds the files the mosaic art site serves for each character.",
   "type": "module",
   "dependencies": {
-    "@masseater.dev/github-workflow": "workspace:*",
-    "@masseater.dev/node-main": "workspace:*",
+    "@r_masseater/github-workflow": "catalog:",
+    "@r_masseater/node-main": "catalog:",
     "@thumb-mosaic/mosaic": "workspace:*",
     "effect": "catalog:stack"
   },
   "devDependencies": {
-    "@r_masseater/msch": "workspace:*",
+    "@r_masseater/msch": "catalog:",
     "vite-plus": "catalog:stack"
   }
 }

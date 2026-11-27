@@ -1,4 +1,4 @@
-import type { PlayParam } from "@r_masseater/fumx-parser";
+import type { PlayParam } from "@r_masseater/song-format";
 import { Array as Arr, Match, Option, pipe } from "effect";
 
 import { decibels } from "#/shared/lib/dsp/number.ts";

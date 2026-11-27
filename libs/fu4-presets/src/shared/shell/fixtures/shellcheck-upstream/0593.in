@@ -1,1 +1,0 @@
-x='foo bar'; x && x=1; echo $x

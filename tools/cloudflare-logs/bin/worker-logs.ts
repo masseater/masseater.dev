@@ -1,6 +1,6 @@
 import { CredentialsFromEnv } from "@distilled.cloud/cloudflare/Credentials";
 import { queryObservabilityTelemetry } from "@distilled.cloud/cloudflare/workers";
-import { runMain } from "@masseater.dev/node-main";
+import { runMain } from "@r_masseater/node-main";
 import {
   Array as Arr,
   Config,

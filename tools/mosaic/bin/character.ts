@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-import { mustSucceed, succeeds, warn } from "@masseater.dev/github-workflow";
-import { runMain } from "@masseater.dev/node-main";
+import { mustSucceed, succeeds, warn } from "@r_masseater/github-workflow";
+import { runMain } from "@r_masseater/node-main";
 import { Config, Duration, Effect, FileSystem, Option, Path, pipe } from "effect";
 
 import { CACHE, MOSAIC, PERSIST, inRepository } from "./lib/repository.ts";

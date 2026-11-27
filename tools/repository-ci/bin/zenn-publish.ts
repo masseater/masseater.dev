@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-import { getJson, outputOf, patch, post, postJson } from "@masseater.dev/github-workflow";
-import { runMain } from "@masseater.dev/node-main";
+import { getJson, outputOf, patch, post, postJson } from "@r_masseater/github-workflow";
+import { runMain } from "@r_masseater/node-main";
 import { Array as Arr, Config, Effect, Option, Schema } from "effect";
 
 const ARTICLES = "apps/zenn-articles";

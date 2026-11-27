@@ -1,3 +1,0 @@
-SC1036:error:1:6: '(' is invalid here. Did you forget to escape it?
-SC1088:error:1:6: Parsing stopped here. Invalid use of parentheses?
-SC1065:error:1:7: Trying to declare parameters? Don't. Use () and refer to params as $1, $2.

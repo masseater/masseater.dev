@@ -1,1 +1,0 @@
-./configure --verbose --error-on-warn --coverage --without-intl

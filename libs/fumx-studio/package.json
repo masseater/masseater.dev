@@ -19,13 +19,13 @@
   },
   "dependencies": {
     "@masseater.dev/daw-view": "workspace:*",
-    "@r_masseater/fumx-parser": "workspace:*",
+    "@r_masseater/song-format": "catalog:",
     "effect": "catalog:stack",
     "tonal": "catalog:"
   },
   "devDependencies": {
     "@effect/vitest": "catalog:",
-    "@r_masseater/vitest-otlp": "workspace:*",
+    "@r_masseater/vitest-otlp": "catalog:",
     "typescript": "catalog:stack",
     "vite-plus": "catalog:stack"
   }

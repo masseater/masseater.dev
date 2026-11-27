@@ -1,4 +1,0 @@
-./tools/dep_updaters/update-openssl.sh download \
-| tee /dev/stderr \
-| tail -n1 \
-| sed -n '/^NEW_VERSION=/p' >> "$GITHUB_ENV"

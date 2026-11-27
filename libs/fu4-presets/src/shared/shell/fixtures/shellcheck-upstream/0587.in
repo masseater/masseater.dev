@@ -1,1 +1,0 @@
-wait -zzx -p foo; echo $foo

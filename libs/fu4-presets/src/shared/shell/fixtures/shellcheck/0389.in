@@ -1,2 +1,0 @@
-SHORT_SHA=$(node -p 'process.version.split(/-nightly\d{8}/)[1]')
-echo "NIGHTLY_REF=$(gh api /repos/nodejs/node/commits/$SHORT_SHA --jq '.sha')" >> $GITHUB_ENV

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { CredentialsFromEnv } from "@distilled.cloud/github/Credentials";
-import { CommandFailed, fail, finished, mask } from "@masseater.dev/github-workflow";
-import { runMainWith } from "@masseater.dev/node-main";
+import { CommandFailed, fail, finished, mask } from "@r_masseater/github-workflow";
+import { runMainWith } from "@r_masseater/node-main";
 import { Array as Arr, Config, Console, Effect, String as Str, pipe } from "effect";
 
 import { installedRepositories } from "./lib/installed-repositories.ts";

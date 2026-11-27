@@ -1,8 +1,0 @@
-# Keep the config outside the workspace so checkout does not remove it.
-ncu-config --global set branch "${GITHUB_REF_NAME}"
-ncu-config --global set upstream origin
-ncu-config --global set username "$USERNAME"
-ncu-config --global set token "$GH_TOKEN"
-ncu-config --global set jenkins_token "$JENKINS_TOKEN"
-ncu-config --global set repo "${GITHUB_REPOSITORY#*/}"
-ncu-config --global set owner "${GITHUB_REPOSITORY_OWNER}"

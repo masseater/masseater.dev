@@ -1,4 +1,4 @@
-import type { PluginUse } from "@r_masseater/fumx-parser";
+import type { PluginUse } from "@r_masseater/song-format";
 import { Array as Arr, Effect, Option, pipe } from "effect";
 
 import type { MixPlugin, MixRequest, PlayedEvent } from "#/shared/lib/plugin/plugin.ts";

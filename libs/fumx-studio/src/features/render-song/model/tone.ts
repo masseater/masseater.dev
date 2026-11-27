@@ -1,4 +1,4 @@
-import type { Effect as SongEffect } from "@r_masseater/fumx-parser";
+import type { Effect as SongEffect } from "@r_masseater/song-format";
 import type { Option } from "effect";
 
 import { SVF, svf } from "#/shared/lib/dsp/filter.ts";

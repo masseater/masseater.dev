@@ -1,7 +1,7 @@
-import { TICKS_PER_WHOLE, readSong } from "@r_masseater/fumx-parser";
-import type { Song as ParsedSong } from "@r_masseater/fumx-parser";
-import { soundingsOf } from "@r_masseater/fumx-parser/analysis";
-import type { Sounding } from "@r_masseater/fumx-parser/analysis";
+import { TICKS_PER_WHOLE, readSong } from "@r_masseater/song-format";
+import type { Song as ParsedSong } from "@r_masseater/song-format";
+import { soundingsOf } from "@r_masseater/song-format/analysis";
+import type { Sounding } from "@r_masseater/song-format/analysis";
 import { Array as Arr, Effect, Number as Num, Option, Order, Record as Rec, pipe } from "effect";
 
 import type { Snippet } from "#/shared/lib/index.ts";

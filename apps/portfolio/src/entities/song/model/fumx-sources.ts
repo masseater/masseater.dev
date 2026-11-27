@@ -1,5 +1,5 @@
 import type { FumxPlugin, Plugins } from "@masseater.dev/fumx-studio/plugin/plugin";
-import type { Song as FumxSong } from "@r_masseater/fumx-parser";
+import type { Song as FumxSong } from "@r_masseater/song-format";
 import { Array as Arr, Effect, Option, Record as Rec, String as Str, pipe } from "effect";
 
 const SLUG = 2;

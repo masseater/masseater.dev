@@ -1,1 +1,0 @@
-declare -i s; declare +i s; s=$(foo); echo $s

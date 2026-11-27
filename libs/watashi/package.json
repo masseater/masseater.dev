@@ -42,8 +42,8 @@
   },
   "dependencies": {
     "@masseater.dev/local-server": "workspace:*",
-    "@r_masseater/h56m": "workspace:*",
-    "@r_masseater/h56m-presets": "workspace:*"
+    "@r_masseater/h56m": "catalog:",
+    "@r_masseater/h56m-presets": "catalog:"
   },
   "devDependencies": {
     "@effect/platform-node": "catalog:",

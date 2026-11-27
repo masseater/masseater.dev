@@ -1,6 +1,6 @@
 import type { Structure, TrackStyle } from "@masseater.dev/daw-view";
-import type { Song } from "@r_masseater/fumx-parser";
-import { analyze } from "@r_masseater/fumx-parser/analysis";
+import type { Song } from "@r_masseater/song-format";
+import { analyze } from "@r_masseater/song-format/analysis";
 import { Array as Arr, Option, pipe } from "effect";
 import { Chord, Note } from "tonal";
 
