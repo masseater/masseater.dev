@@ -12,6 +12,7 @@ export const portfolio = {
   sections: {
     projects: "Projects",
     blogs: "Blogs",
+    slog: "Slog",
     sloppedia: "Sloppedia",
     nikogori: "Nikogori",
     "ai-produced": "AI Produced",

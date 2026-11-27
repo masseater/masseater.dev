@@ -17,7 +17,7 @@ import { FetchHttpClient } from "effect/http";
 import { ExamplesFile, commons, pageImages, underscored } from "./lib/wikimedia.ts";
 import type { Examples, ExampleValue, Licensed } from "./lib/wikimedia.ts";
 
-const ARTICLE = "content/blogs/video-vj-techniques.md";
+const ARTICLE = "content/slog/video-vj-techniques.md";
 const OUTPUT = "src/entities/technique/model/generated/examples.json";
 const WIKI = /\]\((?<url>https:\/\/(?<lang>en|ja)\.wikipedia\.org\/wiki\/[^)\s]+)\)/gu;
 

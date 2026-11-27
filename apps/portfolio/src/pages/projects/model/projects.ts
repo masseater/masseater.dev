@@ -1,6 +1,6 @@
 export type ProjectLink = Readonly<{ label: string; href: string }>;
 
-export type BlogRef = Readonly<{ category: "blogs"; slug: string }>;
+export type BlogRef = Readonly<{ category: "slog"; slug: string }>;
 
 const projectTags = ["site", "package", "plugin", "app", "mcp", "template", "skill"] as const;
 
@@ -22,7 +22,7 @@ const SOURCE = `${GITHUB}/masseater.dev/tree/main`;
 
 const npm = (name: string): ProjectLink => ({ label: "npm", href: `${NPM}/${name}` });
 
-const blog = (slug: string): BlogRef => ({ category: "blogs", slug });
+const blog = (slug: string): BlogRef => ({ category: "slog", slug });
 
 export const projects: readonly Project[] = [
   {
