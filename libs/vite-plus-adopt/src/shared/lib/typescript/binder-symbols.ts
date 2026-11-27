@@ -136,19 +136,19 @@ const DECLARATION_EFFECTS: readonly (readonly [
 ])[] = [
   [
     EXPORT_TABLE_FLAGS,
-    (symbol) => {
+    (symbol): void => {
       symbol.exports ??= new Map();
     },
   ],
   [
     MEMBER_TABLE_FLAGS,
-    (symbol) => {
+    (symbol): void => {
       symbol.members ??= new Map();
     },
   ],
   [
     SymbolFlags.Value,
-    (symbol, node) => {
+    (symbol, node): void => {
       setValueDeclaration(symbol, node);
     },
   ],

@@ -16,7 +16,7 @@ const nodeDependenciesInTests = (): Plugin => ({
   apply: (_config, { mode }) => mode === "test",
   configEnvironment: {
     order: "post",
-    handler: (_name, options) => {
+    handler: (_name, options): void => {
       options.resolve = { ...options.resolve, noExternal: [] };
     },
   },

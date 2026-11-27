@@ -84,10 +84,10 @@ export interface Invalidation {
 export const createInvalidation = (): Invalidation => {
   let dirty = true;
   return {
-    mark: () => {
+    mark: (): void => {
       dirty = true;
     },
-    take: () => {
+    take: (): boolean => {
       const was = dirty;
       dirty = false;
       return was;

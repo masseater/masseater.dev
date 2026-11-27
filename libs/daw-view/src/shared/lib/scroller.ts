@@ -13,13 +13,13 @@ export const createScroller = (node: HTMLElement): Scroller => {
   let expected = Option.none<number>();
   return {
     node,
-    moveTo: (left) => {
+    moveTo: (left): void => {
       if (Math.abs(node.scrollLeft - left) > SLACK) {
         expected = Option.some(left);
         node.scrollLeft = left;
       }
     },
-    settle: () => {
+    settle: (): boolean => {
       const own = Option.exists(expected, (left) => Math.abs(node.scrollLeft - left) < NEAR);
       if (own) {
         expected = Option.none();

@@ -79,7 +79,7 @@ export const glob = workflowRule({
   visitor: (fail): Visitor => ({
     ...NOOP,
     workflowPre: eachEvent(checkEvent(fail)),
-    jobPre: (job) => {
+    jobPre: (job): void => {
       const version = pipe(
         Option.fromNullishOr(job.snapshot),
         Option.flatMap((snapshot) => Option.fromNullishOr(snapshot.version)),

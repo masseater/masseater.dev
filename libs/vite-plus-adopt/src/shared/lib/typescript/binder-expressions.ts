@@ -47,19 +47,19 @@ const BINARY_BINDERS: ReadonlyMap<
 > = new Map([
   [
     AssignmentKind.ExportsProperty,
-    (binding, node, scope) => {
+    (binding, node, scope): void => {
       bindExportsPropertyAssignment(binding, node, scope);
     },
   ],
   [
     AssignmentKind.ModuleExports,
-    (binding, node, scope) => {
+    (binding, node, scope): void => {
       bindModuleExportsAssignment(binding, node, scope);
     },
   ],
   [
     AssignmentKind.ThisProperty,
-    (binding, node) => {
+    (binding, node): void => {
       bindThisPropertyAssignment(binding, node);
     },
   ],

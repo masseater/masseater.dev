@@ -54,7 +54,7 @@ export const scopeProviderOf: From<LangiumCoreServices, ScopeProvider> = (servic
   const { IndexManager } = services.shared.workspace;
   const { AstReflection } = services.shared;
   return {
-    getScope: (context) => {
+    getScope: (context): Scope => {
       const { container } = context;
       if (isImportedSymbol(container) && isImport(container.$container)) {
         const source = importedUriOf(container.$container).toString();

@@ -206,6 +206,7 @@ catalog:
   "@oxlint/plugins": 1.95.0
   oxlint: 1.95.0
   oxlint-tsgolint: 7.0.2008
+  tsrs: 7.1.0-beta.tsrs5
   "@eslint-react/eslint-plugin": 5.30.6
   "@remotion/eslint-plugin": 4.0.546
   "@tanstack/eslint-plugin-query": 5.108.4

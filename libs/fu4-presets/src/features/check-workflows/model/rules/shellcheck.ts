@@ -35,18 +35,18 @@ export const shellcheck = workflowRule({
     const shells: Shells = { workflow: Option.none(), job: Option.none(), runner: Option.none() };
     return {
       ...NOOP,
-      workflowPre: (workflow) => {
+      workflowPre: (workflow): void => {
         shells.workflow = shellOf(workflow.defaults);
       },
-      jobPre: (job) => {
+      jobPre: (job): void => {
         shells.job = shellOf(job.defaults);
         shells.runner = runnerShell(job);
       },
-      jobPost: () => {
+      jobPost: (): void => {
         shells.job = Option.none();
         shells.runner = Option.none();
       },
-      step: (step) => {
+      step: (step): void => {
         for (const [script, at] of Option.toArray(checkedRun(shells)(step))) {
           const parseable = parseableScript(sanitize(script.value));
           for (const finding of checkShell(context.parseScript("bash", parseable))) {

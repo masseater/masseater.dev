@@ -59,7 +59,7 @@ export const contentImport = ({ name, extension, load }: ContentImport): Plugin 
     name,
     transform: {
       filter: { id: pattern },
-      handler(content, id) {
+      handler(content, id): Promise<Readonly<{ code: string }>> {
         return runtime.runPromise(
           loaded(id, content).pipe(
             Effect.map(({ code, watchFiles }) => {
@@ -72,7 +72,7 @@ export const contentImport = ({ name, extension, load }: ContentImport): Plugin 
         );
       },
     },
-    configureVitest: ({ defineCacheKeyGenerator }) => {
+    configureVitest: ({ defineCacheKeyGenerator }): void => {
       defineCacheKeyGenerator(({ id }) => {
         if (pattern.test(id)) {
           return false;

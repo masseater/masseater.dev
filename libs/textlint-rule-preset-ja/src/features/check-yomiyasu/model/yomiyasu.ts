@@ -45,7 +45,7 @@ export const findingsOf =
 export const yomiyasu: TextlintRuleModule = (context) => {
   const { Syntax, RuleError, report, getSource, getFilePath, locator } = context;
   return {
-    [Syntax.Document]: (node) => {
+    [Syntax.Document]: (node): void => {
       const text = getSource(node);
       const starts = lineStarts(text);
       for (const finding of findingsOf(getFilePath() ?? "")(text)) {

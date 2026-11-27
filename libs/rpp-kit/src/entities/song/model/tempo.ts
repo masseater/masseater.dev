@@ -169,15 +169,15 @@ export const tempoMapOf = (root: Chunk): TempoMap => {
   return {
     outline,
     points,
-    beatAt: (seconds) => {
+    beatAt: (seconds): number => {
       const segment = lastWhere(segments, ({ time }) => time <= seconds);
       return segment.beat + beatsWithin(segment, seconds - segment.time);
     },
-    quartersPerSecondAt: (seconds) => {
+    quartersPerSecondAt: (seconds): number => {
       const segment = lastWhere(segments, ({ time }) => time <= seconds);
       return (segment.bpm + segment.slope * (seconds - segment.time)) / SECONDS_PER_MINUTE;
     },
-    secondsAt: (beat) => {
+    secondsAt: (beat): number => {
       const segment = lastWhere(segments, (found) => found.beat <= beat);
       return segment.time + secondsWithin(segment, beat - segment.beat);
     },

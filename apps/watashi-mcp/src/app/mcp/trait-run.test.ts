@@ -130,7 +130,7 @@ const fake = (answer: (input: string) => readonly unknown[]): Fake => {
   return {
     conversation: {
       pickModel: () => Promise.resolve(),
-      reset: () => {
+      reset: (): Promise<void> => {
         counted.resets += 1;
         return Promise.resolve();
       },

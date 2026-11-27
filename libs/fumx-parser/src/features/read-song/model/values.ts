@@ -51,31 +51,31 @@ const durationValue: From<string, Option.Option<Value>> = (text) =>
 type Reader = readonly [From<Literal, Option.Option<string>>, From<string, Option.Option<Value>>];
 
 const READERS: readonly Reader[] = [
-  [(literal) => Option.fromNullishOr(literal.pitch), pitchValue],
-  [(literal) => Option.fromNullishOr(literal.duration), durationValue],
+  [(literal): Option.Option<string> => Option.fromNullishOr(literal.pitch), pitchValue],
+  [(literal): Option.Option<string> => Option.fromNullishOr(literal.duration), durationValue],
   [
-    (literal) => Option.fromNullishOr(literal.decibels),
-    (text) => Option.some(measured("decibels")(decibelsOf(text))),
+    (literal): Option.Option<string> => Option.fromNullishOr(literal.decibels),
+    (text): Option.Option<Value> => Option.some(measured("decibels")(decibelsOf(text))),
   ],
   [
-    (literal) => Option.fromNullishOr(literal.percent),
-    (text) => Option.some(measured("percent")(percentOf(text))),
+    (literal): Option.Option<string> => Option.fromNullishOr(literal.percent),
+    (text): Option.Option<Value> => Option.some(measured("percent")(percentOf(text))),
   ],
   [
-    (literal) => Option.fromNullishOr(literal.hertz),
-    (text) => Option.some(measured("hertz")(hertzOf(text))),
+    (literal): Option.Option<string> => Option.fromNullishOr(literal.hertz),
+    (text): Option.Option<Value> => Option.some(measured("hertz")(hertzOf(text))),
   ],
   [
-    (literal) => Option.fromNullishOr(literal.time),
-    (text) => Option.some(measured("time")(millisecondsOf(text))),
+    (literal): Option.Option<string> => Option.fromNullishOr(literal.time),
+    (text): Option.Option<Value> => Option.some(measured("time")(millisecondsOf(text))),
   ],
   [
-    (literal) => Option.fromNullishOr(literal.semitones),
-    (text) => Option.some(measured("semitones")(semitonesOf(text))),
+    (literal): Option.Option<string> => Option.fromNullishOr(literal.semitones),
+    (text): Option.Option<Value> => Option.some(measured("semitones")(semitonesOf(text))),
   ],
   [
-    (literal) => Option.fromNullishOr(literal.text),
-    (text) => Option.some({ kind: "string", value: text }),
+    (literal): Option.Option<string> => Option.fromNullishOr(literal.text),
+    (text): Option.Option<Value> => Option.some({ kind: "string", value: text }),
   ],
 ];
 

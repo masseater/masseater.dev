@@ -205,16 +205,16 @@ const contextOf: Fn<
 };
 
 const rendererOf: Fn<Context, Renderer> = (context) => ({
-  draw: ({ video, frame }) => {
+  draw: ({ video, frame }): void => {
     draw({ context, video, frame });
   },
-  upload: ({ asset, source }) => {
+  upload: ({ asset, source }): void => {
     upload({ context, asset, source });
   },
-  setTextWidths: (widths) => {
+  setTextWidths: (widths): void => {
     fillTextWidths({ data: context.data, widths });
   },
-  dispose: () => {
+  dispose: (): void => {
     context.device.destroy();
   },
 });

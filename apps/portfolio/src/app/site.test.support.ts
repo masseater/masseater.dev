@@ -210,7 +210,7 @@ const rewrite = (html: string, [selector, handlers]: Rule): string => {
 
 const rewriting = (rules: readonly Rule[]): TransformStream<string, string> =>
   new TransformStream({
-    transform: (chunk, controller) => {
+    transform: (chunk, controller): void => {
       controller.enqueue(Arr.reduce(rules, chunk, rewrite));
     },
   });

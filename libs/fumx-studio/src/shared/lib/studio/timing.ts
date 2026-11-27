@@ -44,7 +44,7 @@ export const gridOf = ({ tempo, swing }: Feel): Grid => {
   return {
     sixteenth,
     bar,
-    at: (at, step) => {
+    at: (at, step): number => {
       const given = orDefault(SILENT)(step);
       const carried = Math.floor(given / STEPS_PER_BAR);
       const within = given - carried * STEPS_PER_BAR;
