@@ -28,9 +28,9 @@ jobs:
         env:
           TITLE: ${{ github.event.pull_request.title }}
           NUMBER: ${{ github.event.pull_request.number }}
-        run: |
-          printf '%s (#%s)\n' "$TITLE" "$NUMBER" > "$RUNNER_TEMP/squash-message"
-          vp exec msch --commit-msg "$RUNNER_TEMP/squash-message"
+        run: printf '%s (#%s)\n' "$TITLE" "$NUMBER" > "$RUNNER_TEMP/squash-message"
+      - if: github.event_name == 'pull_request'
+        run: vp exec msch --commit-msg "$RUNNER_TEMP/squash-message"
 
   wake:
     needs: [up-to-date]
