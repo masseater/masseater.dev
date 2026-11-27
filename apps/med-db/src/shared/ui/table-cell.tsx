@@ -1,8 +1,8 @@
+import { cn } from "@masseater.dev/ui/cn";
+import { TableCell as BaseTableCell } from "@masseater.dev/ui/table";
 import { cva } from "class-variance-authority";
 import type { VariantProps } from "class-variance-authority";
 import type { ComponentProps, ReactNode } from "react";
-
-import { cn } from "#/shared/lib/utils.ts";
 
 const tableCellVariants = cva("px-4 py-3 align-middle", {
   variants: {
@@ -23,5 +23,5 @@ export const TableCell = ({
   variant = "default",
   ...props
 }: ComponentProps<"td"> & Readonly<VariantProps<typeof tableCellVariants>>): ReactNode => (
-  <td data-slot="table-cell" className={cn(tableCellVariants({ variant }), className)} {...props} />
+  <BaseTableCell className={cn(tableCellVariants({ variant }), className)} {...props} />
 );

@@ -53,3 +53,13 @@ export const tablesOf = (summary: Summary): readonly Table[] => [
     ),
   },
 ];
+
+export const headingsOf = (
+  columns: readonly Column[],
+): readonly Readonly<{ key?: string; label: string }>[] => [
+  { label: COPY.way },
+  ...pipe(
+    columns,
+    Arr.map(({ id, label }) => ({ key: id, label })),
+  ),
+];

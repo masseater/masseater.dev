@@ -16,6 +16,7 @@
     "./color-scheme": "./src/shared/lib/color-scheme.ts",
     "./portfolio": "./src/shared/lib/portfolio.ts",
     "./styles.css": "./src/app/styles.css",
+    "./table": "./src/shared/ui/table/index.ts",
     "./theme.css": "./src/app/theme.css",
     "./web-analytics": "./src/shared/lib/web-analytics.ts"
   },

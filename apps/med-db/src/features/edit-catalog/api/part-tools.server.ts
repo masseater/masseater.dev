@@ -1,4 +1,4 @@
-import { compactInput } from "@masseater.dev/mcp-tool-call";
+import { OVERWRITE, WRITE, compactInput } from "@masseater.dev/mcp-tool-call";
 import type { McpServer } from "@modelcontextprotocol/server";
 import type { DrizzleD1Database } from "drizzle-orm/d1";
 import { Schema } from "effect";
@@ -9,8 +9,6 @@ import type { CatalogRelations } from "#/shared/db/index.server.ts";
 
 import { addParts, deletePart, setVideoParts, updatePart } from "./part-write.server.ts";
 
-const WRITE = { readOnlyHint: false, destructiveHint: false, openWorldHint: false };
-const DESTRUCTIVE = { readOnlyHint: false, destructiveHint: true, openWorldHint: false };
 const PARTS_SCHEMA = VideoPartsInput.pipe(
   Schema.toStandardSchemaV1,
   Schema.toStandardJSONSchemaV1,
@@ -26,7 +24,7 @@ export const registerPartTools =
         description:
           "動画のパート表を丸ごと差し替える。配列の順がパートの順になる。既存のパートのコメントも消えるので、登録済みの動画では先に get_video で確かめる。表記ゆれが疑われる曲は先に search_songs で確かめ、既存の表記に合わせるか add_song_alias で別表記を足す",
         inputSchema: PARTS_SCHEMA,
-        annotations: DESTRUCTIVE,
+        annotations: OVERWRITE,
       },
       (input) => runTool(db)(setVideoParts(input)),
     );
@@ -62,7 +60,7 @@ export const registerPartTools =
           Schema.toStandardJSONSchemaV1,
           compactInput,
         ),
-        annotations: DESTRUCTIVE,
+        annotations: OVERWRITE,
       },
       ({ partId }) => runTool(db)(deletePart(partId)),
     );

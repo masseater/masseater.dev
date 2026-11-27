@@ -1,0 +1,10 @@
+export { ColumnHeadings } from "./column-headings.tsx";
+export type { ColumnHeading } from "./column-headings.tsx";
+export type { TableHeadVariant } from "./table-head.tsx";
+export { Table } from "./table.tsx";
+export { TableBody } from "./table-body.tsx";
+export { TableCaption } from "./table-caption.tsx";
+export { TableCell } from "./table-cell.tsx";
+export { TableHead } from "./table-head.tsx";
+export { TableHeader } from "./table-header.tsx";
+export { TableRow } from "./table-row.tsx";

@@ -5,6 +5,7 @@ import type { Bus } from "@masseater.dev/fumx-studio/studio/bus";
 
 import type { Impulses, Life } from "./context.ts";
 import { LEVEL } from "./levels.ts";
+import { shaped } from "./shaping.ts";
 import { kept } from "./tone.ts";
 
 const FIRST = 0;
@@ -32,12 +33,7 @@ export const delayReturn =
   (life: Life) =>
   ({ main, duck }: Returning): void => {
     const send = life.rack.get("DELAY SEND");
-    life.studio.each({
-      frames: life.studio.frames,
-      edit: (channel, from, to) => {
-        svf({ ...DELAY.rumble, from, to })(channel);
-      },
-    })(send);
+    shaped(life)((span) => [svf({ ...DELAY.rumble, ...span })])(send);
     const echo = life.studio.delay({
       ...DELAY.echo,
       seconds: life.grid.sixteenth * DELAY.sixteenths,
@@ -63,13 +59,9 @@ export interface Plate {
 
 export const plateOpened = (life: Life): Plate => {
   const send = life.rack.get("PLATE SEND");
-  life.studio.each({
-    frames: life.studio.frames,
-    edit: (channel, from, to) => {
-      svf({ ...PLATE.rumble, from, to })(channel);
-      svf({ ...PLATE.fizz, from, to })(channel);
-    },
-  })(send);
+  shaped(life)((span) => [svf({ ...PLATE.rumble, ...span }), svf({ ...PLATE.fizz, ...span })])(
+    send,
+  );
   return { send, plate: life.studio.bus({}) };
 };
 
