@@ -16,8 +16,10 @@ export type { Progression } from "#/features/check-progressions/index.ts";
 export { bach, bachPlugin, stylePluginOf } from "#/features/check-style/index.ts";
 export { styleRules, styleRulesPluginOf } from "#/features/check-habits/index.ts";
 export type { StyleRulesPreset } from "#/features/check-habits/index.ts";
-export { HABIT_KINDS, StyleRulesSchema } from "#/shared/lib/style-rules.ts";
-export type { HabitKind, HabitRule, StyleRules } from "#/shared/lib/style-rules.ts";
+export { HABIT_KINDS, StyleRulesSchema, subjectKeyOf } from "#/shared/lib/style-rules.ts";
+export type { HabitKind, HabitRule, StyleRules, Subject } from "#/shared/lib/style-rules.ts";
+export { mixKeyOf } from "#/shared/lib/mix-habit.ts";
+export type { MixHabit } from "#/shared/lib/mix-habit.ts";
 export type { StyleTable, Transitions } from "#/shared/lib/style-table.ts";
 export { harmony, harmonyPlugin } from "#/features/check-harmony/index.ts";
 

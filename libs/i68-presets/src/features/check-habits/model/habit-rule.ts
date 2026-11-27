@@ -1,48 +1,35 @@
 import { defineRule } from "@r_masseater/i68";
 import type { Rule } from "@r_masseater/i68";
-import { Array as Arr, Option, String as Str, pipe } from "effect";
+import { Array as Arr, Option, pipe } from "effect";
 
-import { progressionOf } from "#/shared/lib/degrees.ts";
-import type { Step } from "#/shared/lib/degrees.ts";
+import { subjectKeyOf } from "#/shared/lib/style-rules.ts";
 import type { HabitKind, HabitRule, StyleRules } from "#/shared/lib/style-rules.ts";
 import { reporterOf } from "#/shared/lib/voices.ts";
 
-const FIRST = 1;
+import { occasionsOf } from "./occasions.ts";
 
 type Wording = Readonly<{
   description: (name: string) => string;
-  breaks: (habit: HabitRule, next: string) => boolean;
-  message: (name: string, habit: HabitRule) => string;
+  reportsWhen: boolean;
+  message: (name: string, key: string) => string;
 }>;
 
 const WORDINGS: Readonly<Record<HabitKind, Wording>> = {
   keep: {
-    description: (name) => `Chord changes keep the habits of ${name}`,
-    breaks: (habit, next) => habit.next !== next,
-    message: (name, habit) => `${name} goes ${habit.context} → ${habit.next} here`,
+    description: (name) => `Songs keep the habits of ${name}`,
+    reportsWhen: false,
+    message: (name, key) => `${name} keeps ${key} here`,
   },
   fix: {
-    description: (name) => `Chord changes avoid the habits ${name} is fixing`,
-    breaks: (habit, next) => habit.next === next,
-    message: (name, habit) => `${habit.context} → ${habit.next} is a habit ${name} is fixing`,
+    description: (name) => `Songs avoid the habits ${name} is fixing`,
+    reportsWhen: true,
+    message: (name, key) => `${key} is a habit ${name} is fixing`,
   },
   suggest: {
-    description: (name) => `Chord changes that would fit ${name}`,
-    breaks: (habit, next) => habit.next !== next,
-    message: (name, habit) => `${habit.context} → ${habit.next} would fit ${name} here`,
+    description: (name) => `Habits that would fit ${name}`,
+    reportsWhen: false,
+    message: (name, key) => `${key} would fit ${name} here`,
   },
-};
-
-const follows = (before: readonly Step[], context: string): boolean => {
-  const words = Str.split(" ")(context);
-  return (
-    before.length >= words.length &&
-    pipe(
-      Arr.takeRight(before, words.length),
-      Arr.map((step) => step.token),
-      Arr.join(" "),
-    ) === context
-  );
 };
 
 const detailOf = (habit: HabitRule): string =>
@@ -66,19 +53,14 @@ export const habitRuleOf = ({ rules, kind }: HabitRuleInput): Rule => {
     meta: { description: wording.description(rules.name) },
     check: (context) => {
       const report = reporterOf(context);
-      const steps = progressionOf(context.soundings)(context.song);
-      for (const index of Arr.drop(
-        Arr.makeBy(steps.length, (at) => at),
-        FIRST,
-      )) {
-        const step = Arr.getUnsafe(steps, index);
-        const before = Arr.take(steps, index);
-        for (const habit of habits) {
-          if (follows(before, habit.context) && wording.breaks(habit, step.token)) {
-            report(`${String(index)}:${habit.context}:${habit.next}`, {
-              line: step.line,
-              column: step.column,
-              message: wording.message(rules.name, habit),
+      for (const habit of habits) {
+        const key = subjectKeyOf(habit.habit);
+        for (const occasion of occasionsOf(context)(habit.habit)) {
+          if (occasion.holds === wording.reportsWhen) {
+            report(`${key}:${occasion.id}`, {
+              line: occasion.line,
+              column: occasion.column,
+              message: wording.message(rules.name, key),
               detail: detailOf(habit),
             });
           }

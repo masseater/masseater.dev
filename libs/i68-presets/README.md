@@ -74,13 +74,21 @@ The table in `src/features/check-style/data/bach-chorales.json` holds only count
 
 ## Style rules
 
-Turns the chord-change habits you judged for a style into rules. `styleRules({ plugin, rules })` takes a `StyleRules` object, which the fushi app exports as JSON. Each habit is a chord change after 1-3 chords, judged `keep`, `fix` or `suggest`, with the aim it serves.
+Turns the habits you judged for a style into rules. `styleRules({ plugin, rules })` takes a `StyleRules` object, which the fushi app exports as JSON. Each entry is judged `keep`, `fix` or `suggest` and names the aim it serves. A habit is one of these:
 
-| Rule               | What it catches                                           | How to fix it                                      |
-| ------------------ | --------------------------------------------------------- | -------------------------------------------------- |
-| `<plugin>/keep`    | A kept habit's chords, followed by a different chord      | Go to the chord the habit names, or ignore it here |
-| `<plugin>/fix`     | A habit being fixed, made again                           | Pick another chord                                 |
-| `<plugin>/suggest` | A suggested habit's chords, followed by a different chord | Try the chord the suggestion names                 |
+- `chord`: a chord change after 1-3 chords
+- `level`: a track's volume below the loudest track, in 3 dB steps
+- `pan`: a track's pan, in 25% steps
+- `send`: a track's send to a bus, in 10% steps
+- `move`: a track's volume or pan going up or down in the bar before or after a section change
+
+Tracks are matched by name, ignoring a trailing `-2` and the like.
+
+| Rule               | What it catches                                      | How to fix it                       |
+| ------------------ | ---------------------------------------------------- | ----------------------------------- |
+| `<plugin>/keep`    | A place where a kept habit could happen but does not | Follow the habit, or ignore it here |
+| `<plugin>/fix`     | A habit being fixed, done again                      | Do something else                   |
+| `<plugin>/suggest` | A place where a suggested habit could happen         | Try the habit                       |
 
 `keep` and `suggest` warn and `fix` is an error. The detail names the aim and, when given, the reason.
 

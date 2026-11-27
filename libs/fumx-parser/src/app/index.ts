@@ -1,4 +1,4 @@
-export { SongSchema } from "#/entities/song/index.ts";
+export { MIXER_PARAMETERS, SongSchema } from "#/entities/song/index.ts";
 export type {
   Amount,
   Automation,
@@ -11,6 +11,7 @@ export type {
   Lyric,
   Meter,
   Mixer,
+  MixerParameter,
   Note,
   PlayParam,
   Plugin,

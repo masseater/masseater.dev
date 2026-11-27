@@ -10,7 +10,6 @@ import {
 } from "./binder-cjs.ts";
 import { declare, declareExport } from "./binder-declarations.ts";
 import type { FileBinding, Scope, SymbolFlagPair } from "./binder-declarations.ts";
-import { setValueDeclaration } from "./binder-symbols.ts";
 import {
   getRightMostAssignedExpression,
   isAccessExpression,
@@ -73,7 +72,7 @@ export const bindModuleExportsAssignment: {
       Option.liftPredicate(MODULE_EXPORTS_ALIAS, () => isAliasableExpression(node.right)),
       () => MODULE_EXPORTS_VALUE,
     );
-    setValueDeclaration(declareExport(binding, node, flags), node);
+    declareExport(binding, node, flags).setValueDeclaration(node);
   },
 );
 

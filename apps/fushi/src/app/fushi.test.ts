@@ -83,7 +83,7 @@ describe("fushi", () => {
       const exported = yield* exportPreset(disk);
       expect(exported).toStrictEqual({
         name: "歌もの",
-        habits: [{ ...TRANSITION, kind: "keep", aim: "解決を遅らせる" }],
+        habits: [{ habit: { type: "chord", ...TRANSITION }, kind: "keep", aim: "解決を遅らせる" }],
       });
     }),
   );

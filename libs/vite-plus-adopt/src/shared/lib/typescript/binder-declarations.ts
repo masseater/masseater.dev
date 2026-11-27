@@ -15,23 +15,63 @@ import {
   hasSyntacticModifier,
   isAmbientModule,
 } from "./binder-names.ts";
+import { SymbolTable } from "./binder-symbol-table.ts";
 import { declareSymbol } from "./binder-symbols.ts";
-import type { BoundSymbol, SymbolTable } from "./binder-symbols.ts";
+import type { BoundSymbol } from "./binder-symbols.ts";
 import { nameText } from "./binder-syntax.ts";
 import { hasFlag } from "./flags.ts";
 
 const DATA_FIRST_ARITY = 2;
 const DATA_FIRST_ARITY_3 = 3;
 
-export interface FileBinding {
+export interface FileFacts {
   readonly file: SourceFile;
-  readonly locals: SymbolTable;
   readonly isJs: boolean;
   readonly exportContext: boolean;
   readonly strict: boolean;
   readonly isExternalModule: boolean;
-  symbol?: BoundSymbol;
-  commonJsModuleIndicator?: Node;
+}
+
+export class FileBinding implements FileFacts {
+  public readonly file: SourceFile;
+
+  public readonly locals = new SymbolTable();
+
+  public readonly isJs: boolean;
+
+  public readonly exportContext: boolean;
+
+  public readonly strict: boolean;
+
+  public readonly isExternalModule: boolean;
+
+  #symbol: BoundSymbol | undefined;
+
+  #commonJsModuleIndicator: Node | undefined;
+
+  public constructor(facts: FileFacts) {
+    this.file = facts.file;
+    this.isJs = facts.isJs;
+    this.exportContext = facts.exportContext;
+    this.strict = facts.strict;
+    this.isExternalModule = facts.isExternalModule;
+  }
+
+  public get symbol(): BoundSymbol | undefined {
+    return this.#symbol;
+  }
+
+  public get commonJsModuleIndicator(): Node | undefined {
+    return this.#commonJsModuleIndicator;
+  }
+
+  public readonly attach = (symbol: BoundSymbol): void => {
+    this.#symbol = symbol;
+  };
+
+  public readonly markCommonJs = (node: Node): void => {
+    this.#commonJsModuleIndicator = node;
+  };
 }
 
 export interface Scope {
@@ -58,7 +98,7 @@ export interface DeclareRequest {
 const DEFAULT_NAME = "default";
 
 export const exportsOf = (owner: Option.Option<BoundSymbol>): DeclarationTarget => ({
-  table: owner.pipe(Option.flatMap((symbol) => Option.fromNullishOr(symbol.exports))),
+  table: owner.pipe(Option.flatMap((symbol: BoundSymbol) => symbol.exportTable)),
   parent: owner,
 });
 
@@ -138,7 +178,7 @@ const declareExportedMember = (
     return declareExport(binding, node, flags);
   }
   const local = declareLocal(binding, node, localExportFlags(flags));
-  local.exportSymbol = declareExport(binding, node, flags);
+  local.exportThrough(declareExport(binding, node, flags));
   return local;
 };
 

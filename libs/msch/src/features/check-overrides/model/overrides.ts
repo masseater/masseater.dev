@@ -34,7 +34,7 @@ import type { OverrideKey, Overrides } from "./override-resolution.ts";
 const WORKSPACE_FILE = "pnpm-workspace.yaml";
 const LOCKFILE = "pnpm-lock.yaml";
 const RESOLUTION_FILES = ["*package.json", WORKSPACE_FILE, LOCKFILE, ".npmrc", "patches/*"];
-const RESOLUTION_CONCURRENCY = 4;
+const RESOLUTION_CONCURRENCY = 2;
 const SUCCEEDED = 0;
 
 const taggedError = Schema.TaggedError;

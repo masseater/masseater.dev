@@ -352,8 +352,8 @@ catalogs:
       specifier: 22.0.1
       version: 22.0.1
     '@openrouter/sdk':
-      specifier: 1.5.134
-      version: 1.5.134
+      specifier: 1.5.135
+      version: 1.5.135
     '@opentelemetry/api':
       specifier: 1.10.0
       version: 1.10.0
@@ -415,8 +415,8 @@ catalogs:
       specifier: 1100.2.13
       version: 1100.2.13
     '@r_masseater/oxlint-typed-rules':
-      specifier: 0.4.3
-      version: 0.4.3
+      specifier: 0.5.0
+      version: 0.5.0
     '@r_masseater/vite-plus-adopt':
       specifier: 0.12.0
       version: 0.12.0
@@ -2403,6 +2403,9 @@ importers:
         specifier: catalog:stack
         version: 4.3.5
     devDependencies:
+      '@atproto/api':
+        specifier: 'catalog:'
+        version: 0.32.7
       '@cloudflare/workers-types':
         specifier: 'catalog:'
         version: 5.20261124.1
@@ -4443,7 +4446,7 @@ importers:
         version: link:../oxlint-plugin-decision
       '@r_masseater/oxlint-typed-rules':
         specifier: 'catalog:'
-        version: 0.4.3(effect@4.1.5)(typescript@7.1.0-beta)
+        version: 0.5.0(effect@4.1.5)(typescript@7.1.0-beta)
       '@r_masseater/textlint-rule-preset-ja':
         specifier: workspace:*
         version: link:../textlint-rule-preset-ja
@@ -5716,7 +5719,7 @@ importers:
         version: 4.1.5(effect@4.1.5)(redis@6.2.1(@opentelemetry/api@1.10.0))
       '@openrouter/sdk':
         specifier: 'catalog:'
-        version: 1.5.134
+        version: 1.5.135
       bench-summary:
         specifier: workspace:*
         version: link:../../libs/bench-summary
@@ -8548,8 +8551,8 @@ packages:
   '@open-draft/until@3.0.1':
     resolution: {integrity: sha512-s7/9ELP4aP9YZtW7RJaa0Xf3RISaRH9+EFN18FtykJYRHGNrl8f9ymvoNXzjhrjmftFvkQudtuDU9RYhk0xs3A==}
 
-  '@openrouter/sdk@1.5.134':
-    resolution: {integrity: sha512-Qh18k+XZyeBD26qtrmQUjrEeCokr3oQYRIMAsyX59ZkKK1CdiuqyByhEHSdiq5HEuBNg32sQfyC1SQ6EsuqJWg==}
+  '@openrouter/sdk@1.5.135':
+    resolution: {integrity: sha512-JdX78tuZI0OfQtkgxHUBZfxog+xB8siFyVECZrBrPm2x6fa9VM2k3/2jGXQkkoVTz+HoE3qPSfoO/bVjIEsLkw==}
 
   '@opentelemetry/api@1.10.0':
     resolution: {integrity: sha512-lMkyes8iHrG+mk6WH7X70MdCLI2RS0FwNBY1PyQ8UemaijE2m5mv5A0Niy3HtbYTFrgkUEQjFMXmSAk2hQDuPQ==}
@@ -9967,9 +9970,9 @@ packages:
       vite-plus:
         optional: true
 
-  '@r_masseater/oxlint-typed-rules@0.4.3':
-    resolution: {integrity: sha512-zPZWowimIjHg+k2oTXdbndItxF+IInCtlGwsoD6JjPFN0WF+2SYD43eS/Pvei6iKbbeWzYe7UYSCxBLT6MB5dw==}
-    engines: {node: '>=26'}
+  '@r_masseater/oxlint-typed-rules@0.5.0':
+    resolution: {integrity: sha512-SbzuMtLR+LWRqTBhj8UCgq9zsSxCy3w2/rG2J1lEe5o1apnIWfBNkr4Br/Z3/mZzc/sYSLQExZIPPxJe/4VWgw==}
+    engines: {node: v26.13.1}
     peerDependencies:
       effect: ^4.1.2
       typescript: '>=7.1.0-beta'
@@ -21801,7 +21804,7 @@ snapshots:
 
   '@open-draft/until@3.0.1': {}
 
-  '@openrouter/sdk@1.5.134':
+  '@openrouter/sdk@1.5.135':
     dependencies:
       zod: 4.6.7
 
@@ -22994,7 +22997,7 @@ snapshots:
       - redis
       - utf-8-validate
 
-  '@r_masseater/oxlint-typed-rules@0.4.3(effect@4.1.5)(typescript@7.1.0-beta)':
+  '@r_masseater/oxlint-typed-rules@0.5.0(effect@4.1.5)(typescript@7.1.0-beta)':
     dependencies:
       effect: 4.1.5
       typescript: 7.1.0-beta

@@ -53,7 +53,10 @@ export default defineConfig({
       },
       build: { command: "vp build && sequoia inject", cache: LOCKED },
       ...d1Tasks,
-      "standard-site": { command: "vpx bin/standard-site.ts && sequoia publish", cache: false },
+      "standard-site": {
+        command: "vpx bin/standard-site.ts && vpx bin/standard-site-paths.ts && sequoia publish",
+        cache: false,
+      },
       "technique-examples": { command: "vpx bin/technique-examples.ts", cache: false },
     },
   },

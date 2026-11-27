@@ -1,6 +1,6 @@
 import { CloudflareEnvironment } from "@alchemy.run/cloudflare";
 import { queryDatabase } from "@distilled.cloud/cloudflare/d1";
-import { Array as Arr, Effect, Match, Predicate, Record as Rec, String as Str, pipe } from "effect";
+import { Array as Arr, Effect, Match, Predicate, String as Str, pipe } from "effect";
 
 const PAGE_SIZE = 200;
 const NONE = 0;
@@ -10,8 +10,12 @@ const TABLES = `select name from sqlite_master
   where type = 'table' and name not like 'sqlite_%' and name not like '_cf_%'
   and name != '__alchemy_migrations' order by name`;
 
-const LINKS = `select m.name as name, f."table" as parent
-  from sqlite_master m, pragma_foreign_key_list(m.name) f where m.type = 'table'`;
+type CopyRoute = Readonly<{
+  source: string;
+  target: string;
+  table: string;
+  columns: readonly string[];
+}>;
 
 type Row = Readonly<Record<string, unknown>>;
 
@@ -74,8 +78,9 @@ const clientOf = Effect.gen(function* clientOf() {
   return client;
 });
 
-const insertion = (table: string, row: Row): Statement => {
-  const columns = Rec.keys(row);
+const aliasOf = (index: number): string => `c${index}`;
+
+const insertion = (table: string, columns: readonly string[], row: Row): Statement => {
   const names = pipe(columns, Arr.map(quoted), Arr.join(", "));
   const marks = pipe(
     columns,
@@ -84,12 +89,16 @@ const insertion = (table: string, row: Row): Statement => {
   );
   return {
     sql: `insert into ${quoted(table)} (${names}) values (${marks})`,
-    params: pipe(
-      columns,
-      Arr.map((column) => row[column]),
-    ),
+    params: Arr.makeBy(columns.length, (index) => row[aliasOf(index)]),
   };
 };
+
+const selection = (columns: readonly string[]): string =>
+  pipe(
+    columns,
+    Arr.map((column, index) => `${quoted(column)} as ${aliasOf(index)}`),
+    Arr.join(", "),
+  );
 
 const countIn = (client: Client, databaseId: string, table: string): Effect.Effect<number> =>
   client
@@ -100,15 +109,11 @@ const countIn = (client: Client, databaseId: string, table: string): Effect.Effe
       ),
     );
 
-const copyPage = (
-  client: Client,
-  route: Readonly<{ source: string; target: string; table: string }>,
-  offset: number,
-): Effect.Effect<void> =>
+const copyPage = (client: Client, route: CopyRoute, offset: number): Effect.Effect<void> =>
   client
     .rows(
       route.source,
-      `select * from ${quoted(route.table)} order by rowid limit ${PAGE_SIZE} offset ${offset}`,
+      `select ${selection(route.columns)} from ${quoted(route.table)} order by rowid limit ${PAGE_SIZE} offset ${offset}`,
     )
     .pipe(
       Effect.flatMap((rows) =>
@@ -118,7 +123,7 @@ const copyPage = (
             Effect.forEach(
               pipe(
                 rows,
-                Arr.map((row) => insertion(route.table, row)),
+                Arr.map((row) => insertion(route.table, route.columns, row)),
                 Arr.chunksOf(STATEMENTS_PER_REQUEST),
               ),
               (chunk) => client.insert(route.target, chunk),
@@ -129,12 +134,41 @@ const copyPage = (
       ),
     );
 
+const parentTablesOf = (
+  client: Client,
+  databaseId: string,
+  table: string,
+): Effect.Effect<readonly string[]> =>
+  client.rows(databaseId, `pragma foreign_key_list(${quoted(table)})`).pipe(
+    Effect.map((rows) =>
+      pipe(
+        rows,
+        Arr.map((row) => textOf(row, "table")),
+      ),
+    ),
+  );
+
+const columnsOf = (
+  client: Client,
+  databaseId: string,
+  table: string,
+): Effect.Effect<readonly string[]> =>
+  client.rows(databaseId, `pragma table_info(${quoted(table)})`).pipe(
+    Effect.map((rows) =>
+      pipe(
+        rows,
+        Arr.map((row) => textOf(row, "name")),
+      ),
+    ),
+  );
+
 const copyTable = Effect.fn("copyTable")(function* copyTable(
   client: Client,
   route: Readonly<{ source: string; target: string; table: string }>,
 ) {
+  const columns = yield* columnsOf(client, route.source, route.table);
   const existing = yield* countIn(client, route.target, route.table);
-  yield* copyPage(client, route, existing);
+  yield* copyPage(client, { ...route, columns }, existing);
   const [expected, actual] = yield* Effect.all(
     [countIn(client, route.source, route.table), countIn(client, route.target, route.table)],
     { concurrency: 1 },
@@ -155,12 +189,14 @@ export const copyRows = Effect.fn("copyRows")(function* copyRows(source: string,
     tableRows,
     Arr.map((row) => textOf(row, "name")),
   );
-  const links = yield* client.rows(source, LINKS);
+  const links = yield* Effect.forEach(tables, (table) => parentTablesOf(client, source, table), {
+    concurrency: 1,
+  });
   const parentsOf = (table: string): readonly string[] =>
     pipe(
-      links,
-      Arr.filter((link) => textOf(link, "name") === table),
-      Arr.map((link) => textOf(link, "parent")),
+      Arr.zip(tables, links),
+      Arr.filter(([name]) => name === table),
+      Arr.flatMap(([, parents]) => parents),
     );
   yield* Effect.forEach(
     dependencyOrder(tables, parentsOf),

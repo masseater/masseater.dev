@@ -4,10 +4,10 @@ import { TestClock } from "effect/testing";
 import { expect, test } from "vite-plus/test";
 
 import type { Claims } from "#/entities/credential/index.ts";
+import type { QueuedEnv } from "#/shared/api/index.ts";
 import { memoryStore } from "#/shared/lib/app-store.test.support.ts";
 
 import { ReportJson, notify, remember } from "./exposure-ledger.ts";
-import type { ExposureEnv } from "./exposure-ledger.ts";
 
 const CLAIMS: typeof Claims.Type = {
   repository_owner: "masseater",
@@ -32,7 +32,7 @@ const AN_HOUR = Duration.fromInputUnsafe("1 hour");
 const ONCE = 1;
 const TWICE = 2;
 
-type Queue = Readonly<{ env: ExposureEnv; sent: Ref.Ref<readonly ClaudeRequest[]> }>;
+type Queue = Readonly<{ env: QueuedEnv; sent: Ref.Ref<readonly ClaudeRequest[]> }>;
 
 const withQueue: Effect.Effect<Queue> = Effect.gen(function* withQueue() {
   const sent = yield* Ref.make<readonly ClaudeRequest[]>([]);
@@ -42,7 +42,7 @@ const withQueue: Effect.Effect<Queue> = Effect.gen(function* withQueue() {
     Ref.update(sent, Arr.append(request));
   const send = (request: ClaudeRequest): Promise<void> =>
     Effect.runPromiseWith(context)(record(request));
-  const env: ExposureEnv = { ...store, CLAUDE_REQUESTS: { send } };
+  const env: QueuedEnv = { ...store, CLAUDE_REQUESTS: { send } };
   return { env, sent };
 });
 
@@ -52,7 +52,7 @@ const run = <Value>(effect: Effect.Effect<Value>): Promise<Value> =>
   Effect.runPromise(Effect.provide(effect, clock));
 
 const report = (
-  env: ExposureEnv,
+  env: QueuedEnv,
   found: readonly Readonly<typeof FOUND>[],
 ): Effect.Effect<Response> => notify({ env, claims: CLAIMS, report: { findings: found } });
 

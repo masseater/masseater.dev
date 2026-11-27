@@ -1,21 +1,25 @@
 import { Array as Arr, Effect, Option, Record as Rec, Schema, pipe } from "effect";
 
 import type { Claims } from "#/entities/credential/index.ts";
-import { EXPOSURE_GRANT_KEY, Rejected, grantKeys, verify } from "#/entities/credential/index.ts";
+import {
+  EXPOSURE_GRANT_KEY,
+  Rejected,
+  answeredAs,
+  grantKeys,
+  verify,
+} from "#/entities/credential/index.ts";
 import {
   LedgerJson,
   ReportJson,
   notify,
   remember,
 } from "#/features/report-exposure/model/exposure-ledger.ts";
-import type { ExposureEnv } from "#/features/report-exposure/model/exposure-ledger.ts";
+import type { QueuedEnv } from "#/shared/api/index.ts";
 
 const LEDGER_PATH = "/exposure/ledger";
 const REPORT_PATH = "/exposure/report";
-const UNAUTHORIZED = 401;
-const BAD_GATEWAY = 502;
 
-export type ExposureRoute = Readonly<{ request: Request; env: ExposureEnv }>;
+export type ExposureRoute = Readonly<{ request: Request; env: QueuedEnv }>;
 
 const authorized = (
   request: Request,
@@ -57,17 +61,7 @@ export const exposureRoute = (route: ExposureRoute): Option.Option<Effect.Effect
     Option.map((handler) =>
       authorized(route.request).pipe(
         Effect.flatMap((claims) => handler(route, claims)),
-        Effect.catchTag("Rejected", (rejected) =>
-          Effect.logWarning("exposure.unauthorized").pipe(
-            Effect.annotateLogs({ reason: rejected.reason }),
-            Effect.as(new Response("", { status: UNAUTHORIZED })),
-          ),
-        ),
-        Effect.catchCause((cause) =>
-          Effect.logError("exposure.failed", cause).pipe(
-            Effect.as(new Response("", { status: BAD_GATEWAY })),
-          ),
-        ),
+        answeredAs("exposure"),
       ),
     ),
   );

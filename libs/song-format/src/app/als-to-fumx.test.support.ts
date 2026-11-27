@@ -1,6 +1,10 @@
 import { escapeXml, validateGeneratedSet } from "ableton-als";
 import { Array as Arr, Effect, Option, String as Str, pipe } from "effect";
 
+import { withMix } from "./als-mix.test.support.ts";
+import type { MixSpec } from "./als-mix.test.support.ts";
+import { FIRST, indexIn, timeOf } from "./als-xml.test.support.ts";
+
 export interface NoteSpec {
   readonly time: number;
   readonly duration: number;
@@ -24,6 +28,7 @@ export interface ClipSpec {
 export interface TrackSpec {
   readonly name?: string;
   readonly clips: readonly ClipSpec[];
+  readonly mix?: MixSpec;
 }
 
 export interface TempoSpec {
@@ -51,7 +56,6 @@ export interface SetSpec {
 
 export const LIVE_ELEVEN_TEMPLATE =
   "../features/convert-als/model/fixtures/als-parser/live11-template.als";
-const SONG_START = -63_072_000;
 const TEMPO_ENVELOPE = '<PointeeId Value="8" />';
 const METER_ENVELOPE = '<PointeeId Value="10" />';
 const EMPTY_EVENTS = /<Events \/>/u;
@@ -61,7 +65,6 @@ const EMPTY_LOCATORS = "<Locators>\n\t\t\t<Locators />";
 const DEFAULT_VELOCITY = 100;
 const NO_OFFSET = 0;
 const FIRST_ID = 1;
-const FIRST = 0;
 const METER_IDS_PER_DENOMINATOR = 99;
 
 const noteXml = (note: NoteSpec, id: number): string =>
@@ -130,15 +133,6 @@ const clipXml = (clip: ClipSpec, id: number): string =>
     "",
   );
 
-const indexIn = (text: string, search: string, from: number): number =>
-  pipe(
-    text,
-    Str.slice(from),
-    Str.indexOf(search),
-    Option.map((found) => found + from),
-    Option.getOrThrowWith(() => new Error(`The template has no ${search}`)),
-  );
-
 const withName = (rest: string, name: Option.Option<string>): string =>
   Option.match(name, {
     onNone: () => rest,
@@ -159,8 +153,10 @@ const withTrack = (xml: string, track: TrackSpec, index: number): string => {
     Option.flatMap((match) => Option.fromUndefinedOr(match.index)),
     Option.getOrThrowWith(() => new Error(`The template has no MIDI track ${String(index)}`)),
   );
-  const named = withName(pipe(xml, Str.slice(opening)), Option.fromUndefinedOr(track.name));
-  const timeable = indexIn(named, "<ClipTimeable>", FIRST);
+  const rest = pipe(xml, Str.slice(opening));
+  const renamed = withName(rest, Option.fromUndefinedOr(track.name));
+  const named = withMix({ xml: renamed, mix: Option.fromUndefinedOr(track.mix) });
+  const timeable = indexIn({ text: named, search: "<ClipTimeable>", from: FIRST });
   const clips = pipe(track.clips, Arr.map(clipXml), Arr.join(""));
   const filled = pipe(
     named,
@@ -171,26 +167,20 @@ const withTrack = (xml: string, track: TrackSpec, index: number): string => {
 };
 
 const withEnvelope = (xml: string, target: string, events: readonly string[]): string => {
-  const start = indexIn(xml, "<Events>", indexIn(xml, target, FIRST));
-  const end = indexIn(xml, "</Events>", start);
+  const found = indexIn({ text: xml, search: target, from: FIRST });
+  const start = indexIn({ text: xml, search: "<Events>", from: found });
+  const end = indexIn({ text: xml, search: "</Events>", from: start });
   return `${pipe(xml, Str.slice(FIRST, start))}<Events>${Arr.join(events, "")}${pipe(xml, Str.slice(end))}`;
 };
 
 const meterId = (numerator: number, denominator: number): number =>
   METER_IDS_PER_DENOMINATOR * Math.log2(denominator) + numerator - FIRST_ID;
 
-const timeOf = (beat: number, id: number): number => {
-  if (id === FIRST) {
-    return SONG_START;
-  }
-  return beat;
-};
-
 const tempoEvent = (tempo: TempoSpec, id: number): string =>
-  `<FloatEvent Id="${String(id)}" Time="${String(timeOf(tempo.beat, id))}" Value="${String(tempo.bpm)}" />`;
+  `<FloatEvent Id="${String(id)}" Time="${String(timeOf({ beat: tempo.beat, id }))}" Value="${String(tempo.bpm)}" />`;
 
 const meterEvent = (meter: MeterSpec, id: number): string =>
-  `<EnumEvent Id="${String(id)}" Time="${String(timeOf(meter.beat, id))}" Value="${String(meterId(meter.numerator, meter.denominator))}" />`;
+  `<EnumEvent Id="${String(id)}" Time="${String(timeOf({ beat: meter.beat, id }))}" Value="${String(meterId(meter.numerator, meter.denominator))}" />`;
 
 const locatorXml = (locator: LocatorSpec, id: number): string =>
   `<Locator Id="${String(id)}"><LomId Value="0" /><Time Value="${String(locator.beat)}" /><Name Value="${escapeXml(locator.name)}" /><Annotation Value="" /><IsSongStart Value="false" /></Locator>`;

@@ -87,21 +87,20 @@ jobs:
         with:
           result: ${{ needs.shard.result }}
 
-  autofix:
+  wake:
     needs: verify
     if: failure()
     runs-on: ubuntu-latest
     permissions:
-      actions: write
+      id-token: write
     steps:
-      - env:
-          GH_TOKEN: ${{ github.token }}
-          HEAD_BRANCH: ${{ github.ref_name }}
-          HEAD_SHA: ${{ github.sha }}
-          FAILED_RUN_ID: ${{ github.run_id }}
-        run: >-
-          gh workflow run autofix.yml --repo "$GITHUB_REPOSITORY" --ref "$HEAD_BRANCH"
-          -f run_id="$FAILED_RUN_ID" -f sha="$HEAD_SHA"
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: $/.github/actions/setup
+        with:
+          native: "false"
+      - run: vp run -r wake-main-red
 
   queue:
     needs: [verify]
@@ -192,7 +191,7 @@ jobs:
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}
 
   ci-telemetry:
-    needs: [shard, verify, autofix, deploy, private-names, exposure, deploy-failure]
+    needs: [shard, verify, wake, deploy, private-names, exposure, deploy-failure]
     if: always()
     runs-on: ubuntu-latest
     permissions:

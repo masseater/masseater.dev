@@ -1,3 +1,4 @@
+import { SubjectSchema } from "@r_masseater/i68-presets/habits";
 import { Array as Arr, Schema, pipe } from "effect";
 import type { Option } from "effect";
 
@@ -36,8 +37,7 @@ export type Aim = typeof AimSchema.Type;
 const JudgmentSchema = Schema.Struct({
   style: Schema.String,
   habit: Schema.String,
-  context: Schema.String,
-  next: Schema.String,
+  subject: SubjectSchema,
   verdict: Schema.Literals(VERDICTS),
   aim: Schema.optionalKey(Schema.String),
   reason: Schema.optionalKey(Schema.String),

@@ -46,3 +46,17 @@ export const brokerIdToken = idToken;
 
 /** @internal */
 export const issued = issuedBy;
+
+const Woken = Schema.Struct({ woken: Schema.Boolean });
+
+/** @internal */
+export const wakeProject = Effect.fn("wakeProject")(function* wakeProject(
+  request: Readonly<{ path: string; oidc: string }>,
+) {
+  const post = HttpClientRequest.post(`${BROKER}${request.path}`).pipe(
+    HttpClientRequest.bearerToken(request.oidc),
+  );
+  const response = yield* send(post).pipe(Effect.retry(Schedule.recurs(RETRIES)));
+  const { woken } = yield* HttpClientResponse.schemaBodyJson(Woken)(response);
+  return woken;
+});
