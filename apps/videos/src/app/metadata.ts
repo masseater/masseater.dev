@@ -1,6 +1,15 @@
 import type { Format, Tachie, Timeline, VideoScript } from "@masseater.dev/video-kit/script";
 import { planTimeline } from "@masseater.dev/video-kit/script";
-import { Effect, ManagedRuntime, Option, Record as Rec, Schema, String as Str, pipe } from "effect";
+import {
+  Effect,
+  ManagedRuntime,
+  Option,
+  Record as Rec,
+  Result,
+  Schema,
+  String as Str,
+  pipe,
+} from "effect";
 import { FetchHttpClient, HttpClient } from "effect/http";
 import type { CalculateMetadataFunction } from "remotion";
 import { staticFile } from "remotion";
@@ -39,7 +48,12 @@ const NO_PORTRAITS: NonNullable<Manifest["tachie"]> = {};
 const portraitsOf = (found: Manifest["tachie"]): Readonly<Record<string, string>> =>
   pipe(
     Option.getOrElse(Option.fromNullishOr(found), () => NO_PORTRAITS),
-    Rec.map(({ closed }) => staticFile(closed)),
+    Rec.filterMap((entry) => {
+      if ("psd" in entry) {
+        return Result.failVoid;
+      }
+      return Result.succeed(staticFile(entry.closed));
+    }),
   );
 
 const REMOTE = "https://";
