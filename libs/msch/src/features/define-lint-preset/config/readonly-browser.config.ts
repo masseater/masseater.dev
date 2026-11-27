@@ -19,6 +19,8 @@ export const BROWSER_HANDLES: readonly string[] = [
   "WheelEvent",
   "KeyboardEvent",
   "MouseEvent",
+  "DragEvent",
+  "File",
   "AbortSignal",
   "ImageBitmap",
   "AudioContext",

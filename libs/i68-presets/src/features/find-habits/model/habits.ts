@@ -27,6 +27,8 @@ export interface HabitLimits {
   readonly seen: number;
 }
 
+export const DEFAULT_LIMITS: HabitLimits = { songs: 2, share: 0.3, baseline: 0.03, seen: 8 };
+
 export interface Place {
   readonly song: string;
   readonly bar: number;
