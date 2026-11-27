@@ -1,3 +1,4 @@
+import { MIXER_PARAMETERS } from "@r_masseater/fumx-parser";
 import { Match, Schema } from "effect";
 
 const Track = Schema.String;
@@ -5,7 +6,7 @@ const Track = Schema.String;
 export const MoveSchema = Schema.Struct({
   type: Schema.Literal("move"),
   track: Track,
-  parameter: Schema.Literals(["volume", "pan"]),
+  parameter: Schema.Literals(MIXER_PARAMETERS),
   direction: Schema.Literals(["up", "down"]),
   edge: Schema.Literals(["before", "after"]),
 });

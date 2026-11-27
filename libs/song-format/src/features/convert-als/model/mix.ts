@@ -1,3 +1,4 @@
+import { MIXER_PARAMETERS } from "@r_masseater/fumx-parser";
 import { Array as Arr, Option, pipe } from "effect";
 
 import type {
@@ -28,6 +29,8 @@ const SILENT = DECIMAL_BASE ** (SILENT_DECIBELS / DECIBELS_PER_DECADE);
 
 const decibelsOf: From<number, number> = (gain) =>
   DECIBELS_PER_DECADE * Math.log10(Math.max(gain, SILENT));
+
+const [VOLUME, PAN] = MIXER_PARAMETERS;
 
 const VALUES: Readonly<Record<MixParameter, From<number, number>>> = {
   volume: decibelsOf,
@@ -69,8 +72,8 @@ const startOf =
 const levelOf =
   (owner: Automated): From<AlsMixer, Level> =>
   (mixer) => ({
-    decibels: startOf({ owner, parameter: "volume" })(mixer.Volume),
-    pan: startOf({ owner, parameter: "pan" })(mixer.Pan),
+    decibels: startOf({ owner, parameter: VOLUME })(mixer.Volume),
+    pan: startOf({ owner, parameter: PAN })(mixer.Pan),
     muted: pipe(
       Option.fromUndefinedOr(mixer.Speaker),
       Option.flatMap((speaker) => Option.fromUndefinedOr(speaker.Manual)),

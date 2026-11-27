@@ -1,4 +1,4 @@
-import type { Controller } from "@r_masseater/fumx-parser";
+import type { Controller, MixerParameter } from "@r_masseater/fumx-parser";
 import { Array as Arr, Order } from "effect";
 import type { Option } from "effect";
 
@@ -53,7 +53,7 @@ export interface TrackSend {
   readonly amount: number;
 }
 
-export type MixParameter = "volume" | "pan";
+export type MixParameter = MixerParameter;
 
 export interface MixPoint extends Timed {
   readonly value: number;

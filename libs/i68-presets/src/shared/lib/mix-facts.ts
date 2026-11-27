@@ -1,4 +1,5 @@
-import type { Song } from "@r_masseater/fumx-parser";
+import { MIXER_PARAMETERS } from "@r_masseater/fumx-parser";
+import type { MixerParameter, Song } from "@r_masseater/fumx-parser";
 import type { Sounding } from "@r_masseater/fumx-parser/analysis";
 import { Array as Arr, Option, String as Str, pipe } from "effect";
 
@@ -87,8 +88,8 @@ type Automation = Song["automations"][number];
 const isMove = (
   automation: Automation,
 ): automation is Automation & {
-  readonly parameter: "volume" | "pan";
-} => automation.parameter === "volume" || automation.parameter === "pan";
+  readonly parameter: MixerParameter;
+} => Arr.contains(MIXER_PARAMETERS, automation.parameter);
 
 const directionOf = (automation: Automation): "up" | "down" => {
   if (automation.to.value > automation.from.value) {
