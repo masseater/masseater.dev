@@ -65,7 +65,7 @@ catalog:
   "@modelcontextprotocol/server": 2.4.0
   auth: 1.7.27
   "@r_masseater/oxlint-typed-rules": 0.4.3
-  "@r_masseater/vite-plus-adopt": 0.11.1
+  "@r_masseater/vite-plus-adopt": 0.12.0
   "@discordjs/voice": 0.19.2
   "@snazzah/davey": 0.2.0
   discord.js: 14.28.1
@@ -303,7 +303,6 @@ overrides:
   "@remotion/eslint-plugin>@typescript-eslint/utils": "-" # exit: npm:@remotion/eslint-plugin allows @typescript-eslint/utils@>=8
   "@remotion/eslint-plugin>typescript": "-" # exit: npm:@remotion/eslint-plugin drops typescript || npm:@remotion/eslint-plugin allows typescript@>=7
   workerd: 1.20261124.1 # exit: npm:miniflare requires workerd@>=1.20261115.1
-  "@r_masseater/vite-plus-adopt>@r_masseater/h56m": "workspace:*" # exit: npm:@r_masseater/vite-plus-adopt requires @r_masseater/h56m@>=0.2.0
   vite@*: "catalog:" # exit: unused
   vitest: 5.1.1 # exit: npm:vite-plus requires vitest@>=5.1.1
   "@vitest/browser": 5.1.1 # exit: npm:vite-plus requires vitest@>=5.1.1
@@ -365,6 +364,10 @@ minimumReleaseAgeExclude:
   - "@voidzero-dev/vite-plus-win32-arm64-msvc@1.7.0"
   - "@voidzero-dev/vite-plus-win32-x64-msvc@1.7.0"
   - vite-plus@1.7.0
+  - "@r_masseater/h56m-linux-x64-gnu@0.2.0"
+  - "@r_masseater/h56m-win32-x64-msvc@0.2.0"
+  - "@r_masseater/h56m@0.2.0"
+  - "@r_masseater/vite-plus-adopt@0.12.0"
 
 cargo:
   enabled: true
