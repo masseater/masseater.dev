@@ -18,13 +18,13 @@ type Routine = typeof RoutineSchema.Type;
 
 const RoutineJson = Schema.fromJsonString(RoutineSchema);
 
-const WakeBody = Schema.Struct({ text: Schema.String });
+const WakeBody = Schema.Struct({});
 
 export type FireOutcome = "fired" | "missing" | "rejected";
 
 export interface ClaudeRoutineRpc extends Rpc.WorkerEntrypointBranded {
   register: (routine: unknown) => Promise<boolean>;
-  fire: (text: string) => Promise<FireOutcome>;
+  fire: () => Promise<FireOutcome>;
 }
 
 export const registerRoutine = ({
@@ -54,21 +54,14 @@ const readRoutine = (env: AppStoreEnv): Effect.Effect<Option.Option<Routine>> =>
     ),
   );
 
-const post = ({
-  routine,
-  text,
-}: Readonly<{ routine: Routine; text: string }>): Effect.Effect<
-  FireOutcome,
-  never,
-  HttpClient.HttpClient
-> =>
+const post = (routine: Routine): Effect.Effect<FireOutcome, never, HttpClient.HttpClient> =>
   HttpClientRequest.post(`${FIRE_BASE}${routine.triggerId}/fire`).pipe(
     HttpClientRequest.bearerToken(routine.token),
     HttpClientRequest.setHeaders({
       "anthropic-version": ANTHROPIC_VERSION,
       "anthropic-beta": ROUTINE_BETA,
     }),
-    HttpClientRequest.schemaBodyJson(WakeBody)({ text }),
+    HttpClientRequest.schemaBodyJson(WakeBody)({}),
     Effect.flatMap((request) => HttpClient.execute(request)),
     Effect.flatMap(HttpClientResponse.filterStatusOk),
     Effect.as<FireOutcome>("fired"),
@@ -80,14 +73,11 @@ const post = ({
   );
 
 /** @internal */
-export const fireRoutine = Effect.fn("claude_routine.fire")(function* fire(
-  env: AppStoreEnv,
-  text: string,
-) {
+export const fireRoutine = Effect.fn("claude_routine.fire")(function* fire(env: AppStoreEnv) {
   const stored = yield* readRoutine(env);
   return yield* Option.match(stored, {
     onNone: () =>
       Effect.logWarning("claude_routine.missing").pipe(Effect.as<FireOutcome>("missing")),
-    onSome: (routine) => post({ routine, text }),
+    onSome: post,
   });
 });

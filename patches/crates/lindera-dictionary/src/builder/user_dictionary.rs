@@ -1,0 +1,904 @@
+use std::collections::BTreeMap;
+use std::fs;
+use std::fs::File;
+use std::io;
+use std::io::Read;
+use std::io::Write;
+use std::path::Path;
+
+use byteorder::{LittleEndian, WriteBytesExt};
+use csv::StringRecord;
+use daachorse::DoubleArrayAhoCorasickBuilder;
+use log::debug;
+
+use crate::LinderaResult;
+use crate::builder::connection_cost_matrix::MatrixSize;
+use crate::builder::lexicon_escape::decode_record;
+use crate::dictionary::UserDictionary;
+use crate::dictionary::lexicon_format::LexiconFormat;
+use crate::dictionary::prefix_dictionary::UserPrefixDictionary;
+use crate::error::LinderaErrorKind;
+use crate::viterbi::WordEntry;
+
+type StringRecordProcessor = Option<Box<dyn Fn(&StringRecord) -> LinderaResult<Vec<String>>>>;
+
+/// A user dictionary CSV row whose field count, cost and context IDs have
+/// been checked, so that the rows can be sorted by surface afterwards.
+struct ParsedRow {
+    /// The CSV record, with its position in the input.
+    record: StringRecord,
+    /// The word cost: the row's own, or the default for a simple row.
+    word_cost: i16,
+    /// The left context ID: the row's own, or the default for a simple row.
+    left_id: u16,
+    /// The right context ID: the row's own, or the default for a simple row.
+    right_id: u16,
+}
+
+pub struct UserDictionaryBuilder {
+    user_dictionary_fields_num: usize,
+    dictionary_fields_num: usize,
+    default_word_cost: i16,
+    default_left_context_id: u16,
+    default_right_context_id: u16,
+    flexible_csv: bool,
+    /// The lexicon format of the system dictionary the user dictionary is
+    /// for, which decides whether the fields of each row are decoded as they
+    /// are read (#1389).
+    lexicon_format: LexiconFormat,
+    user_dictionary_handler: StringRecordProcessor,
+    /// The connection matrix size of the system dictionary the user
+    /// dictionary is for. Every row's context IDs are checked against it;
+    /// `None` skips the check.
+    matrix_size: Option<MatrixSize>,
+}
+
+/// Options for [`UserDictionaryBuilder`]. Every field has a default, so
+/// [`Self::builder`] is infallible. Setters take `self` by value to keep the
+/// original owned-builder calling style.
+#[derive(Default)]
+pub struct UserDictionaryBuilderOptions {
+    user_dictionary_fields_num: Option<usize>,
+    dictionary_fields_num: Option<usize>,
+    default_word_cost: Option<i16>,
+    default_left_context_id: Option<u16>,
+    default_right_context_id: Option<u16>,
+    flexible_csv: Option<bool>,
+    /// See [`UserDictionaryBuilder`]'s field of the same name.
+    lexicon_format: Option<LexiconFormat>,
+    user_dictionary_handler: StringRecordProcessor,
+    /// See [`UserDictionaryBuilder`]'s field of the same name.
+    matrix_size: Option<MatrixSize>,
+}
+
+impl UserDictionaryBuilderOptions {
+    pub fn user_dictionary_fields_num(mut self, value: usize) -> Self {
+        self.user_dictionary_fields_num = Some(value);
+        self
+    }
+
+    pub fn dictionary_fields_num(mut self, value: usize) -> Self {
+        self.dictionary_fields_num = Some(value);
+        self
+    }
+
+    pub fn default_word_cost(mut self, value: i16) -> Self {
+        self.default_word_cost = Some(value);
+        self
+    }
+
+    pub fn default_left_context_id(mut self, value: u16) -> Self {
+        self.default_left_context_id = Some(value);
+        self
+    }
+
+    pub fn default_right_context_id(mut self, value: u16) -> Self {
+        self.default_right_context_id = Some(value);
+        self
+    }
+
+    pub fn flexible_csv(mut self, value: bool) -> Self {
+        self.flexible_csv = Some(value);
+        self
+    }
+
+    /// Sets the lexicon format of the system dictionary the user dictionary
+    /// is for, which decides whether the fields of each row are decoded as
+    /// they are read (#1389).
+    ///
+    /// # Arguments
+    ///
+    /// * `value` - The format; MeCab's, the default, takes the fields as
+    ///   written, and Sudachi's decodes its escapes in every field.
+    ///
+    /// # Returns
+    ///
+    /// The options with the format set.
+    pub fn lexicon_format(mut self, value: LexiconFormat) -> Self {
+        self.lexicon_format = Some(value);
+        self
+    }
+
+    pub fn user_dictionary_handler(mut self, value: StringRecordProcessor) -> Self {
+        self.user_dictionary_handler = value;
+        self
+    }
+
+    /// Sets the connection matrix size to check every row's context IDs
+    /// against.
+    ///
+    /// # Arguments
+    ///
+    /// * `value` - The matrix size of the system dictionary the user
+    ///   dictionary is for, or `None` to skip the check.
+    ///
+    /// # Returns
+    ///
+    /// The options with the matrix size set.
+    pub(crate) fn matrix_size(mut self, value: Option<MatrixSize>) -> Self {
+        self.matrix_size = value;
+        self
+    }
+
+    pub fn builder(self) -> UserDictionaryBuilder {
+        UserDictionaryBuilder {
+            user_dictionary_fields_num: self.user_dictionary_fields_num.unwrap_or(3),
+            dictionary_fields_num: self.dictionary_fields_num.unwrap_or(12),
+            default_word_cost: self.default_word_cost.unwrap_or(-10000),
+            default_left_context_id: self.default_left_context_id.unwrap_or(0),
+            default_right_context_id: self.default_right_context_id.unwrap_or(0),
+            flexible_csv: self.flexible_csv.unwrap_or(true),
+            lexicon_format: self.lexicon_format.unwrap_or_default(),
+            user_dictionary_handler: self.user_dictionary_handler,
+            matrix_size: self.matrix_size,
+        }
+    }
+}
+
+impl UserDictionaryBuilder {
+    /// Builds a user dictionary from a CSV file on disk.
+    ///
+    /// # Arguments
+    ///
+    /// * `input_file` - Path of the user dictionary CSV file.
+    ///
+    /// # Returns
+    ///
+    /// The built user dictionary.
+    pub fn build(&self, input_file: &Path) -> LinderaResult<UserDictionary> {
+        debug!("reading {input_file:?}");
+
+        let file = File::open(input_file).map_err(|err| {
+            LinderaErrorKind::Io
+                .with_error(anyhow::anyhow!(err))
+                .add_context(format!(
+                    "Failed to open user dictionary CSV file: {input_file:?}"
+                ))
+        })?;
+        self.build_from_reader(file)
+    }
+
+    /// Builds a user dictionary from CSV content supplied by a reader.
+    ///
+    /// This is the filesystem-free entry point: WebAssembly callers feed it
+    /// bytes obtained in JavaScript (fetch, file inputs, OPFS), and
+    /// [`Self::build`] delegates here after opening its file (#972).
+    /// The content must be UTF-8.
+    ///
+    /// # Arguments
+    ///
+    /// * `reader` - Read source of the user dictionary CSV content.
+    ///
+    /// # Returns
+    ///
+    /// The built user dictionary.
+    pub fn build_from_reader<R: Read>(&self, reader: R) -> LinderaResult<UserDictionary> {
+        let mut rdr = csv::ReaderBuilder::new()
+            .has_headers(false)
+            .flexible(self.flexible_csv)
+            .from_reader(reader);
+
+        // Every row is decoded as the lexicon format reads it (#1389) and
+        // checked as it is read, before the sort, so an error names the first
+        // bad row in input order by its CSV line.
+        let mut rows: Vec<ParsedRow> = vec![];
+        for (line_num, result) in rdr.records().enumerate() {
+            let record = result.map_err(|err| {
+                LinderaErrorKind::Content
+                    .with_error(anyhow::anyhow!(err))
+                    .add_context(format!(
+                        "Failed to parse CSV record at line {}",
+                        line_num + 1,
+                    ))
+            })?;
+            let line = record.position().map_or(0, |position| position.line());
+            let record = decode_record(self.lexicon_format, record).map_err(|message| {
+                LinderaErrorKind::Content
+                    .with_error(anyhow::anyhow!("user dictionary line {line}: {message}"))
+            })?;
+            rows.push(self.parse_row(record)?);
+        }
+
+        // The cached variant computes the allocating surface key once per row
+        // instead of once per comparison.
+        rows.sort_by_cached_key(|row| row.record[0].to_string());
+
+        let mut word_entry_map: BTreeMap<String, Vec<WordEntry>> = BTreeMap::new();
+
+        for (row_id, row) in rows.iter().enumerate() {
+            word_entry_map
+                .entry(row.record[0].to_string())
+                .or_default()
+                .push(WordEntry::new(
+                    crate::viterbi::WordId::new(crate::viterbi::LexType::User, row_id as u32),
+                    row.word_cost,
+                    row.left_id,
+                    row.right_id,
+                ));
+        }
+
+        let mut words_data = Vec::<u8>::new();
+        let mut words_idx_data = Vec::<u8>::new();
+        for row in &rows {
+            let row = &row.record;
+            // `parse_row` lets through only simple rows and rows of at least
+            // `dictionary_fields_num` fields.
+            let word_detail = if row.len() == self.user_dictionary_fields_num {
+                if let Some(handler) = &self.user_dictionary_handler {
+                    handler(row)?
+                } else {
+                    row.iter()
+                        .skip(1)
+                        .map(|s| s.to_string())
+                        .collect::<Vec<String>>()
+                }
+            } else {
+                row.iter()
+                    .skip(4)
+                    .map(|s| s.to_string())
+                    .collect::<Vec<String>>()
+            };
+
+            let offset = words_data.len();
+            words_idx_data
+                .write_u32::<LittleEndian>(offset as u32)
+                .map_err(|err| {
+                    LinderaErrorKind::Io
+                        .with_error(anyhow::anyhow!(err))
+                        .add_context("Failed to write word offset to user dictionary words index")
+                })?;
+
+            // Store word details as null-separated string (like main dictionary)
+            let joined_details = word_detail.join("\0");
+            let joined_details_len = u32::try_from(joined_details.len()).map_err(|err| {
+                LinderaErrorKind::Serialize
+                    .with_error(anyhow::anyhow!(err))
+                    .add_context(format!(
+                        "Word details length too large: {} bytes for word '{}'",
+                        joined_details.len(),
+                        row.get(0).unwrap_or("<unknown>")
+                    ))
+            })?;
+
+            words_data
+                .write_u32::<LittleEndian>(joined_details_len)
+                .map_err(|err| {
+                    LinderaErrorKind::Serialize
+                        .with_error(anyhow::anyhow!(err))
+                        .add_context(
+                            "Failed to write word details length to user dictionary words data",
+                        )
+                })?;
+            words_data
+                .write_all(joined_details.as_bytes())
+                .map_err(|err| {
+                    LinderaErrorKind::Serialize
+                        .with_error(anyhow::anyhow!(err))
+                        .add_context("Failed to write word details to user dictionary words data")
+                })?;
+        }
+
+        let mut id = 0u32;
+
+        // building double array trie
+        let mut keyset: Vec<(&[u8], u32)> = vec![];
+        for (key, word_entries) in &word_entry_map {
+            let len = word_entries.len() as u32;
+            // 24bit for word ID, 8bit for variant count (up to 255 per surface),
+            // matching the system dictionary encoding. The legacy 5-bit user
+            // encoding (max 31 variants) was retired in v4.0.0; user dictionary
+            // `.bin` files built with v3 must be rebuilt from their CSV source.
+            let val = crate::builder::prefix_dictionary::pack_entry_value(key, id, len)?;
+            keyset.push((key.as_bytes(), val));
+            id += len;
+        }
+        let da_bytes = DoubleArrayAhoCorasickBuilder::new()
+            .build_with_values(keyset)
+            .map_err(|err| {
+                LinderaErrorKind::Build
+                    .with_error(anyhow::anyhow!(err))
+                    .add_context("Failed to build DoubleArray for user dictionary")
+            })?
+            .serialize();
+
+        // building values
+        let mut vals_data = Vec::<u8>::new();
+        for word_entries in word_entry_map.values() {
+            for word_entry in word_entries {
+                word_entry.serialize(&mut vals_data).map_err(|err| {
+                    LinderaErrorKind::Serialize
+                        .with_error(anyhow::anyhow!(err))
+                        .add_context(format!(
+                            "Failed to serialize user dictionary word entry (id: {})",
+                            word_entry.word_id().id()
+                        ))
+                })?;
+            }
+        }
+
+        let dict = UserPrefixDictionary::load(da_bytes, vals_data, words_idx_data, words_data)?;
+
+        Ok(UserDictionary { dict })
+    }
+
+    /// Checks a CSV row and parses the fields its entry is made of.
+    ///
+    /// The field count is classified before anything indexes into the row:
+    /// with `flexible` CSV parsing a 1- or 2-field row would otherwise reach
+    /// the cost and context-id columns and panic out of bounds, and a panic
+    /// aborts the module on wasm32, where this builder is fed untrusted
+    /// browser input (#972). A simple row takes the default cost and context
+    /// IDs; a detailed row has its own in columns 2 to 4. When the matrix
+    /// size of a system dictionary is set, the context IDs must address a
+    /// cell of it, the bounds `lindera build` applies to the system
+    /// dictionary's own lexicon (#1182).
+    ///
+    /// # Arguments
+    ///
+    /// * `record` - The CSV row, as read.
+    ///
+    /// # Returns
+    ///
+    /// The parsed row, or an error that names the row by its CSV line (the
+    /// line the record starts on) and its surface.
+    fn parse_row(&self, record: StringRecord) -> LinderaResult<ParsedRow> {
+        let line = record.position().map_or(0, |position| position.line());
+        if record.len() != self.user_dictionary_fields_num
+            && record.len() < self.dictionary_fields_num
+        {
+            return Err(LinderaErrorKind::Content
+                .with_error(anyhow::anyhow!(
+                    "user dictionary should be a CSV with {} or {}+ fields",
+                    self.user_dictionary_fields_num,
+                    self.dictionary_fields_num
+                ))
+                .add_context(format!(
+                    "Line {line} has {} fields (surface: '{}')",
+                    record.len(),
+                    record.get(0).unwrap_or("<empty>")
+                )));
+        }
+
+        let simple = record.len() == self.user_dictionary_fields_num;
+        let (word_cost, left_id, right_id) = if simple {
+            (
+                self.default_word_cost,
+                self.default_left_context_id,
+                self.default_right_context_id,
+            )
+        } else {
+            let parse_error = |field: &str, value: &str| {
+                LinderaErrorKind::Parse
+                    .with_error(anyhow::anyhow!("failed to parse {field}"))
+                    .add_context(format!(
+                        "Invalid {field} '{value}' at line {line} (surface: '{}')",
+                        &record[0]
+                    ))
+            };
+            (
+                record[3]
+                    .parse::<i16>()
+                    .map_err(|_err| parse_error("word cost", &record[3]))?,
+                record[1]
+                    .parse::<u16>()
+                    .map_err(|_err| parse_error("left context ID", &record[1]))?,
+                record[2]
+                    .parse::<u16>()
+                    .map_err(|_err| parse_error("right context ID", &record[2]))?,
+            )
+        };
+
+        let check = self.matrix_size.map_or(Ok(()), |matrix_size| {
+            matrix_size.check_context_ids(left_id.into(), right_id.into())
+        });
+        if let Err(message) = check {
+            let origin = if simple {
+                "; a simple row takes its context ids from default_left_context_id and \
+                 default_right_context_id in metadata.json"
+            } else {
+                ""
+            };
+            return Err(LinderaErrorKind::Content.with_error(anyhow::anyhow!(
+                "user dictionary line {line} (surface: '{}'): {message}{origin}",
+                &record[0]
+            )));
+        }
+
+        Ok(ParsedRow {
+            record,
+            word_cost,
+            left_id,
+            right_id,
+        })
+    }
+}
+
+pub fn build_user_dictionary(user_dict: UserDictionary, output_file: &Path) -> LinderaResult<()> {
+    let parent_dir = match output_file.parent() {
+        Some(parent_dir) => parent_dir,
+        None => {
+            return Err(LinderaErrorKind::Io
+                .with_error(anyhow::anyhow!(
+                    "failed to get parent directory of output file"
+                ))
+                .add_context(format!("Invalid output file path: {output_file:?}")));
+        }
+    };
+    fs::create_dir_all(parent_dir).map_err(|err| {
+        LinderaErrorKind::Io
+            .with_error(anyhow::anyhow!(err))
+            .add_context(format!("Failed to create parent directory: {parent_dir:?}"))
+    })?;
+
+    let mut wtr = io::BufWriter::new(File::create(output_file).map_err(|err| {
+        LinderaErrorKind::Io
+            .with_error(anyhow::anyhow!(err))
+            .add_context(format!(
+                "Failed to create user dictionary output file: {output_file:?}"
+            ))
+    })?);
+    let bytes = rkyv::to_bytes::<rkyv::rancor::Error>(&user_dict).map_err(|err| {
+        LinderaErrorKind::Serialize
+            .with_error(anyhow::anyhow!(err))
+            .add_context(format!(
+                "Failed to serialize user dictionary to file: {output_file:?}"
+            ))
+    })?;
+    wtr.write_all(&bytes).map_err(|err| {
+        LinderaErrorKind::Io
+            .with_error(anyhow::anyhow!(err))
+            .add_context(format!(
+                "Failed to write user dictionary to file: {output_file:?}"
+            ))
+    })?;
+    wtr.flush().map_err(|err| {
+        LinderaErrorKind::Io
+            .with_error(anyhow::anyhow!(err))
+            .add_context(format!(
+                "Failed to flush user dictionary output file: {output_file:?}"
+            ))
+    })?;
+
+    Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use std::path::PathBuf;
+
+    use crate::builder::DictionaryBuilder;
+    use crate::dictionary::UserDictionary;
+    use crate::dictionary::connection_cost_matrix::zero_matrix;
+    use crate::dictionary::lexicon_format::LexiconFormat;
+    use crate::dictionary::metadata::Metadata;
+    use crate::viterbi::WordEntry;
+
+    fn fixture_path(name: &str) -> PathBuf {
+        PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+            .join("../resources/user_dict")
+            .join(name)
+    }
+
+    fn flexible_builder() -> DictionaryBuilder {
+        let metadata = Metadata {
+            flexible_csv: true,
+            ..Metadata::default()
+        };
+        DictionaryBuilder::new(metadata)
+    }
+
+    /// The reader-based build must produce a byte-identical dictionary to the
+    /// path-based build over the same CSV (#972).
+    #[test]
+    fn reader_and_path_builds_are_identical() {
+        let path = fixture_path("ipadic_simple_userdic.csv");
+        let builder = flexible_builder();
+
+        let from_path = match builder.build_user_dict(&path) {
+            Ok(dict) => dict,
+            Err(err) => panic!("path build failed: {err}"),
+        };
+        let bytes = match std::fs::read(&path) {
+            Ok(bytes) => bytes,
+            Err(err) => panic!("failed to read fixture: {err}"),
+        };
+        let from_reader = match builder.build_user_dict_from_reader(bytes.as_slice()) {
+            Ok(dict) => dict,
+            Err(err) => panic!("reader build failed: {err}"),
+        };
+
+        let path_bytes = match rkyv::to_bytes::<rkyv::rancor::Error>(&from_path) {
+            Ok(bytes) => bytes,
+            Err(err) => panic!("serialization failed: {err}"),
+        };
+        let reader_bytes = match rkyv::to_bytes::<rkyv::rancor::Error>(&from_reader) {
+            Ok(bytes) => bytes,
+            Err(err) => panic!("serialization failed: {err}"),
+        };
+        assert_eq!(path_bytes.as_slice(), reader_bytes.as_slice());
+    }
+
+    /// A CSV mixing simple (3-field) and detailed (13-field) rows builds
+    /// under flexible parsing. First test to exercise the mixed fixture.
+    #[test]
+    fn mixed_simple_and_detailed_rows_build() {
+        let bytes = match std::fs::read(fixture_path("ipadic_mixed_userdic.csv")) {
+            Ok(bytes) => bytes,
+            Err(err) => panic!("failed to read fixture: {err}"),
+        };
+        let dict = match flexible_builder().build_user_dict_from_reader(bytes.as_slice()) {
+            Ok(dict) => dict,
+            Err(err) => panic!("mixed build failed: {err}"),
+        };
+        assert!(!dict.dict.vals_data.is_empty());
+    }
+
+    /// Rows shorter than the simple format must produce an error, not an
+    /// out-of-bounds panic: with flexible CSV parsing such rows previously
+    /// reached the cost-column access before any arity check, and on wasm32
+    /// a panic aborts the module (#972).
+    #[test]
+    fn short_rows_error_instead_of_panicking() {
+        for csv in ["東京\n", "東京,1288\n"] {
+            let result = flexible_builder().build_user_dict_from_reader(csv.as_bytes());
+            let err = match result {
+                Ok(_) => panic!("{csv:?} must not build"),
+                Err(err) => format!("{err:?}"),
+            };
+            assert!(
+                err.contains("user dictionary should be a CSV with 3 or 13+ fields"),
+                "unexpected error for {csv:?}: {err}"
+            );
+        }
+    }
+
+    /// A builder with flexible CSV parsing and the given lexicon format, as
+    /// the system dictionary's metadata would set it.
+    fn builder_with_lexicon_format(lexicon_format: LexiconFormat) -> DictionaryBuilder {
+        DictionaryBuilder::new(Metadata {
+            flexible_csv: true,
+            lexicon_format,
+            ..Metadata::default()
+        })
+    }
+
+    /// Returns the details of each entry of `dict` whose surface is
+    /// `surface`, looked up in the automaton as the lattice looks it up.
+    fn details_of(dict: &UserDictionary, surface: &str) -> Vec<Vec<String>> {
+        let Some(found) = dict
+            .dict
+            .da
+            .find_overlapping_iter(surface)
+            .find(|m| m.start() == 0 && m.end() == surface.len())
+        else {
+            return Vec::new();
+        };
+        let (offset, count) = dict.dict.decode_val(found.value());
+        let vals: &[u8] = &dict.dict.vals_data;
+        let start = offset as usize * WordEntry::SERIALIZED_LEN;
+        let end = start + count as usize * WordEntry::SERIALIZED_LEN;
+        vals[start..end]
+            .as_chunks::<{ WordEntry::SERIALIZED_LEN }>()
+            .0
+            .iter()
+            .map(|chunk| {
+                let word_id = WordEntry::deserialize(chunk, false).word_id().id();
+                dict.word_details(word_id as usize)
+                    .into_iter()
+                    .map(String::from)
+                    .collect()
+            })
+            .collect()
+    }
+
+    // The backslashes of the escapes below are written `\x5c`.
+
+    /// A simple row (surface, reading, pronunciation) and a detailed row,
+    /// each with escapes.
+    const ESCAPED_ROWS: &str = "\
+b\x5cu002fs,ビー\x5cu002fエス,ビーエス
+1\x5cu002c2塁,0,0,100,名詞,一般,*,*,*,*,1\x5cu002c2塁,イチニルイ,イチニルイ
+";
+
+    /// With Sudachi's lexicon format in the system dictionary's metadata,
+    /// the rows of a user dictionary are decoded, simple and detailed alike,
+    /// as `sudachi ubuild` decodes them (#1389): the decoded surfaces are
+    /// found and the details are decoded. With MeCab's format the rows are
+    /// taken as written.
+    #[test]
+    fn rows_are_decoded_in_the_sudachi_lexicon_format() {
+        let dict = builder_with_lexicon_format(LexiconFormat::Sudachi)
+            .build_user_dict_from_reader(ESCAPED_ROWS.as_bytes())
+            .unwrap();
+        assert_eq!(
+            details_of(&dict, "b/s"),
+            vec![vec![
+                "*",
+                "*",
+                "*",
+                "*",
+                "*",
+                "*",
+                "*",
+                "ビー/エス",
+                "ビーエス"
+            ]]
+        );
+        assert_eq!(
+            details_of(&dict, "1,2塁"),
+            vec![vec![
+                "名詞",
+                "一般",
+                "*",
+                "*",
+                "*",
+                "*",
+                "1,2塁",
+                "イチニルイ",
+                "イチニルイ"
+            ]]
+        );
+        assert!(details_of(&dict, "b\x5cu002fs").is_empty());
+
+        let dict = builder_with_lexicon_format(LexiconFormat::Mecab)
+            .build_user_dict_from_reader(ESCAPED_ROWS.as_bytes())
+            .unwrap();
+        assert!(details_of(&dict, "b/s").is_empty());
+        assert_eq!(
+            details_of(&dict, "b\x5cu002fs"),
+            vec![vec![
+                "*",
+                "*",
+                "*",
+                "*",
+                "*",
+                "*",
+                "*",
+                "ビー\x5cu002fエス",
+                "ビーエス"
+            ]]
+        );
+    }
+
+    /// An escape that cannot be decoded fails the build with the line of
+    /// its row; with MeCab's format the same row builds.
+    #[test]
+    fn a_bad_escape_fails_with_the_line() {
+        let csv = "東京,トウキョウ,トーキョー\na\x5cu{110000},エー,エー\n";
+        let err = match builder_with_lexicon_format(LexiconFormat::Sudachi)
+            .build_user_dict_from_reader(csv.as_bytes())
+        {
+            Ok(_) => panic!("{csv:?} must not build"),
+            Err(err) => format!("{err:?}"),
+        };
+        assert!(
+            err.contains("user dictionary line 2: invalid escape \x5cu{110000}"),
+            "{err}"
+        );
+        assert!(
+            builder_with_lexicon_format(LexiconFormat::Mecab)
+                .build_user_dict_from_reader(csv.as_bytes())
+                .is_ok()
+        );
+    }
+
+    /// A detailed IPADIC row (13 fields) with the given surface, context IDs
+    /// and cost.
+    fn detailed_row(surface: &str, left_id: &str, right_id: &str, cost: &str) -> String {
+        format!("{surface},{left_id},{right_id},{cost},名詞,固有名詞,一般,*,*,*,{surface},*,*\n")
+    }
+
+    /// Builds `csv` with the flexible builder and returns the error.
+    fn build_error(csv: &str) -> String {
+        match flexible_builder().build_user_dict_from_reader(csv.as_bytes()) {
+            Ok(_) => panic!("{csv:?} must not build"),
+            Err(err) => format!("{err:?}"),
+        }
+    }
+
+    /// A per-row error names the row by its CSV line. The rows are sorted by
+    /// surface only after they are checked, so a bad row on line 1 whose
+    /// surface sorts last is reported at line 1; before #1182 the number
+    /// was the row's position after the sort.
+    #[test]
+    fn row_errors_name_the_csv_line() {
+        let good = detailed_row("あいう", "1", "1", "-1000");
+        for (bad, expected) in [
+            (
+                detailed_row("東京タワー", "1", "1", "abc"),
+                "Invalid word cost 'abc' at line 1 (surface: '東京タワー')",
+            ),
+            (
+                detailed_row("東京タワー", "x", "1", "-1000"),
+                "Invalid left context ID 'x' at line 1 (surface: '東京タワー')",
+            ),
+            (
+                detailed_row("東京タワー", "1", "y", "-1000"),
+                "Invalid right context ID 'y' at line 1 (surface: '東京タワー')",
+            ),
+        ] {
+            let csv = format!("{bad}{good}");
+            let err = build_error(&csv);
+            assert!(
+                err.contains(expected),
+                "unexpected error for {csv:?}: {err}"
+            );
+        }
+
+        let csv = format!("{good}東京\n");
+        let err = build_error(&csv);
+        assert!(
+            err.contains("Line 2 has 1 fields (surface: '東京')"),
+            "unexpected error for {csv:?}: {err}"
+        );
+    }
+
+    /// Of two bad rows, the one on the earlier CSV line is reported, although
+    /// the other one's surface sorts first.
+    #[test]
+    fn the_first_bad_row_in_csv_order_is_reported() {
+        let csv = format!(
+            "{}{}",
+            detailed_row("東京タワー", "1", "1", "abc"),
+            detailed_row("あいう", "1", "1", "xyz")
+        );
+        let err = build_error(&csv);
+        assert!(
+            err.contains("Invalid word cost 'abc' at line 1 (surface: '東京タワー')"),
+            "unexpected error: {err}"
+        );
+    }
+
+    /// A builder for flexible CSV whose rows are checked against a
+    /// connection matrix of 2 forward x 3 backward IDs: left context IDs
+    /// must be below 3 and right context IDs below 2.
+    fn checked_builder(metadata: Metadata) -> DictionaryBuilder {
+        let metadata = Metadata {
+            flexible_csv: true,
+            ..metadata
+        };
+        DictionaryBuilder::new(metadata).with_system_matrix(&zero_matrix(2, 3))
+    }
+
+    /// Builds `csv` with [`checked_builder`] and returns the error.
+    fn checked_build_error(csv: &str) -> String {
+        match checked_builder(Metadata::default()).build_user_dict_from_reader(csv.as_bytes()) {
+            Ok(_) => panic!("{csv:?} must not build"),
+            Err(err) => format!("{err:?}"),
+        }
+    }
+
+    /// With the system matrix set, a row whose context ID lies outside it
+    /// fails the build with an error that names the CSV line and the surface
+    /// (#1182). The bad row is on line 2, and its surface sorts first.
+    #[test]
+    fn out_of_range_context_ids_fail_with_the_line_and_surface() {
+        let good = detailed_row("東京タワー", "2", "1", "-1000");
+        for (bad, expected) in [
+            (
+                detailed_row("あいう", "3", "1", "-1000"),
+                "user dictionary line 2 (surface: 'あいう'): left context id 3 is out of range \
+                 for the connection matrix (matrix.def size 2 3; left context ids must be below 3)",
+            ),
+            (
+                detailed_row("あいう", "0", "2", "-1000"),
+                "user dictionary line 2 (surface: 'あいう'): right context id 2 is out of range \
+                 for the connection matrix (matrix.def size 2 3; right context ids must be below 2)",
+            ),
+            (
+                detailed_row("あいう", "60000", "60000", "-1000"),
+                "user dictionary line 2 (surface: 'あいう'): left context id 60000 is out of range",
+            ),
+        ] {
+            let csv = format!("{good}{bad}");
+            let err = checked_build_error(&csv);
+            assert!(
+                err.contains(expected),
+                "unexpected error for {csv:?}: {err}"
+            );
+            assert!(!err.contains("metadata.json"), "unexpected error: {err}");
+        }
+    }
+
+    /// The last cell of each axis is inside the matrix.
+    #[test]
+    fn context_ids_at_the_last_cell_build() {
+        let csv = detailed_row("東京タワー", "2", "1", "-1000");
+        let result =
+            checked_builder(Metadata::default()).build_user_dict_from_reader(csv.as_bytes());
+        assert!(result.is_ok(), "unexpected error: {:?}", result.err());
+    }
+
+    /// A simple row takes its context IDs from `metadata.json`, so they are
+    /// checked too, and the error says where they come from.
+    #[test]
+    fn simple_rows_are_checked_with_the_default_context_ids() {
+        let metadata = Metadata {
+            default_left_context_id: 3,
+            ..Metadata::default()
+        };
+        let csv = "大阪,名詞,オオサカ\n";
+        let err = match checked_builder(metadata).build_user_dict_from_reader(csv.as_bytes()) {
+            Ok(_) => panic!("{csv:?} must not build"),
+            Err(err) => format!("{err:?}"),
+        };
+        assert!(
+            err.contains(
+                "user dictionary line 1 (surface: '大阪'): left context id 3 is out of range"
+            ),
+            "unexpected error: {err}"
+        );
+        assert!(
+            err.contains(
+                "a simple row takes its context ids from default_left_context_id and \
+                 default_right_context_id in metadata.json"
+            ),
+            "unexpected error: {err}"
+        );
+    }
+
+    /// Without a system matrix the context IDs are not checked, as before
+    /// #1182: they are checked when the user dictionary is combined with the
+    /// system dictionary.
+    #[test]
+    fn without_a_system_matrix_context_ids_are_not_checked() {
+        let csv = detailed_row("あいう", "60000", "60000", "-1000");
+        let result = flexible_builder().build_user_dict_from_reader(csv.as_bytes());
+        assert!(result.is_ok(), "unexpected error: {:?}", result.err());
+    }
+
+    /// The file and reader entry points of `DictionaryBuilder` all check
+    /// against the system matrix, and `build_user_dictionary` writes no
+    /// output when the check fails.
+    #[test]
+    fn every_entry_point_checks_against_the_system_matrix() {
+        let dir = match tempfile::tempdir() {
+            Ok(dir) => dir,
+            Err(err) => panic!("failed to create a temporary directory: {err}"),
+        };
+        let csv = detailed_row("あいう", "60000", "1", "-1000");
+        let input = dir.path().join("userdic.csv");
+        if let Err(err) = std::fs::write(&input, &csv) {
+            panic!("failed to write {input:?}: {err}");
+        }
+        let output = dir.path().join("out").join("userdic.bin");
+        let builder = checked_builder(Metadata::default());
+
+        let errors = [
+            builder.build_user_dict(&input).err(),
+            builder.build_user_dict_from_reader(csv.as_bytes()).err(),
+            builder.build_user_dictionary(&input, &output).err(),
+        ];
+        for err in errors {
+            let err = match err {
+                Some(err) => format!("{err:?}"),
+                None => panic!("{csv:?} must not build"),
+            };
+            assert!(
+                err.contains("user dictionary line 1 (surface: 'あいう'): left context id 60000"),
+                "unexpected error: {err}"
+            );
+        }
+        assert!(!output.exists(), "{output:?} must not be written");
+    }
+}
