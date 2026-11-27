@@ -1,5 +1,7 @@
-import { createRouter } from "#/shared/api/index.server.ts";
+import { env } from "cloudflare:workers";
+
+import { createRouter, servingUpstreams } from "#/shared/api/index.server.ts";
 
 import { moneyRoutes } from "./money-routes.server.ts";
 
-export const handleMoney = createRouter("").use(moneyRoutes).handle;
+export const handleMoney = servingUpstreams(env)(createRouter("").use(moneyRoutes).handle);
