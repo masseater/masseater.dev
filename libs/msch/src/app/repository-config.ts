@@ -96,7 +96,6 @@ export const repositoryConfig = (options: RepositoryOptions): UserConfig => {
       banned: requiredStack,
       peerRanges: "intersect",
     },
-    betterleaks: secretsOf(secrets),
     h56m: secretsOf(secrets),
     wism: structureOf({
       members: workspace.members,

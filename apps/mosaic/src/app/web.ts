@@ -2,7 +2,7 @@ import { browserSpans } from "@r_masseater/workers-tracing/browser-spans";
 
 import { TELEMETRY_SERVICE, TRACES_PATH } from "#/shared/config/index.ts";
 
-type WebEnv = Readonly<{ ASSETS: Readonly<Pick<Fetcher, "fetch">> }>;
+export type WebEnv = Readonly<{ ASSETS: Readonly<Pick<Fetcher, "fetch">> }>;
 
 const receiveSpans = browserSpans({ service: TELEMETRY_SERVICE });
 

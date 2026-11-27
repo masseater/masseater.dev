@@ -13,7 +13,6 @@
   },
   "devDependencies": {
     "@effect/tsgo": "catalog:stack",
-    "@masseater.dev/tsrs-effect": "workspace:*",
     "@r_masseater/msch": "workspace:*",
     "@r_masseater/workers-tracing": "workspace:*",
     "@tanstack/intent": "catalog:",
@@ -22,7 +21,6 @@
     "fallow": "catalog:stack",
     "fallow-similar-code": "catalog:stack",
     "fallow-type-aware": "catalog:stack",
-    "oxlint-tsgolint": "catalog:",
     "typescript": "catalog:stack",
     "vite-plus": "catalog:stack"
   },

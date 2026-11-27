@@ -22,7 +22,7 @@ const { env: database } = testD1;
 
 export const { closeDatabase, resetDatabase } = testD1;
 
-type Embedded = Readonly<{ data: number[][]; shape: number[] }>;
+export type Embedded = Readonly<{ data: number[][]; shape: number[] }>;
 
 const DIMENSIONS = 64;
 
@@ -54,7 +54,7 @@ const vectorOf = (text: string): number[] => {
   );
 };
 
-type Stored = Readonly<{ body: ReadableStream<Uint8Array> }>;
+export type Stored = Readonly<{ body: ReadableStream<Uint8Array> }>;
 
 const storedAt = (key: string): Stored | null =>
   pipe(

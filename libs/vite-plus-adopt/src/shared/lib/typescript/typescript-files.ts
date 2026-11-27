@@ -10,7 +10,7 @@ import { getNormalizedAbsolutePath } from "./paths.ts";
 import { modeToNumber } from "./resolution-mode-numbers.ts";
 import { parseSourceFile } from "./ts-api.ts";
 
-type CompilerOptionsLike = Readonly<Partial<Record<"module" | "moduleResolution", number>>>;
+export type CompilerOptionsLike = Readonly<Partial<Record<"module" | "moduleResolution", number>>>;
 
 const ROOT = "/";
 const SCRIPT_KIND_AFTER_TEXT = 2;

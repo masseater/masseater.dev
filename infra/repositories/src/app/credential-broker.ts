@@ -41,7 +41,7 @@ import type { SideRouteInput } from "./side-routes.ts";
 
 const TOKEN_LIFETIME = { hours: 1 } as const;
 
-type CredentialBrokerEnv = GitHubAppEnv &
+export type CredentialBrokerEnv = GitHubAppEnv &
   SideRouteInput["env"] &
   Readonly<{
     ROOT_TOKEN: SecretsStoreSecret;

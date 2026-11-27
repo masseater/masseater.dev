@@ -1,5 +1,5 @@
 import { Array as Arr, Function, Option, Predicate } from "effect";
-import { SyntaxKind } from "typescript/ast";
+import { NodeFlags, SyntaxKind } from "typescript/ast";
 import type { Node } from "typescript/ast";
 import {
   isArrayBindingPattern,
@@ -8,6 +8,7 @@ import {
   isCallExpression,
   isClassDeclaration,
   isClassExpression,
+  isComputedPropertyName,
   isEnumDeclaration,
   isEnumMember,
   isExpressionStatement,
@@ -37,6 +38,7 @@ import {
   isPropertyAssignment,
   isPropertyDeclaration,
   isPropertySignatureDeclaration,
+  isSourceFile,
   isStringLiteral,
   isTypeAliasDeclaration,
   isTypeLiteralNode,
@@ -87,6 +89,7 @@ const ts = {
   isCallExpression,
   isClassDeclaration,
   isClassExpression,
+  isComputedPropertyName,
   isEnumDeclaration,
   isEnumMember,
   isExpressionStatement,
@@ -117,6 +120,7 @@ const ts = {
   isPropertyAssignment,
   isPropertyDeclaration,
   isPropertySignature: isPropertySignatureDeclaration,
+  isSourceFile,
   isStringLiteral,
   isTypeAliasDeclaration,
   isTypeLiteralNode,
@@ -127,6 +131,7 @@ const ts = {
   isVariableDeclaration,
   isVariableStatement,
   JsxEmit,
+  NodeFlags,
   SymbolFlags,
   SyntaxKind,
   TypeFlags,
@@ -139,6 +144,7 @@ export {
   isCallExpression,
   isClassDeclaration,
   isClassExpression,
+  isComputedPropertyName,
   isEnumDeclaration,
   isEnumMember,
   isExpressionStatement,
@@ -168,6 +174,7 @@ export {
   isPropertyAssignment,
   isPropertyDeclaration,
   isPropertySignatureDeclaration as isPropertySignature,
+  isSourceFile,
   isStringLiteral,
   isTypeAliasDeclaration,
   isTypeLiteralNode,
@@ -178,6 +185,6 @@ export {
   isVariableDeclaration,
   isVariableStatement,
 } from "typescript/ast/is";
-export { SyntaxKind } from "typescript/ast";
+export { NodeFlags, SyntaxKind } from "typescript/ast";
 export { JsxEmit, SymbolFlags, TypeFlags } from "typescript/sync";
 export default ts;
