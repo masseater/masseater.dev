@@ -69,7 +69,7 @@ const Point = Schema.Struct({
   ratio: Schema.Finite,
   title: Schema.NullOr(Schema.String),
   note: Schema.optionalKey(Schema.String),
-  tags: Schema.optional(Schema.Array(Schema.String)),
+  tags: Schema.String.pipe(Schema.Array, Schema.optional),
   byKind: Schema.Record(Schema.String, Kind),
   pair: Schema.Tuple([Schema.String, Schema.Boolean]),
   extra: Schema.Unknown,

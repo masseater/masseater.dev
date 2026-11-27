@@ -54,7 +54,7 @@ export type Transcript = Readonly<{
   outputTokens: number;
 }>;
 
-const Entry = Schema.Struct({ model: Schema.optional(Schema.Array(Schema.Unknown)) });
+const Entry = Schema.Struct({ model: Schema.Unknown.pipe(Schema.Array, Schema.optional) });
 
 const decodeEntry = Schema.decodeUnknownOption(Entry);
 

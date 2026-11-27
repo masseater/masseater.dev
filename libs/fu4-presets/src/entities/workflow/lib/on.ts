@@ -84,7 +84,7 @@ export const parseEvents =
   (sink: Sink) =>
   (node: YamlNode): Option.Option<readonly Event[]> => {
     if (node.kind === "scalar") {
-      return Option.some(Option.toArray(withoutConfig(sink)(node)));
+      return withoutConfig(sink)(node).pipe(Option.toArray, Option.some);
     }
     if (node.kind === "mapping") {
       const entries = parseSection(sink)({

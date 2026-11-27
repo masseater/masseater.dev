@@ -12,7 +12,7 @@ const KeyValue = Schema.Struct({
   value: Schema.Record(Schema.String, Schema.Unknown),
 });
 
-const Attributes = Schema.optional(Schema.Array(KeyValue));
+const Attributes = KeyValue.pipe(Schema.Array, Schema.optional);
 
 const UnixNano = Schema.Union([Schema.String, Schema.Finite]);
 

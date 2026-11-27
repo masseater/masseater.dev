@@ -7,7 +7,7 @@ const ProfileTopic = Schema.Struct({ title: Schema.String, lines: Schema.Array(P
 const ProfileSection = Schema.Struct({
   title: Schema.String,
   lines: Schema.Array(ProfileLine),
-  topics: Schema.optionalKey(Schema.Array(ProfileTopic)),
+  topics: ProfileTopic.pipe(Schema.Array, Schema.optionalKey),
 });
 
 export const Profile = Schema.Struct({

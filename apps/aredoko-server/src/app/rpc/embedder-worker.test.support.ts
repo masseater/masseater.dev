@@ -34,4 +34,4 @@ const workerLayer = RpcServer.layer(EmbedderRpcs).pipe(
   Layer.provide(nodeWorkerRunner),
 );
 
-runMain("aredoko-embedder-test")(Layer.launch(workerLayer));
+workerLayer.pipe(Layer.launch, runMain("aredoko-embedder-test"));

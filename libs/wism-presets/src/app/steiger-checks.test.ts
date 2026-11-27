@@ -50,7 +50,7 @@ const CaseSchema = Schema.Struct({
 type Case = typeof CaseSchema.Type;
 type Found = typeof FoundSchema.Type;
 
-const Recorded = Schema.fromJsonString(Schema.Array(CaseSchema));
+const Recorded = CaseSchema.pipe(Schema.Array, Schema.fromJsonString);
 
 const TsconfigFile = Schema.fromJsonString(Schema.Unknown);
 

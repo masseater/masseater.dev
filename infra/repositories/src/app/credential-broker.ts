@@ -41,7 +41,7 @@ import { sideRoute } from "./side-routes.ts";
 
 const TOKEN_LIFETIME = { hours: 1 } as const;
 
-const PermissionGroups = Schema.mutable(Schema.Array(Schema.Struct({ id: Schema.String })));
+const PermissionGroups = Schema.Struct({ id: Schema.String }).pipe(Schema.Array, Schema.mutable);
 
 const Policy = Schema.Struct({
   effect: Schema.Literal("allow"),
@@ -49,11 +49,11 @@ const Policy = Schema.Struct({
   resources: Schema.Record(Schema.String, Schema.String),
 });
 
-const Policies = Schema.mutable(Schema.Array(Policy));
+const Policies = Policy.pipe(Schema.Array, Schema.mutable);
 
 const Permissions = Schema.Record(Schema.String, Schema.String);
 
-const RepositoryNames = Schema.mutable(Schema.Array(Schema.String));
+const RepositoryNames = Schema.String.pipe(Schema.Array, Schema.mutable);
 
 const GitHubGrant = Schema.Struct({
   permissions: Permissions,

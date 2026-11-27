@@ -162,7 +162,8 @@ const services = Layer.mergeAll(
 );
 
 runMain(
-  Layer.build(services).pipe(
+  services.pipe(
+    Layer.build,
     Effect.flatMap((context) => Effect.provideContext(play(), context)),
     Effect.scoped,
   ),

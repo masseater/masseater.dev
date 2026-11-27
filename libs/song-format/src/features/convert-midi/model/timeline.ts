@@ -2,12 +2,13 @@ import { TICKS_PER_WHOLE } from "@r_masseater/fumx-parser";
 import { Array as Arr, Match, Option, Order, Record as Rec, pipe } from "effect";
 import type { MidiData, MidiEvent } from "midi-file";
 
+import { sortedByTick } from "#/entities/timeline/index.ts";
+import type { Meter, Part, TempoChange, Text, Timed, Timeline } from "#/entities/timeline/index.ts";
 import type { From } from "#/shared/lib/from.ts";
 
 import { channelReadOf } from "./channel.ts";
 import type { ChannelRead } from "./channel.ts";
-import { sortedByTick } from "./events.ts";
-import type { Meter, Part, PlacedEvent, TempoChange, Text, Timed, Timeline } from "./events.ts";
+import type { PlacedEvent } from "./placed.ts";
 
 const QUARTERS_PER_WHOLE = 4;
 const NONE = 0;
@@ -71,7 +72,11 @@ const textOf: From<Placed, Option.Option<KindedText>> = ({ tick, event }) =>
 const tempoOf: From<Placed, Option.Option<TempoChange>> = ({ tick, event }) =>
   Match.value(event).pipe(
     Match.when({ type: "setTempo" }, (tempo) =>
-      Option.some<TempoChange>({ tick, microseconds: tempo.microsecondsPerBeat }),
+      Option.some<TempoChange>({
+        tick,
+        microseconds: tempo.microsecondsPerBeat,
+        target: Option.none(),
+      }),
     ),
     Match.orElse(() => Option.none<TempoChange>()),
   );

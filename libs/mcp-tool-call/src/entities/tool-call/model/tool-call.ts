@@ -81,7 +81,7 @@ const runToolInOf =
   <Services>(services: Layer.Layer<Services>): ToolRunner<Failure, Services> =>
   <Value>({ count }: Counted<Value>) =>
   (effect: Effect.Effect<Value, Failure, Services>): Promise<CallToolResult> =>
-    runner(services)(toOutcome(describe)(count)(effect).pipe(Effect.map(toResult)));
+    effect.pipe(toOutcome(describe)(count), Effect.map(toResult), runner(services));
 
 export const toolCalls = <Failure>(describe: Describe<Failure>): ToolCalls<Failure> => {
   const runToolIn = runToolInOf<Failure>(describe);

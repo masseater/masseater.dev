@@ -291,4 +291,4 @@ const claimAll = Effect.fn("claimAll")(function* claimAll() {
   return yield* claimMissing(missing);
 });
 
-runMain("claim-names")(Effect.scoped(claimAll()));
+claimAll().pipe(Effect.scoped, runMain("claim-names"));

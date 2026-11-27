@@ -69,7 +69,7 @@ const runRule =
     };
     return checked(active, context).pipe(
       Effect.catchCause((cause) =>
-        Effect.fail(failedWith(`fu4 rule ${active.id} failed on ${input.path}`)(cause)),
+        cause.pipe(failedWith(`fu4 rule ${active.id} failed on ${input.path}`), Effect.fail),
       ),
       Effect.map(() => pipe(reports, Arr.map(diagnosticOf(input, active)))),
       Effect.withSpan("fu4.rule", {

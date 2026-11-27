@@ -148,7 +148,9 @@ const cloudflare = Layer.unwrap(
 );
 
 const fail = (cause: Cause.Cause<unknown>): Effect.Effect<void> =>
-  Console.error(Cause.pretty(cause)).pipe(
+  cause.pipe(
+    Cause.pretty,
+    Console.error,
     Effect.andThen(
       Effect.sync(() => {
         process.exitCode = 1;

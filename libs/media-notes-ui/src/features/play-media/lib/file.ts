@@ -38,8 +38,9 @@ export const mountFile = (mount: Mount): Effect.Effect<Player, never, Scope.Scop
       },
       toggle: () => {
         if (video.paused) {
-          Effect.runFork(
-            Effect.ignore(Effect.tryPromise({ try: () => video.play(), catch: constVoid })),
+          Effect.tryPromise({ try: () => video.play(), catch: constVoid }).pipe(
+            Effect.ignore,
+            Effect.runFork,
           );
           return;
         }

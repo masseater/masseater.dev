@@ -40,6 +40,6 @@ const renderLoop = renderPending.pipe(Effect.flatMap(Effect.sleep), Effect.forev
 export const startRendering = (): (() => void) => {
   const fiber = Effect.runFork(renderLoop);
   return (): void => {
-    Effect.runFork(Fiber.interrupt(fiber));
+    fiber.pipe(Fiber.interrupt, Effect.runFork);
   };
 };

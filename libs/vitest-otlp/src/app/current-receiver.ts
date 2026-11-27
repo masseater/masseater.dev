@@ -22,5 +22,5 @@ const notRunning = (): ReceiverNotRunning =>
   });
 
 export const currentReceiver: Effect.Effect<Receiver, ReceiverNotRunning> = Effect.suspend(() =>
-  Effect.fromOption(MutableRef.get(current)),
+  current.pipe(MutableRef.get, Effect.fromOption),
 ).pipe(Effect.mapError(notRunning));

@@ -55,25 +55,39 @@ const kindOf = (type: string, quality: string): Option.Option<string> =>
     Option.orElse(() => Rec.get(TRIADS, quality)),
   );
 
-const majorTonicOf = (key: KeySpan): number => {
+const majorTonicOf = (key: Pick<KeySpan, "mode" | "pitchClass">): number => {
   if (key.mode === "minor") {
     return key.pitchClass + RELATIVE_MAJOR;
   }
   return key.pitchClass;
 };
 
-export const tokenOf =
-  (key: KeySpan) =>
-  (symbol: string): Option.Option<string> => {
-    const chord = Chord.get(symbol);
+export interface ReadChord {
+  readonly chroma: number;
+  readonly kind: string;
+}
+
+export const chordOf = (symbol: string): Option.Option<ReadChord> => {
+  const chord = Chord.get(symbol);
+  return Option.flatMap(Option.fromNullishOr(Note.chroma(chord.tonic ?? "")), (chroma) =>
+    Option.map(kindOf(chord.type, chord.quality), (kind) => ({ chroma, kind })),
+  );
+};
+
+export const degreeOf =
+  (key: Pick<KeySpan, "mode" | "pitchClass">) =>
+  (chord: ReadChord): Option.Option<string> => {
+    const pitchClass = pitchClassOf(chord.chroma - majorTonicOf(key));
     return pipe(
-      Option.fromNullishOr(Note.chroma(chord.tonic ?? "")),
-      Option.flatMap((chroma) => Arr.get(DEGREE_NAMES, pitchClassOf(chroma - majorTonicOf(key)))),
-      Option.flatMap((degree) =>
-        Option.map(kindOf(chord.type, chord.quality), (kind) => `${degree}${kind}`),
-      ),
+      Arr.get(DEGREE_NAMES, pitchClass),
+      Option.map((degree) => `${degree}${chord.kind}`),
     );
   };
+
+export const tokenOf =
+  (key: Pick<KeySpan, "mode" | "pitchClass">) =>
+  (symbol: string): Option.Option<string> =>
+    Option.flatMap(chordOf(symbol), degreeOf(key));
 
 const placeOf =
   (soundings: readonly Sounding[]) =>

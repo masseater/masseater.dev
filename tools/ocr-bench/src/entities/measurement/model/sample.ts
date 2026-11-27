@@ -23,7 +23,7 @@ const DocumentSchema = Schema.Struct({
   tilt: Schema.Finite,
 });
 
-export const DocumentsSchema = Schema.fromJsonString(Schema.Array(DocumentSchema));
+export const DocumentsSchema = DocumentSchema.pipe(Schema.Array, Schema.fromJsonString);
 
 export type Document = typeof DocumentSchema.Type;
 

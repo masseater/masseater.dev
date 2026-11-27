@@ -10,9 +10,9 @@ export const interviewerDev = (): Plugin => ({
   apply: "serve",
   configureServer(server) {
     Option.map(Option.fromNullishOr(server.httpServer), (httpServer) => {
-      const running = Effect.runFork(Layer.launch(serveApi(DEV_API_PORT)));
+      const running = serveApi(DEV_API_PORT).pipe(Layer.launch, Effect.runFork);
       httpServer.once("close", () => {
-        Effect.runFork(Fiber.interrupt(running));
+        running.pipe(Fiber.interrupt, Effect.runFork);
       });
       return running;
     });

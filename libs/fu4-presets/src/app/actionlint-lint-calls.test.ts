@@ -32,14 +32,14 @@ const ErrorSchema = Schema.Struct({
 const CallSchema = Schema.Struct({
   id: Schema.String,
   content: Schema.String,
-  configVariables: Schema.NullOr(Schema.Array(Schema.String)),
+  configVariables: Schema.String.pipe(Schema.Array, Schema.NullOr),
   unsupported: Schema.String,
   errors: Schema.Array(ErrorSchema),
 });
 
 type Call = typeof CallSchema.Type;
 
-const Recorded = Schema.fromJsonString(Schema.Array(CallSchema));
+const Recorded = CallSchema.pipe(Schema.Array, Schema.fromJsonString);
 
 const here = Effect.gen(function* here() {
   const path = yield* Path.Path;

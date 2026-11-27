@@ -34,7 +34,8 @@ const positionAtom = Atom.make((get) =>
   ),
 );
 
-export const usePlayer = (): Option.Option<Player> => AsyncResult.value(useAtomValue(playerAtom));
+export const usePlayer = (): Option.Option<Player> =>
+  useAtomValue(playerAtom).pipe(AsyncResult.value);
 
 export const usePosition = (): Position =>
   AsyncResult.getOrElse(useAtomValue(positionAtom), () => STILL);

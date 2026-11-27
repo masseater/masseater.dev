@@ -122,7 +122,7 @@ test("every mode of the Worker provider reconciles traced props", () =>
 
 const registration = providerLayer(Worker, Effect.succeed(fakeProvider));
 
-const stack = ManagedRuntime.make(withWorkersTracing(OPTIONS)(registration));
+const stack = registration.pipe(withWorkersTracing(OPTIONS), ManagedRuntime.make);
 
 test("a stack's providers answer for Workers with the traced provider", () =>
   stack.runPromise(

@@ -82,7 +82,8 @@ const command = Command.make(
 );
 
 runMain(
-  Layer.build(services).pipe(
+  services.pipe(
+    Layer.build,
     Effect.flatMap((context) =>
       Effect.provideContext(Command.run(command, { version: "0.0.0" }), context),
     ),

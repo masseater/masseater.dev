@@ -2,7 +2,8 @@ import { expect, it } from "@effect/vitest";
 import { readSong } from "@r_masseater/fumx-parser";
 import { Effect, String as Str } from "effect";
 
-import { compareWithMidi, midiToFumx } from "#/features/convert-midi/index.ts";
+import { compareWithSong } from "#/entities/timeline/index.ts";
+import { midiToFumx } from "#/features/convert-midi/index.ts";
 
 import {
   EXTREME_NOTES,
@@ -55,7 +56,7 @@ it.effect("finds a difference between the .fumx and the MIDI file", () =>
     if (source.status === "invalid") {
       expect.unreachable();
     }
-    const comparison = compareWithMidi({ plan: fumx.plan, bars: fumx.bars, song: source.song });
+    const comparison = compareWithSong({ plan: fumx.plan, bars: fumx.bars, song: source.song });
     expect(comparison.matches).toBe(false);
     expect(comparison.controls.missing).toStrictEqual(["grand-piano-ch1 cc 64 16128000 127"]);
     expect(comparison.controls.extra).toStrictEqual(["grand-piano-ch1 cc 64 16128000 126"]);

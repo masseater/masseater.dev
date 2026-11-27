@@ -108,7 +108,7 @@ test("matches zizmor on its recorded corpus", () =>
     const file = yield* path.fromFileUrl(new URL(import.meta.url));
     const base = path.join(path.dirname(file), FIXTURES);
     const raw = yield* fileSystem.readFileString(path.join(base, "expected.json"));
-    const cases = yield* Schema.decodeEffect(Schema.fromJsonString(Schema.Array(Case)))(raw);
+    const cases = yield* Schema.decodeEffect(Case.pipe(Schema.Array, Schema.fromJsonString))(raw);
     const inputs = path.join(base, "inputs");
     const outcomes = yield* Effect.forEach(cases, (entry) => compare(inputs, entry), SEQUENTIAL);
     expect(pipe(outcomes, Arr.filter(differs))).toStrictEqual([]);
