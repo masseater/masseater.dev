@@ -1,6 +1,7 @@
 import { Resvg } from "@resvg/resvg-js";
 import { Array as Arr, Effect, Option, Record as Rec, Schema, String as Str, pipe } from "effect";
 import { Base64 } from "effect/encoding";
+import type { ReactNode } from "react";
 import satori from "satori";
 import type { Font } from "satori";
 import type { Plugin } from "vite-plus";
@@ -9,8 +10,16 @@ import { parse } from "yaml";
 import { categories, entryOgImagePath } from "#/entities/entry/index.server.ts";
 import { site } from "#/shared/config/index.ts";
 
-import { BOLD, JAPANESE, LATIN, REGULAR, cardElement, siteElement } from "./og-card.ts";
-import type { Card } from "./og-card.ts";
+import {
+  BOLD,
+  JAPANESE,
+  LATIN,
+  REGULAR,
+  cardBackdropElement,
+  cardElement,
+  siteElement,
+} from "./og-card.ts";
+import type { Card, CardArt } from "./og-card.ts";
 
 const CLIENT_ENVIRONMENT = "client";
 const FRONTMATTER = /^---\n(?<yaml>[\s\S]*?)\n---/u;
@@ -118,43 +127,53 @@ const fontsOf = (source: Source): Effect.Effect<readonly Font[]> =>
     { concurrency: 1 },
   );
 
+const dataUrlOf = (png: Uint8Array): string => `data:image/png;base64,${Base64.encode(png)}`;
+
 const avatarOf = (source: Source): Effect.Effect<string> =>
-  readBytes(source, "public/avatars/masseater.png").pipe(
-    Effect.map((bytes) => `data:image/png;base64,${Base64.encode(bytes)}`),
-  );
+  readBytes(source, "public/avatars/masseater.png").pipe(Effect.map(dataUrlOf));
 
 type Png = Readonly<{ fileName: string; png: Uint8Array }>;
 
 const toFileName = Str.replace(LEADING_SLASH, "");
+
+const itemsOf =
+  (cards: readonly Card[]) =>
+  (art: CardArt): readonly Readonly<{ element: ReactNode; fileName: string }>[] =>
+    pipe(
+      cards,
+      Arr.map((card) => ({
+        element: cardElement(art)(card),
+        fileName: toFileName(entryOgImagePath(card)),
+      })),
+      Arr.prepend({ element: siteElement(art.avatar), fileName: toFileName(site.ogImage.path) }),
+    );
 
 const renderCards = (source: Source): Effect.Effect<readonly Png[]> =>
   Effect.all(
     { cards: cardsOf(source), avatar: avatarOf(source), fonts: fontsOf(source) },
     { concurrency: 1 },
   ).pipe(
-    Effect.flatMap(({ cards, avatar, fonts }) =>
-      pipe(
-        cards,
-        Arr.map((card) => ({
-          element: cardElement(avatar)(card),
-          fileName: toFileName(entryOgImagePath(card)),
-        })),
-        Arr.prepend({ element: siteElement(avatar), fileName: toFileName(site.ogImage.path) }),
-        (items) =>
+    Effect.flatMap(({ cards, avatar, fonts }) => {
+      const pngOf = (element: ReactNode): Effect.Effect<Uint8Array> =>
+        Effect.promise(() =>
+          satori(element, {
+            width: site.ogImage.width,
+            height: site.ogImage.height,
+            fonts: [...fonts],
+          }),
+        ).pipe(Effect.map((svg) => new Resvg(svg).render().asPng()));
+      return pngOf(cardBackdropElement).pipe(
+        Effect.map((png) => itemsOf(cards)({ avatar, backdrop: dataUrlOf(png) })),
+        Effect.flatMap((items) =>
           Effect.forEach(
             items,
             ({ element, fileName }) =>
-              Effect.promise(() =>
-                satori(element, {
-                  width: site.ogImage.width,
-                  height: site.ogImage.height,
-                  fonts: [...fonts],
-                }),
-              ).pipe(Effect.map((svg) => ({ fileName, png: new Resvg(svg).render().asPng() }))),
+              pngOf(element).pipe(Effect.map((png) => ({ fileName, png }))),
             { concurrency: 1 },
           ),
-      ),
-    ),
+        ),
+      );
+    }),
   );
 
 export const ogImage = (): Plugin => {
