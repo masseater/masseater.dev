@@ -1,5 +1,5 @@
 import type { VideoScript } from "@masseater.dev/video-kit/script";
-import { narrationKey, spokenOf } from "@masseater.dev/video-kit/script";
+import { narrationKey, spokenOf, voiceOf, voicesOf } from "@masseater.dev/video-kit/script";
 import { Array as Arr, Effect, FileSystem, Option, Path, Record as Rec, pipe } from "effect";
 import type { Config, PlatformError } from "effect";
 import type { HttpClient } from "effect/http";
@@ -11,7 +11,7 @@ import { projectPaths, readScript } from "#/shared/lib/project.ts";
 import { videoError } from "#/shared/lib/video-error.ts";
 import type { VideoError } from "#/shared/lib/video-error.ts";
 
-import { speakerName, speakerPortrait, synthesize } from "./voicevox.ts";
+import { speakerName, speakerPortraits, synthesize } from "./voicevox.ts";
 import { wavSeconds } from "./wav.ts";
 
 /** @internal */
@@ -84,47 +84,77 @@ const recordLine = ({
     return { key, seconds, made: true };
   });
 
-const spokenLines = (script: VideoScript): readonly string[] =>
+interface SpokenLine {
+  readonly voice: number;
+  readonly spoken: string;
+}
+
+const spokenLines = (script: VideoScript): readonly SpokenLine[] =>
   pipe(
     script.cuts,
-    Arr.flatMap(({ say }) => say),
-    Arr.map((say) => spokenOf({ say, readings: script.readings })),
+    Arr.flatMap((cut) =>
+      pipe(
+        cut.say,
+        Arr.map((say) => ({
+          voice: voiceOf(script)(cut),
+          spoken: spokenOf({ say, readings: script.readings }),
+        })),
+      ),
+    ),
   );
 
-const savePortrait = (voice: number): Effect.Effect<string, Failure, Services> =>
+type TachieRecord = NonNullable<Manifest["tachie"]>;
+
+const savePortraits = (voice: number): Effect.Effect<TachieRecord, Failure, Services> =>
   Effect.gen(function* save() {
     const fileSystem = yield* FileSystem.FileSystem;
     const path = yield* Path.Path;
     const paths = yield* projectPaths;
-    const relative = tachiePath(`voicevox-${String(voice)}`);
-    const file = path.join(paths.public, relative);
-    if (!(yield* fileSystem.exists(file))) {
-      const png = yield* speakerPortrait(voice);
-      yield* fileSystem.makeDirectory(path.dirname(file), { recursive: true });
-      yield* fileSystem.writeFile(file, png);
-    }
-    return relative;
+    const portraits = yield* speakerPortraits(voice);
+    const saved = yield* Effect.forEach(
+      portraits,
+      ({ style, png }) =>
+        Effect.gen(function* saveOne() {
+          const relative = tachiePath(`voicevox-${String(style)}`);
+          const file = path.join(paths.public, relative);
+          yield* fileSystem.makeDirectory(path.dirname(file), { recursive: true });
+          yield* fileSystem.writeFile(file, png);
+          return [String(style), { closed: relative }] as const;
+        }),
+      { concurrency: 1 },
+    );
+    return Rec.fromEntries(saved);
   });
 
-const NO_TACHIE: NonNullable<Manifest["tachie"]> = {};
+const NO_TACHIE: TachieRecord = {};
 
-const tachieIn = (manifest: Manifest): NonNullable<Manifest["tachie"]> =>
+const tachieIn = (manifest: Manifest): TachieRecord =>
   Option.getOrElse(Option.fromNullishOr(manifest.tachie), () => NO_TACHIE);
 
-const narrateWith = (
-  script: VideoScript,
-  voice: number,
-): Effect.Effect<Narrated, Failure, Services> =>
-  Effect.gen(function* narrateVoice() {
+const namesOf = (
+  voices: readonly number[],
+): Effect.Effect<Readonly<Record<string, string>>, Failure, Services> =>
+  Effect.forEach(
+    voices,
+    (voice) => speakerName(voice).pipe(Effect.map((name) => [String(voice), name] as const)),
+    { concurrency: 1 },
+  ).pipe(Effect.map((entries) => Rec.fromEntries(entries)));
+
+const portraitsOf = (voices: readonly number[]): Effect.Effect<TachieRecord, Failure, Services> =>
+  Effect.forEach(voices, savePortraits, { concurrency: 1 }).pipe(
+    Effect.map((records) => pipe(records, Arr.flatMap(Rec.toEntries), Rec.fromEntries)),
+  );
+
+const narrateAll = (script: VideoScript): Effect.Effect<Narrated, Failure, Services> =>
+  Effect.gen(function* narrateVoices() {
     const manifest = yield* readManifest;
-    const name = yield* speakerName(voice);
-    const portrait = yield* savePortrait(voice);
+    const voices = voicesOf(script);
+    const names = yield* namesOf(voices);
+    const portraits = yield* portraitsOf(voices);
     const recorded = yield* Effect.forEach(
       spokenLines(script),
-      (spoken) => recordLine({ voice, spoken, manifest }),
-      {
-        concurrency: 1,
-      },
+      ({ voice, spoken }) => recordLine({ voice, spoken, manifest }),
+      { concurrency: 1 },
     );
     const fresh = pipe(
       recorded,
@@ -133,8 +163,8 @@ const narrateWith = (
     );
     yield* writeManifest({
       narration: { ...manifest.narration, ...fresh },
-      speakers: { ...manifest.speakers, [String(voice)]: name },
-      tachie: { [String(voice)]: { closed: portrait }, ...tachieIn(manifest) },
+      speakers: { ...manifest.speakers, ...names },
+      tachie: { ...portraits, ...tachieIn(manifest) },
     });
     const made = pipe(
       recorded,
@@ -147,5 +177,5 @@ const narrateWith = (
 export const narrate = (slug: string): Effect.Effect<Narrated, Failure, Services> =>
   Effect.gen(function* narrateVideo() {
     const script = yield* readScript(slug);
-    return yield* narrateWith(script, script.voice);
+    return yield* narrateAll(script);
   });

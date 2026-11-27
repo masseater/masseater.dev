@@ -5,6 +5,7 @@ import type { Segment } from "#/shared/lib/segment.ts";
 import { segmentsOf } from "#/shared/lib/segment.ts";
 
 import type { Cut, VideoScript } from "./cut.ts";
+import { voiceOf } from "./cut.ts";
 import { emphasisAtOf, estimateSeconds, frames } from "./frames.ts";
 import { narrationKey, spokenOf } from "./narration.ts";
 import type { Sources, TimedLine } from "./timeline.ts";
@@ -21,9 +22,12 @@ export interface LinesRequest {
   readonly sources: Sources;
 }
 
-const recordingOf = ({ script, sources }: LinesRequest, say: string): Effect.Effect<Recorded> =>
+const recordingOf = (
+  { script, cut, sources }: LinesRequest,
+  say: string,
+): Effect.Effect<Recorded> =>
   narrationKey({
-    speaker: script.voice,
+    speaker: voiceOf(script)(cut),
     spoken: spokenOf({ say, readings: script.readings }),
   }).pipe(
     Effect.map((key) => ({

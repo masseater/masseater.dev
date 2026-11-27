@@ -15,6 +15,8 @@ export class FontError extends taggedError<FontError, { readonly brand: unique s
 const FACES = [
   `900 64px "${FONT.heavy}"`,
   `700 64px "${FONT.bold}"`,
+  `500 64px "${FONT.bold}"`,
+  `300 64px "${FONT.bold}"`,
   `500 64px "${FONT.code}"`,
 ] as const;
 

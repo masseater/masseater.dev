@@ -23,8 +23,9 @@ const timelineOf = (format: Format): Effect.Effect<Timeline> =>
       narration: {},
       narrationSrc: (key: string) => key,
       assetSrc: (url: string) => url,
-      speakerName: Option.some(SPEAKER),
+      speakers: { "0": SPEAKER },
       tachie: Option.none(),
+      portraits: {},
     },
   });
 

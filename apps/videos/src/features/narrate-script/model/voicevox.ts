@@ -18,7 +18,15 @@ const Speaker = Schema.Struct({
   styles: Schema.Array(Style),
 });
 
-const SpeakerInfo = Schema.Struct({ portrait: Schema.String });
+const StyleInfo = Schema.Struct({
+  id: Schema.Finite,
+  portrait: Schema.String.pipe(Schema.NullOr, Schema.optionalKey),
+});
+
+const SpeakerInfo = Schema.Struct({
+  portrait: Schema.String,
+  style_infos: Schema.Array(StyleInfo),
+});
 
 const Speakers = Schema.Array(Speaker);
 
@@ -63,10 +71,18 @@ export const speakerName = (
   speakerOf(style).pipe(Effect.map(({ name }) => name));
 
 /** @internal */
-export const speakerPortrait = (
+export interface Portrait {
+  readonly style: number;
+  readonly png: Uint8Array;
+}
+
+const pngOf = (base64: string): Uint8Array => new Uint8Array(Buffer.from(base64, "base64"));
+
+/** @internal */
+export const speakerPortraits = (
   style: number,
-): Effect.Effect<Uint8Array, VideoError | Config.ConfigError, HttpClient.HttpClient> =>
-  Effect.gen(function* portrait() {
+): Effect.Effect<readonly Portrait[], VideoError | Config.ConfigError, HttpClient.HttpClient> =>
+  Effect.gen(function* portraits() {
     const engine = yield* VOICEVOX_URL;
     const client = yield* okClient;
     const speaker = yield* speakerOf(style);
@@ -79,7 +95,13 @@ export const speakerPortrait = (
       Effect.flatMap(HttpClientResponse.schemaBodyJson(SpeakerInfo)),
       Effect.mapError(failedWith),
     );
-    return new Uint8Array(Buffer.from(info.portrait, "base64"));
+    return pipe(
+      info.style_infos,
+      Arr.map(({ id, portrait }) => ({
+        style: id,
+        png: pngOf(Option.getOrElse(Option.fromNullishOr(portrait), () => info.portrait)),
+      })),
+    );
   });
 
 /** @internal */

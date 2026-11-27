@@ -1,4 +1,4 @@
-import type { Draw } from "@masseater.dev/video-kit";
+import type { Draw, Look } from "@masseater.dev/video-kit";
 import type { VideoScript } from "@masseater.dev/video-kit/script";
 import { Array as Arr, Option, Record as Rec, String as Str, pipe } from "effect";
 
@@ -71,4 +71,19 @@ export const drawOf = (slug: string): Readonly<Record<string, Draw>> =>
     Option.flatMap((key) => exportOf(videos(key), "draw")),
     Option.filter(isDraw),
     Option.getOrElse(() => NO_DRAW),
+  );
+
+const isLook = (value: unknown): value is Partial<Look> =>
+  typeof value === "object" && value !== null;
+
+const NO_LOOK: Partial<Look> = {};
+
+/** @internal */
+export const lookOf = (slug: string): Partial<Look> =>
+  pipe(
+    videos.keys(),
+    Arr.findFirst((key) => slugOf(key) === slug),
+    Option.flatMap((key) => exportOf(videos(key), "look")),
+    Option.filter(isLook),
+    Option.getOrElse(() => NO_LOOK),
   );
