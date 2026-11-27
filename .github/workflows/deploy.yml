@@ -95,12 +95,7 @@ jobs:
   production:
     needs: [bootstrap, broker]
     if: ${{ !cancelled() && needs.bootstrap.outputs.stacks != '' && needs.bootstrap.outputs.stacks != '[]' }}
-    name: production (${{ matrix.stack.name }})
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        stack: ${{ fromJSON(needs.bootstrap.outputs.stacks) }}
     environment: production
     permissions:
       contents: read
@@ -114,19 +109,15 @@ jobs:
       - uses: $/.github/actions/setup
         with:
           native: "false"
-      - run: vp run --log labeled --filter "$FILTER" deploy:production
-        env:
-          FILTER: ${{ matrix.stack.filter }}
-      - run: vp run -r record-deployment
+      - run: vp run -r deploy-production
         env:
           GH_TOKEN: ${{ github.token }}
-          DEPLOYMENT_ENVIRONMENT: production
-          DEPLOYMENT_TASK: deploy:${{ matrix.stack.name }}
+          STACKS: ${{ needs.bootstrap.outputs.stacks }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}
       - if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: web-vitals-${{ matrix.stack.name }}
+          name: web-vitals
           path: tools/*/report/
           if-no-files-found: ignore
 
