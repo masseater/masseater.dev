@@ -54,7 +54,7 @@ const loudestOf = (tracks: readonly Track[]): number =>
     ),
   );
 
-export const levelHabitsOf =
+const levelHabitsOf =
   (tracks: readonly Track[]) =>
   (track: Track): readonly MixHabit[] => [
     {
