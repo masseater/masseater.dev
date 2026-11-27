@@ -5,7 +5,7 @@ tags: ["fallow", "TypeScript", "静的解析"]
 published: true
 ---
 
-`fallow dupes` は、コピーされた後に名前が変更されたコードを検出する。あるファイルには `for` ループ、別のファイルには `reduce` があるといった、異なるスタイルで記述された同一の計算は検出されない。`fallow similar-code` がその隙間を埋めている。各関数をローカル埋め込みモデルでベクトルに変換し、ベクトルが近接しているペアを列挙する[^fallow-similar-code-docs]。[fallowの記事](/blogs/fallow)では、その他のコマンドについて解説している。
+`fallow dupes` は、コピーされた後に名前が変更されたコードを検出する。あるファイルには `for` ループ、別のファイルには `reduce` があるといった、異なるスタイルで記述された同一の計算は検出されない。`fallow similar-code` がその隙間を埋めている。各関数をローカル埋め込みモデルでベクトルに変換し、ベクトルが近接しているペアを列挙する[^fallow-similar-code-docs]。[fallowの記事](/slog/fallow)では、その他のコマンドについて解説している。
 
 ## dupesが見落とすもの
 

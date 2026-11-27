@@ -130,6 +130,10 @@
   view-transition-name: category-blogs;
 }
 
+@utility vt-category-slog {
+  view-transition-name: category-slog;
+}
+
 @utility vt-category-sloppedia {
   view-transition-name: category-sloppedia;
 }
@@ -232,6 +236,7 @@
 ::view-transition-group(nav-indicator),
 ::view-transition-group(category-projects),
 ::view-transition-group(category-blogs),
+::view-transition-group(category-slog),
 ::view-transition-group(category-sloppedia),
 ::view-transition-group(category-nikogori),
 ::view-transition-group(category-ai-produced) {

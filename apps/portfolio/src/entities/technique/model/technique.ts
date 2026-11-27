@@ -41,13 +41,13 @@ const wikiImages: Readonly<Record<string, WikiImage>> = examples;
 const slugs: Readonly<Record<string, string>> = slugTable;
 
 const catalogs = import.meta.glob<readonly CatalogItem[]>(
-  ["/content/blogs/laborious-techniques.md", "/content/blogs/video-vj-techniques.md"],
+  ["/content/slog/laborious-techniques.md", "/content/slog/video-vj-techniques.md"],
   { query: "?technique-catalog", import: "default", eager: true },
 );
 
 const itemsOf = (article: Article): readonly CatalogItem[] =>
   pipe(
-    Rec.get(catalogs, `/content/blogs/${article}.md`),
+    Rec.get(catalogs, `/content/slog/${article}.md`),
     Option.getOrElse(() => []),
   );
 
