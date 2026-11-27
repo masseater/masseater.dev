@@ -46,9 +46,9 @@ const EventSchema = Schema.Struct({ Time: Schema.FiniteFromString, Value: Schema
 export type AutomationEvent = typeof EventSchema.Type;
 
 const EventsSchema = Schema.Struct({
-  FloatEvent: Schema.optionalKey(Schema.Array(EventSchema)),
-  EnumEvent: Schema.optionalKey(Schema.Array(EventSchema)),
-  BoolEvent: Schema.optionalKey(Schema.Array(EventSchema)),
+  FloatEvent: EventSchema.pipe(Schema.Array, Schema.optionalKey),
+  EnumEvent: EventSchema.pipe(Schema.Array, Schema.optionalKey),
+  BoolEvent: EventSchema.pipe(Schema.Array, Schema.optionalKey),
 });
 
 const EnvelopeSchema = Schema.Struct({
@@ -59,7 +59,7 @@ const EnvelopeSchema = Schema.Struct({
 export type AutomationEnvelope = typeof EnvelopeSchema.Type;
 
 const EnvelopeListSchema = Schema.Struct({
-  AutomationEnvelope: Schema.optionalKey(Schema.Array(EnvelopeSchema)),
+  AutomationEnvelope: EnvelopeSchema.pipe(Schema.Array, Schema.optionalKey),
 });
 
 const EnvelopesSchema = Schema.Struct({ Envelopes: EnvelopeListSchema });
@@ -85,7 +85,7 @@ const NoteSchema = Schema.Struct({
 });
 
 const NoteListSchema = Schema.Struct({
-  MidiNoteEvent: Schema.optionalKey(Schema.Array(NoteSchema)),
+  MidiNoteEvent: NoteSchema.pipe(Schema.Array, Schema.optionalKey),
 });
 
 const KeyTrackSchema = Schema.Struct({ Notes: NoteListSchema, MidiKey: Num });
@@ -98,7 +98,7 @@ const LoopSchema = Schema.Struct({
 });
 
 const KeyTracksSchema = Schema.Struct({
-  KeyTrack: Schema.optionalKey(Schema.Array(KeyTrackSchema)),
+  KeyTrack: KeyTrackSchema.pipe(Schema.Array, Schema.optionalKey),
 });
 
 const ClipSchema = Schema.Struct({
@@ -120,7 +120,9 @@ const DrumsSchema = Schema.Struct({ DrumGroupDevice: Schema.optionalKey(Schema.U
 
 const DevicesSchema = Schema.Struct({ Devices: Schema.optionalKey(DrumsSchema) });
 
-const ClipEventsSchema = Schema.Struct({ MidiClip: Schema.optionalKey(Schema.Array(ClipSchema)) });
+const ClipEventsSchema = Schema.Struct({
+  MidiClip: ClipSchema.pipe(Schema.Array, Schema.optionalKey),
+});
 
 const ArrangementSchema = Schema.Struct({
   ArrangerAutomation: Schema.Struct({ Events: ClipEventsSchema }),
@@ -154,11 +156,11 @@ const LocatorSchema = Schema.Struct({ Time: Num, Name: Text });
 export type AlsLocator = typeof LocatorSchema.Type;
 
 const TracksSchema = Schema.Struct({
-  MidiTrack: Schema.optionalKey(Schema.Array(MidiTrackSchema)),
+  MidiTrack: MidiTrackSchema.pipe(Schema.Array, Schema.optionalKey),
 });
 
 const LocatorListSchema = Schema.Struct({
-  Locator: Schema.optionalKey(Schema.Array(LocatorSchema)),
+  Locator: LocatorSchema.pipe(Schema.Array, Schema.optionalKey),
 });
 
 const LiveSetSchema = Schema.Struct({

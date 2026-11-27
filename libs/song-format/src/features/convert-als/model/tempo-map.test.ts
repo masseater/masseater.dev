@@ -20,8 +20,8 @@ const CaseSchema = Schema.Struct({
   file: Schema.String,
   theoretical: Schema.Boolean,
   unreadable: Schema.Boolean,
-  tempo: Schema.NullOr(Schema.Array(TempoPointSchema)),
-  markers: Schema.NullOr(Schema.Array(MarkerSchema)),
+  tempo: TempoPointSchema.pipe(Schema.Array, Schema.NullOr),
+  markers: MarkerSchema.pipe(Schema.Array, Schema.NullOr),
 });
 
 type Case = typeof CaseSchema.Type;
