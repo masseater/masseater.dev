@@ -9,4 +9,4 @@ export const articleTitles = {
 
 export const COLLECTION_TITLE = "セイキンダンスで再現する表現技法";
 
-export const blogPath = (article: Article): string => `/blogs/${article}`;
+export const blogPath = (article: Article): string => `/slog/${article}`;

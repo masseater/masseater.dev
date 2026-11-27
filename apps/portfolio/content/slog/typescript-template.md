@@ -201,7 +201,7 @@ git diff refs/template/v0.0.9 refs/template/v0.0.10 | git apply --3way
 
 ## 関連
 
-公開リポジトリで開発することの意義については[別の記事](/blogs/public-repo-development)で、公開すると無料になるものについては[OSSの無料プランまとめ](/blogs/oss-free-plans)で書いた。至る所でEffectを採用する理由は、[AIにコードを書かせるなら、あらゆる場面でEffectを採用せよ](/blogs/effect-for-ai)にある。
+公開リポジトリで開発することの意義については[別の記事](/slog/public-repo-development)で、公開すると無料になるものについては[OSSの無料プランまとめ](/slog/oss-free-plans)で書いた。至る所でEffectを採用する理由は、[AIにコードを書かせるなら、あらゆる場面でEffectを採用せよ](/slog/effect-for-ai)にある。
 
 [^structure]: [CLAUDE.md](https://github.com/masseater/typescript-template/blob/main/CLAUDE.md) の「構成」「配置」「その他」と [apps/web/src/shared/api](https://github.com/masseater/typescript-template/tree/main/apps/web/src/shared/api)
 

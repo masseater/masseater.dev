@@ -9,7 +9,7 @@ published: true
 
 ## ClaudeはデフォルトでEffectを用いてTypeScriptを記述する
 
-コードの大部分はClaudeが書いており、特にEffectを用いたTypeScriptではミスが最も目立ちやすい。Effectは失敗や依存関係を型に組み込むが、effect-tsgoはEffectの誤用を型エラーに変換する。私は小規模なスクリプトも含め、あらゆる場面でEffectを採用しており、その理由については [AIにコードを書かせるならEffectを全面採用する](/blogs/effect-for-ai) で記している。アプリ、Workers、CLI、そしてリントルールはすべてここから始まっている。
+コードの大部分はClaudeが書いており、特にEffectを用いたTypeScriptではミスが最も目立ちやすい。Effectは失敗や依存関係を型に組み込むが、effect-tsgoはEffectの誤用を型エラーに変換する。私は小規模なスクリプトも含め、あらゆる場面でEffectを採用しており、その理由については [AIにコードを書かせるならEffectを全面採用する](/slog/effect-for-ai) で記している。アプリ、Workers、CLI、そしてリントルールはすべてここから始まっている。
 
 ## Rustは、計測値やライブラリが求める場所で使う
 
@@ -26,7 +26,7 @@ published: true
 
 ## 型はEffect Schemaで一度だけ定義される
 
-2つの言語をまたぐ型は、Effect Schemaとしてのみ定義される。Rustの構造体やenumは[effect2rs](/blogs/effect2rs)によってそこから生成され、生成されたファイルの横に誰かが手動でいずれかを書き込むと、チェックが失敗する。effect2rsが登場する前、私の最初のデスクトップアプリのプロトコルは2回書かれ、すべての変更を両方のコピーで行わなければならなかった。
+2つの言語をまたぐ型は、Effect Schemaとしてのみ定義される。Rustの構造体やenumは[effect2rs](/slog/effect2rs)によってそこから生成され、生成されたファイルの横に誰かが手動でいずれかを書き込むと、チェックが失敗する。effect2rsが登場する前、私の最初のデスクトップアプリのプロトコルは2回書かれ、すべての変更を両方のコピーで行わなければならなかった。
 
 TypeScript側のスキーマも検証するため、方向はTypeScriptからRustである。Rust側から届くメッセージをデコードするため、両者の不一致は、後で誤った値として現れるのではなく、境界部分でデコードエラーとして表示される。
 

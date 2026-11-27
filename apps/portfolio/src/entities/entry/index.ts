@@ -8,6 +8,7 @@ export { preloadBody } from "./ui/preload-body.ts";
 export { loadedHeadings } from "./model/toc.ts";
 export { EntryBody } from "./ui/entry-body.tsx";
 export { EntryToc } from "./ui/entry-toc.tsx";
+export { EntryFeed } from "./ui/entry-feed.tsx";
 export { EntryList } from "./ui/entry-list.tsx";
 export { EntryMeta } from "./ui/entry-meta.tsx";
 export { entryTitleTransition } from "./ui/entry-transition.ts";

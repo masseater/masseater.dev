@@ -3,7 +3,7 @@ import { Array as Arr, Schema, String as Str, pipe } from "effect";
 import { sectionMeta, sectionPath } from "#/shared/config/index.ts";
 import type { Section } from "#/shared/config/index.ts";
 
-export const categories = ["blogs", "sloppedia"] as const satisfies readonly Section[];
+export const categories = ["blogs", "slog", "sloppedia"] as const satisfies readonly Section[];
 
 export const CategorySchema = Schema.Literals(categories);
 
@@ -11,9 +11,17 @@ export type Category = typeof CategorySchema.Type;
 
 export type Robots = "index" | "noindex";
 
+export type Layout = "cards" | "feed";
+
 export const categoryMeta = {
-  blogs: { ...sectionMeta.blogs, schemaType: "BlogPosting", robots: "index" },
-  sloppedia: { ...sectionMeta.sloppedia, schemaType: "Article", robots: "noindex" },
+  blogs: { ...sectionMeta.blogs, schemaType: "BlogPosting", robots: "index", layout: "cards" },
+  slog: { ...sectionMeta.slog, schemaType: "BlogPosting", robots: "index", layout: "feed" },
+  sloppedia: {
+    ...sectionMeta.sloppedia,
+    schemaType: "Article",
+    robots: "noindex",
+    layout: "cards",
+  },
 } as const satisfies Record<
   Category,
   Readonly<{
@@ -21,6 +29,7 @@ export const categoryMeta = {
     description: string;
     schemaType: "Article" | "BlogPosting";
     robots: Robots;
+    layout: Layout;
   }>
 >;
 
