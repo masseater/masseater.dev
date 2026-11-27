@@ -1,15 +1,12 @@
 ---
-title: "What goes wrong in a huge monorepo (as of November 27, 2026)"
-description: "masseater.dev holds almost everything the owner builds. This note lists what has hurt: the 10 GB Actions cache limit, the memory of a 16 GB cloud session, a verify that stays slow even when sharded, and similar-code detection that stops at the repository border."
-tags: ["monorepo", "CI", "Cloudflare"]
-published: true
+title: "大規模なモノレポで何が問題になるか（2026年11月27日時点）" description: "masseater.dev には、オーナーがビルドするもののほぼすべてが保持されている。本ノートでは、10 GB の Actions キャッシュ制限、16 GB のクラウドセッションのメモリ、シャーディング後も低速なままの verify、およびリポジトリ境界で停止する類似コードの検出など、問題となった点を列挙する。" tags: ["monorepo", "CI", "Cloudflare"] published: true
 ---
 
-masseater.dev is the monorepo that holds almost everything the owner builds. This note collects what has hurt so far, with the numbers measured on November 27. Earlier notes cover single causes in detail: [the CI cache](/slog/monorepo-ci-cache), [why CI got slow](/slog/monorepo-ci-slowness) and [the size of the repository](/slog/monorepo-size).
+masseater.dev は、オーナーがビルドするほぼすべての内容を保持するモノレポである。本ノートでは、11月27日に計測した数値に基づき、これまでに問題となった点をまとめている。これまでのノートでは、[CIキャッシュ](/slog/monorepo-ci-cache)、[CIが低速化した原因](/slog/monorepo-ci-slowness)、および[リポジトリのサイズ](/slog/monorepo-size)について、個別の原因を詳細に解説している。
 
-## The Actions cache is shared by everything
+## アクションキャッシュはすべてで共有される。
 
-GitHub Actions keeps 10 GB of cache per repository and evicts the least recently used entries beyond that. The repository reached 10.3 GB on November 25. Right after the daily prune it still sits at 6.5 GB, and three things fill it:
+GitHub Actionsはリポジトリごとに10GBのキャッシュを保持し、それ以降の直近の使用済みエントリを除外する。このリポジトリは11月25日に10.3GBに達した。日次プルーニング直後でも依然として6.5GBとなっており、以下の3つの要因がこれを占めている：
 
 | What            | Size                   | Why it grows                                        |
 | --------------- | ---------------------- | --------------------------------------------------- |
@@ -17,11 +14,11 @@ GitHub Actions keeps 10 GB of cache per repository and evicts the least recently
 | Vite Task cache | about 0.75 GB per push | Each of the 6 verify shards saves its own           |
 | sccache entries | about 3,700            | The prune cannot reach them                         |
 
-Restoring is not free either. Extracting the cache takes about 60 seconds per job, and the time is spent decompressing, not downloading, so a faster network does not help.
+復元も無料ではない。キャッシュの展開には1回あたり約60秒かかり、その時間はダウンロードではなく解凍に費やされるため、ネットワークが高速であっても意味がない。
 
-## A cloud session cannot run the checks in parallel
+## クラウドセッションでは、チェックを並列に実行できない。
 
-A cloud session has 16 GB of RAM, about 14.3 GB of it usable, and no swap. Single steps already take a large share of that. The three processes inside `vp check` peak at 7.2, 3.2 and 2.4 GB, and the step as a whole peaks at about 10.5 GB.
+クラウドセッションは16GBのRAMを搭載しており、そのうち約14.3GBが利用可能で、スワップはない。単一のステップだけで、すでにその大部分を占めている。`vp check`内の3つのプロセスは最大7.2、3.2、2.4GBに達し、ステップ全体では最大約10.5GBとなる。
 
 | Step                                    | Peak memory   |
 | --------------------------------------- | ------------- |
@@ -32,20 +29,20 @@ A cloud session has 16 GB of RAM, about 14.3 GB of it usable, and no swap. Singl
 | msch                                    | 6.4 GB        |
 | tests                                   | 4 GB          |
 
-Cargo, fallow and Chrome run out of memory when they start next to these. The answer was to run one thing at a time, which makes a cold verify take about 20 minutes. The pre-push hook runs the same verify, so every push pays that price.
+Cargo、fallow、Chromeは、これらに隣接して起動するとメモリ不足に陥る。解決策は一度に1つのタスクを実行することであり、これによりコールド検証に約20分かかる。プリプッシュフックは同じ検証を実行するため、プッシュするたびにそのコストが発生する。
 
-Typed lint builds one TypeScript program for the whole repository. Its memory therefore grows with the number of packages.
+型付きリントは、リポジトリ全体に対して1つのTypeScriptプログラムを構築する。そのため、パッケージ数が増えるにつれてメモリが増大する。
 
-## Sharding does not make verify fast
+## 共有しても検証は速くならない。
 
-In CI, verify still takes about 15 minutes even though it runs in 6 shards. Cutting the work into more pieces has not brought that number down.
+CIでは、6つのシャードで動作しているにもかかわらず、検証に依然として15分ほどかかる。作業を細分化しても、その時間は短縮されていない。
 
-## Similar code is only visible inside one repository
+## 類似のコードは1つのリポジトリ内でのみ表示される。
 
-Splitting a repository hides code that should have been shared, because the similar-code check compares functions inside one repository. With [fallow similar-code](/slog/fallow-similar-code) a cross-repository check has to be built on purpose. fallow stops at 1,414 functions per run, so the comparison has to be sharded.
+リポジトリを分割すると、類似コードチェックで同一リポジトリ内の関数を比較するため、本来共有されるべきコードが隠されてしまう。[類似コードの許容](/slog/fallow-similar-code)では、リポジトリをまたいだチェックを専用に構築する必要がある。fallowは1回の実行につき1,414個の関数で停止するため、比較はシャーディングする必要がある。
 
-This is the strongest argument for keeping things together. A wrong split cannot be noticed from inside either half.
+これが、全体をまとめ上げる最大の根拠となる。誤った分割は、どちらの側からも見抜けない。
 
-## What this means for splitting
+## 分割における意味
 
-The default is one repository. A part is split out only when two conditions hold: keeping it together gives nothing, because it is stable and shares nothing with its neighbours, and the costs above actually bite it. Being easy to fork can be one reason among others, but it is not enough alone. Where a split is made, a periodic cross-repository similar-code check is the safeguard that makes a wrong split visible.
+デフォルトは1つのリポジトリである。分割が行われるのは、2つの条件が満たされた場合に限られる。すなわち、統合しても安定しており、隣接リポジトリと何も共有せず、かつ前述のコストが実際に負担となる場合である。フォークが容易であることも理由の一つになり得るが、それだけでは不十分だ。分割が行われる際、定期的なリポジトリ間の類似コードチェックが、誤った分割を可視化する安全策となる。
