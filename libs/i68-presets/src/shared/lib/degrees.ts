@@ -62,18 +62,30 @@ const majorTonicOf = (key: Pick<KeySpan, "mode" | "pitchClass">): number => {
   return key.pitchClass;
 };
 
+export interface ReadChord {
+  readonly chroma: number;
+  readonly kind: string;
+}
+
+export const chordOf = (symbol: string): Option.Option<ReadChord> => {
+  const chord = Chord.get(symbol);
+  return Option.flatMap(Option.fromNullishOr(Note.chroma(chord.tonic ?? "")), (chroma) =>
+    Option.map(kindOf(chord.type, chord.quality), (kind) => ({ chroma, kind })),
+  );
+};
+
+export const degreeOf =
+  (key: Pick<KeySpan, "mode" | "pitchClass">) =>
+  (chord: ReadChord): Option.Option<string> =>
+    Option.map(
+      Arr.get(DEGREE_NAMES, pitchClassOf(chord.chroma - majorTonicOf(key))),
+      (degree) => `${degree}${chord.kind}`,
+    );
+
 export const tokenOf =
   (key: Pick<KeySpan, "mode" | "pitchClass">) =>
-  (symbol: string): Option.Option<string> => {
-    const chord = Chord.get(symbol);
-    return pipe(
-      Option.fromNullishOr(Note.chroma(chord.tonic ?? "")),
-      Option.flatMap((chroma) => Arr.get(DEGREE_NAMES, pitchClassOf(chroma - majorTonicOf(key)))),
-      Option.flatMap((degree) =>
-        Option.map(kindOf(chord.type, chord.quality), (kind) => `${degree}${kind}`),
-      ),
-    );
-  };
+  (symbol: string): Option.Option<string> =>
+    Option.flatMap(chordOf(symbol), degreeOf(key));
 
 const placeOf =
   (soundings: readonly Sounding[]) =>
