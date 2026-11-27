@@ -1,1 +1,0 @@
-echo "new_version=$(ls icu-data/tzdata/icunew | tail -1)" >> $GITHUB_ENV

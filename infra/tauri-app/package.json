@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@masseater.dev/browser-test": "workspace:*",
-    "@r_masseater/msch": "workspace:*",
+    "@r_masseater/msch": "catalog:",
     "@tailwindcss/vite": "catalog:",
     "@vitejs/plugin-react": "catalog:",
     "effect": "catalog:stack",

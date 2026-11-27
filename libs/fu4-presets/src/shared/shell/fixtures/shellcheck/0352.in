@@ -1,1 +1,0 @@
-gh pr comment "$NUMBER" --repo "$GITHUB_REPOSITORY" --body "$FAST_TRACK_MESSAGE"

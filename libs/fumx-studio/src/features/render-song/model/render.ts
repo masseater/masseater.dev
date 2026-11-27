@@ -1,4 +1,4 @@
-import type { Song } from "@r_masseater/fumx-parser";
+import type { Song } from "@r_masseater/song-format";
 import { Array as Arr, Effect, Option, pipe } from "effect";
 
 import { clockOf } from "#/entities/clock/index.ts";

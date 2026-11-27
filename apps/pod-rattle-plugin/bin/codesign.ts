@@ -1,5 +1,5 @@
 import { run } from "@masseater.dev/component-release";
-import { runMain } from "@masseater.dev/node-main";
+import { runMain } from "@r_masseater/node-main";
 import { Array as Arr, Effect } from "effect";
 
 import { CLAP, VST3, bundlesWith } from "./lib/bundled.ts";

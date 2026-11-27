@@ -1,1 +1,0 @@
-s=1; f() { local s='a b'; }; f; echo $s

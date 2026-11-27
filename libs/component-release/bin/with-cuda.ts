@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { runMainWith } from "@masseater.dev/node-main";
+import { runMainWith } from "@r_masseater/node-main";
 import { Effect } from "effect";
 import { Argument, Command, Flag } from "effect/cli";
 import { Digest } from "effect/crypto";

@@ -1,5 +1,5 @@
 import { checkRust, effect2rs } from "@masseater.dev/effect2rs";
-import { runMain } from "@masseater.dev/node-main";
+import { runMain } from "@r_masseater/node-main";
 import { Array as Arr, Effect, FileSystem, Path, Schema, String as Str, pipe } from "effect";
 import { Command, Flag } from "effect/cli";
 

@@ -1,6 +1,6 @@
-import { runMain } from "@masseater.dev/node-main";
 import { McpServer } from "@modelcontextprotocol/server";
 import { StdioServerTransport } from "@modelcontextprotocol/server/stdio";
+import { runMain } from "@r_masseater/node-main";
 import { Effect, Layer, pipe } from "effect";
 import { FetchHttpClient } from "effect/http";
 

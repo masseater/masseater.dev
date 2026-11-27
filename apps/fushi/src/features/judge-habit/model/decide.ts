@@ -1,4 +1,4 @@
-import type { Subject } from "@r_masseater/i68-presets/habits";
+import type { Subject } from "@r_masseater/i68/habits";
 import { Array as Arr, Effect, Option, String as Str, pipe } from "effect";
 import { SecureRandom } from "effect/crypto";
 import { Atom, AtomRegistry } from "effect/reactivity";

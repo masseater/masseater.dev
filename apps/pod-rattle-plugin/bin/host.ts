@@ -1,4 +1,4 @@
-import { runMain } from "@masseater.dev/node-main";
+import { runMain } from "@r_masseater/node-main";
 import { Effect } from "effect";
 
 import { VST3, bundlesWith, cargo } from "./lib/bundled.ts";

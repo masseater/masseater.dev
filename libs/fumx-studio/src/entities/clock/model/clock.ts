@@ -1,5 +1,5 @@
-import type { Bar, Song } from "@r_masseater/fumx-parser";
-import { TICKS_PER_WHOLE } from "@r_masseater/fumx-parser";
+import type { Bar, Song } from "@r_masseater/song-format";
+import { TICKS_PER_WHOLE } from "@r_masseater/song-format";
 import { Array as Arr, Option, pipe } from "effect";
 
 const SECONDS_PER_MINUTE = 60;

@@ -1,1 +1,0 @@
-declare -i s=0; s=$(f); echo $s

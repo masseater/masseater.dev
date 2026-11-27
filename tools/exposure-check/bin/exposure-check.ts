@@ -1,6 +1,6 @@
 import { CredentialsFromEnv as CloudflareCredentials } from "@distilled.cloud/cloudflare/Credentials";
 import { CredentialsFromEnv as GitHubCredentials } from "@distilled.cloud/github/Credentials";
-import { runMain } from "@masseater.dev/node-main";
+import { runMain } from "@r_masseater/node-main";
 import { Config, Effect, Layer } from "effect";
 import { FetchHttpClient } from "effect/http";
 

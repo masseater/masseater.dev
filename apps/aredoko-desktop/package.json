@@ -34,7 +34,7 @@
     "@effect/vitest": "catalog:",
     "@masseater.dev/component-release": "workspace:*",
     "@masseater.dev/tauri-app": "workspace:*",
-    "@r_masseater/msch": "workspace:*",
+    "@r_masseater/msch": "catalog:",
     "@tauri-apps/cli": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",

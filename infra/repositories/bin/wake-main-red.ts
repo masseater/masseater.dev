@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { runMain } from "@masseater.dev/node-main";
+import { runMain } from "@r_masseater/node-main";
 import { Boolean as Bool, Console, Effect } from "effect";
 
 import { brokerIdToken, wakeProject } from "./lib/broker-client.ts";

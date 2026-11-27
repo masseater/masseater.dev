@@ -1,1 +1,0 @@
-echo "WPT_REVISION=$(gh api /repos/web-platform-tests/wpt/branches/epochs/daily --jq '.commit.sha')" >> $GITHUB_ENV

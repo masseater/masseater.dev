@@ -5,8 +5,8 @@
   "description": "Claims new npm names with a placeholder version and registers the Trusted Publisher.",
   "type": "module",
   "dependencies": {
-    "@masseater.dev/github-workflow": "workspace:*",
-    "@masseater.dev/node-main": "workspace:*",
+    "@r_masseater/github-workflow": "catalog:",
+    "@r_masseater/node-main": "catalog:",
     "effect": "catalog:stack"
   },
   "devDependencies": {

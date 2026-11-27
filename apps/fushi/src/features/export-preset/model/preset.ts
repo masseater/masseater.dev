@@ -1,5 +1,5 @@
-import { StyleRulesSchema } from "@r_masseater/i68-presets/habits";
-import type { HabitKind, HabitRule, StyleRules } from "@r_masseater/i68-presets/habits";
+import { StyleRulesSchema } from "@r_masseater/i68/habits";
+import type { HabitKind, HabitRule, StyleRules } from "@r_masseater/i68/habits";
 import { Array as Arr, Effect, Option, Schema, pipe } from "effect";
 
 import type { Judgment, Library, Style } from "#/entities/library/index.ts";

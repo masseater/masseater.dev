@@ -11,11 +11,11 @@
     "@masseater.dev/aredoko-protocol": "workspace:*",
     "@masseater.dev/effect2rs": "workspace:*",
     "@masseater.dev/media-notes-protocol": "workspace:*",
-    "@masseater.dev/node-main": "workspace:*",
     "@masseater.dev/shirushi-protocol": "workspace:*",
     "@masseater.dev/sts2-protocol": "workspace:*",
     "@masseater.dev/yogoto-protocol": "workspace:*",
     "@masseater.dev/yohaku-protocol": "workspace:*",
+    "@r_masseater/node-main": "catalog:",
     "effect": "catalog:stack",
     "quicktype-core": "26.0.0"
   },

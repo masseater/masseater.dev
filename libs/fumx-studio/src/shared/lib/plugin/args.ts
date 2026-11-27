@@ -1,4 +1,4 @@
-import type { PluginArgument, PluginValue } from "@r_masseater/fumx-parser";
+import type { PluginArgument, PluginValue } from "@r_masseater/song-format";
 import { Array as Arr, Match, Option, pipe } from "effect";
 
 type Of<Kind extends PluginValue["kind"]> = Extract<PluginValue, { readonly kind: Kind }>;

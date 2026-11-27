@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-import { mustSucceed, writeOutputs } from "@masseater.dev/github-workflow";
-import { runMain } from "@masseater.dev/node-main";
+import { mustSucceed, writeOutputs } from "@r_masseater/github-workflow";
+import { runMain } from "@r_masseater/node-main";
 import {
   Array as Arr,
   Effect,

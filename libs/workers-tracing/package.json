@@ -115,7 +115,7 @@
     "@distilled.cloud/cloudflare": "catalog:stack",
     "@effect/platform-node": "catalog:",
     "@r_masseater/vite-plus-adopt": "catalog:",
-    "@r_masseater/vitest-otlp": "workspace:*",
+    "@r_masseater/vitest-otlp": "catalog:",
     "@tanstack/react-start": "catalog:stack",
     "@tanstack/router-core": "1.171.39",
     "@types/node": "catalog:",

@@ -1,6 +1,6 @@
+import { renderSegments } from "@r_masseater/mapped-import";
+import type { Segment } from "@r_masseater/mapped-import";
 import { Array as Arr, Match, pipe, String as Str } from "effect";
-import { renderSegments } from "mapped-import";
-import type { Segment } from "mapped-import";
 import { expect, test } from "vite-plus/test";
 
 import type { SongOutline } from "./outline.ts";

@@ -1,4 +1,4 @@
-import type { Effect as SongEffect } from "@r_masseater/fumx-parser";
+import type { Effect as SongEffect } from "@r_masseater/song-format";
 import { Effect, Option } from "effect";
 
 import { decibels } from "#/shared/lib/dsp/number.ts";

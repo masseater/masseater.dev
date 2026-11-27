@@ -1,5 +1,5 @@
 import { keyOf, sampleFilesOf } from "@masseater.dev/fumx-studio";
-import type { Song as FumxSong } from "@r_masseater/fumx-parser";
+import type { Song as FumxSong } from "@r_masseater/song-format";
 import { Array as Arr, Option, Record as Rec, String as Str, pipe } from "effect";
 import { describe, expect, test } from "vite-plus/test";
 

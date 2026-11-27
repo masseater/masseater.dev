@@ -1,5 +1,5 @@
 import type { RenderSession, Rendered, Structure } from "@masseater.dev/daw-view";
-import type { Song } from "@r_masseater/fumx-parser";
+import type { Song } from "@r_masseater/song-format";
 import { Effect, Option, pipe } from "effect";
 import type { Scope } from "effect";
 

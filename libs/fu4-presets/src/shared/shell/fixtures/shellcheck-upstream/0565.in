@@ -1,1 +1,0 @@
-select foo in $bar; do true; done

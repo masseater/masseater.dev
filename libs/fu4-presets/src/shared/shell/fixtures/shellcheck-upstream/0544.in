@@ -1,1 +1,0 @@
-exec -c -a foo jq '$__loc__'

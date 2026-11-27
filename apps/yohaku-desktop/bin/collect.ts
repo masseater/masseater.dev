@@ -1,4 +1,4 @@
-import { runMain } from "@masseater.dev/node-main";
+import { runMain } from "@r_masseater/node-main";
 import { Array as Arr, Effect, FileSystem, Option, Path, String as Str } from "effect";
 
 import { installers } from "./lib/installers.ts";

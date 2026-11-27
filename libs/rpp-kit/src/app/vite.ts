@@ -1,5 +1,5 @@
+import { contentImport, declarationPathOf } from "@r_masseater/mapped-import/vite";
 import { Effect, Match, Option, Schema } from "effect";
-import { contentImport, declarationPathOf } from "mapped-import/vite";
 import type { Plugin } from "vite-plus";
 
 import { readSong } from "#/entities/song/index.ts";

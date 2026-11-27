@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { getRepoPublicKey } from "@distilled.cloud/github/actions";
 import { CredentialsFromEnv } from "@distilled.cloud/github/Credentials";
-import { runMainWith } from "@masseater.dev/node-main";
+import { runMainWith } from "@r_masseater/node-main";
 import { Console, Effect } from "effect";
 
 import { OWNER } from "#/entities/credential/index.ts";

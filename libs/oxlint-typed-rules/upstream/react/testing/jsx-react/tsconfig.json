@@ -1,4 +1,0 @@
-{
-  "extends": "../samples/tsconfig.jsx-react.json",
-  "include": ["*.ts", "*.tsx"]
-}

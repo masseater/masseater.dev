@@ -1,1 +1,0 @@
-SC2116:style:1:12: Useless echo? Instead of 'cmd $(echo foo)', just use 'cmd foo'

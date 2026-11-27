@@ -1,4 +1,4 @@
-import { SubjectSchema } from "@r_masseater/i68-presets/habits";
+import { SubjectSchema } from "@r_masseater/i68/habits";
 import { Array as Arr, Schema, pipe } from "effect";
 import type { Option } from "effect";
 

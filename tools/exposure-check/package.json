@@ -11,7 +11,7 @@
     "@distilled.cloud/cloudflare": "catalog:stack",
     "@distilled.cloud/github": "catalog:",
     "@masseater.dev/exposure-protocol": "workspace:*",
-    "@masseater.dev/node-main": "workspace:*",
+    "@r_masseater/node-main": "catalog:",
     "effect": "catalog:stack"
   },
   "devDependencies": {

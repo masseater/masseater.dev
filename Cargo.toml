@@ -13,26 +13,13 @@ members = [
   "libs/effect2rs/conformance",
   "libs/desktop-shell",
   "libs/media-notes",
-  "libs/y8/native/core",
-  "libs/y8/native/node",
-  "libs/h56m/native/core",
-  "libs/h56m/native/node",
-  "libs/napi-telemetry",
-  "libs/fu4/native/core",
-  "libs/fu4/native/node",
-  "libs/wism/native/core",
-  "libs/wism/native/node",
   "apps/shirushi/src-tauri",
   "apps/fushi/src-tauri",
   "libs/roformer",
   "libs/audio-fetch",
   "apps/yogoto/src-tauri",
 ]
-exclude = [
-  "patches/crates/lindera-dictionary",
-  "patches/crates/proc-macro-crate",
-  "patches/crates/tauri-macros",
-]
+exclude = ["patches/crates/proc-macro-crate", "patches/crates/tauri-macros"]
 
 [workspace.package]
 version = "0.0.0"
@@ -111,4 +98,3 @@ opt-level = 3
 [patch.crates-io]
 proc-macro-crate = { path = "patches/crates/proc-macro-crate" } # exit: crate:tauri requires tao@>=0.38
 tauri-macros = { path = "patches/crates/tauri-macros" } # exit: crate:tauri-macros@>2.7.6
-lindera-dictionary = { path = "patches/crates/lindera-dictionary" } # exit: crate:lindera-dictionary@>7.0.0

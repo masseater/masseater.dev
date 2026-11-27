@@ -1,5 +1,5 @@
 import { SERVER_FLAGS } from "@masseater.dev/aredoko-protocol";
-import { runMain, whileParentAlive } from "@masseater.dev/node-main";
+import { runMain, whileParentAlive } from "@r_masseater/node-main";
 import { Effect, Layer, String, pipe } from "effect";
 import { Command, Flag } from "effect/cli";
 

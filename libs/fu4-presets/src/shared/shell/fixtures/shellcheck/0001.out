@@ -1,2 +1,0 @@
-SC2086:info:1:1: Double quote to prevent globbing and word splitting
-SC2283:error:1:10: Remove spaces around = to assign (or use [ ] to compare, or quote '=' if literal)

@@ -1,2 +1,0 @@
-sudo apt update && sudo apt install -y nasm libtext-template-perl
-./tools/dep_updaters/update-openssl.sh regenerate

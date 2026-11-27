@@ -1,5 +1,5 @@
 import { run } from "@masseater.dev/component-release";
-import { runMain } from "@masseater.dev/node-main";
+import { runMain } from "@r_masseater/node-main";
 import { Effect, FileSystem, Layer, Match, pipe } from "effect";
 import { Digest } from "effect/crypto";
 import { FetchHttpClient, HttpClient, HttpClientResponse } from "effect/http";

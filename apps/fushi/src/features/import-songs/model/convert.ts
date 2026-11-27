@@ -1,5 +1,5 @@
-import { alsToFumx } from "@masseater.dev/song-format/convert-als";
-import { midiToFumx } from "@masseater.dev/song-format/convert-midi";
+import { alsToFumx } from "@r_masseater/song-format/convert-als";
+import { midiToFumx } from "@r_masseater/song-format/convert-midi";
 import { Array as Arr, Effect, Option, Schema, String as Str, pipe } from "effect";
 
 import type { Song } from "#/entities/library/index.ts";

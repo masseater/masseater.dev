@@ -1,3 +1,0 @@
-SC1073:error:2:1: Couldn't parse this for loop. Fix to allow more checks
-SC1058:error:3:3: Expected 'do'
-SC1072:error:3:3: Expected 'do'. Fix any mentioned problems and try again

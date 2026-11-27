@@ -5,7 +5,7 @@
   "description": "Small host that plays the Pod Rattle plugin with MIDI and checks its sound and editor screen.",
   "type": "module",
   "devDependencies": {
-    "@r_masseater/msch": "workspace:*",
+    "@r_masseater/msch": "catalog:",
     "vite-plus": "catalog:stack"
   }
 }

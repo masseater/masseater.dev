@@ -1,2 +1,0 @@
-SC2206:warning:1:6: Quote to prevent word splitting/globbing, or split robustly with mapfile or read -a
-SC2068:error:2:6: Double quote array expansions to avoid re-splitting elements
