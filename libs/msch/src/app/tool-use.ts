@@ -4,7 +4,7 @@ import { checkKnownPlugins, checkMissingHooks } from "#/features/check-agent-set
 import { checkDocumentedCommands } from "#/features/check-documented-commands/index.ts";
 import { checkLegacyWeb } from "#/features/check-legacy-web/index.ts";
 import { checkMarkdown } from "#/features/check-markdown/index.ts";
-import { checkRestrictedRules } from "#/features/check-overrides/index.ts";
+import { checkRestrictedRules, checkTypeExemptions } from "#/features/check-overrides/index.ts";
 import { checkScripts } from "#/features/check-scripts/index.ts";
 import { checkStructure } from "#/features/check-structure/index.ts";
 import { checkVitePlus } from "#/features/check-vite-plus/index.ts";
@@ -31,6 +31,7 @@ export const checkToolUse = Effect.fn("checkToolUse")(function* checkToolUse(roo
       checkReleasePlease(root),
       checkPublishTrigger(root),
       checkRestrictedRules(root),
+      checkTypeExemptions(root),
       checkMarkdown(root),
       checkLegacyWeb(root),
       checkDocumentedCommands(root),
