@@ -21,17 +21,25 @@ const SESSION = /^(?<group>conversation:[^/]+)\//u;
 
 const NOTHING = 0;
 
-const dot = (left: Vector, right: Vector): number =>
-  Num.sumAll(Arr.zipWith(left, right, (one, other) => one * other));
+const STEP = 1;
 
-const norm = (vector: Vector): number => Math.sqrt(dot(vector, vector));
-
-const cosine = (left: Vector, right: Vector): number => {
-  const size = norm(left) * norm(right);
-  if (size === NOTHING) {
-    return NOTHING;
+const dot = (left: Vector, right: Vector): number => {
+  let sum = NOTHING;
+  for (let index = NOTHING; index < left.length; index += STEP) {
+    sum += (left[index] ?? NOTHING) * (right[index] ?? NOTHING);
   }
-  return dot(left, right) / size;
+  return sum;
+};
+
+const unitOf = (vector: Vector): Vector => {
+  const size = Math.sqrt(dot(vector, vector));
+  if (size === NOTHING) {
+    return vector;
+  }
+  return pipe(
+    vector,
+    Arr.map((value) => value / size),
+  );
 };
 
 export const meanOf = (vectors: Arr.NonEmptyReadonlyArray<Vector>): Vector => {
@@ -69,19 +77,30 @@ const groupOf = (ref: string): string =>
     Option.getOrElse(() => ref),
   );
 
+type Unit = readonly [ref: string, vector: Vector];
+
+const unitsOf = (
+  traits: readonly TraitState[],
+  vectors: Readonly<Record<string, Vector>>,
+): readonly Unit[] =>
+  pipe(
+    traits,
+    Arr.map((trait) => keyText(trait.key)),
+    Arr.flatMap((ref) =>
+      pipe(
+        Rec.get(vectors, ref),
+        Option.map((stored): Unit => [ref, unitOf(stored)]),
+        Option.toArray,
+      ),
+    ),
+  );
+
 const nearestTo =
-  (traits: readonly TraitState[], vectors: Readonly<Record<string, Vector>>, count: number) =>
+  (units: readonly Unit[], count: number) =>
   (vector: Vector): readonly string[] =>
     pipe(
-      traits,
-      Arr.map((trait) => keyText(trait.key)),
-      Arr.flatMap((ref) =>
-        pipe(
-          Rec.get(vectors, ref),
-          Option.map((stored) => [ref, cosine(vector, stored)] as const),
-          Option.toArray,
-        ),
-      ),
+      units,
+      Arr.map(([ref, unit]) => [ref, dot(vector, unit)] as const),
       Arr.sortWith(([, score]) => score, Order.flip(Order.Number)),
       Arr.take(count),
       Arr.map(([ref]) => ref),
@@ -105,7 +124,7 @@ const linkedTo =
 
 export const candidatesOf = ({ traits, vectors, sources }: Neighbourhood): Candidates => {
   const active = pipe(traits, Arr.filter(isActive));
-  const nearest = nearestTo(active, vectors, NEAREST);
+  const nearest = nearestTo(unitsOf(active, vectors), NEAREST);
   const linked = linkedTo(active);
   return Rec.fromEntries(
     pipe(
@@ -129,7 +148,7 @@ export const relatedTo = ({
   vector: Vector;
 }>): HashSet.HashSet<string> => {
   const active = pipe(traits, Arr.filter(isActive));
-  const hits = nearestTo(active, vectors, TOPIC_HITS)(vector);
+  const hits = nearestTo(unitsOf(active, vectors), TOPIC_HITS)(vector);
   const groups = HashSet.fromIterable(
     pipe(
       active,

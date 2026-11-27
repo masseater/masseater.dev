@@ -55,7 +55,6 @@ jobs:
 
   tailnet:
     runs-on: ubuntu-latest
-    environment: bootstrap
     permissions:
       contents: read
       id-token: write

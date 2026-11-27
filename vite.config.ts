@@ -89,7 +89,7 @@ export default defineConfig({
       ],
     },
     "cloudflare/skills": {
-      commit: "5108325ecceabc899c761e07aa617b09c02445ee",
+      commit: "ff191de7d903788eceaf516a514ae7d3b56b924a",
       root: "skills",
       skills: ["cloudflare", "workers-best-practices"],
     },
@@ -107,7 +107,7 @@ export default defineConfig({
       skills: ["feature-sliced-design"],
     },
     "GoogleChrome/modern-web-guidance": {
-      commit: "64a6d708f5a43f2cd3fde5d4d7db3905ba1bdf65",
+      commit: "2b4aa13a72dd47cd135b06ce5abfccd92e19b24f",
       root: "skills",
       skills: ["modern-web-guidance"],
     },
@@ -122,7 +122,7 @@ export default defineConfig({
       skills: ["typescript-discriminated-unions", "typescript-variables"],
     },
     "nanaism/yomiyasu": {
-      commit: "ddf365b5d5b36a7aa4ffab798dce1b694dbb1afd",
+      commit: "3979c750b5e1fe9892bd47bb354f0fb51d534ff2",
       root: "skills",
       skills: ["yomiyasu"],
     },
@@ -161,7 +161,7 @@ export default defineConfig({
       ],
     },
     "shadcn-ui/ui": {
-      commit: "055aa6b7837b1808456a24beb4c97a677864aa82",
+      commit: "0e5b2e621a9ee4cf6a604bbe6c5c0d5b70561eb4",
       root: "skills",
       skills: ["shadcn"],
     },

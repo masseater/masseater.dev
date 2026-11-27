@@ -122,10 +122,13 @@
   "customManagers": [
     {
       "customType": "regex",
-      "managerFilePatterns": ["/^libs/tsrs-effect/package\\.json$/"],
-      "matchStrings": ["\"effect\": \"@effect/tsgo@(?<currentValue>[0-9.]+)\""],
-      "depNameTemplate": "@effect/tsgo",
-      "datasourceTemplate": "npm"
+      "managerFilePatterns": ["/^\\.claude/settings\\.json$/"],
+      "matchStrings": [
+        "\"repo\": \"(?<depName>masseater/cc-jev-teacher)\",\\s+\"ref\": \"(?<currentDigest>[a-f0-9]{40})\""
+      ],
+      "currentValueTemplate": "main",
+      "packageNameTemplate": "https://github.com/{{depName}}",
+      "datasourceTemplate": "git-refs"
     },
     {
       "customType": "regex",
@@ -143,6 +146,13 @@
       "currentValueTemplate": "main",
       "datasourceTemplate": "git-refs",
       "packageNameTemplate": "https://github.com/{{{depName}}}"
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/^\\.claude/hooks/session-start\\.sh$/"],
+      "matchStrings": ["MISE_VERSION=(?<currentValue>v[0-9.]+)"],
+      "depNameTemplate": "jdx/mise",
+      "datasourceTemplate": "github-releases"
     }
   ],
   "gitIgnoredAuthors": ["41898282+github-actions[bot]@users.noreply.github.com"],

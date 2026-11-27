@@ -6,7 +6,8 @@ if [ "${CLAUDE_CODE_REMOTE:-}" != "true" ]; then
 fi
 
 if ! vp env --help >/dev/null 2>&1; then
-  curl -fsSL https://vite.plus | VP_NODE_MANAGER=no bash >&2
+  vp_version="$(sed -nE 's/^ +vite-plus: ([0-9.]+)$/\1/p' "$CLAUDE_PROJECT_DIR/pnpm-workspace.yaml" | head -n 1)"
+  curl -fsSL https://vite.plus | VP_VERSION="$vp_version" VP_NODE_MANAGER=no bash >&2
   echo ". \"$HOME/.config/vite-plus/env\"" >>"$CLAUDE_ENV_FILE"
   . "$HOME/.config/vite-plus/env"
 fi
@@ -24,7 +25,7 @@ if ! dpkg -s "${linux_packages[@]}" >/dev/null 2>&1; then
   apt-get install -y -qq "${linux_packages[@]}" >&2
 fi
 if ! command -v mise >/dev/null 2>&1; then
-  curl -fsSL https://mise.run | sh >&2
+  curl -fsSL https://mise.run | MISE_VERSION=v2026.11.12 sh >&2
   export PATH="$HOME/.local/bin:$PATH"
 fi
 mise trust --quiet mise.toml

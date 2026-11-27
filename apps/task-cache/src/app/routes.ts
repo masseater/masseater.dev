@@ -2,6 +2,7 @@ import { env } from "cloudflare:workers";
 import { Effect, Option, pipe } from "effect";
 
 import { isPublic } from "#/entities/entry/index.ts";
+import type { BlobRef } from "#/entities/entry/index.ts";
 import { spendUpload } from "#/entities/spending/index.ts";
 import { admitsWriter } from "#/features/admit-caller/index.ts";
 import type { Target } from "#/features/admit-caller/index.ts";
@@ -12,7 +13,7 @@ import { STATUS, status } from "#/shared/lib/responses.ts";
 import type { StoreFailed } from "#/shared/lib/store-failed.ts";
 
 const ROUTE =
-  /^\/projects\/(?<namespace>[a-z0-9][a-z0-9._-]{0,62})\/(?:(?<plain>fetch|store)|blob\/(?<blob>[0-9]{1,15}))$/u;
+  /^\/projects\/(?<namespace>[a-z0-9][a-z0-9._-]{0,62})\/(?:(?<plain>fetch|store)|blob\/(?<blob>[0-9]{1,15})-(?<key>[0-9a-f]{64}))$/u;
 
 const FETCH = "POST fetch";
 const STORE = "POST store";
@@ -24,7 +25,7 @@ const UNKNOWN_CALLER = "unknown";
 
 interface Routed extends Target {
   readonly action: string;
-  readonly blob: Option.Option<number>;
+  readonly blob: Option.Option<BlobRef>;
 }
 
 const routeOf = (request: Request): Option.Option<Routed> => {
@@ -41,7 +42,10 @@ const routeOf = (request: Request): Option.Option<Routed> => {
       namespace,
       audience: `${url.origin}/projects/${namespace}`,
       action: `${request.method} ${found["plain"] ?? BLOB_OPERATION}`,
-      blob: pipe(Option.fromNullishOr(found["blob"]), Option.map(Number)),
+      blob: Option.all({
+        id: pipe(Option.fromNullishOr(found["blob"]), Option.map(Number)),
+        key: Option.fromNullishOr(found["key"]),
+      }),
     })),
   );
 };

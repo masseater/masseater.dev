@@ -14,5 +14,5 @@ export {
   storedBytes,
   valueOf,
 } from "./api/entries.ts";
-export type { Entry, Sized } from "./api/entries.ts";
+export type { BlobRef, Entry, Sized } from "./api/entries.ts";
 export { isPublic, setPublic } from "./api/namespaces.ts";

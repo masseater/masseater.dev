@@ -10,6 +10,7 @@ const COMPLETE_REASONS: ReadonlySet<string> = new Set(["stop", "tool_calls"]);
 const EXCEPTION_EVENTS = {
   chat: "gen_ai.client.inference.exception",
   embeddings: "gen_ai.client.embeddings.exception",
+  decision: "gen_ai.client.decision.exception",
 } as const;
 
 export type Operation = keyof typeof EXCEPTION_EVENTS;
