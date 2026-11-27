@@ -5,6 +5,7 @@ import type { Bus } from "@masseater.dev/fumx-studio/studio/bus";
 
 import type { Life } from "./context.ts";
 import { LEVEL } from "./levels.ts";
+import { shaped } from "./shaping.ts";
 import { kept } from "./tone.ts";
 
 const VOICE = {
@@ -19,26 +20,18 @@ const VOICE = {
 } as const;
 
 const equalised = (life: Life, bus: Bus): void => {
-  life.studio.each({
-    frames: life.studio.frames,
-    edit: (channel, from, to) => {
-      svf({ ...VOICE.rumble, from, to })(channel);
-      biquad({ ...VOICE.presence, from, to })(channel);
-      biquad({ ...VOICE.air, from, to })(channel);
-      biquad({ ...VOICE.box, from, to })(channel);
-      biquad({ ...VOICE.harsh, from, to })(channel);
-    },
-  })(bus);
+  shaped(life)((span) => [
+    svf({ ...VOICE.rumble, ...span }),
+    biquad({ ...VOICE.presence, ...span }),
+    biquad({ ...VOICE.air, ...span }),
+    biquad({ ...VOICE.box, ...span }),
+    biquad({ ...VOICE.harsh, ...span }),
+  ])(bus);
 };
 
 const squashed = (life: Life, voices: Bus): void => {
   life.studio.compress(VOICE.compression)(voices);
-  life.studio.each({
-    frames: life.studio.frames,
-    edit: (channel, from, to) => {
-      drive({ ...VOICE.drive, from, to })(channel);
-    },
-  })(voices);
+  shaped(life)((span) => [drive({ ...VOICE.drive, ...span })])(voices);
 };
 
 export const voiceBus =

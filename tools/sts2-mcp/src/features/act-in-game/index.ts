@@ -1,1 +1,1 @@
-export { registerActTool } from "./api/act-tool.ts";
+export { actTool } from "./api/act-tool.ts";

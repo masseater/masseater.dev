@@ -25,3 +25,4 @@ export {
   Summary,
 } from "#/entities/catalog/index.ts";
 export { RpcCauseReason, RpcError, RpcRequest, RpcResponse } from "#/shared/lib/wire.ts";
+export { fileNameOf, pathPartsOf } from "#/shared/lib/file-name.ts";

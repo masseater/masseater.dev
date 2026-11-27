@@ -39,12 +39,18 @@ export const promised = <Value>(
   run: () => Promise<Value>,
 ): Effect.Effect<Value, AccessOAuthFailed> => Effect.tryPromise({ try: run, catch: failed });
 
+const exchanged = <Value>(
+  request: () => Promise<Response>,
+  process: (response: Response) => Promise<Value>,
+): Effect.Effect<Value, AccessOAuthFailed> =>
+  promised(request).pipe(Effect.flatMap((response) => promised(() => process(response))));
+
 const issuerOf = (site: OAuthTargetId): Effect.Effect<URL, AccessOAuthFailed> => {
   const resource = new URL(resourceOf(site));
-  return promised(() => resourceDiscoveryRequest(resource)).pipe(
-    Effect.flatMap((response) =>
-      promised(() => processResourceDiscoveryResponse(resource, response)),
-    ),
+  return exchanged(
+    () => resourceDiscoveryRequest(resource),
+    (response) => processResourceDiscoveryResponse(resource, response),
+  ).pipe(
     Effect.flatMap((metadata) =>
       pipe(
         Option.fromNullishOr(metadata.authorization_servers),
@@ -64,8 +70,9 @@ const issuerOf = (site: OAuthTargetId): Effect.Effect<URL, AccessOAuthFailed> =>
 const discover = (site: OAuthTargetId): Effect.Effect<AuthorizationServer, AccessOAuthFailed> =>
   issuerOf(site).pipe(
     Effect.flatMap((issuer) =>
-      promised(() => discoveryRequest(issuer, { algorithm: "oauth2" })).pipe(
-        Effect.flatMap((response) => promised(() => processDiscoveryResponse(issuer, response))),
+      exchanged(
+        () => discoveryRequest(issuer, { algorithm: "oauth2" }),
+        (response) => processDiscoveryResponse(issuer, response),
       ),
     ),
   );
@@ -124,8 +131,10 @@ export const connect = ({ env, site }: SiteContext): Effect.Effect<Connection, A
     if (Option.isSome(known)) {
       return { server, client: publicClient(known.value) };
     }
-    const response = yield* promised(() => dynamicClientRegistrationRequest(server, registration));
-    const created = yield* promised(() => processDynamicClientRegistrationResponse(response));
+    const created = yield* exchanged(
+      () => dynamicClientRegistrationRequest(server, registration),
+      processDynamicClientRegistrationResponse,
+    );
     yield* remember(env, server.issuer, created.client_id);
     return { server, client: publicClient(created.client_id) };
   });

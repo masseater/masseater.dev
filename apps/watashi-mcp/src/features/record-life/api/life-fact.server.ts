@@ -1,6 +1,6 @@
 import { Effect, Option, pipe } from "effect";
 
-import { findOpen, snapshotOf, succeedRecord } from "#/entities/life-record/index.server.ts";
+import { findNewest, snapshotOf, succeedRecord } from "#/entities/life-record/index.server.ts";
 import type { LifeEntry, Notice, NewRecord, Writer } from "#/entities/life-record/index.server.ts";
 import type { ItemResult, Body } from "#/entities/life-record/index.ts";
 import {
@@ -29,11 +29,10 @@ const factToEnd = (
   key: FactKey,
 ): Effect.Effect<Option.Option<LifeEntry>, StorageFailed, Database> => {
   if (isOpen(body)) {
-    return findOpen({
+    return findNewest({
       record: "profile_fact",
       label: key.topic,
-      about: key.about,
-      startedBy: key.start,
+      open: { about: key.about, startedBy: key.start },
     });
   }
   return Effect.succeedNone;

@@ -1,4 +1,4 @@
-import { compactInput } from "@masseater.dev/mcp-tool-call";
+import { READ_ONLY, compactInput } from "@masseater.dev/mcp-tool-call";
 import type { McpServer } from "@modelcontextprotocol/server";
 import type { DrizzleD1Database } from "drizzle-orm/d1";
 import { Schema } from "effect";
@@ -10,7 +10,6 @@ import { orMissing, runTool } from "#/shared/api/index.server.ts";
 import type { CatalogRelations } from "#/shared/db/index.server.ts";
 import { keywordOf } from "#/shared/db/index.server.ts";
 
-const READ_ONLY = { readOnlyHint: true, openWorldHint: false };
 const KEYWORD_SCHEMA = KeywordInput.pipe(
   Schema.toStandardSchemaV1,
   Schema.toStandardJSONSchemaV1,

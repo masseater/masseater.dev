@@ -1,11 +1,9 @@
+import { TableCell, TableHead, TableRow } from "@masseater.dev/ui/table";
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
 import { ModelName } from "#/entities/benchmark/index.ts";
 import type { TableColumn } from "#/features/sort-table/model/sorting.ts";
-import { TableCell } from "#/shared/ui/table-cell.tsx";
-import { TableHead } from "#/shared/ui/table-head.tsx";
-import { TableRow } from "#/shared/ui/table-row.tsx";
 
 export const SortBodyRow = <Row,>({
   row,

@@ -16,7 +16,7 @@ import type { LifeRecordName, StorageFailed } from "#/shared/db/index.ts";
 
 import { lower, refOf, stringAt } from "./life-record.ts";
 import type { Body } from "./life-record.ts";
-import { findByLabel, scanAll } from "./life-store.server.ts";
+import { findNewest, scanAll } from "./life-store.server.ts";
 import type { LifeEntry } from "./life-store.server.ts";
 import { insertRecord } from "./life-writer.server.ts";
 import type { Writer } from "./life-writer.server.ts";
@@ -100,7 +100,7 @@ const registered =
 const ensureDefined =
   (writer: Writer, definition: Definition) =>
   (name: string): Effect.Effect<Option.Option<Notice>, StorageFailed, Database> =>
-    findByLabel({ record: definition, label: name }).pipe(
+    findNewest({ record: definition, label: name }).pipe(
       Effect.flatMap(
         Option.match({
           onNone: () => registered(writer, definition)(name).pipe(Effect.asSome),
@@ -164,7 +164,7 @@ const validateKind =
 const checkKindValues =
   (body: Body) =>
   (kind: string): Effect.Effect<void, InvalidRecord | StorageFailed, Database> =>
-    findByLabel({ record: "event_kind", label: kind }).pipe(
+    findNewest({ record: "event_kind", label: kind }).pipe(
       Effect.flatMap(validateKind(kind, body)),
     );
 

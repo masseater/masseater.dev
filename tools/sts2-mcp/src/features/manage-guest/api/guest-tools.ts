@@ -1,5 +1,4 @@
 import type { GameStateType } from "@masseater.dev/sts2-protocol";
-import type { McpServer } from "@modelcontextprotocol/server";
 import { Array as Arr, Effect, pipe } from "effect";
 
 import {
@@ -19,8 +18,8 @@ import {
   logScript,
   stopScript,
 } from "#/features/manage-guest/model/guest-scripts.ts";
-import { Vm, fromOutput, guest, recovered, waitReady } from "#/shared/api/index.ts";
-import type { Runner, Services } from "#/shared/api/index.ts";
+import { Vm, defineTool, fromOutput, guest, recovered, waitReady } from "#/shared/api/index.ts";
+import type { Services } from "#/shared/api/index.ts";
 import { Sts2Failed } from "#/shared/lib/errors.ts";
 import { text } from "#/shared/lib/tool-result.ts";
 
@@ -85,40 +84,32 @@ const logs = Effect.fn("tools.logs")(
 );
 
 /** @internal */
-export const registerGuestTools =
-  (run: Runner) =>
-  (server: McpServer): McpServer => {
-    server.registerTool(
-      "sts2_deploy",
-      {
-        description:
-          "VM のゲストで masseater.dev を指定の ref (既定は main) にして、AgentBridge と指定の mod をビルドしてゲームに入れる。ref は先に push しておく。起動中のゲームは閉じる。",
-        inputSchema: DEPLOY_SCHEMA,
-      },
-      (input) => deploy(input).pipe(run),
-    );
-    server.registerTool(
-      "sts2_launch",
-      {
-        description:
-          "ゲームを起動し、各インスタンスの AgentBridge が応答するまで待つ。instances が 2 以上なら同じ VM で多重起動して協力プレイにつなぐ (0 がホスト)。",
-        inputSchema: LAUNCH_SCHEMA,
-      },
-      (input) => launch(input).pipe(run),
-    );
-    server.registerTool(
-      "sts2_stop",
-      { description: "VM の中のゲームをすべて閉じる。", inputSchema: EMPTY_SCHEMA },
-      () => stop().pipe(run),
-    );
-    server.registerTool(
-      "sts2_logs",
-      {
-        description:
-          "インスタンスのゲームのログ (godot.log) の末尾を返す。mod の例外や読み込みの結果を見る。",
-        inputSchema: LOGS_SCHEMA,
-      },
-      (input) => logs(input).pipe(run),
-    );
-    return server;
-  };
+export const guestTools = [
+  defineTool({
+    name: "sts2_deploy",
+    description:
+      "VM のゲストで masseater.dev を指定の ref (既定は main) にして、AgentBridge と指定の mod をビルドしてゲームに入れる。ref は先に push しておく。起動中のゲームは閉じる。",
+    inputSchema: DEPLOY_SCHEMA,
+    handle: deploy,
+  }),
+  defineTool({
+    name: "sts2_launch",
+    description:
+      "ゲームを起動し、各インスタンスの AgentBridge が応答するまで待つ。instances が 2 以上なら同じ VM で多重起動して協力プレイにつなぐ (0 がホスト)。",
+    inputSchema: LAUNCH_SCHEMA,
+    handle: launch,
+  }),
+  defineTool({
+    name: "sts2_stop",
+    description: "VM の中のゲームをすべて閉じる。",
+    inputSchema: EMPTY_SCHEMA,
+    handle: stop,
+  }),
+  defineTool({
+    name: "sts2_logs",
+    description:
+      "インスタンスのゲームのログ (godot.log) の末尾を返す。mod の例外や読み込みの結果を見る。",
+    inputSchema: LOGS_SCHEMA,
+    handle: logs,
+  }),
+];
