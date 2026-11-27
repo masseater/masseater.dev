@@ -924,6 +924,9 @@ catalogs:
     sqlite-vec:
       specifier: 0.1.9
       version: 0.1.9
+    srvx:
+      specifier: 1.0.8
+      version: 1.0.8
     sshpk:
       specifier: 1.18.0
       version: 1.18.0
@@ -1509,6 +1512,9 @@ importers:
       '@effect/platform-node':
         specifier: 'catalog:'
         version: 4.1.5(effect@4.1.5)(redis@6.2.1(@opentelemetry/api@1.10.0))
+      '@masseater.dev/local-server':
+        specifier: workspace:*
+        version: link:../../libs/local-server
       '@masseater.dev/ui':
         specifier: workspace:*
         version: link:../../libs/ui
@@ -4183,6 +4189,9 @@ importers:
       effect:
         specifier: catalog:stack
         version: 4.1.5
+      srvx:
+        specifier: 'catalog:'
+        version: 1.0.8
     devDependencies:
       vite-plus:
         specifier: catalog:stack
@@ -5253,6 +5262,9 @@ importers:
 
   libs/watashi:
     dependencies:
+      '@masseater.dev/local-server':
+        specifier: workspace:*
+        version: link:../local-server
       '@r_masseater/h56m':
         specifier: workspace:*
         version: link:../h56m
