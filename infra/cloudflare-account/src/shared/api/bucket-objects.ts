@@ -13,6 +13,9 @@ const POLL_INTERVAL_SECONDS = 5;
 const SLURP_TIMEOUT_MINUTES = 30;
 const MISSING_SAMPLE = 5;
 const POLL = Schedule.spaced(Duration.seconds(POLL_INTERVAL_SECONDS));
+const TOKEN_PROPAGATION_RETRY_SECONDS = 10;
+const TOKEN_PROPAGATION_RETRIES = 30;
+const TOKEN_PROPAGATION = Schedule.spaced(Duration.seconds(TOKEN_PROPAGATION_RETRY_SECONDS));
 
 export type BucketRoute = Readonly<{ accountId: string; source: string; target: string }>;
 
@@ -101,7 +104,14 @@ const runJob = Effect.fn("runSlurperJob")(function* runJob(
     overwrite: false,
     source: { vendor: "r2", bucket: route.source, secret: credentials },
     target: { vendor: "r2", bucket: route.target, secret: credentials },
-  }).pipe(Effect.orDie);
+  }).pipe(
+    Effect.retry({
+      while: ({ _tag }) => _tag === "SuperSlurperPreconnectivityFailed",
+      schedule: TOKEN_PROPAGATION,
+      times: TOKEN_PROPAGATION_RETRIES,
+    }),
+    Effect.orDie,
+  );
   yield* Option.match(Option.fromNullishOr(id), {
     onNone: () => Effect.die("Slurper created no job"),
     onSome: (jobId) =>
