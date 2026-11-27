@@ -2,7 +2,7 @@ import { Array as Arr, Option, Order, Record as Rec, pipe } from "effect";
 
 import type { From } from "#/shared/lib/from.ts";
 
-import type { Part, Timeline, TimelineControl } from "./events.ts";
+import type { Level, Part, Timeline, TimelineControl, TrackMix } from "./events.ts";
 import { DRUMS, FIRST_DRUM, PROGRAMS } from "./general-midi.ts";
 import { groupsOf, isDrumPart, linesOf } from "./groups.ts";
 import type { Line } from "./groups.ts";
@@ -23,10 +23,17 @@ export interface PlannedPart {
   readonly source: Source;
   readonly lines: readonly Line[];
   readonly controls: readonly TimelineControl[];
+  readonly mix: TrackMix;
+}
+
+export interface PlannedBus {
+  readonly name: string;
+  readonly level: Level;
 }
 
 export interface Plan {
   readonly parts: readonly PlannedPart[];
+  readonly buses: readonly PlannedBus[];
   readonly instruments: ReadonlyMap<number, string>;
   readonly drumVoices: ReadonlyMap<number, string>;
 }
@@ -169,7 +176,14 @@ const namesOf: From<readonly PlannedPart[], ReadonlySet<string>> = (planned) =>
 interface Naming {
   readonly instruments: Plan["instruments"];
   readonly candidates: From<Part, readonly string[]>;
+  readonly mixes: Timeline["mix"]["tracks"];
 }
+
+const UNMIXED: TrackMix = {
+  level: { decibels: NONE, pan: NONE, muted: false },
+  sends: [],
+  envelopes: [],
+};
 
 type Reducer<State, Item> = (state: State, item: Item) => State;
 
@@ -184,12 +198,37 @@ const nextPart: From<Naming, Reducer<readonly PlannedPart[], Part>> =
       source: sourceOf(naming.instruments)(part),
       lines: linesOf(groupsOf(part)),
       controls: controlsOf(part),
+      mix: naming.mixes.get(part.track) ?? UNMIXED,
     });
   };
+
+type BusNaming = Readonly<{ taken: ReadonlySet<string>; buses: Timeline["mix"]["buses"] }>;
+
+const busesOf: From<BusNaming, readonly PlannedBus[]> = ({ taken, buses }) => {
+  const used = new Set(taken);
+  const named: PlannedBus[] = [];
+  for (const [index, bus] of buses.entries()) {
+    const name = uniqueAmong(used)(
+      nameFrom([...Option.toArray(bus.name), `bus ${String(index + NEXT)}`]),
+    );
+    used.add(name);
+    named.push({ name, level: bus.level });
+  }
+  return named;
+};
 
 export const planOf: From<Timeline, Plan> = (timeline) => {
   const instruments = instrumentsOf(timeline.parts);
   const candidates = candidatesOf(sharedLabelsOf(timeline.parts));
-  const parts = Arr.reduce(timeline.parts, NO_PARTS, nextPart({ instruments, candidates }));
-  return { parts, instruments, drumVoices: drumVoicesOf(timeline.parts) };
+  const parts = Arr.reduce(
+    timeline.parts,
+    NO_PARTS,
+    nextPart({ instruments, candidates, mixes: timeline.mix.tracks }),
+  );
+  return {
+    parts,
+    buses: busesOf({ taken: namesOf(parts), buses: timeline.mix.buses }),
+    instruments,
+    drumVoices: drumVoicesOf(timeline.parts),
+  };
 };
