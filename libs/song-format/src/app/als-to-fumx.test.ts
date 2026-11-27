@@ -79,6 +79,15 @@ const OLDER = [
   { file: "live9/live9-patch-markers-noauto.als", notes: 1191 },
 ];
 
+const olderSet = Effect.fn("olderSet")(function* olderSet(file: string, notes: number) {
+  const bytes = yield* fixtureBytes(`${DAWTOOL}${file}`);
+  const converted = yield* convertLiveSetFile({ bytes, title: "dawtool", path: PATH });
+  expect({
+    matches: converted.comparison.matches,
+    notes: converted.comparison.notes.expected,
+  }).toStrictEqual({ matches: true, notes });
+});
+
 layer(files)("Ableton Live Sets", (it) => {
   it.effect("writes a .fumx that reproduces the clips, tempo, meters and locators", () =>
     Effect.gen(function* everything() {
@@ -105,19 +114,9 @@ layer(files)("Ableton Live Sets", (it) => {
     }),
   );
 
-  it.effect("reproduces the MIDI clips of sets saved by Live 8 and Live 9", () =>
-    Effect.gen(function* older() {
-      for (const { file, notes } of OLDER) {
-        const bytes = yield* fixtureBytes(`${DAWTOOL}${file}`);
-        const converted = yield* convertLiveSetFile({ bytes, title: "dawtool", path: PATH });
-        expect({
-          file,
-          matches: converted.comparison.matches,
-          notes: converted.comparison.notes.expected,
-        }).toStrictEqual({ file, matches: true, notes });
-      }
-    }),
-  );
+  for (const { file, notes } of OLDER) {
+    it.effect(`reproduces the MIDI clips of ${file}`, () => olderSet(file, notes));
+  }
 
   it.effect("rejects a file that is not a Live Set", () =>
     Effect.gen(function* junk() {
