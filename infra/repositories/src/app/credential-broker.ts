@@ -3,6 +3,7 @@ import type { CloudflareOpContext, CreateTokenError } from "@distilled.cloud/clo
 import { runner } from "@r_masseater/workers-tracing/effect";
 import {
   Array as Arr,
+  Boolean as Bool,
   DateTime,
   Effect,
   Layer,
@@ -36,7 +37,7 @@ import {
 import { mintGitHubToken, ownsSource } from "#/features/mint-github-token/index.ts";
 
 import type { CredentialBrokerEnv } from "./credential-broker-env.ts";
-import { hourlyJobs } from "./hourly-jobs.ts";
+import { hourlyJobs, idleCheck, isIdleCheck } from "./scheduled-jobs.ts";
 import { sideRoute } from "./side-routes.ts";
 
 const TOKEN_LIFETIME = { hours: 1 } as const;
@@ -263,8 +264,14 @@ const run = <Value>(
 const worker = {
   fetch: (request: Request, env: CredentialBrokerEnv): Promise<Response> =>
     run(env, handle(request, env)),
-  scheduled: (_controller: unknown, env: CredentialBrokerEnv): Promise<void> =>
-    run(env, Effect.andThen(sweepIssuedTokens(env.ACCOUNT_ID), hourlyJobs(env))),
+  scheduled: (controller: ScheduledController, env: CredentialBrokerEnv): Promise<void> =>
+    run(
+      env,
+      Bool.match(isIdleCheck(controller), {
+        onTrue: () => idleCheck({ tick: controller, env }),
+        onFalse: () => Effect.andThen(sweepIssuedTokens(env.ACCOUNT_ID), hourlyJobs(env)),
+      }),
+    ),
 };
 
 export { AccessOAuth } from "#/features/access-oauth/index.ts";
