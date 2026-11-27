@@ -1,36 +1,23 @@
+import { one, toolCalls } from "@masseater.dev/mcp-tool-call";
 import type { CallToolResult } from "@modelcontextprotocol/server";
 import type { DrizzleD1Database } from "drizzle-orm/d1";
-import { Effect, Option, Predicate, Schema } from "effect";
+import { Effect, Layer, Option, Predicate } from "effect";
 
 import { CatalogDb } from "#/shared/db/index.server.ts";
 import type { CatalogRelations } from "#/shared/db/index.server.ts";
-import { runRequest } from "#/shared/observability/index.server.ts";
 
 import { ToolError } from "./tool-error.ts";
 
 const UNKNOWN_FAILURE = "database rejected the change";
 
-const encodeJson = Schema.encodeUnknownEffect(Schema.fromJsonString(Schema.Unknown));
-
-const textResult = (text: string): CallToolResult => ({
-  content: [{ type: "text", text }],
-});
-
-const errorResult = ({ message }: Readonly<{ message: string }>): CallToolResult => ({
-  content: [{ type: "text", text: message }],
-  isError: true,
+const { runToolIn } = toolCalls<ToolError>({
+  describe: ({ message }) => ({ errorTag: "ToolError", text: message }),
 });
 
 export const runTool =
   (db: DrizzleD1Database<CatalogRelations>) =>
   <Value>(effect: Effect.Effect<Value, ToolError, CatalogDb>): Promise<CallToolResult> =>
-    runRequest(
-      effect.pipe(
-        Effect.flatMap(encodeJson),
-        Effect.match({ onFailure: errorResult, onSuccess: textResult }),
-        Effect.provideService(CatalogDb, db),
-      ),
-    );
+    runToolIn(Layer.succeed(CatalogDb)(db))({ count: one })(effect);
 
 const messageOf = (cause: unknown): string =>
   Option.liftPredicate(cause, Predicate.isError).pipe(

@@ -1,3 +1,4 @@
+import { fileNameOf } from "@masseater.dev/aredoko-protocol";
 import { Array, Effect, HashMap, Option, String, pipe } from "effect";
 import type { Scope } from "effect";
 import { LoadingManager } from "three";
@@ -15,14 +16,7 @@ const WHITE_PIXEL =
 
 const decodeUrl = Option.liftThrowable(decodeURIComponent);
 
-export const baseName = (name: string): string =>
-  pipe(
-    name,
-    String.split(/[\\/]/u),
-    Array.last,
-    Option.getOrElse(() => name),
-    String.toLowerCase,
-  );
+export const baseName = (name: string): string => pipe(fileNameOf(name), String.toLowerCase);
 
 const blobUrl = (data: Uint8Array): string =>
   URL.createObjectURL(new Blob([Uint8Array.from(data)]));

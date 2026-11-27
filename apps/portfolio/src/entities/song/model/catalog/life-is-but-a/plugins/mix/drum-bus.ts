@@ -5,6 +5,7 @@ import type { Bus } from "@masseater.dev/fumx-studio/studio/bus";
 
 import type { Life } from "./context.ts";
 import { LEVEL } from "./levels.ts";
+import { shaped } from "./shaping.ts";
 import { kept } from "./tone.ts";
 
 const DUCK = { hold: 0.028, release: 0.15 };
@@ -22,33 +23,20 @@ const DRUMS = {
 } as const;
 
 const kickShaped = (life: Life, kick: Bus): void => {
-  life.studio.each({
-    frames: life.studio.frames,
-    edit: (channel, from, to) => {
-      biquad({ ...KICK.low, from, to })(channel);
-      biquad({ ...KICK.box, from, to })(channel);
-      biquad({ ...KICK.click, from, to })(channel);
-      drive({ ...KICK.drive, from, to })(channel);
-    },
-  })(kick);
+  shaped(life)((span) => [
+    biquad({ ...KICK.low, ...span }),
+    biquad({ ...KICK.box, ...span }),
+    biquad({ ...KICK.click, ...span }),
+    drive({ ...KICK.drive, ...span }),
+  ])(kick);
 };
 
 const drumsShaped = (life: Life, drums: Bus): void => {
-  const { frames } = life.studio;
-  life.studio.each({
-    frames,
-    edit: (channel, from, to) => {
-      svf({ ...DRUMS.rumble, from, to })(channel);
-      biquad({ ...DRUMS.air, from, to })(channel);
-    },
-  })(drums);
+  shaped(life)((span) => [svf({ ...DRUMS.rumble, ...span }), biquad({ ...DRUMS.air, ...span })])(
+    drums,
+  );
   life.studio.compress(DRUMS.compression)(drums);
-  life.studio.each({
-    frames,
-    edit: (channel, from, to) => {
-      drive({ ...DRUMS.drive, from, to })(channel);
-    },
-  })(drums);
+  shaped(life)((span) => [drive({ ...DRUMS.drive, ...span })])(drums);
 };
 
 const summed =

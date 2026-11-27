@@ -1,16 +1,17 @@
+import { Table } from "@masseater.dev/ui/table";
+import type { ColumnHeading } from "@masseater.dev/ui/table";
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
 import type { TransactionValue } from "#/entities/money/index.ts";
-import { TableFrame, TableHead } from "#/shared/ui/index.ts";
-import type { Column } from "#/shared/ui/index.ts";
+import { TableHead } from "#/shared/ui/index.ts";
 
 import { TransactionRow } from "./transaction-row.tsx";
 import type { Labels } from "./transaction-row.tsx";
 
 const LABEL = "出入金";
 
-const COLUMNS: readonly Column[] = [
+const COLUMNS: readonly ColumnHeading[] = [
   { label: "日付", className: "w-28" },
   { label: "摘要" },
   { label: "カテゴリー", className: "w-40" },
@@ -22,7 +23,7 @@ export const TransactionTable = ({
   labels,
   transactions,
 }: Readonly<{ labels: Labels; transactions: readonly TransactionValue[] }>): ReactNode => (
-  <TableFrame label={LABEL}>
+  <Table label={LABEL} className="min-w-xl">
     <TableHead columns={COLUMNS} />
     <tbody>
       {pipe(
@@ -32,5 +33,5 @@ export const TransactionTable = ({
         )),
       )}
     </tbody>
-  </TableFrame>
+  </Table>
 );

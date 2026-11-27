@@ -14,45 +14,47 @@ const buffersOf = (stage: Stage): readonly ArrayBuffer[] => {
   return [];
 };
 
-const liveOf =
-  (worklet: string) =>
-  (mastered: Mastered) =>
-  (tape: Tape): LiveMix => {
-    const init: LiveInit = {
-      frames: mastered.frames,
-      tracks: mastered.stems.length,
-      stages: mastered.stages,
-    };
-    return {
-      tracks: pipe(
+const liveOf = ({
+  worklet,
+  mastered,
+  tape,
+}: Readonly<{ worklet: string; mastered: Mastered; tape: Tape }>): LiveMix => {
+  const init: LiveInit = {
+    frames: mastered.frames,
+    tracks: mastered.stems.length,
+    stages: mastered.stages,
+  };
+  return {
+    tracks: pipe(
+      mastered.stems,
+      Arr.map((stem) => stem.name),
+    ),
+    worklet,
+    init,
+    transfer: pipe(mastered.stages, Arr.flatMap(buffersOf)),
+    tape,
+    mixers: Rec.fromEntries(
+      pipe(
         mastered.stems,
-        Arr.map((stem) => stem.name),
+        Arr.map((stem) => [stem.name, stem.mixer] as const),
       ),
-      worklet,
-      init,
-      transfer: pipe(mastered.stages, Arr.flatMap(buffersOf)),
-      tape,
-      mixers: Rec.fromEntries(
-        pipe(
-          mastered.stems,
-          Arr.map((stem) => [stem.name, stem.mixer] as const),
-        ),
-      ),
-    };
+    ),
   };
+};
 
-const recorded =
-  (mastered: Mastered) =>
-  (tape: Tape): Tape => {
-    for (const [index, stem] of mastered.stems.entries()) {
-      tape.write(index, stem.bus.left, stem.bus.right);
-    }
-    return tape;
-  };
+const recorded = (mastered: Mastered, tape: Tape): Tape => {
+  for (const [index, stem] of mastered.stems.entries()) {
+    tape.write(index, stem.bus.left, stem.bus.right);
+  }
+  return tape;
+};
 
 export const liveFor =
   (worklet: string) =>
   (mastered: Mastered): Effect.Effect<Option.Option<LiveMix>, never, Scope.Scope> =>
     Effect.map(tapeFor({ tracks: mastered.stems.length, frames: mastered.frames }), (tape) =>
-      pipe(tape, Option.map(recorded(mastered)), Option.map(liveOf(worklet)(mastered))),
+      pipe(
+        tape,
+        Option.map((written) => liveOf({ worklet, mastered, tape: recorded(mastered, written) })),
+      ),
     );

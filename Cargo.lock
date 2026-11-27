@@ -3353,6 +3353,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "fushi"
+version = "0.0.0"
+dependencies = [
+ "desktop-shell",
+ "serde",
+ "specta",
+ "specta-typescript",
+ "tauri",
+ "tauri-build",
+ "tauri-specta",
+]
+
+[[package]]
 name = "futures"
 version = "0.3.34"
 source = "registry+https://github.com/rust-lang/crates.io-index"

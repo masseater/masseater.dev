@@ -31,6 +31,7 @@
   },
   "exports": {
     ".": "./src/app/index.ts",
+    "./habits": "./src/app/habits.ts",
     "./package.json": "./package.json"
   },
   "publishConfig": {

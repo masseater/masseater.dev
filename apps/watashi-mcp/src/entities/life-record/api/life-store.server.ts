@@ -25,9 +25,7 @@ export type LabelKey = Readonly<{ record: LifeRecordName; label: string }>;
 
 export type OpenSpan = Readonly<{ about: string; startedBy: string }>;
 
-export type OpenKey = LabelKey & OpenSpan;
-
-type Newest = LabelKey & Readonly<{ open: Option.Option<OpenSpan> }>;
+export type Newest = LabelKey & Readonly<{ open?: OpenSpan }>;
 
 type Wanted = Omit<RecordScan, "limit"> & Readonly<{ label: Option.Option<string> }>;
 
@@ -180,12 +178,16 @@ const spanConditions = ({ about, startedBy }: OpenSpan): readonly (SQL | undefin
 
 const noConditions = (): readonly (SQL | undefined)[] => [];
 
-const newestOf = ({
+export const findNewest = ({
   record,
   label,
   open,
 }: Newest): Effect.Effect<Option.Option<LifeEntry>, StorageFailed, Database> => {
-  const span = pipe(open, Option.map(spanConditions), Option.getOrElse(noConditions));
+  const span = pipe(
+    Option.fromUndefinedOr(open),
+    Option.map(spanConditions),
+    Option.getOrElse(noConditions),
+  );
   const matches = and(
     notRetracted,
     eq(lifeRecord.record, record),
@@ -196,18 +198,6 @@ const newestOf = ({
     db.select().from(lifeRecord).where(matches).orderBy(desc(lifeRecord.id)).limit(ONE_ROW),
   ).pipe(Effect.flatMap(entriesOf), Effect.map(Arr.head));
 };
-
-export const findByLabel = (
-  key: LabelKey,
-): Effect.Effect<Option.Option<LifeEntry>, StorageFailed, Database> =>
-  newestOf({ ...key, open: Option.none() });
-
-export const findOpen = ({
-  about,
-  startedBy,
-  ...key
-}: OpenKey): Effect.Effect<Option.Option<LifeEntry>, StorageFailed, Database> =>
-  newestOf({ ...key, open: Option.some({ about, startedBy }) });
 
 export const scanAll = (
   records: readonly LifeRecordName[],

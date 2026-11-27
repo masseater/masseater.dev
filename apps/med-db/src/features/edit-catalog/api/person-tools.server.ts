@@ -1,4 +1,4 @@
-import { compactInput } from "@masseater.dev/mcp-tool-call";
+import { OVERWRITE, READ_ONLY, compactInput } from "@masseater.dev/mcp-tool-call";
 import type { McpServer } from "@modelcontextprotocol/server";
 import type { DrizzleD1Database } from "drizzle-orm/d1";
 import { Schema } from "effect";
@@ -12,8 +12,6 @@ import { keywordOf } from "#/shared/db/index.server.ts";
 
 import { mergePeople } from "./person-write.server.ts";
 
-const READ_ONLY = { readOnlyHint: true, openWorldHint: false };
-const DESTRUCTIVE = { readOnlyHint: false, destructiveHint: true, openWorldHint: false };
 const KEYWORD_SCHEMA = KeywordInput.pipe(
   Schema.toStandardSchemaV1,
   Schema.toStandardJSONSchemaV1,
@@ -60,7 +58,7 @@ export const registerPersonTools =
           Schema.toStandardJSONSchemaV1,
           compactInput,
         ),
-        annotations: DESTRUCTIVE,
+        annotations: OVERWRITE,
       },
       (input) => runTool(db)(mergePeople(input)),
     );

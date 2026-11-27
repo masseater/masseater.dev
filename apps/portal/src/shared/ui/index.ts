@@ -8,7 +8,5 @@ export { SearchField } from "./search-field.tsx";
 export { Section } from "./section.tsx";
 export { SelectField } from "./select-field.tsx";
 export { Stat } from "./stat.tsx";
-export { TableFrame } from "./table-frame.tsx";
 export { TableHead } from "./table-head.tsx";
-export type { Column } from "./table-head.tsx";
 export { TagList } from "./tag-list.tsx";

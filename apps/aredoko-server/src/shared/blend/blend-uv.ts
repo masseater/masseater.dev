@@ -2,6 +2,7 @@ import { Array, Option, pipe } from "effect";
 
 import { CORNER_DOMAIN, attribute, floatArray, named } from "./blend-attributes.ts";
 import type { Matches } from "./blend-attributes.ts";
+import type { Block } from "./blend-blocks.ts";
 import { elementsOf, floatsOf, intOf, textOf } from "./blend-structs.ts";
 import type { Instance } from "./blend-structs.ts";
 
@@ -48,13 +49,20 @@ const flipped = (uvs: Float32Array): Float32Array => {
   return result;
 };
 
+const cornerUvsOf = (
+  mesh: Instance,
+  matches: Matches,
+  read: (block: Block) => Option.Option<Float32Array>,
+): Option.Option<Float32Array> =>
+  Option.flatMap(attribute({ mesh, domain: CORNER_DOMAIN, matches }), read);
+
 const float2Of = (mesh: Instance, corners: number, matches: Matches): Option.Option<Float32Array> =>
-  Option.flatMap(attribute({ mesh, domain: CORNER_DOMAIN, matches }), (block) =>
+  cornerUvsOf(mesh, matches, (block) =>
     floatArray({ file: mesh.file, block, length: corners * UV }),
   );
 
 const legacyOf = (mesh: Instance, corners: number): Option.Option<Float32Array> =>
-  Option.flatMap(attribute({ mesh, domain: CORNER_DOMAIN, matches: isLegacy }), (block) => {
+  cornerUvsOf(mesh, isLegacy, (block) => {
     const loops = elementsOf({ file: mesh.file, block, structName: "MLoopUV" }).slice(
       NONE,
       corners,
