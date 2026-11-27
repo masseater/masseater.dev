@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import { passkey } from "@better-auth/passkey";
 import { run } from "@r_masseater/workers-tracing/effect";
 import { APIError } from "better-auth/api";

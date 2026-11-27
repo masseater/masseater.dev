@@ -16,6 +16,7 @@ catalogMode: prefer
 catalog:
   cborg: 7.0.0
   msw: 3.0.7
+  reflect-metadata: 0.2.2
   "@pnpm/workspace.projects-reader": 1101.1.9
   "@pnpm/workspace.workspace-manifest-reader": 1100.3.4
   "@opentelemetry/api": 1.10.0
