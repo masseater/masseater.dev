@@ -3,8 +3,8 @@ import { runner } from "@r_masseater/workers-tracing/effect";
 import { WorkerEntrypoint } from "cloudflare:workers";
 import { Effect, Layer, Logger } from "effect";
 
-import { watashiLayer } from "#/app/mcp/bindings.server.ts";
-import type { WatashiServices } from "#/app/mcp/bindings.server.ts";
+import { watashiLayer } from "#/app/mcp/layer.server.ts";
+import type { WatashiServices } from "#/app/mcp/layer.server.ts";
 import type { ToolFailure } from "#/shared/api/index.ts";
 
 import { memoryProjects } from "./memory-projects.server.ts";
