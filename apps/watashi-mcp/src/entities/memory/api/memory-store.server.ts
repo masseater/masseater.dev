@@ -1,4 +1,4 @@
-import { and, desc, eq, like } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 import {
   Array as Arr,
   Effect,
@@ -109,13 +109,7 @@ export const searchMemories = ({
       Option.map((name) => eq(memory.project, name)),
       Option.toArray,
     ),
-    ...Option.toArray(
-      anyTermMatches((pattern) => [
-        like(memory.name, pattern),
-        like(memory.description, pattern),
-        like(memory.content, pattern),
-      ])(terms),
-    ),
+    ...Option.toArray(anyTermMatches([memory.name, memory.description, memory.content])(terms)),
   ];
   return query(() =>
     db
