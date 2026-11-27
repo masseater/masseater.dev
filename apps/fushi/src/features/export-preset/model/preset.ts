@@ -28,8 +28,7 @@ const ruleOf =
   (judgment: Judgment): Option.Option<HabitRule> =>
     Option.all({ kind: KINDS[judgment.verdict], aim: Option.fromNullishOr(judgment.aim) }).pipe(
       Option.map(({ kind, aim }) => ({
-        context: judgment.context,
-        next: judgment.next,
+        habit: judgment.subject,
         kind,
         aim: aimName(library)(aim),
       })),

@@ -66,7 +66,7 @@ catalog:
   "@modelcontextprotocol/client": 2.4.0
   "@modelcontextprotocol/server": 2.4.0
   auth: 1.7.27
-  "@r_masseater/oxlint-typed-rules": 0.4.3
+  "@r_masseater/oxlint-typed-rules": 0.5.0
   "@r_masseater/vite-plus-adopt": 0.12.0
   "@discordjs/voice": 0.19.2
   "@snazzah/davey": 0.2.0
@@ -385,6 +385,7 @@ minimumReleaseAgeExclude:
   - "@r_masseater/h56m-win32-x64-msvc@0.2.0"
   - "@r_masseater/h56m@0.2.0"
   - "@r_masseater/vite-plus-adopt@0.12.0"
+  - "@r_masseater/oxlint-typed-rules@0.5.0"
 
 cargo:
   enabled: true

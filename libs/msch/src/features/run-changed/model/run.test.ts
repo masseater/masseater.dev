@@ -71,8 +71,18 @@ const runsOf = Effect.fn("runsOf")(function* runsOf(
   const root = yield* repository;
   const runs = files.join(root, "node_modules", ".runs");
   const codes = [
-    yield* runChanged(root, ["node", "-e", script, runs]),
-    yield* change(root).pipe(Effect.andThen(runChanged(root, ["node", "-e", script, runs]))),
+    yield* runChanged(root, {
+      command: ["node", "-e", script, runs],
+      batchSources: Number.POSITIVE_INFINITY,
+    }),
+    yield* change(root).pipe(
+      Effect.andThen(
+        runChanged(root, {
+          command: ["node", "-e", script, runs],
+          batchSources: Number.POSITIVE_INFINITY,
+        }),
+      ),
+    ),
   ];
   const recorded = yield* files.readFile(runs);
   return { codes, recorded: Option.getOrElse(recorded, () => "") };
@@ -137,6 +147,41 @@ const passesTheWorkspaceWhoseInstalledDependencyChanged = Effect.gen(
   },
 );
 
+const BATCHED = 2;
+const FAIL_IN_ONE_BATCH = String.raw`${RECORD}; if (process.argv.includes("apps/b")) process.exit(1)`;
+
+const batchedRuns = Effect.fn("batchedRuns")(function* batchedRuns(script: string) {
+  const files = yield* RepositoryFiles;
+  const root = yield* repository;
+  const runs = files.join(root, "node_modules", ".runs");
+  const run = runChanged(root, {
+    command: ["node", "-e", script, runs],
+    batchSources: BATCHED,
+  });
+  const first = yield* run;
+  const second = yield* run;
+  const recorded = yield* files.readFile(runs);
+  return { codes: [first, second], recorded: Option.getOrElse(recorded, () => "") };
+});
+
+const runsInBatchesWhenTheSourcesExceedTheLimit = Effect.gen(
+  function* runsInBatchesWhenTheSourcesExceedTheLimit() {
+    const runs = yield* batchedRuns(RECORD);
+    expect(runs).toStrictEqual({
+      codes: [PASSED, PASSED],
+      recorded: `${ROOT_PATHS} apps/a\napps/b libs/lint\nlibs/shared\n`,
+    });
+  },
+);
+
+const runsOnlyTheFailedBatchAgain = Effect.gen(function* runsOnlyTheFailedBatchAgain() {
+  const runs = yield* batchedRuns(FAIL_IN_ONE_BATCH);
+  expect(runs).toStrictEqual({
+    codes: [FAILED, FAILED],
+    recorded: `${ROOT_PATHS} apps/a\napps/b libs/lint\nlibs/shared\napps/b libs/lint\n`,
+  });
+});
+
 const runsAgainAfterAFailure = Effect.gen(function* runsAgainAfterAFailure() {
   const runs = yield* runsOf(RECORD_AND_FAIL, () => Effect.void);
   expect(runs).toStrictEqual({ codes: [FAILED, FAILED], recorded: `${EVERYTHING}${EVERYTHING}` });
@@ -165,4 +210,9 @@ layer(Layer.mergeAll(fixtureLayer, nodeServicesLayer))("msch-changed", (it) => {
     () => passesTheWorkspaceWhoseInstalledDependencyChanged,
   );
   it.effect("runs again after the command failed", () => runsAgainAfterAFailure);
+  it.effect(
+    "runs in batches when the sources exceed the limit",
+    () => runsInBatchesWhenTheSourcesExceedTheLimit,
+  );
+  it.effect("runs only the failed batch again", () => runsOnlyTheFailedBatchAgain);
 });

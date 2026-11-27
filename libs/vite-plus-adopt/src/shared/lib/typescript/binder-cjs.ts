@@ -5,13 +5,7 @@ import { SymbolFlags } from "typescript/sync";
 
 import { declare, exportsOf } from "./binder-declarations.ts";
 import type { FileBinding, Scope, SymbolFlagPair } from "./binder-declarations.ts";
-import {
-  addDeclarationToSymbol,
-  createSymbol,
-  escapeLeadingUnderscores,
-  exportOf,
-} from "./binder-symbols.ts";
-import type { BoundSymbol } from "./binder-symbols.ts";
+import { BoundSymbol, escapeLeadingUnderscores, exportOf } from "./binder-symbols.ts";
 import {
   getElementOrPropertyAccessName,
   isAccessExpression,
@@ -47,17 +41,17 @@ const EXPORT_PROPERTY: SymbolFlagPair = {
 const EXPORT_ALIAS: SymbolFlagPair = { includes: SymbolFlags.Alias, excludes: EMPTY };
 
 export const createFileSymbol = (binding: FileBinding): void => {
-  const symbol = createSymbol(EMPTY, `"${Str.replace(EXTENSION, "")(binding.file.fileName)}"`);
-  addDeclarationToSymbol(symbol, binding.file, SymbolFlags.ValueModule);
-  binding.symbol = symbol;
+  const symbol = new BoundSymbol(EMPTY, `"${Str.replace(EXTENSION, "")(binding.file.fileName)}"`);
+  symbol.addDeclaration(binding.file, SymbolFlags.ValueModule);
+  binding.attach(symbol);
 };
 
 export const lookupSymbolForName: {
   (name: string): (binding: FileBinding) => Option.Option<BoundSymbol>;
   (binding: FileBinding, name: string): Option.Option<BoundSymbol>;
 } = Fn.dual(DATA_FIRST_ARITY, (binding: FileBinding, name: string): Option.Option<BoundSymbol> => {
-  const local = Option.fromNullishOr(binding.locals.get(name)).pipe(
-    Option.map((found) => found.exportSymbol ?? found),
+  const local = Option.fromNullishOr(binding.locals.entries.get(name)).pipe(
+    Option.map((found: BoundSymbol) => found.exportSymbol ?? found),
   );
   return local.pipe(
     Option.orElse(() =>
@@ -130,7 +124,7 @@ export const setCommonJsModuleIndicator: {
     return false;
   }
   if (Predicate.isUndefined(binding.commonJsModuleIndicator)) {
-    binding.commonJsModuleIndicator = node;
+    binding.markCommonJs(node);
     createFileSymbol(binding);
   }
   return true;
@@ -186,7 +180,7 @@ const markModuleAssignment = (
 ): Option.Option<BoundSymbol> =>
   symbol.pipe(
     Option.map((found) => {
-      addDeclarationToSymbol(found, name, MODULE_ASSIGNMENT);
+      found.addDeclaration(name, MODULE_ASSIGNMENT);
       return found;
     }),
   );

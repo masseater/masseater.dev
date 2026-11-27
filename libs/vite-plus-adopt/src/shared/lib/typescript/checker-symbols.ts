@@ -167,7 +167,7 @@ const localNamed = (identifier: Node): Option.Option<BoundSymbol> =>
     Option.flatMap((binding) =>
       Option.liftPredicate(identifier, (node) => isIdentifier(node)).pipe(
         Option.flatMap((node) =>
-          Option.fromNullishOr(binding.locals.get(escapeLeadingUnderscores(node.text))),
+          Option.fromNullishOr(binding.locals.entries.get(escapeLeadingUnderscores(node.text))),
         ),
       ),
     ),

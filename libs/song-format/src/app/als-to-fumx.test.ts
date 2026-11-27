@@ -88,6 +88,30 @@ const olderSet = Effect.fn("olderSet")(function* olderSet(file: string, notes: n
   }).toStrictEqual({ matches: true, notes });
 });
 
+const MIX = {
+  volume: 0.5,
+  pan: -0.5,
+  send: 0.25,
+  automation: [
+    { beat: 0, gain: 0.5 },
+    { beat: 4, gain: 1 },
+  ],
+};
+
+const MIXED_LINES = [
+  "bus a-gated-verb-send",
+  "track keys instrument acoustic-grand-piano volume -6dB pan -50% send a-gated-verb-send +25%",
+  "  automate keys.volume -6dB -> 0dB over 1bar",
+];
+
+const mixedSet = Effect.gen(function* mixedSet() {
+  const template = yield* fixtureBytes(LIVE_ELEVEN_TEMPLATE);
+  const bytes = yield* liveElevenSet(template, { ...SET, tracks: [{ ...KEYS, mix: MIX }, BASS] });
+  const converted = yield* convertLiveSetFile({ bytes, title: "fixture", path: PATH });
+  expect(converted.comparison.matches).toBe(true);
+  expect(pipe(converted.text, Str.split("\n"))).toStrictEqual(expect.arrayContaining(MIXED_LINES));
+});
+
 layer(files)("Ableton Live Sets", (it) => {
   it.effect("writes a .fumx that reproduces the clips, tempo, meters and locators", () =>
     Effect.gen(function* everything() {
@@ -113,6 +137,8 @@ layer(files)("Ableton Live Sets", (it) => {
       }
     }),
   );
+
+  it.effect("writes the mixer, sends and volume automation of each track", () => mixedSet);
 
   for (const { file, notes } of OLDER) {
     it.effect(`reproduces the MIDI clips of ${file}`, () => olderSet(file, notes));

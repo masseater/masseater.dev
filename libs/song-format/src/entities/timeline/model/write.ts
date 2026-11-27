@@ -8,6 +8,7 @@ import { controlLinesOf } from "./control-lines.ts";
 import type { Timeline } from "./events.ts";
 import { barsOf, bpmText } from "./layout.ts";
 import type { LaidBar, LaidTempo } from "./layout.ts";
+import { automationLinesOf, busLineOf, trackMixWords } from "./mix-lines.ts";
 import { planOf } from "./plan.ts";
 import type { Plan, PlannedPart } from "./plan.ts";
 import { voiceLinesOf } from "./voice-lines.ts";
@@ -88,6 +89,7 @@ const barBodyOf: From<Plan, From<LaidBar, readonly string[]>> = (plan) => (bar) 
     Arr.flatMap((planned) => [
       ...voiceLinesOf({ plan, bar })(planned),
       ...controlLinesOf(bar)(planned),
+      ...automationLinesOf(bar)(planned),
     ]),
   ),
 ];
@@ -138,12 +140,25 @@ const kitLinesOf: From<Plan, readonly string[]> = (plan) => {
   return ["kit gm-drums {", ...voices, "}"];
 };
 
-const trackLineOf: From<PlannedPart, string> = (planned) => {
+const sourceWordsOf: From<PlannedPart, readonly string[]> = (planned) => {
   if (planned.source.kind === "kit") {
-    return `track ${planned.name} kit gm-drums role drums`;
+    return ["kit gm-drums role drums"];
   }
-  return `track ${planned.name} instrument ${planned.source.instrument}`;
+  return [`instrument ${planned.source.instrument}`];
 };
+
+const trackLineOf =
+  (plan: Plan): From<PlannedPart, string> =>
+  (planned) =>
+    Arr.join(
+      [
+        "track",
+        planned.name,
+        ...sourceWordsOf(planned),
+        ...trackMixWords({ mix: planned.mix, buses: plan.buses }),
+      ],
+      " ",
+    );
 
 interface Heading {
   readonly plan: Plan;
@@ -158,7 +173,8 @@ const headerOf: From<Heading, readonly string[]> = ({ plan, title }) => [
   ...instrumentLinesOf(plan),
   ...kitLinesOf(plan),
   "",
-  ...pipe(plan.parts, Arr.map(trackLineOf)),
+  ...pipe(plan.buses, Arr.map(busLineOf)),
+  ...pipe(plan.parts, Arr.map(trackLineOf(plan))),
 ];
 
 export interface WriteInput {

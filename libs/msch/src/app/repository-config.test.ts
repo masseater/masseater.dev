@@ -88,7 +88,7 @@ describe("repositoryConfig check", () => {
   it("runs the type check through effect-tsgo unless the repository names a launcher", () => {
     expect(config).toHaveProperty(
       ["run", "tasks", "check", "command"],
-      expect.stringContaining("msch-changed effect-tsgo --tsrs-lint vp check"),
+      expect.stringContaining("msch-changed --batch-sources 1000 effect-tsgo --tsrs-lint vp check"),
     );
   });
 
@@ -99,7 +99,7 @@ describe("repositoryConfig check", () => {
     });
     expect(launched).toHaveProperty(
       ["run", "tasks", "check", "command"],
-      expect.stringContaining("msch-changed tsrs-effect vp check"),
+      expect.stringContaining("msch-changed --batch-sources 1000 tsrs-effect vp check"),
     );
     expect(launched).toHaveProperty(["run", "tasks", "check", "dependsOn"], ["tsrs-effect#native"]);
   });

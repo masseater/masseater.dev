@@ -1,9 +1,11 @@
-import { Array as Arr, Effect, Stdio, Stream, pipe } from "effect";
+import { Array as Arr, Effect, Option, Stdio, Stream, pipe } from "effect";
 import { ChildProcess, ChildProcessSpawner } from "effect/process";
 
 import { keepOnly } from "#/shared/lib/pass-records.ts";
 import type { Records } from "#/shared/lib/pass-records.ts";
 
+import { batchesOf } from "./batches.ts";
+import type { Invocation } from "./invocation.ts";
 import { recordsOf } from "./records.ts";
 import { unitsOf } from "./units.ts";
 import type { Unit } from "./units.ts";
@@ -12,6 +14,7 @@ const SUCCESS = 0;
 const LIST_SEPARATOR = ", ";
 const ARGUMENT_SEPARATOR = " ";
 const EVERYTHING = "everything";
+const SINGLE_BATCH = 1;
 
 const report = Effect.fn("report")(function* report(text: string) {
   const stdio = yield* Stdio.Stdio;
@@ -56,35 +59,52 @@ const exitCodeOf = Effect.fn("exitCodeOf")(function* exitCodeOf(
   return Number(code);
 });
 
-const passedAll = (units: readonly Unit[]): readonly string[] =>
-  pipe(
-    units,
-    Arr.map(({ key }) => key),
-  );
-
 interface Plan {
+  readonly root: string;
+  readonly command: readonly [string, ...string[]];
   readonly units: readonly Unit[];
   readonly changed: readonly Unit[];
-  readonly records: Records;
 }
 
-const ran = Effect.fn("ran")(function* ran(
-  root: string,
-  command: readonly [string, ...string[]],
-  plan: Plan,
-) {
-  const code = yield* exitCodeOf(root, [...command, ...pathsOf(plan.units, plan.changed)]);
-  yield* Effect.when(
-    keepOnly(plan.records, passedAll(plan.units)),
-    Effect.succeed(code === SUCCESS),
+const keyOf = ({ key }: Unit): string => key;
+
+const keysAfter = (plan: Plan, records: Records, batch: readonly Unit[]): readonly string[] => {
+  const current = pipe(plan.units, Arr.map(keyOf));
+  const kept = pipe(
+    records.passed,
+    Arr.filter((key) => Arr.contains(current, key)),
   );
+  return Arr.dedupe([...kept, ...pipe(batch, Arr.map(keyOf))]);
+};
+
+const ranBatch = Effect.fn("ranBatch")(function* ranBatch(plan: Plan, batch: readonly Unit[]) {
+  const code = yield* exitCodeOf(plan.root, [...plan.command, ...pathsOf(plan.units, batch)]);
+  const records = yield* recordsOf(plan.root, plan.command);
+  const keys = keysAfter(plan, records, batch);
+  yield* Effect.when(keepOnly(records, keys), Effect.succeed(code === SUCCESS));
   return code;
+});
+
+const ran = Effect.fn("ran")(function* ran(plan: Plan, batchSources: number) {
+  const batches = batchesOf(plan.changed, batchSources);
+  yield* Effect.when(
+    report(`${String(batches.length)} batches of at most ${String(batchSources)} source files`),
+    Effect.succeed(batches.length > SINGLE_BATCH),
+  );
+  const codes = yield* Effect.forEach(batches, (batch) => ranBatch(plan, batch), {
+    concurrency: 1,
+  });
+  return pipe(
+    codes,
+    Arr.findFirst((code) => code !== SUCCESS),
+    Option.getOrElse(() => SUCCESS),
+  );
 });
 
 /** @internal */
 export const runChanged = Effect.fn("runChanged")(function* runChanged(
   root: string,
-  command: readonly [string, ...string[]],
+  { command, batchSources }: Invocation,
 ) {
   const units = yield* unitsOf(root);
   const records = yield* recordsOf(root, command);
@@ -100,5 +120,5 @@ export const runChanged = Effect.fn("runChanged")(function* runChanged(
   yield* report(
     `${String(changed.length)} of ${String(units.length)} changed ${since}: ${namesOf(units, changed)}`,
   );
-  return yield* ran(root, command, { units, changed, records });
+  return yield* ran({ root, command, units, changed }, batchSources);
 });

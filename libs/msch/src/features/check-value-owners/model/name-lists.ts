@@ -34,13 +34,30 @@ export const nameListOf = (site: UnownedSite): Option.Option<NameList> => {
 export const mostNamesOf = (list: NameList): number =>
   Math.max(MINIMUM_NAMES, list.names.length - MISSING_ALLOWANCE);
 
+export interface Listed {
+  readonly file: string;
+  readonly line: number;
+  readonly column: number;
+  readonly names: readonly string[];
+  readonly reason: string;
+}
+
+export const listedProblem = ({ file, line, column, names, reason }: Listed): Problem => ({
+  file,
+  line,
+  column,
+  rule: RULE,
+  message: `The names ${formatValues(names)} are listed by hand, but ${reason}`,
+});
+
 export const problemOf = ({
   list,
   reason,
-}: Readonly<{ list: NameList; reason: string }>): Problem => ({
-  file: list.site.file,
-  line: list.site.line,
-  column: list.site.column,
-  rule: RULE,
-  message: `The names ${formatValues(list.names)} are listed by hand, but ${reason}`,
-});
+}: Readonly<{ list: NameList; reason: string }>): Problem =>
+  listedProblem({
+    file: list.site.file,
+    line: list.site.line,
+    column: list.site.column,
+    names: list.names,
+    reason,
+  });

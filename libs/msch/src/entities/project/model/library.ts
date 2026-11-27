@@ -18,6 +18,8 @@ import {
   declarationsOf,
   isGenericDeclaration,
   isTypeDeclaration,
+  carriesTag,
+  declaresAType,
   propertyNamesOf,
   resolvedSymbol,
 } from "#/shared/lib/syntax.ts";
@@ -48,6 +50,8 @@ export interface LibraryShape extends LibraryType {
 export interface LibraryIndex {
   readonly vocabularies: readonly LibraryVocabulary[];
   readonly shapes: readonly LibraryShape[];
+  readonly typeNames: readonly string[];
+  readonly tagNames: readonly string[];
 }
 
 interface Walk {
@@ -67,7 +71,7 @@ interface Exported {
 }
 
 const NAMESPACE_DEPTH_LIMIT = 8;
-const EMPTY_INDEX: LibraryIndex = { vocabularies: [], shapes: [] };
+const EMPTY_INDEX: LibraryIndex = { vocabularies: [], shapes: [], typeNames: [], tagNames: [] };
 
 export const isObjectType =
   (checker: Checker) =>
@@ -117,12 +121,13 @@ const declaredTypeIndex = (walk: Walk, exported: Exported): LibraryIndex => {
     Option.toArray,
   );
   const shapes = shapeOf(walk.checker)({ ...located, form: "declared" }, declaration.value, type);
-  return { vocabularies, shapes };
+  return { ...EMPTY_INDEX, vocabularies, shapes };
 };
 
 const schemaTypeIndex =
   (walk: Walk, located: LibraryType) =>
   (declaration: Declaration, schemaType: Type): LibraryIndex => ({
+    ...EMPTY_INDEX,
     vocabularies: vocabularyOf(walk.checker)(schemaType).pipe(
       Option.map((vocabulary) => ({ ...located, vocabulary })),
       Option.toArray,
@@ -155,6 +160,14 @@ const mergeIndexes = (indexes: readonly LibraryIndex[]): LibraryIndex => ({
     indexes,
     Arr.flatMap((index) => index.shapes),
   ),
+  typeNames: pipe(
+    indexes,
+    Arr.flatMap((index) => index.typeNames),
+  ),
+  tagNames: pipe(
+    indexes,
+    Arr.flatMap((index) => index.tagNames),
+  ),
 });
 
 const isNamespace = (symbol: TypeSymbol): boolean =>
@@ -163,10 +176,27 @@ const isNamespace = (symbol: TypeSymbol): boolean =>
     Arr.some((declaration) => isModuleDeclaration(declaration)),
   );
 
+const typeNameIndex = (visit: Visit, symbol: TypeSymbol): LibraryIndex => {
+  const declarations = declarationsOf(symbol);
+  const typeNames = pipe(
+    [visit.exported.name],
+    Arr.filter(() => declaresAType(declarations)),
+  );
+  const tagNames = pipe(
+    typeNames,
+    Arr.filter((name) => carriesTag(name)(declarations)),
+  );
+  return { ...EMPTY_INDEX, typeNames, tagNames };
+};
+
 const indexUnder = (walk: Walk, visit: Visit): LibraryIndex => {
   const symbol = resolvedSymbol(walk.checker)(visit.exported);
   const named = { symbol, typeName: `${visit.qualifier}${visit.exported.name}` };
-  const own = mergeIndexes([declaredTypeIndex(walk, named), schemaValueIndex(walk, named)]);
+  const own = mergeIndexes([
+    declaredTypeIndex(walk, named),
+    schemaValueIndex(walk, named),
+    typeNameIndex(visit, symbol),
+  ]);
   if (
     !isNamespace(symbol) ||
     visit.ancestors.length >= NAMESPACE_DEPTH_LIMIT ||

@@ -9,6 +9,7 @@ import {
 } from "effect";
 
 import type { Step } from "#/shared/lib/degrees.ts";
+import type { MixFact } from "#/shared/lib/mix-facts.ts";
 import { longestContext } from "#/shared/lib/style-table.ts";
 import type { StyleTable } from "#/shared/lib/style-table.ts";
 
@@ -18,6 +19,7 @@ const NEVER = 0;
 export interface StyleSong {
   readonly name: string;
   readonly steps: readonly Step[];
+  readonly mix: readonly MixFact[];
 }
 
 export interface HabitLimits {

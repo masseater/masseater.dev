@@ -129,18 +129,44 @@ const ArrangementSchema = Schema.Struct({
   ArrangerAutomation: Schema.Struct({ Events: ClipEventsSchema }),
 });
 
+const SendHolderSchema = Schema.Struct({ Send: ParameterSchema });
+
+const SendsSchema = Schema.Struct({
+  TrackSendHolder: SendHolderSchema.pipe(Schema.Array, Schema.optionalKey),
+});
+
+const SpeakerSchema = Schema.Struct({ Manual: Schema.optionalKey(Flag) });
+
+const TrackMixerSchema = Schema.Struct({
+  Volume: ParameterSchema,
+  Pan: ParameterSchema,
+  Speaker: Schema.optionalKey(SpeakerSchema),
+  Sends: Schema.optionalKey(SendsSchema),
+});
+
+export type AlsMixer = typeof TrackMixerSchema.Type;
+
 const TrackChainSchema = Schema.Struct({
   DeviceChain: Schema.optionalKey(DevicesSchema),
+  Mixer: Schema.optionalKey(TrackMixerSchema),
   MainSequencer: Schema.Struct({ ClipTimeable: ArrangementSchema }),
 });
 
 const MidiTrackSchema = Schema.Struct({
   Id: Schema.String,
   Name: NameSchema,
+  AutomationEnvelopes: Schema.optionalKey(EnvelopesSchema),
   DeviceChain: TrackChainSchema,
 });
 
 export type AlsMidiTrack = typeof MidiTrackSchema.Type;
+
+const ReturnTrackSchema = Schema.Struct({
+  Name: NameSchema,
+  DeviceChain: Schema.Struct({ Mixer: Schema.optionalKey(TrackMixerSchema) }),
+});
+
+export type AlsReturnTrack = typeof ReturnTrackSchema.Type;
 
 const MixerSchema = Schema.Struct({ Tempo: ParameterSchema, TimeSignature: ParameterSchema });
 
@@ -158,6 +184,7 @@ export type AlsLocator = typeof LocatorSchema.Type;
 
 const TracksSchema = Schema.Struct({
   MidiTrack: MidiTrackSchema.pipe(Schema.Array, Schema.optionalKey),
+  ReturnTrack: ReturnTrackSchema.pipe(Schema.Array, Schema.optionalKey),
 });
 
 const LocatorListSchema = Schema.Struct({

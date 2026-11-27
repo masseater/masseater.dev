@@ -33,7 +33,7 @@ mise install --locked >&2
 if ! grep -qs "^\[profile.dev\]" "$HOME/.cargo/config.toml"; then
   printf "[profile.dev]\ndebug = 0\n\n[profile.test]\ndebug = 0\n" >>"$HOME/.cargo/config.toml"
 fi
-echo "export PATH=\"$CLAUDE_PROJECT_DIR/.pnpm/rust/bin:$HOME/.local/bin:$HOME/.local/share/mise/shims:\$PATH\" DOTNET_NOLOGO=1 DOTNET_CLI_TELEMETRY_OPTOUT=1 VP_RUN_CONCURRENCY_LIMIT=1" >>"$CLAUDE_ENV_FILE"
+echo "export PATH=\"$CLAUDE_PROJECT_DIR/.pnpm/rust/bin:$HOME/.local/bin:$HOME/.local/share/mise/shims:\$PATH\" DOTNET_NOLOGO=1 DOTNET_CLI_TELEMETRY_OPTOUT=1 VP_RUN_CONCURRENCY_LIMIT=2" >>"$CLAUDE_ENV_FILE"
 vp env on >&2
 vp install --frozen-lockfile >&2
 if [ ! -d node_modules/.vite/task-cache ]; then

@@ -34,9 +34,9 @@ const ALL_STEPS: readonly OnboardingStep[] = ["setup", "idea-hint", "source-hint
 export const READY: ClaudeStatus = { installed: true, loggedIn: true };
 
 export type Setup = Partial<{
-  claude: ClaudeStatus;
-  onboarding: readonly OnboardingStep[];
-  release: Release;
+  readonly claude: ClaudeStatus;
+  readonly onboarding: readonly OnboardingStep[];
+  readonly release: Release;
 }>;
 
 export interface Calls {

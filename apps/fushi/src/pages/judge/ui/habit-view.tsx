@@ -1,3 +1,4 @@
+import { Option } from "effect";
 import type { ReactNode } from "react";
 
 import { songsOf } from "#/entities/library/index.ts";
@@ -26,7 +27,9 @@ export const HabitView = ({
   const songs = songsOf(library)(style.id);
   return (
     <div className="grid gap-3">
-      <p className="text-muted-foreground text-xs">{`${LABELS.harmonyAgainst} ${judging.found.baseline}`}</p>
+      {Option.isSome(candidate.shares) && (
+        <p className="text-muted-foreground text-xs">{`${LABELS.harmonyAgainst} ${judging.found.baseline}`}</p>
+      )}
       <Title>{candidate.key}</Title>
       <HabitFacts candidate={candidate} songs={songs.length} />
       <Subtitle>{LABELS.where}</Subtitle>

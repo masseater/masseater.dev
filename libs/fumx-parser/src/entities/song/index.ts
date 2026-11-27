@@ -9,10 +9,11 @@ export type {
   Controller,
   Meter,
   Mixer,
+  MixerParameter,
   Role,
   Song,
   Tempo,
   TempoStep,
   Track,
 } from "./model/song.ts";
-export { SongSchema } from "./model/song.ts";
+export { MIXER_PARAMETERS, SongSchema } from "./model/song.ts";
