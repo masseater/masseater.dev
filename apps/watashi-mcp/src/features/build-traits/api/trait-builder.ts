@@ -1,15 +1,16 @@
 import { createModels } from "@earendil-works/pi-ai/models";
 import { Harness } from "@earendil-works/pi-durable";
-import { runner } from "@r_masseater/workers-tracing/effect";
 import { PiHarness } from "agents/harness/pi";
 import { Lifecycle } from "agents/lifecycle";
 import { createAI } from "agents/models/pi-ai";
-import { DurableObject, env } from "cloudflare:workers";
-import { Effect, Logger, Option, Semaphore } from "effect";
+import { DurableObject } from "cloudflare:workers";
+import type { env as workerEnv } from "cloudflare:workers";
+import { Effect, Option, Semaphore } from "effect";
 
 import { TRAIT_MODEL, traitRegistry } from "./trait-pi.ts";
 import { buildTraits } from "./trait-run.server.ts";
 import type { Conversation, RunSummary } from "./trait-run.server.ts";
+import { awaited, traitRunner } from "./trait-services.server.ts";
 
 const MAX_TURNS = 3;
 
@@ -24,12 +25,9 @@ const busy = (): RunResult => BUSY;
 const logRun = (summary: RunResult): Effect.Effect<void> =>
   Effect.logInfo("watashi.traits.run").pipe(Effect.annotateLogs({ summary }));
 
-const logger = Logger.layer([Logger.withLeveledConsole(Logger.formatStructured)]);
-const runLogged = runner(logger);
-
 export class TraitBuilder extends DurableObject {
   private readonly ai = createAI({
-    binding: env.AI,
+    binding: this.env.AI,
     metadata: { caller: "watashi-mcp.trait-builder" },
   });
 
@@ -57,19 +55,20 @@ export class TraitBuilder extends DurableObject {
       reset: () => session.reset(),
       prompt: (input) => session.prompt(input),
     };
-    const guarded = buildTraits({ conversation, translator: env.AI, ai: env.AI }).pipe(
+    const guarded = buildTraits({ conversation, translator: this.env.AI, ai: this.env.AI }).pipe(
       this.gate.withPermitsIfAvailable(ONE_RUN),
       Effect.map(Option.getOrElse(busy)),
       Effect.tap(logRun),
     );
-    return runLogged(guarded);
+    return traitRunner(this.env)(guarded);
   }
 }
 
-const builder = (): DurableObjectStub<TraitBuilder> => env.TRAIT_BUILDER.getByName("owner");
-
-const worker = {
-  scheduled: (): Promise<RunResult> => builder().run(),
+const worker: ExportedHandler<typeof workerEnv> = {
+  scheduled: (_controller, bindings) => {
+    const builder = bindings.TRAIT_BUILDER.getByName("owner");
+    return awaited(() => builder.run());
+  },
 };
 
 export default worker;

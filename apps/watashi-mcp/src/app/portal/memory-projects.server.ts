@@ -3,7 +3,8 @@ import { Array as Arr, Effect, pipe } from "effect";
 
 import type { Body } from "#/entities/life-record/index.ts";
 import { timeOut } from "#/entities/life-record/index.ts";
-import { db, query } from "#/shared/db/index.server.ts";
+import type { Database } from "#/shared/db/index.server.ts";
+import { query } from "#/shared/db/index.server.ts";
 import { memory } from "#/shared/db/index.ts";
 import type { StorageFailed } from "#/shared/db/index.ts";
 
@@ -11,7 +12,7 @@ const NOT_RETRACTED = "";
 
 const lastUpdated = max(memory.updatedAt);
 
-export const memoryProjects: Effect.Effect<Body, StorageFailed> = query(() =>
+export const memoryProjects: Effect.Effect<Body, StorageFailed, Database> = query((db) =>
   db
     .select({ project: memory.project, memos: count(), updatedAt: lastUpdated })
     .from(memory)

@@ -1,8 +1,8 @@
 import type { UpstreamFailed } from "@masseater.dev/mcp-tool-call";
 import { Array as Arr, Effect, Record as Rec, pipe } from "effect";
 
+import type { Embedder, VectorTexts } from "#/entities/trait/index.server.ts";
 import { embedTexts } from "#/entities/trait/index.server.ts";
-import type { VectorTexts } from "#/entities/trait/index.server.ts";
 import { planTraits, isActive, keyText, supportsOf } from "#/entities/trait/index.ts";
 import type { Plan, Step } from "#/entities/trait/index.ts";
 import { encodeJson } from "#/shared/db/index.server.ts";
@@ -16,7 +16,7 @@ const quotesOf = (trait: Plan["touched"][number]): string =>
     Arr.join("\n"),
   );
 
-const vectorsOf = (plan: Plan): Effect.Effect<VectorTexts, UpstreamFailed> => {
+const vectorsOf = (plan: Plan): Effect.Effect<VectorTexts, UpstreamFailed, Embedder> => {
   const active = pipe(plan.touched, Arr.filter(isActive));
   return embedTexts(pipe(active, Arr.map(quotesOf))).pipe(
     Effect.flatMap((items) => Effect.forEach(items, encodeJson, { concurrency: 1 })),
@@ -28,7 +28,7 @@ const vectorsOf = (plan: Plan): Effect.Effect<VectorTexts, UpstreamFailed> => {
   );
 };
 
-export const settle = (step: Step): Effect.Effect<Settled, UpstreamFailed> => {
+export const settle = (step: Step): Effect.Effect<Settled, UpstreamFailed, Embedder> => {
   const plan = planTraits(step);
   return vectorsOf(plan).pipe(Effect.map((vectors) => ({ plan, vectors })));
 };

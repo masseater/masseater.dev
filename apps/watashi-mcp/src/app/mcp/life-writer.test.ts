@@ -1,6 +1,5 @@
 import { afterAll, expect, it } from "@effect/vitest";
 import { Array as Arr, Effect, pipe } from "effect";
-import { vi } from "vite-plus/test";
 
 import {
   findRecord,
@@ -11,11 +10,10 @@ import {
 import type { MemoryWriteValue } from "#/entities/memory/index.ts";
 import { writeMemory } from "#/features/manage-memory/index.test.support.ts";
 import { routeLifeRead } from "#/features/record-life/index.test.support.ts";
+import type { Database } from "#/shared/db/index.server.ts";
 import type { StorageFailed } from "#/shared/db/index.ts";
 
-import { closeDatabase, resetDatabase } from "./d1.test.support.ts";
-
-vi.mock("cloudflare:workers", () => import("./d1.test.support.ts"));
+import { closeDatabase, resetDatabase, provided } from "./d1.test.support.ts";
 
 afterAll(() => Effect.runPromise(closeDatabase));
 
@@ -40,44 +38,50 @@ const memo = (name: string): MemoryWriteValue => ({
 });
 
 it.effect("同時に足した記録は別々の id を受け取る", () =>
-  Effect.gen(function* insertsAtOnce() {
-    yield* resetDatabase;
-    const ids = yield* Effect.all(
-      [insertRecord(writer)(todo("洗濯")), insertRecord(writer)(todo("掃除"))],
-      AT_ONCE,
-    );
-    expect(Arr.dedupe(ids)).toHaveLength(WRITERS);
-  }),
+  provided(
+    Effect.gen(function* insertsAtOnce() {
+      yield* resetDatabase;
+      const ids = yield* Effect.all(
+        [insertRecord(writer)(todo("洗濯")), insertRecord(writer)(todo("掃除"))],
+        AT_ONCE,
+      );
+      expect(Arr.dedupe(ids)).toHaveLength(WRITERS);
+    }),
+  ),
 );
 
 it.effect("同じ記録を同時に直すと、リビジョンが続き番号で残る", () =>
-  Effect.gen(function* replacesAtOnce() {
-    yield* resetDatabase;
-    const id = yield* insertRecord(writer)(todo("洗濯"));
-    const entry = yield* findRecord({ record: "todo", id });
-    const retitle = (title: string): Effect.Effect<void, StorageFailed> =>
-      replaceRecord(writer)({
-        entry,
-        snapshot: { ...snapshotOf(entry), body: { ...entry.body, title } },
-        op: "update",
-      });
-    yield* Effect.all([retitle("洗濯と乾燥"), retitle("洗濯とアイロン")], AT_ONCE);
-    const history = yield* routeLifeRead({ ref: `todo:${id}`, revisions: true });
-    expect(history).toMatchObject({ revisions: [{ rev: 3 }, { rev: 2 }, { rev: 1 }] });
-  }),
+  provided(
+    Effect.gen(function* replacesAtOnce() {
+      yield* resetDatabase;
+      const id = yield* insertRecord(writer)(todo("洗濯"));
+      const entry = yield* findRecord({ record: "todo", id });
+      const retitle = (title: string): Effect.Effect<void, StorageFailed, Database> =>
+        replaceRecord(writer)({
+          entry,
+          snapshot: { ...snapshotOf(entry), body: { ...entry.body, title } },
+          op: "update",
+        });
+      yield* Effect.all([retitle("洗濯と乾燥"), retitle("洗濯とアイロン")], AT_ONCE);
+      const history = yield* routeLifeRead({ ref: `todo:${id}`, revisions: true });
+      expect(history).toMatchObject({ revisions: [{ rev: 3 }, { rev: 2 }, { rev: 1 }] });
+    }),
+  ),
 );
 
 it.effect("同時に作った作業メモは別々の id を受け取る", () =>
-  Effect.gen(function* createsMemosAtOnce() {
-    yield* resetDatabase;
-    const results = yield* Effect.all(
-      [writeMemory(writer)(memo("first")), writeMemory(writer)(memo("second"))],
-      AT_ONCE,
-    );
-    const refs = pipe(
-      results,
-      Arr.flatMap((result) => result.written),
-    );
-    expect(Arr.dedupe(refs)).toHaveLength(WRITERS);
-  }),
+  provided(
+    Effect.gen(function* createsMemosAtOnce() {
+      yield* resetDatabase;
+      const results = yield* Effect.all(
+        [writeMemory(writer)(memo("first")), writeMemory(writer)(memo("second"))],
+        AT_ONCE,
+      );
+      const refs = pipe(
+        results,
+        Arr.flatMap((result) => result.written),
+      );
+      expect(Arr.dedupe(refs)).toHaveLength(WRITERS);
+    }),
+  ),
 );

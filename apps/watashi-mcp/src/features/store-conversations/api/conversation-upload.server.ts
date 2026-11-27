@@ -1,10 +1,14 @@
 import { ChunkQuery, FileQuery } from "@masseater.dev/watashi-protocol";
 import type { ChunkParams } from "@masseater.dev/watashi-protocol";
-import { env } from "cloudflare:workers";
 import { Clock, Effect, Option, Schema, String as Str, pipe } from "effect";
 
 import type { Principal } from "#/entities/api-token/index.server.ts";
-import { chunkAt, committedEnd, appendChunk } from "#/entities/conversation/index.server.ts";
+import {
+  ConversationObjects,
+  appendChunk,
+  chunkAt,
+  committedEnd,
+} from "#/entities/conversation/index.server.ts";
 import type { FileKey } from "#/entities/conversation/index.server.ts";
 import { fileKeyOf, paramsOf } from "#/entities/conversation/index.ts";
 import {
@@ -15,8 +19,11 @@ import {
   storageFailed,
   withStatus,
 } from "#/shared/api/index.ts";
+import type { Database, WriteFailure } from "#/shared/db/index.server.ts";
 import { nowIso, query } from "#/shared/db/index.server.ts";
-import type { WriteFailure } from "#/shared/db/index.server.ts";
+
+import { UploadMetrics } from "./upload-metrics.server.ts";
+import type { MetricsSink } from "./upload-metrics.server.ts";
 
 type UploadStatus = "ok" | "conflict" | "error";
 
@@ -39,7 +46,7 @@ const isGzip = (body: Uint8Array): boolean =>
 const objectKeyOf = ({ key, params }: Pick<Placed, "key" | "params">): string =>
   `${key.kind}/${key.sessionId}/${key.file}/${pipe(String(params.start), Str.padStart(OFFSET_WIDTH, "0"))}-${String(params.end)}.jsonl.gz`;
 
-const conflictAt = (key: FileKey): Effect.Effect<Stored> =>
+const conflictAt = (key: FileKey): Effect.Effect<Stored, never, Database> =>
   committedEnd(key).pipe(
     Effect.map((expected) => ({
       response: withStatus(CONFLICT)({ expected }),
@@ -48,7 +55,11 @@ const conflictAt = (key: FileKey): Effect.Effect<Stored> =>
     Effect.orElseSucceed(() => ({ response: storageFailed(), status: "error" as const })),
   );
 
-const discardLoser = ({ key, params, objectKey }: Placed): Effect.Effect<void> =>
+const discardLoser = ({
+  key,
+  params,
+  objectKey,
+}: Placed): Effect.Effect<void, never, Database | ConversationObjects> =>
   chunkAt({ ...key, start: params.start }).pipe(
     Effect.flatMap((winner) =>
       Option.match(
@@ -58,7 +69,10 @@ const discardLoser = ({ key, params, objectKey }: Placed): Effect.Effect<void> =
         ),
         {
           onSome: () => Effect.void,
-          onNone: () => query(() => env.CONVERSATIONS.delete(objectKey)),
+          onNone: () =>
+            ConversationObjects.pipe(
+              Effect.flatMap((objects) => Effect.promise(() => objects.delete(objectKey))),
+            ),
         },
       ),
     ),
@@ -67,7 +81,7 @@ const discardLoser = ({ key, params, objectKey }: Placed): Effect.Effect<void> =
 
 const afterAppendFailure =
   (key: FileKey) =>
-  (failure: WriteFailure): Effect.Effect<Stored> => {
+  (failure: WriteFailure): Effect.Effect<Stored, never, Database> => {
     if (failure.duplicate) {
       return conflictAt(key);
     }
@@ -78,7 +92,7 @@ const afterAppendFailure =
 
 const onAppendFailure =
   (placed: Placed) =>
-  (failure: WriteFailure): Effect.Effect<Stored> =>
+  (failure: WriteFailure): Effect.Effect<Stored, never, Database | ConversationObjects> =>
     discardLoser(placed).pipe(Effect.andThen(afterAppendFailure(placed.key)(failure)));
 
 const commit = Effect.fn("conversation.commit")(function* commit(placed: Placed) {
@@ -108,29 +122,34 @@ const place = Effect.fn("conversation.place")(function* place(upload: Upload) {
     return { response: withStatus(CONFLICT)({ expected: committed }), status: "conflict" as const };
   }
   const objectKey = objectKeyOf({ key, params: upload.params });
+  const objects = yield* ConversationObjects;
   yield* query(() =>
-    env.CONVERSATIONS.put(objectKey, upload.body, {
-      httpMetadata: { contentType: "application/gzip" },
-    }),
+    objects.put(objectKey, upload.body, { httpMetadata: { contentType: "application/gzip" } }),
   );
   return yield* commit({ ...upload, key, objectKey });
 });
 
 const record =
   (upload: Upload, principal: Principal) =>
-  (outcome: Readonly<{ status: UploadStatus; latencyMs: number }>): Effect.Effect<void> => {
+  (
+    outcome: Readonly<{ status: UploadStatus; latencyMs: number }>,
+  ): Effect.Effect<void, never, UploadMetrics> => {
     const metrics = {
       rawBytes: upload.params.end - upload.params.start,
       storedBytes: upload.body.byteLength,
       redactions: upload.params.redactions,
     };
-    return Effect.sync(() => {
-      env.CONVERSATION_UPLOADS.writeDataPoint({
-        indexes: [outcome.status],
-        blobs: [outcome.status, upload.params.source, principal.via],
-        doubles: [metrics.rawBytes, metrics.storedBytes, metrics.redactions, outcome.latencyMs],
+    const point = {
+      indexes: [outcome.status],
+      blobs: [outcome.status, upload.params.source, principal.via],
+      doubles: [metrics.rawBytes, metrics.storedBytes, metrics.redactions, outcome.latencyMs],
+    };
+    const written = (uploads: MetricsSink): Effect.Effect<void> =>
+      Effect.sync(() => {
+        uploads.writeDataPoint(point);
       });
-    }).pipe(
+    return UploadMetrics.pipe(
+      Effect.flatMap(written),
       Effect.andThen(Effect.logInfo("conversation upload")),
       Effect.annotateLogs({
         event: "conversation_upload",
@@ -193,7 +212,7 @@ export const upload = Effect.fn("conversation.upload")(function* upload(
   });
 });
 
-export const offset = (request: Request): Effect.Effect<Response> =>
+export const offset = (request: Request): Effect.Effect<Response, never, Database> =>
   Option.match(Schema.decodeUnknownOption(FileQuery)(paramsOf(request)), {
     onNone: () => Effect.succeed(withStatus(BAD_REQUEST)({ error: "kind・session・file を送る" })),
     onSome: (params) =>

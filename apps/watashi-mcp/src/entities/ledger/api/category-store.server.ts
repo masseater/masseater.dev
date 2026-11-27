@@ -5,7 +5,8 @@ import { Array as Arr, Effect, Match, Option, pipe } from "effect";
 import { decide, normalized } from "#/entities/ledger/model/categories.ts";
 import type { Category, Decision, Rule } from "#/entities/ledger/model/categories.ts";
 import { InvalidRecord } from "#/shared/api/index.ts";
-import { db, query } from "#/shared/db/index.server.ts";
+import { query } from "#/shared/db/index.server.ts";
+import type { Build } from "#/shared/db/index.server.ts";
 
 import { runAll } from "./database.server.ts";
 import { categoryRules, transactions } from "./ledger.table.ts";
@@ -32,7 +33,7 @@ const IDS_PER_UPDATE = 90;
 
 const KEY_SEPARATOR = "\u0000";
 
-export const userRules = query(() =>
+export const userRules = query((db) =>
   db
     .select({
       pattern: categoryRules.pattern,
@@ -62,30 +63,32 @@ const changesOf = (rules: readonly Rule[], rows: readonly Candidate[]): readonly
     Arr.map(({ id, decision }) => ({ id, decision })),
   );
 
-const updatesOf = (changes: readonly Change[]): readonly BatchItem<"sqlite">[] =>
-  pipe(
-    changes,
-    Arr.groupBy(({ decision }) =>
-      Arr.join([decision.category, Option.getOrElse(decision.label, () => "")], KEY_SEPARATOR),
-    ),
-    Arr.fromRecord,
-    Arr.flatMap(([, group]) =>
-      pipe(
-        group,
-        Arr.map(({ id }) => id),
-        Arr.chunksOf(IDS_PER_UPDATE),
-        Arr.map((ids) =>
-          db
-            .update(transactions)
-            .set({
-              category: Arr.headNonEmpty(group).decision.category,
-              label: Option.getOrNull(Arr.headNonEmpty(group).decision.label),
-            })
-            .where(inArray(transactions.id, ids)),
+const updatesOf =
+  (changes: readonly Change[]): Build<readonly BatchItem<"sqlite">[]> =>
+  (db) =>
+    pipe(
+      changes,
+      Arr.groupBy(({ decision }) =>
+        Arr.join([decision.category, Option.getOrElse(decision.label, () => "")], KEY_SEPARATOR),
+      ),
+      Arr.fromRecord,
+      Arr.flatMap(([, group]) =>
+        pipe(
+          group,
+          Arr.map(({ id }) => id),
+          Arr.chunksOf(IDS_PER_UPDATE),
+          Arr.map((ids) =>
+            db
+              .update(transactions)
+              .set({
+                category: Arr.headNonEmpty(group).decision.category,
+                label: Option.getOrNull(Arr.headNonEmpty(group).decision.label),
+              })
+              .where(inArray(transactions.id, ids)),
+          ),
         ),
       ),
-    ),
-  );
+    );
 
 const choiceOf = (category: Category | "auto", label: Option.Option<string>): Choice =>
   Match.value(category).pipe(
@@ -105,7 +108,7 @@ const existing = (
   );
 
 const recategorize = Effect.fn("recategorize")(function* recategorize(rules: readonly Rule[]) {
-  const rows = yield* query(() =>
+  const rows = yield* query((db) =>
     db
       .select({
         id: transactions.id,
@@ -128,7 +131,7 @@ export const setCategory = Effect.fn("setCategory")(function* setCategory({
   label,
 }: CategoryChoice) {
   const where = eq(transactions.id, transactionId);
-  const changed = yield* query(() =>
+  const changed = yield* query((db) =>
     db
       .update(transactions)
       .set(choiceOf(category, label))
@@ -138,7 +141,7 @@ export const setCategory = Effect.fn("setCategory")(function* setCategory({
   yield* existing(changed, `取引 ${transactionId} はありません`);
   const rules = yield* userRules;
   yield* recategorize(rules);
-  return yield* query(() =>
+  return yield* query((db) =>
     db
       .select({ id: transactions.id, category: transactions.category, label: transactions.label })
       .from(transactions)
@@ -149,7 +152,7 @@ export const setCategory = Effect.fn("setCategory")(function* setCategory({
 export const setRule = Effect.fn("setRule")(function* setRule(rule: Rule) {
   const saved = { ...rule, pattern: normalized(rule.pattern) };
   const label = Option.getOrNull(saved.label);
-  yield* query(() =>
+  yield* query((db) =>
     db
       .insert(categoryRules)
       .values({ pattern: saved.pattern, category: saved.category, label })
@@ -165,7 +168,7 @@ export const setRule = Effect.fn("setRule")(function* setRule(rule: Rule) {
 
 export const deleteRule = Effect.fn("deleteRule")(function* deleteRule(text: string) {
   const pattern = normalized(text);
-  const deleted = yield* query(() =>
+  const deleted = yield* query((db) =>
     db
       .delete(categoryRules)
       .where(eq(categoryRules.pattern, pattern))

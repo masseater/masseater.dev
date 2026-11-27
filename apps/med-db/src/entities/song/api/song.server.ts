@@ -1,13 +1,14 @@
 import { Array as Arr, Effect, Number, Option, Order, pipe, Record, String as Str } from "effect";
 
-import { catalogDb } from "#/shared/db/index.server.ts";
+import { fromCatalog } from "#/shared/db/index.server.ts";
+import type { CatalogDb } from "#/shared/db/index.server.ts";
 
 import { quoteReach, sourcesByVideo, videoSummaries } from "./quote-reach.server.ts";
 import type { QuotePair, VideoSummary } from "./quote-reach.server.ts";
 
 const findSong = Effect.fn("catalog.song.find")(function* findSong(id: number) {
-  const found = yield* Effect.promise(() =>
-    catalogDb.query.song.findFirst({
+  const found = yield* fromCatalog((db) =>
+    db.query.song.findFirst({
       columns: { id: true, title: true, artist: true, url: true, genre: true, note: true },
       with: {
         aliases: { columns: { alias: true } },
@@ -52,7 +53,9 @@ const byVideo = (parts: readonly UsedPart[]): readonly DirectUse[] =>
     (uses) => Arr.sort(uses, byTitle),
   );
 
-const indirectUsage = (reach: readonly QuotePair[]): Effect.Effect<readonly IndirectUse[]> =>
+const indirectUsage = (
+  reach: readonly QuotePair[],
+): Effect.Effect<readonly IndirectUse[], never, CatalogDb> =>
   videoSummaries(reach.flat()).pipe(
     Effect.map((summaries) => {
       const summaryOf = (videoId: number): readonly VideoSummary[] =>

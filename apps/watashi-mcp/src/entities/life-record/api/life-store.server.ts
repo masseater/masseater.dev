@@ -3,7 +3,8 @@ import type { SQL } from "drizzle-orm";
 import { Array as Arr, Effect, Option, Schema, pipe } from "effect";
 
 import { RecordNotFound } from "#/shared/api/index.ts";
-import { db, anyTermMatches, firstRow, query } from "#/shared/db/index.server.ts";
+import type { Database } from "#/shared/db/index.server.ts";
+import { anyTermMatches, firstRow, query } from "#/shared/db/index.server.ts";
 import { lifeRecord, NOT_RETRACTED } from "#/shared/db/index.ts";
 import type { LifeRecordName, LifeRow, StorageFailed } from "#/shared/db/index.ts";
 
@@ -99,8 +100,8 @@ const pageOf = ({
   wanted,
   limit,
   offset,
-}: Page): Effect.Effect<readonly LifeRow[], StorageFailed> =>
-  query(() =>
+}: Page): Effect.Effect<readonly LifeRow[], StorageFailed, Database> =>
+  query((db) =>
     db
       .select()
       .from(lifeRecord)
@@ -113,7 +114,7 @@ const pageOf = ({
 const rowsFrom = (
   wanted: Wanted,
   offset: number,
-): Effect.Effect<readonly LifeRow[], StorageFailed> =>
+): Effect.Effect<readonly LifeRow[], StorageFailed, Database> =>
   pageOf({ wanted, limit: SCAN_LIMIT, offset }).pipe(
     Effect.filterOrElse(
       (rows) => rows.length < SCAN_LIMIT,
@@ -122,10 +123,12 @@ const rowsFrom = (
     ),
   );
 
-const everyEntry = (wanted: Wanted): Effect.Effect<readonly LifeEntry[], StorageFailed> =>
+const everyEntry = (wanted: Wanted): Effect.Effect<readonly LifeEntry[], StorageFailed, Database> =>
   rowsFrom(wanted, NO_OFFSET).pipe(Effect.flatMap(entriesOf));
 
-export const scanRecords = (scan: RecordScan): Effect.Effect<readonly LifeEntry[], StorageFailed> =>
+export const scanRecords = (
+  scan: RecordScan,
+): Effect.Effect<readonly LifeEntry[], StorageFailed, Database> =>
   pageOf({
     wanted: anyLabel(scan),
     limit: Math.min(scan.limit, SCAN_LIMIT),
@@ -146,7 +149,7 @@ const limitedOf = (limit: number, found: number): Body => {
   return {};
 };
 
-export const scanCapped = (scan: RecordScan): Effect.Effect<CappedScan, StorageFailed> =>
+export const scanCapped = (scan: RecordScan): Effect.Effect<CappedScan, StorageFailed, Database> =>
   pageOf({ wanted: anyLabel(scan), limit: scan.limit + ONE_ROW, offset: NO_OFFSET }).pipe(
     Effect.flatMap((rows) =>
       entriesOf(Arr.take(rows, scan.limit)).pipe(
@@ -158,8 +161,8 @@ export const scanCapped = (scan: RecordScan): Effect.Effect<CappedScan, StorageF
 export const findRecord = ({
   record,
   id,
-}: IdKey): Effect.Effect<LifeEntry, RecordNotFound | StorageFailed> =>
-  query(() =>
+}: IdKey): Effect.Effect<LifeEntry, RecordNotFound | StorageFailed, Database> =>
+  query((db) =>
     db
       .select()
       .from(lifeRecord)
@@ -181,7 +184,7 @@ const newestOf = ({
   record,
   label,
   open,
-}: Newest): Effect.Effect<Option.Option<LifeEntry>, StorageFailed> => {
+}: Newest): Effect.Effect<Option.Option<LifeEntry>, StorageFailed, Database> => {
   const span = pipe(open, Option.map(spanConditions), Option.getOrElse(noConditions));
   const matches = and(
     notRetracted,
@@ -189,30 +192,30 @@ const newestOf = ({
     eq(lifeRecord.label, label),
     ...span,
   );
-  return query(() =>
+  return query((db) =>
     db.select().from(lifeRecord).where(matches).orderBy(desc(lifeRecord.id)).limit(ONE_ROW),
   ).pipe(Effect.flatMap(entriesOf), Effect.map(Arr.head));
 };
 
 export const findByLabel = (
   key: LabelKey,
-): Effect.Effect<Option.Option<LifeEntry>, StorageFailed> =>
+): Effect.Effect<Option.Option<LifeEntry>, StorageFailed, Database> =>
   newestOf({ ...key, open: Option.none() });
 
 export const findOpen = ({
   about,
   startedBy,
   ...key
-}: OpenKey): Effect.Effect<Option.Option<LifeEntry>, StorageFailed> =>
+}: OpenKey): Effect.Effect<Option.Option<LifeEntry>, StorageFailed, Database> =>
   newestOf({ ...key, open: Option.some({ about, startedBy }) });
 
 export const scanAll = (
   records: readonly LifeRecordName[],
-): Effect.Effect<readonly LifeEntry[], StorageFailed> =>
+): Effect.Effect<readonly LifeEntry[], StorageFailed, Database> =>
   everyEntry(wholeOf(records, Option.none()));
 
 export const scanLabel = ({
   record,
   label,
-}: LabelKey): Effect.Effect<readonly LifeEntry[], StorageFailed> =>
+}: LabelKey): Effect.Effect<readonly LifeEntry[], StorageFailed, Database> =>
   everyEntry(wholeOf([record], Option.some(label)));

@@ -7,3 +7,4 @@ export const MCP_URL = `https://${SITE_HOST}${MCP_PATH}`;
 export const SERVER_NAME = "sundries";
 
 export const TOOL_CALL_DATASET = "masseater_dev_sundries_tool_calls";
+export type { AppEnv } from "./app-env.ts";

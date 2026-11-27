@@ -2,7 +2,6 @@ import type { UpstreamFailed } from "@masseater.dev/mcp-tool-call";
 import { compactInput } from "@masseater.dev/mcp-tool-call";
 import type { JoinedTailnet } from "@masseater.dev/repositories/credential-broker";
 import type { McpServer } from "@modelcontextprotocol/server";
-import { env } from "cloudflare:workers";
 import { Effect, Schema } from "effect";
 
 import { brokerFailed, runTool } from "#/shared/api/index.ts";
@@ -21,18 +20,24 @@ const TailnetInput = Schema.Struct({
 
 const INPUT_SCHEMA = TailnetInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
 
-const join = (publicKey: string): Effect.Effect<JoinedTailnet, UpstreamFailed> =>
-  Effect.tryPromise({ try: () => env.TAILNET.join(publicKey), catch: brokerFailed });
+export type Tailnet = Readonly<{ join: (publicKey: string) => Promise<JoinedTailnet> }>;
 
-export const registerTailnetTools = (server: McpServer): McpServer => {
-  server.registerTool(
-    "join_tailnet",
-    {
-      description: DESCRIPTION,
-      inputSchema: compactInput(INPUT_SCHEMA),
-      annotations: { readOnlyHint: false, openWorldHint: true },
-    },
-    (input) => join(input.publicKey).pipe(runTool({ count: () => ONE_JOIN })),
-  );
-  return server;
-};
+const join =
+  (tailnet: Tailnet) =>
+  (publicKey: string): Effect.Effect<JoinedTailnet, UpstreamFailed> =>
+    Effect.tryPromise({ try: () => tailnet.join(publicKey), catch: brokerFailed });
+
+export const registerTailnetTools =
+  (tailnet: Tailnet) =>
+  (server: McpServer): McpServer => {
+    server.registerTool(
+      "join_tailnet",
+      {
+        description: DESCRIPTION,
+        inputSchema: compactInput(INPUT_SCHEMA),
+        annotations: { readOnlyHint: false, openWorldHint: true },
+      },
+      (input) => join(tailnet)(input.publicKey).pipe(runTool({ count: () => ONE_JOIN })),
+    );
+    return server;
+  };

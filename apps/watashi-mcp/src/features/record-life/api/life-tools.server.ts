@@ -4,7 +4,8 @@ import { Schema, pipe } from "effect";
 
 import { LifeReadInput, LifeStatsInput, LifeWriteInput } from "#/entities/life-record/index.ts";
 import type { LifeReadValue } from "#/entities/life-record/index.ts";
-import { runTool } from "#/shared/api/index.server.ts";
+import type { ToolRun } from "#/shared/api/index.server.ts";
+import type { Database } from "#/shared/db/index.server.ts";
 
 import { routeLifeRead } from "./life-read-route.server.ts";
 import { lifeStats } from "./life-stats.server.ts";
@@ -24,50 +25,60 @@ const READ_DESCRIPTION = "Read the owner's life records.";
 const STATS_DESCRIPTION =
   "Aggregate the owner's metrics over a period instead of counting records yourself.";
 
-const registerWrite = (server: McpServer): McpServer => {
-  server.registerTool(
-    "life_write",
-    {
-      description: WRITE_DESCRIPTION,
-      inputSchema: compactInput(WRITE_SCHEMA),
-      annotations: OVERWRITE,
-    },
-    (input, ctx) =>
-      writeLife({ actor: clientOf(ctx) })(input.records).pipe(
-        runTool({ count: ({ written }) => written.length }),
-      ),
-  );
-  return server;
-};
+const registerWrite =
+  (runTool: ToolRun<Database>) =>
+  (server: McpServer): McpServer => {
+    server.registerTool(
+      "life_write",
+      {
+        description: WRITE_DESCRIPTION,
+        inputSchema: compactInput(WRITE_SCHEMA),
+        annotations: OVERWRITE,
+      },
+      (input, ctx) =>
+        writeLife({ actor: clientOf(ctx) })(input.records).pipe(
+          runTool({ count: ({ written }) => written.length }),
+        ),
+    );
+    return server;
+  };
 
-const readLife = (input: LifeReadValue): Promise<CallToolResult> =>
-  routeLifeRead(input).pipe(runTool({ count: one }));
+const readLife =
+  (runTool: ToolRun<Database>) =>
+  (input: LifeReadValue): Promise<CallToolResult> =>
+    routeLifeRead(input).pipe(runTool({ count: one }));
 
-const registerRead = (server: McpServer): McpServer => {
-  server.registerTool(
-    "life_read",
-    {
-      description: READ_DESCRIPTION,
-      inputSchema: compactInput(READ_SCHEMA),
-      annotations: READ_ONLY,
-    },
-    (input) => readLife(input),
-  );
-  return server;
-};
+const registerRead =
+  (runTool: ToolRun<Database>) =>
+  (server: McpServer): McpServer => {
+    server.registerTool(
+      "life_read",
+      {
+        description: READ_DESCRIPTION,
+        inputSchema: compactInput(READ_SCHEMA),
+        annotations: READ_ONLY,
+      },
+      (input) => readLife(runTool)(input),
+    );
+    return server;
+  };
 
-const registerStats = (server: McpServer): McpServer => {
-  server.registerTool(
-    "life_stats",
-    {
-      description: STATS_DESCRIPTION,
-      inputSchema: compactInput(STATS_SCHEMA),
-      annotations: READ_ONLY,
-    },
-    (input) => lifeStats(input).pipe(runTool({ count: (stats) => stats.length })),
-  );
-  return server;
-};
+const registerStats =
+  (runTool: ToolRun<Database>) =>
+  (server: McpServer): McpServer => {
+    server.registerTool(
+      "life_stats",
+      {
+        description: STATS_DESCRIPTION,
+        inputSchema: compactInput(STATS_SCHEMA),
+        annotations: READ_ONLY,
+      },
+      (input) => lifeStats(input).pipe(runTool({ count: (stats) => stats.length })),
+    );
+    return server;
+  };
 
-export const registerLifeTools = (server: McpServer): McpServer =>
-  pipe(server, registerWrite, registerRead, registerStats);
+export const registerLifeTools =
+  (runTool: ToolRun<Database>) =>
+  (server: McpServer): McpServer =>
+    pipe(server, registerWrite(runTool), registerRead(runTool), registerStats(runTool));

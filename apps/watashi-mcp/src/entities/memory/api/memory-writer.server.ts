@@ -2,13 +2,13 @@ import { eq, max } from "drizzle-orm";
 import { Effect, Option, Schema } from "effect";
 
 import {
-  db,
   commit,
   numbered,
   attempt,
   encodeJson,
   nextAfterMax,
   nowIso,
+  Database,
 } from "#/shared/db/index.server.ts";
 import type { WriteFailure } from "#/shared/db/index.server.ts";
 import { memory } from "#/shared/db/index.ts";
@@ -36,7 +36,7 @@ export type Saved = Readonly<{ id: number; snapshot: MemorySnapshotValue }>;
 
 export type MemoryResult = Readonly<{ written: readonly string[]; notices: readonly never[] }>;
 
-const nextId: Effect.Effect<number, WriteFailure> = attempt(() =>
+const nextId: Effect.Effect<number, WriteFailure, Database> = attempt((db) =>
   db.select({ max: max(memory.id) }).from(memory),
 ).pipe(Effect.map(nextAfterMax));
 
@@ -54,8 +54,9 @@ export const resultOf = (id: number): MemoryResult => ({ written: [`memory:${id}
 
 const write =
   ({ writer, op }: Target) =>
-  ({ id, snapshot }: Saved): Effect.Effect<MemoryResult, WriteFailure> =>
+  ({ id, snapshot }: Saved): Effect.Effect<MemoryResult, WriteFailure, Database> =>
     Effect.gen(function* writeMemoryRow() {
+      const db = yield* Database;
       const now = yield* nowIso;
       const evidence = yield* encodeJson(snapshot.evidence);
       const row = { ...snapshot, evidence, updatedAt: now };
@@ -73,12 +74,12 @@ const write =
 
 export const save =
   (target: Target) =>
-  (saved: Saved): Effect.Effect<MemoryResult, StorageFailed> =>
+  (saved: Saved): Effect.Effect<MemoryResult, StorageFailed, Database> =>
     numbered(write(target)(saved));
 
 export const create =
   (writer: Writer) =>
-  (snapshot: MemorySnapshotValue): Effect.Effect<MemoryResult, StorageFailed> =>
+  (snapshot: MemorySnapshotValue): Effect.Effect<MemoryResult, StorageFailed, Database> =>
     nextId.pipe(
       Effect.flatMap((id) => write({ writer, op: "create" })({ id, snapshot })),
       numbered,

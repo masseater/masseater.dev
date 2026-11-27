@@ -9,11 +9,12 @@ import {
   WatashiSearchInput,
 } from "#/entities/memory/index.ts";
 import type { MemoryReadValue } from "#/entities/memory/index.ts";
-import { runTool } from "#/shared/api/index.server.ts";
+import type { ToolRun } from "#/shared/api/index.server.ts";
 
 import { readMemory } from "./memory-read.server.ts";
 import { writeMemory } from "./memory-write.server.ts";
 import { watashiProfile } from "./profile-read.server.ts";
+import type { ProfileServices } from "./profile-read.server.ts";
 import { watashiSearch } from "./watashi-search.server.ts";
 
 const MEMORY_WRITE_SCHEMA = MemoryWriteInput.pipe(
@@ -46,60 +47,78 @@ const SEARCH_DESCRIPTION = "Search the owner's life records and AI work memos in
 const PROFILE_DESCRIPTION =
   "Return USER.md, the owner's profile for agents; call it at the start of a conversation and follow it.";
 
-const registerMemoryWrite = (server: McpServer): McpServer => {
-  server.registerTool(
-    "memory_write",
-    {
-      description: MEMORY_WRITE_DESCRIPTION,
-      inputSchema: compactInput(MEMORY_WRITE_SCHEMA),
-      annotations: OVERWRITE,
-    },
-    (input, ctx) => writeMemory({ actor: clientOf(ctx) })(input).pipe(runTool({ count: one })),
-  );
-  return server;
-};
+const registerMemoryWrite =
+  (runTool: ToolRun<ProfileServices>) =>
+  (server: McpServer): McpServer => {
+    server.registerTool(
+      "memory_write",
+      {
+        description: MEMORY_WRITE_DESCRIPTION,
+        inputSchema: compactInput(MEMORY_WRITE_SCHEMA),
+        annotations: OVERWRITE,
+      },
+      (input, ctx) => writeMemory({ actor: clientOf(ctx) })(input).pipe(runTool({ count: one })),
+    );
+    return server;
+  };
 
-const readMemoryTool = (input: MemoryReadValue): Promise<CallToolResult> =>
-  readMemory(input).pipe(runTool({ count: one }));
+const readMemoryTool =
+  (runTool: ToolRun<ProfileServices>) =>
+  (input: MemoryReadValue): Promise<CallToolResult> =>
+    readMemory(input).pipe(runTool({ count: one }));
 
-const registerMemoryRead = (server: McpServer): McpServer => {
-  server.registerTool(
-    "memory_read",
-    {
-      description: MEMORY_READ_DESCRIPTION,
-      inputSchema: compactInput(MEMORY_READ_SCHEMA),
-      annotations: READ_ONLY,
-    },
-    (input) => readMemoryTool(input),
-  );
-  return server;
-};
+const registerMemoryRead =
+  (runTool: ToolRun<ProfileServices>) =>
+  (server: McpServer): McpServer => {
+    server.registerTool(
+      "memory_read",
+      {
+        description: MEMORY_READ_DESCRIPTION,
+        inputSchema: compactInput(MEMORY_READ_SCHEMA),
+        annotations: READ_ONLY,
+      },
+      (input) => readMemoryTool(runTool)(input),
+    );
+    return server;
+  };
 
-const registerSearch = (server: McpServer): McpServer => {
-  server.registerTool(
-    "watashi_search",
-    {
-      description: SEARCH_DESCRIPTION,
-      inputSchema: compactInput(SEARCH_SCHEMA),
-      annotations: READ_ONLY,
-    },
-    (input) => watashiSearch(input).pipe(runTool({ count: one })),
-  );
-  return server;
-};
+const registerSearch =
+  (runTool: ToolRun<ProfileServices>) =>
+  (server: McpServer): McpServer => {
+    server.registerTool(
+      "watashi_search",
+      {
+        description: SEARCH_DESCRIPTION,
+        inputSchema: compactInput(SEARCH_SCHEMA),
+        annotations: READ_ONLY,
+      },
+      (input) => watashiSearch(input).pipe(runTool({ count: one })),
+    );
+    return server;
+  };
 
-const registerProfile = (server: McpServer): McpServer => {
-  server.registerTool(
-    "watashi_profile",
-    {
-      description: PROFILE_DESCRIPTION,
-      inputSchema: compactInput(PROFILE_SCHEMA),
-      annotations: READ_ONLY,
-    },
-    (input) => watashiProfile(input).pipe(runTool({ count: one })),
-  );
-  return server;
-};
+const registerProfile =
+  (runTool: ToolRun<ProfileServices>) =>
+  (server: McpServer): McpServer => {
+    server.registerTool(
+      "watashi_profile",
+      {
+        description: PROFILE_DESCRIPTION,
+        inputSchema: compactInput(PROFILE_SCHEMA),
+        annotations: READ_ONLY,
+      },
+      (input) => watashiProfile(input).pipe(runTool({ count: one })),
+    );
+    return server;
+  };
 
-export const registerWatashiTools = (server: McpServer): McpServer =>
-  pipe(server, registerMemoryWrite, registerMemoryRead, registerSearch, registerProfile);
+export const registerWatashiTools =
+  (runTool: ToolRun<ProfileServices>) =>
+  (server: McpServer): McpServer =>
+    pipe(
+      server,
+      registerMemoryWrite(runTool),
+      registerMemoryRead(runTool),
+      registerSearch(runTool),
+      registerProfile(runTool),
+    );

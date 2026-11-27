@@ -1,15 +1,18 @@
 import { afterAll, expect, it } from "@effect/vitest";
 import { eq } from "drizzle-orm";
 import { Effect } from "effect";
-import { vi } from "vite-plus/test";
 
-import { catalogDb } from "#/shared/db/index.server.ts";
-import { closeDatabase, resetDatabase, whileRejecting } from "#/shared/db/index.test.support.ts";
+import { fromCatalog } from "#/shared/db/index.server.ts";
+import type { CatalogDb } from "#/shared/db/index.server.ts";
+import {
+  closeDatabase,
+  resetDatabase,
+  whileRejecting,
+  withCatalog,
+} from "#/shared/db/index.test.support.ts";
 import { part, partStaff, person, personAlias, video } from "#/shared/db/index.ts";
 
 import { mergePeople } from "./person-write.server.ts";
-
-vi.mock("cloudflare:workers", () => import("#/shared/db/index.test.support.ts"));
 
 afterAll(() => Effect.runPromise(closeDatabase));
 
@@ -27,20 +30,18 @@ const SOURCE_NAME = "消す人";
 
 const TARGET_NAME = "残す人";
 
-const addPerson = (name: string, alias: string): Effect.Effect<number> =>
+const addPerson = (name: string, alias: string): Effect.Effect<number, never, CatalogDb> =>
   Effect.gen(function* insertPerson() {
-    const created = yield* Effect.promise(() =>
-      catalogDb.insert(person).values({ name }).returning({ id: person.id }).get(),
+    const created = yield* fromCatalog((db) =>
+      db.insert(person).values({ name }).returning({ id: person.id }).get(),
     );
-    yield* Effect.promise(() =>
-      catalogDb.insert(personAlias).values({ personId: created.id, alias }),
-    );
+    yield* fromCatalog((db) => db.insert(personAlias).values({ personId: created.id, alias }));
     return created.id;
   });
 
-const addPart = (videoId: number, position: number): Effect.Effect<number> =>
-  Effect.promise(() =>
-    catalogDb
+const addPart = (videoId: number, position: number): Effect.Effect<number, never, CatalogDb> =>
+  fromCatalog((db) =>
+    db
       .insert(part)
       .values({ videoId, position, label: `パート ${position.toString()}` })
       .returning({ id: part.id })
@@ -51,8 +52,8 @@ const seedPeople = Effect.gen(function* seedPeople() {
   yield* resetDatabase;
   const sourceId = yield* addPerson(SOURCE_NAME, "消す人の別名");
   const targetId = yield* addPerson(TARGET_NAME, "残す人の別名");
-  const medley = yield* Effect.promise(() =>
-    catalogDb
+  const medley = yield* fromCatalog((db) =>
+    db
       .insert(video)
       .values({ title: "テストメドレー", url: "https://example.com/watch/1" })
       .returning({ id: video.id })
@@ -60,8 +61,8 @@ const seedPeople = Effect.gen(function* seedPeople() {
   );
   const intro = yield* addPart(medley.id, FIRST);
   const chorus = yield* addPart(medley.id, SECOND);
-  yield* Effect.promise(() =>
-    catalogDb.insert(partStaff).values([
+  yield* fromCatalog((db) =>
+    db.insert(partStaff).values([
       { partId: intro, personId: sourceId, role: "audio" },
       { partId: intro, personId: targetId, role: "audio" },
       { partId: intro, personId: sourceId, role: "video" },
@@ -73,18 +74,16 @@ const seedPeople = Effect.gen(function* seedPeople() {
 
 const stored = Effect.all(
   {
-    people: Effect.promise(() =>
-      catalogDb.select({ name: person.name }).from(person).orderBy(person.id),
-    ),
-    aliases: Effect.promise(() =>
-      catalogDb
+    people: fromCatalog((db) => db.select({ name: person.name }).from(person).orderBy(person.id)),
+    aliases: fromCatalog((db) =>
+      db
         .select({ name: person.name, alias: personAlias.alias })
         .from(personAlias)
         .innerJoin(person, eq(person.id, personAlias.personId))
         .orderBy(person.id, personAlias.alias),
     ),
-    credits: Effect.promise(() =>
-      catalogDb
+    credits: fromCatalog((db) =>
+      db
         .select({ position: part.position, role: partStaff.role, name: person.name })
         .from(partStaff)
         .innerJoin(part, eq(part.id, partStaff.partId))
@@ -130,7 +129,7 @@ it.effect("mergePeople は消す側の担当と名前と別名義を残す側へ
     expect(merged.id).toBe(ids.targetId);
     const after = yield* stored;
     expect(after).toStrictEqual(MERGED);
-  }),
+  }).pipe(withCatalog),
 );
 
 it.effect("mergePeople は別名義の追加を D1 が拒むと、担当を移さず元のまま残す", () =>
@@ -142,7 +141,7 @@ it.effect("mergePeople は別名義の追加を D1 が拒むと、担当を移�
     );
     const after = yield* stored;
     expect(after).toStrictEqual(SEEDED);
-  }),
+  }).pipe(withCatalog),
 );
 
 it.effect("mergePeople は消す側の削除を D1 が拒むと、担当も別名義も元のまま残す", () =>
@@ -151,7 +150,7 @@ it.effect("mergePeople は消す側の削除を D1 が拒むと、担当も別�
     yield* mergePeople(ids).pipe(whileRejecting({ event: "DELETE", table: "person" }), Effect.flip);
     const after = yield* stored;
     expect(after).toStrictEqual(SEEDED);
-  }),
+  }).pipe(withCatalog),
 );
 
 it.effect("mergePeople は同じ人どうしや居ない人を指すと失敗し、何も書き換えない", () =>
@@ -168,5 +167,5 @@ it.effect("mergePeople は同じ人どうしや居ない人を指すと失敗し
     expect(missing.message).toBe(PERSON_MISSING);
     const after = yield* stored;
     expect(after).toStrictEqual(SEEDED);
-  }),
+  }).pipe(withCatalog),
 );

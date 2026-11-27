@@ -4,11 +4,12 @@ import { Effect, Option, Schema } from "effect";
 import { CI_TOKEN, NAMESPACE, verifyToken } from "#/app/token.test.support.ts";
 import { TokenVerifier } from "#/features/admit-caller/index.ts";
 import { joined } from "#/shared/lib/bytes.ts";
+import { withStore } from "#/shared/lib/cloudflare.test.support.ts";
 
 import { routed as served } from "./routes.ts";
 
-const routed = (request: Request): ReturnType<typeof served> =>
-  served(request).pipe(Effect.provideService(TokenVerifier, verifyToken));
+const routed = (request: Request): Effect.Effect<Response> =>
+  withStore(served(request).pipe(Effect.provideService(TokenVerifier, verifyToken)));
 
 const BOUNDARY = "vp-boundary";
 const ENDPOINT = `https://task-cache.masseater.dev/projects/${NAMESPACE}`;

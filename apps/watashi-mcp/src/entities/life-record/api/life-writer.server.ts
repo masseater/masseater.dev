@@ -2,13 +2,13 @@ import { eq, max } from "drizzle-orm";
 import { Effect, Schema } from "effect";
 
 import {
-  db,
   commitAll,
   numbered,
   attempt,
   encodeJson,
   nextAfterMax,
   nowIso,
+  Database,
 } from "#/shared/db/index.server.ts";
 import type { RevisedWrite, WriteFailure } from "#/shared/db/index.server.ts";
 import { NOT_RETRACTED, SOURCES, lifeRecord } from "#/shared/db/index.ts";
@@ -41,7 +41,7 @@ type Numbered = NewRecord & Readonly<{ id: number }>;
 
 const NO_REASON = "";
 
-const nextId: Effect.Effect<number, WriteFailure> = attempt(() =>
+const nextId: Effect.Effect<number, WriteFailure, Database> = attempt((db) =>
   db.select({ max: max(lifeRecord.id) }).from(lifeRecord),
 ).pipe(Effect.map(nextAfterMax));
 
@@ -54,7 +54,7 @@ export const snapshotOf = ({ row, body }: LifeEntry): SnapshotValue => ({
 
 const insertion =
   ({ actor, now }: Stamp) =>
-  ({ id, record, source, body }: Numbered): Effect.Effect<RevisedWrite> =>
+  ({ id, record, source, body }: Numbered): Effect.Effect<RevisedWrite, never, Database> =>
     Effect.gen(function* insertLifeRow() {
       const encoded = yield* encodeJson(body);
       const snapshot: SnapshotValue = {
@@ -73,20 +73,22 @@ const insertion =
           actor,
           at: now,
         },
-        write: db.insert(lifeRecord).values({ ...row, createdAt: now, updatedAt: now }),
+        write: (yield* Database)
+          .insert(lifeRecord)
+          .values({ ...row, createdAt: now, updatedAt: now }),
       };
     });
 
 const replacement =
   ({ actor, now }: Stamp) =>
-  ({ entry, snapshot, op }: Replacement): Effect.Effect<RevisedWrite> =>
+  ({ entry, snapshot, op }: Replacement): Effect.Effect<RevisedWrite, never, Database> =>
     Effect.gen(function* replaceLifeRow() {
       const { record, id } = entry.row;
       const encoded = yield* encodeJson(snapshot.body);
       const columns = { ...columnsOf(record)(snapshot.body), body: encoded };
       return {
         record: { entity: record, entityId: String(id), op, body: snapshot, actor, at: now },
-        write: db
+        write: (yield* Database)
           .update(lifeRecord)
           .set({ ...snapshot, ...columns, updatedAt: now })
           .where(eq(lifeRecord.id, id)),
@@ -95,7 +97,7 @@ const replacement =
 
 export const insertRecord =
   ({ actor }: Writer) =>
-  (created: NewRecord): Effect.Effect<number, StorageFailed> =>
+  (created: NewRecord): Effect.Effect<number, StorageFailed, Database> =>
     Effect.gen(function* insertLifeRecord() {
       const now = yield* nowIso;
       const id = yield* nextId;
@@ -106,7 +108,7 @@ export const insertRecord =
 
 export const replaceRecord =
   ({ actor }: Writer) =>
-  (replaced: Replacement): Effect.Effect<void, StorageFailed> =>
+  (replaced: Replacement): Effect.Effect<void, StorageFailed, Database> =>
     Effect.gen(function* replaceLifeRecord() {
       const now = yield* nowIso;
       const changed = yield* replacement({ actor, now })(replaced);
@@ -115,7 +117,7 @@ export const replaceRecord =
 
 export const succeedRecord =
   ({ actor }: Writer) =>
-  ({ ended, created }: Succession): Effect.Effect<number, StorageFailed> =>
+  ({ ended, created }: Succession): Effect.Effect<number, StorageFailed, Database> =>
     Effect.gen(function* succeedLifeRecord() {
       const now = yield* nowIso;
       const id = yield* nextId;

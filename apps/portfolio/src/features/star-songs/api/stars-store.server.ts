@@ -1,8 +1,8 @@
-import { env } from "cloudflare:workers";
 import { and, count, eq } from "drizzle-orm";
 import type { SQL } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/d1";
-import { Array as Arr, Effect, Number as Num, Record, pipe } from "effect";
+import type { DrizzleD1Database } from "drizzle-orm/d1";
+import { Array as Arr, Context, Effect, Number as Num, Record, pipe } from "effect";
 
 import type { Entry } from "#/entities/entry/index.ts";
 import { star } from "#/features/star-songs/model/star.table.ts";
@@ -17,11 +17,22 @@ export type Counts =
   | Readonly<{ status: "found"; counts: Record.ReadonlyRecord<string, number> }>
   | Readonly<{ status: "missing" }>;
 
-export type Change = (target: Target, visitor: string) => Effect.Effect<void>;
+export class StarsDb extends Context.Service<StarsDb, DrizzleD1Database>()(
+  "portfolio/features/star-songs/api/stars-store.server/StarsDb",
+) {}
 
 const NONE = 0;
 
-const db = drizzle(env.STARS);
+export const starsDbOf = (binding: D1Database): DrizzleD1Database => drizzle(binding);
+
+export type Change = (target: Target, visitor: string) => Effect.Effect<void, never, StarsDb>;
+
+const queried = Effect.fn("stars.query")(function* queried<Found>(
+  query: (db: DrizzleD1Database) => Promise<Found>,
+) {
+  const db = yield* StarsDb;
+  return yield* Effect.promise(() => query(db));
+});
 
 const ofTarget = (target: Target): SQL | undefined =>
   and(eq(star.category, target.category), eq(star.slug, target.slug));
@@ -30,7 +41,7 @@ const ofVisitor = (target: Target, visitor: string): SQL | undefined =>
   and(ofTarget(target), eq(star.visitor, visitor));
 
 export const read = Effect.fn("stars.read")(function* read(target: Target, visitor: string) {
-  const rows = yield* Effect.promise(() =>
+  const rows = yield* queried((db) =>
     db
       .select({
         count: count(),
@@ -56,7 +67,7 @@ export const read = Effect.fn("stars.read")(function* read(target: Target, visit
 export const readCounts = Effect.fn("stars.counts")(function* readCounts(
   category: Target["category"],
 ) {
-  const rows = yield* Effect.promise(() =>
+  const rows = yield* queried((db) =>
     db
       .select({ slug: star.slug, count: count() })
       .from(star)
@@ -75,7 +86,7 @@ export const readCounts = Effect.fn("stars.counts")(function* readCounts(
 });
 
 export const addStar = Effect.fn("stars.add")(function* addStar(target: Target, visitor: string) {
-  yield* Effect.promise(() =>
+  yield* queried((db) =>
     db
       .insert(star)
       .values({ ...target, visitor })
@@ -87,5 +98,5 @@ export const removeStar = Effect.fn("stars.remove")(function* removeStar(
   target: Target,
   visitor: string,
 ) {
-  yield* Effect.promise(() => db.delete(star).where(ofVisitor(target, visitor)));
+  yield* queried((db) => db.delete(star).where(ofVisitor(target, visitor)));
 });

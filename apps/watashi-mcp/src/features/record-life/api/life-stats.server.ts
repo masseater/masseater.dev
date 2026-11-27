@@ -17,8 +17,9 @@ import type {
   StatsRequest,
 } from "#/entities/life-record/index.ts";
 import type { StoreFailure } from "#/shared/api/index.ts";
+import type { Database } from "#/shared/db/index.server.ts";
 
-const dayRange = (input: string): Effect.Effect<Period, StoreFailure> =>
+const dayRange = (input: string): Effect.Effect<Period, StoreFailure, Database> =>
   pipe(
     parseTime(input),
     Result.map((time) => dayRangeOf(storedOf(time))),
@@ -27,7 +28,7 @@ const dayRange = (input: string): Effect.Effect<Period, StoreFailure> =>
     Effect.fromResult,
   );
 
-const periodOf = ({ from, to }: Period): Effect.Effect<Period, StoreFailure> =>
+const periodOf = ({ from, to }: Period): Effect.Effect<Period, StoreFailure, Database> =>
   Effect.all({ start: dayRange(from), end: dayRange(to) }, { concurrency: 1 }).pipe(
     Effect.map(({ start, end }) => ({ from: start.from, to: end.to })),
   );
@@ -35,7 +36,7 @@ const periodOf = ({ from, to }: Period): Effect.Effect<Period, StoreFailure> =>
 const compareOf = (
   compareTo: LifeStatsValue["compareTo"],
   period: Period,
-): Effect.Effect<Option.Option<Period>, StoreFailure> => {
+): Effect.Effect<Option.Option<Period>, StoreFailure, Database> => {
   if (Predicate.isUndefined(compareTo)) {
     return Effect.succeedSome(previousPeriod(period));
   }
@@ -48,7 +49,7 @@ const compareOf = (
   return periodOf(compareTo).pipe(Effect.asSome);
 };
 
-const requestOf = (input: LifeStatsValue): Effect.Effect<StatsRequest, StoreFailure> =>
+const requestOf = (input: LifeStatsValue): Effect.Effect<StatsRequest, StoreFailure, Database> =>
   Effect.gen(function* statsRequest() {
     const period = yield* periodOf(input);
     const compare = yield* compareOf(input.compareTo, period);
@@ -64,7 +65,7 @@ const requestOf = (input: LifeStatsValue): Effect.Effect<StatsRequest, StoreFail
 
 export const lifeStats = (
   input: LifeStatsValue,
-): Effect.Effect<readonly MetricStats[], StoreFailure> =>
+): Effect.Effect<readonly MetricStats[], StoreFailure, Database> =>
   Effect.all({ request: requestOf(input), data: loadStatsData }, { concurrency: 1 }).pipe(
     Effect.map(({ request, data }) => computeStats(request)(data)),
   );

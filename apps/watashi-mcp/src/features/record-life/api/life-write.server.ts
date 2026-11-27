@@ -4,6 +4,7 @@ import { checkEventValues } from "#/entities/life-record/index.server.ts";
 import type { Notice, ValuesCheck, Writer } from "#/entities/life-record/index.server.ts";
 import type { ItemResult, ChangeValue, WriteItemValue } from "#/entities/life-record/index.ts";
 import type { StoreFailure } from "#/shared/api/index.ts";
+import type { Database } from "#/shared/db/index.server.ts";
 
 import { changeItem, checkChange } from "./life-change.server.ts";
 import {
@@ -39,7 +40,7 @@ const isChange = (item: WriteItemValue): item is ChangeValue => "ref" in item;
 
 const writeItem =
   (writer: Writer) =>
-  (item: WriteItemValue): Effect.Effect<ItemResult, StoreFailure> => {
+  (item: WriteItemValue): Effect.Effect<ItemResult, StoreFailure, Database> => {
     if (isChange(item)) {
       return changeItem(writer)(item);
     }
@@ -48,7 +49,7 @@ const writeItem =
 
 const checkItem =
   (checkValues: ValuesCheck) =>
-  (item: WriteItemValue): Effect.Effect<void, StoreFailure> => {
+  (item: WriteItemValue): Effect.Effect<void, StoreFailure, Database> => {
     if (isChange(item)) {
       return checkChange(checkValues)(item);
     }
@@ -75,7 +76,9 @@ const refsOf = (results: readonly ItemResult[]): readonly string[] =>
     Arr.map((result) => result.ref),
   );
 
-const checkAll = (records: readonly WriteItemValue[]): Effect.Effect<void, StoreFailure> => {
+const checkAll = (
+  records: readonly WriteItemValue[],
+): Effect.Effect<void, StoreFailure, Database> => {
   const check = checkItem(valuesCheckFor(records));
   return Effect.forEach(
     records,
@@ -90,7 +93,7 @@ const writeNext =
     done: readonly ItemResult[],
     item: WriteItemValue,
     index: number,
-  ): Effect.Effect<readonly ItemResult[], StoreFailure> => {
+  ): Effect.Effect<readonly ItemResult[], StoreFailure, Database> => {
     const written = refsOf(done);
     return writeItem(writer)(item).pipe(
       locating({ index, written }),
@@ -100,7 +103,9 @@ const writeNext =
 
 const writeAll =
   (writer: Writer) =>
-  (records: readonly WriteItemValue[]): Effect.Effect<readonly ItemResult[], StoreFailure> =>
+  (
+    records: readonly WriteItemValue[],
+  ): Effect.Effect<readonly ItemResult[], StoreFailure, Database> =>
     Effect.reduce(records, Arr.empty<ItemResult>, writeNext(writer));
 
 const resultOf = (results: readonly ItemResult[]): WriteResult => ({
@@ -113,5 +118,5 @@ const resultOf = (results: readonly ItemResult[]): WriteResult => ({
 
 export const writeLife =
   (writer: Writer) =>
-  (records: readonly WriteItemValue[]): Effect.Effect<WriteResult, StoreFailure> =>
+  (records: readonly WriteItemValue[]): Effect.Effect<WriteResult, StoreFailure, Database> =>
     checkAll(records).pipe(Effect.andThen(writeAll(writer)(records)), Effect.map(resultOf));

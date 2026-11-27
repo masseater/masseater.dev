@@ -1,6 +1,6 @@
 import { Array, Effect, Number, Option, Order, pipe, String as Str } from "effect";
 
-import { catalogDb } from "#/shared/db/index.server.ts";
+import { fromCatalog } from "#/shared/db/index.server.ts";
 
 const byLocale = Order.make<string>((self, that) =>
   Number.sign(pipe(self, Str.localeCompare(that))),
@@ -16,8 +16,8 @@ const byVideoThenPosition = Order.combine(
 );
 
 export const getPerson = Effect.fn("catalog.person")(function* getPerson(id: number) {
-  const promiseResult = yield* Effect.promise(() =>
-    catalogDb.query.person.findFirst({
+  const promiseResult = yield* fromCatalog((db) =>
+    db.query.person.findFirst({
       columns: { id: true, name: true },
       with: {
         aliases: { columns: { alias: true } },

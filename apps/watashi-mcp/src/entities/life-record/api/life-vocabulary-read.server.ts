@@ -1,5 +1,6 @@
 import { Array as Arr, Effect, Option, Order, Record as Rec, String as Str, pipe } from "effect";
 
+import type { Database } from "#/shared/db/index.server.ts";
 import type { StorageFailed } from "#/shared/db/index.ts";
 
 import { stringsAt } from "./life-filter.ts";
@@ -59,7 +60,7 @@ const vocabularyOf = (entries: readonly Entry[]): Body => {
   };
 };
 
-export const readVocabulary: Effect.Effect<Body, StorageFailed> = scanAll([
+export const readVocabulary: Effect.Effect<Body, StorageFailed, Database> = scanAll([
   "event_kind",
   "metric_definition",
   "life_event",

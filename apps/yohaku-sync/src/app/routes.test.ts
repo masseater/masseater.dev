@@ -2,13 +2,12 @@ import { describe, expect, it } from "@effect/vitest";
 import { Changes, Pushed, SYNC_ORIGIN } from "@masseater.dev/yohaku-protocol/sync";
 import type { SyncDocument } from "@masseater.dev/yohaku-protocol/sync";
 import { Array, Effect, Option, Schema, pipe } from "effect";
-import { afterAll, beforeEach, vi } from "vite-plus/test";
+import { afterAll, beforeEach } from "vite-plus/test";
 
-import { closeDatabase, resetDatabase } from "#/shared/lib/d1.test.support.ts";
+import { DocumentsDb, documentsDbOf } from "#/entities/document/index.ts";
+import { closeDatabase, database, resetDatabase } from "#/shared/lib/d1.test.support.ts";
 
 import { routed } from "./routes.ts";
-
-vi.mock("cloudflare:workers", () => import("#/shared/lib/d1.test.support.ts"));
 
 const OK = 200;
 const BAD_REQUEST = 400;
@@ -30,13 +29,22 @@ const manuscript = (body: string, updatedAt: number): typeof SyncDocument.Type =
   body,
 });
 
+const drizzled = database.pipe(Effect.map(documentsDbOf));
+
+const withDatabase = <Success, Failure>(
+  effect: Effect.Effect<Success, Failure, DocumentsDb>,
+): Effect.Effect<Success, Failure> =>
+  effect.pipe(Effect.provideServiceEffect(DocumentsDb, drizzled));
+
+const routedAt = (request: Request): Effect.Effect<Response> => withDatabase(routed(request));
+
 const JSON_BODY = { "content-type": "application/json" };
 
 const putWith = (
   headers: Readonly<Record<string, string>>,
   body: string,
 ): Effect.Effect<Response> =>
-  routed(new Request(`${SYNC_ORIGIN}/api/documents`, { method: "PUT", headers, body }));
+  routedAt(new Request(`${SYNC_ORIGIN}/api/documents`, { method: "PUT", headers, body }));
 
 const put = (body: string): Effect.Effect<Response> => putWith(JSON_BODY, body);
 
@@ -46,7 +54,7 @@ const push = (
   encodePushed({ documents }).pipe(Effect.flatMap(put));
 
 const changesAfter = (after: number): Effect.Effect<typeof Changes.Type, Schema.SchemaError> =>
-  routed(new Request(`${SYNC_ORIGIN}/api/changes?after=${after.toString()}`)).pipe(
+  routedAt(new Request(`${SYNC_ORIGIN}/api/changes?after=${after.toString()}`)).pipe(
     Effect.flatMap((response) => Effect.promise(() => response.text())),
     Effect.flatMap(decodeChanges),
   );

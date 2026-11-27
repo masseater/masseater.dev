@@ -4,10 +4,13 @@ import { env } from "cloudflare:workers";
 
 import { createAuth } from "#/shared/auth/index.server.ts";
 import { MCP_URL } from "#/shared/config/index.ts";
+import { catalogDbOf } from "#/shared/db/index.server.ts";
 
 import { buildServer } from "./build-server.server.ts";
 
-const handler = meteredMcpHandler(env.TOOL_CALLS)(buildServer);
+const catalog = catalogDbOf(env.DB);
+
+const handler = meteredMcpHandler(env.TOOL_CALLS)(() => buildServer(catalog));
 
 export const serveMcp = (request: Request): Promise<Response> =>
-  requireMcpAuth(createAuth(), handler, { resource: MCP_URL })(request);
+  requireMcpAuth(createAuth(env), handler, { resource: MCP_URL })(request);

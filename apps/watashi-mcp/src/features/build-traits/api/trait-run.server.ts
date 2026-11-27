@@ -16,7 +16,7 @@ import type { ProfileModel } from "./profile-ai.server.ts";
 import { buildProfile } from "./profile-build.server.ts";
 import type { ProfileOutcome } from "./profile-save.server.ts";
 import { buildStep } from "./trait-build.server.ts";
-import type { StepFailure, StepOutcome } from "./trait-build.server.ts";
+import type { StepFailure, StepOutcome, StepServices } from "./trait-build.server.ts";
 import { TRAIT_MODEL, missingCallText, readTranscript } from "./trait-pi.ts";
 import { translateTraits } from "./trait-translate.server.ts";
 
@@ -91,7 +91,7 @@ const analystOf = (conversation: Conversation): TraitAnalyst["Service"] =>
 const stepsUntil = (
   deadline: number,
   done: number,
-): Effect.Effect<BuildSummary, StepFailure, TraitAnalyst> =>
+): Effect.Effect<BuildSummary, StepFailure, TraitAnalyst | StepServices> =>
   Effect.gen(function* nextStep() {
     const outcome: StepOutcome = yield* buildStep;
     yield* Effect.logInfo("watashi.traits.step").pipe(Effect.annotateLogs(outcome));
@@ -113,7 +113,7 @@ export const buildTraits = ({
   conversation: Conversation;
   translator: ProfileModel;
   ai: ProfileModel;
-}>): Effect.Effect<RunSummary, StepFailure> =>
+}>): Effect.Effect<RunSummary, StepFailure, StepServices> =>
   Effect.gen(function* buildAll() {
     const start = yield* Clock.currentTimeMillis;
     const deadline = start + Duration.toMillis(BUDGET);

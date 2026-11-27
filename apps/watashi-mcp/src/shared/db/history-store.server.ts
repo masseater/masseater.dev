@@ -1,7 +1,8 @@
 import { and, desc, eq } from "drizzle-orm";
 import { Effect, Schema } from "effect";
 
-import { db } from "./client.server.ts";
+import type { Database } from "#/shared/db/index.server.ts";
+
 import { RevisionNotFound } from "./revision-not-found.ts";
 import { revision } from "./revision.table.ts";
 import type { Revision, RevisionEntity } from "./revision.table.ts";
@@ -28,9 +29,9 @@ export const listHistory = ({
   entity,
   id,
   limit,
-}: HistoryQuery): Effect.Effect<readonly HistoryEntry[], StorageFailed> => {
+}: HistoryQuery): Effect.Effect<readonly HistoryEntry[], StorageFailed, Database> => {
   const ofRecord = and(eq(revision.entity, entity), eq(revision.entityId, String(id)));
-  return query(() =>
+  return query((db) =>
     db.select().from(revision).where(ofRecord).orderBy(desc(revision.rev)).limit(limit),
   ).pipe(Effect.flatMap((items) => Effect.forEach(items, entryOf, { concurrency: 1 })));
 };
@@ -39,14 +40,14 @@ export const findRevision = ({
   entity,
   id,
   rev,
-}: RevisionRef): Effect.Effect<Revision, RevisionNotFound | StorageFailed> => {
+}: RevisionRef): Effect.Effect<Revision, RevisionNotFound | StorageFailed, Database> => {
   const entityId = String(id);
   const ofRevision = and(
     eq(revision.entity, entity),
     eq(revision.entityId, entityId),
     eq(revision.rev, rev),
   );
-  return query(() => db.select().from(revision).where(ofRevision)).pipe(
+  return query((db) => db.select().from(revision).where(ofRevision)).pipe(
     Effect.flatMap(firstRow(() => RevisionNotFound.make({ entity, entityId, rev }))),
   );
 };

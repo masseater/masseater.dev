@@ -5,6 +5,7 @@ import { ResearchAsk, ResearchRequest, SessionRecord } from "#/shared/api/index.
 import type { InterviewSummary } from "#/shared/api/index.ts";
 
 import { recentRecords } from "./session-store.ts";
+import type { SessionsDb } from "./session-store.ts";
 
 const decodeAsk = Schema.decodeUnknownEffect(Schema.fromJsonString(ResearchAsk));
 const decodeRecord = Schema.decodeUnknownEffect(Schema.fromJsonString(SessionRecord));
@@ -36,7 +37,9 @@ const withMemory = Effect.fn("kikite.researchMemory")(function* withMemory(reque
     headers: { "content-type": "application/json" },
     body,
   });
-}) satisfies (request: Request) => Effect.Effect<Request, Schema.SchemaError | StoreFailed>;
+}) satisfies (
+  request: Request,
+) => Effect.Effect<Request, Schema.SchemaError | StoreFailed, SessionsDb>;
 
 const BAD_REQUEST = 400;
 const SERVER_ERROR = 500;
@@ -46,7 +49,7 @@ const rejected = (code: number) => (): Effect.Effect<Response> =>
 
 export const researched =
   (forward: (next: Request) => Promise<Response>) =>
-  (request: Request): Effect.Effect<Response> =>
+  (request: Request): Effect.Effect<Response, never, SessionsDb> =>
     withMemory(request).pipe(
       Effect.flatMap((next) => Effect.promise(() => forward(next))),
       Effect.catchTags({ SchemaError: rejected(BAD_REQUEST), StoreFailed: rejected(SERVER_ERROR) }),

@@ -76,4 +76,5 @@ const MONEY_WRITE = tool({
   count: one,
 });
 
+/** @internal */
 export const registerMoneyTools = registerAll([MONEY_WRITE, MONEY_READ]);

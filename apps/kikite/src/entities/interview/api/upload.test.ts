@@ -4,10 +4,10 @@ import { HttpClient, HttpClientResponse } from "effect/http";
 import type { HttpClientRequest } from "effect/http";
 import { AtomRegistry } from "effect/reactivity";
 import { TestClock } from "effect/testing";
-import { vi } from "vite-plus/test";
 
 import { entriesAtom, recordingAtom } from "#/entities/interview/model/atoms.ts";
 import type { Entry } from "#/entities/interview/model/atoms.ts";
+import { ApiOrigin } from "#/shared/api/index.ts";
 import { modify, write } from "#/shared/lib/registry.ts";
 
 import { autosaving } from "./upload.ts";
@@ -54,22 +54,23 @@ const uploadsAfter = (
     Effect.andThen(Effect.sync(() => MutableRef.get(sent))),
   );
 
-layer(Layer.merge(AtomRegistry.layer, Layer.succeed(HttpClient.HttpClient, fakeServer)))(
-  "autosaving",
-  (it) => {
-    it.effect("uploads a session once per change and never an empty one", () =>
-      Effect.gen(function* test() {
-        vi.stubGlobal("location", { origin: ORIGIN });
-        yield* write(recordingAtom, { id: ID, startedAt: STARTED });
-        yield* Effect.forkScoped(autosaving);
-        const beforeSpeech = yield* uploadsAfter(Effect.void);
-        expect(beforeSpeech).toStrictEqual([]);
-        const afterSpeech = yield* uploadsAfter(write(entriesAtom, [FIRST_SPEECH]));
-        expect(afterSpeech).toStrictEqual([UPLOAD]);
-        const afterMore = yield* uploadsAfter(modify(entriesAtom, Arr.append(SECOND_SPEECH)));
-        expect(afterMore).toHaveLength(TWO_UPLOADS);
-        vi.unstubAllGlobals();
-      }).pipe(Effect.scoped),
-    );
-  },
-);
+layer(
+  Layer.mergeAll(
+    AtomRegistry.layer,
+    Layer.succeed(HttpClient.HttpClient, fakeServer),
+    Layer.succeed(ApiOrigin, ORIGIN),
+  ),
+)("autosaving", (it) => {
+  it.effect("uploads a session once per change and never an empty one", () =>
+    Effect.gen(function* test() {
+      yield* write(recordingAtom, { id: ID, startedAt: STARTED });
+      yield* Effect.forkScoped(autosaving);
+      const beforeSpeech = yield* uploadsAfter(Effect.void);
+      expect(beforeSpeech).toStrictEqual([]);
+      const afterSpeech = yield* uploadsAfter(write(entriesAtom, [FIRST_SPEECH]));
+      expect(afterSpeech).toStrictEqual([UPLOAD]);
+      const afterMore = yield* uploadsAfter(modify(entriesAtom, Arr.append(SECOND_SPEECH)));
+      expect(afterMore).toHaveLength(TWO_UPLOADS);
+    }).pipe(Effect.scoped),
+  );
+});

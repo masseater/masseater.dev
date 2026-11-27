@@ -5,7 +5,7 @@ import type { VideoDetail, CreateVideoInput, UpdateVideoInput } from "#/entities
 import { getVideo } from "#/entities/video/index.server.ts";
 import { orMissing, query } from "#/shared/api/index.server.ts";
 import type { ToolError } from "#/shared/api/index.ts";
-import { catalogDb } from "#/shared/db/index.server.ts";
+import type { CatalogDb } from "#/shared/db/index.server.ts";
 import { part, video } from "#/shared/db/index.ts";
 
 const VIDEO_MISSING = "video not found";
@@ -20,7 +20,7 @@ const videoIdOf = (url: string): Option.Option<string> =>
     ),
   );
 
-const videoDetail = (id: number): Effect.Effect<VideoDetail, ToolError> =>
+const videoDetail = (id: number): Effect.Effect<VideoDetail, ToolError, CatalogDb> =>
   getVideo(id).pipe(orMissing(VIDEO_MISSING));
 
 export const createVideo = Effect.fn("mcp.video.create")(function* createVideo(
@@ -30,8 +30,8 @@ export const createVideo = Effect.fn("mcp.video.create")(function* createVideo(
     Option.orElse(() => videoIdOf(input.url)),
     Option.getOrNull,
   );
-  const created = yield* query(() =>
-    catalogDb
+  const created = yield* query((db) =>
+    db
       .insert(video)
       .values({ ...input, videoId })
       .returning({ id: video.id })
@@ -53,19 +53,17 @@ export const updateVideo = Effect.fn("mcp.video.update")(function* updateVideo(
   const { id, ...fields } = input;
   const patch = { ...fields, ...derivedVideoId(input) };
   if (Arr.isReadonlyArrayNonEmpty(Struct.keys(patch))) {
-    yield* query(() => catalogDb.update(video).set(patch).where(eq(video.id, id)));
+    yield* query((db) => db.update(video).set(patch).where(eq(video.id, id)));
   }
   return yield* videoDetail(id);
 });
 
 export const deleteVideo = Effect.fn("mcp.video.delete")(function* deleteVideo(id: number) {
-  yield* query(() =>
-    catalogDb
-      .delete(part)
-      .where(and(eq(part.refVideoId, id), isNull(part.songId), isNull(part.label))),
+  yield* query((db) =>
+    db.delete(part).where(and(eq(part.refVideoId, id), isNull(part.songId), isNull(part.label))),
   );
-  const deleted = yield* query(() =>
-    catalogDb.delete(video).where(eq(video.id, id)).returning({ id: video.id }).get(),
+  const deleted = yield* query((db) =>
+    db.delete(video).where(eq(video.id, id)).returning({ id: video.id }).get(),
   );
   return yield* Effect.succeed(Option.fromUndefinedOr(deleted)).pipe(orMissing(VIDEO_MISSING));
 });
