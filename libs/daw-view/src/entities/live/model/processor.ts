@@ -32,10 +32,10 @@ const commandOf = Schema.decodeUnknownOption(CommandSchema);
 type Command = typeof CommandSchema.Type;
 
 const portLinkOf = (port: Readonly<MessagePort>): Link => ({
-  send: (message) => {
+  send: (message): void => {
     port.postMessage(message, []);
   },
-  listen: (heard) => {
+  listen: (heard): void => {
     port.addEventListener("message", ({ data }) => {
       heard(data);
     });

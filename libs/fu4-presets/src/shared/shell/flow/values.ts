@@ -59,10 +59,10 @@ const wordStatus: Rate = (_scope, node) =>
 const RATES: ReadonlyMap<string, Rate> = new Map<string, Rate>([
   ["word", wordStatus],
   ["number", wordStatus],
-  ["raw_string", (_scope, node) => literalStatus(Str.slice(QUOTE, -QUOTE)(node.text))],
+  ["raw_string", (_scope, node): Status => literalStatus(Str.slice(QUOTE, -QUOTE)(node.text))],
   [
     "string_content",
-    (_scope, node) => literalStatus(Str.replaceAll(STRING_ESCAPE, "$<char>")(node.text)),
+    (_scope, node): Status => literalStatus(Str.replaceAll(STRING_ESCAPE, "$<char>")(node.text)),
   ],
   ["simple_expansion", variableStatus],
   ["expansion", variableStatus],

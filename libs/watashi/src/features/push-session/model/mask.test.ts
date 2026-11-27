@@ -82,7 +82,7 @@ const recorder = (): Recorder => {
   const seen: string[] = [];
   return {
     seen: () => Arr.join(seen, ""),
-    detect: (text) => {
+    detect: (text): ReturnType<Detector> => {
       seen.push(text);
       return detectWord("TOKEN123")(text);
     },

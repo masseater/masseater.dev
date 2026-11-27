@@ -80,11 +80,11 @@ export const sheetOf =
     const take = (): Take => takeOf(shaded)(log, shown);
     return {
       log,
-      show: (view) => {
+      show: (view): void => {
         shown = view;
       },
       take,
-      progress: (share, label) => {
+      progress: (share, label): void => {
         report({ share, label, take: take() });
       },
     };

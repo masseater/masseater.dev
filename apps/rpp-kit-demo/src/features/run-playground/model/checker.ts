@@ -157,7 +157,7 @@ const filesOf = ({ transport, api }: Session): Files => {
   };
   return {
     write,
-    program: (source) => {
+    program: (source): Program => {
       write(source);
       return Option.getOrElse(program, () => {
         const created = api.createProgram(contents.pipe(HashMap.keys, Arr.fromIterable), OPTIONS);

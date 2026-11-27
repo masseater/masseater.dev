@@ -157,7 +157,7 @@ export const matrix = workflowRule({
   docs: "https://github.com/rhysd/actionlint/blob/main/docs/checks.md#check-matrix-values",
   visitor: (fail): Visitor => ({
     ...NOOP,
-    jobPre: (job) => {
+    jobPre: (job): void => {
       for (const found of Option.toArray(matrixOf(job.strategy))) {
         checkMatrix(fail, found);
       }

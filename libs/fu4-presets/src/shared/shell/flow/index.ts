@@ -39,7 +39,7 @@ const scanOnly: Execute = (analysis, flow, node) => {
 };
 
 const HANDLERS: ReadonlyMap<string, Execute> = new Map<string, Execute>([
-  ["comment", (_analysis, flow) => flow],
+  ["comment", (_analysis, flow): ReturnType<Execute> => flow],
   ["program", sequence],
   ["compound_statement", sequence],
   ["do_group", sequence],

@@ -102,12 +102,12 @@ const createDepthCounter = (): DepthCounter => {
   const depth = MutableRef.make(OUTSIDE_NODE_MODULES);
   return {
     current: () => MutableRef.get(depth),
-    enter: (external) => {
+    enter: (external): void => {
       if (external) {
         MutableRef.increment(depth);
       }
     },
-    leave: (external) => {
+    leave: (external): void => {
       if (external) {
         MutableRef.decrement(depth);
       }
@@ -120,7 +120,7 @@ const createFlagStore = (): Pick<FileRegistry, "hasFlag" | "setFlag"> => {
   return {
     hasFlag: (fileName, flag) =>
       Option.fromNullishOr(flags.get(toPath(fileName))).pipe(Option.exists((own) => own.has(flag))),
-    setFlag: (fileName, flag, value) => {
+    setFlag: (fileName, flag, value): void => {
       const path = toPath(fileName);
       const own = flags.getOrInsertComputed(path, () => new Set<FileFlag>());
       if (value) {
@@ -141,13 +141,13 @@ const createFileRegistry = (): FileRegistry => {
   return {
     ...createFlagStore(),
     lookup: (fileName) => Option.fromNullishOr(filesByName.get(toPath(fileName))),
-    record: (request, file) => {
+    record: (request, file): void => {
       for (const [id, sourceFile] of Option.toArray(Option.all([request.packageId, file]))) {
         byPackage.set(packageIdToString(id), sourceFile);
       }
       filesByName.set(toPath(request.fileName), file);
     },
-    include: (file, isDefaultLib) => {
+    include: (file, isDefaultLib): void => {
       if (isDefaultLib) {
         defaultLibFiles.push(file);
         return;
@@ -156,7 +156,7 @@ const createFileRegistry = (): FileRegistry => {
     },
     fileForPackage: (packageId) =>
       Option.fromNullishOr(byPackage.get(packageIdToString(packageId))),
-    recordResolutions: (fileName, entries) => {
+    recordResolutions: (fileName, entries): void => {
       resolvedModules.set(toPath(fileName), entries);
     },
     result: () => ({ files: [...defaultLibFiles, ...otherFiles], resolvedModules }),

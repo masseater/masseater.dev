@@ -47,12 +47,12 @@ export const useStar = (
           Effect.map(() => queryClient.setQueryData<StarState>(queryKey, toggled(starred))),
         ),
       ),
-    onSuccess: (data) => {
+    onSuccess: (data): void => {
       if (isLast()) {
         queryClient.setQueryData(queryKey, data);
       }
     },
-    onError: () => {
+    onError: (): void => {
       if (isLast()) {
         queryClient.setQueryData<StarState>(queryKey, toggled(!starred));
       }

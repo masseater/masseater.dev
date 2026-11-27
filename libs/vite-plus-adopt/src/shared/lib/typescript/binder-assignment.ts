@@ -99,7 +99,7 @@ const isNamedProperty = (left: AccessExpression): boolean =>
   isBindableStatic(left, STATIC_NAME) || isDynamicElementAccess(left);
 
 const STATIC_NAME_KINDS: readonly KindRule<AccessExpression>[] = [
-  [(left) => isPrototypeAccess(left.expression), AssignmentKind.PrototypeProperty],
+  [(left): boolean => isPrototypeAccess(left.expression), AssignmentKind.PrototypeProperty],
   [isExportsProperty, AssignmentKind.ExportsProperty],
   [isNamedProperty, AssignmentKind.Property],
 ];

@@ -157,7 +157,10 @@ const VARIANT_RULES: readonly (readonly [string, (variant: string) => string])[]
   ["kebab-case", snakeVariant("-")],
   ["snake_case", snakeVariant("_")],
   ["camelCase", String.uncapitalize],
-  ["SCREAMING_SNAKE_CASE", (variant) => pipe(variant, snakeVariant("_"), String.toUpperCase)],
+  [
+    "SCREAMING_SNAKE_CASE",
+    (variant): string => pipe(variant, snakeVariant("_"), String.toUpperCase),
+  ],
   ["UPPERCASE", String.toUpperCase],
 ];
 

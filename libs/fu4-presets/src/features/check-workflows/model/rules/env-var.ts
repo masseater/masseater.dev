@@ -41,17 +41,17 @@ export const envVar = workflowRule({
   docs: "https://github.com/rhysd/actionlint/blob/main/docs/checks.md#check-env-var-names",
   visitor: (fail): Visitor => ({
     ...NOOP,
-    workflowPre: (workflow) => {
+    workflowPre: (workflow): void => {
       checkEnv(fail)(workflow.env);
     },
-    jobPre: (job) => {
+    jobPre: (job): void => {
       checkEnv(fail)(job.env);
       checkContainer(fail)(job.container);
       for (const service of servicesOf(job)) {
         checkContainer(fail)(service.container);
       }
     },
-    step: (step) => {
+    step: (step): void => {
       checkEnv(fail)(step.env);
     },
   }),

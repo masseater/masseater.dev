@@ -14,7 +14,7 @@ const diagnosticOf = (problem: Problem): Diagnostic => ({
 
 const vocabularyRule = (load: ProblemLoader): Rule => ({
   create: (context) => ({
-    Program: () => {
+    Program: (): void => {
       const problems = pipe(
         load(context.cwd),
         Arr.filter((problem) => problem.file === context.filename),

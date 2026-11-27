@@ -32,10 +32,10 @@ export const mountNiconico = ({
   ).pipe(
     Effect.map((engine) => ({
       time: () => engine.time(),
-      seek: (seconds: number) => {
+      seek: (seconds: number): void => {
         engine.seek(seconds);
       },
-      toggle: () => {
+      toggle: (): void => {
         if (MutableRef.get(playing)) {
           engine.pause();
           return;

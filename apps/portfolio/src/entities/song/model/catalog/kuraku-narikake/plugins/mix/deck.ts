@@ -64,7 +64,7 @@ const summedDeck = (frames: number): Deck => {
   );
   return {
     frames: SUMMED_FRAMES,
-    write: (slot, left, right) => {
+    write: (slot, left, right): void => {
       const sum = Arr.get(sums, slot);
       if (Option.isSome(sum)) {
         added(sum.value, left, right);
@@ -98,7 +98,7 @@ const taped = (tape: Tape): Held => ({
 const summed = (frames: number): Held => ({
   deck: summedDeck(frames),
   tape: Option.none(),
-  slotOf: (_name, drum) => {
+  slotOf: (_name, drum): number => {
     if (drum) {
       return SLOT.drums;
     }

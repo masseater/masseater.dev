@@ -66,14 +66,14 @@ const basename = (word: string): string => Str.replace(/^.*\//u, "")(word);
 const isPnpm = (word: string): boolean => PNPM_BINARIES.has(basename(word));
 
 const invocationRules: readonly ((name: string, args: Argv) => boolean)[] = [
-  (name) => PNPM_BINARIES.has(name),
-  (name, args) =>
+  (name): boolean => PNPM_BINARIES.has(name),
+  (name, args): boolean =>
     WRAPPERS.has(name) &&
     pipe(
       args,
       Arr.some((word) => isPnpm(word)),
     ),
-  (name, [subcommand = "", ...rest]) =>
+  (name, [subcommand = "", ...rest]): boolean =>
     LAUNCHERS.has(name) &&
     LAUNCHER_SUBCOMMANDS.has(subcommand) &&
     pipe(

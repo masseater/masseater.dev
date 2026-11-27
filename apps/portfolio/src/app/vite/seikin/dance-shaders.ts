@@ -190,7 +190,7 @@ const loadGpuEffect = (read: Read, path: string): Promise<string> => {
 export const danceShaders = (): Plugin => ({
   name: "dance-shaders",
   enforce: "pre",
-  load(id) {
+  load(id): Promise<string> | undefined {
     const { fs } = this;
     return pipe(
       Option.liftPredicate(id, Str.endsWith(`${FRAGMENT}${QUERY}`)),

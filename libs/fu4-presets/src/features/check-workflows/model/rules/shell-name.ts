@@ -87,21 +87,21 @@ export const shellName = workflowRule({
     let platform: Platform = "any";
     return {
       ...NOOP,
-      workflowPre: (workflow) => {
+      workflowPre: (workflow): void => {
         defaultShell(workflow.defaults).pipe(Option.getOrUndefined, check(fail, platform));
       },
-      jobPre: (job) => {
+      jobPre: (job): void => {
         for (const runner of Option.toArray(Option.fromNullishOr(job.runsOn))) {
           platform = platformOf(runner);
           defaultShell(job.defaults).pipe(Option.getOrUndefined, check(fail, platform));
         }
       },
-      step: (step) => {
+      step: (step): void => {
         for (const run of Option.toArray(runOf(step))) {
           check(fail, platform)(run.shell);
         }
       },
-      jobPost: () => {
+      jobPost: (): void => {
         platform = "any";
       },
     };

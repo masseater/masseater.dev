@@ -96,7 +96,7 @@ export const workflowCall = workflowRule({
   docs: "https://github.com/rhysd/actionlint/blob/main/docs/checks.md#check-workflow-call-syntax",
   visitor: (fail, context): Visitor => ({
     ...NOOP,
-    jobPre: (job) => {
+    jobPre: (job): void => {
       for (const call of Option.toArray(Option.fromNullishOr(job.workflowCall))) {
         for (const uses of Option.toArray(usesOf(call))) {
           checkUses({ fail, project: context.project }, call, uses);
