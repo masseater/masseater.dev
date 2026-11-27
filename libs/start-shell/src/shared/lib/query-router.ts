@@ -7,14 +7,15 @@ import {
 } from "@tanstack/react-router";
 import type { AnyRoute, Router } from "@tanstack/react-router";
 import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query";
+import { Record } from "effect";
 
 type SearchCodec = Readonly<{
   parseSearch: typeof defaultParseSearch;
   stringifySearch: typeof defaultStringifySearch;
 }>;
 
-const parseText = (searchStr: string): Record<string, string> =>
-  Object.fromEntries(new URLSearchParams(searchStr));
+const parseText: SearchCodec["parseSearch"] = (searchStr) =>
+  Record.fromEntries(new URLSearchParams(searchStr));
 
 const JSON_SEARCH: SearchCodec = {
   parseSearch: defaultParseSearch,
