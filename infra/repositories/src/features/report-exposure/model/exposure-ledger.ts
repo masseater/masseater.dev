@@ -1,6 +1,5 @@
 import { Ledger } from "@masseater.dev/exposure-protocol";
 import type { LedgerEntryValue, Report } from "@masseater.dev/exposure-protocol";
-import type { ClaudeRequest } from "@masseater.dev/exposure-protocol/claude-requests";
 import {
   Array as Arr,
   Boolean as Bool,
@@ -15,8 +14,8 @@ import {
 } from "effect";
 
 import type { Claims } from "#/entities/credential/index.ts";
-import { readRow, swapRow } from "#/shared/api/index.ts";
-import type { AppStoreEnv } from "#/shared/api/index.ts";
+import { queueRequest, readRow, swapRow } from "#/shared/api/index.ts";
+import type { QueuedEnv } from "#/shared/api/index.ts";
 
 const LEDGER_KEY = "exposure_ledger";
 const REPORTED_KEY = "exposure_reported";
@@ -39,29 +38,18 @@ const BoundedReport = Schema.Struct({
 
 const Reported = Schema.Record(Schema.String, Schema.Finite);
 
-export type ClaudeRequests = Readonly<{ send: (request: ClaudeRequest) => Promise<unknown> }>;
-
-export type ExposureEnv = AppStoreEnv & Readonly<{ CLAUDE_REQUESTS: ClaudeRequests }>;
-
 type Row<Codec extends Schema.Codec<unknown, string>> = Readonly<{
-  env: ExposureEnv;
+  env: QueuedEnv;
   name: string;
   codec: Codec;
   empty: Codec["Type"];
 }>;
 
 export type Notice = Readonly<{
-  env: ExposureEnv;
+  env: QueuedEnv;
   claims: typeof Claims.Type;
   report: typeof Report.Type;
 }>;
-
-const taggedError = Schema.TaggedError;
-
-class QueueRefused extends taggedError<QueueRefused, { readonly brand: unique symbol }>()(
-  "QueueRefused",
-  { reason: Schema.String },
-) {}
 
 export const LedgerJson = Schema.fromJsonString(Ledger);
 export const ReportJson = Schema.fromJsonString(BoundedReport);
@@ -116,7 +104,7 @@ export const remember = ({
   env,
   observed,
 }: Readonly<{
-  env: ExposureEnv;
+  env: QueuedEnv;
   observed: readonly LedgerEntryValue[];
 }>): Effect.Effect<Response> =>
   replace({
@@ -153,10 +141,7 @@ const isFresh =
     );
 
 const send = (notice: Notice): Effect.Effect<void> =>
-  Effect.tryPromise({
-    try: () => notice.env.CLAUDE_REQUESTS.send({ text: message(notice), sender: SENDER }),
-    catch: (cause) => QueueRefused.make({ reason: String(cause) }),
-  }).pipe(Effect.orDie, Effect.asVoid);
+  queueRequest({ env: notice.env, request: { text: message(notice), sender: SENDER } });
 
 const stamped =
   (fingerprints: readonly string[], notified: boolean, now: number) =>
