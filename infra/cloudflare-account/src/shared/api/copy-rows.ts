@@ -10,9 +10,6 @@ const TABLES = `select name from sqlite_master
   where type = 'table' and name not like 'sqlite_%' and name not like '_cf_%'
   and name != '__alchemy_migrations' order by name`;
 
-const LINKS = `select m.name as name, f."table" as parent
-  from sqlite_master m, pragma_foreign_key_list(m.name) f where m.type = 'table'`;
-
 type Row = Readonly<Record<string, unknown>>;
 
 type Statement = Readonly<{ sql: string; params: readonly unknown[] }>;
@@ -129,6 +126,20 @@ const copyPage = (
       ),
     );
 
+const parentTablesOf = (
+  client: Client,
+  databaseId: string,
+  table: string,
+): Effect.Effect<readonly string[]> =>
+  client.rows(databaseId, `pragma foreign_key_list(${quoted(table)})`).pipe(
+    Effect.map((rows) =>
+      pipe(
+        rows,
+        Arr.map((row) => textOf(row, "table")),
+      ),
+    ),
+  );
+
 const copyTable = Effect.fn("copyTable")(function* copyTable(
   client: Client,
   route: Readonly<{ source: string; target: string; table: string }>,
@@ -155,12 +166,14 @@ export const copyRows = Effect.fn("copyRows")(function* copyRows(source: string,
     tableRows,
     Arr.map((row) => textOf(row, "name")),
   );
-  const links = yield* client.rows(source, LINKS);
+  const links = yield* Effect.forEach(tables, (table) => parentTablesOf(client, source, table), {
+    concurrency: 1,
+  });
   const parentsOf = (table: string): readonly string[] =>
     pipe(
-      links,
-      Arr.filter((link) => textOf(link, "name") === table),
-      Arr.map((link) => textOf(link, "parent")),
+      Arr.zip(tables, links),
+      Arr.filter(([name]) => name === table),
+      Arr.flatMap(([, parents]) => parents),
     );
   yield* Effect.forEach(
     dependencyOrder(tables, parentsOf),
