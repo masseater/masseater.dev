@@ -2,11 +2,11 @@ import { expect, layer } from "@effect/vitest";
 import { Effect, Layer } from "effect";
 import { HttpClient, HttpClientResponse } from "effect/http";
 import { AtomRegistry } from "effect/reactivity";
-import { vi } from "vite-plus/test";
 
 import type { Input } from "#/entities/interview/index.test.support.ts";
 import { entriesAtom, heardAtom } from "#/entities/interview/index.ts";
 import type { Entry } from "#/entities/interview/index.ts";
+import { ApiOrigin } from "#/shared/api/index.ts";
 import { read, write } from "#/shared/lib/registry.ts";
 
 import { correct } from "./correction.ts";
@@ -33,26 +33,27 @@ const speech = (id: number, text: string, by: Input): Entry => ({
   by,
 });
 
-layer(Layer.merge(AtomRegistry.layer, Layer.succeed(HttpClient.HttpClient, fakeServer)))(
-  "correct",
-  (it) => {
-    it.effect("replaces misheard voice lines and keeps what was heard", () =>
-      Effect.gen(function* test() {
-        vi.stubGlobal("location", { origin: ORIGIN });
-        yield* write(entriesAtom, [
-          speech(FIRST, "右にオゾンコシが出る", "voice"),
-          speech(SECOND, "手で打った", "typed"),
-        ]);
-        yield* correct();
-        const entries = yield* read(entriesAtom);
-        expect(entries).toStrictEqual([
-          { ...speech(FIRST, "右に文字起こしが出る", "voice"), raw: "右にオゾンコシが出る" },
-          speech(SECOND, "手で打った", "typed"),
-        ]);
-        const heard = yield* read(heardAtom);
-        expect(heard.correctedThrough).toBe(FIRST);
-        vi.unstubAllGlobals();
-      }),
-    );
-  },
-);
+layer(
+  Layer.mergeAll(
+    AtomRegistry.layer,
+    Layer.succeed(HttpClient.HttpClient, fakeServer),
+    Layer.succeed(ApiOrigin, ORIGIN),
+  ),
+)("correct", (it) => {
+  it.effect("replaces misheard voice lines and keeps what was heard", () =>
+    Effect.gen(function* test() {
+      yield* write(entriesAtom, [
+        speech(FIRST, "右にオゾンコシが出る", "voice"),
+        speech(SECOND, "手で打った", "typed"),
+      ]);
+      yield* correct();
+      const entries = yield* read(entriesAtom);
+      expect(entries).toStrictEqual([
+        { ...speech(FIRST, "右に文字起こしが出る", "voice"), raw: "右にオゾンコシが出る" },
+        speech(SECOND, "手で打った", "typed"),
+      ]);
+      const heard = yield* read(heardAtom);
+      expect(heard.correctedThrough).toBe(FIRST);
+    }),
+  );
+});

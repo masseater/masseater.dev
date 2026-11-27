@@ -1,5 +1,8 @@
-import { createRouter } from "#/shared/api/index.server.ts";
+import { env } from "cloudflare:workers";
 
-import { catalogRoutes } from "./routes.server.ts";
+import { servingCatalog } from "#/shared/api/index.server.ts";
+import { catalogDbOf } from "#/shared/db/index.server.ts";
 
-export const handleCatalog = createRouter("").use(catalogRoutes).handle;
+import { catalogRouter } from "./catalog-router.server.ts";
+
+export const handleCatalog = servingCatalog(catalogDbOf(env.DB))(catalogRouter);

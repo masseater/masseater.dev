@@ -3,13 +3,24 @@ import { devtools } from "@tanstack/devtools-vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
 import rsc from "@vitejs/plugin-rsc";
-import type { PluginOption } from "vite-plus";
+import type { Plugin, PluginOption } from "vite-plus";
 
 import { seikinTechniques } from "#/app/vite/seikin/seikin-techniques.ts";
 
 import { clientAssets } from "./client-assets.ts";
 import { formats, songs } from "./formats.ts";
 import { pages, sitemap, withLastmod } from "./prerender.ts";
+
+const nodeDependenciesInTests = (): Plugin => ({
+  name: "portfolio:node-dependencies-in-tests",
+  apply: (_config, { mode }) => mode === "test",
+  configEnvironment: {
+    order: "post",
+    handler: (_name, options) => {
+      options.resolve = { ...options.resolve, noExternal: [] };
+    },
+  },
+});
 
 export const portfolioPlugins = (): PluginOption[] => [
   devtools(),
@@ -36,6 +47,7 @@ export const portfolioPlugins = (): PluginOption[] => [
   }),
   rsc(),
   viteReact({ include: /\.(?:md|tsx?)$/u }),
+  nodeDependenciesInTests(),
 ];
 
 export const workerPlugins = (): PluginOption[] => [songs()];

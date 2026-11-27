@@ -1,7 +1,7 @@
 import { countDistinct, isNotNull } from "drizzle-orm";
 import { Array, Effect, Option, Order, pipe } from "effect";
 
-import { NO_ROWS, catalogDb, containing } from "#/shared/db/index.server.ts";
+import { NO_ROWS, containing, fromCatalog } from "#/shared/db/index.server.ts";
 import { part } from "#/shared/db/index.ts";
 
 const byUsesDescending = Order.flip(
@@ -25,15 +25,15 @@ export const listSongs = Effect.fn("catalog.songs")(function* listSongs(
   );
   const [songs, counts] = yield* Effect.all(
     [
-      Effect.promise(() =>
-        catalogDb.query.song.findMany({
+      fromCatalog((db) =>
+        db.query.song.findMany({
           columns: { id: true, title: true, artist: true },
           where,
           orderBy: { title: "asc" },
         }),
       ),
-      Effect.promise(() =>
-        catalogDb
+      fromCatalog((db) =>
+        db
           .select({ songId: part.songId, uses: countDistinct(part.videoId) })
           .from(part)
           .where(isNotNull(part.songId))

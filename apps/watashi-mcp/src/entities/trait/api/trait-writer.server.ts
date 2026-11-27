@@ -2,14 +2,14 @@ import { eq, max } from "drizzle-orm";
 import { Array as Arr, Effect, Option, Order, Record as Rec, pipe } from "effect";
 
 import {
-  db,
   commitWith,
   attempt,
   nextAfterMax,
   nowIso,
   toStorageFailed,
+  Database,
 } from "#/shared/db/index.server.ts";
-import type { RevisedWrite, Statement, WriteFailure } from "#/shared/db/index.server.ts";
+import type { RevisedWrite, Statement, WriteFailure, Build } from "#/shared/db/index.server.ts";
 import {
   ownerTrait,
   ownerTraitEvidence,
@@ -36,7 +36,7 @@ type Stamp = Readonly<{
 
 type TraitWrite = Readonly<{ revised: RevisedWrite; extra: readonly Statement[] }>;
 
-const nextId: Effect.Effect<number, WriteFailure> = attempt(() =>
+const nextId: Effect.Effect<number, WriteFailure, Database> = attempt((db) =>
   db.select({ max: max(ownerTrait.id) }).from(ownerTrait),
 ).pipe(Effect.map(nextAfterMax));
 
@@ -75,16 +75,14 @@ const opOf = (trait: TraitState): RevisionOp => {
   return "update";
 };
 
-const traitStatement = (
-  trait: TraitState,
-  id: number,
-  row: typeof ownerTrait.$inferInsert,
-): Statement => {
-  if ("created" in trait.key) {
-    return db.insert(ownerTrait).values({ ...row, id });
-  }
-  return db.update(ownerTrait).set(row).where(eq(ownerTrait.id, id));
-};
+const traitStatement =
+  (trait: TraitState, id: number, row: typeof ownerTrait.$inferInsert): Build<Statement> =>
+  (db) => {
+    if ("created" in trait.key) {
+      return db.insert(ownerTrait).values({ ...row, id });
+    }
+    return db.update(ownerTrait).set(row).where(eq(ownerTrait.id, id));
+  };
 
 const MAX_PARAMETERS = 100;
 
@@ -94,38 +92,40 @@ const EVIDENCE_PER_INSERT = Math.floor(MAX_PARAMETERS / EVIDENCE_COLUMNS);
 
 type EvidenceRow = typeof ownerTraitEvidence.$inferInsert;
 
-const evidenceInsert = (rows: Arr.NonEmptyReadonlyArray<EvidenceRow>): Statement =>
-  db.insert(ownerTraitEvidence).values([...rows]);
+const evidenceStatements =
+  (trait: TraitState, id: number): Build<readonly Statement[]> =>
+  (db) => {
+    const cleared = db.delete(ownerTraitEvidence).where(eq(ownerTraitEvidence.traitId, id));
+    const inserts = pipe(
+      trait.evidence,
+      Arr.map((item): EvidenceRow => ({ ...item, traitId: id })),
+      Arr.chunksOf(EVIDENCE_PER_INSERT),
+      Arr.map((rows): Statement => db.insert(ownerTraitEvidence).values([...rows])),
+    );
+    return [cleared, ...inserts];
+  };
 
-const evidenceStatements = (trait: TraitState, id: number): readonly Statement[] => {
-  const cleared = db.delete(ownerTraitEvidence).where(eq(ownerTraitEvidence.traitId, id));
-  const inserts = pipe(
-    trait.evidence,
-    Arr.map((item): EvidenceRow => ({ ...item, traitId: id })),
-    Arr.chunksOf(EVIDENCE_PER_INSERT),
-    Arr.map(evidenceInsert),
-  );
-  return [cleared, ...inserts];
-};
-
-const vectorStatements = (
-  trait: TraitState,
-  id: number,
-  { vectors, at }: Pick<Stamp, "vectors" | "at">,
-): readonly Statement[] => {
-  const cleared = db.delete(ownerTraitVector).where(eq(ownerTraitVector.traitId, id));
-  return Option.match(Rec.get(vectors, keyText(trait.key)), {
-    onNone: () => [cleared],
-    onSome: (vector) => [
-      cleared,
-      db.insert(ownerTraitVector).values({ traitId: id, vector, updatedAt: at }),
-    ],
-  });
-};
+const vectorStatements =
+  (
+    trait: TraitState,
+    id: number,
+    { vectors, at }: Pick<Stamp, "vectors" | "at">,
+  ): Build<readonly Statement[]> =>
+  (db) => {
+    const cleared = db.delete(ownerTraitVector).where(eq(ownerTraitVector.traitId, id));
+    return Option.match(Rec.get(vectors, keyText(trait.key)), {
+      onNone: () => [cleared],
+      onSome: (vector) => [
+        cleared,
+        db.insert(ownerTraitVector).values({ traitId: id, vector, updatedAt: at }),
+      ],
+    });
+  };
 
 const writesOf =
   ({ idOf, vectors, actor, at }: Stamp) =>
-  (trait: TraitState): TraitWrite => {
+  (trait: TraitState): Build<TraitWrite> =>
+  (db) => {
     const id = idOf(trait.key);
     const snapshot = {
       kind: trait.kind,
@@ -145,25 +145,30 @@ const writesOf =
           actor,
           at,
         },
-        write: traitStatement(trait, id, { ...snapshot, createdAt: at, updatedAt: at }),
+        write: traitStatement(trait, id, { ...snapshot, createdAt: at, updatedAt: at })(db),
       },
-      extra: [...evidenceStatements(trait, id), ...vectorStatements(trait, id, { vectors, at })],
+      extra: [
+        ...evidenceStatements(trait, id)(db),
+        ...vectorStatements(trait, id, { vectors, at })(db),
+      ],
     };
   };
 
-const cursorWrite = (cursor: Cursor, at: string): Statement =>
-  db
-    .insert(traitCursor)
-    .values({ ...cursor, updatedAt: at })
-    .onConflictDoUpdate({
-      target: traitCursor.origin,
-      set: { position: cursor.position, updatedAt: at },
-    });
+const cursorWrite =
+  (cursor: Cursor, at: string): Build<Statement> =>
+  (db) =>
+    db
+      .insert(traitCursor)
+      .values({ ...cursor, updatedAt: at })
+      .onConflictDoUpdate({
+        target: traitCursor.origin,
+        set: { position: cursor.position, updatedAt: at },
+      });
 
 const commitTraits = (
   writes: Arr.NonEmptyReadonlyArray<TraitWrite>,
   advance: Statement,
-): Effect.Effect<void, WriteFailure> =>
+): Effect.Effect<void, WriteFailure, Database> =>
   commitWith({
     writes: pipe(
       writes,
@@ -183,13 +188,17 @@ export const saveTraits = ({
   vectors,
   cursor,
   actor,
-}: Saving): Effect.Effect<void, StorageFailed> =>
+}: Saving): Effect.Effect<void, StorageFailed, Database> =>
   Effect.gen(function* saveTraitPlan() {
+    const db = yield* Database;
     const at = yield* nowIso;
     const first = yield* nextId;
     const stamp = { idOf: idsOf(plan, first), vectors, actor, at };
-    const writes = pipe(plan.touched, Arr.map(writesOf(stamp)));
-    const advance = cursorWrite(cursor, at);
+    const writes = pipe(
+      plan.touched,
+      Arr.map((trait) => writesOf(stamp)(trait)(db)),
+    );
+    const advance = cursorWrite(cursor, at)(db);
     yield* Arr.match(writes, {
       onEmpty: () => attempt(() => db.batch([advance])).pipe(Effect.asVoid),
       onNonEmpty: (nonEmpty) => commitTraits(nonEmpty, advance),

@@ -1,27 +1,41 @@
 import { expect, it } from "@effect/vitest";
+import type { PortalResult } from "@masseater.dev/portal-protocol";
 import { Effect } from "effect";
-import { vi } from "vite-plus/test";
+
+import { servingUpstreams } from "#/shared/api/index.server.ts";
+import type { UpstreamBindings } from "#/shared/api/index.test.support.ts";
 
 import { watashiRoutes } from "./watashi-routes.server.ts";
-
-type Written = Readonly<{ status: "ok"; body: Readonly<{ written: readonly string[] }> }>;
-
-vi.mock("cloudflare:workers", () => ({
-  env: {
-    WATASHI: {
-      memoryWrite: (): Promise<Written> =>
-        Promise.resolve({ status: "ok", body: { written: ["notes/today"] } }),
-    },
-  },
-}));
 
 const OK = 200;
 const EDIT = '{"project":"notes","name":"today","description":"a memo","content":"text"}';
 const FORM = "project=notes&name=today&description=a+memo&content=text";
 
+const written = (): Promise<PortalResult> =>
+  Promise.resolve({ status: "ok", body: { written: ["notes/today"] } });
+
+const unused = (): Promise<never> => Promise.reject(new Error("not called in this test"));
+
+const upstreams: UpstreamBindings = {
+  PERSONAL: { fetch: unused },
+  WATASHI: {
+    lifeRead: unused,
+    memoryRead: unused,
+    memoryWrite: written,
+    memoryProjects: unused,
+    profile: unused,
+    conversationRead: unused,
+  },
+  MONEY: { read: unused },
+  SLIDES: { search: unused },
+  CREDENTIALS: { list: unused },
+};
+
+const handle = servingUpstreams(upstreams)(watashiRoutes.handle);
+
 const write = (contentType: string, body: string): Effect.Effect<number> =>
   Effect.promise(() =>
-    watashiRoutes.handle(
+    handle(
       new Request("https://portal.example.com/api/watashi/memos", {
         method: "POST",
         headers: { "content-type": contentType },

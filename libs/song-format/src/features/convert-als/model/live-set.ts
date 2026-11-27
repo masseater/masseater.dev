@@ -46,9 +46,9 @@ const EventSchema = Schema.Struct({ Time: Schema.FiniteFromString, Value: Schema
 export type AutomationEvent = typeof EventSchema.Type;
 
 const EventsSchema = Schema.Struct({
-  FloatEvent: Schema.Array(EventSchema).pipe(Schema.optionalKey),
-  EnumEvent: Schema.Array(EventSchema).pipe(Schema.optionalKey),
-  BoolEvent: Schema.Array(EventSchema).pipe(Schema.optionalKey),
+  FloatEvent: EventSchema.pipe(Schema.Array, Schema.optionalKey),
+  EnumEvent: EventSchema.pipe(Schema.Array, Schema.optionalKey),
+  BoolEvent: EventSchema.pipe(Schema.Array, Schema.optionalKey),
 });
 
 const EnvelopeSchema = Schema.Struct({
@@ -59,7 +59,7 @@ const EnvelopeSchema = Schema.Struct({
 export type AutomationEnvelope = typeof EnvelopeSchema.Type;
 
 const EnvelopeListSchema = Schema.Struct({
-  AutomationEnvelope: Schema.Array(EnvelopeSchema).pipe(Schema.optionalKey),
+  AutomationEnvelope: EnvelopeSchema.pipe(Schema.Array, Schema.optionalKey),
 });
 
 const EnvelopesSchema = Schema.Struct({ Envelopes: EnvelopeListSchema });
@@ -85,7 +85,7 @@ const NoteSchema = Schema.Struct({
 });
 
 const NoteListSchema = Schema.Struct({
-  MidiNoteEvent: Schema.Array(NoteSchema).pipe(Schema.optionalKey),
+  MidiNoteEvent: NoteSchema.pipe(Schema.Array, Schema.optionalKey),
 });
 
 const KeyTrackSchema = Schema.Struct({ Notes: NoteListSchema, MidiKey: Num });
@@ -98,7 +98,7 @@ const LoopSchema = Schema.Struct({
 });
 
 const KeyTracksSchema = Schema.Struct({
-  KeyTrack: Schema.Array(KeyTrackSchema).pipe(Schema.optionalKey),
+  KeyTrack: KeyTrackSchema.pipe(Schema.Array, Schema.optionalKey),
 });
 
 const ClipSchema = Schema.Struct({
@@ -121,7 +121,7 @@ const DrumsSchema = Schema.Struct({ DrumGroupDevice: Schema.optionalKey(Schema.U
 const DevicesSchema = Schema.Struct({ Devices: Schema.optionalKey(DrumsSchema) });
 
 const ClipEventsSchema = Schema.Struct({
-  MidiClip: Schema.Array(ClipSchema).pipe(Schema.optionalKey),
+  MidiClip: ClipSchema.pipe(Schema.Array, Schema.optionalKey),
 });
 
 const ArrangementSchema = Schema.Struct({
@@ -156,11 +156,11 @@ const LocatorSchema = Schema.Struct({ Time: Num, Name: Text });
 export type AlsLocator = typeof LocatorSchema.Type;
 
 const TracksSchema = Schema.Struct({
-  MidiTrack: Schema.Array(MidiTrackSchema).pipe(Schema.optionalKey),
+  MidiTrack: MidiTrackSchema.pipe(Schema.Array, Schema.optionalKey),
 });
 
 const LocatorListSchema = Schema.Struct({
-  Locator: Schema.Array(LocatorSchema).pipe(Schema.optionalKey),
+  Locator: LocatorSchema.pipe(Schema.Array, Schema.optionalKey),
 });
 
 const LiveSetSchema = Schema.Struct({

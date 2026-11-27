@@ -1,4 +1,4 @@
-export { accessMcpEndpoint } from "#/features/serve-access-mcp/index.ts";
+export { accessMcpRoute } from "#/features/serve-access-mcp/index.ts";
 export type { AccessMcp } from "#/features/serve-access-mcp/index.ts";
 export { meteredMcpHandler } from "#/entities/tool-call/index.ts";
 export type { MeteredFetch } from "#/entities/tool-call/index.ts";

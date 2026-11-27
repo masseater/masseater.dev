@@ -1,9 +1,12 @@
 import { expect, it } from "@effect/vitest";
 import { createMcpHandler } from "@modelcontextprotocol/server";
 import { Array as Arr, Effect, Option, Record as Rec, Schema, String as Str, pipe } from "effect";
-import { afterAll, beforeAll, beforeEach, vi } from "vite-plus/test";
+import { afterAll, beforeAll, beforeEach } from "vite-plus/test";
+
+import { registerSloppediaTools } from "#/features/edit-sloppedia/index.ts";
 
 import {
+  broker,
   MAIN_SHA,
   NEW_PULL,
   REPO,
@@ -12,9 +15,7 @@ import {
   github,
 } from "./sloppedia-tools.test.support.ts";
 import type { Sent } from "./sloppedia-tools.test.support.ts";
-import { registerTools } from "./tools.ts";
-
-vi.mock("cloudflare:workers", () => import("./sloppedia-tools.test.support.ts"));
+import { serverOf } from "./tools.ts";
 
 beforeAll(() => {
   github.listen({ onUnhandledFrame: "error" });
@@ -71,7 +72,7 @@ const encodeJson = Schema.encodeEffect(Schema.fromJsonString(Schema.Unknown));
 const writeArticle = Effect.gen(function* writeArticle() {
   const body = yield* encodeJson(toolCall);
   const response = yield* Effect.promise(() =>
-    createMcpHandler(registerTools).fetch(
+    createMcpHandler(() => registerSloppediaTools(broker)(serverOf())).fetch(
       new Request("https://sundries.masseater.dev/mcp", {
         method: "POST",
         headers: {

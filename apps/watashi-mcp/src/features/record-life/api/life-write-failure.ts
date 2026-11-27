@@ -2,6 +2,7 @@ import { Array as Arr, Effect, Match } from "effect";
 
 import { InvalidRecord } from "#/shared/api/index.ts";
 import type { StoreFailure } from "#/shared/api/index.ts";
+import type { Database } from "#/shared/db/index.server.ts";
 import { StorageFailed } from "#/shared/db/index.ts";
 
 export type Place = Readonly<{ index: number; written: readonly string[] }>;
@@ -19,7 +20,9 @@ const locatedMessage =
 
 export const locating =
   (place: Place) =>
-  <Value>(write: Effect.Effect<Value, StoreFailure>): Effect.Effect<Value, StoreFailure> => {
+  <Value, Services>(
+    write: Effect.Effect<Value, StoreFailure, Services | Database>,
+  ): Effect.Effect<Value, StoreFailure, Services | Database> => {
     const locate = locatedMessage(place);
     return write.pipe(
       Effect.mapError((failure) =>

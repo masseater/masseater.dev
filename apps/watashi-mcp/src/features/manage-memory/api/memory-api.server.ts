@@ -6,6 +6,7 @@ import type { MemoryWriteValue } from "#/entities/memory/index.ts";
 import { describeFailure } from "#/shared/api/index.server.ts";
 import type { StoreFailure } from "#/shared/api/index.ts";
 import { BAD_REQUEST, json, storageFailed, withStatus } from "#/shared/api/index.ts";
+import type { Database } from "#/shared/db/index.server.ts";
 
 import { writeMemory } from "./memory-write.server.ts";
 
@@ -19,7 +20,7 @@ type Imported = Readonly<{ written: readonly string[]; failure: Option.Option<St
 
 const writeEach =
   (principal: Principal) =>
-  (memos: readonly MemoryWriteValue[]): Effect.Effect<Imported> =>
+  (memos: readonly MemoryWriteValue[]): Effect.Effect<Imported, never, Database> =>
     Effect.gen(function* writeMemos() {
       const write = writeMemory({ actor: `api:${principal.via}` });
       const written: string[] = [];

@@ -1,15 +1,17 @@
 import { afterAll, expect, it } from "@effect/vitest";
 import { eq } from "drizzle-orm";
 import { Effect } from "effect";
-import { vi } from "vite-plus/test";
 
-import { catalogDb } from "#/shared/db/index.server.ts";
-import { closeDatabase, resetDatabase, whileRejecting } from "#/shared/db/index.test.support.ts";
+import { fromCatalog } from "#/shared/db/index.server.ts";
+import {
+  closeDatabase,
+  resetDatabase,
+  whileRejecting,
+  withCatalog,
+} from "#/shared/db/index.test.support.ts";
 import { part, song, songAlias, video } from "#/shared/db/index.ts";
 
 import { createSong, mergeSongs } from "./song-write.server.ts";
-
-vi.mock("cloudflare:workers", () => import("#/shared/db/index.test.support.ts"));
 
 afterAll(() => Effect.runPromise(closeDatabase));
 
@@ -33,15 +35,15 @@ const seedSongs = Effect.gen(function* seedSongs() {
   yield* resetDatabase;
   const source = yield* createSong({ title: SOURCE_TITLE, aliases: ["消す曲の別名"] });
   const target = yield* createSong({ title: TARGET_TITLE, aliases: ["残す曲の別名"] });
-  const medley = yield* Effect.promise(() =>
-    catalogDb
+  const medley = yield* fromCatalog((db) =>
+    db
       .insert(video)
       .values({ title: "テストメドレー", url: "https://example.com/watch/1" })
       .returning({ id: video.id })
       .get(),
   );
-  yield* Effect.promise(() =>
-    catalogDb.insert(part).values([
+  yield* fromCatalog((db) =>
+    db.insert(part).values([
       { videoId: medley.id, position: FIRST, songId: source.id },
       { videoId: medley.id, position: SECOND, songId: source.id },
       { videoId: medley.id, position: THIRD, songId: target.id },
@@ -52,18 +54,16 @@ const seedSongs = Effect.gen(function* seedSongs() {
 
 const stored = Effect.all(
   {
-    songs: Effect.promise(() =>
-      catalogDb.select({ title: song.title }).from(song).orderBy(song.id),
-    ),
-    aliases: Effect.promise(() =>
-      catalogDb
+    songs: fromCatalog((db) => db.select({ title: song.title }).from(song).orderBy(song.id)),
+    aliases: fromCatalog((db) =>
+      db
         .select({ title: song.title, alias: songAlias.alias })
         .from(songAlias)
         .innerJoin(song, eq(song.id, songAlias.songId))
         .orderBy(song.id, songAlias.alias),
     ),
-    parts: Effect.promise(() =>
-      catalogDb
+    parts: fromCatalog((db) =>
+      db
         .select({ position: part.position, title: song.title })
         .from(part)
         .leftJoin(song, eq(song.id, part.songId))
@@ -107,7 +107,7 @@ it.effect("mergeSongs は消す側のパートと題名と別名を残す側へ�
     expect(merged.id).toBe(ids.targetId);
     const after = yield* stored;
     expect(after).toStrictEqual(MERGED);
-  }),
+  }).pipe(withCatalog),
 );
 
 it.effect("mergeSongs は別名の追加を D1 が拒むと、パートを移さず元のまま残す", () =>
@@ -119,7 +119,7 @@ it.effect("mergeSongs は別名の追加を D1 が拒むと、パートを移さ
     );
     const after = yield* stored;
     expect(after).toStrictEqual(SEEDED);
-  }),
+  }).pipe(withCatalog),
 );
 
 it.effect("mergeSongs は消す側の削除を D1 が拒むと、パートも別名も元のまま残す", () =>
@@ -128,7 +128,7 @@ it.effect("mergeSongs は消す側の削除を D1 が拒むと、パートも別
     yield* mergeSongs(ids).pipe(whileRejecting({ event: "DELETE", table: "song" }), Effect.flip);
     const after = yield* stored;
     expect(after).toStrictEqual(SEEDED);
-  }),
+  }).pipe(withCatalog),
 );
 
 it.effect("mergeSongs は同じ曲どうしや無い曲を指すと失敗し、何も書き換えない", () =>
@@ -144,5 +144,5 @@ it.effect("mergeSongs は同じ曲どうしや無い曲を指すと失敗し、�
     expect(missing.message).toBe(SONG_MISSING);
     const after = yield* stored;
     expect(after).toStrictEqual(SEEDED);
-  }),
+  }).pipe(withCatalog),
 );

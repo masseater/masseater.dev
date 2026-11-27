@@ -2,6 +2,7 @@ import { Array as Arr, Effect, Option, Record as Rec, Schema, pipe } from "effec
 
 import { AGGREGATES } from "#/entities/life-record/model/life-body.ts";
 import type { Aggregate } from "#/entities/life-record/model/life-body.ts";
+import type { Database } from "#/shared/db/index.server.ts";
 import type { StorageFailed } from "#/shared/db/index.ts";
 
 import type { StatEvent } from "./life-daily.ts";
@@ -35,7 +36,7 @@ const aggregateOf = (entry: LifeEntry): Aggregate =>
     Option.getOrElse((): Aggregate => "sum"),
   );
 
-export const loadStatsData: Effect.Effect<StatsData, StorageFailed> = Effect.all(
+export const loadStatsData: Effect.Effect<StatsData, StorageFailed, Database> = Effect.all(
   {
     events: scanAll(["life_event"]).pipe(Effect.map(statEventsOf)),
     aggregates: scanAll(["metric_definition"]).pipe(

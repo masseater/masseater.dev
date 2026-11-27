@@ -1,12 +1,9 @@
 import { afterAll, beforeEach, expect, it } from "@effect/vitest";
 import { Array as Arr, Effect, pipe } from "effect";
-import { vi } from "vite-plus/test";
 
 import { createAuth } from "#/shared/auth/index.server.ts";
 
-import { closeDatabase, resetDatabase } from "./auth-limits.test.support.ts";
-
-vi.mock("cloudflare:workers", () => import("./auth-limits.test.support.ts"));
+import { authBindings, closeDatabase, resetDatabase } from "./auth-limits.test.support.ts";
 
 beforeEach(() => Effect.runPromise(resetDatabase));
 afterAll(() => Effect.runPromise(closeDatabase));
@@ -32,7 +29,8 @@ const headersOf = ({ ip, forwardedFor }: Caller): Record<string, string> => ({
 });
 
 const statusOf = (request: Request): Effect.Effect<number> =>
-  Effect.promise(() => createAuth().handler(request)).pipe(
+  authBindings.pipe(
+    Effect.flatMap((bindings) => Effect.promise(() => createAuth(bindings).handler(request))),
     Effect.map((response) => response.status),
   );
 

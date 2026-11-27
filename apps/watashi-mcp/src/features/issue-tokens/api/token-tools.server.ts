@@ -3,7 +3,8 @@ import { Label, TOKEN_SCOPES } from "@masseater.dev/watashi-protocol";
 import type { CallToolResult, McpServer } from "@modelcontextprotocol/server";
 import { Option, Schema } from "effect";
 
-import { runTool } from "#/shared/api/index.server.ts";
+import type { ToolRun } from "#/shared/api/index.server.ts";
+import type { Database } from "#/shared/db/index.server.ts";
 
 import { mintToken } from "./api-token-api.server.ts";
 
@@ -27,21 +28,25 @@ const ISSUE_SCHEMA = IssueInput.pipe(Schema.toStandardSchemaV1, Schema.toStandar
 
 const DESCRIPTION = "Issue a token for the watashi HTTP API.";
 
-const issuing = (input: IssueRequest): Promise<CallToolResult> =>
-  mintToken({
-    scope: Option.getOrElse(Option.fromUndefinedOr(input.scope), () => DEFAULT_SCOPE),
-    label: Option.getOrElse(Option.fromUndefinedOr(input.label), () => ""),
-  }).pipe(runTool({ count: one }));
+const issuing =
+  (runTool: ToolRun<Database>) =>
+  (input: IssueRequest): Promise<CallToolResult> =>
+    mintToken({
+      scope: Option.getOrElse(Option.fromUndefinedOr(input.scope), () => DEFAULT_SCOPE),
+      label: Option.getOrElse(Option.fromUndefinedOr(input.label), () => ""),
+    }).pipe(runTool({ count: one }));
 
-export const registerTokenTools = (server: McpServer): McpServer => {
-  server.registerTool(
-    TOOL,
-    {
-      description: DESCRIPTION,
-      inputSchema: compactInput(ISSUE_SCHEMA),
-      annotations: WRITE,
-    },
-    (input) => issuing(input),
-  );
-  return server;
-};
+export const registerTokenTools =
+  (runTool: ToolRun<Database>) =>
+  (server: McpServer): McpServer => {
+    server.registerTool(
+      TOOL,
+      {
+        description: DESCRIPTION,
+        inputSchema: compactInput(ISSUE_SCHEMA),
+        annotations: WRITE,
+      },
+      (input) => issuing(runTool)(input),
+    );
+    return server;
+  };

@@ -29,6 +29,7 @@ const PackageManifest = Schema.Struct({
   types: Schema.optional(Schema.String),
   typings: Schema.optional(Schema.String),
   main: Schema.optional(Schema.String),
+  native: Schema.optional(Schema.Unknown),
 });
 
 export type Manifest = typeof PackageManifest.Type;

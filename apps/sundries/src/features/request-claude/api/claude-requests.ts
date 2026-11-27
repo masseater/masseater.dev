@@ -1,9 +1,9 @@
 import { failedAt } from "@masseater.dev/mcp-tool-call";
 import type { UpstreamFailed } from "@masseater.dev/mcp-tool-call";
-import { env } from "cloudflare:workers";
 import { asc, desc, eq, gt, isNull } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/d1";
-import { Array as Arr, Clock, Effect, Option, Order } from "effect";
+import type { DrizzleD1Database } from "drizzle-orm/d1";
+import { Array as Arr, Clock, Context, Effect, Option, Order } from "effect";
 
 import { claudeRequests } from "./claude-requests.table.ts";
 
@@ -13,47 +13,48 @@ export type NewRequest = Readonly<{ text: string; sender: string }>;
 
 export type Reply = Readonly<{ id: number; reply: string; threadUrl: string }>;
 
+export class RequestsDb extends Context.Service<RequestsDb, DrizzleD1Database>()(
+  "sundries/features/request-claude/api/claude-requests/RequestsDb",
+) {}
+
+export const requestsDbOf = (binding: D1Database): DrizzleD1Database => drizzle(binding);
+
 const PAGE_SIZE = 50;
 
 const failed = failedAt("claude-requests");
 
-const db = drizzle(env.CLAUDE_REQUESTS);
+const query = Effect.fn("query")(function* query<Row>(
+  run: (db: DrizzleD1Database) => Promise<Row>,
+) {
+  const db = yield* RequestsDb;
+  return yield* Effect.tryPromise({ try: () => run(db), catch: failed });
+});
 
-const query = <Row>(run: () => Promise<Row>): Effect.Effect<Row, UpstreamFailed> =>
-  Effect.tryPromise({ try: run, catch: failed });
-
-export const enqueue = ({
-  text,
-  sender,
-}: NewRequest): Effect.Effect<Readonly<{ id: number }>, UpstreamFailed> =>
-  Clock.currentTimeMillis.pipe(
-    Effect.flatMap((createdAt) =>
-      query(() =>
-        db
-          .insert(claudeRequests)
-          .values({ text, sender, createdAt })
-          .returning({ id: claudeRequests.id }),
-      ),
-    ),
-    Effect.flatMap((rows) =>
-      Effect.fromOption(Arr.head(rows)).pipe(
-        Effect.mapError(() => failed("insert returned no row")),
-      ),
-    ),
+export const enqueue = Effect.fn("enqueue")(function* enqueue({ text, sender }: NewRequest) {
+  const createdAt = yield* Clock.currentTimeMillis;
+  const rows = yield* query((db) =>
+    db
+      .insert(claudeRequests)
+      .values({ text, sender, createdAt })
+      .returning({ id: claudeRequests.id }),
   );
+  return yield* Effect.fromOption(Arr.head(rows)).pipe(
+    Effect.mapError(() => failed("insert returned no row")),
+  );
+});
 
-export const delivered = (id: number): Effect.Effect<void, UpstreamFailed> =>
+export const delivered = (id: number): Effect.Effect<void, UpstreamFailed, RequestsDb> =>
   Clock.currentTimeMillis.pipe(
     Effect.flatMap((takenAt) =>
-      query(() => db.update(claudeRequests).set({ takenAt }).where(eq(claudeRequests.id, id))),
+      query((db) => db.update(claudeRequests).set({ takenAt }).where(eq(claudeRequests.id, id))),
     ),
     Effect.asVoid,
   );
 
-export const take: Effect.Effect<readonly ClaudeRequest[], UpstreamFailed> =
+export const take: Effect.Effect<readonly ClaudeRequest[], UpstreamFailed, RequestsDb> =
   Clock.currentTimeMillis.pipe(
     Effect.flatMap((takenAt) =>
-      query(() =>
+      query((db) =>
         db
           .update(claudeRequests)
           .set({ takenAt })
@@ -64,30 +65,24 @@ export const take: Effect.Effect<readonly ClaudeRequest[], UpstreamFailed> =
     Effect.map(Arr.sortWith((request: ClaudeRequest) => request.id, Order.Number)),
   );
 
-export const answer = ({
-  id,
-  reply,
-  threadUrl,
-}: Reply): Effect.Effect<Readonly<{ id: number; replied: boolean }>, UpstreamFailed> =>
-  Clock.currentTimeMillis.pipe(
-    Effect.flatMap((repliedAt) =>
-      query(() =>
-        db
-          .update(claudeRequests)
-          .set({ reply, repliedAt, threadUrl })
-          .where(eq(claudeRequests.id, id))
-          .returning({ id: claudeRequests.id }),
-      ),
-    ),
-    Effect.map((rows) => ({ id, replied: Arr.isArrayNonEmpty(rows) })),
+export const answer = Effect.fn("answer")(function* answer({ id, reply, threadUrl }: Reply) {
+  const repliedAt = yield* Clock.currentTimeMillis;
+  const rows = yield* query((db) =>
+    db
+      .update(claudeRequests)
+      .set({ reply, repliedAt, threadUrl })
+      .where(eq(claudeRequests.id, id))
+      .returning({ id: claudeRequests.id }),
   );
+  return { id, replied: Arr.isArrayNonEmpty(rows) };
+});
 
-const latest = query(() =>
+const latest = query((db) =>
   db.select().from(claudeRequests).orderBy(desc(claudeRequests.id)).limit(PAGE_SIZE),
 );
 
-const after = (id: number): Effect.Effect<readonly ClaudeRequest[], UpstreamFailed> =>
-  query(() =>
+const after = (id: number): Effect.Effect<readonly ClaudeRequest[], UpstreamFailed, RequestsDb> =>
+  query((db) =>
     db
       .select()
       .from(claudeRequests)
@@ -98,5 +93,5 @@ const after = (id: number): Effect.Effect<readonly ClaudeRequest[], UpstreamFail
 
 export const listed = (
   from: Option.Option<number>,
-): Effect.Effect<readonly ClaudeRequest[], UpstreamFailed> =>
+): Effect.Effect<readonly ClaudeRequest[], UpstreamFailed, RequestsDb> =>
   Option.match(from, { onNone: () => latest, onSome: after });

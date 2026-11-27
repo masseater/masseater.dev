@@ -17,6 +17,7 @@ import { runToolIn } from "#/shared/api/index.ts";
 import { ArticleInput } from "./sloppedia-input.ts";
 import { articleContent } from "./sloppedia-markdown.ts";
 import { sloppediaToken } from "./sloppedia-token.ts";
+import type { SloppediaBroker } from "./sloppedia-token.ts";
 
 type Article = typeof ArticleInput.Type;
 
@@ -157,8 +158,11 @@ const publish = Effect.fn("publish")(function* publish(token: string, article: A
   return { pull: pull.html_url, url: `${SITE}/sloppedia/${article.slug}` };
 });
 
-const writeArticle = Effect.fn("writeArticle")(function* writeArticle(article: Article) {
-  const token = yield* sloppediaToken;
+const writeArticle = Effect.fn("writeArticle")(function* writeArticle(
+  broker: SloppediaBroker,
+  article: Article,
+) {
+  const token = yield* sloppediaToken(broker);
   const credentials = Effect.succeed({
     token: Redacted.make(token),
     apiBaseUrl: DEFAULT_API_BASE_URL,
@@ -169,15 +173,17 @@ const writeArticle = Effect.fn("writeArticle")(function* writeArticle(article: A
 
 const runGithubTool = runToolIn(githubLayer);
 
-export const registerSloppediaTools = (server: McpServer): McpServer => {
-  server.registerTool(
-    "write_sloppedia_article",
-    {
-      description: DESCRIPTION,
-      inputSchema: compactInput(INPUT_SCHEMA),
-      annotations: WRITE,
-    },
-    (input) => writeArticle(input).pipe(runGithubTool({ count: one })),
-  );
-  return server;
-};
+export const registerSloppediaTools =
+  (broker: SloppediaBroker) =>
+  (server: McpServer): McpServer => {
+    server.registerTool(
+      "write_sloppedia_article",
+      {
+        description: DESCRIPTION,
+        inputSchema: compactInput(INPUT_SCHEMA),
+        annotations: WRITE,
+      },
+      (input) => writeArticle(broker, input).pipe(runGithubTool({ count: one })),
+    );
+    return server;
+  };

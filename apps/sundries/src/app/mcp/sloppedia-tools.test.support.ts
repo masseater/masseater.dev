@@ -8,10 +8,11 @@ import {
   String as Str,
   pipe,
 } from "effect";
-import { constVoid } from "effect/Function";
 import type { DefaultBodyType, StrictRequest } from "msw";
 import { http } from "msw/http";
 import { setupServer } from "msw/node";
+
+import type { SloppediaBroker } from "#/features/edit-sloppedia/index.ts";
 
 export type Answer = Readonly<{ status: number; body: unknown }>;
 
@@ -219,7 +220,6 @@ export const setScene = (overrides: Partial<Scene>): void => {
 
 export const sentRequests = (): readonly Sent[] => MutableRef.get(sent);
 
-export const env = {
-  TOOL_CALLS: { writeDataPoint: constVoid },
-  SLOPPEDIA_GITHUB: { fetch: (): Promise<Response> => Promise.resolve(new Response("token")) },
+export const broker: SloppediaBroker = {
+  fetch: (): Promise<Response> => Promise.resolve(new Response("token")),
 };

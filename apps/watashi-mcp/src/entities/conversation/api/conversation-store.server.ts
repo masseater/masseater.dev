@@ -1,7 +1,9 @@
+import type { SQL } from "drizzle-orm";
 import { and, asc, count, desc, eq, gte, inArray, max, sum } from "drizzle-orm";
 import { Array as Arr, Effect, Option, pipe } from "effect";
 
-import { db, query } from "#/shared/db/index.server.ts";
+import type { Database, Build } from "#/shared/db/index.server.ts";
+import { query } from "#/shared/db/index.server.ts";
 import { conversationChunk, conversationSession } from "#/shared/db/index.ts";
 import type {
   ConversationChunk,
@@ -51,8 +53,8 @@ const orNothing = (value: number | null): number =>
     Option.getOrElse(() => NOTHING),
   );
 
-export const committedEnd = (key: FileKey): Effect.Effect<number, StorageFailed> =>
-  query(() =>
+export const committedEnd = (key: FileKey): Effect.Effect<number, StorageFailed, Database> =>
+  query((db) =>
     db
       .select({ end: max(conversationChunk.end) })
       .from(conversationChunk)
@@ -69,8 +71,8 @@ export const committedEnd = (key: FileKey): Effect.Effect<number, StorageFailed>
 export const chunkAt = ({
   start,
   ...key
-}: ChunkKey): Effect.Effect<Option.Option<ConversationChunk>, StorageFailed> =>
-  query(() =>
+}: ChunkKey): Effect.Effect<Option.Option<ConversationChunk>, StorageFailed, Database> =>
+  query((db) =>
     db
       .select()
       .from(conversationChunk)
@@ -90,8 +92,8 @@ const toFileSummary = ({ file, bytes, chunks, redactions }: FileTotals): FileSum
 export const filesOf = ({
   kind,
   sessionId,
-}: SessionKey): Effect.Effect<readonly FileSummary[], StorageFailed> =>
-  query(() =>
+}: SessionKey): Effect.Effect<readonly FileSummary[], StorageFailed, Database> =>
+  query((db) =>
     db
       .select({
         file: conversationChunk.file,
@@ -110,8 +112,8 @@ type SessionFileTotals = FileTotals & Readonly<{ sessionId: string }>;
 const recentSessions = ({
   kind,
   limit,
-}: SessionPage): Effect.Effect<readonly ConversationSession[], StorageFailed> =>
-  query(() =>
+}: SessionPage): Effect.Effect<readonly ConversationSession[], StorageFailed, Database> =>
+  query((db) =>
     db
       .select()
       .from(conversationSession)
@@ -123,18 +125,17 @@ const recentSessions = ({
 const recentFiles = ({
   kind,
   limit,
-}: SessionPage): Effect.Effect<readonly SessionFileTotals[], StorageFailed> => {
-  const recent = db
-    .select({ sessionId: conversationSession.sessionId })
-    .from(conversationSession)
-    .where(eq(conversationSession.kind, kind))
-    .orderBy(desc(conversationSession.lastAt))
-    .limit(limit);
-  const inPage = and(
-    eq(conversationChunk.kind, kind),
-    inArray(conversationChunk.sessionId, recent),
-  );
-  return query(() =>
+}: SessionPage): Effect.Effect<readonly SessionFileTotals[], StorageFailed, Database> => {
+  const recentIn: Build<SQL | undefined> = (db) => {
+    const recent = db
+      .select({ sessionId: conversationSession.sessionId })
+      .from(conversationSession)
+      .where(eq(conversationSession.kind, kind))
+      .orderBy(desc(conversationSession.lastAt))
+      .limit(limit);
+    return and(eq(conversationChunk.kind, kind), inArray(conversationChunk.sessionId, recent));
+  };
+  return query((db) =>
     db
       .select({
         sessionId: conversationChunk.sessionId,
@@ -144,7 +145,7 @@ const recentFiles = ({
         redactions: sum(conversationChunk.redactions),
       })
       .from(conversationChunk)
-      .where(inPage)
+      .where(recentIn(db))
       .groupBy(conversationChunk.sessionId, conversationChunk.file)
       .orderBy(asc(conversationChunk.file)),
   );
@@ -175,7 +176,7 @@ const attachFiles = ([sessions, files]: readonly [
 
 export const listSessions = (
   page: SessionPage,
-): Effect.Effect<readonly SessionSummary[], StorageFailed> =>
+): Effect.Effect<readonly SessionSummary[], StorageFailed, Database> =>
   Effect.all([recentSessions(page), recentFiles(page)], { concurrency: "unbounded" }).pipe(
     Effect.map(attachFiles),
   );
@@ -184,8 +185,8 @@ export const chunksFrom = ({
   cursor,
   limit,
   ...key
-}: ChunkPage): Effect.Effect<readonly ConversationChunk[], StorageFailed> =>
-  query(() =>
+}: ChunkPage): Effect.Effect<readonly ConversationChunk[], StorageFailed, Database> =>
+  query((db) =>
     db
       .select()
       .from(conversationChunk)
