@@ -22,7 +22,7 @@ export class ClaudeRoutine extends WorkerEntrypoint<AppStoreEnv> implements Clau
     return runner(services)(registerRoutine({ env: this.env, routine }));
   }
 
-  public fire(text: string): Promise<FireOutcome> {
-    return runner(services)(fireRoutine(this.env, text));
+  public fire(): Promise<FireOutcome> {
+    return runner(services)(fireRoutine(this.env));
   }
 }

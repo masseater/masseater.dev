@@ -1,0 +1,562 @@
+use std::fs::File;
+use std::io::{Read, Write};
+use std::ops::Deref;
+use std::path::Path;
+#[cfg(feature = "mmap")]
+use std::sync::Arc;
+use std::sync::OnceLock;
+use std::sync::atomic::{AtomicU8, Ordering};
+
+#[cfg(feature = "mmap")]
+use memmap2::Mmap;
+
+use anyhow::anyhow;
+use encoding_rs::Encoding;
+use serde::{Deserialize, Serialize};
+
+use crate::LinderaResult;
+use crate::error::LinderaErrorKind;
+
+use rkyv::{Archive, Deserialize as RkyvDeserialize, Serialize as RkyvSerialize};
+
+/// Counts the fields a NUL-joined detail blob splits into.
+///
+/// The dictionary builder joins a row's detail fields with `"\0"` and writes
+/// no trailing separator, so the field count is exactly one more than the
+/// number of NUL bytes. Callers use this to size their detail vectors up
+/// front instead of letting them grow from capacity zero, which cost two
+/// reallocations per token for a 9-field dictionary (#966).
+///
+/// # Arguments
+///
+/// * `joined_details` - The NUL-joined detail blob.
+///
+/// # Returns
+///
+/// The number of fields, always at least 1 (an empty blob splits into a
+/// single empty field, matching `slice::split`).
+#[inline]
+pub(crate) fn detail_field_count(joined_details: &[u8]) -> usize {
+    memchr::memchr_iter(0, joined_details).count() + 1
+}
+
+/// Reads the `words_data` byte offset a word id maps to.
+///
+/// Both packed dictionaries store `words_idx_data` as one little-endian `u32`
+/// per word id. Every step is bounds-checked, so a corrupt archive or an
+/// absurd id ends in `None` instead of a panic -- the accessors used to slice
+/// this unchecked (#966).
+///
+/// # Arguments
+///
+/// * `words_idx_data` - The word-id index table.
+/// * `word_id` - The word id to look up.
+///
+/// # Returns
+///
+/// The entry's byte offset into `words_data`, or `None` when the id has no
+/// slot in the table. Callers map `None` onto their own missing-entry
+/// fallback, which differs per dictionary.
+#[inline]
+pub(crate) fn words_idx_offset(words_idx_data: &[u8], word_id: usize) -> Option<usize> {
+    let start = word_id.checked_mul(4)?;
+    let bytes = words_idx_data.get(start..start.checked_add(4)?)?;
+    let offset: [u8; 4] = bytes.try_into().ok()?;
+    Some(u32::from_le_bytes(offset) as usize)
+}
+
+/// Returns how many word ids a word-id index table addresses.
+///
+/// The counterpart of [`words_idx_offset`], kept beside it so the one
+/// `u32`-per-entry layout of `dict.wordsidx` is stated in a single place: ids
+/// `0..words_idx_count(table)` are exactly the ids for which
+/// `words_idx_offset` yields `Some`.
+///
+/// # Arguments
+///
+/// * `words_idx_data` - The word-id index table.
+///
+/// # Returns
+///
+/// The number of entries the table holds.
+#[inline]
+pub(crate) fn words_idx_count(words_idx_data: &[u8]) -> usize {
+    words_idx_data.len() / 4
+}
+
+/// Locates and validates one entry's NUL-joined detail blob.
+///
+/// Each entry is a 4-byte little-endian length followed by that many bytes of
+/// NUL-joined fields. The whole blob is validated once rather than field by
+/// field: NUL is ASCII and therefore never occurs inside a multi-byte UTF-8
+/// sequence, so "the blob is valid UTF-8" and "every field is valid UTF-8"
+/// are the same statement. One `from_utf8` call replaces one per field, and
+/// the resulting `&str` can be split without re-validating.
+///
+/// # Arguments
+///
+/// * `words_data` - The packed detail records.
+/// * `offset` - The entry's byte offset inside `words_data`.
+///
+/// # Returns
+///
+/// The entry's joined fields, or `None` when the offset, the declared length
+/// or the payload's encoding is invalid.
+#[inline]
+pub(crate) fn joined_details_at(words_data: &[u8], offset: usize) -> Option<&str> {
+    str::from_utf8(detail_blob_at(words_data, offset)?).ok()
+}
+
+/// Locates one entry's NUL-joined detail blob, without validating it.
+///
+/// Each entry is a 4-byte little-endian length followed by that many bytes of
+/// NUL-joined fields.
+///
+/// # Arguments
+///
+/// * `words_data` - The packed detail records.
+/// * `offset` - The entry's byte offset inside `words_data`.
+///
+/// # Returns
+///
+/// The entry's bytes, or `None` when the offset or the declared length runs
+/// past the end of `words_data`.
+#[inline]
+fn detail_blob_at(words_data: &[u8], offset: usize) -> Option<&[u8]> {
+    let header: [u8; 4] = words_data
+        .get(offset..offset.checked_add(4)?)?
+        .try_into()
+        .ok()?;
+    let start = offset + 4;
+    let len = u32::from_le_bytes(header) as usize;
+    words_data.get(start..start.checked_add(len)?)
+}
+
+/// Which entries of a packed dictionary's detail records have been validated
+/// as UTF-8, and their field counts: one byte per word id.
+///
+/// The detail records of a loaded dictionary never change, so an entry that
+/// was valid UTF-8 once stays valid, with the same fields.
+/// [`recorded_joined_details`] validates an entry the first time it is read,
+/// stores the entry's field count, and from then on skips both the validation
+/// and the count (#1393). Validating on every read was the largest single
+/// cost of decoding a token's details, and validating every entry when the
+/// dictionary is loaded would turn the O(1) load of an embedded or
+/// memory-mapped dictionary into a pass over all of its detail records. One
+/// byte instead of one bit per word id takes 8 times the memory (about 1 MB
+/// for UniDic CWJ) and saved a further 1.5 to 3.5% of the instructions of
+/// `lindera tokenize -o mecab`, since the `memchr` pass of
+/// `detail_field_count` goes too.
+///
+/// The slots are allocated on first use, sized from the word-id index, so
+/// loading a dictionary stays O(1), and a dictionary whose details are never
+/// read allocates nothing.
+///
+/// A record only means something next to the bytes it was filled from, so it
+/// is never carried over to another value: [`Default`] and [`Clone`] both give
+/// an empty record. (`Dictionary::clone` shares the dictionary itself through
+/// an `Arc`, and with it the record.)
+#[derive(Default)]
+pub(crate) struct DetailChecks {
+    /// One byte per word id: 0 until the entry has been validated, then its
+    /// field count, or `u8::MAX` for a count of `u8::MAX` or more, which is
+    /// counted again on each read. A count is never 0, since even an empty
+    /// blob is one (empty) field.
+    slots: OnceLock<Box<[AtomicU8]>>,
+}
+
+impl Clone for DetailChecks {
+    /// Returns an empty record: the clone is checked again on its own reads.
+    fn clone(&self) -> Self {
+        Self::default()
+    }
+}
+
+impl DetailChecks {
+    /// Returns the record's slots, allocating them on first use.
+    ///
+    /// # Arguments
+    ///
+    /// * `word_count` - The number of word ids of the dictionary. Only the
+    ///   first call's value is used; the record's dictionary never changes,
+    ///   so every call passes the same value.
+    ///
+    /// # Returns
+    ///
+    /// One slot per word id, all zero until entries are recorded.
+    #[inline]
+    fn slots(&self, word_count: usize) -> &[AtomicU8] {
+        self.slots
+            .get_or_init(|| (0..word_count).map(|_| AtomicU8::new(0)).collect())
+    }
+
+    /// Whether `word_id`'s entry has been recorded as valid, for the tests.
+    ///
+    /// # Arguments
+    ///
+    /// * `word_id` - The word id.
+    ///
+    /// # Returns
+    ///
+    /// `true` once the entry has been read and validated.
+    #[cfg(test)]
+    pub(crate) fn is_recorded(&self, word_id: usize) -> bool {
+        self.slots
+            .get()
+            .and_then(|slots| slots.get(word_id))
+            .is_some_and(|slot| slot.load(Ordering::Relaxed) != 0)
+    }
+}
+
+/// What [`recorded_joined_details`] finds for a word id.
+pub(crate) enum JoinedDetails<'a> {
+    /// The word id has no slot in the word-id index.
+    NoSlot,
+    /// The entry's offset, declared length or encoding is invalid.
+    Malformed,
+    /// The entry's NUL-joined fields, and how many there are.
+    Fields(&'a str, usize),
+}
+
+/// Looks up one entry's NUL-joined detail blob, and validates it as UTF-8
+/// only the first time the entry is read.
+///
+/// The first read of an entry validates it with `str::from_utf8` and counts
+/// its fields; when the validation succeeds, the count is stored in the
+/// entry's slot in `checks`, and later reads convert the same bytes without
+/// validating them and take the count from the slot. An entry that fails is
+/// never recorded, so every read of it fails again, as before (#1393).
+///
+/// # Arguments
+///
+/// * `words_idx_data` - The word-id index table.
+/// * `words_data` - The packed detail records.
+/// * `checks` - The record of the entries already validated.
+/// * `word_id` - The word id to look up.
+///
+/// # Returns
+///
+/// [`JoinedDetails::NoSlot`] when the id has no slot in the index,
+/// [`JoinedDetails::Malformed`] when the entry's offset, declared length or
+/// encoding is invalid, and the entry's fields otherwise.
+///
+/// # Safety
+///
+/// `checks` must only ever have been used with these same `words_idx_data`
+/// and `words_data` bytes, and those bytes must not change while `checks`
+/// exists. A set slot then means that the bytes this function locates for the
+/// word id were validated, and their fields counted, by an earlier call.
+#[inline]
+pub(crate) unsafe fn recorded_joined_details<'a>(
+    words_idx_data: &'a [u8],
+    words_data: &'a [u8],
+    checks: &DetailChecks,
+    word_id: usize,
+) -> JoinedDetails<'a> {
+    let Some(offset) = words_idx_offset(words_idx_data, word_id) else {
+        return JoinedDetails::NoSlot;
+    };
+    let Some(bytes) = detail_blob_at(words_data, offset) else {
+        return JoinedDetails::Malformed;
+    };
+    // `words_idx_offset` found a slot in the index, so `word_id` is below the
+    // word count and the record has a slot for it; `get` keeps a panic off
+    // this path all the same, and falls back to validating.
+    let slot = checks.slots(words_idx_count(words_idx_data)).get(word_id);
+    if let Some(slot) = slot {
+        let recorded = slot.load(Ordering::Relaxed);
+        if recorded != 0 {
+            // SAFETY: a slot is set only below, after `str::from_utf8`
+            // accepted the bytes that `words_idx_offset` and `detail_blob_at`
+            // located for this word id. By the caller's contract, `checks`
+            // has only been used with these same `words_idx_data` and
+            // `words_data`, which have not changed since, so that lookup
+            // located the same bytes as this one.
+            let joined = unsafe { str::from_utf8_unchecked(bytes) };
+            let count = if recorded == u8::MAX {
+                detail_field_count(bytes)
+            } else {
+                usize::from(recorded)
+            };
+            return JoinedDetails::Fields(joined, count);
+        }
+    }
+    match str::from_utf8(bytes) {
+        Ok(joined) => {
+            let count = detail_field_count(bytes);
+            if let Some(slot) = slot {
+                // `Relaxed` is enough: the slot states a fact about bytes
+                // that never change, and publishes no other write.
+                slot.store(count.min(usize::from(u8::MAX)) as u8, Ordering::Relaxed);
+            }
+            JoinedDetails::Fields(joined, count)
+        }
+        Err(_) => JoinedDetails::Malformed,
+    }
+}
+
+/// Write data directly to the writer.
+pub fn write_data<W: Write>(buffer: &[u8], writer: &mut W) -> LinderaResult<()> {
+    writer.write_all(buffer).map_err(|err| {
+        LinderaErrorKind::Io
+            .with_error(err)
+            .add_context("Failed to write data to output")
+    })?;
+    Ok(())
+}
+
+pub fn read_file(filename: &Path) -> LinderaResult<Vec<u8>> {
+    let mut input_read = File::open(filename).map_err(|err| {
+        LinderaErrorKind::Io
+            .with_error(err)
+            .add_context(format!("Failed to open file: {}", filename.display()))
+    })?;
+    let mut buffer = Vec::new();
+    input_read.read_to_end(&mut buffer).map_err(|err| {
+        LinderaErrorKind::Io.with_error(err).add_context(format!(
+            "Failed to read file contents: {}",
+            filename.display()
+        ))
+    })?;
+    Ok(buffer)
+}
+
+/// Reads a file into a 16-byte aligned buffer, as required when loading rkyv
+/// archives (e.g. `char_def.bin`, `unk.bin`).
+pub fn read_aligned_file(filename: &Path) -> LinderaResult<rkyv::util::AlignedVec<16>> {
+    let raw_data = read_file(filename)?;
+
+    let mut aligned_data = rkyv::util::AlignedVec::<16>::new();
+    aligned_data.extend_from_slice(&raw_data);
+
+    Ok(aligned_data)
+}
+
+#[cfg(feature = "mmap")]
+pub fn mmap_file(filename: &Path) -> LinderaResult<Mmap> {
+    let file = File::open(filename).map_err(|err| {
+        LinderaErrorKind::Io.with_error(err).add_context(format!(
+            "Failed to open file for memory mapping: {}",
+            filename.display()
+        ))
+    })?;
+    let mmap = unsafe { Mmap::map(&file) }.map_err(|err| {
+        LinderaErrorKind::Io
+            .with_error(err)
+            .add_context(format!("Failed to memory map file: {}", filename.display()))
+    })?;
+    Ok(mmap)
+}
+
+pub fn read_file_with_encoding(filepath: &Path, encoding_name: &str) -> LinderaResult<String> {
+    let encoding = Encoding::for_label_no_replacement(encoding_name.as_bytes());
+    let encoding = encoding.ok_or_else(|| {
+        LinderaErrorKind::Decode.with_error(anyhow!("Invalid encoding: {encoding_name}"))
+    })?;
+
+    let buffer = read_file(filepath)?;
+    Ok(encoding.decode(&buffer).0.into_owned())
+}
+
+#[derive(Clone)]
+pub enum Data {
+    Static(&'static [u8]),
+    Vec(Vec<u8>),
+    #[cfg(feature = "mmap")]
+    Map(Arc<Mmap>),
+}
+
+impl Archive for Data {
+    type Archived = rkyv::vec::ArchivedVec<u8>;
+    type Resolver = rkyv::vec::VecResolver;
+
+    fn resolve(&self, resolver: Self::Resolver, out: rkyv::Place<Self::Archived>) {
+        rkyv::vec::ArchivedVec::resolve_from_slice(self.deref(), resolver, out);
+    }
+}
+
+impl<S> RkyvSerialize<S> for Data
+where
+    S: rkyv::rancor::Fallible + rkyv::ser::Writer + rkyv::ser::Allocator + ?Sized,
+{
+    fn serialize(&self, serializer: &mut S) -> Result<Self::Resolver, S::Error> {
+        rkyv::vec::ArchivedVec::serialize_from_slice(self.deref(), serializer)
+    }
+}
+
+impl<D: rkyv::rancor::Fallible + ?Sized> RkyvDeserialize<Data, D> for rkyv::vec::ArchivedVec<u8> {
+    fn deserialize(&self, _deserializer: &mut D) -> Result<Data, D::Error> {
+        let mut vec = Vec::with_capacity(self.len());
+        vec.extend_from_slice(self.as_slice());
+        Ok(Data::Vec(vec))
+    }
+}
+
+impl Deref for Data {
+    type Target = [u8];
+    fn deref(&self) -> &Self::Target {
+        match self {
+            Data::Static(s) => s,
+            Data::Vec(v) => v,
+            #[cfg(feature = "mmap")]
+            Data::Map(m) => m,
+        }
+    }
+}
+
+impl From<&'static [u8]> for Data {
+    fn from(s: &'static [u8]) -> Self {
+        Self::Static(s)
+    }
+}
+
+impl<T: Deref<Target = [u8]>> From<&'static T> for Data {
+    fn from(t: &'static T) -> Self {
+        Self::Static(t)
+    }
+}
+
+impl From<Vec<u8>> for Data {
+    fn from(v: Vec<u8>) -> Self {
+        Self::Vec(v)
+    }
+}
+
+#[cfg(feature = "mmap")]
+impl From<Mmap> for Data {
+    fn from(m: Mmap) -> Self {
+        Self::Map(Arc::new(m))
+    }
+}
+
+impl Serialize for Data {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        serializer.serialize_bytes(self.deref())
+    }
+}
+
+impl<'de> Deserialize<'de> for Data {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let v = <Vec<u8> as serde::Deserialize>::deserialize(deserializer)?;
+        Ok(Data::Vec(v))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{detail_field_count, joined_details_at, words_idx_offset};
+
+    /// The count must match what `slice::split` actually yields, which is the
+    /// invariant the presized detail vectors rely on.
+    #[test]
+    fn detail_field_count_matches_split() {
+        for blob in [
+            &b""[..],
+            &b"a"[..],
+            &b"a\0b"[..],
+            &b"\0"[..],
+            &b"\0\0"[..],
+            &b"a\0\0b"[..],
+            &b"NOUN\0general\0*\0*\0*\0*\0base\0reading\0pron"[..],
+        ] {
+            assert_eq!(
+                detail_field_count(blob),
+                blob.split(|&b| b == 0).count(),
+                "blob {blob:?}"
+            );
+        }
+    }
+
+    /// An empty blob still splits into one (empty) field, so the count is
+    /// never zero -- a zero capacity would reintroduce the growth this
+    /// helper exists to avoid.
+    #[test]
+    fn detail_field_count_is_never_zero() {
+        assert_eq!(detail_field_count(b""), 1);
+    }
+
+    /// The IPADIC shape: 9 fields joined by 8 separators.
+    #[test]
+    fn detail_field_count_ipadic_shape() {
+        let blob = b"\xe5\x90\x8d\xe8\xa9\x9e\0*\0*\0*\0*\0*\0a\0b\0c";
+        assert_eq!(detail_field_count(blob), 9);
+    }
+
+    /// Builds a `words_data` blob holding `entries`, each encoded as a 4-byte
+    /// LE length followed by its NUL-joined fields, and returns it with each
+    /// entry's offset.
+    fn packed(entries: &[&[&str]]) -> (Vec<u8>, Vec<usize>) {
+        let mut data = Vec::new();
+        let mut offsets = Vec::new();
+        for fields in entries {
+            offsets.push(data.len());
+            let joined = fields.join("\0");
+            data.extend_from_slice(&(joined.len() as u32).to_le_bytes());
+            data.extend_from_slice(joined.as_bytes());
+        }
+        (data, offsets)
+    }
+
+    /// Each entry decodes to its own blob, not to the tail of the buffer.
+    #[test]
+    fn joined_details_at_reads_the_declared_length() {
+        let (data, offsets) = packed(&[&["名詞", "一般"], &["動詞", "自立", "*"]]);
+
+        assert_eq!(joined_details_at(&data, offsets[0]), Some("名詞\0一般"));
+        assert_eq!(joined_details_at(&data, offsets[1]), Some("動詞\0自立\0*"));
+    }
+
+    /// A truncated header, an offset past the end, and a declared length that
+    /// runs past the buffer all yield `None` rather than panicking. The
+    /// accessors used to slice this unchecked.
+    #[test]
+    fn joined_details_at_rejects_out_of_range_offsets_and_lengths() {
+        let (mut data, offsets) = packed(&[&["名詞", "一般"]]);
+
+        // Offset past the end, and an offset whose 4-byte header straddles it.
+        assert_eq!(joined_details_at(&data, data.len()), None);
+        assert_eq!(joined_details_at(&data, data.len() - 2), None);
+        // An offset so large that `offset + 4` would overflow.
+        assert_eq!(joined_details_at(&data, usize::MAX), None);
+
+        // Declared length running past the buffer.
+        let past_end = (data.len() + 1) as u32;
+        data[offsets[0]..offsets[0] + 4].copy_from_slice(&past_end.to_le_bytes());
+        assert_eq!(joined_details_at(&data, offsets[0]), None);
+
+        // A length so large that `start + len` would overflow.
+        data[offsets[0]..offsets[0] + 4].copy_from_slice(&u32::MAX.to_le_bytes());
+        assert_eq!(joined_details_at(&data, offsets[0]), None);
+    }
+
+    /// Invalid UTF-8 anywhere in the blob rejects the whole entry, which is
+    /// what per-field validation did too.
+    #[test]
+    fn joined_details_at_rejects_invalid_utf8() {
+        let (mut data, offsets) = packed(&[&["ok", "fields"]]);
+        let last = data.len() - 1;
+        data[last] = 0xff;
+
+        assert_eq!(joined_details_at(&data, offsets[0]), None);
+    }
+
+    /// Word ids index a table of little-endian `u32`s; out-of-range and
+    /// overflowing ids yield `None`.
+    #[test]
+    fn words_idx_offset_reads_and_bounds_checks() {
+        let table: Vec<u8> = [7u32, 42u32].iter().flat_map(|v| v.to_le_bytes()).collect();
+
+        assert_eq!(words_idx_offset(&table, 0), Some(7));
+        assert_eq!(words_idx_offset(&table, 1), Some(42));
+        assert_eq!(words_idx_offset(&table, 2), None);
+        // `word_id * 4` overflows.
+        assert_eq!(words_idx_offset(&table, usize::MAX), None);
+        assert_eq!(words_idx_offset(&table, usize::MAX / 4), None);
+    }
+}
