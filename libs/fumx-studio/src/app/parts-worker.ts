@@ -42,7 +42,7 @@ const heldSession = (): Held => {
   const held: { session: Option.Option<readonly [Song, Session]> } = { session: Option.none() };
   return {
     get: () => held.session,
-    set: (song, session) => {
+    set: (song, session): void => {
       held.session = Option.some([song, session]);
     },
   };

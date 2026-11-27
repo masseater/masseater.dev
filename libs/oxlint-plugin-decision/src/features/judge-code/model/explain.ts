@@ -198,7 +198,7 @@ const explaining = (pass: ExplainPass, mode: ExplainFormat): Explainer => {
   const sent = snippetRequestsFor(pass.request);
   const print = printerFor(mode);
   return {
-    outcome: (match, at, { served, answers, cached, verdict, reported }) => {
+    outcome: (match, at, { served, answers, cached, verdict, reported }): void => {
       print({
         ...baseOf({ pass, sent }, match, at)(answers),
         served,
@@ -210,7 +210,7 @@ const explaining = (pass: ExplainPass, mode: ExplainFormat): Explainer => {
         reported,
       });
     },
-    failure: (matches, reason) => {
+    failure: (matches, reason): void => {
       for (const [index, match] of matches.entries()) {
         const at = { ref: refAt(index), loc: match.loc };
         print({ ...baseOf({ pass, sent }, match, at)({}), reported: false, error: reason });

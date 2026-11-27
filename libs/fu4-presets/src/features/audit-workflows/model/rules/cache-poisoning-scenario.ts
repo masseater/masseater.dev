@@ -38,17 +38,17 @@ const hasReleaseBranch = (branches: YamlNode): boolean =>
 
 const RELEASE_CHECKS: readonly (readonly [ReleaseTrigger, (workflow: WorkflowInput) => boolean])[] =
   [
-    ["tag-push", (workflow) => pipe(pushBody(workflow), Option.exists(hasTagFilter))],
+    ["tag-push", (workflow): boolean => pipe(pushBody(workflow), Option.exists(hasTagFilter))],
     [
       "release-branch-push",
-      (workflow) =>
+      (workflow): boolean =>
         pipe(
           pushBody(workflow),
           Option.flatMap(valueAt("branches")),
           Option.exists(hasReleaseBranch),
         ),
     ],
-    ["release-event", (workflow) => hasEvent(workflow)("release")],
+    ["release-event", (workflow): boolean => hasEvent(workflow)("release")],
   ];
 
 const releaseTriggers = (workflow: WorkflowInput): readonly ReleaseTrigger[] =>

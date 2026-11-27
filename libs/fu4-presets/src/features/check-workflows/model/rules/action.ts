@@ -32,7 +32,7 @@ export const action = workflowRule({
   docs: "https://github.com/rhysd/actionlint/blob/main/docs/checks.md#check-popular-action-inputs",
   visitor: (fail, context): Visitor => ({
     ...NOOP,
-    step: (step) => {
+    step: (step): void => {
       for (const exec of Option.toArray(actionOf(step))) {
         for (const uses of Option.toArray(usesOf(exec))) {
           checkUses({ fail, project: context.project }, uses, exec);

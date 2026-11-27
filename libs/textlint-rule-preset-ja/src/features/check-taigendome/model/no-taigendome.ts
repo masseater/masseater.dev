@@ -167,7 +167,7 @@ export const noTaigendome: TextlintRuleModule = (context) => {
   return {
     [Syntax.Paragraph]: (node) => check(node, getSource(node)),
     [Syntax.Header]: (node) => check(node, getSource(node)),
-    [Syntax.Str]: (node) => {
+    [Syntax.Str]: (node): Promise<void> => {
       if (inJsx) {
         return check(node, node.value);
       }

@@ -94,7 +94,7 @@ const createResultTables = (): ResultTables => {
       Option.fromNullishOr(tables.get(outer)).pipe(
         Option.flatMap((table) => Option.fromNullishOr(table.get(inner))),
       ),
-    tableFor: (outer) => {
+    tableFor: (outer): Map<string, ResolutionResult> => {
       const table = tables.getOrInsertComputed(outer, () => new Map<string, ResolutionResult>());
       return table;
     },
@@ -107,12 +107,12 @@ export const createModuleResolutionCache = (): ModuleResolutionCache => {
   return {
     packageJson: createPackageJsonCache(),
     getFromDirectory: (key) => perDirectory.get(toPath(key.directory), modeKey(key.name, key.mode)),
-    setForDirectory: (key, result) => {
+    setForDirectory: (key, result): void => {
       perDirectory.tableFor(toPath(key.directory)).set(modeKey(key.name, key.mode), result);
     },
     getFromNonRelative: (key) =>
       nonRelative.get(modeKey(key.name, key.mode), toPath(key.directory)),
-    setForNonRelative: (key, result) => {
+    setForNonRelative: (key, result): void => {
       const table = nonRelative.tableFor(modeKey(key.name, key.mode));
       const path = toPath(key.directory);
       if (table.has(path)) {

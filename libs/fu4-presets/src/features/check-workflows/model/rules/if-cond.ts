@@ -62,13 +62,13 @@ export const ifCond = workflowRule({
   docs: "https://github.com/rhysd/actionlint/blob/main/docs/checks.md#if-cond-constant",
   visitor: (fail): Visitor => ({
     ...NOOP,
-    jobPre: (job) => {
+    jobPre: (job): void => {
       checkCondition(fail)(job.condition);
       for (const snapshot of Option.toArray(Option.fromNullishOr(job.snapshot))) {
         checkCondition(fail)(snapshot.condition);
       }
     },
-    step: (step) => {
+    step: (step): void => {
       checkCondition(fail)(step.condition);
     },
   }),

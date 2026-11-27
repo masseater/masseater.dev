@@ -64,7 +64,7 @@ const resamplerOf = (fill: Fill, ratio: number): Resampler => {
     }
   };
   return {
-    reset: () => {
+    reset: (): void => {
       Object.assign(state, { phase: ONE, count: 0, index: 0, a0: 0, a1: 0, b0: 0, b1: 0 });
     },
     pull: pullOf(ratio, fill, interpolated),
@@ -110,7 +110,7 @@ const cueOf = (): Cue => {
   let state: CueState = { queued: false, next: STOP, on: false, fresh: false };
   return {
     read: () => state,
-    write: (change) => {
+    write: (change): void => {
       state = { ...state, ...change };
     },
   };

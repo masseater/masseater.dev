@@ -91,7 +91,7 @@ const rendererOf = (parts: Parts): Renderer => {
   let bound = Option.none<Bound>();
   let number = ORIGIN;
   return {
-    draw: (frame) => {
+    draw: (frame): void => {
       number += ONE_PIXEL;
       if (Option.isSome(bound)) {
         drawGpuFrame({ bound: bound.value, frame: { ...frame, number } });

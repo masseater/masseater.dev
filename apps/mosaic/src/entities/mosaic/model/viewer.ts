@@ -51,16 +51,16 @@ export const useViewerStore = (): ViewerStore => {
   return useMemo(
     (): ViewerStore => ({
       read: () => registry.get(viewerAtom),
-      write: (viewer) => {
+      write: (viewer): void => {
         registry.set(viewerAtom, viewer);
         registry.set(arrivalAtom, "pending");
       },
-      arrive: () => {
+      arrive: (): void => {
         if (registry.get(arrivalAtom) === "pending") {
           registry.set(arrivalAtom, "arrived");
         }
       },
-      step: (step) => {
+      step: (step): void => {
         registry.update(viewerAtom, onScene(step));
       },
     }),

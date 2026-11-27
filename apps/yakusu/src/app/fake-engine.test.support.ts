@@ -40,7 +40,7 @@ export const fakeEngineWith = (prepare: Prepare): FakeEngine => {
     requests,
     engine: {
       prepare: () => Stream.toAsyncIterable(prepare()),
-      translate: (request) => {
+      translate: (request): AsyncIterable<string> => {
         requests.push(request);
         return Stream.toAsyncIterable(reply(request));
       },

@@ -65,7 +65,7 @@ export const closure =
 const SHARED: readonly ((file: string) => boolean)[] = [
   Str.startsWith(".github/actions/"),
   Str.startsWith("patches/"),
-  (file) => !Str.includes("/")(file) && !Str.endsWith(".md")(file),
+  (file): boolean => !Str.includes("/")(file) && !Str.endsWith(".md")(file),
 ];
 
 const isShared =

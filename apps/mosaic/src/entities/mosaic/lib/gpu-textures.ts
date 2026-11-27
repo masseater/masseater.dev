@@ -166,10 +166,10 @@ const createSlots = (): Slots => {
   const map = MutableHashMap.empty<string, readonly [HTMLImageElement, Slot]>();
   return {
     get: (image) => Option.map(MutableHashMap.get(map, image.src), ([, slot]) => slot),
-    set: (image, slot) => {
+    set: (image, slot): void => {
       MutableHashMap.set(map, image.src, [image, slot]);
     },
-    remove: (image) => {
+    remove: (image): void => {
       MutableHashMap.remove(map, image.src);
     },
     entries: () => map.pipe(MutableHashMap.values, Array.fromIterable),
@@ -182,7 +182,7 @@ export const createTextures = (context: Context): Textures => {
   return {
     get: lookup(context, slots),
     ensure: register(context, slots),
-    sweep: (frame) => {
+    sweep: (frame): void => {
       if (slots.size() > TEXTURE_LIMIT) {
         evict(slots, frame);
       }

@@ -83,7 +83,7 @@ const blockOf = (
   let started = false;
   return {
     image,
-    start: () => {
+    start: (): void => {
       if (!started) {
         started = true;
         const first = index === OVERVIEW;

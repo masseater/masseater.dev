@@ -67,7 +67,7 @@ const loadsTypeScriptRules = Effect.gen(function* loadsTypeScriptRules() {
 });
 
 const noBaz: TextlintPreset["rules"][string] = (context) => ({
-  [context.Syntax.Str](node) {
+  [context.Syntax.Str](node): void {
     if (Str.includes("baz")(context.getSource(node))) {
       context.report(node, new context.RuleError("baz is not allowed"));
     }

@@ -1,11 +1,10 @@
 import { createTextSearchRouter } from "@masseater.dev/start-shell/query-router";
-import type { Router } from "@tanstack/react-router";
 
 import { FRESH } from "#/shared/config/index.ts";
 
 import { routeTree } from "./routeTree.gen.ts";
 
-export type AppRouter = Router<typeof routeTree>;
+export type AppRouter = ReturnType<typeof createTextSearchRouter<typeof routeTree>>;
 
 declare module "@tanstack/react-router" {
   interface Register {

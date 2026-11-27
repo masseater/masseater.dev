@@ -86,7 +86,7 @@ const createProgramCache = (site: Omit<ProgramSite, "options">): ProgramLookup =
 const createResolvedModuleTable = (): ResolvedModuleTable => {
   const byFile = new Map<string, Map<string, TsResolution>>();
   return {
-    record: (fileName, entries) => {
+    record: (fileName, entries): void => {
       const path = toPath(fileName);
       const own = byFile.getOrInsertComputed(path, () => new Map<string, TsResolution>());
       for (const entry of entries) {
@@ -147,7 +147,7 @@ export const wrapHost: {
             noDtsResolution: false,
           }),
         ),
-      createPrimaryProgram: (rootName) => {
+      createPrimaryProgram: (rootName): Program => {
         const created = getProgram([rootName], PRIMARY_OPTIONS);
         for (const [fileName, entries] of created.resolvedModules) {
           resolvedModules.record(fileName, entries);

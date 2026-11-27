@@ -51,17 +51,17 @@ const boostOf =
 type SourceOp = "flush" | "gather" | "empty" | "stereo";
 
 const sources = ({ kuraku, track, buses }: Rig): Pick<Handlers, SourceOp> => ({
-  flush: ({ into, lane, mono }) => {
+  flush: ({ into, lane, mono }): void => {
     const bus = kuraku.studio.bus({ mono: mono === true, name: track });
     buses.put(into, kuraku.lane(track, lane)(bus));
   },
-  gather: ({ into, lane }) => {
+  gather: ({ into, lane }): void => {
     buses.put(into, kuraku.lane(track, lane)(kuraku.studio.bus({ mono: true })));
   },
-  empty: ({ into, mono }) => {
+  empty: ({ into, mono }): void => {
     buses.put(into, kuraku.studio.bus({ mono }));
   },
-  stereo: ({ bus }) => {
+  stereo: ({ bus }): void => {
     buses.put(bus, stereoOf(buses.at(bus)));
   },
 });
@@ -69,18 +69,18 @@ const sources = ({ kuraku, track, buses }: Rig): Pick<Handlers, SourceOp> => ({
 const routes = ({ kuraku, buses }: Rig): Omit<Handlers, SourceOp | ToneOp> => {
   const { studio, frames } = kuraku;
   return {
-    send: (step) => {
+    send: (step): void => {
       sent(frames)({ into: buses.at(step.into), gain: step.gain, shape: boostOf(kuraku)(step) })(
         buses.at(step.from),
       );
     },
-    duck: ({ bus, by, depth }) => {
+    duck: ({ bus, by, depth }): void => {
       studio.envelope({ envelope: kuraku.shared()[by], depth })(buses.at(bus));
     },
-    scale: ({ bus, gain }) => {
+    scale: ({ bus, gain }): void => {
       scaled({ frames, bus: buses.at(bus), gain });
     },
-    mix: ({ from, into, gain }) => {
+    mix: ({ from, into, gain }): void => {
       studio.mix({ into: buses.at(into), gain })(buses.at(from));
     },
   };

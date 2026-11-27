@@ -131,7 +131,7 @@ export const lifeOf = (request: MixRequest): Session => {
   return {
     life,
     stems,
-    play: (stage) => {
+    play: (stage): void => {
       for (const name of stageOf(request)(stage)) {
         for (const event of request.play(name)) {
           heard(event);

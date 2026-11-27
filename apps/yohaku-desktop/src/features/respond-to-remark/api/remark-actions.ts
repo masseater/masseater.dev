@@ -89,10 +89,10 @@ export const useRemarkActions = (marked: Marked): RemarkActions => {
     rewriting,
     proposal,
     done,
-    rewrite: () => {
+    rewrite: (): void => {
       setRewriting(Option.some(marked.key));
     },
-    replace: () => {
+    replace: (): void => {
       const ready = Option.all({ view: editor, text: proposal });
       if (Option.isSome(ready)) {
         replaced(marked, ready.value.view, ready.value.text);
@@ -101,7 +101,7 @@ export const useRemarkActions = (marked: Marked): RemarkActions => {
       Effect.runFork(yohaku.logReaction("remark-rewritten"));
     },
     cancel: finish,
-    keep: () => {
+    keep: (): void => {
       const ready = Option.all({ view: editor, manuscript: id });
       if (Option.isSome(ready)) {
         ready.value.view.dispatch({ effects: dropped.of(marked.key) });
