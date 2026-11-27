@@ -1,6 +1,5 @@
 import { Array as Arr, Effect, Option, Record as Rec, pipe } from "effect";
 
-import type { Scene, Script } from "#/entities/script/index.ts";
 import type { Format } from "#/shared/config/index.ts";
 import { FPS, FRAMES, NOTHING, ONE, SFX, SFX_CREDIT, Timing } from "#/shared/config/index.ts";
 
@@ -9,6 +8,7 @@ import type { Unplaced } from "./fit-length.ts";
 import { fitLength, totalOf } from "./fit-length.ts";
 import { frames, revealsOf } from "./frames.ts";
 import { timeLines } from "./lines.ts";
+import type { Scene, Script } from "./script.ts";
 import type { Sources, TimedLine, TimedScene, Timeline } from "./timeline.ts";
 
 const REVEAL_HOLD_SECONDS = 1.6;

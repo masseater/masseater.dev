@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import type { Timeline } from "#/entities/timeline/index.ts";
+import type { Timeline } from "#/entities/script/index.ts";
 
 import { BackgroundMusic } from "./background-music.tsx";
 import { SoundEffects } from "./sound-effects.tsx";

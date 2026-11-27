@@ -1,10 +1,10 @@
 import { Array as Arr, Effect, Option, Record as Rec, pipe } from "effect";
 
-import type { Line, Scene, Script } from "#/entities/script/index.ts";
 import { Timing } from "#/shared/config/index.ts";
 
 import { emphasisAtOf, estimateSeconds, frames } from "./frames.ts";
 import { narrationKey, spokenOf } from "./narration.ts";
+import type { Line, Scene, Script } from "./script.ts";
 import type { Sources, TimedLine } from "./timeline.ts";
 
 type Recording = Readonly<{ key: string; seconds: number }>;

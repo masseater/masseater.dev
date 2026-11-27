@@ -1,9 +1,8 @@
 import { Array as Arr, Effect, Option, String as Str, pipe } from "effect";
 import { expect, test } from "vite-plus/test";
 
-import { parseScript } from "#/entities/script/index.ts";
+import { parseScript, planTimeline } from "#/entities/script/index.ts";
 import type { ScriptError } from "#/entities/script/index.ts";
-import { planTimeline } from "#/entities/timeline/index.ts";
 
 import { checkScript } from "./check.ts";
 

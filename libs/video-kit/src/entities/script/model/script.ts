@@ -1,8 +1,9 @@
 import { Array as Arr, pipe } from "effect";
 
 import type { Format } from "#/shared/config/index.ts";
+import type { Segment } from "#/shared/ui/index.ts";
 
-export type Segment = Readonly<{ text: string; code: boolean; emphasis: boolean }>;
+export type { Segment } from "#/shared/ui/index.ts";
 export type Line = Readonly<{ segments: readonly Segment[]; caption: boolean }>;
 
 export type SceneBase = Readonly<{

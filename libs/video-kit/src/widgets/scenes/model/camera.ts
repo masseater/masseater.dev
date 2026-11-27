@@ -1,7 +1,7 @@
 import { Array as Arr, Option, pipe } from "effect";
 
-import type { TimedLine, TimedScene } from "#/entities/timeline/index.ts";
-import { HEADING_LANDS_AT } from "#/entities/timeline/index.ts";
+import type { TimedLine, TimedScene } from "#/entities/script/index.ts";
+import { HEADING_LANDS_AT } from "#/entities/script/index.ts";
 import { ONE } from "#/shared/config/index.ts";
 import type { Hit } from "#/shared/ui/motion.ts";
 

@@ -48,7 +48,12 @@ export default defineConfig({
       ],
     },
     textlint: {
-      ignores: ["apps/zenn-articles/**", "**/.cache/**", "**/fixtures/**"],
+      ignores: [
+        "apps/zenn-articles/**",
+        "**/src/pages/*/video.md",
+        "**/.cache/**",
+        "**/fixtures/**",
+      ],
       kanji: [
         "個人情報保護法",
         "中小企業基盤整備機構",
@@ -68,7 +73,7 @@ export default defineConfig({
       },
       rules: { "@r_masseater/preset-ja": { "no-taigendome": false } },
     },
-    markdown: { ignores: ["apps/zenn-articles/**"] },
+    markdown: { ignores: ["apps/zenn-articles/**", "**/src/pages/*/video.md"] },
     run: {
       remoteCache: "https://task-cache.masseater.dev/projects/masseater.dev",
       tasks: { "db-check-all": "vp run -r db:check" },

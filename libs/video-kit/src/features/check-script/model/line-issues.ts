@@ -1,7 +1,7 @@
 import { Array as Arr, Number as Num, pipe } from "effect";
 
 import { textOf } from "#/entities/script/index.ts";
-import type { TimedLine } from "#/entities/timeline/index.ts";
+import type { TimedLine } from "#/entities/script/index.ts";
 import type { Format } from "#/shared/config/index.ts";
 import { Timing } from "#/shared/config/index.ts";
 

@@ -1,8 +1,9 @@
 import { Array as Arr, Match, Number as Num, Option, pipe } from "effect";
 
-import type { Line, Scene } from "#/entities/script/index.ts";
-import { textOf } from "#/entities/script/index.ts";
 import { FPS, NOTHING, ONE, Timing } from "#/shared/config/index.ts";
+
+import type { Line, Scene } from "./script.ts";
+import { textOf } from "./script.ts";
 
 export const frames = (seconds: number): number => Math.round(seconds * FPS);
 

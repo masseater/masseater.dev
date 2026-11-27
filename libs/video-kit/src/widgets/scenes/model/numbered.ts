@@ -1,6 +1,6 @@
 import { Array as Arr, pipe } from "effect";
 
-import type { TimedScene } from "#/entities/timeline/index.ts";
+import type { TimedScene } from "#/entities/script/index.ts";
 import { NOTHING, ONE } from "#/shared/config/index.ts";
 
 export interface Numbered {

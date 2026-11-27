@@ -1,7 +1,7 @@
 import { Array as Arr, Option, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import type { TimedLine } from "#/entities/timeline/index.ts";
+import type { TimedLine } from "#/entities/script/index.ts";
 import { Box } from "#/shared/ui/box.tsx";
 import { popIn } from "#/shared/ui/motion.ts";
 import { keyed } from "#/widgets/scenes/model/keyed.ts";

@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import type { TimedScene } from "#/entities/timeline/index.ts";
+import type { TimedScene } from "#/entities/script/index.ts";
 import type { Format } from "#/shared/config/index.ts";
 
 export interface SceneProps {

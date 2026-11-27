@@ -1,9 +1,8 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
-import type { Segment } from "#/entities/script/index.ts";
-
 import { Run } from "./run.tsx";
+import type { Segment } from "./segment.ts";
 import { markVars } from "./vars.ts";
 
 const classOf = (segment: Segment): string => {

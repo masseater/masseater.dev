@@ -3,8 +3,7 @@ import type { ReactNode } from "react";
 import { useCurrentFrame } from "remotion";
 
 import type { Segment } from "#/entities/script/index.ts";
-import { plainOf } from "#/entities/script/index.ts";
-import { HEADING_LANDS_AT } from "#/entities/timeline/index.ts";
+import { plainOf, HEADING_LANDS_AT } from "#/entities/script/index.ts";
 import { Box } from "#/shared/ui/box.tsx";
 import { slamIn } from "#/shared/ui/motion.ts";
 

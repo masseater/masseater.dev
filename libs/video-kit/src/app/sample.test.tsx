@@ -2,10 +2,8 @@ import { Effect, Option } from "effect";
 import { expect, test } from "vite-plus/test";
 import { page } from "vite-plus/test/browser";
 
-import { parseScript } from "#/entities/script/index.ts";
-import type { ScriptError } from "#/entities/script/index.ts";
-import { planTimeline } from "#/entities/timeline/index.ts";
-import type { Timeline } from "#/entities/timeline/index.ts";
+import { parseScript, planTimeline } from "#/entities/script/index.ts";
+import type { ScriptError, Timeline } from "#/entities/script/index.ts";
 import type { Format } from "#/shared/config/index.ts";
 import { FONT } from "#/shared/config/index.ts";
 

@@ -1,8 +1,7 @@
 import { Array as Arr, Match, pipe } from "effect";
 
 import { plainOf, textOf } from "#/entities/script/index.ts";
-import type { Scene, Segment } from "#/entities/script/index.ts";
-import type { Timeline } from "#/entities/timeline/index.ts";
+import type { Scene, Segment, Timeline } from "#/entities/script/index.ts";
 
 const FIXED = "ひとことで言うと★0123456789/—";
 

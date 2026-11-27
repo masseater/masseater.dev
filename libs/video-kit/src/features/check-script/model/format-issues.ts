@@ -1,8 +1,7 @@
 import { Array as Arr, pipe } from "effect";
 
-import type { Line, Scene, Script } from "#/entities/script/index.ts";
+import type { Line, Scene, Script, Timeline } from "#/entities/script/index.ts";
 import { textOf } from "#/entities/script/index.ts";
-import type { Timeline } from "#/entities/timeline/index.ts";
 import type { Format } from "#/shared/config/index.ts";
 import { ONE, Timing } from "#/shared/config/index.ts";
 

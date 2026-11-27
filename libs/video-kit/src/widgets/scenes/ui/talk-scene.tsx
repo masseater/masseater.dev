@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { useCurrentFrame } from "remotion";
 
 import type { Segment } from "#/entities/script/index.ts";
-import { HEADING_LANDS_AT } from "#/entities/timeline/index.ts";
+import { HEADING_LANDS_AT } from "#/entities/script/index.ts";
 import { markProgress, slamIn } from "#/shared/ui/motion.ts";
 import { headlineSize } from "#/widgets/scenes/model/headline-size.ts";
 

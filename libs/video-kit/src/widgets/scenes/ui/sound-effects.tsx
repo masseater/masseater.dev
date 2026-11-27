@@ -3,7 +3,7 @@ import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 import { Sequence } from "remotion";
 
-import type { Timeline } from "#/entities/timeline/index.ts";
+import type { Timeline } from "#/entities/script/index.ts";
 import { SFX } from "#/shared/config/index.ts";
 
 const EFFECT_FRAMES = 60;

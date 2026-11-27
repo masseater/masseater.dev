@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { AbsoluteFill } from "remotion";
 
-import type { Timeline } from "#/entities/timeline/index.ts";
+import type { Timeline } from "#/entities/script/index.ts";
 import { useFonts } from "#/shared/ui/use-fonts.ts";
 import { shownText } from "#/widgets/scenes/model/shown-text.ts";
 

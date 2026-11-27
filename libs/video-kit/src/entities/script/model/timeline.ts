@@ -1,9 +1,9 @@
 import type { Option } from "effect";
 
-import type { Line, Scene } from "#/entities/script/index.ts";
 import type { Format, SfxKind } from "#/shared/config/index.ts";
 
 import type { Narration } from "./narration.ts";
+import type { Line, Scene } from "./script.ts";
 
 export interface TimedLine {
   readonly line: Line;

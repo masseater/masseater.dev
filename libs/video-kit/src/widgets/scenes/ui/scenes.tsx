@@ -2,7 +2,7 @@ import { Array as Arr, Record as Rec, pipe } from "effect";
 import type { ReactNode } from "react";
 import { Sequence } from "remotion";
 
-import type { Timeline } from "#/entities/timeline/index.ts";
+import type { Timeline } from "#/entities/script/index.ts";
 import { numbered } from "#/widgets/scenes/model/numbered.ts";
 
 import type { SceneOverride } from "./scene-props.ts";

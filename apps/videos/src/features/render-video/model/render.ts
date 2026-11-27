@@ -6,10 +6,10 @@ import type { Config, PlatformError } from "effect";
 import type { ChildProcessSpawner } from "effect/process";
 
 import { REMOTION_BROWSER } from "#/shared/config/index.ts";
-import { webpackOverride } from "#/shared/config/webpack.ts";
 import { projectPaths } from "#/shared/lib/project.ts";
 import { failedWith } from "#/shared/lib/video-error.ts";
 import type { VideoError } from "#/shared/lib/video-error.ts";
+import { webpackOverride } from "#/shared/lib/webpack.ts";
 
 import { normalizeLoudness } from "./ffmpeg.ts";
 

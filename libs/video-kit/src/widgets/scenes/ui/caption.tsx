@@ -2,7 +2,7 @@ import { Array as Arr, Option, pipe } from "effect";
 import type { ReactNode } from "react";
 import { useCurrentFrame } from "remotion";
 
-import type { TimedLine } from "#/entities/timeline/index.ts";
+import type { TimedLine } from "#/entities/script/index.ts";
 
 import { CaptionLine } from "./caption-line.tsx";
 

@@ -1,8 +1,9 @@
 import { Effect, Record as Rec, String as Str } from "effect";
 
-import type { Line, Script } from "#/entities/script/index.ts";
-import { textOf } from "#/entities/script/index.ts";
 import { NOTHING, Timing } from "#/shared/config/index.ts";
+
+import type { Line, Script } from "./script.ts";
+import { textOf } from "./script.ts";
 
 const KEY_LENGTH = 24;
 const HASH = "SHA-256";

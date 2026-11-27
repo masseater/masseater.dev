@@ -5,7 +5,7 @@ import type { CSSProperties, ReactNode } from "react";
 import { useMemo } from "react";
 import { createRoot } from "react-dom/client";
 
-import type { Timeline } from "#/entities/timeline/index.ts";
+import type { Timeline } from "#/entities/script/index.ts";
 import type { Format } from "#/shared/config/index.ts";
 import { StandardVideo } from "#/widgets/scenes/index.ts";
 
