@@ -4,7 +4,7 @@ import { runMain } from "@masseater.dev/node-main";
 import { Array as Arr, Effect, Option, Record as Rec, Schema, pipe } from "effect";
 
 import { isChanged, nameOf, workspace } from "./lib/changes.ts";
-import { deployed } from "./lib/deployment.ts";
+import { Stacks, deployed } from "./lib/deployment.ts";
 
 const TASK = "deploy:production";
 const WORKFLOWS = [".github/workflows/deploy.yml"];
@@ -15,11 +15,6 @@ const Task = Schema.Struct({
 });
 
 const Plan = Schema.fromJsonString(Schema.Struct({ plan: Schema.Record(Schema.String, Task) }));
-
-const Stacks = Schema.Struct({ name: Schema.String, filter: Schema.String }).pipe(
-  Schema.Array,
-  Schema.fromJsonString,
-);
 
 type Tasks = (typeof Plan.Type)["plan"];
 

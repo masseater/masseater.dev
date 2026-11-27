@@ -1,8 +1,8 @@
+import { TableBody } from "@masseater.dev/ui/table";
 import { Array, pipe } from "effect";
 import type { ReactNode } from "react";
 
 import { usePerson } from "#/pages/person/api/use-person.ts";
-import { TableBody } from "#/shared/ui/table-body.tsx";
 import { TableHeadings } from "#/shared/ui/table-headings.tsx";
 import { Table } from "#/shared/ui/table.tsx";
 

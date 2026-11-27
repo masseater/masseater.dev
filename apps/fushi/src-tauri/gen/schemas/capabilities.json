@@ -1,0 +1,1 @@
+{"default":{"identifier":"default","description":"Capability for the main window. The same permissions are given at startup to the origin the bundled localhost server serves","local":true,"windows":["main"],"permissions":["core:default","allow-load-library","allow-save-library","allow-list-baselines","allow-read-baseline"]}}

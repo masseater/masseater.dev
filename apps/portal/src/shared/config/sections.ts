@@ -1,5 +1,6 @@
 import type { RegisteredRouter } from "@tanstack/react-router";
 import {
+  CalendarRange,
   FileText,
   History,
   House,
@@ -33,6 +34,7 @@ export const NAV_GROUPS: readonly NavGroup[] = [
       { label: "年表", to: "/timeline" },
       { label: "ライフ記録", to: "/records" },
       { label: "作業メモ", to: "/memos" },
+      { label: "週次振り返り", to: "/weeks" },
       { label: "人物像", to: "/profile" },
       { label: "会話履歴", to: "/conversations" },
     ],
@@ -52,6 +54,7 @@ export const NAV_ICONS: Readonly<Record<PortalPath, LucideIcon>> = {
   "/timeline": History,
   "/records": NotebookPen,
   "/memos": FileText,
+  "/weeks": CalendarRange,
   "/profile": UserRound,
   "/conversations": MessagesSquare,
   "/money": Wallet,

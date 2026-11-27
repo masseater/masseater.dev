@@ -1,4 +1,4 @@
-import { compactInput } from "@masseater.dev/mcp-tool-call";
+import { OVERWRITE, WRITE, compactInput } from "@masseater.dev/mcp-tool-call";
 import type { McpServer } from "@modelcontextprotocol/server";
 import type { DrizzleD1Database } from "drizzle-orm/d1";
 import { Schema } from "effect";
@@ -9,8 +9,6 @@ import type { CatalogRelations } from "#/shared/db/index.server.ts";
 
 import { addSongAlias, removeSongAlias } from "./song-write.server.ts";
 
-const WRITE = { readOnlyHint: false, destructiveHint: false, openWorldHint: false };
-const DESTRUCTIVE = { readOnlyHint: false, destructiveHint: true, openWorldHint: false };
 const ALIAS_SCHEMA = SongAliasInput.pipe(
   Schema.toStandardSchemaV1,
   Schema.toStandardJSONSchemaV1,
@@ -31,7 +29,7 @@ export const registerSongAliasTools =
     );
     server.registerTool(
       "remove_song_alias",
-      { description: "曲から別表記を外す", inputSchema: ALIAS_SCHEMA, annotations: DESTRUCTIVE },
+      { description: "曲から別表記を外す", inputSchema: ALIAS_SCHEMA, annotations: OVERWRITE },
       (input) => runTool(db)(removeSongAlias(input)),
     );
     return server;

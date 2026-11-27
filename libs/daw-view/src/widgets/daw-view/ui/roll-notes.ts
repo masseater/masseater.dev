@@ -194,11 +194,12 @@ const visible = (brush: Brush): readonly NoteEvent[] => {
   return eventsBetween({ from: brush.pen.from * bar, to: brush.pen.to * bar })(brush.track);
 };
 
-const keyedTrack =
-  (notes: Notes, keys: Keys) =>
+const drawnOn =
+  <Drawn extends NoteEvent>(notes: Notes, keep: (event: NoteEvent) => event is Drawn) =>
+  (draw: (brush: Brush) => (event: Drawn) => void) =>
   (track: Track): void => {
     const brush = brushOf(notes)(track);
-    pipe(visible(brush), Arr.filter(isKeyed(notes.layout)), Arr.map(keyed(brush, keys)));
+    pipe(visible(brush), Arr.filter(keep), Arr.map(draw(brush)));
   };
 
 const keyedPass = (notes: Notes, keys: Keys): void => {
@@ -207,7 +208,8 @@ const keyedPass = (notes: Notes, keys: Keys): void => {
   pen.context.beginPath();
   pen.context.rect(pen.origin, layout.top, pen.width - pen.origin, keys.height);
   pen.context.clip();
-  pipe(layout.tracks, Arr.map(keyedTrack(notes, keys)));
+  const keysOn = drawnOn(notes, isKeyed(layout))((brush) => keyed(brush, keys));
+  pipe(layout.tracks, Arr.map(keysOn));
   pen.context.restore();
 };
 
@@ -268,13 +270,12 @@ const rowed =
 
 const rowPass = (notes: Notes): void => {
   const space = spacer();
+  const rowsOn = drawnOn(
+    notes,
+    (event): event is NoteEvent => !isKeyed(notes.layout)(event),
+  )((brush) => rowed(brush, space));
   for (const track of notes.layout.tracks) {
-    const brush = brushOf(notes)(track);
-    pipe(
-      visible(brush),
-      Arr.filter((event) => !isKeyed(notes.layout)(event)),
-      Arr.map(rowed(brush, space)),
-    );
+    rowsOn(track);
   }
 };
 

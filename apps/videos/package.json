@@ -1,0 +1,34 @@
+{
+  "name": "@masseater.dev/videos",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Remotion project holding the owner's explainer videos, one folder per video, each rendered as 9:16 and 16:9 from its Markdown script.",
+  "bin": {
+    "videos": "./bin/videos.ts"
+  },
+  "type": "module",
+  "imports": {
+    "#/*": "./src/*",
+    "#package.json": "./package.json"
+  },
+  "dependencies": {
+    "@masseater.dev/node-main": "workspace:*",
+    "@masseater.dev/tachie": "workspace:*",
+    "@masseater.dev/video-kit": "workspace:*",
+    "effect": "catalog:stack",
+    "playwright-core": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "remotion": "catalog:"
+  },
+  "devDependencies": {
+    "@effect/vitest": "catalog:",
+    "@remotion/bundler": "catalog:",
+    "@remotion/cli": "catalog:",
+    "@remotion/renderer": "catalog:",
+    "@remotion/tailwind-v4": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "vite-plus": "catalog:stack"
+  }
+}

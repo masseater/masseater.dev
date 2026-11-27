@@ -1,4 +1,4 @@
-import { compactInput } from "@masseater.dev/mcp-tool-call";
+import { OVERWRITE, WRITE, compactInput } from "@masseater.dev/mcp-tool-call";
 import type { McpServer } from "@modelcontextprotocol/server";
 import type { DrizzleD1Database } from "drizzle-orm/d1";
 import { Schema } from "effect";
@@ -9,8 +9,6 @@ import type { CatalogRelations } from "#/shared/db/index.server.ts";
 
 import { createSong, deleteSong, mergeSongs, updateSong } from "./song-write.server.ts";
 
-const WRITE = { readOnlyHint: false, destructiveHint: false, openWorldHint: false };
-const DESTRUCTIVE = { readOnlyHint: false, destructiveHint: true, openWorldHint: false };
 const CREATE_SCHEMA = CreateSongInput.pipe(
   Schema.toStandardSchemaV1,
   Schema.toStandardJSONSchemaV1,
@@ -58,7 +56,7 @@ export const registerSongTools =
       {
         description: "曲を消す。その曲を使ったパートは残り、曲とのつながりだけが外れる",
         inputSchema: ID_SCHEMA,
-        annotations: DESTRUCTIVE,
+        annotations: OVERWRITE,
       },
       ({ id }) => runTool(db)(deleteSong(id)),
     );
@@ -68,7 +66,7 @@ export const registerSongTools =
         description:
           "重複した曲をまとめる。消す側の曲名と別表記は残す側の別表記になり、パートは残す側につながる",
         inputSchema: MERGE_SCHEMA,
-        annotations: DESTRUCTIVE,
+        annotations: OVERWRITE,
       },
       (input) => runTool(db)(mergeSongs(input)),
     );

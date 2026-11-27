@@ -1,15 +1,12 @@
 "use client";
 
+import { Table, TableBody, TableCaption, TableHeader } from "@masseater.dev/ui/table";
 import { Array as Arr, pipe } from "effect";
 import { useId } from "react";
 import type { ReactNode } from "react";
 
 import { sortRows, useSort } from "#/features/sort-table/model/sorting.ts";
 import type { TableColumn } from "#/features/sort-table/model/sorting.ts";
-import { TableBody } from "#/shared/ui/table-body.tsx";
-import { TableCaption } from "#/shared/ui/table-caption.tsx";
-import { TableHeader } from "#/shared/ui/table-header.tsx";
-import { Table } from "#/shared/ui/table.tsx";
 
 import { SortBodyRow } from "./sort-body-row.tsx";
 import { SortHeaderRow } from "./sort-header-row.tsx";

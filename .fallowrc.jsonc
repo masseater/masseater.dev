@@ -208,6 +208,12 @@
       "alwaysUsed": ["src/app/routeTree.gen.ts"],
     },
     {
+      "name": "remotion-fsd",
+      "enablers": ["@remotion/cli"],
+      "entryPointRole": "runtime",
+      "entryPoints": ["src/app/index.{ts,tsx}", "src/pages/*/*.{ts,tsx}"],
+    },
+    {
       "name": "alchemy-stacks",
       "enablers": ["alchemy"],
       "entryPoints": ["alchemy.*.ts"],

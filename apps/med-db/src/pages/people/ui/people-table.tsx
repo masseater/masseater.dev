@@ -1,10 +1,10 @@
+import { TableBody } from "@masseater.dev/ui/table";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 import { Array, pipe } from "effect";
 import type { ReactNode } from "react";
 
 import { catalogQueries } from "#/entities/catalog/index.ts";
-import { TableBody } from "#/shared/ui/table-body.tsx";
 import { TableHeadings } from "#/shared/ui/table-headings.tsx";
 import { Table } from "#/shared/ui/table.tsx";
 

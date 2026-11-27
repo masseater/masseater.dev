@@ -1,6 +1,7 @@
+import { pathPartsOf } from "@masseater.dev/aredoko-protocol";
 import { Array, Effect, Number, Option, Order, Path, Record, pipe } from "effect";
 
-import { isLoose, partsOf } from "#/entities/package/index.ts";
+import { isLoose } from "#/entities/package/index.ts";
 
 import { statOf } from "./file-stat.ts";
 import type { PackageFile } from "./package-row.ts";
@@ -41,7 +42,7 @@ const memberOf = Effect.fn("memberOf")(function* statMember(root: string, name: 
     Option.map(
       (found) =>
         ({
-          pathname: pipe(partsOf(name), Array.join(SEPARATOR)),
+          pathname: pipe(pathPartsOf(name), Array.join(SEPARATOR)),
           file,
           ...found,
         }) satisfies Member,
@@ -51,7 +52,7 @@ const memberOf = Effect.fn("memberOf")(function* statMember(root: string, name: 
 
 const topOf = ({ pathname }: Member): string =>
   pipe(
-    partsOf(pathname),
+    pathPartsOf(pathname),
     Array.head,
     Option.getOrElse(() => pathname),
   );

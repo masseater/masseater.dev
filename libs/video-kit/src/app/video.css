@@ -1,0 +1,118 @@
+@import "tailwindcss";
+@import "@fontsource/noto-sans-jp/700.css";
+@import "@fontsource/noto-sans-jp/900.css";
+@import "@fontsource/ibm-plex-mono/latin-500.css";
+
+@source "../";
+
+@custom-variant horizontal (&:where([data-format="horizontal"], [data-format="horizontal"] *));
+
+@theme {
+  --color-paper: #f4f1ea;
+  --color-ink: #1c1b19;
+  --color-muted: #6b675f;
+  --color-rule: #d9d3c7;
+  --color-accent: #2f5bd3;
+  --color-telop: #ffffff;
+  --color-highlight: #ffd60a;
+  --color-code-ink: #f4f1ea;
+  --color-code-prompt: #8fb3ff;
+  --color-code-output: #b9b4a8;
+
+  --text-label: 60px;
+  --text-label-h: 40px;
+  --text-meta: 46px;
+  --text-meta-h: 32px;
+  --text-caption: 70px;
+  --text-caption-h: 56px;
+  --text-code: 40px;
+  --text-code-h: 34px;
+  --text-star: 150px;
+  --text-star-h: 120px;
+  --text-credit: 32px;
+  --text-credit-h: 22px;
+  --text-quote: 96px;
+  --text-quote-h: 80px;
+
+  --font-jp: "Noto Sans JP", sans-serif;
+  --font-code: "IBM Plex Mono", "Noto Sans JP", monospace;
+}
+
+@utility motion {
+  translate: var(--x, 0) var(--y, 0);
+  scale: var(--scale, 1);
+  opacity: var(--shown, 1);
+}
+
+@utility fitted {
+  font-size: calc(var(--size) * 1px);
+}
+
+@utility telop {
+  -webkit-text-stroke: 0.16em var(--color-ink);
+  paint-order: stroke fill;
+}
+
+@utility marker {
+  background-image: linear-gradient(var(--color-highlight), var(--color-highlight));
+  background-repeat: no-repeat;
+  background-position: 0 88%;
+  background-size: calc(var(--mark, 1) * 100%) 42%;
+  box-decoration-break: clone;
+}
+
+@utility japanese {
+  word-break: auto-phrase;
+  text-wrap: balance;
+  letter-spacing: 0.02em;
+}
+
+@utility safe-area {
+  position: absolute;
+  inset: 288px 192px 672px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
+@utility safe-area-h {
+  inset: 54px 96px;
+  gap: 24px;
+}
+
+@utility stage {
+  scale: var(--zoom, 1);
+  transform-origin: 50% 45%;
+}
+
+@utility tachie {
+  right: -60px;
+  bottom: -40px;
+  height: 780px;
+}
+
+@utility tachie-h {
+  right: 0;
+  bottom: 0;
+  height: 560px;
+}
+
+@utility emphasis {
+  color: var(--emphasis, currentColor);
+}
+
+@utility star-outline {
+  -webkit-text-stroke: 0.07em var(--color-ink);
+  paint-order: stroke fill;
+}
+
+@utility inline-code {
+  font-family: var(--font-code);
+  font-weight: 500;
+  font-size: 0.86em;
+  background: var(--color-ink);
+  color: var(--color-code-ink);
+  padding: 0.04em 0.32em;
+  border-radius: 0.18em;
+  margin: 0 0.12em;
+}
