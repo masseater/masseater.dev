@@ -8,7 +8,7 @@ import { registerConversationTools } from "#/features/store-conversations/index.
 import type { ToolRun } from "#/shared/api/index.server.ts";
 import { SITE_NAME, SITE_ORIGIN } from "#/shared/config/index.ts";
 
-import type { WatashiServices } from "./bindings.server.ts";
+import type { WatashiServices } from "./layer.server.ts";
 import { registerMoneyTools } from "./money-tools.server.ts";
 
 const SERVER_INFO = { name: SITE_NAME, version: "0.0.0", websiteUrl: SITE_ORIGIN };

@@ -11,7 +11,7 @@ import type { MetricsSink } from "#/features/store-conversations/index.server.ts
 import { services } from "#/shared/api/index.server.ts";
 import { Database, databaseOf } from "#/shared/db/index.server.ts";
 
-import type { WatashiServices } from "./bindings.server.ts";
+import type { WatashiServices } from "./layer.server.ts";
 
 const testD1 = makeD1({
   migrations: new URL("../../../drizzle/", import.meta.url).href,
