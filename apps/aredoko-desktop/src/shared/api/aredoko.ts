@@ -1,4 +1,4 @@
-import { OtelTracer } from "@effect/opentelemetry";
+import { layerGlobal } from "@effect/opentelemetry/OtelTracer";
 import {
   AredokoClient,
   ENDPOINT_FILE,
@@ -52,7 +52,7 @@ const serverUrlLayer = Layer.effect(
 const clientLayer = aredokoClientLayer.pipe(Layer.provide(serverUrlLayer));
 
 const runtime = ManagedRuntime.make(
-  Layer.mergeAll(clientLayer, OtelTracer.layerGlobal).pipe(Layer.provide(FetchHttpClient.layer)),
+  Layer.mergeAll(clientLayer, layerGlobal).pipe(Layer.provide(FetchHttpClient.layer)),
 );
 
 const run = <Value>(

@@ -18,7 +18,7 @@ export const RevisionRow = ({
     <p className="text-muted-foreground text-sm">{revision.body.description}</p>
     <details>
       <summary className="text-muted-foreground cursor-pointer text-xs">{SHOWN}</summary>
-      <pre className="text-foreground mt-2 text-xs leading-relaxed whitespace-pre-wrap">
+      <pre className="text-foreground mt-2 text-xs leading-relaxed break-words whitespace-pre-wrap">
         {revision.body.content}
       </pre>
     </details>
