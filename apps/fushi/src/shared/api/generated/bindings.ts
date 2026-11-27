@@ -6,6 +6,7 @@ import type { InvokeOptions } from "@tauri-apps/api/core";
 
 /** Commands */
 export const commands = {
+	exportPreset: (name: string, json: string, options?: InvokeOptions) => typedError<boolean, Failure>(__TAURI_INVOKE("export_preset", { name, json }, options)),
 	loadLibrary: (options?: InvokeOptions) => typedError<string | null, Failure>(__TAURI_INVOKE("load_library", undefined, options)),
 	saveLibrary: (json: string, options?: InvokeOptions) => typedError<null, Failure>(__TAURI_INVOKE("save_library", { json }, options)),
 	listBaselines: (options?: InvokeOptions) => typedError<string[], Failure>(__TAURI_INVOKE("list_baselines", undefined, options)),

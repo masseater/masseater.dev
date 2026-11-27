@@ -1,4 +1,5 @@
 const COMMANDS: &[&str] = &[
+    "export_preset",
     "load_library",
     "save_library",
     "list_baselines",

@@ -45,3 +45,10 @@ export const fetchBaselines: Effect.Effect<readonly string[], CommandFailed> = i
 /** @internal */
 export const fetchBaselineText = (name: string): Effect.Effect<string, CommandFailed> =>
   invoked(() => commands.readBaseline(name));
+
+/** @internal */
+export const savePresetText = ({
+  name,
+  json,
+}: Readonly<{ name: string; json: string }>): Effect.Effect<boolean, CommandFailed> =>
+  invoked(() => commands.exportPreset(name, json));
