@@ -1,7 +1,6 @@
 import type { Controller } from "@r_masseater/fumx-parser";
 import { Array as Arr, Order } from "effect";
 import type { Option } from "effect";
-import type { MidiEvent } from "midi-file";
 
 export interface Timed {
   readonly tick: number;
@@ -40,6 +39,7 @@ export interface Meter extends Timed {
 
 export interface TempoChange extends Timed {
   readonly microseconds: number;
+  readonly target: Option.Option<number>;
 }
 
 export interface Timeline {
@@ -52,14 +52,15 @@ export interface Timeline {
   readonly parts: readonly Part[];
 }
 
-export type ChannelEvent = Extract<MidiEvent, { readonly channel: number }>;
-
-export interface PlacedEvent {
-  readonly tick: number;
-  readonly event: ChannelEvent;
-}
-
 const byTick = Order.mapInput(Order.Number, (timed: Timed) => timed.tick);
 
 export const sortedByTick = <Item extends Timed>(items: readonly Item[]): readonly Item[] =>
   Arr.sort(items, byTick);
+
+const byTickThenPitch = Order.combine(
+  Order.mapInput(Order.Number, (note: TimelineNote) => note.tick),
+  Order.mapInput(Order.Number, (note: TimelineNote) => note.midi),
+);
+
+export const sortedNotes = (notes: readonly TimelineNote[]): readonly TimelineNote[] =>
+  Arr.sort(notes, byTickThenPitch);

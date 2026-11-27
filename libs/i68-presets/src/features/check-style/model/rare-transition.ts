@@ -5,7 +5,8 @@ import { Array as Arr, Number as Num, Option, Record as Rec, pipe } from "effect
 import { progressionOf } from "#/shared/lib/degrees.ts";
 import type { Step } from "#/shared/lib/degrees.ts";
 import { numberOption } from "#/shared/lib/options.ts";
-import type { StyleTable } from "#/shared/lib/style-table.ts";
+import { longestContext } from "#/shared/lib/style-table.ts";
+import type { Context, StyleTable } from "#/shared/lib/style-table.ts";
 import { reporterOf } from "#/shared/lib/voices.ts";
 import type { Reporter } from "#/shared/lib/voices.ts";
 
@@ -18,40 +19,8 @@ const NEVER = 0;
 const minShare = numberOption({ key: "share", fallback: DEFAULT_SHARE });
 const minSeen = numberOption({ key: "seen", fallback: DEFAULT_SEEN });
 
-interface Context {
-  readonly words: string;
-  readonly next: Readonly<Record<string, number>>;
-  readonly total: number;
-}
-
 const percentOf = (count: number, total: number): string =>
   `${String(Math.round((count / total) * PERCENT))}%`;
-
-const contextOf =
-  (table: StyleTable, seen: number, before: readonly Step[]) =>
-  (length: number): Option.Option<Context> => {
-    const words = pipe(
-      Arr.takeRight(before, length),
-      Arr.map((step) => step.token),
-      Arr.join(" "),
-    );
-    return pipe(
-      Rec.get(table.transitions, words),
-      Option.map((next) => ({ words, next, total: Num.sumAll(Rec.values(next)) })),
-      Option.filter((context) => context.total >= seen),
-    );
-  };
-
-const longestContext = (
-  table: StyleTable,
-  seen: number,
-  before: readonly Step[],
-): Option.Option<Context> =>
-  pipe(
-    Arr.range(FIRST, Math.min(table.order, before.length)),
-    Arr.reverse,
-    Arr.findFirst(contextOf(table, seen, before)),
-  );
 
 const suggestionsOf = (context: Context): string =>
   pipe(
@@ -72,7 +41,7 @@ const checkStep =
   (steps: readonly Step[], index: number): void => {
     const before = Arr.take(steps, index);
     for (const step of Option.toArray(Arr.get(steps, index))) {
-      for (const context of Option.toArray(longestContext(table, seen, before))) {
+      for (const context of Option.toArray(longestContext({ table, seen })(before))) {
         const count = Option.getOrElse(Rec.get(context.next, step.token), () => NEVER);
         if (count / context.total < share) {
           report(`${String(step.line)}:${step.token}:${String(index)}`, {
