@@ -5,7 +5,6 @@ import { sha256 } from "alchemy/Util";
 import { Effect, Option, Redacted } from "effect";
 
 import { japanBucket, japanBucketName } from "#/shared/api/index.ts";
-import type { BucketMover } from "#/shared/api/index.ts";
 
 const RETENTION_DAYS = 30;
 
@@ -70,15 +69,11 @@ const writerToken = Effect.fn("writerToken")(function* writerToken(appName: stri
   });
 });
 
-export const logArchive = Effect.fn("logArchive")(function* logArchive(
-  appName: string,
-  mover: BucketMover,
-) {
+export const logArchive = Effect.fn("logArchive")(function* logArchive(appName: string) {
   const { accountId } = yield* yield* CloudflareEnvironment;
   const bucket = yield* japanBucket("WorkerLogs", {
     name: bucketNameOf(appName),
     lifecycleRules: Option.some(LIFECYCLE_RULES),
-    mover,
   });
   const token = yield* writerToken(appName);
   const credentials = all(token.tokenId, token.value, bucket.bucketName).pipe(

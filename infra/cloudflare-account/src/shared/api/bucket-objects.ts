@@ -21,12 +21,14 @@ export type BucketRoute = Readonly<{ accountId: string; source: string; target: 
 
 export type SlurperCredentials = Readonly<{ accessKeyId: string; secretAccessKey: string }>;
 
-type ObjectEntry = Readonly<{ key: string; size: number }>;
+type ObjectEntry = Readonly<{ key: string; size: number; etag: string }>;
 
 const entriesOfItem = (item: BucketsObjectsListResultItem): readonly ObjectEntry[] =>
-  Option.all({ key: Option.fromNullishOr(item.key), size: Option.fromNullishOr(item.size) }).pipe(
-    Option.toArray,
-  );
+  Option.all({
+    key: Option.fromNullishOr(item.key),
+    size: Option.fromNullishOr(item.size),
+    etag: Option.fromNullishOr(item.etag),
+  }).pipe(Option.toArray);
 
 const entriesOf = Effect.fn("entriesOf")(function* entriesOf(
   accountId: string,
@@ -40,6 +42,9 @@ const entriesOf = Effect.fn("entriesOf")(function* entriesOf(
   return pipe(items, Arr.flatMap(entriesOfItem));
 });
 
+const fingerprintOf = ({ size, etag }: Readonly<{ size: number; etag: string }>): string =>
+  `${size}:${etag}`;
+
 const missingFrom = Effect.fn("missingFrom")(function* missingFrom(
   route: BucketRoute,
 ): Effect.fn.Return<readonly ObjectEntry[], never, CloudflareOpContext> {
@@ -47,15 +52,15 @@ const missingFrom = Effect.fn("missingFrom")(function* missingFrom(
     [entriesOf(route.accountId, route.source), entriesOf(route.accountId, route.target)],
     { concurrency: 2 },
   );
-  const sizes = new Map(
+  const fingerprints = new Map(
     pipe(
       target,
-      Arr.map(({ key, size }) => [key, size] as const),
+      Arr.map(({ key, size, etag }) => [key, fingerprintOf({ size, etag })] as const),
     ),
   );
   return pipe(
     source,
-    Arr.filter(({ key, size }) => sizes.get(key) !== size),
+    Arr.filter(({ key, size, etag }) => fingerprints.get(key) !== fingerprintOf({ size, etag })),
   );
 });
 
