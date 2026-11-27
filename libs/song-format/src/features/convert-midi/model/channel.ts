@@ -1,8 +1,10 @@
-import { Array as Arr, Match, Option, Order, Record as Rec, pipe } from "effect";
+import { Array as Arr, Match, Option, Record as Rec, pipe } from "effect";
 
+import { sortedNotes } from "#/entities/timeline/index.ts";
+import type { TimelineControl, TimelineNote } from "#/entities/timeline/index.ts";
 import type { From } from "#/shared/lib/from.ts";
 
-import type { ChannelEvent, PlacedEvent, TimelineControl, TimelineNote } from "./events.ts";
+import type { ChannelEvent, PlacedEvent } from "./placed.ts";
 
 const NONE = 0;
 const NEXT = 1;
@@ -99,11 +101,6 @@ const pairedOf =
     return [...paired.notes, ...unended];
   };
 
-const byTickThenPitch = Order.combine(
-  Order.mapInput(Order.Number, (note: TimelineNote) => note.tick),
-  Order.mapInput(Order.Number, (note: TimelineNote) => note.midi),
-);
-
 const notesOf =
   (end: number): From<readonly PlacedEvent[], readonly TimelineNote[]> =>
   (events) => {
@@ -115,7 +112,7 @@ const notesOf =
       Rec.values,
       Arr.flatMap(pairedOf(end)),
     );
-    return Arr.sort(notes, byTickThenPitch);
+    return sortedNotes(notes);
   };
 
 interface Rpn {

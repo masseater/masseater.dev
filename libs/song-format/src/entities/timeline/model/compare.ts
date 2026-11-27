@@ -159,21 +159,34 @@ const actualControlsOf: From<Song, readonly string[]> = (song) =>
     ),
   );
 
-type TempoPoint = readonly [number, number];
+interface TempoPoint {
+  readonly tick: number;
+  readonly microseconds: number;
+  readonly target: Option.Option<number>;
+}
+
+const FLAT = "-";
+
+const isFlatRepeat = (point: TempoPoint, previous: TempoPoint): boolean =>
+  Option.isNone(point.target) &&
+  Option.isNone(previous.target) &&
+  previous.microseconds === point.microseconds;
 
 const changesOf: From<readonly TempoPoint[], readonly string[]> = (points) =>
   pipe(
     points,
-    Arr.filter(([, microseconds], index) =>
+    Arr.filter((point, index) =>
       pipe(
         Arr.get(points, index - NEXT),
         Option.match({
           onNone: () => true,
-          onSome: ([, previous]) => previous !== microseconds,
+          onSome: (previous) => !isFlatRepeat(point, previous),
         }),
       ),
     ),
-    Arr.map((point) => keyOf(point)),
+    Arr.map(({ tick, microseconds, target }) =>
+      keyOf([tick, microseconds, Option.getOrElse(target, () => FLAT)]),
+    ),
   );
 
 const expectedTempoOf: From<readonly LaidBar[], readonly string[]> = (bars) =>
@@ -183,7 +196,11 @@ const expectedTempoOf: From<readonly LaidBar[], readonly string[]> = (bars) =>
       Arr.flatMap((bar) =>
         pipe(
           bar.tempo,
-          Arr.map((step): TempoPoint => [bar.start + step.offset, step.microseconds]),
+          Arr.map((step): TempoPoint => ({
+            tick: bar.start + step.offset,
+            microseconds: step.microseconds,
+            target: step.target,
+          })),
         ),
       ),
     ),
@@ -195,10 +212,14 @@ const barPointsOf: From<Song["bars"][number], readonly TempoPoint[]> = (bar) => 
   if (Arr.isReadonlyArrayNonEmpty(bar.tempoSteps)) {
     return pipe(
       bar.tempoSteps,
-      Arr.map((step): TempoPoint => [bar.start + step.offset, microsecondsOf(step.bpm)]),
+      Arr.map((step): TempoPoint => ({
+        tick: bar.start + step.offset,
+        microseconds: microsecondsOf(step.bpm),
+        target: pipe(step.target, Option.map(microsecondsOf)),
+      })),
     );
   }
-  return [[bar.start, microsecondsOf(bar.tempo.bpm)]];
+  return [{ tick: bar.start, microseconds: microsecondsOf(bar.tempo.bpm), target: Option.none() }];
 };
 
 const actualTempoOf: From<Song, readonly string[]> = (song) =>
@@ -264,7 +285,7 @@ export interface CompareInput {
   readonly song: Song;
 }
 
-export const compareWithMidi: From<CompareInput, Comparison> = ({ plan, bars, song }) => {
+export const compareWithSong: From<CompareInput, Comparison> = ({ plan, bars, song }) => {
   const tallies = {
     notes: tallyOf(expectedNotesOf(plan), actualNotesOf({ plan, song })),
     controls: tallyOf(expectedControlsOf(plan), actualControlsOf(song)),
