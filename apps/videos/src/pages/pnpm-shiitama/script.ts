@@ -1,6 +1,6 @@
 import type { VideoScript } from "@masseater.dev/video-kit/script";
 
-import { IMAGES, SHOTS, ZUNDAMON } from "#/shared/config/index.ts";
+import { BGM, IMAGES, SHOTS, ZUNDAMON } from "#/shared/config/index.ts";
 
 export const script: VideoScript = {
   title: "1分で分かるpnpm",
@@ -14,7 +14,7 @@ export const script: VideoScript = {
     "0.2秒": "れいてんにびょう",
     PC: "ピーシー",
   },
-  bgm: { url: "https://amachamusic.chagasi.com/mp3/simplestyle.mp3", credit: "甘茶の音楽工房" },
+  bgm: BGM,
   images: { ...IMAGES, ...SHOTS, ...ZUNDAMON },
   cuts: [
     { id: "hook", say: ["**1分で**\n**分かる**\n**pnpm**"] },

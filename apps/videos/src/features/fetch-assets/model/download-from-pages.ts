@@ -9,7 +9,10 @@ import type { VideoError } from "#/shared/lib/video-error.ts";
 import type { PageAsset } from "./asset.ts";
 
 const SEPARATOR = "/";
+const TERMS = "#tos-check";
+const TERMS_DOWNLOAD = "#song-dlbtn";
 const NO_NAME = "";
+const NONE = 0;
 
 const nameOf = (url: string): string =>
   pipe(
@@ -47,19 +50,27 @@ const session = ({
     );
     const context = yield* attempt(() => browser.newContext({ acceptDownloads: true }));
     const page = yield* attempt(() => context.newPage());
+    const clickDownload = (url: string): Effect.Effect<void, VideoError> =>
+      Effect.gen(function* click() {
+        const terms = page.locator(TERMS);
+        const count = yield* attempt(() => terms.count());
+        if (count > NONE) {
+          yield* attempt(() => terms.check());
+          yield* attempt(() => page.locator(TERMS_DOWNLOAD).click());
+          return;
+        }
+        yield* attempt(() =>
+          page
+            .locator(`a[href$="${nameOf(url)}"]`)
+            .first()
+            .click(),
+        );
+      });
     const download = (asset: PageAsset): Effect.Effect<void, VideoError, Path.Path> =>
       Effect.gen(function* click() {
         const file = yield* fileOf(asset.url);
         const [started] = yield* Effect.all(
-          [
-            attempt(() => page.waitForEvent("download")),
-            attempt(() =>
-              page
-                .locator(`a[href$="${nameOf(asset.url)}"]`)
-                .first()
-                .click(),
-            ),
-          ],
+          [attempt(() => page.waitForEvent("download")), clickDownload(asset.url)],
           { concurrency: "unbounded" },
         );
         yield* attempt(() => started.saveAs(file));

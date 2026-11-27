@@ -1,6 +1,6 @@
 import type { VideoScript } from "@masseater.dev/video-kit/script";
 
-import { IMAGES, SHOTS, ZUNDAMON } from "#/shared/config/index.ts";
+import { BGM, IMAGES, SHOTS, ZUNDAMON } from "#/shared/config/index.ts";
 
 export const script: VideoScript = {
   title: "最新ツール解説「pnpm」",
@@ -13,7 +13,7 @@ export const script: VideoScript = {
     "43秒": "よんじゅうさんびょう",
     PC: "ピーシー",
   },
-  bgm: { url: "https://amachamusic.chagasi.com/mp3/simplestyle.mp3", credit: "甘茶の音楽工房" },
+  bgm: BGM,
   images: { ...IMAGES, ...SHOTS, ...ZUNDAMON },
   cuts: [
     { id: "question", say: ["最近よく聞く\n**pnpm**って何なのだ？"] },

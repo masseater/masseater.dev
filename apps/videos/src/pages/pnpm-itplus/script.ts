@@ -1,6 +1,6 @@
 import type { VideoScript } from "@masseater.dev/video-kit/script";
 
-import { IMAGES, SHOTS, ZUNDAMON } from "#/shared/config/index.ts";
+import { BGM, IMAGES, SHOTS, ZUNDAMON } from "#/shared/config/index.ts";
 
 export const script: VideoScript = {
   title: "知っていると一歩先をいけるpnpm",
@@ -14,7 +14,7 @@ export const script: VideoScript = {
     Vite: "ヴィート",
     Nuxt: "ナクスト",
   },
-  bgm: { url: "https://amachamusic.chagasi.com/mp3/simplestyle.mp3", credit: "甘茶の音楽工房" },
+  bgm: BGM,
   images: { ...IMAGES, ...SHOTS, ...ZUNDAMON },
   cuts: [
     { id: "intro", say: ["知っていると一歩先をいける\n**pnpm**を紹介するのだ！"] },

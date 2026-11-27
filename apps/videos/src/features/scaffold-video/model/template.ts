@@ -1,12 +1,15 @@
 /** @internal */
 export const SCRIPT_TEMPLATE = `import type { VideoScript } from "@masseater.dev/video-kit/script";
 
+import { BGM } from "#/shared/config/index.ts";
+
 export const script: VideoScript = {
   title: "ツール名",
   formats: ["vertical"],
   length: { vertical: 30 },
   voice: 8,
   readings: {},
+  bgm: BGM,
   cuts: [
     { id: "opening", say: ["**ツール名**、知ってる？"] },
     { id: "features", say: ["一言で言うと**こう**。"] },

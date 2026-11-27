@@ -11,6 +11,6 @@ export const tachiePath = (name: string): string => `${CACHE_DIR}/tachie/${name}
 export const narrationPath = (key: string): string => `${CACHE_DIR}/narration/${key}.wav`;
 
 export const assetPath = (url: string): string => {
-  const { hostname, pathname } = new URL(url);
-  return `${CACHE_DIR}/assets/${Str.replaceAll(UNSAFE, SAFE)(`${hostname}${pathname}`)}`;
+  const { hostname, pathname, search } = new URL(url);
+  return `${CACHE_DIR}/assets/${Str.replaceAll(UNSAFE, SAFE)(`${hostname}${pathname}${search}`)}`;
 };
