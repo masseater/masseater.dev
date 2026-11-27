@@ -7,7 +7,7 @@ import { Array as Arr, Effect, Layer, Option, Record as Rec, Redacted, Schema, p
 import { layer as fetchHttpClient } from "effect/http/FetchHttpClient";
 import { expect, test } from "vite-plus/test";
 
-import { copyObjectsProvider } from "#/shared/api/index.ts";
+import { copyObjectsProvider, provisionBucketMover } from "#/shared/api/index.ts";
 
 import { logArchive } from "./log-archive.ts";
 
@@ -40,7 +40,8 @@ const ENVIRONMENT = Effect.succeed({
   source: { type: "env" as const },
 });
 
-const archive = logArchive(APP_NAME).pipe(
+const archive = provisionBucketMover(APP_NAME).pipe(
+  Effect.flatMap((mover) => logArchive(APP_NAME, mover)),
   Effect.provideService(CloudflareEnvironment, ENVIRONMENT),
 );
 
@@ -84,10 +85,10 @@ test("ログのバケットは、管轄を指定せずに決まった名前で�
     Option.some({ name: `${BUCKET_NAME}-japan` }),
   ]));
 
-test("ログの移し替えと書き込みのトークンは、それぞれ決まったバケットの中身だけを扱う", () =>
+test("バケットの移し替えはアカウント内の全バケットの中身を扱い、ログの書き込みは日本のバケットだけを扱う", () =>
   expect(declared(ApiToken.AccountApiToken.Type)).resolves.toStrictEqual([
     Option.some({
-      name: `${BUCKET_NAME}-mover`,
+      name: `${APP_NAME}-bucket-mover`,
       policies: [
         {
           effect: "allow",
@@ -95,10 +96,7 @@ test("ログの移し替えと書き込みのトークンは、それぞれ決�
             "Workers R2 Storage Bucket Item Read",
             "Workers R2 Storage Bucket Item Write",
           ],
-          resources: {
-            [`com.cloudflare.edge.r2.bucket.${ACCOUNT_ID}_default_${BUCKET_NAME}`]: "*",
-            [`com.cloudflare.edge.r2.bucket.${ACCOUNT_ID}_default_${JAPAN_BUCKET_NAME}`]: "*",
-          },
+          resources: { [`com.cloudflare.api.account.${ACCOUNT_ID}`]: "*" },
         },
       ],
     }),
