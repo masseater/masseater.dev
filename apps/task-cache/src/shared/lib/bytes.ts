@@ -30,6 +30,6 @@ export const digestOf = (bytes: Uint8Array): Effect.Effect<string> =>
 
 export const fromBase64 = (text: string): Effect.Effect<Uint8Array, StoreFailed> =>
   Result.match(Base64.decode(text), {
-    onFailure: (error) => Effect.fail(storeFailed(error)),
+    onFailure: (error) => error.pipe(storeFailed, Effect.fail),
     onSuccess: (bytes) => Effect.succeed(bytes),
   });

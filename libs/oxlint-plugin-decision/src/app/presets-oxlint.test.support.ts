@@ -69,7 +69,7 @@ export const oxlint: {
       Effect.gen(function* run() {
         const bin = yield* fromRoot("node_modules", "oxlint", "bin", "oxlint");
         const PATH = yield* Effect.orDie(Config.String("PATH"));
-        const coverage = yield* Effect.orDie(Config.option(Config.String("NODE_V8_COVERAGE")));
+        const coverage = yield* Config.String("NODE_V8_COVERAGE").pipe(Config.option, Effect.orDie);
         const handle = yield* ChildProcess.make(bin, args, {
           cwd,
           env: {

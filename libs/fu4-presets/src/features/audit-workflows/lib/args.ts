@@ -61,7 +61,7 @@ export const passes =
 export const reaches =
   (...predicates: readonly Predicate[]) =>
   (args: readonly string[]): boolean =>
-    Option.isSome(passes(...predicates)(Option.some(args)));
+    Option.some(args).pipe(passes(...predicates), Option.isSome);
 
 export const thenEvery =
   (predicate: Predicate) =>

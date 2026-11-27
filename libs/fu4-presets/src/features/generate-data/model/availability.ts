@@ -29,10 +29,10 @@ const Mapping = Schema.Struct({
 });
 
 const Definition = Schema.Struct({
-  context: Schema.optionalKey(Schema.Array(Schema.String)),
+  context: Schema.String.pipe(Schema.Array, Schema.optionalKey),
   mapping: Schema.optionalKey(Mapping),
   sequence: Schema.optionalKey(Schema.Struct({ "item-type": Schema.String })),
-  "one-of": Schema.optionalKey(Schema.Array(Schema.String)),
+  "one-of": Schema.String.pipe(Schema.Array, Schema.optionalKey),
 });
 
 const ParserSchema = Schema.Struct({ definitions: Schema.Record(Schema.String, Definition) });

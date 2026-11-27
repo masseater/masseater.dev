@@ -22,6 +22,6 @@ export const subscribeDrops = ({ onHover, onDrop }: DropHandlers): (() => void) 
   ).pipe(Effect.andThen(Effect.never), Effect.scoped);
   const fiber = Effect.runFork(listening);
   return (): void => {
-    Effect.runFork(Fiber.interrupt(fiber));
+    fiber.pipe(Fiber.interrupt, Effect.runFork);
   };
 };

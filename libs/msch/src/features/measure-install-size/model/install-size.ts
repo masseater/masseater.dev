@@ -120,11 +120,10 @@ const measure = Effect.fn("measure")(function* measure(
   );
   const sizes = HashMap.fromIterable(measured);
   const sizeOf = (packages: HashSet.HashSet<string>): number =>
-    Num.sumAll(
-      pipe(
-        Arr.fromIterable(packages),
-        Arr.map((found) => Option.getOrElse(HashMap.get(sizes, found), () => START)),
-      ),
+    packages.pipe(
+      Arr.fromIterable,
+      Arr.map((found) => Option.getOrElse(HashMap.get(sizes, found), () => START)),
+      Num.sumAll,
     );
   return { closures, sizeOf, total: sizeOf(everything) } satisfies Measured;
 });

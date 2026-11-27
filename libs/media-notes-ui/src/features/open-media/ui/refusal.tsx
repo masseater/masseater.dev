@@ -6,9 +6,9 @@ import type { ReactNode } from "react";
 import { chooseFileAtom, openFileAtom, openLinkAtom } from "#/features/open-media/model/open.ts";
 
 export const Refusal = ({ id }: Readonly<{ id: string }>): ReactNode => {
-  const link = AsyncResult.error(useAtomValue(openLinkAtom));
-  const file = AsyncResult.error(useAtomValue(openFileAtom));
-  const chosen = AsyncResult.error(useAtomValue(chooseFileAtom));
+  const link = useAtomValue(openLinkAtom).pipe(AsyncResult.error);
+  const file = useAtomValue(openFileAtom).pipe(AsyncResult.error);
+  const chosen = useAtomValue(chooseFileAtom).pipe(AsyncResult.error);
   return Option.match(Option.firstSomeOf([link, file, chosen]), {
     onNone: () => false,
     onSome: ({ message }) => (

@@ -12,9 +12,9 @@ const services = Layer.mergeAll(CloudflareCredentials, GitHubCredentials).pipe(
 
 const program = Config.String("CLOUDFLARE_ACCOUNT_ID").pipe(Effect.flatMap(check));
 
-runMain("exposure-check")(
-  Layer.build(services).pipe(
-    Effect.flatMap((context) => Effect.provideContext(program, context)),
-    Effect.scoped,
-  ),
+services.pipe(
+  Layer.build,
+  Effect.flatMap((context) => Effect.provideContext(program, context)),
+  Effect.scoped,
+  runMain("exposure-check"),
 );

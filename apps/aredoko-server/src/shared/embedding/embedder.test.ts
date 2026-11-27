@@ -57,7 +57,9 @@ const recordFetches = Effect.gen(function* recordFetches() {
 });
 
 const loadFailure = Effect.fn("loadFailure")(function* loadFailure(directory: string) {
-  const failure = yield* Layer.build(localEmbedderLayer(Option.some(directory))).pipe(
+  const failure = yield* Option.some(directory).pipe(
+    localEmbedderLayer,
+    Layer.build,
     Effect.scoped,
     Effect.flip,
   );

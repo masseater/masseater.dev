@@ -15,7 +15,7 @@ export type DependencyAllowances = Readonly<Record<string, DependencyAllowance>>
 export const MSCH_DEV_DEPENDENCIES = ["msch", "devDependencies"] as const;
 export const MSCH_DEPENDENCIES = ["msch", "dependencies"] as const;
 
-const Names = Schema.optional(Schema.Array(Schema.String));
+const Names = Schema.String.pipe(Schema.Array, Schema.optional);
 const DependencySettings = Schema.Struct({ use: Names, dependencies: Names });
 const WorkspaceDependencyAllowances = Schema.Record(Schema.String, DependencySettings);
 

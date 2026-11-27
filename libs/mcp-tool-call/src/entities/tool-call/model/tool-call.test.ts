@@ -29,7 +29,7 @@ it.effect("成功した呼び出しは JSON の本文と件数を返す", () =>
 it.effect("失敗した呼び出しは describe の文言と _tag を返す", () =>
   Effect.gen(function* failed() {
     const result = yield* Effect.promise(() =>
-      runTool({ count: one })(Effect.fail(Missing.make({ key: "x" }))),
+      Missing.make({ key: "x" }).pipe(Effect.fail, runTool({ count: one })),
     );
     expect(result).toStrictEqual({
       content: [{ type: "text", text: "x was not found" }],

@@ -25,7 +25,8 @@ const command = Command.make("nimado-collect").pipe(
 );
 
 runMain(
-  Layer.build(services).pipe(
+  services.pipe(
+    Layer.build,
     Effect.flatMap((context) =>
       Effect.provideContext(Command.run(command, { version: pkg.version }), context),
     ),

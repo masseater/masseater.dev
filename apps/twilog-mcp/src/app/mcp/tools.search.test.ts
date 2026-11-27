@@ -108,7 +108,7 @@ const AccountResult = Schema.Struct({
   loginUrl: OptionalString,
   linkedTo: OptionalString,
   maxPage: Schema.optionalKey(Schema.Finite),
-  posts: Schema.optionalKey(Schema.Array(Posted)),
+  posts: Posted.pipe(Schema.Array, Schema.optionalKey),
 });
 
 const Result = Schema.Struct({ results: Schema.Array(AccountResult) });

@@ -28,5 +28,5 @@ export const settledAs =
   (run: () => Promise<Settled<unknown>>): Effect.Effect<Value, ApiFailed> =>
     Effect.suspend(() => settled(run)).pipe(
       Effect.flatMap(decode),
-      Effect.catchTag("SchemaError", (cause) => Effect.fail(thrown(cause))),
+      Effect.catchTag("SchemaError", (cause) => cause.pipe(thrown, Effect.fail)),
     );

@@ -58,7 +58,8 @@ const program = Effect.gen(function* write() {
 });
 
 runMain(
-  Layer.build(nodeServices).pipe(
+  nodeServices.pipe(
+    Layer.build,
     Effect.flatMap((context) =>
       Effect.provideContext(program.pipe(Effect.withSpan("build.asset-headers")), context),
     ),

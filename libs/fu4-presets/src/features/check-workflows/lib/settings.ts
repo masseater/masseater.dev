@@ -1,10 +1,10 @@
 import type { RuleContext } from "@r_masseater/fu4";
 import { Option, Record as Rec, Schema, pipe } from "effect";
 
-const Names = Schema.NullOr(Schema.Array(Schema.String));
+const Names = Schema.String.pipe(Schema.Array, Schema.NullOr);
 const Runner = Schema.Struct({ labels: Schema.optional(Names) });
 const ActionlintSettings = Schema.Struct({
-  "self-hosted-runner": Schema.optional(Schema.NullOr(Runner)),
+  "self-hosted-runner": Runner.pipe(Schema.NullOr, Schema.optional),
   "config-variables": Schema.optional(Names),
 });
 

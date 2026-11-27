@@ -88,7 +88,7 @@ const impliedFormatOf = (
     return Option.none();
   }
   const scope = cachedScope(source, getDirectoryPath(path));
-  return Option.some(formatOfScope(scope));
+  return scope.pipe(formatOfScope, Option.some);
 };
 
 const scopeReason = (info: PackageJsonInfo): ModuleKindReason => {

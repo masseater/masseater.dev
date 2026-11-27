@@ -45,8 +45,10 @@ export class WatashiPortal extends WorkerEntrypoint implements WatashiPortalRpc 
     operation: string,
     effect: Effect.Effect<unknown, ToolFailure>,
   ): Promise<PortalResult> {
-    return runLogged(
-      settled(operation)(effect).pipe(Effect.annotateLogs({ entrypoint: this.ctx.props })),
+    return effect.pipe(
+      settled(operation),
+      Effect.annotateLogs({ entrypoint: this.ctx.props }),
+      runLogged,
     );
   }
 }

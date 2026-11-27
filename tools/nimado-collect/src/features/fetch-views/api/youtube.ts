@@ -12,7 +12,7 @@ const Statistics = Schema.Struct({ viewCount: Schema.optionalKey(Schema.FiniteFr
 
 const Item = Schema.Struct({ id: Schema.String, statistics: Schema.optionalKey(Statistics) });
 
-const VideosResponse = Schema.Struct({ items: Schema.optionalKey(Schema.Array(Item)) });
+const VideosResponse = Schema.Struct({ items: Item.pipe(Schema.Array, Schema.optionalKey) });
 
 type ItemValue = typeof Item.Type;
 type Failure = HttpClientError.HttpClientError | Schema.SchemaError;

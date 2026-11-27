@@ -146,7 +146,7 @@ export const forgetReturnedRows = Effect.sync(() => {
 
 export const returnedRows = Effect.sync(() => MutableRef.get(returned));
 
-export const lastAssetRequest = Effect.sync(() => Arr.last(MutableRef.get(assetRequests)));
+export const lastAssetRequest = Effect.sync(() => assetRequests.pipe(MutableRef.get, Arr.last));
 
 const StoredStars = Schema.Array(Schema.Struct({ visitor: Schema.String }));
 

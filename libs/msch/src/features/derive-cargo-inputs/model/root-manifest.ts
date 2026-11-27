@@ -83,7 +83,12 @@ export const readManifest = Effect.fn("readManifest")(function* readManifest(roo
   const file = files.join(root, MANIFEST_FILE);
   const text = yield* files.readFile(file);
   const value = yield* Effect.try({
-    try: () => getStaticTOMLValue(parseTOML(Option.getOrElse(text, () => ""))),
+    try: () =>
+      text.pipe(
+        Option.getOrElse(() => ""),
+        parseTOML,
+        getStaticTOMLValue,
+      ),
     catch: () => ManifestUnreadable.make({ file }),
   });
   return yield* encodeJson(value);

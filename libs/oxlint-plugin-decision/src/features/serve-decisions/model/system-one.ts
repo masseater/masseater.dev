@@ -44,7 +44,9 @@ const failureOf = (response: HttpClientResponse.HttpClientResponse): Effect.Effe
   response.json.pipe(
     Effect.option,
     Effect.flatMap((body) =>
-      Effect.fail(`http ${String(response.status)}: ${messageOfBody(Option.getOrUndefined(body))}`),
+      Effect.fail(
+        `http ${String(response.status)}: ${body.pipe(Option.getOrUndefined, messageOfBody)}`,
+      ),
     ),
   );
 

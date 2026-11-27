@@ -34,8 +34,9 @@ export const woken = (deck: Deck): Deck => {
 export const shut = (deck: Option.Option<Deck>): void => {
   if (Option.isSome(deck)) {
     const { context } = deck.value;
-    Effect.runFork(
-      Effect.ignore(Effect.tryPromise({ try: () => context.close(), catch: () => context.state })),
+    Effect.tryPromise({ try: () => context.close(), catch: () => context.state }).pipe(
+      Effect.ignore,
+      Effect.runFork,
     );
   }
 };

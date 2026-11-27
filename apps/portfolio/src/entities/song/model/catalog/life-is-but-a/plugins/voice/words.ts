@@ -46,9 +46,9 @@ const isAkai = (word: Word): boolean => Option.contains(word.mode, "akai");
 
 const grainOf = (word: Word): number => {
   if (isAkai(word)) {
-    return orDefault(GRAIN.akai)(Option.getOrUndefined(word.grain));
+    return word.grain.pipe(Option.getOrUndefined, orDefault(GRAIN.akai));
   }
-  return orDefault(GRAIN.smooth)(Option.getOrUndefined(word.grain));
+  return word.grain.pipe(Option.getOrUndefined, orDefault(GRAIN.smooth));
 };
 
 const modeOf = (word: Word): NonNullable<Stretching["mode"]> => {

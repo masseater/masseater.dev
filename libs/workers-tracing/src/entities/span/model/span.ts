@@ -44,7 +44,7 @@ export const markCause =
   (span: Span): void => {
     const error = pipe(
       failures(cause),
-      Option.flatMap((failed) => Array.head(Cause.prettyErrors(failed))),
+      Option.flatMap((failed) => failed.pipe(Cause.prettyErrors, Array.head)),
     );
     if (Option.isSome(error)) {
       markFailed(error.value)(span);

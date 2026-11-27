@@ -86,7 +86,7 @@ export const SessionRecord = Schema.Struct({
   progress: Schema.Array(SessionProgress),
   withdrawn: Schema.Finite,
   summary: Schema.OptionFromNullOr(Summary),
-  leads: Schema.optionalKey(Schema.Array(Lead)),
+  leads: Lead.pipe(Schema.Array, Schema.optionalKey),
 });
 
 export const SessionListing = Schema.Struct({

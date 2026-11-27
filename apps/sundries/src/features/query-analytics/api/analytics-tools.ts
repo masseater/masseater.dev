@@ -50,7 +50,7 @@ const Viewer = Schema.Struct({ accounts: Schema.Array(Account) });
 
 const Data = Schema.Struct({ viewer: Viewer });
 
-const GraphqlErrors = Schema.NullOr(Schema.Array(Schema.Struct({ message: Schema.String })));
+const GraphqlErrors = Schema.Struct({ message: Schema.String }).pipe(Schema.Array, Schema.NullOr);
 
 const GraphqlResult = Schema.Struct({
   data: Schema.NullOr(Data),

@@ -11,13 +11,14 @@ const WORKFLOWS = [".github/workflows/deploy.yml"];
 
 const Task = Schema.Struct({
   package: Schema.String,
-  dependsOn: Schema.optionalKey(Schema.Array(Schema.String)),
+  dependsOn: Schema.String.pipe(Schema.Array, Schema.optionalKey),
 });
 
 const Plan = Schema.fromJsonString(Schema.Struct({ plan: Schema.Record(Schema.String, Task) }));
 
-const Stacks = Schema.fromJsonString(
-  Schema.Array(Schema.Struct({ name: Schema.String, filter: Schema.String })),
+const Stacks = Schema.Struct({ name: Schema.String, filter: Schema.String }).pipe(
+  Schema.Array,
+  Schema.fromJsonString,
 );
 
 type Tasks = (typeof Plan.Type)["plan"];

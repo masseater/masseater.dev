@@ -92,7 +92,7 @@ const reread = (image: Uint8Array): Effect.Effect<readonly string[], ImageError>
   );
 
 const failureOf = <Value, Failure>(effect: Effect.Effect<Value, Failure>): Promise<Failure> =>
-  Effect.runPromise(Effect.flip(effect));
+  effect.pipe(Effect.flip, Effect.runPromise);
 
 test("fails with ImageError instead of throwing when the image is not a PNG", () =>
   expect(failureOf(reread(JPEG))).resolves.toBeInstanceOf(ImageError));
