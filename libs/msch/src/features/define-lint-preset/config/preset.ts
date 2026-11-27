@@ -21,7 +21,6 @@ import {
   shadcnRestyleContracts,
   webGuidanceRules,
 } from "./lint.config.ts";
-import { readonlyParameterAllow } from "./readonly-types.config.ts";
 import { flakeMaskingSyntax, testDoubleSyntax, testRules } from "./test-rules.config.ts";
 
 type LintConfig = NonNullable<UserConfig["lint"]>;
@@ -89,6 +88,7 @@ const rules = {
   "msch-lint/ui-state-in-atoms": "error",
   "msch-lint/no-hand-written-sql": "error",
   "msch-lint/platform-node-by-module": "error",
+  "msch-lint/readonly-parameters": "error",
   "msch-lint/typed-calls-not-reflect": "error",
   "react/react-in-jsx-scope": "off",
   "eslint/no-undef": "off",
@@ -105,10 +105,7 @@ const rules = {
   "jsdoc/require-param": ["error", { exemptedBy: ["inheritdoc", "internal", "msch"] }],
   "jsdoc/require-returns": ["error", { exemptedBy: ["inheritdoc", "internal", "msch"] }],
   "eslint-js/no-restricted-syntax": ["error", ...cloudflareResourceSyntax],
-  "typescript/prefer-readonly-parameter-types": [
-    "error",
-    { ignoreInferredTypes: true, allow: readonlyParameterAllow },
-  ],
+  "typescript/prefer-readonly-parameter-types": "off",
   "eslint/no-duplicate-imports": ["error", { allowSeparateTypeImports: true }],
   "react/function-component-definition": [
     "error",

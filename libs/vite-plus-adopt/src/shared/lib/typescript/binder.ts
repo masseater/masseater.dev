@@ -10,8 +10,8 @@ import {
 import { SymbolFlags } from "typescript/sync";
 
 import { createFileSymbol } from "./binder-cjs.ts";
-import { declareExport } from "./binder-declarations.ts";
-import type { FileBinding, SymbolFlagPair } from "./binder-declarations.ts";
+import { FileBinding, declareExport } from "./binder-declarations.ts";
+import type { SymbolFlagPair } from "./binder-declarations.ts";
 import { bindJSDocTypeAliases } from "./binder-jsdoc.ts";
 import { bindFileNodes } from "./binder-walk.ts";
 
@@ -48,14 +48,13 @@ const hasUseStrictPrologue = (file: SourceFile): boolean =>
 const createBinding = (file: SourceFile): FileBinding => {
   const isExternalModule =
     Predicate.isNotUndefined(file.externalModuleIndicator) && file.externalModuleIndicator !== true;
-  return {
+  return new FileBinding({
     file,
-    locals: new Map(),
     isJs: isJsFile(file),
     exportContext: file.isDeclarationFile && !hasExportDeclarations(file),
     strict: isExternalModule || hasUseStrictPrologue(file),
     isExternalModule,
-  };
+  });
 };
 
 const declareFileSymbol = (binding: FileBinding): void => {
@@ -79,7 +78,7 @@ const writableValue = (value: unknown): PropertyDescriptor => ({
 const exposeOnSourceFile = (binding: FileBinding): void => {
   Object.defineProperties(binding.file, {
     symbol: writableValue(binding.symbol),
-    locals: writableValue(binding.locals),
+    locals: writableValue(binding.locals.entries),
     commonJsModuleIndicator: writableValue(binding.commonJsModuleIndicator),
   });
 };

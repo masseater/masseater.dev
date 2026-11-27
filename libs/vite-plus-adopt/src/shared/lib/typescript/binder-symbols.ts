@@ -4,24 +4,10 @@ import type { Node } from "typescript/ast";
 import { isSourceFile } from "typescript/ast/is";
 import { SymbolFlags } from "typescript/sync";
 
+import { SymbolTable } from "./binder-symbol-table.ts";
 import { EMPTY, combineFlags, hasFlag, withFlags } from "./flags.ts";
 
 const DATA_FIRST_ARITY = 2;
-const DATA_FIRST_ARITY_3 = 3;
-
-export interface BoundSymbol {
-  flags: number;
-  readonly escapedName: string;
-  readonly name: string;
-  declarations?: Node[];
-  valueDeclaration?: Node;
-  exports?: SymbolTable;
-  members?: SymbolTable;
-  parent?: BoundSymbol;
-  exportSymbol?: BoundSymbol;
-}
-
-export interface SymbolTable extends Map<string, BoundSymbol> {}
 
 export interface SymbolDeclaration {
   readonly table: Option.Option<SymbolTable>;
@@ -50,15 +36,6 @@ export const escapeLeadingUnderscores = (name: string): string => {
   }
   return name;
 };
-
-export const createSymbol: {
-  (escapedName: string): (flags: number) => BoundSymbol;
-  (flags: number, escapedName: string): BoundSymbol;
-} = Fn.dual(DATA_FIRST_ARITY, (flags: number, escapedName: string): BoundSymbol => ({
-  flags,
-  escapedName,
-  name: unescapeLeadingUnderscores(escapedName),
-}));
 
 const isInJsFileNode = (node: Node): boolean => {
   let current = node;
@@ -98,16 +75,6 @@ const replacesModuleDeclaration = (existing: Node, node: Node): boolean =>
 const replacesValueDeclaration = (existing: Node, node: Node): boolean =>
   replacesAssignmentDeclaration(existing, node) || replacesModuleDeclaration(existing, node);
 
-export const setValueDeclaration: {
-  (node: Node): (symbol: BoundSymbol) => void;
-  (symbol: BoundSymbol, node: Node): void;
-} = Fn.dual(DATA_FIRST_ARITY, (symbol: BoundSymbol, node: Node): void => {
-  const existing = symbol.valueDeclaration;
-  if (Predicate.isUndefined(existing) || replacesValueDeclaration(existing, node)) {
-    symbol.valueDeclaration = node;
-  }
-});
-
 const EXPORT_TABLE_FLAGS = combineFlags(
   SymbolFlags.Class,
   SymbolFlags.Enum,
@@ -115,57 +82,92 @@ const EXPORT_TABLE_FLAGS = combineFlags(
   SymbolFlags.Variable,
 );
 
-const MEMBER_TABLE_FLAGS = combineFlags(
-  SymbolFlags.Class,
-  SymbolFlags.Interface,
-  SymbolFlags.TypeLiteral,
-  SymbolFlags.ObjectLiteral,
-);
+const entriesOf = (table: SymbolTable): ReadonlyMap<string, BoundSymbol> => table.entries;
 
-const recordDeclaration = (symbol: BoundSymbol, node: Node): void => {
-  const declarations = symbol.declarations ?? [];
-  if (!declarations.includes(node)) {
-    declarations.push(node);
+export class BoundSymbol {
+  public readonly escapedName: string;
+
+  public readonly name: string;
+
+  #flags: number;
+
+  #declarations: readonly Node[] | undefined;
+
+  #valueDeclaration: Node | undefined;
+
+  #exports: Option.Option<SymbolTable> = Option.none();
+
+  #parent: BoundSymbol | undefined;
+
+  #exportSymbol: BoundSymbol | undefined;
+
+  public constructor(flags: number, escapedName: string) {
+    this.#flags = flags;
+    this.escapedName = escapedName;
+    this.name = unescapeLeadingUnderscores(escapedName);
   }
-  symbol.declarations = declarations;
-};
 
-const DECLARATION_EFFECTS: readonly (readonly [
-  required: number,
-  apply: (symbol: BoundSymbol, node: Node) => void,
-])[] = [
-  [
-    EXPORT_TABLE_FLAGS,
-    (symbol): void => {
-      symbol.exports ??= new Map();
-    },
-  ],
-  [
-    MEMBER_TABLE_FLAGS,
-    (symbol): void => {
-      symbol.members ??= new Map();
-    },
-  ],
-  [
-    SymbolFlags.Value,
-    (symbol, node): void => {
-      setValueDeclaration(symbol, node);
-    },
-  ],
-];
+  public get flags(): number {
+    return this.#flags;
+  }
 
-export const addDeclarationToSymbol: {
-  (node: Node, flags: number): (symbol: BoundSymbol) => void;
-  (symbol: BoundSymbol, node: Node, flags: number): void;
-} = Fn.dual(DATA_FIRST_ARITY_3, (symbol: BoundSymbol, node: Node, flags: number): void => {
-  symbol.flags = withFlags(symbol.flags, flags);
-  recordDeclaration(symbol, node);
-  for (const [required, apply] of DECLARATION_EFFECTS) {
-    if (hasFlag(flags, required)) {
-      apply(symbol, node);
+  public get declarations(): readonly Node[] | undefined {
+    return this.#declarations;
+  }
+
+  public get valueDeclaration(): Node | undefined {
+    return this.#valueDeclaration;
+  }
+
+  public get exports(): ReadonlyMap<string, BoundSymbol> | undefined {
+    return this.#exports.pipe(Option.map(entriesOf), Option.getOrUndefined);
+  }
+
+  public get parent(): BoundSymbol | undefined {
+    return this.#parent;
+  }
+
+  public get exportSymbol(): BoundSymbol | undefined {
+    return this.#exportSymbol;
+  }
+
+  public get exportTable(): Option.Option<SymbolTable> {
+    return this.#exports;
+  }
+
+  public readonly openExports = (): void => {
+    this.#exports = Option.orElseSome(this.#exports, () => new SymbolTable());
+  };
+
+  public readonly setValueDeclaration = (node: Node): void => {
+    const existing = this.#valueDeclaration;
+    if (Predicate.isUndefined(existing) || replacesValueDeclaration(existing, node)) {
+      this.#valueDeclaration = node;
     }
-  }
-});
+  };
+
+  public readonly addDeclaration = (node: Node, flags: number): void => {
+    this.#flags = withFlags(this.#flags, flags);
+    const declarations = this.#declarations ?? [];
+    if (!declarations.includes(node)) {
+      this.#declarations = [...declarations, node];
+    }
+    if (hasFlag(flags, EXPORT_TABLE_FLAGS)) {
+      this.openExports();
+    }
+    if (hasFlag(flags, SymbolFlags.Value)) {
+      this.setValueDeclaration(node);
+    }
+  };
+
+  public readonly adoptedBy = (parent: BoundSymbol): void => {
+    this.#parent ??= parent;
+  };
+
+  public readonly exportThrough = (symbol: BoundSymbol): void => {
+    this.#exportSymbol = symbol;
+  };
+}
 
 const conflicts = (found: BoundSymbol, declaration: SymbolDeclaration): boolean =>
   hasFlag(found.flags, declaration.excludes) &&
@@ -179,14 +181,14 @@ const symbolInTable = (
   name: string,
   declaration: SymbolDeclaration,
 ): BoundSymbol => {
-  const found = table.get(name);
+  const found = table.entries.get(name);
   if (Predicate.isUndefined(found)) {
-    const created = createSymbol(EMPTY, name);
-    table.set(name, created);
+    const created = new BoundSymbol(EMPTY, name);
+    table.add(created);
     return created;
   }
   if (conflicts(found, declaration)) {
-    return createSymbol(EMPTY, name);
+    return new BoundSymbol(EMPTY, name);
   }
   return found;
 };
@@ -201,15 +203,15 @@ export const exportOf: {
 );
 
 export const declareSymbol = (declaration: SymbolDeclaration): BoundSymbol => {
-  const symbol = Option.getOrElse(
+  const symbol: BoundSymbol = Option.getOrElse(
     Option.zipWith(declaration.table, declaration.name, (table, name) =>
       symbolInTable(table, name, declaration),
     ),
-    () => createSymbol(EMPTY, MISSING_NAME),
+    () => new BoundSymbol(EMPTY, MISSING_NAME),
   );
-  addDeclarationToSymbol(symbol, declaration.node, declaration.includes);
-  if (Predicate.isUndefined(symbol.parent) && Option.isSome(declaration.parent)) {
-    symbol.parent = declaration.parent.value;
+  symbol.addDeclaration(declaration.node, declaration.includes);
+  if (Option.isSome(declaration.parent)) {
+    symbol.adoptedBy(declaration.parent.value);
   }
   return symbol;
 };

@@ -1,15 +1,20 @@
 import { Array as Arr, Option, String as Str, pipe } from "effect";
 
 import {
+  isClassDeclaration,
   isEnumDeclaration,
   isExportAssignment,
   isExportDeclaration,
   isIdentifier,
   isImportDeclaration,
   isInterfaceDeclaration,
+  isLiteralTypeNode,
   isPropertyAccessExpression,
+  isPropertyDeclaration,
+  isPropertySignatureDeclaration,
   isStringLiteral,
   isTypeAliasDeclaration,
+  isTypeLiteralNode,
   SyntaxKind,
 } from "./compiler.ts";
 import type {
@@ -79,6 +84,12 @@ export const isExternalDeclaration =
   (program: Program) =>
   (declaration: Node): boolean =>
     isExternalFile(program)(declaration.getSourceFile());
+
+export const isOutsideDeclaration =
+  (program: Program) =>
+  (declaration: Node): boolean =>
+    program.isSourceFileDefaultLibrary(declaration.getSourceFile()) ||
+    isExternalDeclaration(program)(declaration);
 
 const ALIAS_KINDS: ReadonlySet<SyntaxKind> = new Set([
   SyntaxKind.ImportSpecifier,
@@ -174,6 +185,39 @@ export const isTypeDeclaration = (
   isTypeAliasDeclaration(declaration) ||
   isInterfaceDeclaration(declaration) ||
   isEnumDeclaration(declaration);
+
+const membersOf = (declaration: Node): readonly Node[] => {
+  if (isInterfaceDeclaration(declaration) || isClassDeclaration(declaration)) {
+    return declaration.members;
+  }
+  if (isTypeAliasDeclaration(declaration) && isTypeLiteralNode(declaration.type)) {
+    return declaration.type.members;
+  }
+  return [];
+};
+
+const isTagNamed =
+  (name: string) =>
+  (member: Node): boolean =>
+    (isPropertySignatureDeclaration(member) || isPropertyDeclaration(member)) &&
+    pipe(
+      Option.fromUndefinedOr(member.type),
+      Option.exists(
+        (type) =>
+          isLiteralTypeNode(type) && isStringLiteral(type.literal) && type.literal.text === name,
+      ),
+    );
+
+export const declaresAType = (declarations: readonly Node[]): boolean =>
+  pipe(
+    declarations,
+    Arr.some((declaration) => isTypeDeclaration(declaration) || isClassDeclaration(declaration)),
+  );
+
+export const carriesTag =
+  (name: string) =>
+  (declarations: readonly Node[]): boolean =>
+    pipe(declarations, Arr.flatMap(membersOf), Arr.some(isTagNamed(name)));
 
 export const isGenericDeclaration = (declaration: Node): boolean =>
   (isTypeAliasDeclaration(declaration) || isInterfaceDeclaration(declaration)) &&

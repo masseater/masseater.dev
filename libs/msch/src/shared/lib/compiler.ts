@@ -48,6 +48,7 @@ export {
   isIdentifier,
   isImportDeclaration,
   isInterfaceDeclaration,
+  isLiteralTypeNode,
   isModuleBlock,
   isModuleDeclaration,
   isNewExpression,
@@ -56,6 +57,8 @@ export {
   isParenthesizedExpression,
   isPropertyAccessExpression,
   isPropertyAssignment,
+  isPropertyDeclaration,
+  isPropertySignatureDeclaration,
   isReturnStatement,
   isSatisfiesExpression,
   isSignatureDeclaration,
@@ -70,7 +73,7 @@ export {
   isVariableDeclarationList,
   isVariableStatement,
 } from "typescript/ast/is";
-export { API, IndexKind, SignatureKind } from "typescript/sync";
+export { API, IndexKind, SignatureKind, SymbolFlags } from "typescript/sync";
 export type {
   Checker,
   ParsedCommandLine,

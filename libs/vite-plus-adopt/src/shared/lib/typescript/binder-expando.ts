@@ -22,7 +22,7 @@ import {
   isExpandoSymbol,
   isFunctionSymbol,
 } from "./binder-expando-symbol.ts";
-import { addDeclarationToSymbol, exportOf } from "./binder-symbols.ts";
+import { exportOf } from "./binder-symbols.ts";
 import type { BoundSymbol } from "./binder-symbols.ts";
 import {
   getElementOrPropertyAccessName,
@@ -95,7 +95,7 @@ const addNamespaceDeclaration =
     parent: Option.Option<BoundSymbol>,
   ): Option.Option<BoundSymbol> => {
     if (Option.isSome(symbol)) {
-      addDeclarationToSymbol(symbol.value, name, NAMESPACE_FLAGS.includes);
+      symbol.value.addDeclaration(name, NAMESPACE_FLAGS.includes);
       return symbol;
     }
     return parent.pipe(
@@ -180,7 +180,7 @@ const bindExpandoMember = (
   if (Option.isNone(owner)) {
     return;
   }
-  owner.value.exports ??= new Map();
+  owner.value.openExports();
   const flags = expandoMemberFlags(declaration);
   declare(binding, {
     target: exportsOf(owner),
