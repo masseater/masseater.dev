@@ -1,4 +1,4 @@
-import { and, desc, eq, gte, inArray, lte, or } from "drizzle-orm";
+import { and, desc, eq, gte, inArray, like, lte, or } from "drizzle-orm";
 import type { SQL } from "drizzle-orm";
 import { Array as Arr, Effect, Option, Schema, pipe } from "effect";
 
@@ -64,7 +64,7 @@ const startsBefore = (to: string): SQL | undefined =>
   or(eq(lifeRecord.dayStart, NONE), lte(lifeRecord.dayStart, to));
 
 const termCondition = (terms: readonly string[]): Option.Option<SQL> =>
-  anyTermMatches([lifeRecord.searchText])(terms);
+  anyTermMatches((pattern) => [like(lifeRecord.searchText, pattern)])(terms);
 
 const conditionsOf = ({
   records,
