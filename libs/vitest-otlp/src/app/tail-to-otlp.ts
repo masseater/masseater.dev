@@ -11,11 +11,6 @@ import {
   ExportTraceServiceRequestSchema,
 } from "#/shared/api/index.ts";
 
-export interface Env {
-  readonly OTEL_EXPORTER_OTLP_ENDPOINT: string;
-  readonly OTEL_SERVICE_NAME: string;
-}
-
 const PROTOBUF_CONTENT_TYPE = "application/x-protobuf";
 
 const post = <Desc extends DescMessage>(
@@ -43,7 +38,10 @@ const exportInvocation = (
 
 const runtime = ManagedRuntime.make(FetchHttpClient.layer);
 
-const tailStream = (onset: TailEvent, env: Env): ((event: TailEvent) => Promise<unknown>) => {
+const tailStream = (
+  onset: TailEvent,
+  env: Readonly<{ OTEL_EXPORTER_OTLP_ENDPOINT: string; OTEL_SERVICE_NAME: string }>,
+): ((event: TailEvent) => Promise<unknown>) => {
   const events: TailEvent[] = [onset];
   const exportAll = Effect.suspend(() =>
     exportInvocation(env.OTEL_EXPORTER_OTLP_ENDPOINT, invocationOf(env.OTEL_SERVICE_NAME)(events)),

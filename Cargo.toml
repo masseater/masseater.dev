@@ -104,5 +104,5 @@ opt-level = 3
 opt-level = 3
 
 [patch.crates-io]
-proc-macro-crate = { path = "patches/crates/proc-macro-crate" } # exit: crate:tao requires gtk@>=0.19
+proc-macro-crate = { path = "patches/crates/proc-macro-crate" } # exit: crate:tauri requires tao@>=0.38
 tauri-macros = { path = "patches/crates/tauri-macros" } # exit: crate:tauri-macros@>2.7.6

@@ -18,7 +18,8 @@ export interface Command {
   readonly cwd?: string;
 }
 
-type Spawned<Success> = Effect.Effect<
+/** @internal */
+export type Spawned<Success> = Effect.Effect<
   Success,
   CommandFailed | PlatformError.PlatformError,
   ChildProcessSpawner.ChildProcessSpawner

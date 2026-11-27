@@ -10,7 +10,8 @@ import {
 } from "effect";
 import type { PlatformError } from "effect";
 
-type Appended = Effect.Effect<
+/** @internal */
+export type Appended = Effect.Effect<
   void,
   Config.ConfigError | PlatformError.PlatformError,
   FileSystem.FileSystem

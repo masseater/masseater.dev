@@ -11,7 +11,8 @@ const AUDIENCE = "masseater-dev-credential-broker";
 
 const IdToken = Schema.Struct({ value: Schema.String });
 
-type BrokerError =
+/** @internal */
+export type BrokerError =
   | Config.ConfigError
   | HttpBody.HttpBodyError
   | HttpClientError.HttpClientError

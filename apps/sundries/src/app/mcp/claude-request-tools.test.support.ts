@@ -9,8 +9,13 @@ export const { closeDatabase, resetDatabase } = d1;
 
 const ignored = constVoid;
 
+export const wakes: { outcome: string; texts: string[] } = { outcome: "fired", texts: [] };
+
 const routine = {
-  fire: (): Promise<string> => Promise.resolve("fired"),
+  fire: (text: string): Promise<string> => {
+    wakes.texts.push(text);
+    return Promise.resolve(wakes.outcome);
+  },
   register: (): Promise<boolean> => Promise.resolve(true),
 };
 

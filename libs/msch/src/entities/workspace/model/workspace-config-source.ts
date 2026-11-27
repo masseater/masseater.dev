@@ -104,12 +104,6 @@ export const programOf = Effect.fn("programOf")(function* programOf(file: string
   return program;
 });
 
-export interface WorkspaceConfig {
-  readonly file: string;
-  readonly source: string;
-  readonly program: unknown;
-}
-
 export const workspaceConfigOf = Effect.fn("workspaceConfigOf")(function* workspaceConfigOf(
   root: string,
   directory: string,
@@ -118,10 +112,10 @@ export const workspaceConfigOf = Effect.fn("workspaceConfigOf")(function* worksp
   const file = files.join(root, directory, CONFIG_FILE);
   const text = yield* files.readFile(file);
   if (Option.isNone(text)) {
-    return Option.none<WorkspaceConfig>();
+    return Option.none();
   }
   const program = yield* programOf(file, text.value);
-  return Option.some<WorkspaceConfig>({ file, source: text.value, program });
+  return Option.some({ file, source: text.value, program });
 });
 
 export type { WorkspaceSettingsInvalid };

@@ -65,7 +65,7 @@
     "vite-plus": "catalog:stack"
   },
   "peerDependencies": {
-    "@r_masseater/h56m": "^0.1.0"
+    "@r_masseater/h56m": "workspace:^"
   },
   "engines": {
     "node": "v26.13.1"
