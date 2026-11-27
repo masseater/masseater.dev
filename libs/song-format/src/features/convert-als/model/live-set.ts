@@ -1,4 +1,4 @@
-import { Effect, Schema } from "effect";
+import { Array as Arr, Effect, Option, Record as Rec, Schema, pipe } from "effect";
 import { XMLParser } from "fast-xml-parser";
 
 const taggedError = Schema.TaggedError;
@@ -34,7 +34,7 @@ const parser = new XMLParser({
   attributesGroupName: ATTRIBUTES,
   parseTagValue: false,
   parseAttributeValue: false,
-  isArray: (name) => REPEATED.has(name),
+  isArray: (name: string): boolean => REPEATED.has(name),
 });
 
 const Num = Schema.Struct({ Value: Schema.FiniteFromString });
@@ -56,11 +56,13 @@ const EnvelopeSchema = Schema.Struct({
   Automation: Schema.Struct({ Events: EventsSchema }),
 });
 
-const EnvelopesSchema = Schema.Struct({
-  Envelopes: Schema.Struct({
-    AutomationEnvelope: Schema.optionalKey(Schema.Array(EnvelopeSchema)),
-  }),
+export type AutomationEnvelope = typeof EnvelopeSchema.Type;
+
+const EnvelopeListSchema = Schema.Struct({
+  AutomationEnvelope: Schema.optionalKey(Schema.Array(EnvelopeSchema)),
 });
+
+const EnvelopesSchema = Schema.Struct({ Envelopes: EnvelopeListSchema });
 
 const TargetSchema = Schema.Struct({ Id: Schema.FiniteFromString });
 
@@ -82,24 +84,29 @@ const NoteSchema = Schema.Struct({
   VelocityDeviation: Schema.optionalKey(Schema.FiniteFromString),
 });
 
-const KeyTrackSchema = Schema.Struct({
-  Notes: Schema.Struct({ MidiNoteEvent: Schema.optionalKey(Schema.Array(NoteSchema)) }),
-  MidiKey: Num,
+const NoteListSchema = Schema.Struct({
+  MidiNoteEvent: Schema.optionalKey(Schema.Array(NoteSchema)),
+});
+
+const KeyTrackSchema = Schema.Struct({ Notes: NoteListSchema, MidiKey: Num });
+
+const LoopSchema = Schema.Struct({
+  LoopStart: Num,
+  LoopEnd: Num,
+  StartRelative: Num,
+  LoopOn: Flag,
+});
+
+const KeyTracksSchema = Schema.Struct({
+  KeyTrack: Schema.optionalKey(Schema.Array(KeyTrackSchema)),
 });
 
 const ClipSchema = Schema.Struct({
   CurrentStart: Num,
   CurrentEnd: Num,
-  Loop: Schema.Struct({
-    LoopStart: Num,
-    LoopEnd: Num,
-    StartRelative: Num,
-    LoopOn: Flag,
-  }),
+  Loop: LoopSchema,
   Disabled: Schema.optionalKey(Flag),
-  Notes: Schema.Struct({
-    KeyTracks: Schema.Struct({ KeyTrack: Schema.optionalKey(Schema.Array(KeyTrackSchema)) }),
-  }),
+  Notes: Schema.Struct({ KeyTracks: KeyTracksSchema }),
 });
 
 export type AlsClip = typeof ClipSchema.Type;
@@ -109,25 +116,25 @@ const NameSchema = Schema.Struct({
   UserName: Schema.optionalKey(Text),
 });
 
-const DevicesSchema = Schema.Struct({
-  Devices: Schema.optionalKey(
-    Schema.Struct({ DrumGroupDevice: Schema.optionalKey(Schema.Unknown) }),
-  ),
+const DrumsSchema = Schema.Struct({ DrumGroupDevice: Schema.optionalKey(Schema.Unknown) });
+
+const DevicesSchema = Schema.Struct({ Devices: Schema.optionalKey(DrumsSchema) });
+
+const ClipEventsSchema = Schema.Struct({ MidiClip: Schema.optionalKey(Schema.Array(ClipSchema)) });
+
+const ArrangementSchema = Schema.Struct({
+  ArrangerAutomation: Schema.Struct({ Events: ClipEventsSchema }),
+});
+
+const TrackChainSchema = Schema.Struct({
+  DeviceChain: Schema.optionalKey(DevicesSchema),
+  MainSequencer: Schema.Struct({ ClipTimeable: ArrangementSchema }),
 });
 
 const MidiTrackSchema = Schema.Struct({
   Id: Schema.String,
   Name: NameSchema,
-  DeviceChain: Schema.Struct({
-    DeviceChain: Schema.optionalKey(DevicesSchema),
-    MainSequencer: Schema.Struct({
-      ClipTimeable: Schema.Struct({
-        ArrangerAutomation: Schema.Struct({
-          Events: Schema.Struct({ MidiClip: Schema.optionalKey(Schema.Array(ClipSchema)) }),
-        }),
-      }),
-    }),
-  }),
+  DeviceChain: TrackChainSchema,
 });
 
 export type AlsMidiTrack = typeof MidiTrackSchema.Type;
@@ -144,15 +151,21 @@ export type AlsMaster = typeof MasterSchema.Type;
 
 const LocatorSchema = Schema.Struct({ Time: Num, Name: Text });
 
+export type AlsLocator = typeof LocatorSchema.Type;
+
+const TracksSchema = Schema.Struct({
+  MidiTrack: Schema.optionalKey(Schema.Array(MidiTrackSchema)),
+});
+
+const LocatorListSchema = Schema.Struct({
+  Locator: Schema.optionalKey(Schema.Array(LocatorSchema)),
+});
+
 const LiveSetSchema = Schema.Struct({
-  Tracks: Schema.Struct({ MidiTrack: Schema.optionalKey(Schema.Array(MidiTrackSchema)) }),
+  Tracks: TracksSchema,
   MasterTrack: Schema.optionalKey(MasterSchema),
   MainTrack: Schema.optionalKey(MasterSchema),
-  Locators: Schema.optionalKey(
-    Schema.Struct({
-      Locators: Schema.Struct({ Locator: Schema.optionalKey(Schema.Array(LocatorSchema)) }),
-    }),
-  ),
+  Locators: Schema.optionalKey(Schema.Struct({ Locators: LocatorListSchema })),
 });
 
 export type LiveSet = typeof LiveSetSchema.Type;
@@ -168,26 +181,37 @@ const DocumentSchema = Schema.Struct({
 
 const decodeDocument = Schema.decodeUnknownEffect(DocumentSchema);
 
+const isElement = Schema.is(Schema.Record(Schema.String, Schema.Unknown));
+const isAttributes = Schema.is(Schema.Record(Schema.String, Schema.String));
+
 const flattened = (node: unknown): unknown => {
   if (node === "") {
     return {};
   }
-  if (Array.isArray(node)) {
-    return node.map(flattened);
+  if (Arr.isArray(node)) {
+    return pipe(
+      node,
+      Arr.map((child) => flattened(child)),
+    );
   }
-  if (typeof node === "object" && node !== null) {
-    const { [ATTRIBUTES]: attributes, ...children } = node as Record<string, unknown>;
+  if (isElement(node)) {
+    const { [ATTRIBUTES]: attributes, ...children } = node;
+    const own = pipe(
+      Option.liftPredicate(attributes, isAttributes),
+      Option.getOrElse((): Readonly<Record<string, string>> => ({})),
+    );
     return {
-      ...Object.fromEntries(
-        Object.entries(children).map(([key, value]) => [key, flattened(value)]),
+      ...pipe(
+        children,
+        Rec.map((child) => flattened(child)),
       ),
-      ...(attributes as Record<string, string> | undefined),
+      ...own,
     };
   }
   return node;
 };
 
-const gunzip = (bytes: Uint8Array) =>
+const gunzip = (bytes: Uint8Array): Effect.Effect<string, UnreadableAls> =>
   Effect.tryPromise({
     try: () =>
       new Response(

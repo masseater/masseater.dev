@@ -3,7 +3,14 @@ import { Array as Arr, Option, Order, pipe } from "effect";
 
 import type { From } from "#/shared/lib/from.ts";
 
-import type { AlsMaster, AutomationEvent, LiveSet, Parameter } from "./live-set.ts";
+import type {
+  AlsLocator,
+  AlsMaster,
+  AutomationEnvelope,
+  AutomationEvent,
+  LiveSet,
+  Parameter,
+} from "./live-set.ts";
 
 export const SONG_START = 0;
 
@@ -38,8 +45,10 @@ const mixerOf: From<
   AlsMaster,
   Option.Option<{ readonly Tempo: Parameter; readonly TimeSignature: Parameter }>
 > = (master) =>
-  Option.orElse(Option.fromUndefinedOr(master.DeviceChain?.Mixer), () =>
-    Option.fromUndefinedOr(master.MasterChain?.Mixer),
+  pipe(
+    Option.fromUndefinedOr(master.DeviceChain),
+    Option.orElse(() => Option.fromUndefinedOr(master.MasterChain)),
+    Option.map((chain) => chain.Mixer),
   );
 
 const eventsOf = (events: {
@@ -52,18 +61,28 @@ const eventsOf = (events: {
   ...(events.BoolEvent ?? []),
 ];
 
+const automationEnvelopesOf = (master: AlsMaster): readonly AutomationEnvelope[] =>
+  pipe(
+    Option.fromUndefinedOr(master.AutomationEnvelopes),
+    Option.flatMap((envelopes) => Option.fromUndefinedOr(envelopes.Envelopes.AutomationEnvelope)),
+    Option.getOrElse((): readonly AutomationEnvelope[] => []),
+  );
+
 const byTime = Order.mapInput(Order.Number, (event: AutomationEvent) => event.Time);
 
 export const envelopeOf =
   (master: AlsMaster): From<Parameter, readonly AutomationEvent[]> =>
   (parameter) => {
-    const inline = Option.fromUndefinedOr(parameter.ArrangerAutomation?.Events);
+    const inline = pipe(
+      Option.fromUndefinedOr(parameter.ArrangerAutomation),
+      Option.map((automation) => automation.Events),
+    );
     const pointed = pipe(
       Option.fromUndefinedOr(parameter.AutomationTarget),
       Option.flatMap((target) =>
-        Arr.findFirst(
-          master.AutomationEnvelopes?.Envelopes.AutomationEnvelope ?? [],
-          (envelope) => envelope.EnvelopeTarget.PointeeId.Value === target.Id,
+        pipe(
+          automationEnvelopesOf(master),
+          Arr.findFirst((envelope) => envelope.EnvelopeTarget.PointeeId.Value === target.Id),
         ),
       ),
       Option.map((envelope) => envelope.Automation.Events),
@@ -72,11 +91,12 @@ export const envelopeOf =
       Option.orElse(pointed, () => inline),
       Option.map(eventsOf),
       Option.getOrElse((): readonly AutomationEvent[] => []),
-      Arr.sort(byTime),
+      Arr.sortBy(byTime),
     );
   };
 
 const SINGLE = 1;
+const NEXT = 1;
 
 const tempoOf: From<
   LiveSet,
@@ -96,10 +116,10 @@ export const tempoEnvelopeOf: From<LiveSet, readonly Point[]> = (liveSet) =>
   pipe(
     tempoOf(liveSet),
     Option.map(({ master, tempo }) =>
-      Arr.map(envelopeOf(master)(tempo), (event): Point => ({
-        beat: event.Time,
-        value: Number(event.Value),
-      })),
+      pipe(
+        envelopeOf(master)(tempo),
+        Arr.map((event): Point => ({ beat: event.Time, value: Number(event.Value) })),
+      ),
     ),
     Option.getOrElse((): readonly Point[] => []),
   );
@@ -140,29 +160,45 @@ const segmentOf = (from: Point, next: Option.Option<Point>): TempoSegment => {
   });
 };
 
+const keptWith = (
+  kept: readonly TempoSegment[],
+  segment: TempoSegment,
+): readonly TempoSegment[] => {
+  const earlier = pipe(
+    Arr.last(kept),
+    Option.filter((last) => last.beat === segment.beat),
+    Option.match({ onNone: () => kept, onSome: () => Arr.dropRight(kept, SINGLE) }),
+  );
+  const redundant = pipe(
+    Arr.last(earlier),
+    Option.exists(
+      (last) =>
+        Option.isNone(last.target) && Option.isNone(segment.target) && last.bpm === segment.bpm,
+    ),
+  );
+  if (redundant) {
+    return earlier;
+  }
+  return [...earlier, segment];
+};
+
+const withoutRepeats = (segments: readonly TempoSegment[]): readonly TempoSegment[] => {
+  let kept: readonly TempoSegment[] = [];
+  for (const segment of segments) {
+    kept = keptWith(kept, segment);
+  }
+  return kept;
+};
+
 export const tempoSegmentsOf: From<readonly Point[], readonly TempoSegment[]> = (points) =>
   pipe(
     points,
-    Arr.map((point, index) => ({ point, next: Arr.get(points, index + 1) })),
+    Arr.map((point, index) => ({ point, next: Arr.get(points, index + NEXT) })),
     Arr.filter(({ next }) =>
       Option.match(next, { onNone: () => true, onSome: (to) => to.beat > SONG_START }),
     ),
     Arr.map(({ point, next }) => segmentOf(point, next)),
-    Arr.reduce([] as readonly TempoSegment[], (kept, segment) => {
-      const kept2 = pipe(
-        Arr.last(kept),
-        Option.filter((last) => last.beat === segment.beat),
-        Option.match({ onNone: () => kept, onSome: () => Arr.dropRight(kept, 1) }),
-      );
-      const redundant = pipe(
-        Arr.last(kept2),
-        Option.exists(
-          (last) =>
-            Option.isNone(last.target) && Option.isNone(segment.target) && last.bpm === segment.bpm,
-        ),
-      );
-      return redundant ? kept2 : [...kept2, segment];
-    }),
+    withoutRepeats,
   );
 
 const meterOfId = (beat: number, id: number): Option.Option<MeterChange> =>
@@ -205,7 +241,9 @@ const byBeat = Order.mapInput(Order.Number, (locator: Locator) => locator.beat);
 
 export const locatorsOf: From<LiveSet, readonly Locator[]> = (liveSet) =>
   pipe(
-    liveSet.Locators?.Locators.Locator ?? [],
+    Option.fromUndefinedOr(liveSet.Locators),
+    Option.flatMap((locators) => Option.fromUndefinedOr(locators.Locators.Locator)),
+    Option.getOrElse((): readonly AlsLocator[] => []),
     Arr.map((locator): Locator => ({ beat: locator.Time.Value, name: locator.Name.Value })),
-    Arr.sort(byBeat),
+    Arr.sortBy(byBeat),
   );

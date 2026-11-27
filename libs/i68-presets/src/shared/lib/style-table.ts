@@ -36,13 +36,16 @@ const contextOf =
     );
   };
 
-export const longestContext = (
-  table: StyleTable,
-  seen: number,
-  before: readonly Step[],
-): Option.Option<Context> =>
-  pipe(
-    Arr.range(FIRST, Math.min(table.order, before.length)),
-    Arr.reverse,
-    Arr.findFirst(contextOf(table, seen, before)),
-  );
+export interface Judge {
+  readonly table: StyleTable;
+  readonly seen: number;
+}
+
+export const longestContext =
+  ({ table, seen }: Judge) =>
+  (before: readonly Step[]): Option.Option<Context> =>
+    pipe(
+      Arr.range(FIRST, Math.min(table.order, before.length)),
+      Arr.reverse,
+      Arr.findFirst(contextOf(table, seen, before)),
+    );

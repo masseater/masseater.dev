@@ -1,7 +1,7 @@
 import { alsToFumx } from "@masseater.dev/song-format/convert-als";
 import { readSong } from "@r_masseater/fumx-parser";
 import { soundingsOf } from "@r_masseater/fumx-parser/analysis";
-import { Effect, FileSystem, Path, Schema } from "effect";
+import { Effect, FileSystem, Path, Schema, String as Str } from "effect";
 
 import { progressionOf } from "#/shared/lib/degrees.ts";
 
@@ -16,7 +16,7 @@ export class UnreadableSong extends taggedError<
 
 const textOf = Effect.fn("textOf")(function* textOf(file: string, name: string) {
   const fileSystem = yield* FileSystem.FileSystem;
-  if (file.endsWith(".als")) {
+  if (Str.endsWith(".als")(file)) {
     const bytes = yield* fileSystem.readFile(file);
     const fumx = yield* alsToFumx({ bytes, title: name });
     return fumx.text;

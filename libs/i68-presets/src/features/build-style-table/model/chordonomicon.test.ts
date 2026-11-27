@@ -1,11 +1,15 @@
 import { describe, expect, it } from "@effect/vitest";
+import { Array as Arr, pipe } from "effect";
 
 import { symbolOf, tokensOf } from "./chordonomicon.ts";
 
 describe("Chordonomicon chords", () => {
   it("spells chord symbols the way tonal reads them", () => {
     expect(
-      ["Amin", "Csmin", "Fs7", "Bb", "C/B", "Dmaj7", "Ebmin7", "Gsdim", "Cadd9"].map(symbolOf),
+      pipe(
+        ["Amin", "Csmin", "Fs7", "Bb", "C/B", "Dmaj7", "Ebmin7", "Gsdim", "Cadd9"],
+        Arr.map((symbol) => symbolOf(symbol)),
+      ),
     ).toStrictEqual(["Am", "C#m", "F#7", "Bb", "C", "Dmaj7", "Ebm7", "G#dim", "Cadd9"]);
   });
 

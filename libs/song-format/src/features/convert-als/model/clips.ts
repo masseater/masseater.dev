@@ -1,4 +1,4 @@
-import { Array as Arr, Order, pipe } from "effect";
+import { Array as Arr, Option, Order, pipe } from "effect";
 
 import type { From } from "#/shared/lib/from.ts";
 
@@ -66,10 +66,11 @@ const sourceNotesOf: From<AlsClip, readonly SourceNote[]> = (clip) =>
           end: note.Time + note.Duration,
           midi: keyTrack.MidiKey.Value,
           velocity: Math.round(note.Velocity),
-          release:
-            note.OffVelocity === undefined || note.OffVelocity === NONE
-              ? DEFAULT_RELEASE
-              : Math.round(note.OffVelocity),
+          release: pipe(
+            Option.fromUndefinedOr(note.OffVelocity),
+            Option.filter((off) => off !== NONE),
+            Option.match({ onNone: () => DEFAULT_RELEASE, onSome: Math.round }),
+          ),
         })),
       ),
     ),
@@ -96,9 +97,13 @@ const byStartThenPitch = Order.combine(
 );
 
 export const notesOfClip: From<AlsClip, readonly PlayedNote[]> = (clip) => {
-  if (clip.Disabled?.Value === "true") {
+  const disabled = pipe(
+    Option.fromUndefinedOr(clip.Disabled),
+    Option.exists((flag) => flag.Value === "true"),
+  );
+  if (disabled) {
     return [];
   }
   const notes = sourceNotesOf(clip);
-  return pipe(passesOf(clip), Arr.flatMap(inPass(notes)), Arr.sort(byStartThenPitch));
+  return pipe(passesOf(clip), Arr.flatMap(inPass(notes)), Arr.sortBy(byStartThenPitch));
 };

@@ -1,3 +1,4 @@
+import { runMain } from "@masseater.dev/node-main";
 import { Console, Effect, FileSystem, Option, Path, Schema } from "effect";
 import { Argument, Command, Flag } from "effect/cli";
 
@@ -23,16 +24,14 @@ export interface Source {
   readonly path: string;
 }
 
-export interface ConvertCommand<Failure, Requirements> {
+export interface ConvertCommand<Failure> {
   readonly name: string;
   readonly input: string;
   readonly source: string;
-  readonly convert: (source: Source) => Effect.Effect<Converted, Failure, Requirements>;
+  readonly convert: (source: Source) => Effect.Effect<Converted, Failure>;
 }
 
-export const convertCommand = <Failure, Requirements>(
-  spec: ConvertCommand<Failure, Requirements>,
-) => {
+export const convertMain = <Failure>(spec: ConvertCommand<Failure>): void => {
   const convertFile = Effect.fn("convertFile")(function* convertFile(
     file: string,
     out: Option.Option<string>,
@@ -50,7 +49,7 @@ export const convertCommand = <Failure, Requirements>(
     yield* fileSystem.writeFileString(target, converted.text);
     return { output: target, comparison: converted.comparison, adjustments: converted.adjustments };
   });
-  return Command.make(
+  const command = Command.make(
     spec.name,
     {
       file: Argument.String("file").pipe(Argument.withDescription(spec.input)),
@@ -74,4 +73,5 @@ export const convertCommand = <Failure, Requirements>(
         Effect.asVoid,
       ),
   );
+  runMain(spec.name)(Command.run(command, { version: "0.0.0" }));
 };

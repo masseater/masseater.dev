@@ -41,7 +41,7 @@ const checkStep =
   (steps: readonly Step[], index: number): void => {
     const before = Arr.take(steps, index);
     for (const step of Option.toArray(Arr.get(steps, index))) {
-      for (const context of Option.toArray(longestContext(table, seen, before))) {
+      for (const context of Option.toArray(longestContext({ table, seen })(before))) {
         const count = Option.getOrElse(Rec.get(context.next, step.token), () => NEVER);
         if (count / context.total < share) {
           report(`${String(step.line)}:${step.token}:${String(index)}`, {

@@ -1,5 +1,5 @@
 import { TICKS_PER_WHOLE } from "@r_masseater/fumx-parser";
-import { Array as Arr, Option, pipe } from "effect";
+import { Array as Arr, Boolean as Bool, Option, pipe } from "effect";
 
 import { sortedByTick, sortedNotes } from "#/entities/timeline/index.ts";
 import type { Part, TempoChange, Timeline, TimelineNote } from "#/entities/timeline/index.ts";
@@ -32,14 +32,20 @@ const microsecondsOf: From<number, number> = (bpm) => Math.round(MICROSECONDS_PE
 
 const nameOf: From<AlsMidiTrack, Option.Option<string>> = (track) =>
   pipe(
-    [track.Name.EffectiveName?.Value, track.Name.UserName?.Value],
+    [track.Name.EffectiveName, track.Name.UserName],
     Arr.map(Option.fromUndefinedOr),
     Arr.getSomes,
+    Arr.map((name) => name.Value),
     Arr.findFirst((name) => name !== ""),
   );
 
 const isDrumRack: From<AlsMidiTrack, boolean> = (track) =>
-  track.DeviceChain.DeviceChain?.Devices?.DrumGroupDevice !== undefined;
+  pipe(
+    Option.fromUndefinedOr(track.DeviceChain.DeviceChain),
+    Option.flatMap((chain) => Option.fromUndefinedOr(chain.Devices)),
+    Option.flatMap((devices) => Option.fromUndefinedOr(devices.DrumGroupDevice)),
+    Option.isSome,
+  );
 
 interface TrackNotes {
   readonly notes: readonly TimelineNote[];
@@ -51,20 +57,26 @@ const trackNotesOf: From<AlsMidiTrack, TrackNotes> = (track) => {
     track.DeviceChain.MainSequencer.ClipTimeable.ArrangerAutomation.Events.MidiClip ?? [],
     Arr.flatMap(notesOfClip),
   );
-  const placed = Arr.map(played, (note) => ({
-    note,
-    start: tickOf(note.beat),
-    end: tickOf(note.beat + note.length),
-  }));
+  const placed = pipe(
+    played,
+    Arr.map((note) => ({
+      note,
+      start: tickOf(note.beat),
+      end: tickOf(note.beat + note.length),
+    })),
+  );
   return {
     notes: sortedNotes(
-      Arr.map(placed, ({ note, start, end }): TimelineNote => ({
-        tick: start.tick,
-        end: end.tick,
-        midi: note.midi,
-        velocity: note.velocity,
-        release: note.release,
-      })),
+      pipe(
+        placed,
+        Arr.map(({ note, start, end }): TimelineNote => ({
+          tick: start.tick,
+          end: end.tick,
+          midi: note.midi,
+          velocity: note.velocity,
+          release: note.release,
+        })),
+      ),
     ),
     offGrid: Arr.countBy(placed, ({ start, end }) => !start.exact || !end.exact),
   };
@@ -80,7 +92,10 @@ const partOf = (track: AlsMidiTrack, index: number): PartRead => {
   return {
     part: {
       track: index,
-      channel: isDrumRack(track) ? DRUM_CHANNEL : MELODIC_CHANNEL,
+      channel: Bool.match(isDrumRack(track), {
+        onFalse: () => MELODIC_CHANNEL,
+        onTrue: () => DRUM_CHANNEL,
+      }),
       name: nameOf(track),
       program: Option.none(),
       notes: read.notes,
@@ -97,7 +112,7 @@ const temposOf: From<LiveSet, readonly TempoChange[]> = (liveSet) =>
     Arr.map((segment): TempoChange => ({
       tick: tickOf(segment.beat).tick,
       microseconds: microsecondsOf(segment.bpm),
-      target: Option.map(segment.target, microsecondsOf),
+      target: pipe(segment.target, Option.map(microsecondsOf)),
     })),
   );
 
@@ -110,25 +125,37 @@ export const timelineOf: From<LiveSet, Timeline> = (liveSet) => {
     Arr.map(partOf),
     Arr.filter((read) => Arr.isReadonlyArrayNonEmpty(read.part.notes)),
   );
-  const parts = Arr.map(reads, (read) => read.part);
+  const parts = pipe(
+    reads,
+    Arr.map((read) => read.part),
+  );
   const markers = sortedByTick(
-    Arr.map(locatorsOf(liveSet), (locator) => ({
-      tick: tickOf(locator.beat).tick,
-      text: locator.name,
-    })),
+    pipe(
+      locatorsOf(liveSet),
+      Arr.map((locator) => ({ tick: tickOf(locator.beat).tick, text: locator.name })),
+    ),
   );
   const tempos = temposOf(liveSet);
-  const meters = Arr.map(metersOf(liveSet), (meter) => ({
-    tick: tickOf(meter.beat).tick,
-    numerator: meter.numerator,
-    denominator: meter.denominator,
-  }));
+  const meters = pipe(
+    metersOf(liveSet),
+    Arr.map((meter) => ({
+      tick: tickOf(meter.beat).tick,
+      numerator: meter.numerator,
+      denominator: meter.denominator,
+    })),
+  );
+  const noteEnds = pipe(
+    parts,
+    Arr.flatMap((part) => part.notes),
+    Arr.map((note) => note.end),
+  );
+  const pointEnds = pipe(
+    [...markers, ...tempos, ...meters],
+    Arr.map((point) => point.tick + NEXT),
+  );
   return {
     title: Option.none(),
-    end: lastOf([
-      ...Arr.flatMap(parts, (part) => Arr.map(part.notes, (note) => note.end)),
-      ...Arr.map([...markers, ...tempos, ...meters], (point) => point.tick + NEXT),
-    ]),
+    end: lastOf([...noteEnds, ...pointEnds]),
     offGrid: Arr.reduce(reads, NONE, (sum, read) => sum + read.offGrid),
     tempos,
     meters,

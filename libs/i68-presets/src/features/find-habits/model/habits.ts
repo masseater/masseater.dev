@@ -1,4 +1,12 @@
-import { Array as Arr, Number as Num, Option, Order, Record as Rec, pipe } from "effect";
+import {
+  Array as Arr,
+  Number as Num,
+  Option,
+  Order,
+  Record as Rec,
+  String as Str,
+  pipe,
+} from "effect";
 
 import type { Step } from "#/shared/lib/degrees.ts";
 import { longestContext } from "#/shared/lib/style-table.ts";
@@ -60,7 +68,7 @@ const occurrencesIn =
       Arr.flatMap((index) => {
         const step = Arr.getUnsafe(song.steps, index);
         return pipe(
-          longestContext(baseline, limits.seen, Arr.take(song.steps, index)),
+          longestContext({ table: baseline, seen: limits.seen })(Arr.take(song.steps, index)),
           Option.map((context) => ({
             context: context.words,
             next: step.token,
@@ -80,11 +88,14 @@ const matches = (tokens: readonly string[], words: string): boolean =>
 const styleShareOf =
   (songs: readonly StyleSong[]) =>
   (context: string, next: string): number => {
-    const { length } = context.split(" ");
+    const { length } = Str.split(" ")(context);
     const following = pipe(
       songs,
       Arr.flatMap((song) => {
-        const tokens = Arr.map(song.steps, (step) => step.token);
+        const tokens = pipe(
+          song.steps,
+          Arr.map((step) => step.token),
+        );
         return pipe(
           Arr.makeBy(tokens.length, (index) => index),
           Arr.filter(
@@ -113,7 +124,10 @@ const habitOf =
       count: same.length,
       share: share(first.context, first.next),
       baselineShare: first.baselineShare,
-      evidence: Arr.map(same, (occurrence) => occurrence.place),
+      evidence: pipe(
+        same,
+        Arr.map((occurrence) => occurrence.place),
+      ),
     };
   };
 
@@ -122,13 +136,15 @@ const byReach = Order.combine(
   Order.mapInput(Num.Order, (habit: Habit) => -habit.count),
 );
 
-export const habitsOf = ({ songs, baseline, limits }: HabitInput): readonly Habit[] =>
-  pipe(
+export const habitsOf = ({ songs, baseline, limits }: HabitInput): readonly Habit[] => {
+  const toHabit = habitOf(styleShareOf(songs));
+  return pipe(
     songs,
     Arr.flatMap(occurrencesIn(baseline, limits)),
     Arr.groupBy((occurrence) => `${occurrence.context}\u0000${occurrence.next}`),
     Rec.values,
-    Arr.map(habitOf(styleShareOf(songs))),
+    Arr.map(toHabit),
     Arr.filter((habit) => habit.songs >= limits.songs && habit.share >= limits.share),
-    Arr.sort(byReach),
+    Arr.sortBy(byReach),
   );
+};

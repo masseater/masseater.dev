@@ -76,11 +76,13 @@ export const chordOf = (symbol: string): Option.Option<ReadChord> => {
 
 export const degreeOf =
   (key: Pick<KeySpan, "mode" | "pitchClass">) =>
-  (chord: ReadChord): Option.Option<string> =>
-    Option.map(
-      Arr.get(DEGREE_NAMES, pitchClassOf(chord.chroma - majorTonicOf(key))),
-      (degree) => `${degree}${chord.kind}`,
+  (chord: ReadChord): Option.Option<string> => {
+    const pitchClass = pitchClassOf(chord.chroma - majorTonicOf(key));
+    return pipe(
+      Arr.get(DEGREE_NAMES, pitchClass),
+      Option.map((degree) => `${degree}${chord.kind}`),
     );
+  };
 
 export const tokenOf =
   (key: Pick<KeySpan, "mode" | "pitchClass">) =>
