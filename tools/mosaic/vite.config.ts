@@ -11,6 +11,7 @@ export default defineConfig({
         cache: false,
       },
       daily: { command: [], dependsOn: ["character"] },
+      "daily:persist": { command: [], cache: false },
       "daily:deploy": { command: [], dependsOn: ["mosaic#deploy:mosaic-files"] },
       cargo: {
         command:

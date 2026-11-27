@@ -4,6 +4,7 @@ import { Array as Arr, Clock, Effect, Option, String as Str, pipe } from "effect
 import { saveTraitJa, loadTraitJa, loadTraits } from "#/entities/trait/index.server.ts";
 import { idOf, isActive, japaneseOf, TraitTranslator } from "#/entities/trait/index.ts";
 import type { JaRows, TraitState } from "#/entities/trait/index.ts";
+import type { Database } from "#/shared/db/index.server.ts";
 import { nowIso } from "#/shared/db/index.server.ts";
 import type { StorageFailed } from "#/shared/db/index.ts";
 
@@ -27,7 +28,7 @@ const translated = (text: string): Effect.Effect<string, UpstreamFailed, TraitTr
 const translateOne = ({
   id,
   trait,
-}: Pending): Effect.Effect<void, TranslateFailure, TraitTranslator> =>
+}: Pending): Effect.Effect<void, TranslateFailure, TraitTranslator | Database> =>
   Effect.gen(function* translateTrait() {
     const statement = yield* translated(trait.statement);
     const why = yield* translated(trait.why);
@@ -56,7 +57,7 @@ const translateFrom = (
   pending: readonly Pending[],
   deadline: number,
   done: number,
-): Effect.Effect<number, TranslateFailure, TraitTranslator> =>
+): Effect.Effect<number, TranslateFailure, TraitTranslator | Database> =>
   Effect.gen(function* nextTrait() {
     const now = yield* Clock.currentTimeMillis;
     const next = Arr.get(pending, done);
@@ -69,7 +70,7 @@ const translateFrom = (
 
 export const translateTraits = (
   deadline: number,
-): Effect.Effect<number, TranslateFailure, TraitTranslator> =>
+): Effect.Effect<number, TranslateFailure, TraitTranslator | Database> =>
   Effect.gen(function* translateAll() {
     const traits = yield* loadTraits;
     const rows = yield* loadTraitJa;

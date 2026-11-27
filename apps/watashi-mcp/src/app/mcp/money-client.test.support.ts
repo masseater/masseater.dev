@@ -11,6 +11,9 @@ import {
   pipe,
 } from "effect";
 
+import { runToolIn } from "#/shared/api/index.server.ts";
+
+import { moneyLayer } from "./money-d1.test.support.ts";
 import { registerMoneyTools } from "./money-tools.server.ts";
 
 export type Args = Readonly<Record<string, unknown>>;
@@ -52,9 +55,11 @@ const payloadOf = (text: string): string =>
     Option.getOrElse(() => text),
   );
 
+const runTool = runToolIn(moneyLayer);
+
 const respond = (body: string): Promise<Response> =>
   createMcpHandler(() =>
-    pipe(new McpServer({ name: "watashi", version: "0.0.0" }), registerMoneyTools),
+    pipe(new McpServer({ name: "watashi", version: "0.0.0" }), registerMoneyTools(runTool)),
   ).fetch(mcpRequest(body), {
     authInfo: authInfoOf({ azp: "claude-code" }),
   });

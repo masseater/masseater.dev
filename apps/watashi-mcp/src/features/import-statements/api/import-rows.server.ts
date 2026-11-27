@@ -3,7 +3,7 @@ import { Array as Arr, Option, pipe } from "effect";
 
 import { decide, transactions } from "#/entities/ledger/index.ts";
 import type { Rule, Entry, Fingerprint } from "#/entities/ledger/index.ts";
-import { db } from "#/shared/db/index.server.ts";
+import type { Build } from "#/shared/db/index.server.ts";
 
 export type LedgerEntry = Entry & Readonly<{ memo: Option.Option<string> }>;
 
@@ -49,11 +49,16 @@ export const rowOf =
     };
   };
 
-const insertOf = (rows: readonly NewRow[]): BatchItem<"sqlite"> =>
-  db
-    .insert(transactions)
-    .values([...rows])
-    .onConflictDoNothing({ target: transactions.hash });
-
-export const insertsOf = (rows: readonly NewRow[]): readonly BatchItem<"sqlite">[] =>
-  pipe(rows, Arr.chunksOf(ROWS_PER_INSERT), Arr.map(insertOf));
+export const insertsOf =
+  (rows: readonly NewRow[]): Build<readonly BatchItem<"sqlite">[]> =>
+  (db) =>
+    pipe(
+      rows,
+      Arr.chunksOf(ROWS_PER_INSERT),
+      Arr.map((chunk): BatchItem<"sqlite"> =>
+        db
+          .insert(transactions)
+          .values([...chunk])
+          .onConflictDoNothing({ target: transactions.hash }),
+      ),
+    );

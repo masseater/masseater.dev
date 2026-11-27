@@ -1,4 +1,3 @@
-import { env } from "cloudflare:workers";
 import { Effect, Option, pipe } from "effect";
 
 import { isPublic } from "#/entities/entry/index.ts";
@@ -8,6 +7,8 @@ import { admitsWriter } from "#/features/admit-caller/index.ts";
 import type { Target } from "#/features/admit-caller/index.ts";
 import { fetchEntries, readBlob, storeEntry } from "#/features/serve-entries/index.ts";
 import { Limits } from "#/shared/config/index.ts";
+import { limited } from "#/shared/lib/cache-store.ts";
+import type { CacheStore } from "#/shared/lib/cache-store.ts";
 import type { Malformed } from "#/shared/lib/malformed.ts";
 import { STATUS, status } from "#/shared/lib/responses.ts";
 import type { StoreFailed } from "#/shared/lib/store-failed.ts";
@@ -105,7 +106,7 @@ const blobRead = Effect.fn("routes.blobRead")(function* blobRead(_request: Reque
 
 const HANDLERS: ReadonlyMap<
   string,
-  (request: Request, route: Routed) => Effect.Effect<Response, Malformed | StoreFailed>
+  (request: Request, route: Routed) => Effect.Effect<Response, Malformed | StoreFailed, CacheStore>
 > = new Map([
   [FETCH, fetched],
   [STORE, stored],
@@ -118,8 +119,8 @@ const failed =
     Effect.logWarning("cache.request_failed", failure).pipe(Effect.as(status(code)));
 
 const answered = (
-  response: Effect.Effect<Response, Malformed | StoreFailed>,
-): Effect.Effect<Response> =>
+  response: Effect.Effect<Response, Malformed | StoreFailed, CacheStore>,
+): Effect.Effect<Response, never, CacheStore> =>
   response.pipe(
     Effect.catchTags({
       Malformed: failed(STATUS.badRequest),
@@ -127,10 +128,8 @@ const answered = (
     }),
   );
 
-const flooded = (request: Request): Effect.Effect<boolean> =>
-  Effect.promise(() =>
-    env.LIMITER.limit({ key: request.headers.get("cf-connecting-ip") ?? UNKNOWN_CALLER }),
-  ).pipe(Effect.map((outcome) => !outcome.success));
+const flooded = (request: Request): Effect.Effect<boolean, never, CacheStore> =>
+  limited(request.headers.get("cf-connecting-ip") ?? UNKNOWN_CALLER);
 
 export const routed = Effect.fn("routes.routed")(function* routed(request: Request) {
   const route = routeOf(request);

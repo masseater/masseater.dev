@@ -11,6 +11,8 @@ import {
   pipe,
 } from "effect";
 
+import { Database } from "./client.server.ts";
+import type { Build } from "./client.server.ts";
 import { StorageFailed } from "./storage-failed.ts";
 
 export type WriteFailure = Readonly<{ duplicate: boolean; message: string }>;
@@ -33,18 +35,22 @@ const writeFailure = (cause: unknown): WriteFailure => {
   };
 };
 
-export const attempt = <Row>(run: () => Promise<Row>): Effect.Effect<Row, WriteFailure> =>
-  Effect.tryPromise({ try: run, catch: writeFailure });
+export const attempt = Effect.fn("watashi.attempt")(function* attempt<Row>(
+  run: Build<Promise<Row>>,
+) {
+  const db = yield* Database;
+  return yield* Effect.tryPromise({ try: () => run(db), catch: writeFailure });
+});
 
 export const toStorageFailed = ({ message }: WriteFailure): StorageFailed =>
   StorageFailed.make({ message });
 
-export const query = <Row>(run: () => Promise<Row>): Effect.Effect<Row, StorageFailed> =>
+export const query = <Row>(run: Build<Promise<Row>>): Effect.Effect<Row, StorageFailed, Database> =>
   attempt(run).pipe(Effect.mapError(toStorageFailed));
 
 export const firstRow =
   <Failure>(onEmpty: () => Failure) =>
-  <Row>(rows: readonly Row[]): Effect.Effect<Row, Failure> =>
+  <Row>(rows: readonly Row[]): Effect.Effect<Row, Failure, Database> =>
     Effect.fromOption(Arr.head(rows)).pipe(Effect.mapError(onEmpty));
 
 export const nowIso = DateTime.now.pipe(Effect.map(DateTime.formatIso));

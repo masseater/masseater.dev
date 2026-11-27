@@ -1,11 +1,12 @@
 import { Array as Arr, Effect, Option, Order, pipe } from "effect";
 
 import { SCAN_LIMIT, scanCapped } from "#/entities/life-record/index.server.ts";
-import { contains, itemOf, todayJst } from "#/entities/life-record/index.ts";
+import { itemOf, scoreText, todayJst } from "#/entities/life-record/index.ts";
 import type { Body, Entry } from "#/entities/life-record/index.ts";
 import { memoryItem, searchMemories } from "#/entities/memory/index.server.ts";
 import { DEFAULT_MEMORY_LIMIT } from "#/entities/memory/index.ts";
 import type { WatashiSearchValue } from "#/entities/memory/index.ts";
+import type { Database } from "#/shared/db/index.server.ts";
 import { termsOf } from "#/shared/db/index.server.ts";
 import { LIFE_RECORDS } from "#/shared/db/index.ts";
 import type { Memory, StorageFailed } from "#/shared/db/index.ts";
@@ -16,15 +17,6 @@ const SEARCHED_RECORDS = pipe(
   LIFE_RECORDS,
   Arr.filter((record) => record !== "event_kind" && record !== "metric_definition"),
 );
-
-const scoreText =
-  (terms: readonly string[]) =>
-  (text: string): number =>
-    pipe(
-      terms,
-      Arr.filter((term) => contains(term)(text)),
-      Arr.length,
-    );
 
 const lifeScored =
   (terms: readonly string[], today: string) =>
@@ -44,7 +36,9 @@ const scoreOf = (scored: Scored): number => scored.score;
 
 const itemOfScored = (scored: Scored): Body => scored.item;
 
-export const watashiSearch = (input: WatashiSearchValue): Effect.Effect<Body, StorageFailed> =>
+export const watashiSearch = (
+  input: WatashiSearchValue,
+): Effect.Effect<Body, StorageFailed, Database> =>
   Effect.gen(function* searchWatashi() {
     const terms = termsOf(input.query);
     const limit = input.limit ?? DEFAULT_MEMORY_LIMIT;

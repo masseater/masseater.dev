@@ -7,7 +7,8 @@ import type { Category } from "#/entities/ledger/index.ts";
 import { transactions } from "#/entities/ledger/index.ts";
 import type { CategoryTotal } from "#/features/report-money/model/money-flow.ts";
 import type { DayTotal } from "#/features/report-money/model/monthly.ts";
-import { db, query } from "#/shared/db/index.server.ts";
+import type { Database } from "#/shared/db/index.server.ts";
+import { query } from "#/shared/db/index.server.ts";
 import type { StorageFailed } from "#/shared/db/index.ts";
 
 export type Period = Readonly<{ from: string; to: string }>;
@@ -71,8 +72,8 @@ const pageOf = (rows: readonly Transaction[]): TransactionPage => {
 
 export const listTransactions = (
   filter: TransactionFilter,
-): Effect.Effect<TransactionPage, StorageFailed> =>
-  query(() =>
+): Effect.Effect<TransactionPage, StorageFailed, Database> =>
+  query((db) =>
     db
       .select({
         id: transactions.id,
@@ -94,8 +95,8 @@ export const listTransactions = (
 
 export const categoryTotals = (
   period: Period,
-): Effect.Effect<readonly CategoryTotal[], StorageFailed> =>
-  query(() =>
+): Effect.Effect<readonly CategoryTotal[], StorageFailed, Database> =>
+  query((db) =>
     db
       .select({ category: transactions.category, label: transactions.label, amount: summedAmount })
       .from(transactions)
@@ -111,8 +112,10 @@ export const categoryTotals = (
     ),
   );
 
-export const dayTotals = (period: Period): Effect.Effect<readonly DayTotal[], StorageFailed> =>
-  query(() =>
+export const dayTotals = (
+  period: Period,
+): Effect.Effect<readonly DayTotal[], StorageFailed, Database> =>
+  query((db) =>
     db
       .select({ date: transactions.date, category: transactions.category, amount: summedAmount })
       .from(transactions)

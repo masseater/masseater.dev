@@ -3,7 +3,7 @@ import type { SQL } from "drizzle-orm";
 import { Array, Effect, Option, pipe } from "effect";
 
 import type { VideoFilter } from "#/entities/video/model/video-search.ts";
-import { NO_ROWS, catalogDb, containing, keywordOf } from "#/shared/db/index.server.ts";
+import { NO_ROWS, containing, keywordOf, fromCatalog } from "#/shared/db/index.server.ts";
 import { part, video } from "#/shared/db/index.ts";
 
 const keywordCondition = (filter: VideoFilter): SQL | undefined =>
@@ -27,8 +27,8 @@ const kindCondition = (filter: VideoFilter): SQL | undefined =>
 export const listVideos = Effect.fn("catalog.videos")(function* listVideos(filter: VideoFilter) {
   const [videos, counts] = yield* Effect.all(
     [
-      Effect.promise(() =>
-        catalogDb
+      fromCatalog((db) =>
+        db
           .select({
             id: video.id,
             title: video.title,
@@ -41,8 +41,8 @@ export const listVideos = Effect.fn("catalog.videos")(function* listVideos(filte
           .where(and(keywordCondition(filter), kindCondition(filter)))
           .orderBy(video.title),
       ),
-      Effect.promise(() =>
-        catalogDb
+      fromCatalog((db) =>
+        db
           .select({ videoId: part.videoId, parts: countDistinct(part.id) })
           .from(part)
           .groupBy(part.videoId),

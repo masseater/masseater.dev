@@ -10,6 +10,7 @@ import {
   textAt,
 } from "#/entities/life-record/index.ts";
 import type { Entry, Body } from "#/entities/life-record/index.ts";
+import type { Database } from "#/shared/db/index.server.ts";
 import type { LifeRecordName, StorageFailed } from "#/shared/db/index.ts";
 
 export type ExtrasInput = Readonly<{
@@ -23,7 +24,7 @@ export type ExtrasInput = Readonly<{
 
 export type Extras = Readonly<{ items: readonly Body[]; summary: Body }>;
 
-type Extra = (input: ExtrasInput) => Effect.Effect<Extras, StorageFailed>;
+type Extra = (input: ExtrasInput) => Effect.Effect<Extras, StorageFailed, Database>;
 
 const RECENT_EVENTS = 5;
 
@@ -41,7 +42,7 @@ const lastByKind = (events: readonly Entry[], today: string): Body =>
 
 const personSummary =
   (input: ExtrasInput) =>
-  (about: string): Effect.Effect<Body, StorageFailed> => {
+  (about: string): Effect.Effect<Body, StorageFailed, Database> => {
     const mentions = peopleFilter([about]);
     return scanAll(["life_event"]).pipe(
       Effect.map(Arr.filter(mentions)),
@@ -124,7 +125,7 @@ const EXTRAS: Readonly<Record<LifeRecordName, Extra>> = {
   metric_definition: vocabularyExtras,
 };
 
-export const extrasOf = (input: ExtrasInput): Effect.Effect<Extras, StorageFailed> =>
+export const extrasOf = (input: ExtrasInput): Effect.Effect<Extras, StorageFailed, Database> =>
   Option.match(input.record, {
     onNone: () => plain(input),
     onSome: (record) => EXTRAS[record](input),

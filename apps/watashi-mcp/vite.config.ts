@@ -54,6 +54,7 @@ export default defineConfig(({ mode }) => ({
     isolate: true,
     include: ["src/**/*.test.{ts,tsx}"],
     server: { deps: { external: ["miniflare", "workerd"] } },
+    testTimeout: 30_000,
   },
   plugins: appPlugins(mode),
 }));

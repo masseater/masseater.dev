@@ -1,7 +1,16 @@
 import { makeD1 } from "@masseater.dev/d1-test";
-import type { Database, Statement } from "@masseater.dev/d1-test";
-import { Array as Arr, Effect, MutableRef, Option, Schema, String as Str, pipe } from "effect";
-import { vi } from "vite-plus/test";
+import {
+  Array as Arr,
+  Effect,
+  MutableRef,
+  Option,
+  Record as Rec,
+  Schema,
+  String as Str,
+  pipe,
+} from "effect";
+
+import type { SiteDependencies } from "./site.ts";
 
 type Element = Readonly<{ setAttribute: (name: string, value: string) => void }>;
 
@@ -28,7 +37,7 @@ const testD1 = makeD1({
   tables: ["star"],
 });
 
-const { env: d1, resetDatabase } = testD1;
+const { database, resetDatabase } = testD1;
 
 export const { closeDatabase } = testD1;
 
@@ -42,35 +51,57 @@ const limited = MutableRef.make<readonly string[]>([]);
 
 const returned = MutableRef.make<readonly number[]>([]);
 
-const counting = (statement: Statement): Statement => ({
-  ...statement,
-  bind: (...params) => counting(statement.bind(...params)),
-  all: () =>
-    Effect.runPromise(
-      Effect.promise(() => statement.all()).pipe(
-        Effect.tap(({ results }) =>
-          Effect.sync(() => {
-            MutableRef.update(returned, Arr.append(results.length));
-          }),
-        ),
-      ),
-    ),
-  raw: () =>
-    Effect.runPromise(
-      Effect.promise(() => statement.raw()).pipe(
-        Effect.tap((rows) =>
-          Effect.sync(() => {
-            MutableRef.update(returned, Arr.append(rows.length));
-          }),
-        ),
-      ),
-    ),
-});
-
-const stars: Database = {
-  ...d1.DB,
-  prepare: (sql) => counting(d1.DB.prepare(sql)),
+const tallied = (length: number): void => {
+  MutableRef.update(returned, Arr.append(length));
 };
+
+const memberOf = (members: Readonly<Record<string, unknown>>, key: string | symbol): unknown =>
+  Option.getOrUndefined(Rec.get(members, String(key)));
+
+const counting = (statement: Readonly<D1PreparedStatement>): D1PreparedStatement =>
+  new Proxy(statement, {
+    get: (target, key) =>
+      memberOf(
+        {
+          bind: (...values: readonly unknown[]) => counting(target.bind(...values)),
+          all: () =>
+            Effect.runPromise(
+              Effect.promise(() => target.all()).pipe(
+                Effect.tap(({ results }) =>
+                  Effect.sync(() => {
+                    tallied(results.length);
+                  }),
+                ),
+              ),
+            ),
+          raw: () =>
+            Effect.runPromise(
+              Effect.promise(() => target.raw()).pipe(
+                Effect.tap((rows) =>
+                  Effect.sync(() => {
+                    tallied(rows.length);
+                  }),
+                ),
+              ),
+            ),
+          first: () => target.first(),
+          run: () => target.run(),
+        },
+        key,
+      ),
+  });
+
+const countingRows = (binding: Readonly<D1Database>): D1Database =>
+  new Proxy(binding, {
+    get: (target, key) =>
+      memberOf(
+        {
+          prepare: (sql: string) => counting(target.prepare(sql)),
+          exec: (sql: string) => target.exec(sql),
+        },
+        key,
+      ),
+  });
 
 const limiter = {
   limit: ({ key }: Readonly<{ key: string }>): Promise<{ success: boolean }> => {
@@ -104,20 +135,11 @@ const assetFor = (request: Request): Response => {
   return page();
 };
 
-const assets: Pick<Fetcher, "fetch"> = {
-  fetch: (input, init) => {
+const assets = {
+  fetch: (input: Request | string, init?: Readonly<{ method: string }>): Promise<Response> => {
     const request = new Request(input, init);
     MutableRef.update(assetRequests, Arr.append(request));
     return Promise.resolve(assetFor(request));
-  },
-};
-
-export const env = {
-  STARS: stars,
-  STARS_LIMITER: limiter,
-  ASSETS: assets,
-  get VISITOR_SALT(): string {
-    return MutableRef.get(salt);
   },
 };
 
@@ -152,9 +174,8 @@ const StoredStars = Schema.Array(Schema.Struct({ visitor: Schema.String }));
 
 const decodeStoredStars = Schema.decodeUnknownEffect(StoredStars);
 
-export const storedVisitors = Effect.promise(() =>
-  d1.DB.prepare("SELECT visitor FROM star").all(),
-).pipe(
+export const storedVisitors = database.pipe(
+  Effect.flatMap((stars) => Effect.promise(() => stars.prepare("SELECT visitor FROM star").all())),
   Effect.flatMap(({ results }) => decodeStoredStars(results)),
   Effect.map(Arr.map(({ visitor }) => visitor)),
   Effect.orDie,
@@ -212,10 +233,16 @@ const rewriterWith = (rules: readonly Rule[]): Rewriter => ({
     ),
 });
 
-const HTMLRewriter = function HTMLRewriter(): Rewriter {
-  return rewriterWith([]);
-};
+const HTMLRewriter = (): Rewriter => rewriterWith([]);
 
-export const stubRewriter = (): void => {
-  vi.stubGlobal("HTMLRewriter", HTMLRewriter);
-};
+export const site: Effect.Effect<SiteDependencies> = database.pipe(
+  Effect.map((stars) => ({
+    bindings: {
+      STARS: countingRows(stars),
+      STARS_LIMITER: limiter,
+      ASSETS: assets,
+      VISITOR_SALT: MutableRef.get(salt),
+    },
+    rewriter: HTMLRewriter,
+  })),
+);

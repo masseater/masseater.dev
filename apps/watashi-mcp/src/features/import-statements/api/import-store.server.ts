@@ -6,7 +6,8 @@ import { accountNamed, userRules, runAll } from "#/entities/ledger/index.server.
 import type { Failure } from "#/entities/ledger/index.server.ts";
 import { fingerprints, imports, transactions } from "#/entities/ledger/index.ts";
 import { InvalidRecord } from "#/shared/api/index.ts";
-import { db, query } from "#/shared/db/index.server.ts";
+import type { Database } from "#/shared/db/index.server.ts";
+import { query } from "#/shared/db/index.server.ts";
 
 import { ROWS_PER_INSERT, insertsOf, rowOf } from "./import-rows.server.ts";
 import type { ImportRequest, NewRow, Prepared } from "./import-rows.server.ts";
@@ -33,12 +34,13 @@ const insertAll = Effect.fn("insertAll")(function* insertAll(
 ) {
   const createdAt = yield* Clock.currentTimeMillis;
   const { importId, request } = prepared;
-  const header = db
-    .insert(imports)
-    .values({ id: importId, accountId: request.accountId, source: request.source, createdAt });
-  const inserts = insertsOf(rows);
-  yield* runAll([header, ...inserts]);
-  const [counted] = yield* query(() =>
+  yield* runAll((db) => [
+    db
+      .insert(imports)
+      .values({ id: importId, accountId: request.accountId, source: request.source, createdAt }),
+    ...insertsOf(rows)(db),
+  ]);
+  const [counted] = yield* query((db) =>
     db.select({ added: count() }).from(transactions).where(eq(transactions.importId, importId)),
   );
   return pipe(
@@ -47,9 +49,9 @@ const insertAll = Effect.fn("insertAll")(function* insertAll(
   );
 });
 
-const dropEmptyImport = (importId: string, added: number): Effect.Effect<void, Failure> =>
+const dropEmptyImport = (importId: string, added: number): Effect.Effect<void, Failure, Database> =>
   Effect.when(
-    query(() => db.delete(imports).where(eq(imports.id, importId))),
+    query((db) => db.delete(imports).where(eq(imports.id, importId))),
     Effect.succeed(added === NOTHING),
   ).pipe(Effect.asVoid);
 
@@ -75,7 +77,7 @@ export const importEntries = Effect.fn("importEntries")(function* importEntries(
 
 /** @internal */
 export const deleteImport = Effect.fn("deleteImport")(function* deleteImport(importId: string) {
-  const [deletedRows, deletedImports] = yield* query(() =>
+  const [deletedRows, deletedImports] = yield* query((db) =>
     db.batch([
       db
         .delete(transactions)

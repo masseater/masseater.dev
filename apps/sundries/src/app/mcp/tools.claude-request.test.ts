@@ -11,16 +11,21 @@ import {
   String as Str,
   pipe,
 } from "effect";
-import { afterAll, beforeEach, vi } from "vite-plus/test";
+import { afterAll, beforeEach } from "vite-plus/test";
 
-import { closeDatabase, resetDatabase, wakes } from "./claude-request-tools.test.support.ts";
-import { registerTools } from "./tools.ts";
+import { registerClaudeRequestTools } from "#/features/request-claude/index.ts";
 
-vi.mock("cloudflare:workers", () => import("./claude-request-tools.test.support.ts"));
+import {
+  bindings,
+  closeDatabase,
+  resetDatabase,
+  wakes,
+} from "./claude-request-tools.test.support.ts";
+import { serverOf } from "./tools.ts";
 
 beforeEach(() => {
   wakes.outcome = "rejected";
-  wakes.texts = [];
+  wakes.count = 0;
   return Effect.runPromise(resetDatabase);
 });
 afterAll(() => Effect.runPromise(closeDatabase));
@@ -95,10 +100,14 @@ const call = (client: string, name: string, args: Args): Effect.Effect<Called> =
       method: "tools/call",
       params: { name, arguments: args },
     });
+    const found = yield* bindings;
     const response = yield* Effect.promise(() =>
-      createMcpHandler(registerTools).fetch(mcpRequest(body), {
-        authInfo: authInfoOf({ azp: client }),
-      }),
+      createMcpHandler(() => registerClaudeRequestTools(found)(serverOf())).fetch(
+        mcpRequest(body),
+        {
+          authInfo: authInfoOf({ azp: client }),
+        },
+      ),
     );
     const text = yield* Effect.promise(() => response.text());
     const { result } = yield* decodeResult(payloadOf(text));
@@ -205,7 +214,7 @@ it.effect("空の依頼は受け付けない", () =>
   }),
 );
 
-it.effect("送った依頼は本文をそのまま添えてプロジェクトを起こし、受け取り済みにする", () =>
+it.effect("送った依頼は未取得のまま残し、本文なしでプロジェクトを起こす", () =>
   Effect.gen(function* woken() {
     wakes.outcome = "fired";
     const sent = yield* value(MUSE, "send_to_claude", { text: "記事を直して" }).pipe(
@@ -214,11 +223,13 @@ it.effect("送った依頼は本文をそのまま添えてプロジェクトを
     );
     const taken = yield* take;
     expect(sent.woke).toBe("fired");
-    const sentText = Arr.join(wakes.texts, "");
-    expect(wakes.texts).toHaveLength(SENT_ONCE);
-    expect(sentText).toContain("記事を直して");
-    expect(sentText).toContain(`依頼 id: ${sent.id}`);
-    expect(taken).toStrictEqual([]);
+    expect(wakes.count).toBe(SENT_ONCE);
+    expect(
+      pipe(
+        taken,
+        Arr.map(({ id, text }) => ({ id, text })),
+      ),
+    ).toStrictEqual([{ id: sent.id, text: "記事を直して" }]);
   }),
 );
 

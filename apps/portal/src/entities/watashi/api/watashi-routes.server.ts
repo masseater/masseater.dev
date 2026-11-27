@@ -6,7 +6,7 @@ import { MemoList, MemoProjects } from "#/entities/watashi/model/memo.ts";
 import { Profile } from "#/entities/watashi/model/profile.ts";
 import { CursorQuery, MemosSearch, RecordsSearch } from "#/entities/watashi/model/search.ts";
 import { RECENT_SESSION_LIMIT, Sessions } from "#/entities/watashi/model/session.ts";
-import { createRouter, respond, rpcBody, watashi } from "#/shared/api/index.server.ts";
+import { createRouter, respond, rpcBody } from "#/shared/api/index.server.ts";
 
 import { memosInput, recordsInput } from "./inputs.ts";
 import { conversation, memoDetail, timeline } from "./watashi-reads.server.ts";
@@ -18,40 +18,57 @@ const JsonBody = Schema.Struct({
 });
 
 export const watashiRoutes = createRouter("/api/watashi")
-  .get("/timeline", () => respond(timeline))
+  .get("/timeline", ({ request }) => respond(request)(timeline))
   .get(
     "/records",
-    ({ query }) =>
-      respond(rpcBody({ schema: LifePage, call: () => watashi().lifeRead(recordsInput(query)) })),
+    ({ query, request }) =>
+      respond(request)(
+        rpcBody({ schema: LifePage, call: ({ WATASHI }) => WATASHI.lifeRead(recordsInput(query)) }),
+      ),
     { query: Schema.toStandardSchemaV1(RecordsSearch) },
   )
   .get(
     "/memos",
-    ({ query }) =>
-      respond(rpcBody({ schema: MemoList, call: () => watashi().memoryRead(memosInput(query)) })),
+    ({ query, request }) =>
+      respond(request)(
+        rpcBody({ schema: MemoList, call: ({ WATASHI }) => WATASHI.memoryRead(memosInput(query)) }),
+      ),
     { query: Schema.toStandardSchemaV1(MemosSearch) },
   )
   .post(
     "/memos",
-    ({ body }) => respond(rpcBody({ schema: Written, call: () => watashi().memoryWrite(body) })),
+    ({ body, request }) =>
+      respond(request)(
+        rpcBody({ schema: Written, call: ({ WATASHI }) => WATASHI.memoryWrite(body) }),
+      ),
     {
       body: Schema.toStandardSchemaV1(MemoChange),
       headers: Schema.toStandardSchemaV1(JsonBody),
     },
   )
-  .get("/memo-projects", () =>
-    respond(rpcBody({ schema: MemoProjects, call: () => watashi().memoryProjects() })),
+  .get("/memo-projects", ({ request }) =>
+    respond(request)(
+      rpcBody({ schema: MemoProjects, call: ({ WATASHI }) => WATASHI.memoryProjects() }),
+    ),
   )
-  .get("/memos/:project/:name", ({ params }) => respond(memoDetail(params)), {
+  .get("/memos/:project/:name", ({ params, request }) => respond(request)(memoDetail(params)), {
     params: Schema.toStandardSchemaV1(MemoKey),
   })
-  .get("/profile", () => respond(rpcBody({ schema: Profile, call: () => watashi().profile() })))
-  .get("/conversations", () =>
-    respond(rpcBody({ schema: Sessions, call: () => watashi().conversationRead(RECENT_SESSIONS) })),
+  .get("/profile", ({ request }) =>
+    respond(request)(rpcBody({ schema: Profile, call: ({ WATASHI }) => WATASHI.profile() })),
+  )
+  .get("/conversations", ({ request }) =>
+    respond(request)(
+      rpcBody({
+        schema: Sessions,
+        call: ({ WATASHI }) => WATASHI.conversationRead(RECENT_SESSIONS),
+      }),
+    ),
   )
   .get(
     "/conversations/:sessionId",
-    ({ params, query }) => respond(conversation({ ...query, sessionId: params.sessionId })),
+    ({ params, query, request }) =>
+      respond(request)(conversation({ ...query, sessionId: params.sessionId })),
     { query: Schema.toStandardSchemaV1(CursorQuery) },
   );
 

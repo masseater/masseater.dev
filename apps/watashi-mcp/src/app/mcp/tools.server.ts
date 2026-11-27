@@ -5,18 +5,21 @@ import { registerTokenTools } from "#/features/issue-tokens/index.server.ts";
 import { registerWatashiTools } from "#/features/manage-memory/index.server.ts";
 import { registerLifeTools } from "#/features/record-life/index.server.ts";
 import { registerConversationTools } from "#/features/store-conversations/index.server.ts";
+import type { ToolRun } from "#/shared/api/index.server.ts";
 import { SITE_NAME, SITE_ORIGIN } from "#/shared/config/index.ts";
 
+import type { WatashiServices } from "./layer.server.ts";
 import { registerMoneyTools } from "./money-tools.server.ts";
 
 const SERVER_INFO = { name: SITE_NAME, version: "0.0.0", websiteUrl: SITE_ORIGIN };
 
-export const registerTools = (): McpServer =>
+/** @internal */
+export const registerTools = (runTool: ToolRun<WatashiServices>) => (): McpServer =>
   pipe(
     new McpServer(SERVER_INFO),
-    registerLifeTools,
-    registerWatashiTools,
-    registerConversationTools,
-    registerTokenTools,
-    registerMoneyTools,
+    registerLifeTools(runTool),
+    registerWatashiTools(runTool),
+    registerConversationTools(runTool),
+    registerTokenTools(runTool),
+    registerMoneyTools(runTool),
   );

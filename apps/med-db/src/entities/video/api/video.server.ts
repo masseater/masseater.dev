@@ -1,6 +1,6 @@
 import { Array as Arr, Effect, Number, Option, Order, pipe, String as Str, Struct } from "effect";
 
-import { catalogDb } from "#/shared/db/index.server.ts";
+import { fromCatalog } from "#/shared/db/index.server.ts";
 
 const VIDEO_COLUMNS = {
   id: true,
@@ -20,8 +20,8 @@ const byTitle = Order.make<Readonly<{ title: string }>>((left, right) =>
 );
 
 export const getVideo = Effect.fn("catalog.video")(function* getVideo(id: number) {
-  const promiseResult = yield* Effect.promise(() =>
-    catalogDb.query.video.findFirst({
+  const promiseResult = yield* fromCatalog((db) =>
+    db.query.video.findFirst({
       columns: VIDEO_COLUMNS,
       with: {
         parts: {

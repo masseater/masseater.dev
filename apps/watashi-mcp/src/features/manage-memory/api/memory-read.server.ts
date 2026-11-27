@@ -7,8 +7,8 @@ import { DEFAULT_MEMORY_LIMIT } from "#/entities/memory/index.ts";
 import type { MemoryReadValue } from "#/entities/memory/index.ts";
 import { InvalidRecord, MemoryNotFound } from "#/shared/api/index.ts";
 import type { StoreFailure } from "#/shared/api/index.ts";
+import type { Database, HistoryEntry } from "#/shared/db/index.server.ts";
 import { listHistory } from "#/shared/db/index.server.ts";
-import type { HistoryEntry } from "#/shared/db/index.server.ts";
 import type { Memory } from "#/shared/db/index.ts";
 
 type Named = Readonly<{ project: string; name: string }>;
@@ -32,7 +32,7 @@ const withRetraction = (row: Memory): Body => {
   return { ...memoryItem(row), retracted: { at: row.retractedAt, reason: row.retractReason } };
 };
 
-const revisionsOf = (row: Memory): Effect.Effect<Body, StoreFailure> =>
+const revisionsOf = (row: Memory): Effect.Effect<Body, StoreFailure, Database> =>
   listHistory({ entity: "memory", id: row.id, limit: HISTORY_LIMIT }).pipe(
     Effect.map((entries) => ({
       ref: `memory:${row.id}`,
@@ -42,7 +42,7 @@ const revisionsOf = (row: Memory): Effect.Effect<Body, StoreFailure> =>
 
 const shown =
   (input: MemoryReadValue) =>
-  (row: Memory): Effect.Effect<Body, StoreFailure> => {
+  (row: Memory): Effect.Effect<Body, StoreFailure, Database> => {
     if (input.revisions === true) {
       return revisionsOf(row);
     }
@@ -51,7 +51,7 @@ const shown =
 
 const foundOrFail =
   (named: Named) =>
-  (row: Option.Option<Memory>): Effect.Effect<Memory, StoreFailure> =>
+  (row: Option.Option<Memory>): Effect.Effect<Memory, StoreFailure, Database> =>
     Effect.fromOption(row).pipe(
       Effect.mapError(() =>
         MemoryNotFound.make({ project: named.project, memoryName: named.name }),
@@ -60,10 +60,10 @@ const foundOrFail =
 
 const readNamed =
   (input: MemoryReadValue) =>
-  (named: Named): Effect.Effect<Body, StoreFailure> =>
+  (named: Named): Effect.Effect<Body, StoreFailure, Database> =>
     findMemory(named).pipe(Effect.flatMap(foundOrFail(named)), Effect.flatMap(shown(input)));
 
-const searchNamed = (input: MemoryReadValue): Effect.Effect<Body, StoreFailure> =>
+const searchNamed = (input: MemoryReadValue): Effect.Effect<Body, StoreFailure, Database> =>
   searchMemories({
     query: input.query ?? NO_QUERY,
     project: Option.fromUndefinedOr(input.project),
@@ -89,7 +89,7 @@ const namedOf = (input: MemoryReadValue): Effect.Effect<Option.Option<Named>, In
       ),
   });
 
-export const readMemory = (input: MemoryReadValue): Effect.Effect<Body, StoreFailure> => {
+export const readMemory = (input: MemoryReadValue): Effect.Effect<Body, StoreFailure, Database> => {
   const named = readNamed(input);
   return namedOf(input).pipe(
     Effect.flatMap(Option.match({ onNone: () => searchNamed(input), onSome: named })),

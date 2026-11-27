@@ -1,6 +1,6 @@
 import { describe, expect, it } from "@effect/vitest";
 import { Array as Arr, Effect, Option, String as Str, pipe } from "effect";
-import { afterAll, beforeEach, vi } from "vite-plus/test";
+import { afterAll, beforeEach } from "vite-plus/test";
 
 import {
   BRANCH_CI_TOKEN,
@@ -26,8 +26,6 @@ import {
   storeAs,
 } from "./routes.test.support.ts";
 import type { Found } from "./routes.test.support.ts";
-
-vi.mock("cloudflare:workers", () => import("#/shared/lib/cloudflare.test.support.ts"));
 
 const OK = 200;
 const UNAUTHORIZED = 401;
@@ -74,7 +72,8 @@ const returnsAStoredValue = Effect.gen(function* returnsAStoredValue() {
   expect(hit.kind).toBe("exact");
   expect(valuesOf(hit)).toStrictEqual([BINARY]);
   expect(blobIdOf(hit.entries)).toBe(NO_BLOB);
-  expect(objectCount()).toBe(NO_OBJECTS);
+  const objectsLeft = yield* objectCount;
+  expect(objectsLeft).toBe(NO_OBJECTS);
 });
 
 const missesAnUnknownKey = Effect.gen(function* missesAnUnknownKey() {
@@ -112,7 +111,8 @@ const keepsALargeValueAndItsBlobApart = Effect.gen(function* keepsALargeValueAnd
   expect(valuesOf(hit)).toStrictEqual([value]);
   const bytes = yield* blob(blobIdOf(hit.entries));
   expect(bytes).toStrictEqual(BINARY);
-  expect(objectCount()).toBe(ONE_OBJECT);
+  const objectsLeft = yield* objectCount;
+  expect(objectsLeft).toBe(ONE_OBJECT);
 });
 
 const versioned = (version: number): Uint8Array => encoder.encode(`version ${String(version)}`);
@@ -128,7 +128,8 @@ const listsTheNewestFirst = Effect.gen(function* listsTheNewestFirst() {
     Arr.range(STORED_PER_KEY - KEPT_PER_KEY + FIRST_VERSION, STORED_PER_KEY),
   );
   expect(valuesOf(hit)).toStrictEqual(pipe(kept, Arr.map(versioned)));
-  expect(objectCount()).toBe(KEPT_PER_KEY);
+  const objectsLeft = yield* objectCount;
+  expect(objectsLeft).toBe(KEPT_PER_KEY);
 });
 
 const refusesAStoreWithoutAMainBranchRun = Effect.gen(

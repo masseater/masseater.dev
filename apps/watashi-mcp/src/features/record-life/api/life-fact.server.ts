@@ -12,6 +12,7 @@ import {
   textAt,
   todayJst,
 } from "#/entities/life-record/index.ts";
+import type { Database } from "#/shared/db/index.server.ts";
 import type { StorageFailed } from "#/shared/db/index.ts";
 
 import { plainInsert } from "./life-create.server.ts";
@@ -26,7 +27,7 @@ const isOpen = (body: Body): boolean => columnsOf("profile_fact")(body).dayEnd =
 const factToEnd = (
   body: Body,
   key: FactKey,
-): Effect.Effect<Option.Option<LifeEntry>, StorageFailed> => {
+): Effect.Effect<Option.Option<LifeEntry>, StorageFailed, Database> => {
   if (isOpen(body)) {
     return findOpen({
       record: "profile_fact",
@@ -47,7 +48,7 @@ const replacedNotice = (entry: LifeEntry, until: string): Notice => ({
 
 const succeedFact =
   ({ writer, input, until }: Successor) =>
-  (entry: LifeEntry): Effect.Effect<ItemResult, StorageFailed> =>
+  (entry: LifeEntry): Effect.Effect<ItemResult, StorageFailed, Database> =>
     succeedRecord(writer)({
       ended: {
         entry,

@@ -5,7 +5,7 @@ export default defineConfig({
     tasks: {
       verify: { command: [], dependsOn: ["dotnet"] },
       dotnet: "dotnet build --disable-build-servers -p:CopyToModsFolder=false",
-      fix: { cache: false, command: "dotnet format --exclude build" },
+      fix: "dotnet format --exclude build",
       build: { cache: false, command: "dotnet build" },
       publish: { cache: false, command: "dotnet publish" },
       pck: { cache: false, command: "dotnet msbuild -restore -t:ExportPck" },

@@ -1,4 +1,4 @@
-import { Effect, Schema, Stream } from "effect";
+import { Context, Effect, Schema, Stream } from "effect";
 import { HttpClient, HttpClientRequest, HttpClientResponse } from "effect/http";
 
 import {
@@ -21,12 +21,17 @@ export class InterviewerFailed extends taggedError<
 const failed = (cause: unknown): InterviewerFailed =>
   InterviewerFailed.make({ message: String(cause) });
 
+export const ApiOrigin = Context.Reference<string>("kikite/shared/api/interviewer/ApiOrigin", {
+  defaultValue: () => globalThis.location.origin,
+});
+
 /** @internal */
 export const send = Effect.fn("kikite.send")(function* send(
   request: HttpClientRequest.HttpClientRequest,
 ) {
+  const origin = yield* ApiOrigin;
   const client = (yield* HttpClient.HttpClient).pipe(
-    HttpClient.mapRequest(HttpClientRequest.prependUrl(globalThis.location.origin)),
+    HttpClient.mapRequest(HttpClientRequest.prependUrl(origin)),
     HttpClient.filterStatusOk,
   );
   return yield* client.execute(request);

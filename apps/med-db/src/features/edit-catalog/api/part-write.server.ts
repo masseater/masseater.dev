@@ -11,7 +11,8 @@ import type {
 import { getVideo } from "#/entities/video/index.server.ts";
 import { orMissing, query } from "#/shared/api/index.server.ts";
 import { ToolError } from "#/shared/api/index.ts";
-import { catalogDb } from "#/shared/db/index.server.ts";
+import { CatalogDb } from "#/shared/db/index.server.ts";
+import type { CatalogStatements } from "#/shared/db/index.server.ts";
 import { part, partStaff } from "#/shared/db/index.ts";
 
 import { personByName, songByTitle, videoByTitle } from "./resolve.server.ts";
@@ -41,16 +42,16 @@ const NEXT = 1;
 const NO_PARTS = 0;
 const PART_FIELDS = ["label", "bpm", "bars", "startSec", "endSec", "note", "comment"] as const;
 
-const videoDetail = (id: number): Effect.Effect<VideoDetail, ToolError> =>
+const videoDetail = (id: number): Effect.Effect<VideoDetail, ToolError, CatalogDb> =>
   getVideo(id).pipe(orMissing(VIDEO_MISSING));
 
 const referenceId = (
   reference: Readonly<{
     id: number | undefined;
     name: string | undefined;
-    resolve: (name: string) => Effect.Effect<number, ToolError>;
+    resolve: (name: string) => Effect.Effect<number, ToolError, CatalogDb>;
   }>,
-): Effect.Effect<Option.Option<number>, ToolError> =>
+): Effect.Effect<Option.Option<number>, ToolError, CatalogDb> =>
   Option.fromUndefinedOr(reference.id).pipe(
     Option.match({
       onSome: (id) => Effect.succeedSome(id),
@@ -81,7 +82,7 @@ const materialOf = Effect.fn("mcp.part.material")(function* materialOf(input: Pa
 const staffingOf = (
   role: StaffRole,
   names: readonly string[] | undefined,
-): Effect.Effect<readonly Staffing[], ToolError> =>
+): Effect.Effect<readonly Staffing[], ToolError, CatalogDb> =>
   Option.fromUndefinedOr(names).pipe(
     Option.match({
       onNone: () => Effect.succeed([]),
@@ -94,7 +95,7 @@ const staffingOf = (
     }),
   );
 
-const staffingsOf = (input: Part): Effect.Effect<readonly Staffing[], ToolError> =>
+const staffingsOf = (input: Part): Effect.Effect<readonly Staffing[], ToolError, CatalogDb> =>
   Effect.all([staffingOf("audio", input.audioStaff), staffingOf("video", input.videoStaff)], {
     concurrency: 1,
   }).pipe(Effect.map(Arr.flatten));
@@ -110,7 +111,9 @@ const preparePart = Effect.fn("mcp.part.prepare")(function* preparePart(input: P
   return prepared;
 });
 
-const prepareParts = (parts: readonly Part[]): Effect.Effect<readonly Prepared[], ToolError> =>
+const prepareParts = (
+  parts: readonly Part[],
+): Effect.Effect<readonly Prepared[], ToolError, CatalogDb> =>
   Effect.forEach(parts, preparePart, { concurrency: 1 });
 
 const membersOf = (staff: readonly Staffing[]): readonly Member[] =>
@@ -124,43 +127,45 @@ const membersOf = (staff: readonly Staffing[]): readonly Member[] =>
     ),
   );
 
-const staffInserts = (partId: number, staff: readonly Staffing[]): readonly Statement[] =>
-  pipe(
-    membersOf(staff),
-    Arr.map((member) =>
-      catalogDb
-        .insert(partStaff)
-        .values({ ...member, partId })
-        .onConflictDoNothing(),
-    ),
-  );
+const staffInserts =
+  (partId: number, staff: readonly Staffing[]): CatalogStatements =>
+  (db) =>
+    pipe(
+      membersOf(staff),
+      Arr.map((member) =>
+        db
+          .insert(partStaff)
+          .values({ ...member, partId })
+          .onConflictDoNothing(),
+      ),
+    );
 
-const staffReplacements = (partId: number, staff: readonly Staffing[]): readonly Statement[] => [
-  ...pipe(
-    staff,
-    Arr.map(({ role }) =>
-      catalogDb
-        .delete(partStaff)
-        .where(and(eq(partStaff.partId, partId), eq(partStaff.role, role))),
+const staffReplacements =
+  (partId: number, staff: readonly Staffing[]): CatalogStatements =>
+  (db) => [
+    ...pipe(
+      staff,
+      Arr.map(({ role }) =>
+        db.delete(partStaff).where(and(eq(partStaff.partId, partId), eq(partStaff.role, role))),
+      ),
     ),
-  ),
-  ...staffInserts(partId, staff),
-];
+    ...staffInserts(partId, staff)(db),
+  ];
 
-const partInserts = (placing: Placing): readonly Statement[] =>
-  pipe(
-    placing.parts,
-    Arr.flatMap((prepared, index) => {
-      const id = placing.lastId + index + NEXT;
-      const position = placing.lastPosition + index + NEXT;
-      return [
-        catalogDb
-          .insert(part)
-          .values({ ...prepared.values, id, videoId: placing.videoId, position }),
-        ...staffInserts(id, prepared.staff),
-      ];
-    }),
-  );
+const partInserts =
+  (placing: Placing): CatalogStatements =>
+  (db) =>
+    pipe(
+      placing.parts,
+      Arr.flatMap((prepared, index) => {
+        const id = placing.lastId + index + NEXT;
+        const position = placing.lastPosition + index + NEXT;
+        return [
+          db.insert(part).values({ ...prepared.values, id, videoId: placing.videoId, position }),
+          ...staffInserts(id, prepared.staff)(db),
+        ];
+      }),
+    );
 
 const lastOf = (found: Last | undefined): number =>
   Option.fromUndefinedOr(found).pipe(
@@ -168,27 +173,29 @@ const lastOf = (found: Last | undefined): number =>
     Option.getOrElse(() => NO_PARTS),
   );
 
-const lastPartId = query(() =>
-  catalogDb
+const lastPartId = query((db) =>
+  db
     .select({ last: max(part.id) })
     .from(part)
     .get(),
 ).pipe(Effect.map(lastOf));
 
-const lastPositionIn = (videoId: number): Effect.Effect<number, ToolError> =>
-  query(() =>
-    catalogDb
+const lastPositionIn = (videoId: number): Effect.Effect<number, ToolError, CatalogDb> =>
+  query((db) =>
+    db
       .select({ last: max(part.position) })
       .from(part)
       .where(eq(part.videoId, videoId))
       .get(),
   ).pipe(Effect.map(lastOf));
 
-const writeAll = (statements: readonly Statement[]): Effect.Effect<unknown, ToolError> =>
-  Arr.match(statements, {
+const writeAll = Effect.fn("mcp.parts.write")(function* writeAll(build: CatalogStatements) {
+  const db = yield* CatalogDb;
+  return yield* Arr.match(build(db), {
     onEmpty: () => Effect.void,
-    onNonEmpty: (batch) => query(() => catalogDb.batch(batch)),
+    onNonEmpty: (batch) => query(() => db.batch(batch)),
   });
+});
 
 export const setVideoParts = Effect.fn("mcp.parts.set")(function* setVideoParts(
   input: typeof VideoPartsInput.Type,
@@ -196,10 +203,10 @@ export const setVideoParts = Effect.fn("mcp.parts.set")(function* setVideoParts(
   yield* videoDetail(input.videoId);
   const parts = yield* prepareParts(input.parts);
   const lastId = yield* lastPartId;
-  yield* query(() =>
-    catalogDb.batch([
-      catalogDb.delete(part).where(eq(part.videoId, input.videoId)),
-      ...partInserts({ videoId: input.videoId, lastId, lastPosition: NO_PARTS, parts }),
+  yield* query((db) =>
+    db.batch([
+      db.delete(part).where(eq(part.videoId, input.videoId)),
+      ...partInserts({ videoId: input.videoId, lastId, lastPosition: NO_PARTS, parts })(db),
     ]),
   );
   return yield* videoDetail(input.videoId);
@@ -234,28 +241,28 @@ const changedMaterial = Effect.fn("mcp.part.changedMaterial")(function* changedM
 export const updatePart = Effect.fn("mcp.part.update")(function* updatePart(
   input: typeof UpdatePartInput.Type,
 ) {
-  const found = yield* query(() =>
-    catalogDb.select({ videoId: part.videoId }).from(part).where(eq(part.id, input.partId)).get(),
+  const found = yield* query((db) =>
+    db.select({ videoId: part.videoId }).from(part).where(eq(part.id, input.partId)).get(),
   );
   const { videoId } = yield* Effect.succeed(Option.fromUndefinedOr(found)).pipe(
     orMissing(PART_MISSING),
   );
   const patch = { ...Struct.pick(input, PART_FIELDS), ...(yield* changedMaterial(input)) };
   const staff = yield* staffingsOf(input);
-  const partUpdates: readonly Statement[] = Boolean.match(
-    Arr.isReadonlyArrayNonEmpty(Struct.keys(patch)),
-    {
-      onFalse: () => [],
-      onTrue: () => [catalogDb.update(part).set(patch).where(eq(part.id, input.partId))],
-    },
-  );
-  yield* writeAll([...partUpdates, ...staffReplacements(input.partId, staff)]);
+  const changesPart = Arr.isReadonlyArrayNonEmpty(Struct.keys(patch));
+  yield* writeAll((db) => [
+    ...Boolean.match(changesPart, {
+      onFalse: (): readonly Statement[] => [],
+      onTrue: () => [db.update(part).set(patch).where(eq(part.id, input.partId))],
+    }),
+    ...staffReplacements(input.partId, staff)(db),
+  ]);
   return yield* videoDetail(videoId);
 });
 
 export const deletePart = Effect.fn("mcp.part.delete")(function* deletePart(partId: number) {
-  const deleted = yield* query(() =>
-    catalogDb.delete(part).where(eq(part.id, partId)).returning({ id: part.id }).get(),
+  const deleted = yield* query((db) =>
+    db.delete(part).where(eq(part.id, partId)).returning({ id: part.id }).get(),
   );
   return yield* Effect.succeed(Option.fromUndefinedOr(deleted)).pipe(orMissing(PART_MISSING));
 });

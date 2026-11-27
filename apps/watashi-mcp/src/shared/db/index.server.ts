@@ -1,4 +1,5 @@
-export { db } from "./client.server.ts";
+export { Database, databaseOf } from "./client.server.ts";
+export type { Build } from "./client.server.ts";
 export {
   nowIso,
   query,

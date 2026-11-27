@@ -1,14 +1,14 @@
 import { Effect } from "effect";
 
-import { catalogDb } from "#/shared/db/index.server.ts";
+import { fromCatalog } from "#/shared/db/index.server.ts";
 import { part, person, song, video } from "#/shared/db/index.ts";
 
 export const getStats = Effect.all(
   {
-    songs: Effect.promise(() => catalogDb.$count(song)),
-    videos: Effect.promise(() => catalogDb.$count(video)),
-    parts: Effect.promise(() => catalogDb.$count(part)),
-    people: Effect.promise(() => catalogDb.$count(person)),
+    songs: fromCatalog((db) => db.$count(song)),
+    videos: fromCatalog((db) => db.$count(video)),
+    parts: fromCatalog((db) => db.$count(part)),
+    people: fromCatalog((db) => db.$count(person)),
   },
   { concurrency: "unbounded" },
 ).pipe(Effect.withSpan("catalog.stats"));

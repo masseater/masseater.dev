@@ -1,51 +1,31 @@
 import { layer as nodeServices } from "@effect/platform-node/NodeServices";
-import { SqliteClient } from "@effect/sql-sqlite-node";
 import {
   Array as Arr,
   Effect,
   FileSystem,
-  Layer,
   ManagedRuntime,
-  Option,
   Path,
   String as Str,
   pipe,
 } from "effect";
 import type { PlatformError } from "effect/PlatformError";
-import { SqlClient } from "effect/sql";
-import type { SqlError } from "effect/sql/SqlError";
-
-export type Params = readonly unknown[];
-
-export type Query = Readonly<{ sql: string; params: Params }>;
-
-export type Row = Readonly<Record<string, unknown>>;
-
-export type Result = Readonly<{ results: readonly Row[]; success: true }>;
-
-export type Statement = Readonly<{
-  query: Query;
-  bind: (...params: Params) => Statement;
-  all: () => Promise<Result>;
-  first: () => Promise<Row | null>;
-  run: () => Promise<Result>;
-  raw: () => Promise<readonly (readonly unknown[])[]>;
-}>;
-
-export type Database = Readonly<{
-  prepare: (sql: string) => Statement;
-  batch: (statements: readonly Statement[]) => Promise<readonly Result[]>;
-}>;
+import { Miniflare } from "miniflare";
 
 export type Source = Readonly<{ migrations: string; tables: readonly string[] }>;
 
+export type Database = Awaited<ReturnType<Miniflare["getD1Database"]>>;
+
 export type D1 = Readonly<{
-  env: { DB: Database };
-  resetDatabase: Effect.Effect<readonly (readonly Row[])[]>;
+  database: Effect.Effect<Database>;
+  resetDatabase: Effect.Effect<void>;
   closeDatabase: Effect.Effect<void>;
 }>;
 
+const services = ManagedRuntime.make(nodeServices);
+
+const BINDING = "DB";
 const BREAKPOINT = "--> statement-breakpoint";
+const EMPTY_WORKER = "export default { fetch: () => new Response(null) };";
 
 const statementsIn = (sql: string): readonly string[] =>
   pipe(sql, Str.split(BREAKPOINT), Arr.map(Str.trim), Arr.filter(Str.isNonEmpty));
@@ -67,94 +47,37 @@ const migrationStatements = Effect.fn("d1Test.migrations")(function* migrationSt
   return pipe(files, Arr.flatMap(statementsIn));
 });
 
-const plain = (sql: string): Query => ({ sql, params: [] });
+const runAll = (database: Database, statements: readonly string[]): Effect.Effect<void> =>
+  Effect.forEach(statements, (sql) => Effect.promise(() => database.prepare(sql).run()), {
+    concurrency: 1,
+    discard: true,
+  });
 
-const D1_MAX_PARAMETERS = 100;
-
-const fitsD1 = (query: Query): boolean => query.params.length <= D1_MAX_PARAMETERS;
-
-const tooManyVariables = (query: Query): Error =>
-  new Error(
-    `D1_ERROR: too many SQL variables (${String(query.params.length)} bound, D1 allows ${String(D1_MAX_PARAMETERS)})`,
-  );
-
-const withinD1 = (query: Query): Effect.Effect<Query> =>
+const deletions = (tables: readonly string[]): readonly string[] =>
   pipe(
-    query,
-    Option.liftPredicate(fitsD1),
-    Option.match({
-      onNone: () => Effect.die(tooManyVariables(query)),
-      onSome: Effect.succeed,
-    }),
+    tables,
+    Arr.map((table) => `DELETE FROM ${table}`),
   );
-
-const executeAll = (
-  queries: readonly Query[],
-): Effect.Effect<readonly (readonly Row[])[], SqlError, SqlClient.SqlClient> =>
-  Effect.gen(function* runQueries() {
-    const client = yield* SqlClient.SqlClient;
-    const execute = (query: Query): Effect.Effect<readonly Row[], SqlError> =>
-      withinD1(query).pipe(Effect.andThen(client.unsafe<Row>(query.sql, query.params)));
-    return yield* client.withTransaction(Effect.forEach(queries, execute, { concurrency: 1 }));
-  });
-
-const plainAll = Arr.map(plain);
-
-const sqlite = SqliteClient.layer({ filename: ":memory:" });
-
-const rowsOf = (query: Query): Effect.Effect<readonly Row[], SqlError, SqlClient.SqlClient> =>
-  Effect.gen(function* readRows() {
-    const client = yield* SqlClient.SqlClient;
-    yield* withinD1(query);
-    return yield* client.unsafe<Row>(query.sql, query.params);
-  });
-
-const valuesOf = (
-  query: Query,
-): Effect.Effect<readonly (readonly unknown[])[], SqlError, SqlClient.SqlClient> =>
-  Effect.gen(function* readValues() {
-    const client = yield* SqlClient.SqlClient;
-    yield* withinD1(query);
-    return yield* client.unsafe(query.sql, query.params).values;
-  });
-
-const resultOf = (results: readonly Row[]): Result => ({ results, success: true });
-
-const queryOf = (statement: Statement): Query => statement.query;
-
-const queriesOf = Arr.map(queryOf);
-
-const resultsOf = Arr.map(resultOf);
-
-const deleteAll = (table: string): Query => plain(`DELETE FROM ${table}`);
 
 export const makeD1 = (source: Source): D1 => {
-  const migrated = Layer.effectDiscard(
-    migrationStatements(source.migrations).pipe(Effect.map(plainAll), Effect.flatMap(executeAll)),
-  );
-  const runtime = ManagedRuntime.make(
-    migrated.pipe(Layer.provideMerge(sqlite), Layer.provide(nodeServices)),
-  );
-  const statementOf = (query: Query): Statement => ({
-    query,
-    bind: (...params) => statementOf({ sql: query.sql, params }),
-    all: () => runtime.runPromise(rowsOf(query).pipe(Effect.map(resultOf))),
-    first: () =>
-      runtime.runPromise(
-        rowsOf(query).pipe(Effect.map((rows) => Option.getOrNull(Arr.head(rows)))),
-      ),
-    run: () => runtime.runPromise(rowsOf(query).pipe(Effect.map(resultOf))),
-    raw: () => runtime.runPromise(valuesOf(query)),
+  const miniflare = new Miniflare({
+    modules: true,
+    script: EMPTY_WORKER,
+    d1Databases: [BINDING],
   });
-  const database: Database = {
-    prepare: (sql) => statementOf(plain(sql)),
-    batch: (statements) =>
-      runtime.runPromise(executeAll(queriesOf(statements)).pipe(Effect.map(resultsOf))),
-  };
-  const resetQueries = pipe(source.tables, Arr.map(deleteAll));
+  const migrated = Effect.gen(function* migrate() {
+    const database = yield* Effect.promise(() => miniflare.getD1Database(BINDING));
+    const statements = yield* migrationStatements(source.migrations).pipe(Effect.orDie);
+    yield* runAll(database, statements);
+    return database;
+  });
+  const ready = services.runPromise(migrated);
+  const database = Effect.promise(() => ready);
   return {
-    env: { DB: database },
-    resetDatabase: Effect.promise(() => runtime.runPromise(executeAll(resetQueries))),
-    closeDatabase: Effect.promise(() => runtime.dispose()),
+    database,
+    resetDatabase: database.pipe(
+      Effect.flatMap((found) => runAll(found, deletions(source.tables))),
+    ),
+    closeDatabase: Effect.promise(() => miniflare.dispose()),
   };
 };

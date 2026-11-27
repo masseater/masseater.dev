@@ -1,6 +1,7 @@
 import type { UpstreamFailed } from "@masseater.dev/mcp-tool-call";
 import { Effect, Option } from "effect";
 
+import type { ConversationObjects } from "#/entities/conversation/index.server.ts";
 import { cursorOf } from "#/entities/trait/index.server.ts";
 import {
   collect,
@@ -10,6 +11,7 @@ import {
   GLOBAL,
 } from "#/entities/trait/index.ts";
 import type { Collected, BatchSource } from "#/entities/trait/index.ts";
+import type { Database } from "#/shared/db/index.server.ts";
 import { NOT_RETRACTED } from "#/shared/db/index.ts";
 import type { LifeRow, Memory, StorageFailed } from "#/shared/db/index.ts";
 
@@ -45,7 +47,7 @@ const lifeSource = (row: LifeRow): readonly BatchSource[] => [
 const positionOfRow = (row: Readonly<{ updatedAt: string; id: number }>): Effect.Effect<string> =>
   rowPositionText({ at: row.updatedAt, id: row.id });
 
-const collectMemory: Effect.Effect<Option.Option<Collected>, StorageFailed> = Effect.gen(
+const collectMemory: Effect.Effect<Option.Option<Collected>, StorageFailed, Database> = Effect.gen(
   function* collectMemory() {
     const stored = yield* cursorOf("memory");
     const before = yield* settledBefore;
@@ -59,7 +61,7 @@ const collectMemory: Effect.Effect<Option.Option<Collected>, StorageFailed> = Ef
   },
 );
 
-const collectLife: Effect.Effect<Option.Option<Collected>, StorageFailed> = Effect.gen(
+const collectLife: Effect.Effect<Option.Option<Collected>, StorageFailed, Database> = Effect.gen(
   function* collectLife() {
     const stored = yield* cursorOf("life");
     const before = yield* settledBefore;
@@ -75,7 +77,8 @@ const collectLife: Effect.Effect<Option.Option<Collected>, StorageFailed> = Effe
 
 export const collectSources: Effect.Effect<
   Option.Option<Collected>,
-  StorageFailed | UpstreamFailed
+  StorageFailed | UpstreamFailed,
+  Database | ConversationObjects
 > = Effect.gen(function* collectSources() {
   const fromMemory = yield* collectMemory;
   if (Option.isSome(fromMemory)) {

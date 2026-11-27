@@ -3,14 +3,12 @@ import { Client, InMemoryTransport } from "@modelcontextprotocol/client";
 import type { CallToolResult, ContentBlock, TextContent } from "@modelcontextprotocol/client";
 import { McpServer, createMcpHandler } from "@modelcontextprotocol/server";
 import { Array as Arr, Effect, Option, Schema, String as Str, pipe } from "effect";
-import { afterAll, afterEach, beforeAll, vi } from "vite-plus/test";
+import { afterAll, afterEach, beforeAll } from "vite-plus/test";
 
 import { PostsJson } from "#/features/search-posts/index.test.support.ts";
 
-import { TOKENS, networkAnswering, tokens } from "./search-tools.test.support.ts";
+import { TOKENS, broker, networkAnswering, tokens } from "./search-tools.test.support.ts";
 import { registerTools } from "./tools.ts";
-
-vi.mock("cloudflare:workers", () => import("./search-tools.test.support.ts"));
 
 const TWILOG_MCP = "https://twilog-mcp.togetter.dev/mcp";
 const UNAUTHORIZED = 401;
@@ -131,7 +129,7 @@ const callSearch = (
 const search = (args: Readonly<Record<string, unknown>>): Effect.Effect<typeof Result.Type> =>
   Effect.gen(function* searched() {
     const [clientSide, serverSide] = InMemoryTransport.createLinkedPair();
-    const server = registerTools();
+    const server = registerTools(broker);
     const client = new Client({ name: "vitest", version: "0.0.0" });
     yield* Effect.promise(() => server.connect(serverSide));
     yield* Effect.promise(() => client.connect(clientSide));

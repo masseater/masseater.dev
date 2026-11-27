@@ -36,7 +36,7 @@ export {
   ordered,
   projected,
   factStateOf,
-  contains,
+  scoreText,
 } from "./api/life-filter.ts";
 export type { Entry } from "./api/life-filter.ts";
 export { goalPeriods } from "./api/life-goals.ts";

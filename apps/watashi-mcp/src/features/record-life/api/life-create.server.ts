@@ -34,6 +34,7 @@ import type {
   Body,
 } from "#/entities/life-record/index.ts";
 import type { InvalidRecord } from "#/shared/api/index.ts";
+import type { Database } from "#/shared/db/index.server.ts";
 import type { LifeRecordName, Source, StorageFailed } from "#/shared/db/index.ts";
 
 export type CreateItem = Exclude<WriteItemValue, ChangeValue>;
@@ -44,7 +45,7 @@ type Prepared = Readonly<{ input: NewRecord; assumed: readonly string[] }>;
 
 export type Creator = (
   writer: Writer,
-) => (input: NewRecord) => Effect.Effect<ItemResult, CreateFailure>;
+) => (input: NewRecord) => Effect.Effect<ItemResult, CreateFailure, Database>;
 
 const DUPLICATE_SCAN = 200;
 
@@ -67,7 +68,7 @@ export const plainInsert: Creator = (writer) => (input) =>
 
 const updatedExisting =
   (writer: Writer, entry: LifeEntry) =>
-  (body: Body): Effect.Effect<ItemResult, StorageFailed> => {
+  (body: Body): Effect.Effect<ItemResult, StorageFailed, Database> => {
     const ref = refOf(entry.row);
     return replaceRecord(writer)({
       entry,
@@ -98,7 +99,7 @@ const duplicateNotice =
     note: "The same event may already exist. Ask the owner which one to keep, then retract the other.",
   });
 
-const duplicatesOf = (body: Body): Effect.Effect<readonly LifeEntry[], StorageFailed> => {
+const duplicatesOf = (body: Body): Effect.Effect<readonly LifeEntry[], StorageFailed, Database> => {
   const day = Option.some(columnsOf("life_event")(body).dayEnd);
   const same = isSameEvent(body);
   return scanRecords({
@@ -148,7 +149,9 @@ const mergedMedia = (entry: LifeEntry, body: Body): Body => ({
   ids: { ...idsOf(entry.body), ...idsOf(body) },
 });
 
-const mediaCandidates = (body: Body): Effect.Effect<readonly LifeEntry[], StorageFailed> => {
+const mediaCandidates = (
+  body: Body,
+): Effect.Effect<readonly LifeEntry[], StorageFailed, Database> => {
   if (Rec.isEmptyRecord(idsOf(body))) {
     return scanLabel({ record: "media_item", label: textAt("mediaType")(body) });
   }
@@ -190,12 +193,12 @@ const preparedOf = (item: CreateItem): Effect.Effect<Prepared, InvalidRecord> =>
 
 export const checkCreate =
   (checkValues: ValuesCheck) =>
-  (item: CreateItem): Effect.Effect<void, CreateFailure> =>
+  (item: CreateItem): Effect.Effect<void, CreateFailure, Database> =>
     preparedOf(item).pipe(Effect.flatMap(({ input }) => checkValues(input)));
 
 export const createItem =
   ({ writer, creators }: Readonly<{ writer: Writer; creators: Creators }>) =>
-  (item: CreateItem): Effect.Effect<ItemResult, CreateFailure> =>
+  (item: CreateItem): Effect.Effect<ItemResult, CreateFailure, Database> =>
     Effect.gen(function* createLifeRecord() {
       const { input, assumed } = yield* preparedOf(item);
       const result = yield* creators[input.record](writer)(input);

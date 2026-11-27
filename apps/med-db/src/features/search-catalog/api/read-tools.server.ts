@@ -1,11 +1,13 @@
 import { compactInput } from "@masseater.dev/mcp-tool-call";
 import type { McpServer } from "@modelcontextprotocol/server";
+import type { DrizzleD1Database } from "drizzle-orm/d1";
 import { Schema } from "effect";
 
 import { IdInput, KeywordInput, VideoSearchInput } from "#/entities/catalog/index.ts";
 import { getSong, listSongs } from "#/entities/song/index.server.ts";
 import { getVideo, listVideos } from "#/entities/video/index.server.ts";
 import { orMissing, runTool } from "#/shared/api/index.server.ts";
+import type { CatalogRelations } from "#/shared/db/index.server.ts";
 import { keywordOf } from "#/shared/db/index.server.ts";
 
 const READ_ONLY = { readOnlyHint: true, openWorldHint: false };
@@ -25,43 +27,45 @@ const VIDEO_SEARCH_SCHEMA = VideoSearchInput.pipe(
   compactInput,
 );
 
-export const registerReadTools = (server: McpServer): McpServer => {
-  server.registerTool(
-    "search_songs",
-    {
-      description:
-        "曲を曲名・別表記・アーティストの部分一致で探す。登録する前の表記ゆれの確認にも使う",
-      inputSchema: KEYWORD_SCHEMA,
-      annotations: READ_ONLY,
-    },
-    ({ keyword }) => runTool(keywordOf(keyword).pipe(listSongs)),
-  );
-  server.registerTool(
-    "get_song",
-    {
-      description: "曲の詳細と、その曲を使った動画を、引用をたどった間接的な使用まで含めて返す",
-      inputSchema: ID_SCHEMA,
-      annotations: READ_ONLY,
-    },
-    ({ id }) => runTool(getSong(id).pipe(orMissing("song not found"))),
-  );
-  server.registerTool(
-    "search_videos",
-    {
-      description: "メドレーや合作などの動画を、タイトル・動画 ID・投稿者の部分一致と種類で探す",
-      inputSchema: VIDEO_SEARCH_SCHEMA,
-      annotations: READ_ONLY,
-    },
-    (filter) => runTool(listVideos(filter)),
-  );
-  server.registerTool(
-    "get_video",
-    {
-      description: "動画の詳細、パート表、この動画を引用している動画を返す",
-      inputSchema: ID_SCHEMA,
-      annotations: READ_ONLY,
-    },
-    ({ id }) => runTool(getVideo(id).pipe(orMissing("video not found"))),
-  );
-  return server;
-};
+export const registerReadTools =
+  (db: DrizzleD1Database<CatalogRelations>) =>
+  (server: McpServer): McpServer => {
+    server.registerTool(
+      "search_songs",
+      {
+        description:
+          "曲を曲名・別表記・アーティストの部分一致で探す。登録する前の表記ゆれの確認にも使う",
+        inputSchema: KEYWORD_SCHEMA,
+        annotations: READ_ONLY,
+      },
+      ({ keyword }) => runTool(db)(keywordOf(keyword).pipe(listSongs)),
+    );
+    server.registerTool(
+      "get_song",
+      {
+        description: "曲の詳細と、その曲を使った動画を、引用をたどった間接的な使用まで含めて返す",
+        inputSchema: ID_SCHEMA,
+        annotations: READ_ONLY,
+      },
+      ({ id }) => runTool(db)(getSong(id).pipe(orMissing("song not found"))),
+    );
+    server.registerTool(
+      "search_videos",
+      {
+        description: "メドレーや合作などの動画を、タイトル・動画 ID・投稿者の部分一致と種類で探す",
+        inputSchema: VIDEO_SEARCH_SCHEMA,
+        annotations: READ_ONLY,
+      },
+      (filter) => runTool(db)(listVideos(filter)),
+    );
+    server.registerTool(
+      "get_video",
+      {
+        description: "動画の詳細、パート表、この動画を引用している動画を返す",
+        inputSchema: ID_SCHEMA,
+        annotations: READ_ONLY,
+      },
+      ({ id }) => runTool(db)(getVideo(id).pipe(orMissing("video not found"))),
+    );
+    return server;
+  };

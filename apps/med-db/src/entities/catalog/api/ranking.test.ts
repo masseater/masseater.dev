@@ -1,16 +1,14 @@
 import { afterAll, expect, it } from "@effect/vitest";
 import { Array as Arr, Effect, Number as Num, Option, Order, pipe, Schema, Struct } from "effect";
-import { vi } from "vite-plus/test";
 
 import { listPeople } from "#/entities/person/@x/catalog.ts";
 import { listSongs } from "#/entities/song/@x/catalog.ts";
 import { listVideos } from "#/entities/video/@x/catalog.ts";
-import { closeDatabase } from "#/shared/db/index.test.support.ts";
+import { servingCatalog } from "#/shared/api/index.server.ts";
+import { catalog, closeDatabase, withCatalog } from "#/shared/db/index.test.support.ts";
 
-import { handleCatalog } from "./handle.server.ts";
+import { catalogRouter } from "./catalog-router.server.ts";
 import { seedCatalog, thumbnailOf } from "./ranking.test.support.ts";
-
-vi.mock("cloudflare:workers", () => import("#/shared/db/index.test.support.ts"));
 
 afterAll(() => Effect.runPromise(closeDatabase));
 
@@ -38,8 +36,11 @@ const Json = Schema.fromJsonString(Schema.Unknown);
 
 const fetchRanking = (path: string): Effect.Effect<Readonly<{ status: number; body: unknown }>> =>
   Effect.gen(function* requestRanking() {
+    const db = yield* catalog;
     const response = yield* Effect.promise(() =>
-      handleCatalog(new Request(`http://localhost/api/catalog/ranking/${path}`)),
+      servingCatalog(db)(catalogRouter)(
+        new Request(`http://localhost/api/catalog/ranking/${path}`),
+      ),
     );
     const text = yield* Effect.promise(() => response.text());
     const body = yield* Schema.decodeEffect(Json)(text).pipe(
@@ -69,7 +70,7 @@ it.effect("曲の順位は使った動画の本数の多い順に、指定した
     });
     expect(ranking.body).toStrictEqual(Arr.take(everything, TOP_THREE));
     expect(all.body).toStrictEqual(everything);
-  }),
+  }).pipe(withCatalog),
 );
 
 it.effect("動画の順位はパートのある動画だけを、パートの多い順に指定した件数だけ返す", () =>
@@ -105,7 +106,7 @@ it.effect("動画の順位はパートのある動画だけを、パートの多
     });
     expect(top.body).toStrictEqual(Arr.take(featured, TOP_TWO));
     expect(all.body).toStrictEqual(featured);
-  }),
+  }).pipe(withCatalog),
 );
 
 it.effect("担当者の順位は担当したパートの多い順に、指定した件数だけを返す", () =>
@@ -124,7 +125,7 @@ it.effect("担当者の順位は担当したパートの多い順に、指定し
     });
     expect(ranking.body).toStrictEqual(Arr.take(everything, TOP_THREE));
     expect(all.body).toStrictEqual(everything);
-  }),
+  }).pipe(withCatalog),
 );
 
 it.effect("順位は件数の指定が無いときと上限を超えるときに断る", () =>
@@ -134,5 +135,5 @@ it.effect("順位は件数の指定が無いときと上限を超えるときに
     const tooMany = yield* fetchRanking(`songs?limit=${OVER_THE_CAP.toString()}`);
     expect(missing.status).toBe(INVALID);
     expect(tooMany.status).toBe(INVALID);
-  }),
+  }).pipe(withCatalog),
 );
