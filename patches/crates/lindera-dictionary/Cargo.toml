@@ -23,7 +23,6 @@ autobenches = false
 description = "A morphological dictionary library."
 homepage = "https://github.com/lindera/lindera"
 documentation = "https://docs.rs/lindera-dictionary"
-readme = "README.md"
 keywords = ["morphological", "analysis", "dictionary", "library"]
 categories = ["text-processing"]
 license = "MIT"
