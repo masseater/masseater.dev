@@ -17,7 +17,9 @@
     "./owner-access": "./src/features/grant-owner-access/index.ts",
     "./owner-site-run": "./src/features/run-owner-site/index.ts",
     "./run-tasks": "./src/features/run-owner-site/index.ts",
-    "./app-name": "./src/features/name-app/index.ts"
+    "./app-name": "./src/features/name-app/index.ts",
+    "./japan": "./src/shared/config/japan.ts",
+    "./japan-database": "./src/features/relocate-database/index.ts"
   },
   "dependencies": {
     "@alchemy.run/cloudflare": "catalog:stack",

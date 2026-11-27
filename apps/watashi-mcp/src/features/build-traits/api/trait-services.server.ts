@@ -1,3 +1,4 @@
+import { JAPAN_GENERATION, JAPAN_OBJECT } from "@masseater.dev/cloudflare-account/japan";
 import { run, runner } from "@r_masseater/workers-tracing/effect";
 import type { Run } from "@r_masseater/workers-tracing/effect";
 import { Effect, Layer, Logger } from "effect";
@@ -28,3 +29,7 @@ export const traitRunner = (bindings: TraitBindings): Run<TraitServices> =>
 
 export const awaited = (call: () => PromiseLike<unknown>): Promise<void> =>
   run(Effect.promise(call).pipe(Effect.asVoid));
+
+export const ownerOf = <Stub>(
+  namespace: Readonly<{ getByName: (name: string, options: typeof JAPAN_OBJECT) => Stub }>,
+): Stub => namespace.getByName(`owner${JAPAN_GENERATION}`, JAPAN_OBJECT);
