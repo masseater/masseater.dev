@@ -93,3 +93,19 @@ it.effect("人生の記録と作業メモを store で分けて返す", () =>
     expect(found).toMatchObject({ total: 2, countsByStore: { life: 1, memory: 1 } });
   }),
 );
+
+const LONG_TERM = "あいうえおかきくけこさしすせそたちつてとなにぬねの";
+
+it.effect("LIKE のパターン長の上限を超える検索語でも、先頭部分で探して失敗しない", () =>
+  Effect.gen(function* searchesLongTerm() {
+    yield* resetDatabase;
+    yield* writeMemory(writer)({
+      project: "assistant",
+      name: "kana",
+      description: "かな",
+      content: LONG_TERM,
+    });
+    const found = yield* watashiSearch({ query: LONG_TERM });
+    expect(found).toMatchObject({ total: 1, countsByStore: { memory: 1 } });
+  }),
+);

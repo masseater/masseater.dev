@@ -41,11 +41,6 @@ export const lintToolReadonlyAllow = [
   },
   { from: "package" as const, package: "markdownlint", name: ["LintError"] },
   {
-    from: "package" as const,
-    package: "steiger",
-    name: ["ConfigObject", "GlobalIgnore", "Plugin"],
-  },
-  {
     from: "file" as const,
     path: "upstream/attw-core/lib/checkPackage.d.ts",
     name: ["CheckPackageOptions"],

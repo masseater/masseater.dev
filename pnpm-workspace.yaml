@@ -14,15 +14,8 @@ fetchRetryMaxtimeout: 120000
 catalogMode: prefer
 
 catalog:
-  chokidar: 6.0.0
   cborg: 7.0.0
   msw: 3.0.7
-  effector: 23.5.1
-  empathic: 2.1.0
-  globby: 16.2.4
-  immer: 11.2.10
-  micromatch: 4.0.8
-  patronum: 2.3.0
   "@pnpm/deps.path": 1101.0.11
   "@pnpm/lockfile.fs": 1100.2.20
   "@pnpm/logger": 1100.0.0
@@ -235,15 +228,9 @@ catalog:
   cjs-module-lexer: 2.3.0
   markdownlint: 0.42.2
   minimatch: 11.0.9
-  pluralize: 8.0.0
   semver: 7.8.6
-  steiger: 0.10.0
   textlint: 16.1.3
-  tsconfck: 3.1.6
   validate-npm-package-name: 8.0.0
-  web-tree-sitter: 0.27.2
-  "@feature-sliced/filesystem": 3.1.1
-  "@feature-sliced/steiger-plugin": 0.8.2
   "@types/semver": 7.8.0
   react: 19.3.1
   react-dom: 19.3.1
@@ -311,13 +298,12 @@ catalogs:
     typescript: 7.1.0-beta
     vite-plus: 1.7.0
 overrides:
-  "@r_masseater/vite-plus-adopt>@r_masseater/h56m": "workspace:*" # exit: npm:@r_masseater/vite-plus-adopt requires @r_masseater/h56m@>=0.2.0
   "@vitest/browser-playwright": 5.1.1 # exit: npm:vite-plus allows @vitest/browser-playwright@>=5.1.1
-  "@feature-sliced/filesystem>typescript": "catalog:stack" # exit: npm:@feature-sliced/filesystem allows typescript@>=7
   "langium>vscode-languageserver": "catalog:" # exit: npm:langium allows vscode-languageserver@>=11
   "@remotion/eslint-plugin>@typescript-eslint/utils": "-" # exit: npm:@remotion/eslint-plugin allows @typescript-eslint/utils@>=8
   "@remotion/eslint-plugin>typescript": "-" # exit: npm:@remotion/eslint-plugin drops typescript || npm:@remotion/eslint-plugin allows typescript@>=7
   workerd: 1.20261123.1 # exit: npm:miniflare requires workerd@>=1.20261115.1
+  "@r_masseater/vite-plus-adopt>@r_masseater/h56m": "workspace:*" # exit: npm:@r_masseater/vite-plus-adopt requires @r_masseater/h56m@>=0.2.0
   vite@*: "catalog:" # exit: unused
   vitest: 5.1.1 # exit: npm:vite-plus requires vitest@>=5.1.1
   "@vitest/browser": 5.1.1 # exit: npm:vite-plus requires vitest@>=5.1.1

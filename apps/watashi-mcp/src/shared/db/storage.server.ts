@@ -52,12 +52,29 @@ export const nowIso = DateTime.now.pipe(Effect.map(DateTime.formatIso));
 export const termsOf = (text: string): readonly string[] =>
   pipe(text, Str.split(/\s+/u), Arr.filter(Str.isNonEmpty), Arr.dedupe);
 
+const LIKE_PATTERN_BYTES = 50;
+
+const LIKE_WILDCARD_BYTES = 2;
+
+const utf8 = new TextEncoder();
+
+const fitsLike = (term: string): boolean =>
+  utf8.encode(term).byteLength <= LIKE_PATTERN_BYTES - LIKE_WILDCARD_BYTES;
+
+const likeableTerm = (term: string): string =>
+  pipe(
+    Arr.scan(Arr.fromIterable(term), "", (prefix, point) => prefix + point),
+    Arr.filter(fitsLike),
+    Arr.last,
+    Option.getOrElse(() => ""),
+  );
+
 export const anyTermMatches =
   (matchesOf: (pattern: string) => SQL[]) =>
   (terms: readonly string[]): Option.Option<SQL> => {
     const matches = pipe(
       terms,
-      Arr.flatMap((term) => matchesOf(`%${term}%`)),
+      Arr.flatMap((term) => matchesOf(`%${likeableTerm(term)}%`)),
     );
     return Option.fromNullishOr(or(...matches));
   };

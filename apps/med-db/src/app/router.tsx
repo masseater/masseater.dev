@@ -1,4 +1,4 @@
-import { createQueryRouter } from "@masseater.dev/start-shell/query-router";
+import { createTextSearchRouter } from "@masseater.dev/start-shell/query-router";
 import type { Router } from "@tanstack/react-router";
 
 import { routeTree } from "./routeTree.gen.ts";
@@ -11,4 +11,4 @@ declare module "@tanstack/react-router" {
   }
 }
 
-export const getRouter = (): AppRouter => createQueryRouter(routeTree);
+export const getRouter = (): AppRouter => createTextSearchRouter(routeTree);

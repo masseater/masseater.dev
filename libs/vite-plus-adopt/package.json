@@ -1,14 +1,12 @@
 {
   "name": "@r_masseater/vite-plus-adopt",
-  "version": "0.11.1",
-  "description": "Adopt h56m secret scanning, commitlint, textlint, Steiger and dependency checks into Vite+ through the settings in vite.config.ts, and ship the Feature-Sliced Design Steiger plugin and @arethetypeswrong/core for TypeScript 7.",
+  "version": "0.12.0",
+  "description": "Adopt h56m secret scanning, commitlint, textlint, fallow and dependency checks into Vite+ through the settings in vite.config.ts, and ship @arethetypeswrong/core for TypeScript 7.",
   "keywords": [
     "arethetypeswrong",
     "attw",
     "commitlint",
-    "feature-sliced",
     "h56m",
-    "steiger",
     "tanstack-intent",
     "textlint",
     "vite-plus"
@@ -41,10 +39,6 @@
       "types": "./dist/index.d.mts",
       "default": "./dist/index.mjs"
     },
-    "./fsd": {
-      "types": "./dist/fsd.d.mts",
-      "default": "./dist/fsd.mjs"
-    },
     "./attw": {
       "types": "./dist/attw.d.mts",
       "default": "./dist/attw.mjs"
@@ -73,37 +67,23 @@
     "@textlint/config-loader": "catalog:",
     "@textlint/kernel": "catalog:",
     "@textlint/utils": "catalog:",
-    "chokidar": "catalog:",
     "cjs-module-lexer": "catalog:",
-    "effector": "catalog:",
-    "empathic": "catalog:",
-    "fastest-levenshtein": "catalog:",
     "fflate": "catalog:",
-    "globby": "catalog:",
-    "immer": "catalog:",
-    "micromatch": "catalog:",
     "minimatch": "catalog:",
-    "patronum": "catalog:",
-    "pluralize": "catalog:",
     "semver": "catalog:",
     "textlint": "catalog:",
-    "tsconfck": "catalog:",
     "validate-npm-package-name": "catalog:",
-    "web-tree-sitter": "catalog:",
     "yaml": "catalog:"
   },
   "devDependencies": {
     "@effect/platform-node": "catalog:",
     "@effect/vitest": "catalog:",
-    "@feature-sliced/filesystem": "catalog:",
-    "@feature-sliced/steiger-plugin": "catalog:",
     "@r_masseater/h56m-presets": "workspace:*",
     "@size-limit/file": "catalog:",
     "@types/node": "catalog:",
     "@types/semver": "catalog:",
     "effect": "catalog:stack",
     "size-limit": "catalog:",
-    "steiger": "catalog:",
     "typescript": "catalog:stack",
     "vite": "catalog:",
     "vite-plus": "catalog:stack"
@@ -124,21 +104,9 @@
       "name": "tools",
       "path": [
         "dist/*.mjs",
-        "!dist/fsd.mjs",
-        "!dist/attw.mjs",
-        "!dist/steiger-*.mjs"
+        "!dist/attw.mjs"
       ],
       "limit": "15600 B"
-    },
-    {
-      "name": "steiger",
-      "path": "dist/steiger-*.mjs",
-      "limit": "38300 B"
-    },
-    {
-      "name": "fsd",
-      "path": "dist/fsd.mjs",
-      "limit": "9430 B"
     },
     {
       "name": "attw",

@@ -1,4 +1,4 @@
-import { createQueryRouter } from "@masseater.dev/start-shell/query-router";
+import { createTextSearchRouter } from "@masseater.dev/start-shell/query-router";
 import type { Router } from "@tanstack/react-router";
 
 import { FRESH } from "#/shared/config/index.ts";
@@ -14,7 +14,7 @@ declare module "@tanstack/react-router" {
 }
 
 export const getRouter = (): AppRouter => {
-  const router = createQueryRouter(routeTree);
+  const router = createTextSearchRouter(routeTree);
   router.options.context.queryClient.setDefaultOptions({ queries: FRESH });
   return router;
 };
