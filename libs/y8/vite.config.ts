@@ -6,7 +6,15 @@ import { defineConfig } from "vite-plus";
 
 const CARGO_INPUTS = await cargoInputs({ directory: import.meta.dirname });
 
-const DOWNLOAD_ENV = ["HTTPS_PROXY", "https_proxy", "NO_PROXY", "no_proxy", "SSL_CERT_FILE"];
+const DOWNLOAD_ENV = [
+  "HTTPS_PROXY",
+  "https_proxy",
+  "NO_PROXY",
+  "no_proxy",
+  "SSL_CERT_FILE",
+  "LINDERA_BUILD_DICTIONARY_CACHE_DIR",
+  "LINDERA_BUILD_DICTIONARY_FROM_SOURCE",
+];
 
 export default defineConfig({
   msch: { lint: { ignorePatterns: ["native/core/tests/fixtures/**"] } },
