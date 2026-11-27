@@ -17,7 +17,12 @@ export type {
   SongText,
   StyleSong,
 } from "#/features/find-habits/index.ts";
-export { HABIT_KINDS, StyleRulesSchema, subjectKeyOf } from "#/shared/lib/style-rules.ts";
+export {
+  HABIT_KINDS,
+  StyleRulesSchema,
+  SubjectSchema,
+  subjectKeyOf,
+} from "#/shared/lib/style-rules.ts";
 export type { HabitKind, HabitRule, StyleRules, Subject } from "#/shared/lib/style-rules.ts";
 export { mixKeyOf } from "#/shared/lib/mix-habit.ts";
 export type { MixHabit } from "#/shared/lib/mix-habit.ts";
