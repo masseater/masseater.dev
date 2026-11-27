@@ -22,3 +22,10 @@ export const d1Tasks = {
     `drizzle-kit generate --explain --output json | grep -q '"status":"no_changes"'`,
   ],
 } satisfies Tasks;
+
+const UNAUTHENTICATED = 401;
+const RETRIES = 5;
+const RETRY_DELAY_SECONDS = 5;
+
+export const rejectsUnauthenticated = (mcpUrl: string): string =>
+  `test "$(curl --silent --output /dev/null --write-out '%{http_code}' --retry ${RETRIES} --retry-delay ${RETRY_DELAY_SECONDS} --retry-all-errors --request POST --header 'content-type: application/json' --data '{}' ${mcpUrl})" = ${UNAUTHENTICATED}`;
