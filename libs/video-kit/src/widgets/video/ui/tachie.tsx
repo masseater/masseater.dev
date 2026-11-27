@@ -1,31 +1,24 @@
-import { Option, pipe } from "effect";
+import { Match, Option } from "effect";
 import type { ReactNode } from "react";
-import { Img, useCurrentFrame } from "remotion";
 
-import type { Tachie as TachieImages, TimedCut } from "#/entities/cut/index.ts";
-import { isMouthOpen } from "#/widgets/video/model/speaking.ts";
+import type { Tachie as TachieArt, TimedCut } from "#/entities/cut/index.ts";
+
+import { ImageCharacter } from "./image-character.tsx";
+import { PsdArt } from "./psd-art.tsx";
 
 const NONE = "";
 
 export const Tachie = ({
-  images,
+  art,
   cuts,
-}: Readonly<{ images: Option.Option<TachieImages>; cuts: readonly TimedCut[] }>): ReactNode => {
-  const frame = useCurrentFrame();
-  return Option.match(images, {
+}: Readonly<{ art: Option.Option<TachieArt>; cuts: readonly TimedCut[] }>): ReactNode =>
+  Option.match(art, {
     onNone: () => NONE,
-    onSome: ({ closed, open }) => {
-      const src = pipe(
-        open,
-        Option.filter(() => isMouthOpen({ cuts, frame })),
-        Option.getOrElse(() => closed),
-      );
-      return (
-        <Img
-          className="tachie horizontal:tachie-h pointer-events-none absolute object-contain object-bottom"
-          src={src}
-        />
-      );
-    },
+    onSome: (found) =>
+      Match.value<TachieArt>(found).pipe(
+        Match.discriminatorsExhaustive("kind")({
+          image: (image) => <ImageCharacter art={image} cuts={cuts} />,
+          psd: (psd) => <PsdArt art={psd} cuts={cuts} />,
+        }),
+      ),
   });
-};

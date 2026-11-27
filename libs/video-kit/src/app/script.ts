@@ -10,6 +10,8 @@ export type {
   Cut,
   Narration,
   Sources,
+  ImageTachie,
+  PsdTachie,
   Tachie,
   TimedCut,
   TimedLine,
