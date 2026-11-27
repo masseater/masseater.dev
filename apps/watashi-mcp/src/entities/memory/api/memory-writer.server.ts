@@ -22,6 +22,7 @@ export const MemorySnapshot = Schema.Struct({
   description: Schema.String,
   content: Schema.String,
   evidence: Schema.Array(Schema.String),
+  view: Schema.optionalKey(Schema.String),
   retractedAt: Schema.String,
   retractReason: Schema.String,
 });
@@ -46,6 +47,7 @@ export const snapshotOf = (row: Memory): MemorySnapshotValue => ({
   description: row.description,
   content: row.content,
   evidence: evidenceOf(row),
+  view: row.view,
   retractedAt: row.retractedAt,
   retractReason: row.retractReason,
 });
@@ -59,7 +61,7 @@ const write =
       const db = yield* Database;
       const now = yield* nowIso;
       const evidence = yield* encodeJson(snapshot.evidence);
-      const row = { ...snapshot, evidence, updatedAt: now };
+      const row = { ...snapshot, evidence, view: snapshot.view ?? "", updatedAt: now };
       const statement = Option.match(
         Option.liftPredicate(op, (value) => value === "create"),
         {

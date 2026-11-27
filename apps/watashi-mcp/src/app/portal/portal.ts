@@ -7,7 +7,7 @@ import { watashiLayer } from "#/app/mcp/layer.server.ts";
 import type { WatashiServices } from "#/app/mcp/layer.server.ts";
 import type { ToolFailure } from "#/shared/api/index.ts";
 
-import { memoryProjects } from "./memory-projects.server.ts";
+import { memoryProjects, memoryViews } from "./memory-lists.server.ts";
 import { conversationRead } from "./portal-conversation.server.ts";
 import { lifeRead, memoryRead, memoryWrite, profile } from "./portal-operations.server.ts";
 import { settled } from "./portal-settled.server.ts";
@@ -33,6 +33,10 @@ export class WatashiPortal extends WorkerEntrypoint implements WatashiPortalRpc 
 
   public memoryProjects(): Promise<PortalResult> {
     return this.run("memory_projects", memoryProjects);
+  }
+
+  public memoryViews(input: unknown): Promise<PortalResult> {
+    return this.run("memory_views", memoryViews(input));
   }
 
   public profile(): Promise<PortalResult> {
