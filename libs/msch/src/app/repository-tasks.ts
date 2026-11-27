@@ -51,8 +51,10 @@ const FALLOW = [
   "fallow security --fail-on-issues --quiet",
 ];
 
+const CHECK_BATCH_SOURCES = 1000;
+
 const checkCommand = (launcher: string): string =>
-  `GOMEMLIMIT=4GiB TSRS_LINT_RUN_EXTERNAL_CODE=1 msch-changed ${launcher} vp check --deny-warnings --continue-on-error`;
+  `GOMEMLIMIT=4GiB TSRS_LINT_RUN_EXTERNAL_CODE=1 msch-changed --batch-sources ${String(CHECK_BATCH_SOURCES)} ${launcher} vp check --deny-warnings --continue-on-error`;
 
 const AUDIT =
   'before="$(cksum pnpm-workspace.yaml)"; vp pm audit --fix || exit; if [ "$before" != "$(cksum pnpm-workspace.yaml)" ]; then echo "vp pm audit --fix rewrote pnpm-workspace.yaml. Run vp install and commit the diff." >&2; exit 1; fi';
