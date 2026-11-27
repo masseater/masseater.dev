@@ -151,7 +151,7 @@
         "!dist/drizzle.mjs",
         "!dist/remotion.mjs"
       ],
-      "limit": "33391 B"
+      "limit": "30068 B"
     }
   ],
   "engines": {
