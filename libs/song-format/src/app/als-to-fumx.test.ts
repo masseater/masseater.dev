@@ -2,9 +2,8 @@ import { NodeFileSystem, NodePath } from "@effect/platform-node-shared";
 import { expect, layer } from "@effect/vitest";
 import { Effect, Exit, FileSystem, Layer, Path, String as Str, pipe } from "effect";
 
-import { liveElevenSet } from "#/features/convert-als/model/live-set.test.support.ts";
-import type { SetSpec } from "#/features/convert-als/model/live-set.test.support.ts";
-
+import { liveElevenSet } from "./als-to-fumx.test.support.ts";
+import type { SetSpec } from "./als-to-fumx.test.support.ts";
 import { convertLiveSetFile } from "./als-to-fumx.ts";
 
 const PATH = "/song.fumx";

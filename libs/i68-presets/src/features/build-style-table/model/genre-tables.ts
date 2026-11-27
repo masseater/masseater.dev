@@ -1,4 +1,3 @@
-import { parse } from "csv-parse/sync";
 import {
   Array as Arr,
   Effect,
@@ -9,6 +8,7 @@ import {
   String as Str,
   pipe,
 } from "effect";
+import { Csv } from "effect/encoding";
 
 import { sortedRecord } from "#/shared/lib/sorted-record.ts";
 import type { StyleTable } from "#/shared/lib/style-table.ts";
@@ -23,6 +23,13 @@ const CHORDS = "chords";
 const GENRE = "main_genre";
 
 export const CHORDONOMICON_SOURCE = "https://huggingface.co/datasets/ailsntua/Chordonomicon";
+
+const taggedError = Schema.TaggedError;
+
+export class UnreadableCorpus extends taggedError<
+  UnreadableCorpus,
+  { readonly brand: unique symbol }
+>()("UnreadableCorpus", { message: Schema.String }, { identifier: "UnreadableCorpus" }) {}
 
 export interface TableLimits {
   readonly order: number;
@@ -42,33 +49,6 @@ export interface GenreTables {
 interface Cell {
   count: number;
 }
-
-interface Columns {
-  readonly chords: number;
-  readonly genre: number;
-}
-
-interface Seen {
-  readonly columns: Option.Option<Columns>;
-  readonly songs: number;
-}
-
-const isRows = Schema.is(Schema.Array(Schema.Array(Schema.String)));
-
-const fieldsOf = (line: string): readonly string[] => {
-  const parsed: unknown = parse(line, { relax_column_count: true, relax_quotes: true });
-  return pipe(
-    Option.liftPredicate(parsed, isRows),
-    Option.flatMap(Arr.head),
-    Option.getOrElse((): readonly string[] => []),
-  );
-};
-
-const columnsOf = (header: readonly string[]): Option.Option<Columns> =>
-  Option.all({
-    chords: Arr.findFirstIndex(header, (name) => name === CHORDS),
-    genre: Arr.findFirstIndex(header, (name) => name === GENRE),
-  });
 
 const nameOf = (genre: string): string =>
   pipe(
@@ -137,34 +117,34 @@ export const genreTablesOf = Effect.fn("genreTablesOf")(function* genreTablesOf<
   limits: TableLimits,
 ) {
   const counter = counterOf(limits);
-  const record = (columns: Columns, fields: readonly string[]): void => {
-    const tokens = tokensOf(Arr.getUnsafe(fields, columns.chords));
+  const record = (row: Readonly<Record<string, string>>): void => {
+    const tokens = tokensOf(
+      pipe(
+        Rec.get(row, CHORDS),
+        Option.getOrElse(() => ""),
+      ),
+    );
     counter.add(ALL, tokens);
-    for (const genre of Option.toArray(Arr.get(fields, columns.genre))) {
+    for (const genre of Option.toArray(Rec.get(row, GENRE))) {
       if (genre !== "") {
         counter.add(genre, tokens);
       }
     }
   };
-  const seen = yield* pipe(
+  const songs = yield* pipe(
     bytes,
-    Stream.decodeText(),
-    Stream.splitLines,
-    Stream.filter((line) => line !== ""),
+    Stream.pipeThroughChannel(Csv.decode({ headers: true })),
+    Stream.mapError((cause) => UnreadableCorpus.make({ message: String(cause) })),
     Stream.runFold(
-      (): Seen => ({ columns: Option.none(), songs: NONE }),
-      (before: Seen, line: string): Seen =>
-        Option.match(before.columns, {
-          onNone: () => ({ columns: columnsOf(fieldsOf(line)), songs: NONE }),
-          onSome: (columns) => {
-            record(columns, fieldsOf(line));
-            return { columns: before.columns, songs: before.songs + ONE };
-          },
-        }),
+      () => NONE,
+      (seen: number, row: Readonly<Record<string, string>>): number => {
+        record(row);
+        return seen + ONE;
+      },
     ),
   );
   return {
-    songs: seen.songs,
+    songs,
     tables: pipe([ALL, ...counter.genres()], Arr.map(counter.tableOf)),
   } satisfies GenreTables;
 });

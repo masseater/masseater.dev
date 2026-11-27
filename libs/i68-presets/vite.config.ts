@@ -8,6 +8,8 @@ export default defineConfig({
       build: { command: "vp pack", cache: LOCKED },
       verify: { command: [], dependsOn: ["test", "build"] },
       "build-style-tables": { command: "node bin/build-style-tables.ts", cache: false },
+      "build-genre-tables": { command: "node bin/build-genre-tables.ts", cache: false },
+      "find-habits": { command: "node bin/find-habits.ts", cache: false },
     },
   },
   pack: {

@@ -49,7 +49,10 @@ export interface SetSpec {
   readonly locators?: readonly LocatorSpec[];
 }
 
-const TEMPLATE = new URL("./fixtures/als-parser/live11-template.als", import.meta.url);
+const TEMPLATE = new URL(
+  "../features/convert-als/model/fixtures/als-parser/live11-template.als",
+  import.meta.url,
+);
 const SONG_START = -63_072_000;
 const TEMPO_ENVELOPE = '<PointeeId Value="8" />';
 const METER_ENVELOPE = '<PointeeId Value="10" />';
