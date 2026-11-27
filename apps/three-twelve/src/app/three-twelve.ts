@@ -1,3 +1,4 @@
+import { JAPAN_GENERATION, JAPAN_OBJECT } from "@masseater.dev/cloudflare-account/japan";
 import { runner } from "@r_masseater/workers-tracing/effect";
 import { DurableObject } from "cloudflare:workers";
 import type { env as workerEnv } from "cloudflare:workers";
@@ -41,7 +42,7 @@ export class Player extends DurableObject {
 const worker: ExportedHandler<typeof workerEnv> = {
   fetch: (request, env) => {
     const stage = {
-      player: env.PLAYER.getByName("player"),
+      player: env.PLAYER.getByName(`player${JAPAN_GENERATION}`, JAPAN_OBJECT),
       audio: env.AUDIO,
       limiter: env.LIMITER,
     };
@@ -49,7 +50,7 @@ const worker: ExportedHandler<typeof workerEnv> = {
   },
   scheduled: (_controller, env) => {
     const stage = {
-      player: env.PLAYER.getByName("player"),
+      player: env.PLAYER.getByName(`player${JAPAN_GENERATION}`, JAPAN_OBJECT),
       audio: env.AUDIO,
       limiter: env.LIMITER,
     };
