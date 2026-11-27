@@ -3,6 +3,7 @@ import { soundingsOf } from "@r_masseater/fumx-parser/analysis";
 import { Effect, Schema } from "effect";
 
 import { progressionOf } from "#/shared/lib/degrees.ts";
+import { mixFactsOf } from "#/shared/lib/mix-facts.ts";
 
 import type { StyleSong } from "./habits.ts";
 
@@ -26,9 +27,11 @@ export const styleSongFromText = Effect.fn("styleSongFromText")(function* styleS
   if (source.status === "invalid") {
     return yield* UnreadableSong.make({ message: `${name} is not a song i68 can read` });
   }
+  const soundings = soundingsOf(source.song);
   const song: StyleSong = {
     name,
-    steps: progressionOf(soundingsOf(source.song))(source.song),
+    steps: progressionOf(soundings)(source.song),
+    mix: mixFactsOf(soundings)(source.song),
   };
   return song;
 });
