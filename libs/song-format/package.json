@@ -4,6 +4,7 @@
   "private": true,
   "description": "The .fumx song format: TypeScript imports, language server, MIDI conversion and the song-report command.",
   "bin": {
+    "als-to-fumx": "./bin/als-to-fumx.ts",
     "fumx-language-server": "./bin/fumx-language-server.ts",
     "midi-to-fumx": "./bin/midi-to-fumx.ts",
     "song-report": "./bin/song-report.ts"
@@ -13,6 +14,7 @@
     "#/*": "./src/*"
   },
   "exports": {
+    "./convert-als": "./src/features/convert-als/index.ts",
     "./convert-midi": "./src/features/convert-midi/index.ts",
     "./vite": "./src/app/vite.ts"
   },
@@ -20,7 +22,9 @@
     "@effect/platform-node-shared": "catalog:",
     "@masseater.dev/node-main": "workspace:*",
     "@r_masseater/fumx-parser": "workspace:*",
+    "ableton-als": "catalog:",
     "effect": "catalog:stack",
+    "fast-xml-parser": "catalog:",
     "langium": "catalog:",
     "mapped-import": "workspace:*",
     "midi-file": "catalog:",

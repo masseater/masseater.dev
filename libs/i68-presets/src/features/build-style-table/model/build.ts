@@ -1,11 +1,12 @@
 import { midiToFumx } from "@masseater.dev/song-format/convert-midi";
 import { readSong } from "@r_masseater/fumx-parser";
 import { soundingsOf } from "@r_masseater/fumx-parser/analysis";
-import { Array as Arr, Effect, Order, Record as Rec, Schema, String as Str, pipe } from "effect";
+import { Array as Arr, Effect, Record as Rec, Schema, pipe } from "effect";
 import { VerovioToolkit } from "verovio/esm";
 import createVerovioModule from "verovio/wasm-hum";
 
 import { progressionOf } from "#/shared/lib/degrees.ts";
+import { sortedRecord } from "#/shared/lib/sorted-record.ts";
 import type { StyleTable, Transitions } from "#/shared/lib/style-table.ts";
 
 import { BACH_SOURCE, bachChorales } from "./corpus.ts";
@@ -65,12 +66,6 @@ const transitionsIn = (tokens: readonly string[]): readonly Transition[] =>
       ),
     ),
   );
-
-const byKey = Order.mapInput(Str.Order, ([key]: readonly [string, unknown]) => key);
-
-const sortedRecord = <Value>(
-  entries: readonly (readonly [string, Value])[],
-): Readonly<Record<string, Value>> => Rec.fromEntries(Arr.sort(entries, byKey));
 
 const nextCounts = (
   transitions: Arr.NonEmptyReadonlyArray<Transition>,
