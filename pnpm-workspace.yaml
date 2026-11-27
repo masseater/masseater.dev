@@ -275,6 +275,14 @@ catalog:
   verovio: 6.4.1
   modern-web-guidance: 1.0.2
   smol-toml: 1.9.1
+  remotion: 4.0.547
+  "@remotion/bundler": 4.0.547
+  "@remotion/cli": 4.0.547
+  "@remotion/layout-utils": 4.0.547
+  "@remotion/media": 4.0.547
+  "@remotion/player": 4.0.547
+  "@remotion/renderer": 4.0.547
+  "@remotion/tailwind-v4": 4.0.547
 catalogs:
   stack:
     "@distilled.cloud/cloudflare": 1.0.0-rc.20
@@ -304,6 +312,8 @@ overrides:
   "langium>vscode-languageserver": "catalog:" # exit: npm:langium allows vscode-languageserver@>=11
   "@remotion/eslint-plugin>@typescript-eslint/utils": "-" # exit: npm:@remotion/eslint-plugin allows @typescript-eslint/utils@>=8
   "@remotion/eslint-plugin>typescript": "-" # exit: npm:@remotion/eslint-plugin drops typescript || npm:@remotion/eslint-plugin allows typescript@>=7
+  "@remotion/tailwind-v4>tailwindcss": "catalog:stack" # exit: npm:@remotion/tailwind-v4 allows tailwindcss@>=4.3.5
+  "@remotion/tailwind-v4>@tailwindcss/webpack": 4.3.5 # exit: npm:@remotion/tailwind-v4 allows @tailwindcss/webpack@>=4.3.5
   workerd: 1.20261124.1 # exit: npm:miniflare requires workerd@>=1.20261115.1
   vite@*: "catalog:" # exit: unused
   fflate@>=0.7.0 <0.7.5: ^0.8.0 # exit: unused
