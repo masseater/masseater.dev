@@ -71,6 +71,32 @@ it.effect("作業メモは無ければ作り、あれば渡した項目だけを
   ),
 );
 
+const week = { project: "個人PJ", name: "weekly-2026-11-16" } as const;
+
+const weekView = [
+  { type: "Headline", text: "監査をまとめた週" },
+  { type: "Point", theme: "CI", text: "マージキューを通るようになった", days: "水" },
+] as const;
+
+it.effect("作業メモに表示の部品を持たせ、内容を変えても表示は残る", () =>
+  provided(
+    Effect.gen(function* keepsView() {
+      yield* resetDatabase;
+      yield* writeMemory(writer)({
+        ...week,
+        description: "監査をまとめた週",
+        content: "監査をまとめた",
+        view: weekView,
+      });
+      yield* writeMemory(writer)({ ...week, content: "監査を4つにまとめた" });
+      const read = yield* readMemory(week);
+      expect(read).toMatchObject({
+        items: [{ content: "監査を4つにまとめた", view: weekView }],
+      });
+    }),
+  ),
+);
+
 it.effect("無い作業メモは取り消せない", () =>
   provided(
     Effect.gen(function* refusesRetract() {

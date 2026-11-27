@@ -8,6 +8,7 @@ import { staticFile } from "remotion";
 import { NARRATION_MANIFEST, assetPath, narrationPath } from "#/shared/config/index.ts";
 import type { Manifest } from "#/shared/lib/manifest-schema.ts";
 import { EMPTY_MANIFEST, ManifestJson } from "#/shared/lib/manifest-schema.ts";
+import { tachieArt } from "#/shared/lib/tachie-art.ts";
 
 /** @internal */
 export interface VideoProps extends Readonly<Record<string, unknown>> {
@@ -29,10 +30,7 @@ const tachieOf = (voice: number, found: Manifest["tachie"]): Option.Option<Tachi
   return pipe(
     Option.fromNullishOr(found),
     Option.flatMap(Rec.get(key)),
-    Option.map(({ closed, open }) => ({
-      closed: staticFile(closed),
-      open: Option.map(Option.fromNullishOr(open), (path) => staticFile(path)),
-    })),
+    Option.map((entry) => tachieArt({ entry, locate: (path) => staticFile(path) })),
   );
 };
 

@@ -12,7 +12,5 @@ export const DEFAULT_LOOK: Look = {
   frame: (shot: Shot, content: ReactNode): ReactNode => (
     <ShotFrame lines={shot.lines}>{content}</ShotFrame>
   ),
-  overlay: (timeline: Timeline): ReactNode => (
-    <Tachie cuts={timeline.cuts} images={timeline.tachie} />
-  ),
+  overlay: (timeline: Timeline): ReactNode => <Tachie art={timeline.tachie} cuts={timeline.cuts} />,
 };

@@ -70,11 +70,19 @@ const label = (pen: Pen, { text, start, end, baseline }: Label): void => {
   pen.context.fillText(fitted(pen.context)(text, end - left - PAD), left, baseline);
 };
 
+const extentOf = (
+  pen: Pen,
+  from: number,
+  to: number,
+): Readonly<{ start: number; end: number }> => ({
+  start: leftOf(pen)(from),
+  end: leftOf(pen)(to),
+});
+
 const section =
   (pen: Pen) =>
   (item: Section, index: number): void => {
-    const start = leftOf(pen)(item.from);
-    const end = leftOf(pen)(item.to);
+    const { start, end } = extentOf(pen, item.from, item.to);
     if (index % TWO === ONE) {
       pen.context.fillStyle = pen.theme.lane;
       pen.context.fillRect(start, EDGE, end - start, RULER.sections);
@@ -94,8 +102,7 @@ const markEnd = (pen: Pen, index: number): number =>
 const mark =
   (pen: Pen) =>
   (item: Mark, index: number): void => {
-    const start = leftOf(pen)(item.bar);
-    const end = leftOf(pen)(markEnd(pen, index));
+    const { start, end } = extentOf(pen, item.bar, markEnd(pen, index));
     if (end >= EDGE && start <= pen.width) {
       pen.context.fillRect(Math.round(start), RULER.sections, HAIRLINE, RULER.marks);
       label(pen, { text: item.label, start, end, baseline: RULER.markText });

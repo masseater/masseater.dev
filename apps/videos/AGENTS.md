@@ -13,3 +13,4 @@ Rules:
 - Put words, order and holds in `script.ts`. Put what is on screen in `video.tsx`. Every cut in `script.ts` needs an entry in `draw`.
 - Name downloaded images in `src/shared/config/stock.ts` and list them in the script's `images`. いらすとや allows up to 20 illustrations per video. Take screenshots with Playwright into `public/cache/shots/`.
 - `src/pages/pnpm-*/` are one video per reference channel style. Start a new video by copying the closest one.
+- The narrator's standing art comes from the `tachie` entry of the narration manifest. `make` fills it with the VOICEVOX portrait. For a PSD character, give the entry `psd` and optionally `favorites` (`.pfv`), a PSDToolKit `state`, and `blink` and `mouth` patterns. `@masseater.dev/tachie` then draws it and moves the mouth with the narration's volume.

@@ -118,23 +118,23 @@ const groupsByBins = (
   measured: Measured,
   by: Bins,
   days: readonly string[],
-): readonly DayGroup[] => {
+): readonly GroupValue[] => {
   const daily = dailyOfMetric(measured.data)(by.metric);
-  return pipe(binsOf(by.bins), Arr.map(binGroup(daily, days)));
+  return pipe(binsOf(by.bins), Arr.map(binGroup(daily, days)), Arr.map(groupValue(measured)));
 };
 
 const groupsByHas = (
   measured: Measured,
   target: string,
   days: readonly string[],
-): readonly DayGroup[] => {
+): readonly GroupValue[] => {
   const present = dailyOf({
     spec: { type: "days", target },
     aggregate: DEFAULT_AGGREGATE,
     events: measured.data.events,
   });
   const isPresent = (day: string): boolean => Rec.has(present, day);
-  return [
+  const groups: readonly DayGroup[] = [
     [`with:${target}`, pipe(days, Arr.filter(isPresent))],
     [
       `without:${target}`,
@@ -144,6 +144,7 @@ const groupsByHas = (
       ),
     ],
   ];
+  return pipe(groups, Arr.map(groupValue(measured)));
 };
 
 const kindGroup =
@@ -167,10 +168,10 @@ export const groupsOf =
   ({ measured, days }: Scope) =>
   (groupBy: GroupBy): readonly GroupValue[] => {
     if ("bins" in groupBy) {
-      return pipe(groupsByBins(measured, groupBy, days), Arr.map(groupValue(measured)));
+      return groupsByBins(measured, groupBy, days);
     }
     if ("has" in groupBy) {
-      return pipe(groupsByHas(measured, groupBy.has, days), Arr.map(groupValue(measured)));
+      return groupsByHas(measured, groupBy.has, days);
     }
     if (groupBy.by === "kind") {
       return kindGroups(measured, days);

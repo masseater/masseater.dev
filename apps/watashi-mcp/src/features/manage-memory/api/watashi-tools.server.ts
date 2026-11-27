@@ -38,7 +38,7 @@ const PROFILE_SCHEMA = WatashiProfileInput.pipe(
 );
 
 const MEMORY_WRITE_DESCRIPTION =
-  "Write an AI work memo about a project or what you learned from life records.";
+  "Write an AI work memo about a project or what you learned from life records. Pass view to show it in the portal as components instead of Markdown.";
 
 const MEMORY_READ_DESCRIPTION = "Find and read AI work memos; call it before starting work.";
 

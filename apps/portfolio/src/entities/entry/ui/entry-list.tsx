@@ -3,9 +3,8 @@ import type { ReactNode } from "react";
 
 import type { Entry } from "#/entities/entry/model/entry.ts";
 
+import { EntryEmpty } from "./entry-empty.tsx";
 import { EntryListItem } from "./entry-list-item.tsx";
-
-const EMPTY_MESSAGE = "まだ何もない。";
 
 const NO_STARS = 0;
 
@@ -25,11 +24,7 @@ export const EntryList = ({
   starCounts: Option.Option<Record.ReadonlyRecord<string, number>>;
 }>): ReactNode => {
   if (!Array.isReadonlyArrayNonEmpty(entries)) {
-    return (
-      <p className="glass-surface text-foreground/70 font-display px-6 py-16 text-center text-sm tracking-widest">
-        {EMPTY_MESSAGE}
-      </p>
-    );
+    return <EntryEmpty />;
   }
   return (
     <ul className="grid gap-x-8 sm:grid-cols-2 md:grid-cols-3" role="list">

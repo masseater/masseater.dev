@@ -1,7 +1,7 @@
 import { Array as Arr, Effect, Option, Predicate, Record as Rec, pipe } from "effect";
 
 import {
-  findByLabel,
+  findNewest,
   scanAll,
   scanLabel,
   scanRecords,
@@ -172,7 +172,7 @@ export const upsertMedia: Creator = (writer) => (input) =>
   );
 
 export const upsertDefinition: Creator = (writer) => (input) =>
-  findByLabel({ record: input.record, label: columnsOf(input.record)(input.body).label }).pipe(
+  findNewest({ record: input.record, label: columnsOf(input.record)(input.body).label }).pipe(
     Effect.flatMap(
       Option.match({
         onNone: () => plainInsert(writer)(input),

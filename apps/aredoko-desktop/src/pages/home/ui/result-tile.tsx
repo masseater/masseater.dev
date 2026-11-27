@@ -1,10 +1,10 @@
 import type { SearchResult } from "@masseater.dev/aredoko-protocol";
+import { fileNameOf } from "@masseater.dev/aredoko-protocol";
 import { Option } from "effect";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
 import { originOf, useSelectResult, useSelectedResult } from "#/entities/asset/index.ts";
-import { fileNameOf } from "#/shared/lib/index.ts";
 
 import { TileThumbnail } from "./tile-thumbnail.tsx";
 

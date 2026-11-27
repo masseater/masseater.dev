@@ -13,7 +13,7 @@ const blogSlugs = pipe(
 
 describe("projects", () => {
   test.each(blogSlugs)("ブログ %s が公開されている", (slug) =>
-    expect(Effect.runPromise(entryOf({ category: "blogs", slug }))).resolves.toMatchObject({
+    expect(Effect.runPromise(entryOf({ category: "slog", slug }))).resolves.toMatchObject({
       status: "found",
       entry: { status: "published" },
     }),

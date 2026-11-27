@@ -114,6 +114,7 @@ catalog:
   feed: 6.0.0
   "@yarnpkg/parsers": 3.1.0
   jose: 6.2.18
+  srvx: 1.0.8
   "@stefanprobst/rehype-extract-toc": 3.0.0
   rehype-slug: 6.0.0
   satori: 0.63.2
@@ -202,8 +203,8 @@ catalog:
   "@types/seedrandom": 3.0.8
   claude-code-jsonl-parser: 0.1.3
   synckit: 0.12.3
-  "@oxlint/plugins": 1.94.0
-  oxlint: 1.94.0
+  "@oxlint/plugins": 1.95.0
+  oxlint: 1.95.0
   oxlint-tsgolint: 7.0.2008
   "@eslint-react/eslint-plugin": 5.30.6
   "@remotion/eslint-plugin": 4.0.546
@@ -283,6 +284,8 @@ catalog:
   "@remotion/player": 4.0.547
   "@remotion/renderer": 4.0.547
   "@remotion/tailwind-v4": 4.0.547
+  "@remotion/media-utils": 4.0.547
+  ag-psd: 34.2.3
 catalogs:
   stack:
     "@distilled.cloud/cloudflare": 1.0.0-rc.20

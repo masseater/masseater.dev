@@ -11,6 +11,7 @@
     "@anthropic-ai/claude-agent-sdk": "catalog:",
     "@effect/atom-react": "catalog:stack",
     "@effect/platform-node": "catalog:",
+    "@masseater.dev/local-server": "workspace:*",
     "@masseater.dev/ui": "workspace:*",
     "@r_masseater/workers-tracing": "workspace:*",
     "drizzle-orm": "catalog:stack",

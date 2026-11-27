@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@masseater.dev/node-main": "workspace:*",
+    "@masseater.dev/tachie": "workspace:*",
     "@masseater.dev/video-kit": "workspace:*",
     "effect": "catalog:stack",
     "playwright-core": "catalog:",
@@ -21,6 +22,7 @@
     "remotion": "catalog:"
   },
   "devDependencies": {
+    "@effect/vitest": "catalog:",
     "@remotion/bundler": "catalog:",
     "@remotion/cli": "catalog:",
     "@remotion/renderer": "catalog:",

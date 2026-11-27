@@ -21,9 +21,8 @@ export interface Pipelines {
   readonly quad: GPURenderPipeline;
   readonly intro: GPURenderPipeline;
   readonly outline: GPURenderPipeline;
-  readonly frameLayout: GPUBindGroupLayout;
-  readonly drawLayout: GPUBindGroupLayout;
-  readonly sampler: GPUSampler;
+  readonly frameGroup: (cells: GPUBuffer) => GPUBindGroup;
+  readonly drawGroup: (texture: GPUTexture) => GPUBindGroup;
   readonly frameBuffer: GPUBuffer;
   readonly drawBuffer: GPUBuffer;
 }
@@ -89,34 +88,38 @@ export const createPipelines = (gpu: Gpu): Pipelines => {
     gpu,
     device.createPipelineLayout({ bindGroupLayouts: [frameLayout, drawLayout] }),
   );
+  const frameBuffer = bufferOf(device, FRAME_BYTES);
+  const drawBuffer = bufferOf(device, SLOT_BYTES * MAX_DRAWS);
+  const sampler = device.createSampler({
+    magFilter: "linear",
+    minFilter: "linear",
+    mipmapFilter: "linear",
+  });
   return {
     quad: pipeline({ vertex: "vs_quad", fragment: "fs_image" }),
     intro: pipeline({ vertex: "vs_intro", fragment: "fs_image" }),
     outline: pipeline({ vertex: "vs_quad", fragment: "fs_outline" }),
-    frameLayout,
-    drawLayout,
-    sampler: device.createSampler({
-      magFilter: "linear",
-      minFilter: "linear",
-      mipmapFilter: "linear",
-    }),
-    frameBuffer: bufferOf(device, FRAME_BYTES),
-    drawBuffer: bufferOf(device, SLOT_BYTES * MAX_DRAWS),
+    frameGroup: (cells) =>
+      device.createBindGroup({
+        layout: frameLayout,
+        entries: [
+          { binding: FRAME_BINDING, resource: { buffer: frameBuffer } },
+          { binding: SAMPLER_BINDING, resource: sampler },
+          { binding: CELLS_BINDING, resource: { buffer: cells } },
+        ],
+      }),
+    drawGroup: (texture) =>
+      device.createBindGroup({
+        layout: drawLayout,
+        entries: [
+          { binding: DRAW_BINDING, resource: { buffer: drawBuffer, size: SLOT_BYTES } },
+          { binding: SOURCE_BINDING, resource: texture.createView() },
+        ],
+      }),
+    frameBuffer,
+    drawBuffer,
   };
 };
-
-export const drawGroup = ({
-  device,
-  pipelines,
-  texture,
-}: Readonly<{ device: GPUDevice; pipelines: Pipelines; texture: GPUTexture }>): GPUBindGroup =>
-  device.createBindGroup({
-    layout: pipelines.drawLayout,
-    entries: [
-      { binding: DRAW_BINDING, resource: { buffer: pipelines.drawBuffer, size: SLOT_BYTES } },
-      { binding: SOURCE_BINDING, resource: texture.createView() },
-    ],
-  });
 
 export const cellsBuffer = ({
   device,
@@ -130,21 +133,3 @@ export const cellsBuffer = ({
   device.queue.writeBuffer(buffer, START, data);
   return buffer;
 };
-
-export const frameGroup = ({
-  device,
-  pipelines,
-  cells,
-}: Readonly<{
-  device: GPUDevice;
-  pipelines: Pipelines;
-  cells: GPUBuffer;
-}>): GPUBindGroup =>
-  device.createBindGroup({
-    layout: pipelines.frameLayout,
-    entries: [
-      { binding: FRAME_BINDING, resource: { buffer: pipelines.frameBuffer } },
-      { binding: SAMPLER_BINDING, resource: pipelines.sampler },
-      { binding: CELLS_BINDING, resource: { buffer: cells } },
-    ],
-  });

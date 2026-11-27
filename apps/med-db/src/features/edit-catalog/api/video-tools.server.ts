@@ -1,4 +1,4 @@
-import { compactInput } from "@masseater.dev/mcp-tool-call";
+import { OVERWRITE, WRITE, compactInput } from "@masseater.dev/mcp-tool-call";
 import type { McpServer } from "@modelcontextprotocol/server";
 import type { DrizzleD1Database } from "drizzle-orm/d1";
 import { Schema } from "effect";
@@ -8,9 +8,6 @@ import { runTool } from "#/shared/api/index.server.ts";
 import type { CatalogRelations } from "#/shared/db/index.server.ts";
 
 import { createVideo, deleteVideo, updateVideo } from "./video-write.server.ts";
-
-const WRITE = { readOnlyHint: false, destructiveHint: false, openWorldHint: false };
-const DESTRUCTIVE = { readOnlyHint: false, destructiveHint: true, openWorldHint: false };
 
 export const registerVideoTools =
   (db: DrizzleD1Database<CatalogRelations>) =>
@@ -51,7 +48,7 @@ export const registerVideoTools =
           Schema.toStandardJSONSchemaV1,
           compactInput,
         ),
-        annotations: DESTRUCTIVE,
+        annotations: OVERWRITE,
       },
       ({ id }) => runTool(db)(deleteVideo(id)),
     );

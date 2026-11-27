@@ -1,3 +1,8 @@
+@source "../shared/ui/heading.tsx";
+@source "../shared/ui/page-footer.tsx";
+@source "../shared/ui/page-header.tsx";
+@source "../shared/ui/titled.tsx";
+@source "../shared/ui/table";
 @source "../shared/ui/button.tsx";
 
 :root {

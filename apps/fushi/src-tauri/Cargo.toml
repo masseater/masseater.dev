@@ -1,0 +1,33 @@
+[package]
+name = "fushi"
+version = "0.0.0"
+license = "AGPL-3.0-only"
+edition = "2024"
+publish = false
+
+[lib]
+name = "fushi"
+
+[build-dependencies]
+tauri-build = { version = "=2.7.6", features = [] }
+
+[dev-dependencies]
+tauri = { version = "=2.12.7", features = ["test"] }
+
+[dependencies]
+desktop-shell = { path = "../../../libs/desktop-shell" }
+serde = { version = "=1.0.229", features = ["derive"] }
+specta = { version = "=2.0.0-rc.28", features = ["derive"] }
+specta-typescript = "=0.0.15"
+tauri = { version = "=2.12.7", features = [] }
+tauri-plugin-dialog = "=2.8.4"
+tauri-specta = { version = "=2.0.0-rc.29", features = ["derive", "typescript"] }
+
+[lints.rust]
+unsafe_code = "forbid"
+
+[lints.clippy]
+pedantic = { level = "deny", priority = -1 }
+nursery = { level = "deny", priority = -1 }
+missing_errors_doc = "allow"
+missing_panics_doc = "allow"

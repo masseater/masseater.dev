@@ -1,3 +1,4 @@
+import type { Part } from "@masseater.dev/tachie";
 import type { Option } from "effect";
 
 import type { Format, SfxKind } from "#/shared/config/index.ts";
@@ -29,10 +30,20 @@ export interface Shot extends TimedCut {
   readonly portraits: Readonly<Record<string, string>>;
 }
 
-export interface Tachie {
+export interface ImageTachie {
+  readonly kind: "image";
   readonly closed: string;
   readonly open: Option.Option<string>;
 }
+
+export interface PsdTachie {
+  readonly kind: "psd";
+  readonly psd: string;
+  readonly favorites: Option.Option<string>;
+  readonly parts: readonly Part[];
+}
+
+export type Tachie = ImageTachie | PsdTachie;
 
 export interface Timeline {
   readonly format: Format;

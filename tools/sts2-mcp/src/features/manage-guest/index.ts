@@ -1,1 +1,1 @@
-export { registerGuestTools } from "./api/guest-tools.ts";
+export { guestTools } from "./api/guest-tools.ts";
