@@ -16,6 +16,7 @@ export default defineConfig({
         command: "alchemy deploy --config alchemy.github.ts --stage prod --yes",
         cache: false,
       },
+      "wake-main-red": { command: "node bin/wake-main-red.ts", cache: false },
       "github-token": { command: "node bin/github-token.ts", cache: false },
       "atproto-password": { command: "node bin/atproto-password.ts", cache: false },
       "private-names": { command: "node bin/private-names.ts", cache: false },
