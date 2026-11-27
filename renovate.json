@@ -35,12 +35,11 @@
       "groupName": "better-auth"
     },
     {
-      "description": "vite-plus は oxlint と tsrs の版を固定し、@effect/tsgo は対応している版の oxlint と oxlint-tsgolint にしかパッチを当てられない。合わないと prepare が落ちて vp install が失敗する。vite-plus は vitest の版も固定し、@vitest/* だけが上がると vitest が 2 つ入って @effect/vitest のテストが suite を見つけられずに落ちる (#1479)。組で上げ、up-to-date の install が通ったときだけマージする。",
+      "description": "vite-plus は oxlint と tsrs の版を固定し、@effect/tsgo は対応している版の oxlint と tsrs にしかパッチを当てられない。合わないと prepare が落ちて vp install が失敗する。vite-plus は vitest の版も固定し、@vitest/* だけが上がると vitest が 2 つ入って @effect/vitest のテストが suite を見つけられずに落ちる (#1479)。組で上げ、up-to-date の install が通ったときだけマージする。",
       "matchPackageNames": [
         "vite-plus",
         "oxlint",
         "@oxlint/plugins",
-        "oxlint-tsgolint",
         "@effect/tsgo",
         "vitest",
         "@vitest/**"
@@ -130,13 +129,6 @@
       "currentValueTemplate": "main",
       "packageNameTemplate": "https://github.com/{{depName}}",
       "datasourceTemplate": "git-refs"
-    },
-    {
-      "customType": "regex",
-      "managerFilePatterns": ["/^libs/tsrs-effect/package\\.json$/"],
-      "matchStrings": ["\"effect\": \"@effect/tsgo@(?<currentValue>[0-9.]+)\""],
-      "depNameTemplate": "@effect/tsgo",
-      "datasourceTemplate": "npm"
     },
     {
       "customType": "regex",

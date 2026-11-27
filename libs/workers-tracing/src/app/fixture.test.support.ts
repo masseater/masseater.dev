@@ -7,7 +7,7 @@ import { notFound, redirect } from "@tanstack/router-core";
 import { Array as Arr, Effect, Option, Schema, String, pipe } from "effect";
 import { CloudflareAdapter } from "elysia/adapter/cloudflare-worker";
 
-interface Env {
+export interface Env {
   readonly CACHE: KVNamespace;
 }
 

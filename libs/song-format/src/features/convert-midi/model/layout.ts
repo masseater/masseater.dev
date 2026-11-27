@@ -111,7 +111,7 @@ const spanAt =
     return { start, length: end - start, signature };
   };
 
-interface Cursor {
+export interface Cursor {
   readonly start: number;
   readonly first: boolean;
 }

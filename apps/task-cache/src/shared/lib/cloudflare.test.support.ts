@@ -1,7 +1,7 @@
 import { makeD1 } from "@masseater.dev/d1-test";
 import { Effect, Option, pipe } from "effect";
 
-interface Range {
+export interface Range {
   readonly offset: number;
   readonly length: number;
 }

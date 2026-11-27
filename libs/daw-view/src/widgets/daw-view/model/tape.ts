@@ -17,8 +17,7 @@ const silent = () => ({ channels: 0, scale: 0, data: new Int16Array(0) });
 const openDisk = async (id) => {
   const root = await navigator.storage.getDirectory();
   const home = await root.getDirectoryHandle(HOME, { create: true });
-  const stale = [];
-  for await (const name of home.keys()) stale.push(name);
+  const stale = await Array.fromAsync(home.keys());
   for (const name of stale) {
     try { await home.removeEntry(name, { recursive: true }); } catch {}
   }

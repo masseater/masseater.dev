@@ -43,33 +43,18 @@ const stepSpans = (bar: Bar): readonly Span[] =>
     })),
   );
 
-const rampedBpm =
-  (index: number) =>
-  (bar: Bar): Option.Option<number> =>
-    pipe(
-      bar.tempo.ramp,
-      Option.filter((ramp) => bar.index + ramp.bars > index),
-      Option.map((ramp) => {
-        const share = (index - bar.index) / ramp.bars;
-        return bar.tempo.bpm + (ramp.bpm - bar.tempo.bpm) * share;
-      }),
-    );
+const rampedEnd = (bar: Bar): number =>
+  Option.match(bar.tempo.ramp, {
+    onNone: () => bar.tempo.bpm,
+    onSome: (ramp) => bar.tempo.bpm + (ramp.bpm - bar.tempo.bpm) / ramp.bars,
+  });
 
-const rampedTo =
-  (bars: readonly Bar[]) =>
-  (index: number): Option.Option<number> =>
-    pipe(bars, Arr.take(index + ONE), Arr.reverse, Arr.findFirst(rampedBpm(index)));
-
-const barSpans =
-  (bars: readonly Bar[]) =>
-  (bar: Bar, index: number): readonly Span[] => {
-    if (Arr.isReadonlyArrayNonEmpty(bar.tempoSteps)) {
-      return stepSpans(bar);
-    }
-    const from = Option.getOrElse(rampedTo(bars)(index), () => bar.tempo.bpm);
-    const to = Option.getOrElse(rampedTo(bars)(index + ONE), () => from);
-    return [{ start: bar.start, length: bar.length, from, to }];
-  };
+const barSpans = (bar: Bar): readonly Span[] => {
+  if (Arr.isReadonlyArrayNonEmpty(bar.tempoSteps)) {
+    return stepSpans(bar);
+  }
+  return [{ start: bar.start, length: bar.length, from: bar.tempo.bpm, to: rampedEnd(bar) }];
+};
 
 const timedOf = (spans: readonly Span[]): readonly Timed[] =>
   pipe(
@@ -122,7 +107,7 @@ const plainOf =
   };
 
 export const clockOf = (song: Song): Clock => {
-  const spans = pipe(song.bars, Arr.flatMap(barSpans(song.bars)));
+  const spans = pipe(song.bars, Arr.flatMap(barSpans));
   const timed = timedOf(spans);
   const last = pipe(
     Arr.last(timed),

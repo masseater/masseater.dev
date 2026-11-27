@@ -30,7 +30,7 @@ import {
 } from "./binder-syntax.ts";
 import type { AccessExpression } from "./binder-syntax.ts";
 
-type AncestorVerdict = boolean | "quit";
+export type AncestorVerdict = boolean | "quit";
 
 const QUIT = "quit";
 

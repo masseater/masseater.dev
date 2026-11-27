@@ -24,6 +24,8 @@
     "tonal": "catalog:"
   },
   "devDependencies": {
+    "@effect/vitest": "catalog:",
+    "@r_masseater/vitest-otlp": "workspace:*",
     "typescript": "catalog:stack",
     "vite-plus": "catalog:stack"
   }
