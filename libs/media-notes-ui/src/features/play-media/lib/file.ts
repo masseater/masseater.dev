@@ -33,10 +33,10 @@ export const mountFile = (mount: Mount): Effect.Effect<Player, never, Scope.Scop
   Effect.acquireRelease(placed(mount), () => removed(mount)).pipe(
     Effect.map((video) => ({
       time: () => ({ current: seconds(video.currentTime), duration: seconds(video.duration) }),
-      seek: (to: number) => {
+      seek: (to: number): void => {
         video.currentTime = to;
       },
-      toggle: () => {
+      toggle: (): void => {
         if (video.paused) {
           Effect.tryPromise({ try: () => video.play(), catch: constVoid }).pipe(
             Effect.ignore,

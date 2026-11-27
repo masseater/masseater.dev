@@ -119,20 +119,20 @@ export const checkerOf = (options: CheckerOptions): Checker => {
   };
   return {
     setVar,
-    removeVar: (name) => {
+    removeVar: (name): void => {
       env = { ...env, vars: Rec.remove(env.vars, name) };
     },
-    updateSecrets: (type) => {
+    updateSecrets: (type): void => {
       setVar("secrets", strict({ ...DEFAULT_SECRETS, ...type.props }));
     },
     updateInputs,
-    updateDispatchInputs: (type) => {
+    updateDispatchInputs: (type): void => {
       updateInputs(type);
       for (const github of Option.toArray(Rec.get(env.vars, "github"))) {
         setVar("github", withEventInputs(github, type));
       }
     },
-    setWorkflowKey: (key) => {
+    setWorkflowKey: (key): void => {
       setAvailability(
         Option.getOrElse(workflowKey(key), (): Availability => ({ contexts: [], functions: [] })),
       );

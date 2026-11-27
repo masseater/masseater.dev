@@ -6,6 +6,7 @@ import type { Execute } from "./analysis.ts";
 import { ASSIGN_HANDLERS } from "./assign.ts";
 import { CALL_HANDLERS } from "./calls.ts";
 import { initialScope, setAll } from "./scope.ts";
+import type { Scope } from "./scope.ts";
 import { STATEMENT_HANDLERS } from "./statements.ts";
 
 const sequence: Execute = (analysis, flow, node) => analysis.block(flow, node.namedChildren);
@@ -39,7 +40,7 @@ const scanOnly: Execute = (analysis, flow, node) => {
 };
 
 const HANDLERS: ReadonlyMap<string, Execute> = new Map<string, Execute>([
-  ["comment", (_analysis, flow) => flow],
+  ["comment", (_analysis, flow): Option.Option<Scope> => flow],
   ["program", sequence],
   ["compound_statement", sequence],
   ["do_group", sequence],

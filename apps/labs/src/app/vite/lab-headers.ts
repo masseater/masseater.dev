@@ -108,7 +108,7 @@ export const labHeaders = (): Plugin => ({
   ],
   generateBundle: {
     order: "post",
-    handler(_options, bundle) {
+    handler(_options, bundle): Promise<void> {
       const files = pipe(
         Rec.values(bundle),
         Arr.filter((output): output is Rolldown.OutputAsset => output.type === "asset"),

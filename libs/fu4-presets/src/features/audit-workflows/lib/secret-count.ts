@@ -7,7 +7,7 @@ import {
   spanLocation,
   supportsTemplates,
 } from "#/features/audit-workflows/lib/raw.ts";
-import type { Audit } from "#/features/audit-workflows/model/audit.ts";
+import type { Audit, Drafts } from "#/features/audit-workflows/model/audit.ts";
 
 export type Count = (spanned: Spanned) => number;
 
@@ -56,7 +56,7 @@ export const secretAudit = (counter: SecretCounter): Audit => {
   const count = counted(counter);
   return {
     ...meta,
-    raw: (input) => {
+    raw: (input): Drafts => {
       if (!supportsTemplates(input)) {
         return [];
       }

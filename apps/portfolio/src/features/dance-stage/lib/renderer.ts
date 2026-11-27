@@ -250,17 +250,17 @@ export const createRenderer: Fn<
 > = (input) => {
   const context = contextFor(input);
   return {
-    draw: ({ video, frame }) => {
+    draw: ({ video, frame }): void => {
       draw({ context, video, frame });
     },
-    upload: ({ asset, source }) => {
+    upload: ({ asset, source }): void => {
       bindTexture({ gl: context.gl, unit: UNITS[asset], texture: context.textures[asset] });
       upload({ context, unit: UNITS[asset], source });
     },
-    setTextWidths: (widths) => {
+    setTextWidths: (widths): void => {
       context.textWidths.set(Arr.take(widths, TEXT_ROWS));
     },
-    dispose: () => {
+    dispose: (): void => {
       dispose(context);
     },
   };

@@ -66,7 +66,7 @@ export const playNotes = (snippet: Snippet): Playing => {
   );
   return {
     fraction: () => (context.currentTime - at) / seconds,
-    stop: () => {
+    stop: (): void => {
       for (const voice of voices) {
         voice.stop();
       }

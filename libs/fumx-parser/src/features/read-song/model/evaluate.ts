@@ -175,7 +175,7 @@ const valueIn: From<Machine, From<Expression, Value>> = (machine) => (node) => {
 const envOf: From<Machine, Env> = (machine) => ({
   value: machine.value,
   with: ([binding, value]) => envOf(machine.inner(new Map<AstNode, Value>([[binding, value]]))),
-  fail: ({ node, message }) => {
+  fail: ({ node, message }): void => {
     failIn(machine.scope.state)({ node, message });
   },
 });

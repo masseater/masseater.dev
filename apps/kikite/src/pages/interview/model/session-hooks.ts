@@ -34,12 +34,12 @@ export const useAnswering = (): Answering => {
   const session = useSession();
   return useMemo(
     () => ({
-      typed: (text: string) => {
+      typed: (text: string): void => {
         if (Option.isSome(session)) {
           session.value.typed(text);
         }
       },
-      typing: (text: string) => {
+      typing: (text: string): void => {
         if (Option.isSome(session)) {
           session.value.typing(text);
         }

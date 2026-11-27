@@ -168,7 +168,7 @@ const STRING_TARGET_LOADERS: readonly (readonly [
   (target: string, context: TargetContext) => boolean,
   StringTargetLoader,
 ])[] = [
-  [(target) => Str.startsWith("./")(target), resolveRelativeTargetWithTrace],
+  [(target): boolean => Str.startsWith("./")(target), resolveRelativeTargetWithTrace],
   [isPackageImportTarget, resolveImportToPackage],
 ];
 
