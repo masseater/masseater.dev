@@ -8,7 +8,7 @@ const record = (call: string): void => {
   MutableRef.update(calls, Arr.append(call));
 };
 
-export type FakePlayer = Readonly<{
+type FakePlayer = Readonly<{
   isToken: (token: string) => Promise<boolean>;
   lastRun: () => Promise<unknown>;
   arm: () => Promise<void>;
@@ -40,7 +40,7 @@ export const env = {
       return Promise.resolve({ success: !MutableRef.get(flooded) });
     },
   },
-  PLAYER: { getByName: (): FakePlayer => player },
+  PLAYER: { getByName: (): typeof player => player },
   AUDIO: {
     put: (): Promise<void> => {
       record("audio.put");

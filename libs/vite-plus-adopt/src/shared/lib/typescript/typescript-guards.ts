@@ -30,7 +30,7 @@ import {
 } from "./binder-syntax.ts";
 import type { AccessExpression } from "./binder-syntax.ts";
 
-export type AncestorVerdict = boolean | "quit";
+type AncestorVerdict = boolean | "quit";
 
 const QUIT = "quit";
 
@@ -64,7 +64,7 @@ const ancestorMatching = (
 
 const findAncestor = (
   node: Node | undefined,
-  judge: (candidate: Node) => AncestorVerdict,
+  judge: (candidate: Node) => boolean | "quit",
 ): Node | undefined => Option.getOrUndefined(ancestorMatching(Option.fromNullishOr(node), judge));
 
 const getNameOfAccessExpression = (node: AccessExpression): Node => {

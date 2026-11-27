@@ -3,7 +3,7 @@ import { Mac } from "effect/crypto";
 
 import { TraceRequest, UnreadableBody, bodyOf, logTraceRequest } from "#/entities/span/index.ts";
 
-export type TraceSinkEnv = Readonly<{ TRACE_SINK_TOKEN: string }>;
+type TraceSinkEnv = Readonly<{ TRACE_SINK_TOKEN: string }>;
 
 const runtime = ManagedRuntime.make(
   Logger.layer([Logger.withLeveledConsole(Logger.formatStructured)]),
@@ -49,7 +49,7 @@ const receive = (request: Request, env: TraceSinkEnv): Effect.Effect<Response> =
   );
 
 const worker = {
-  fetch: (request: Request, env: TraceSinkEnv): Promise<Response> =>
+  fetch: (request: Request, env: Readonly<{ TRACE_SINK_TOKEN: string }>): Promise<Response> =>
     runtime.runPromise(receive(request, env)),
 };
 

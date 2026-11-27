@@ -4,8 +4,13 @@ import type { PlatformError } from "effect";
 import { Migrator, SqlClient } from "effect/sql";
 import type { SqlError } from "effect/sql";
 
-type Database = SqliteClient.SqliteClient | SqlClient.SqlClient;
-type DatabaseFailure = Migrator.MigrationError | SqlError.SqlError | PlatformError.PlatformError;
+/** @internal */
+export type Database = SqliteClient.SqliteClient | SqlClient.SqlClient;
+/** @internal */
+export type DatabaseFailure =
+  | Migrator.MigrationError
+  | SqlError.SqlError
+  | PlatformError.PlatformError;
 
 const prepared = (extensions: readonly string[]): Layer.Layer<never, SqlError.SqlError, Database> =>
   Layer.effectDiscard(

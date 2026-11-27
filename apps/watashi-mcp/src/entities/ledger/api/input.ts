@@ -5,7 +5,7 @@ import { AccountClassSchema } from "#/entities/ledger/model/accounts.ts";
 import { CategorySchema } from "#/entities/ledger/model/categories.ts";
 import { ColumnsSchema } from "#/entities/ledger/model/csv-columns.ts";
 
-export type InputSchema = Schema.ConstraintDecoder<unknown> & Schema.Constraint;
+type InputSchema = Schema.ConstraintDecoder<unknown> & Schema.Constraint;
 
 const MONTH = /^\d{4}-(?:0[1-9]|1[0-2])$/u;
 
@@ -178,13 +178,9 @@ const MoneyReadInputSchema = Schema.Union([
   }),
 ]);
 
-export type Standard<Target extends InputSchema> = StandardSchemaWithJSON<
-  Target["Encoded"],
-  Target["Type"]
-> &
-  Target;
-
-const standard = <Target extends InputSchema>(schema: Target): Standard<Target> =>
+const standard = <Target extends InputSchema>(
+  schema: Target,
+): StandardSchemaWithJSON<Target["Encoded"], Target["Type"]> & Target =>
   pipe(schema, Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
 
 export const MoneyWriteInput = standard(MoneyWriteInputSchema);
