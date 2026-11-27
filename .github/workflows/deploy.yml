@@ -99,7 +99,6 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      max-parallel: 6
       matrix:
         stack: ${{ fromJSON(needs.bootstrap.outputs.stacks) }}
     environment: production
