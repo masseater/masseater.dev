@@ -97,7 +97,14 @@ const surfaceOf = ({ entries: all }: typeof Ledger.Type): Surface => ({
 
 const rememberSurface = (
   observed: Surface,
-): Effect.Effect<Surface, BrokerError, HttpClient.HttpClient> =>
+): Effect.Effect<
+  Surface,
+  | Config.ConfigError
+  | HttpBody.HttpBodyError
+  | HttpClientError.HttpClientError
+  | Schema.SchemaError,
+  HttpClient.HttpClient
+> =>
   post({
     path: "/exposure/ledger",
     body: Ledger,
@@ -107,7 +114,14 @@ const rememberSurface = (
 
 const reportFindings = (
   findings: (typeof Report.Type)["findings"],
-): Effect.Effect<typeof ReportOutcome.Type, BrokerError, HttpClient.HttpClient> =>
+): Effect.Effect<
+  typeof ReportOutcome.Type,
+  | Config.ConfigError
+  | HttpBody.HttpBodyError
+  | HttpClientError.HttpClientError
+  | Schema.SchemaError,
+  HttpClient.HttpClient
+> =>
   post({ path: "/exposure/report", body: Report, value: { findings }, answer: ReportOutcome }).pipe(
     Effect.withSpan("exposure.report"),
   );

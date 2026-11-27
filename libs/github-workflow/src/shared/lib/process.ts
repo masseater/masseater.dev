@@ -18,12 +18,6 @@ export interface Command {
   readonly cwd?: string;
 }
 
-type Spawned<Success> = Effect.Effect<
-  Success,
-  CommandFailed | PlatformError.PlatformError,
-  ChildProcessSpawner.ChildProcessSpawner
->;
-
 const failed = ({ command, args }: Command): CommandFailed =>
   CommandFailed.make({ message: `${command} ${Arr.join(args, " ")} failed` });
 
@@ -46,10 +40,21 @@ const exitCodeOf = Effect.fn("exitCodeOf")(function* exitCodeOf({
   );
 });
 
-const succeedsWith = (command: Command): Spawned<boolean> =>
-  exitCodeOf(command).pipe(Effect.map((code) => code === SUCCESS));
+const succeedsWith = (
+  command: Command,
+): Effect.Effect<
+  boolean,
+  CommandFailed | PlatformError.PlatformError,
+  ChildProcessSpawner.ChildProcessSpawner
+> => exitCodeOf(command).pipe(Effect.map((code) => code === SUCCESS));
 
-const mustSucceedWith = (command: Command): Spawned<void> =>
+const mustSucceedWith = (
+  command: Command,
+): Effect.Effect<
+  void,
+  CommandFailed | PlatformError.PlatformError,
+  ChildProcessSpawner.ChildProcessSpawner
+> =>
   succeedsWith(command).pipe(
     Effect.filterOrFail(
       (passed) => passed,
@@ -73,7 +78,13 @@ const collected = Effect.fn("collected")(function* collected({ command, args, en
   return { output, code };
 });
 
-const outputWith = (command: Command): Spawned<string> =>
+const outputWith = (
+  command: Command,
+): Effect.Effect<
+  string,
+  CommandFailed | PlatformError.PlatformError,
+  ChildProcessSpawner.ChildProcessSpawner
+> =>
   collected(command).pipe(
     Effect.scoped,
     Effect.filterOrFail(
@@ -89,8 +100,13 @@ export const succeeds = succeedsWith;
 /** @internal */
 export const mustSucceed = mustSucceedWith;
 
-const finishedWith = (command: Command): Spawned<Readonly<{ output: string; code: number }>> =>
-  Effect.scoped(collected(command));
+const finishedWith = (
+  command: Command,
+): Effect.Effect<
+  Readonly<{ output: string; code: number }>,
+  CommandFailed | PlatformError.PlatformError,
+  ChildProcessSpawner.ChildProcessSpawner
+> => Effect.scoped(collected(command));
 
 /** @internal */
 export const outputOf = outputWith;

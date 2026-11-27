@@ -1,7 +1,6 @@
-export type RawId = Readonly<{ id: string }>;
-export type Id = Readonly<{ id: number }>;
-
 export const idParams = {
-  parse: ({ id }: RawId): Id => ({ id: Number(id) }),
-  stringify: ({ id }: Id): RawId => ({ id: id.toString() }),
+  parse: ({ id }: Readonly<{ id: string }>): Readonly<{ id: number }> => ({ id: Number(id) }),
+  stringify: ({ id }: Readonly<{ id: number }>): Readonly<{ id: string }> => ({
+    id: id.toString(),
+  }),
 };

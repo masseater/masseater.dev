@@ -10,10 +10,6 @@ const HEADERS = {
   "x-github-api-version": "2022-11-28",
 };
 
-type Failure = Config.ConfigError | HttpBody.HttpBodyError | HttpClientError.HttpClientError;
-
-type Sent<Success> = Effect.Effect<Success, Failure, HttpClient.HttpClient>;
-
 const requestTo = Effect.fn("requestTo")(function* requestTo(
   method: HttpMethod.HttpMethod,
   path: string,
@@ -52,7 +48,10 @@ const getJsonOf =
     path: string,
   ): Effect.Effect<
     Codec["Type"],
-    Failure | Schema.SchemaError,
+    | Config.ConfigError
+    | HttpBody.HttpBodyError
+    | HttpClientError.HttpClientError
+    | Schema.SchemaError,
     HttpClient.HttpClient | Codec["DecodingServices"]
   > =>
     requestTo("GET", path).pipe(
@@ -65,26 +64,41 @@ const postJsonOf =
   ({
     path,
     body,
-  }: Write): Effect.Effect<
+  }: Readonly<{ path: string; body: unknown }>): Effect.Effect<
     Codec["Type"],
-    Failure | Schema.SchemaError,
+    | Config.ConfigError
+    | HttpBody.HttpBodyError
+    | HttpClientError.HttpClientError
+    | Schema.SchemaError,
     HttpClient.HttpClient | Codec["DecodingServices"]
   > =>
     withBody("POST", path, body).pipe(Effect.flatMap(HttpClientResponse.schemaBodyJson(schema)));
 
-const removeAt = (path: string): Sent<void> =>
-  requestTo("DELETE", path).pipe(Effect.flatMap(execute), Effect.asVoid);
+const removeAt = (
+  path: string,
+): Effect.Effect<
+  void,
+  Config.ConfigError | HttpBody.HttpBodyError | HttpClientError.HttpClientError,
+  HttpClient.HttpClient
+> => requestTo("DELETE", path).pipe(Effect.flatMap(execute), Effect.asVoid);
 
-interface Write {
-  readonly path: string;
-  readonly body: unknown;
-}
+const postTo = ({
+  path,
+  body,
+}: Readonly<{ path: string; body: unknown }>): Effect.Effect<
+  void,
+  Config.ConfigError | HttpBody.HttpBodyError | HttpClientError.HttpClientError,
+  HttpClient.HttpClient
+> => withBody("POST", path, body).pipe(Effect.asVoid);
 
-const postTo = ({ path, body }: Write): Sent<void> =>
-  withBody("POST", path, body).pipe(Effect.asVoid);
-
-const patchAt = ({ path, body }: Write): Sent<void> =>
-  withBody("PATCH", path, body).pipe(Effect.asVoid);
+const patchAt = ({
+  path,
+  body,
+}: Readonly<{ path: string; body: unknown }>): Effect.Effect<
+  void,
+  Config.ConfigError | HttpBody.HttpBodyError | HttpClientError.HttpClientError,
+  HttpClient.HttpClient
+> => withBody("PATCH", path, body).pipe(Effect.asVoid);
 
 /** @internal */
 export const getJson = getJsonOf;

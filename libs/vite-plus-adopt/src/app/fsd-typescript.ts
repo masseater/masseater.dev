@@ -12,21 +12,10 @@ import type { ModuleResolver } from "typescript/sync";
 
 import { toJson } from "#/shared/lib/json.ts";
 
-export interface ResolutionHost {
+interface ResolutionHost {
   readonly fileExists: (fileName: string) => boolean;
   readonly directoryExists?: ((directoryName: string) => boolean) | undefined;
 }
-
-export interface Resolution {
-  readonly resolvedModule: { readonly resolvedFileName: string } | undefined;
-}
-
-export type ResolveArguments = readonly [
-  moduleName: string,
-  containingFile: string,
-  compilerOptions: object,
-  host: ResolutionHost,
-];
 
 const WORKING_DIRECTORY = Str.replaceAll("\\", "/")(process.cwd());
 const CWD = rootedDirectoryPathFromPath(rootedPathFromNormalized(WORKING_DIRECTORY));
@@ -103,8 +92,16 @@ const resolverFor = (compilerOptions: object): ModuleResolver =>
   )(compilerOptions);
 
 const resolveModuleName = (
-  ...[moduleName, containingFile, compilerOptions, host]: ResolveArguments
-): Resolution => {
+  ...[moduleName, containingFile, compilerOptions, host]: readonly [
+    moduleName: string,
+    containingFile: string,
+    compilerOptions: object,
+    host: Readonly<{
+      fileExists: (fileName: string) => boolean;
+      directoryExists?: ((directoryName: string) => boolean) | undefined;
+    }>,
+  ]
+): Readonly<{ resolvedModule: Readonly<{ resolvedFileName: string }> | undefined }> => {
   const containingPath = toRootedFilePath(containingFile, CWD);
   current.host = Option.some(host);
   current.relative = containingPath !== containingFile;

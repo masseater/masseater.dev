@@ -10,7 +10,7 @@ import { getNormalizedAbsolutePath } from "./paths.ts";
 import { modeToNumber } from "./resolution-mode-numbers.ts";
 import { parseSourceFile } from "./ts-api.ts";
 
-export type CompilerOptionsLike = Readonly<Partial<Record<"module" | "moduleResolution", number>>>;
+type CompilerOptionsLike = Readonly<Partial<Record<"module" | "moduleResolution", number>>>;
 
 const ROOT = "/";
 const SCRIPT_KIND_AFTER_TEXT = 2;
@@ -51,7 +51,7 @@ const modeOptionsOf = (options: CompilerOptionsLike): ModeOptions => ({
 const getModeForUsageLocation = (
   sourceFile: SourceFile,
   usage: Node,
-  options: CompilerOptionsLike,
+  options: Readonly<Partial<Record<"module" | "moduleResolution", number>>>,
 ): ModuleKind | undefined =>
   Option.getOrUndefined(
     modeForUsage(sourceFile, usage, modeOptionsOf(options)).pipe(

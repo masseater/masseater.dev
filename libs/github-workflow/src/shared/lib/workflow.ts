@@ -10,12 +10,6 @@ import {
 } from "effect";
 import type { PlatformError } from "effect";
 
-type Appended = Effect.Effect<
-  void,
-  Config.ConfigError | PlatformError.PlatformError,
-  FileSystem.FileSystem
->;
-
 const taggedError = Schema.TaggedError;
 
 export class WorkflowFailed extends taggedError<
@@ -23,7 +17,10 @@ export class WorkflowFailed extends taggedError<
   { readonly brand: unique symbol }
 >()("WorkflowFailed", { message: Schema.String }) {}
 
-const appendTo = (variable: string, entries: Readonly<Record<string, string>>): Appended =>
+const appendTo = (
+  variable: string,
+  entries: Readonly<Record<string, string>>,
+): Effect.Effect<void, Config.ConfigError | PlatformError.PlatformError, FileSystem.FileSystem> =>
   Effect.gen(function* appended() {
     const path = yield* Config.String(variable);
     const fs = yield* FileSystem.FileSystem;
@@ -35,10 +32,14 @@ const appendTo = (variable: string, entries: Readonly<Record<string, string>>): 
     yield* fs.writeFileString(path, lines, { flag: "a" });
   });
 
-const outputsOf = (outputs: Readonly<Record<string, string>>): Appended =>
+const outputsOf = (
+  outputs: Readonly<Record<string, string>>,
+): Effect.Effect<void, Config.ConfigError | PlatformError.PlatformError, FileSystem.FileSystem> =>
   appendTo("GITHUB_OUTPUT", outputs);
 
-const envOf = (variables: Readonly<Record<string, string>>): Appended =>
+const envOf = (
+  variables: Readonly<Record<string, string>>,
+): Effect.Effect<void, Config.ConfigError | PlatformError.PlatformError, FileSystem.FileSystem> =>
   appendTo("GITHUB_ENV", variables);
 
 /** @internal */
