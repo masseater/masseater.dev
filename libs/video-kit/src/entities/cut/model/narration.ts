@@ -8,10 +8,7 @@ import type { VideoScript } from "./cut.ts";
 const KEY_LENGTH = 24;
 const SPACE = " ";
 
-const longestFirst = Order.mapInput(
-  Order.flip(Order.Number),
-  ([word]: readonly [string, string]) => word.length,
-);
+const lengthOf = ([word]: readonly [string, string]): number => word.length;
 const HASH = "SHA-256";
 
 export const spokenOf = ({
@@ -19,7 +16,10 @@ export const spokenOf = ({
   readings,
 }: Readonly<{ say: string; readings: VideoScript["readings"] }>): string => {
   let spoken = plainOf(segmentsOf(say));
-  for (const [word, reading] of pipe(Rec.toEntries(readings), Arr.sort(longestFirst))) {
+  for (const [word, reading] of pipe(
+    Rec.toEntries(readings),
+    Arr.sortWith(lengthOf, Order.flip(Order.Number)),
+  )) {
     spoken = Str.replaceAll(word, reading)(spoken);
   }
   return Str.replaceAll(SPACE, Str.empty)(spoken);
