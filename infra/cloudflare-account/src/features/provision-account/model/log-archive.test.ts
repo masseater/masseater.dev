@@ -1,13 +1,9 @@
 import { ApiToken, CloudflareEnvironment, Providers, R2 } from "@alchemy.run/cloudflare";
-import { fromApiToken } from "@distilled.cloud/cloudflare/Credentials";
 import { Stack, isResourceOfType } from "alchemy";
 import { Stage } from "alchemy/Stage";
 import { inMemoryState } from "alchemy/State";
 import { Array as Arr, Effect, Layer, Option, Record as Rec, Redacted, Schema, pipe } from "effect";
-import { layer as fetchHttpClient } from "effect/http/FetchHttpClient";
 import { expect, test } from "vite-plus/test";
-
-import { copyObjectsProvider, provisionBucketMover } from "#/shared/api/index.ts";
 
 import { logArchive } from "./log-archive.ts";
 
@@ -40,25 +36,17 @@ const ENVIRONMENT = Effect.succeed({
   source: { type: "env" as const },
 });
 
-const archive = provisionBucketMover(APP_NAME).pipe(
-  Effect.flatMap((mover) => logArchive(APP_NAME, mover)),
+const archive = logArchive(APP_NAME).pipe(
   Effect.provideService(CloudflareEnvironment, ENVIRONMENT),
 );
 
 const REGISTERED: Readonly<Record<string, never>> = {};
 
-const CLOUDFLARE = Layer.mergeAll(fromApiToken({ apiToken: UNUSED_TOKEN }), fetchHttpClient);
-
-const NO_PROVIDERS = copyObjectsProvider.pipe(
-  Layer.provide(CLOUDFLARE),
-  Layer.provideMerge(
-    Layer.succeed(Providers, {
-      kind: "ProviderCollection",
-      get: (service: string) => REGISTERED[service],
-      providers: REGISTERED,
-    }),
-  ),
-);
+const NO_PROVIDERS = Layer.succeed(Providers, {
+  kind: "ProviderCollection",
+  get: (service: string) => REGISTERED[service],
+  providers: REGISTERED,
+});
 
 const declaredWith =
   <Decoded>(decode: (props: unknown) => Option.Option<Decoded>) =>
@@ -79,27 +67,13 @@ const declaredWith =
 
 const declared = declaredWith((props) => decodeProps(props));
 
-test("ログのバケットは、管轄を指定せずに決まった名前で作り、日本にも同じ設定の組を作る", () =>
+test("ログのバケットは、日本に決まった名前で作る", () =>
   expect(declared(R2.Bucket.Type)).resolves.toStrictEqual([
-    Option.some({ name: BUCKET_NAME }),
-    Option.some({ name: `${BUCKET_NAME}-japan` }),
+    Option.some({ name: JAPAN_BUCKET_NAME }),
   ]));
 
-test("バケットの移し替えはアカウント内の全バケットの中身を扱い、ログの書き込みは日本のバケットだけを扱う", () =>
+test("ログの書き込みは日本のバケットだけを扱う", () =>
   expect(declared(ApiToken.AccountApiToken.Type)).resolves.toStrictEqual([
-    Option.some({
-      name: `${APP_NAME}-bucket-mover`,
-      policies: [
-        {
-          effect: "allow",
-          permissionGroups: [
-            "Workers R2 Storage Bucket Item Read",
-            "Workers R2 Storage Bucket Item Write",
-          ],
-          resources: { [`com.cloudflare.api.account.${ACCOUNT_ID}`]: "*" },
-        },
-      ],
-    }),
     Option.some({
       name: `${APP_NAME}-worker-logs-writer`,
       policies: [
@@ -116,6 +90,5 @@ test("バケットの移し替えはアカウント内の全バケットの中�
 
 test("ログのバケットは、古いログと途中で止まったマルチパートアップロードを消す", () =>
   expect(declaredWith(decodeLifecycle)(R2.Bucket.Type)).resolves.toStrictEqual([
-    Option.some({ lifecycleRules: [{ id: "expire" }, { id: "abort-multipart" }] }),
     Option.some({ lifecycleRules: [{ id: "expire" }, { id: "abort-multipart" }] }),
   ]));
