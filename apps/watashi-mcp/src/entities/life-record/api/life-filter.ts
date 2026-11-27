@@ -147,12 +147,12 @@ export const matchesAll =
       Arr.every((filter) => filter(entry)),
     );
 
-const scoreOf =
+export const scoreText =
   (terms: readonly string[]) =>
-  (entry: Entry): number =>
+  (text: string): number =>
     pipe(
       terms,
-      Arr.filter((term) => contains(term)(entry.row.searchText)),
+      Arr.filter((term) => contains(term)(text)),
       Arr.length,
     );
 
@@ -166,7 +166,13 @@ export const ordered =
       );
     }
     if (order === "relevance") {
-      return pipe(entries, Arr.sortWith(scoreOf(terms), Order.flip(Order.Number)));
+      return pipe(
+        entries,
+        Arr.sortWith(
+          (entry: Entry) => scoreText(terms)(entry.row.searchText),
+          Order.flip(Order.Number),
+        ),
+      );
     }
     return entries;
   };

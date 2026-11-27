@@ -11,24 +11,6 @@
       "rationale": "Each lists the extension order TypeScript tries for one module kind; the lists differ and mirror the compiler's own tables."
     },
     {
-      "candidate_id": "similar-code:candidate:v1:93eb2bc2096057668dcd463e776a41b65126bac312390657c06e259ab2ec2543",
-      "review_key": "similar-code:review:v1:9e083cc25ffb23af19fa95ca3d4e5fea2135b01b20a855f89816e662b4efc76c",
-      "candidate_worthy": false,
-      "behaviorally_equivalent": false,
-      "refactor_safe": false,
-      "outcome": "related-but-distinct",
-      "rationale": "rpcBody decodes a PortalResult that may carry a failure; jsonBody reads a fetch Response body. The inputs differ."
-    },
-    {
-      "candidate_id": "similar-code:candidate:v1:74b399d738efb93668c07e50a916ef641c778b72672b93a63b37a5c60063cbca",
-      "review_key": "similar-code:review:v1:35dbf010eaa9095417b44144753c7b7fd3e9f2cf048a7ae75fe6e07d89248cd9",
-      "candidate_worthy": false,
-      "behaviorally_equivalent": false,
-      "refactor_safe": false,
-      "outcome": "related-but-distinct",
-      "rationale": "Two report queries that group by different columns and return different shapes."
-    },
-    {
       "candidate_id": "similar-code:candidate:v1:cc3a775d73a3f6c3a0208dbbf2feb587c25bd8709a02870482059d84b05957c6",
       "review_key": "similar-code:review:v1:2624d6485d11db3eee834619933bd7f7643777956029e61c99ec113a79b56fc7",
       "candidate_worthy": false,
@@ -45,51 +27,6 @@
       "refactor_safe": false,
       "outcome": "related-but-distinct",
       "rationale": "outcome handles a missing grpc-status and delegates to succeeded, which checks the code; they compose rather than repeat."
-    },
-    {
-      "candidate_id": "similar-code:candidate:v1:d5da1543d0520b38fe5442298df88f339d3257f5b6dc4abeaade5c99368ec825",
-      "review_key": "similar-code:review:v1:6102f6a5fd1797c10c52bf9a7f2c385065ed6af6c42299421f5bb8719b21c7b2",
-      "candidate_worthy": false,
-      "behaviorally_equivalent": false,
-      "refactor_safe": false,
-      "outcome": "intentional-duplication",
-      "rationale": "One edits the fumx studio buffer, the other belongs to a finished song's frozen engine with its own fade constants; songs do not depend on the studio library."
-    },
-    {
-      "candidate_id": "similar-code:candidate:v1:760a75218e49f71d7af9e30ad968accb9dff391a4cf151c1baec33495fa989f3",
-      "review_key": "similar-code:review:v1:d8a25416887cfd5fbfe991842dff6951034a0a6ca52aaa2ebcc63da59fb6d75e",
-      "candidate_worthy": false,
-      "behaviorally_equivalent": false,
-      "refactor_safe": false,
-      "outcome": "related-but-distinct",
-      "rationale": "scanCapped reports whether the result was truncated by asking for one extra row; scanRecords clamps to the scan limit."
-    },
-    {
-      "candidate_id": "similar-code:candidate:v1:167efb91802e7fa0bf19b81551d4051eae9a575dde864fcba9c5da723815a808",
-      "review_key": "similar-code:review:v1:df436292fd12f6889bfe3a3f08bfc2918c4eb72a2d2e9d461a0210b95e7d8a04",
-      "candidate_worthy": false,
-      "behaviorally_equivalent": false,
-      "refactor_safe": false,
-      "outcome": "intentional-duplication",
-      "rationale": "A memoising thunk in a song engine and in the published GitHub Actions linter engine; sharing it would add a dependency between an app's song catalog and that published package for four lines."
-    },
-    {
-      "candidate_id": "similar-code:candidate:v1:f126332863dc88b794e4cb6e071f377aa062aa17333c7877d1f28162f784032c",
-      "review_key": "similar-code:review:v1:b484cf62fdbb461e53a1fbf3e6d657c3c245a8a4dd87e0fee6f330db4927e4c5",
-      "candidate_worthy": false,
-      "behaviorally_equivalent": false,
-      "refactor_safe": false,
-      "outcome": "related-but-distinct",
-      "rationale": "Two instrument buses of one song with different effect chains."
-    },
-    {
-      "candidate_id": "similar-code:candidate:v1:2fef8916ecb4f715dd7d6d4451ada7568b2fb928b67617e957f3bcd13abcaabb",
-      "review_key": "similar-code:review:v1:2460f2cd52c7404237353bd8aee194799feb077cc91e2bfec64780abcdfa350a",
-      "candidate_worthy": false,
-      "behaviorally_equivalent": false,
-      "refactor_safe": false,
-      "outcome": "related-but-distinct",
-      "rationale": "Each app wires its own auth and tool registry; watashi-mcp passes the caller identity, med-db does not."
     },
     {
       "candidate_id": "similar-code:candidate:v1:81dfa4eb53c5ddda9301e03a500ff3ec305e50799b5d0e38f18ca447702cebf4",
@@ -110,15 +47,6 @@
       "rationale": "Each maps imports of a different upstream plugin's layout to virtual modules; the id derivation differs per upstream."
     },
     {
-      "candidate_id": "similar-code:candidate:v1:b8cf6bac6b6602f46ec409a9f83851f986de8654688e50d1738f8bde238b0c5e",
-      "review_key": "similar-code:review:v1:766cf4057b6f4c596b765409be33942a12124053fe511a8528ce47f3d7ba04da",
-      "candidate_worthy": false,
-      "behaviorally_equivalent": false,
-      "refactor_safe": false,
-      "outcome": "related-but-distinct",
-      "rationale": "Different buses with different effect chains in a song engine."
-    },
-    {
       "candidate_id": "similar-code:candidate:v1:7a8b145f3fec02465884932044a4cc06c1e2ea121bb9f0aead321a26f087a02a",
       "review_key": "similar-code:review:v1:66f48f7dfd141b11a3bafb788d553da881bc3dd0be9046ed673e809b8de5e2c7",
       "candidate_worthy": false,
@@ -135,15 +63,6 @@
       "refactor_safe": false,
       "outcome": "unrelated",
       "rationale": "Footers of two different apps with different content and styling."
-    },
-    {
-      "candidate_id": "similar-code:candidate:v1:5220e2272c34cc9ea1c1b88afc0118f392422dc27f9ddb4258e4875ca8785e91",
-      "review_key": "similar-code:review:v1:09a4935fd1d7b91860720155111b079314312860b5b4f21f5af27457a52f4cae",
-      "candidate_worthy": false,
-      "behaviorally_equivalent": false,
-      "refactor_safe": false,
-      "outcome": "related-but-distinct",
-      "rationale": "LinkExample chooses between a plain link and WikiFigure; it calls WikiFigure."
     },
     {
       "candidate_id": "similar-code:candidate:v1:41378d930b8fe3e1efc4432559bc960b81323a2a50d77fbcbf89ebd50b106b01",
@@ -173,15 +92,6 @@
       "rationale": "Cache read with a trace message versus resolution that writes the cache."
     },
     {
-      "candidate_id": "similar-code:candidate:v1:257b40f4b10d65a846372b58cb127d34aa8f64fbd2819d36bc13ed2775400150",
-      "review_key": "similar-code:review:v1:07444230d48af2f2c2ef7ccdc9df80a7bee5a59673989c6b0914a59c14a47381",
-      "candidate_worthy": false,
-      "behaviorally_equivalent": false,
-      "refactor_safe": false,
-      "outcome": "related-but-distinct",
-      "rationale": "subpathsOf keeps every export entry for public-entry checks; subpathTargetsOf keeps only concrete non-wildcard targets for dependency checks."
-    },
-    {
       "candidate_id": "similar-code:candidate:v1:9ec1a96ce0f7c1d4263ee13593a60e31d7b65e85c6e865828feeea3a2515586e",
       "review_key": "similar-code:review:v1:6611cce671f2e3eaf7ed4ef45df597516fe63e9b402573f9e71d3d961f43f784",
       "candidate_worthy": false,
@@ -200,15 +110,6 @@
       "rationale": "Headings of two different sites with different design systems."
     },
     {
-      "candidate_id": "similar-code:candidate:v1:930edafab429239941a5561e9a7584fffa5c6d2831d2cffc57eba62fc42fc6c3",
-      "review_key": "similar-code:review:v1:7f10a2402814f416b1282a4b752177d1232e7c4c88993c5eddfcf779fc26eaba",
-      "candidate_worthy": false,
-      "behaviorally_equivalent": false,
-      "refactor_safe": false,
-      "outcome": "related-but-distinct",
-      "rationale": "Tempo points from MIDI bars in microseconds versus from song bars in BPM."
-    },
-    {
       "candidate_id": "similar-code:candidate:v1:54d731cc692b4a32cb49d9e49b1de8427a693aea0796614d501e23ecc5e2b6f3",
       "review_key": "similar-code:review:v1:0f79fc6915182cec15d2ea1a6789ae7356c8ab21ad3d0529705c182ad471f899",
       "candidate_worthy": false,
@@ -225,15 +126,6 @@
       "refactor_safe": false,
       "outcome": "unrelated",
       "rationale": "Footers of two different sites with different content."
-    },
-    {
-      "candidate_id": "similar-code:candidate:v1:e16618fae9b6150a239d2e2ce6c1bbc586fad37d2ee4793d4641b175d5c84b85",
-      "review_key": "similar-code:review:v1:ffc6c8b0e861714c61e1697c6f12b3745fdac0ee2dc3083f1cb04e3dd406de46",
-      "candidate_worthy": false,
-      "behaviorally_equivalent": false,
-      "refactor_safe": false,
-      "outcome": "related-but-distinct",
-      "rationale": "Different buses with different effect chains in a song engine."
     },
     {
       "candidate_id": "similar-code:candidate:v1:c2f5ad24c2e4b4f1def759b702a1617d838c94312e9ef0628e30d83e742597ba",
@@ -335,15 +227,6 @@
       "rationale": "A figure with caption and a page section in different apps."
     },
     {
-      "candidate_id": "similar-code:candidate:v1:984346c92b6f7c54150958202105ee5f81be0b8131712b15db572e40d32bde66",
-      "review_key": "similar-code:review:v1:67bb1037ac9973b987d6e3ad8903117c9d407887a64b1271ef507799c23c3381",
-      "candidate_worthy": false,
-      "behaviorally_equivalent": false,
-      "refactor_safe": false,
-      "outcome": "related-but-distinct",
-      "rationale": "Dispatch on two different optional inputs; one calls the other."
-    },
-    {
       "candidate_id": "similar-code:candidate:v1:8408fd30844fc0d24ee34f5c3bdc228716457af87c72b1b4b42a68068a368cdb",
       "review_key": "similar-code:review:v1:4c396aa187d9fd94313c855f3384e161d6eef770d3165b1e4a526ec96c83768c",
       "candidate_worthy": false,
@@ -351,15 +234,6 @@
       "refactor_safe": false,
       "outcome": "related-but-distinct",
       "rationale": "Comment readers for two formats with different parsers."
-    },
-    {
-      "candidate_id": "similar-code:candidate:v1:cbe8c4fae68913a93f0c9d829e39c2d03bb0ca31c6abd2cba1c22d0d1e210764",
-      "review_key": "similar-code:review:v1:3a6c21ba34d1c591ec20ac049e5e0e8cb4a314bd5edbd1e69093754ee95cd2c9",
-      "candidate_worthy": false,
-      "behaviorally_equivalent": false,
-      "refactor_safe": false,
-      "outcome": "related-but-distinct",
-      "rationale": "Paging through every row versus one capped page."
     },
     {
       "candidate_id": "similar-code:candidate:v1:aa56a13c1b9a9f442b72aae909a8577ce7913080be6bced67ca807b5d999b0ca",
@@ -387,15 +261,6 @@
       "refactor_safe": false,
       "outcome": "related-but-distinct",
       "rationale": "One grouping strategy versus the dispatcher over all strategies."
-    },
-    {
-      "candidate_id": "similar-code:candidate:v1:dff81bba540885543b24d94633d3d102735635706c723cc3d09d7f99f8c6eed0",
-      "review_key": "similar-code:review:v1:a54386cfd039f16e07cf880bb4d244c305cd90318a4dca0c70d80c22b077a0b8",
-      "candidate_worthy": false,
-      "behaviorally_equivalent": false,
-      "refactor_safe": false,
-      "outcome": "related-but-distinct",
-      "rationale": "Findings of two different audits with different severities and locations."
     },
     {
       "candidate_id": "similar-code:candidate:v1:6056f12e277cc4e8a117c497e8756639f4ed3e2af85555516a276dbcfb2157c2",
@@ -452,15 +317,6 @@
       "rationale": "blankGroup calls drawGroup with a 1x1 texture."
     },
     {
-      "candidate_id": "similar-code:candidate:v1:2d4deefe5401fae16c40a144550c42e261378aafce3ff5b19fc1f1338b962020",
-      "review_key": "similar-code:review:v1:f92406a464d812c0416385aab0c16d4383567209944d8e9a432148a6d501fd5a",
-      "candidate_worthy": false,
-      "behaviorally_equivalent": false,
-      "refactor_safe": false,
-      "outcome": "related-but-distinct",
-      "rationale": "Different buses with different effect chains in a song engine."
-    },
-    {
       "candidate_id": "similar-code:candidate:v1:af94a5fd43f73f9f1fb8312a8a7c32e0bf22a76b4daedb28c96bfb8ec2413c0a",
       "review_key": "similar-code:review:v1:b2bdb766b979f608a2e249c7371f5658f04c2243e0d2849710857f995dc734ab",
       "candidate_worthy": false,
@@ -470,24 +326,6 @@
       "rationale": "MosaicChrome composes MosaicToolbar with the switcher."
     },
     {
-      "candidate_id": "similar-code:candidate:v1:2e697737fdbda1c3440e99886721b60a87de99be26ac7e873514976420e5686b",
-      "review_key": "similar-code:review:v1:df2177186777a8e6ba65adeb68753ee2ac166cdcf892c8d7f73d5da2933a8941",
-      "candidate_worthy": false,
-      "behaviorally_equivalent": false,
-      "refactor_safe": false,
-      "outcome": "related-but-distinct",
-      "rationale": "Different buses with different effect chains in a song engine."
-    },
-    {
-      "candidate_id": "similar-code:candidate:v1:8dd2ffcacf5ce20404dd2345ed9b3feac055ced05db810d1399e76d33e68ec0b",
-      "review_key": "similar-code:review:v1:d8ec04723386d775f7c37f4da0149e29e348e210535074530a50bdc489a01138",
-      "candidate_worthy": false,
-      "behaviorally_equivalent": false,
-      "refactor_safe": false,
-      "outcome": "related-but-distinct",
-      "rationale": "Event handlers for different instruments of one song."
-    },
-    {
       "candidate_id": "similar-code:candidate:v1:08dd898b6dc538997b4c795c45fc9fdaf5fdc4b5619ea4640e0688668f1404b9",
       "review_key": "similar-code:review:v1:36f9191aae22b86bc0bd048134c265657847511ac358ced8e7d7f109a71871f6",
       "candidate_worthy": false,
@@ -495,15 +333,6 @@
       "refactor_safe": false,
       "outcome": "unrelated",
       "rationale": "Last path segment versus everything before it, in different packages."
-    },
-    {
-      "candidate_id": "similar-code:candidate:v1:6a3c97be5a885272095cbbdcca5f7cb644f3c870472c0f4569e94adfcf597719",
-      "review_key": "similar-code:review:v1:6f07fa68515cca36c5a03726ee97d8f941e8aa4af5f45809006a90c38221d74d",
-      "candidate_worthy": false,
-      "behaviorally_equivalent": false,
-      "refactor_safe": false,
-      "outcome": "unrelated",
-      "rationale": "Adds a panned clip into a bus versus scaling a bus's gain."
     },
     {
       "candidate_id": "similar-code:candidate:v1:3309a725c2fce30dfb06c03f37cd48f82109408e80805ec158a5ec42f8939345",
@@ -524,22 +353,184 @@
       "rationale": "Different steps of TypeScript module resolution."
     },
     {
-      "candidate_id": "similar-code:candidate:v1:4772a7fc2568d23ee069ac67c1c619774f070115d7b30c61cea6355ecd5174b6",
-      "review_key": "similar-code:review:v1:5a5afbbbf358e34b3b46c714df91b796bcc27aa240adcc0fcfa7201974b2e928",
+      "candidate_id": "similar-code:candidate:v1:876ea492bf06e8263a4536402340ff8246c9927587ee470ffc4df7bb91bc5a3b",
+      "review_key": "similar-code:review:v1:70296ff775e93bea4518da9ed01bdc85e26b5f6e736f3a172a3de0c62c8f2624",
       "candidate_worthy": false,
       "behaviorally_equivalent": false,
       "refactor_safe": false,
-      "outcome": "unrelated",
-      "rationale": "Search forms of two different apps with different design systems and hidden fields."
+      "outcome": "intentional-duplication",
+      "rationale": "Each is a one-line CallToolResult constructor in its own workspace: sts2-mcp is a local tool and med-db is a Worker, and the shared mcp-tool-call library carries Worker-only dependencies (jose, security-headers) that a local tool must not take on."
     },
     {
-      "candidate_id": "similar-code:candidate:v1:398398597dff0a0ba6198b415fc56585c278b1fdfb56c24e1ec00ff923a9887b",
-      "review_key": "similar-code:review:v1:e59575ebe2eaf74b2ca3cd23694b76cd874b54382b81b9a772cb85e2645a3e19",
+      "candidate_id": "similar-code:candidate:v1:36854bfd0c2f24ab1384ffe2bd0f035f8e512af4caf0c50aa0565f397d385d93",
+      "review_key": "similar-code:review:v1:2a9fcee8c16ddfdadd2243c8a13cc34ee7b71f65126e7f977c93445d7dbc1266",
       "candidate_worthy": false,
       "behaviorally_equivalent": false,
       "refactor_safe": false,
       "outcome": "related-but-distinct",
-      "rationale": "Validation pass versus write pass over the same records."
+      "rationale": "Both are visitors that report to the same variable-usage state, but they handle different node kinds: checkAssignment sees assignment statements (assign, or use when appending) and checkName sees bare names (use, or declare under declaration commands)."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:1c98cc510efe9b96f29c6ec788634b04bfe4c51f3b260cc1c13a426bb746c68f",
+      "review_key": "similar-code:review:v1:07444230d48af2f2c2ef7ccdc9df80a7bee5a59673989c6b0914a59c14a47381",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "related-but-distinct",
+      "rationale": "subpathsOf returns every export entry with its raw value for entry resolution; subpathTargetsOf also drops wildcard subpaths and string-only roots for dependency checks. The two lists differ on purpose."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:8e7478adb76718c338327b595cc7906eb3358dd1d7bfd4ef6aa3ed902ed7174f",
+      "review_key": "similar-code:review:v1:eac81cf4321a463ced81743e623813eb62b91a44f5c97cbfb525016475ad4dde",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "related-but-distinct",
+      "rationale": "Both are thin keys into newestOf; findByLabel passes no open filter and findOpen builds one from about and startedBy, so they differ in the one argument that matters."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:e1fcec5b3ed3e5e79191bca1d610e921477c63d3aa55b9613fcf1d762dd5a2ed",
+      "review_key": "similar-code:review:v1:f5662d201087731098dbd46354072814dccaa471949c444265bf883a99667ab4",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "intentional-duplication",
+      "rationale": "Two audit rules that follow the same stepTargetCheck shape: resolve the action slug, call GitHub, return findings. The rule-specific lookups differ, and the shared shape already lives in stepTargetCheck and withGitHub."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:588db142c8c86dfffd3d8cd61535d7912d77bddfcc148e6d79a26e176bed6ac7",
+      "review_key": "similar-code:review:v1:cf8477ca42839b14d5ddb0e7a4e830bbffec21582e76381916a0955508906cbb",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "related-but-distinct",
+      "rationale": "liveFor allocates the tape and records the stems into it; liveOf builds the LiveMix description from the mastered song. liveFor calls liveOf, so they compose."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:4109c47979a623f67353402c0c7f3c88dac5e3bb8926210127a89d50eb35ac7a",
+      "review_key": "similar-code:review:v1:a6013cae33f066d60b6b87a6cc997595d28411b45684164099567a0e5928cc07",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "intentional-duplication",
+      "rationale": "Table pieces of two separate apps, decision-bench and ocr-decide, with different row and header shapes. Apps do not share UI beyond the web-ui library, and the pieces share only generic table markup."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:109e6e22c24429c04c0c16502a7713bf283e70a97e5067192dcfb28ddc08b34e",
+      "review_key": "similar-code:review:v1:ffc6c8b0e861714c61e1697c6f12b3745fdac0ee2dc3083f1cb04e3dd406de46",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "intentional-duplication",
+      "rationale": "Each is the mix chain of one bus of one finished song, with its own constants. Songs are frozen and chain the same studio calls in an order that belongs to the sound; sharing a helper would couple the buses."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:7ecca88b0f17287a86e2bfb5723e0df93b5c2aed1ef890c22258ec89325847e1",
+      "review_key": "similar-code:review:v1:146385e72150abc5e1f87431337a55debb29e1187772e96f401e54b0a9293822",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "intentional-duplication",
+      "rationale": "Each is the mix chain of one bus of one finished song, with its own constants. The chains call the same studio effects in different orders and with different settings."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:adfec4fadb4bec78cb790c707e5b5df73327c636d354f74176694fa06c22f72c",
+      "review_key": "similar-code:review:v1:cfe461129a3a332fbe8447329d2aa53336a672ef12e16454d8f7f2a6a026b55f",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "related-but-distinct",
+      "rationale": "fileNameOf splits on both slash and backslash for user-picked Windows and POSIX paths; baseName splits only on slash because it reads names from shell script text. msch is a published package and cannot depend on an app."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:1cfc677264bf4cc1d794ff4cc87bc9de8c2faf1be2be88639e01de0a939fe58a",
+      "review_key": "similar-code:review:v1:33ff989c201107f247332fec3682cb5956c1dc8cfe1858e460a6590353e9e9d5",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "related-but-distinct",
+      "rationale": "change dispatches among restore, retract and update; retract is one branch and requires a reason. They compose rather than repeat."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:63de9a7545c83b833553a64c0170bf3657bc18b3df39ca6fe1eb7a2c7f36ef84",
+      "review_key": "similar-code:review:v1:9f25e231c5f7a0544e476b48d921bdf0cac2ee0418c4c2c0f2f1d0db48ce1209",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "related-but-distinct",
+      "rationale": "Both report to the variable-usage state, but checkAssignment handles assignment statements and checkCommandWrites handles names that a command writes to, such as read targets, where a file-descriptor form counts as a use."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:af0125a4c62fbe29a98fdb774f99c031acc69e5a83ceda29570941c65b4386d3",
+      "review_key": "similar-code:review:v1:c3bdebdf9f3a1beb1a8c3720c58603ae785ec8176d36fdbbc63b988caf2f99c8",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "related-but-distinct",
+      "rationale": "barPointsOf turns the tempo steps of a parsed bar into tempo points for comparison; afterBar reads the last laid-out tempo step to carry state forward in writing. The input types and results differ."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:91a6fc3714740d39fc431e1ba9b25a35d54cd350111565e7174dffededa41729",
+      "review_key": "similar-code:review:v1:7b3695fa136cc7eb4aa80614c015e72623a4516a0872926dba1d04ada91b1042",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "related-but-distinct",
+      "rationale": "valueOf finds an argument by name; numberIn calls valueOf and narrows it to a number. They compose."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:577f479fd5a37975b3b52af87c7387c6ac445fa78a2f26b69144afe42b408d22",
+      "review_key": "similar-code:review:v1:02ff2446b636ec5e8526c047543607e09736542cb430bfa93f9d1cd88d6b0bbd",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "related-but-distinct",
+      "rationale": "SortBodyRow renders one body row and SortableTable renders the table around it with the header and sorting; SortableTable uses SortBodyRow."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:58aac522deb25d73e57a5ca05272d8ec0e1f456185877ab9e6347c9bf084de25",
+      "review_key": "similar-code:review:v1:d7fdc1ce40c8900c4260261c6efee7a633f7d521886605e3bdd85b0657547461",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "intentional-duplication",
+      "rationale": "Header-row components of med-db and ocr-decide. med-db takes plain labels and ocr-decide prepends a fixed leading column and uses its own markup; the apps do not share UI beyond web-ui."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:1220c2acc3808d7293629f090c5f090cf0d414f96532fc20f1a6e227b6865660",
+      "review_key": "similar-code:review:v1:9449ed6660230f450ad93475864a442d091694c0882ba1fc24f95b1db092573e",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "related-but-distinct",
+      "rationale": "Both report to the variable-usage state, but checkCommandWrites handles names that a command writes to and checkName handles bare names under declaration commands; the conditions that decide use or assign differ."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:0689d8db73b116c90154d7f4cb3037f21f906ec5ed3a7c94196950fc7f019fa8",
+      "review_key": "similar-code:review:v1:0a3e4577941212589e2dd680387f1c65ffa0052580a7acea00f2417135972a5e",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "related-but-distinct",
+      "rationale": "restOf measures a rest and has no items; soundingOf measures a sounding and also builds its items and nudges. They share only the duration call."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:f85140a9c2ad6a9d05ddfbb99834b489fb9a4515b2544e1d051214a9dea7c2d8",
+      "review_key": "similar-code:review:v1:7a45bb54eb7db8661a52072843fa699dcb909b717648e92ef7f38910d2b97fe9",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "related-but-distinct",
+      "rationale": "CredentialSection filters credentials by kind and renders titled rows for the credentials page; AttentionList renders the home page's attention rows without filtering or a title. The rows and the surrounding markup differ."
+    },
+    {
+      "candidate_id": "similar-code:candidate:v1:cf5808927413a3aa5de0333b1e053b3f10049f0509304f2b8c7b7a7f3a26e657",
+      "review_key": "similar-code:review:v1:eeb5710fa04333b2e37caecd166ea4b08397ee8e0cc6c535e6c1028bb0e95583",
+      "candidate_worthy": false,
+      "behaviorally_equivalent": false,
+      "refactor_safe": false,
+      "outcome": "related-but-distinct",
+      "rationale": "Both match every expression variant exhaustively, which the type forces, but they collect different things: unsoundTrueValues returns values of a ternary and walk tracks dominating bot conditions and flips them under not."
     }
   ]
 }
