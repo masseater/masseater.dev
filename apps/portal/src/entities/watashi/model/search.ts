@@ -9,9 +9,9 @@ export const MemosSearch = Schema.Struct({
   keyword: Keyword,
 });
 
-export const ConversationSearch = Schema.Struct({ cursor: Schema.optionalKey(Schema.Int) });
-
 const CursorText = Schema.FiniteFromString.check(Schema.isInt());
+
+export const ConversationSearch = Schema.Struct({ cursor: Schema.optionalKey(CursorText) });
 
 export const CursorQuery = Schema.Struct({ cursor: Schema.optionalKey(CursorText) });
 

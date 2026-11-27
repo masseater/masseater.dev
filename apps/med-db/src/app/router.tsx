@@ -11,4 +11,4 @@ declare module "@tanstack/react-router" {
   }
 }
 
-export const getRouter = (): AppRouter => createQueryRouter(routeTree);
+export const getRouter = (): AppRouter => createQueryRouter(routeTree, { textSearch: true });
