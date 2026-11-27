@@ -56,7 +56,7 @@ const phrases = loadDefaultJapaneseParser();
 
 export type Card = Readonly<{ category: Category; slug: string; title: string }>;
 
-const stage = (child: ReactNode): ReactNode =>
+const stage = (backgroundImage: string, child: ReactNode): ReactNode =>
   createElement(
     "div",
     {
@@ -65,7 +65,7 @@ const stage = (child: ReactNode): ReactNode =>
         width: "100%",
         height: "100%",
         backgroundColor: backdropPalette.base,
-        backgroundImage: backdrop,
+        backgroundImage,
         color: colors.foreground,
         fontFamily: `${LATIN}, ${JAPANESE}`,
       },
@@ -150,29 +150,40 @@ const byline = (avatar: string): ReactNode =>
     ),
   );
 
+const panelBox = {
+  display: "flex",
+  flexGrow: 1,
+  margin: sizes.stageMargin,
+  borderRadius: sizes.cardRadius,
+} as const;
+
 const glassPanel = (...children: readonly ReactNode[]): ReactNode =>
   createElement(
     "div",
     {
       style: {
-        display: "flex",
+        ...panelBox,
         flexDirection: "column",
-        flexGrow: 1,
-        margin: sizes.stageMargin,
         padding: "48px 64px",
-        borderRadius: sizes.cardRadius,
         backgroundColor: colors.glass,
         border: `1px solid ${colors.ring}`,
-        boxShadow: `0 24px 64px ${colors.shadow}`,
       },
     },
     ...children,
   );
 
+export const cardBackdropElement: ReactNode = stage(
+  backdrop,
+  createElement("div", { style: { ...panelBox, boxShadow: `0 24px 64px ${colors.shadow}` } }),
+);
+
+export type CardArt = Readonly<{ avatar: string; backdrop: string }>;
+
 export const cardElement =
-  (avatar: string) =>
+  ({ avatar, backdrop: backdropPng }: CardArt) =>
   (card: Card): ReactNode =>
     stage(
+      `url(${backdropPng})`,
       glassPanel(
         tracked(categoryMeta[card.category].title, sizes.label),
         titleText(card),
@@ -217,4 +228,4 @@ const siteColumn = (avatar: string): ReactNode =>
     tracked(sectionTitles, sizes.sections),
   );
 
-export const siteElement = (avatar: string): ReactNode => stage(siteColumn(avatar));
+export const siteElement = (avatar: string): ReactNode => stage(backdrop, siteColumn(avatar));
