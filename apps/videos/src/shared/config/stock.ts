@@ -55,3 +55,9 @@ export const ZUNDAMON = {
   "zun-point": "cache/tachie/zunmon026.png",
   "zun-run": "cache/tachie/zunmon034.png",
 } as const;
+
+export const BGM = {
+  url: "https://dl.tracks.co.jp/w?m=7497ab",
+  page: "https://dl.tracks.co.jp/?m=7497ab",
+  credit: "しゃろう",
+} as const;

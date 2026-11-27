@@ -10,7 +10,7 @@ export type Cut = Readonly<{
   voice?: number;
 }>;
 
-export type Bgm = Readonly<{ url: string; credit: string }>;
+export type Bgm = Readonly<{ url: string; credit: string; page?: string }>;
 
 export type VideoScript = Readonly<{
   title: string;
