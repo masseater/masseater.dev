@@ -18,7 +18,7 @@
     "./owner-site-run": "./src/features/run-owner-site/index.ts",
     "./run-tasks": "./src/features/run-owner-site/index.ts",
     "./app-name": "./src/features/name-app/index.ts",
-    "./japan": "./src/shared/config/japan.ts",
+    "./japan": "./src/shared/config/index.ts",
     "./japan-database": "./src/features/relocate-database/index.ts"
   },
   "dependencies": {
