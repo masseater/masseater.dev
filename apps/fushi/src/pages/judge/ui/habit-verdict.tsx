@@ -7,7 +7,6 @@ import type { Library, Style } from "#/entities/library/index.ts";
 import type { Candidate } from "#/features/find-candidates/index.ts";
 import { Decide } from "#/features/judge-habit/index.ts";
 import type { Decision } from "#/features/judge-habit/index.ts";
-import { HARMONY } from "#/shared/config/index.ts";
 
 import { JudgedRow } from "./judged-row.tsx";
 
@@ -27,11 +26,12 @@ export const HabitVerdict = ({
     (): Decision => ({
       style: style.id,
       habit,
-      transition: { context: candidate.context, next: candidate.next },
-      aims: aimsOf(library)({ style: style.id, category: HARMONY }),
+      subject: candidate.subject,
+      category: candidate.category,
+      aims: aimsOf(library)({ style: style.id, category: candidate.category }),
       after: { page: "judge", style: style.id, habit: next },
     }),
-    [library, style.id, habit, candidate.context, candidate.next, next],
+    [library, style.id, habit, candidate.subject, candidate.category, next],
   );
   return Option.match(judgmentOf(library)({ style: style.id, habit }), {
     onNone: () => <Decide decision={decision} />,

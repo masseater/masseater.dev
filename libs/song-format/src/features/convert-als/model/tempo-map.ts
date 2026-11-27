@@ -61,9 +61,11 @@ const eventsOf = (events: {
   ...(events.BoolEvent ?? []),
 ];
 
-const automationEnvelopesOf = (master: AlsMaster): readonly AutomationEnvelope[] =>
+export type Automated = Pick<AlsMaster, "AutomationEnvelopes">;
+
+const automationEnvelopesOf = (owner: Automated): readonly AutomationEnvelope[] =>
   pipe(
-    Option.fromUndefinedOr(master.AutomationEnvelopes),
+    Option.fromUndefinedOr(owner.AutomationEnvelopes),
     Option.flatMap((envelopes) => Option.fromUndefinedOr(envelopes.Envelopes.AutomationEnvelope)),
     Option.getOrElse((): readonly AutomationEnvelope[] => []),
   );
@@ -71,7 +73,7 @@ const automationEnvelopesOf = (master: AlsMaster): readonly AutomationEnvelope[]
 const byTime = Order.mapInput(Order.Number, (event: AutomationEvent) => event.Time);
 
 export const envelopeOf =
-  (master: AlsMaster): From<Parameter, readonly AutomationEvent[]> =>
+  (owner: Automated): From<Parameter, readonly AutomationEvent[]> =>
   (parameter) => {
     const inline = pipe(
       Option.fromUndefinedOr(parameter.ArrangerAutomation),
@@ -81,7 +83,7 @@ export const envelopeOf =
       Option.fromUndefinedOr(parameter.AutomationTarget),
       Option.flatMap((target) =>
         pipe(
-          automationEnvelopesOf(master),
+          automationEnvelopesOf(owner),
           Arr.findFirst((envelope) => envelope.EnvelopeTarget.PointeeId.Value === target.Id),
         ),
       ),
