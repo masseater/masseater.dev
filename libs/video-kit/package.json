@@ -1,0 +1,41 @@
+{
+  "name": "@masseater.dev/video-kit",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Turns a Markdown video script into the standard explainer video as Remotion scenes for 9:16 and 16:9, and checks the script before it is rendered.",
+  "type": "module",
+  "imports": {
+    "#/*": "./src/*"
+  },
+  "exports": {
+    ".": "./src/app/parts.ts",
+    "./script": "./src/app/script.ts",
+    "./video.css": "./src/app/video.css"
+  },
+  "dependencies": {
+    "@effect/atom-react": "catalog:stack",
+    "@fontsource/ibm-plex-mono": "catalog:",
+    "@fontsource/noto-sans-jp": "catalog:",
+    "@remotion/layout-utils": "catalog:",
+    "@remotion/media": "catalog:"
+  },
+  "devDependencies": {
+    "@masseater.dev/browser-test": "workspace:*",
+    "@remotion/player": "catalog:",
+    "@tailwindcss/vite": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "effect": "catalog:stack",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "remotion": "catalog:",
+    "tailwindcss": "catalog:stack",
+    "vite": "catalog:",
+    "vite-plus": "catalog:stack"
+  },
+  "peerDependencies": {
+    "effect": "^4.0.0",
+    "react": "^19.0.0",
+    "remotion": "^4.0.0"
+  }
+}
