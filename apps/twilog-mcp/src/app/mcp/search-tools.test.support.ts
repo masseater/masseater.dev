@@ -1,11 +1,12 @@
 import type { SiteToken } from "@masseater.dev/repositories/credential-broker";
 import type { OAuthTargetId } from "@masseater.dev/repositories/oauth-targets";
 import { Effect, Option } from "effect";
-import { constVoid } from "effect/Function";
 import type { DefaultBodyType, StrictRequest } from "msw";
 import { http } from "msw/http";
 import { setupServer } from "msw/node";
 import type { SetupServer } from "msw/node";
+
+import type { TokenBroker } from "#/features/search-posts/index.ts";
 
 export const TOKENS: Readonly<Record<string, SiteToken>> = {
   "twilog/r_masseater": {
@@ -23,14 +24,9 @@ export const TOKENS: Readonly<Record<string, SiteToken>> = {
 
 export const tokens = { current: TOKENS };
 
-export const env = {
-  TOOL_CALLS: { writeDataPoint: constVoid },
-  ACCESS_OAUTH: {
-    token: (site: OAuthTargetId): Promise<SiteToken> =>
-      Promise.resolve(
-        tokens.current[site] ?? { status: "failed", site, message: "unknown target" },
-      ),
-  },
+export const broker: TokenBroker = {
+  token: (site: OAuthTargetId): Promise<SiteToken> =>
+    Promise.resolve(tokens.current[site] ?? { status: "failed", site, message: "unknown target" }),
 };
 
 const EMPTY = 0;

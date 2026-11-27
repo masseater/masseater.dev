@@ -3,6 +3,7 @@ import { Effect, Logger } from "effect";
 import { status } from "elysia";
 import type { ElysiaCustomStatusResponse } from "elysia";
 
+import { Upstreams, upstreamsFor } from "./bindings.server.ts";
 import type { PortalFailed } from "./portal-failed.ts";
 
 const BAD_GATEWAY = 502;
@@ -23,14 +24,17 @@ const downOf = ({
     Effect.as(status(BAD_GATEWAY, { errorTag, text })),
   );
 
-export const respond = <Body>(
-  effect: Effect.Effect<Body, PortalFailed>,
-): Promise<Body | UpstreamDown> =>
-  runRequest(
-    effect.pipe(
-      Effect.matchEffect({
-        onFailure: downOf,
-        onSuccess: (body) => Effect.succeed<Body | UpstreamDown>(body),
-      }),
-    ),
-  );
+export const respond =
+  (request: Request) =>
+  <Body>(effect: Effect.Effect<Body, PortalFailed, Upstreams>): Promise<Body | UpstreamDown> => {
+    const upstreams = upstreamsFor(request);
+    return runRequest(
+      effect.pipe(
+        Effect.matchEffect({
+          onFailure: downOf,
+          onSuccess: (body) => Effect.succeed<Body | UpstreamDown>(body),
+        }),
+        Effect.provideServiceEffect(Upstreams, upstreams),
+      ),
+    );
+  };

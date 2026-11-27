@@ -1,9 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { serveMemories } from "#/app/mcp/index.server.ts";
+import { handleMemories } from "#/app/mcp/index.server.ts";
 
 const handle = ({ request }: Readonly<{ request: Request }>): Promise<Response> =>
-  serveMemories(request);
+  handleMemories(request);
 
 export const Route = createFileRoute("/api/memories")({
   server: { handlers: { PUT: handle, ANY: handle } },

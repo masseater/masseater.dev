@@ -1,7 +1,8 @@
 import { asc, eq } from "drizzle-orm";
 import { Array as Arr, Effect, Option, Record as Rec, Schema, pipe } from "effect";
 
-import { db, query } from "#/shared/db/index.server.ts";
+import type { Database } from "#/shared/db/index.server.ts";
+import { query } from "#/shared/db/index.server.ts";
 import {
   ownerTrait,
   ownerTraitEvidence,
@@ -54,18 +55,19 @@ const stateOf =
     ),
   });
 
-export const loadTraits: Effect.Effect<readonly TraitState[], StorageFailed> = Effect.gen(
+export const loadTraits: Effect.Effect<readonly TraitState[], StorageFailed, Database> = Effect.gen(
   function* loadAllTraits() {
-    const rows = yield* query(() => db.select().from(ownerTrait).orderBy(asc(ownerTrait.id)));
-    const evidence = yield* query(() => db.select().from(ownerTraitEvidence));
+    const rows = yield* query((db) => db.select().from(ownerTrait).orderBy(asc(ownerTrait.id)));
+    const evidence = yield* query((db) => db.select().from(ownerTraitEvidence));
     return pipe(rows, Arr.map(stateOf(evidence)));
   },
 );
 
 export const loadTraitVectors: Effect.Effect<
   Readonly<Record<string, Vector>>,
-  StorageFailed
-> = query(() => db.select().from(ownerTraitVector)).pipe(
+  StorageFailed,
+  Database
+> = query((db) => db.select().from(ownerTraitVector)).pipe(
   Effect.map((rows) =>
     Rec.fromEntries(
       pipe(
@@ -84,8 +86,8 @@ export const loadTraitVectors: Effect.Effect<
 
 export const cursorOf = (
   origin: TraitOrigin,
-): Effect.Effect<Option.Option<string>, StorageFailed> =>
-  query(() =>
+): Effect.Effect<Option.Option<string>, StorageFailed, Database> =>
+  query((db) =>
     db
       .select({ position: traitCursor.position })
       .from(traitCursor)
@@ -100,7 +102,7 @@ export const cursorOf = (
     ),
   );
 
-export const loadTraitJa: Effect.Effect<JaRows, StorageFailed> = query(() =>
+export const loadTraitJa: Effect.Effect<JaRows, StorageFailed, Database> = query((db) =>
   db.select().from(ownerTraitJa),
 ).pipe(
   Effect.map((rows) =>

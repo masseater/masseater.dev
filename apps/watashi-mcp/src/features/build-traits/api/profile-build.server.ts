@@ -4,6 +4,7 @@ import { Hex } from "effect/encoding";
 import { latestProfile } from "#/entities/owner-profile/index.server.ts";
 import type { ProfileAuthor } from "#/entities/owner-profile/index.ts";
 import type { TraitTranslator } from "#/entities/trait/index.ts";
+import type { Database } from "#/shared/db/index.server.ts";
 import { encodeJson } from "#/shared/db/index.server.ts";
 
 import type { ProfileFailure, ProfileOutcome } from "./profile-save.server.ts";
@@ -18,7 +19,7 @@ const hashOf = (text: string): Effect.Effect<string> =>
 export const buildProfile: Effect.Effect<
   ProfileOutcome,
   ProfileFailure,
-  ProfileAuthor | TraitTranslator
+  ProfileAuthor | TraitTranslator | Database
 > = Effect.gen(function* buildUserMd() {
   const source = yield* profileSource;
   const input = yield* encodeJson({ instructions: PROFILE_INSTRUCTIONS, source });

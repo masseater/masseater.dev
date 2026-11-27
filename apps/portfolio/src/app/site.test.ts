@@ -8,7 +8,7 @@ import {
   String as Str,
   pipe,
 } from "effect";
-import { afterAll, beforeEach, expect, test, vi } from "vite-plus/test";
+import { afterAll, beforeEach, expect, test } from "vite-plus/test";
 
 import {
   MISSING_ARTICLE,
@@ -20,14 +20,10 @@ import {
   limitedKeys,
   resetSite,
   returnedRows,
+  site,
   storedVisitors,
-  stubRewriter,
 } from "./site.test.support.ts";
-import worker from "./site.ts";
-
-vi.mock("cloudflare:workers", () => import("./site.test.support.ts"));
-
-stubRewriter();
+import { serveSite } from "./site.ts";
 
 beforeEach(() => Effect.runPromise(resetSite));
 
@@ -74,7 +70,7 @@ const OPENING_TAGS = /<(?:script|style)\b/gu;
 const SHA256_HEX = /^[0-9a-f]{64}$/u;
 
 const fetchSite = (request: Request): Effect.Effect<Response> =>
-  Effect.promise(() => worker.fetch(request));
+  site.pipe(Effect.flatMap((found) => Effect.promise(() => serveSite(found)(request))));
 
 const fromIp = (path: string, method: string, ip: string): Effect.Effect<Response> =>
   fetchSite(new Request(`${ORIGIN}${path}`, { method, headers: { "cf-connecting-ip": ip } }));

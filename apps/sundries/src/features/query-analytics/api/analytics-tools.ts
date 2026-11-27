@@ -1,6 +1,5 @@
 import { failedAt, READ_ONLY, UpstreamFailed, compactInput } from "@masseater.dev/mcp-tool-call";
 import type { McpServer } from "@modelcontextprotocol/server";
-import { env } from "cloudflare:workers";
 import { Array as Arr, DateTime, Effect, Option, Schema, String as Str, pipe } from "effect";
 import { FetchHttpClient, HttpClient, HttpClientRequest, HttpClientResponse } from "effect/http";
 
@@ -82,12 +81,18 @@ const windowOf = Effect.fn("windowOf")(function* windowOf(days: number) {
   };
 });
 
-const fetchToken = Effect.tryPromise({
-  try: () => env.WEB_ANALYTICS_TOKEN.fetch(TOKEN_URL),
-  catch: fail,
-}).pipe(
-  Effect.flatMap((response) => Effect.tryPromise({ try: () => response.text(), catch: fail })),
-);
+export type AnalyticsBindings = Readonly<{
+  WEB_ANALYTICS_TOKEN: Readonly<{ fetch: (url: string) => Promise<Response> }>;
+  CLOUDFLARE_ACCOUNT_ID: string;
+}>;
+
+const fetchToken = (bindings: AnalyticsBindings): Effect.Effect<string, UpstreamFailed> =>
+  Effect.tryPromise({
+    try: () => bindings.WEB_ANALYTICS_TOKEN.fetch(TOKEN_URL),
+    catch: fail,
+  }).pipe(
+    Effect.flatMap((response) => Effect.tryPromise({ try: () => response.text(), catch: fail })),
+  );
 
 const messagesOf = (errors: typeof GraphqlErrors.Type | undefined): string =>
   pipe(
@@ -96,20 +101,23 @@ const messagesOf = (errors: typeof GraphqlErrors.Type | undefined): string =>
     Arr.join("; "),
   );
 
-const readReport = Effect.fn("readReport")(function* readReport(query: Query) {
+const readReport = Effect.fn("readReport")(function* readReport(
+  bindings: AnalyticsBindings,
+  query: Query,
+) {
   const window = yield* windowOf(query.days);
   const site = [{ requestHost: HOST }, window];
   const page = Option.match(query.path, {
     onNone: () => site,
     onSome: (requestPath) => [...site, { requestPath }],
   });
-  const token = yield* fetchToken;
+  const token = yield* fetchToken(bindings);
   const client = yield* HttpClient.HttpClient;
   const request = HttpClientRequest.post(GRAPHQL_URL).pipe(
     HttpClientRequest.bearerToken(token),
     HttpClientRequest.bodyJsonUnsafe({
       query: REPORT,
-      variables: { account: env.CLOUDFLARE_ACCOUNT_ID, site, page },
+      variables: { account: bindings.CLOUDFLARE_ACCOUNT_ID, site, page },
     }),
   );
   const { data, errors } = yield* client
@@ -135,19 +143,21 @@ const readReport = Effect.fn("readReport")(function* readReport(query: Query) {
 
 const runHttpTool = runToolIn(FetchHttpClient.layer);
 
-export const registerAnalyticsTools = (server: McpServer): McpServer => {
-  server.registerTool(
-    "read_web_analytics",
-    {
-      description: DESCRIPTION,
-      inputSchema: compactInput(INPUT_SCHEMA),
-      annotations: READ_ONLY,
-    },
-    (input) =>
-      readReport({
-        path: Option.fromNullishOr(input.path),
-        days: input.days ?? DEFAULT_DAYS,
-      }).pipe(runHttpTool({ count: (report) => report.byPath.length })),
-  );
-  return server;
-};
+export const registerAnalyticsTools =
+  (bindings: AnalyticsBindings) =>
+  (server: McpServer): McpServer => {
+    server.registerTool(
+      "read_web_analytics",
+      {
+        description: DESCRIPTION,
+        inputSchema: compactInput(INPUT_SCHEMA),
+        annotations: READ_ONLY,
+      },
+      (input) =>
+        readReport(bindings, {
+          path: Option.fromNullishOr(input.path),
+          days: input.days ?? DEFAULT_DAYS,
+        }).pipe(runHttpTool({ count: (report) => report.byPath.length })),
+    );
+    return server;
+  };

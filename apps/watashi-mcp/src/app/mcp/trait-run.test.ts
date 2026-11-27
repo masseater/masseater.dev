@@ -1,7 +1,6 @@
 import { compile } from "@earendil-works/pi-schema";
 import { afterAll, expect, it } from "@effect/vitest";
 import { Array as Arr, Effect, Option, Schema, pipe } from "effect";
-import { vi } from "vite-plus/test";
 
 import { profileTraits } from "#/entities/trait/index.server.ts";
 import {
@@ -14,9 +13,7 @@ import { watashiProfile, writeMemory } from "#/features/manage-memory/index.test
 import { encodeJson } from "#/shared/db/index.server.ts";
 
 import { pastBudget, settle } from "./trait-build.test.support.ts";
-import { closeDatabase, resetDatabase } from "./trait.test.support.ts";
-
-vi.mock("cloudflare:workers", () => import("./trait.test.support.ts"));
+import { closeDatabase, resetDatabase, provided } from "./trait.test.support.ts";
 
 afterAll(() => Effect.runPromise(closeDatabase));
 
@@ -156,33 +153,35 @@ const setUp = resetDatabase.pipe(
 );
 
 it.effect("会話の最後の正しい記録の呼び出しから特性を作る", () =>
-  Effect.gen(function* recordsFromTranscript() {
-    yield* setUp;
-    const { conversation, resets } = fake((input) => [
-      { kind: "pi.user", model: [{ role: "user", content: input }] },
-      assistant([call({ observations: [{ action: "new" }] })]),
-      recorded,
-    ]);
-    const summary = yield* buildTraits({ conversation, translator, ai });
-    expect(summary).toStrictEqual({
-      steps: ONCE,
-      idle: true,
-      translated: ONCE,
-      profile: "written",
-    });
-    expect(resets()).toBe(ONCE);
-    const traits = yield* profileTraits({ scope: Option.none(), topic: Option.none() });
-    expect(traits).toMatchObject({
-      stack: [{ statement: "Use Neovim as the editor.", ja: { statement: JAPANESE } }],
-    });
-    const again = yield* buildTraits({ conversation, translator, ai });
-    expect(again).toStrictEqual({
-      steps: NONE,
-      idle: true,
-      translated: NONE,
-      profile: "unchanged",
-    });
-  }),
+  provided(
+    Effect.gen(function* recordsFromTranscript() {
+      yield* setUp;
+      const { conversation, resets } = fake((input) => [
+        { kind: "pi.user", model: [{ role: "user", content: input }] },
+        assistant([call({ observations: [{ action: "new" }] })]),
+        recorded,
+      ]);
+      const summary = yield* buildTraits({ conversation, translator, ai });
+      expect(summary).toStrictEqual({
+        steps: ONCE,
+        idle: true,
+        translated: ONCE,
+        profile: "written",
+      });
+      expect(resets()).toBe(ONCE);
+      const traits = yield* profileTraits({ scope: Option.none(), topic: Option.none() });
+      expect(traits).toMatchObject({
+        stack: [{ statement: "Use Neovim as the editor.", ja: { statement: JAPANESE } }],
+      });
+      const again = yield* buildTraits({ conversation, translator, ai });
+      expect(again).toStrictEqual({
+        steps: NONE,
+        idle: true,
+        translated: NONE,
+        profile: "unchanged",
+      });
+    }),
+  ),
 );
 
 const silent = fake(() => [assistant([{ type: "text", text: "done" }])]);
@@ -192,23 +191,25 @@ const retried = fake(() => [recorded]);
 const WRITTEN = { steps: ONCE, idle: true, translated: ONCE, profile: "written" };
 
 it.effect("記録の呼び出しが無ければ失敗し、源を読んだ印を進めないが、人物像は作る", () =>
-  Effect.gen(function* failsWithoutCall() {
-    yield* setUp;
-    const before = asked.merges;
-    const failure = yield* Effect.flip(
-      buildTraits({ conversation: silent.conversation, translator, ai }),
-    );
-    expect(failure).toMatchObject({
-      _tag: "AnalystFailed",
-      message: "no record_observations call (done ): stop=none parts=text",
-    });
-    expect(asked.merges).toBe(before + ONCE);
-    const summary = yield* buildTraits({ conversation: retried.conversation, translator, ai });
-    expect(summary).toStrictEqual(WRITTEN);
-    const profile = yield* watashiProfile({});
-    expect(profile).toContain("## How to work with me\n- Always use Neovim as the editor. [1]");
-    expect(profile).toContain("- Never use Python. [1]");
-  }),
+  provided(
+    Effect.gen(function* failsWithoutCall() {
+      yield* setUp;
+      const before = asked.merges;
+      const failure = yield* Effect.flip(
+        buildTraits({ conversation: silent.conversation, translator, ai }),
+      );
+      expect(failure).toMatchObject({
+        _tag: "AnalystFailed",
+        message: "no record_observations call (done ): stop=none parts=text",
+      });
+      expect(asked.merges).toBe(before + ONCE);
+      const summary = yield* buildTraits({ conversation: retried.conversation, translator, ai });
+      expect(summary).toStrictEqual(WRITTEN);
+      const profile = yield* watashiProfile({});
+      expect(profile).toContain("## How to work with me\n- Always use Neovim as the editor. [1]");
+      expect(profile).toContain("- Never use Python. [1]");
+    }),
+  ),
 );
 
 const nothingFound = assistant([call({ observations: [] })]);
@@ -218,34 +219,38 @@ const refusing = {
 };
 
 it.effect("作るのに時間を使い切っても、前の回に作った特性を先に訳す", () =>
-  Effect.gen(function* translatesBeforeBuilding() {
-    yield* setUp;
-    const first = fake(() => [recorded]);
-    yield* Effect.flip(buildTraits({ conversation: first.conversation, translator: refusing, ai }));
-    yield* writeMemory({ actor: "test" })({
-      project: "assistant",
-      name: "terminal",
-      description: "端末",
-      content: "端末は Ghostty を使う",
-    });
-    yield* settle;
-    const services = yield* Effect.context();
-    const slow: Conversation = {
-      pickModel: () => Promise.resolve(),
-      reset: () => Promise.resolve(),
-      prompt: () =>
-        Effect.runPromiseWith(services)(
-          pastBudget.pipe(Effect.as({ status: "done", messages: [nothingFound] })),
-        ),
-    };
-    const summary = yield* buildTraits({ conversation: slow, translator, ai });
-    expect(summary).toStrictEqual({
-      steps: ONCE,
-      idle: false,
-      translated: ONCE,
-      profile: "written",
-    });
-  }),
+  provided(
+    Effect.gen(function* translatesBeforeBuilding() {
+      yield* setUp;
+      const first = fake(() => [recorded]);
+      yield* Effect.flip(
+        buildTraits({ conversation: first.conversation, translator: refusing, ai }),
+      );
+      yield* writeMemory({ actor: "test" })({
+        project: "assistant",
+        name: "terminal",
+        description: "端末",
+        content: "端末は Ghostty を使う",
+      });
+      yield* settle;
+      const services = yield* Effect.context();
+      const slow: Conversation = {
+        pickModel: () => Promise.resolve(),
+        reset: () => Promise.resolve(),
+        prompt: () =>
+          Effect.runPromiseWith(services)(
+            pastBudget.pipe(Effect.as({ status: "done", messages: [nothingFound] })),
+          ),
+      };
+      const summary = yield* buildTraits({ conversation: slow, translator, ai });
+      expect(summary).toStrictEqual({
+        steps: ONCE,
+        idle: false,
+        translated: ONCE,
+        profile: "written",
+      });
+    }),
+  ),
 );
 
 it("記録の道具の引数は、Pi の検査でも Effect Schema と同じ形だけを通す", () => {

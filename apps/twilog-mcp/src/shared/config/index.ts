@@ -7,3 +7,4 @@ export const MCP_URL = `https://${SITE_HOST}${MCP_PATH}`;
 export const SERVER_NAME = "twilog";
 
 export const TOOL_CALL_DATASET = "masseater_dev_twilog_tool_calls";
+export type { AppEnv } from "./app-env.ts";

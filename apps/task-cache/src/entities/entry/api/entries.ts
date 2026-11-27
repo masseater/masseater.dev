@@ -1,12 +1,12 @@
-import { env } from "cloudflare:workers";
 import { and, asc, desc, eq, inArray, lt, sum } from "drizzle-orm";
-import { drizzle } from "drizzle-orm/d1";
 import { Array as Arr, Effect, Option, pipe } from "effect";
 import { Base64 } from "effect/encoding";
 
 import { entries } from "#/entities/entry/model/entries.table.ts";
 import { Limits } from "#/shared/config/index.ts";
 import { byteLength, fromBase64, joined } from "#/shared/lib/bytes.ts";
+import { inBucket, queried } from "#/shared/lib/cache-store.ts";
+import type { CacheStore, StoredObject } from "#/shared/lib/cache-store.ts";
 import { StoreFailed, storeFailed } from "#/shared/lib/store-failed.ts";
 
 export type Entry = typeof entries.$inferSelect;
@@ -27,8 +27,6 @@ export interface Blob {
 const REMOVAL_BATCH = 90;
 const NOTHING = 0;
 const NO_CHUNKS: readonly Uint8Array[] = [];
-
-const db = drizzle(env.DB);
 
 const sized = {
   id: entries.id,
@@ -57,12 +55,9 @@ export const blobIdOf = (entry: Pick<Entry, "blobBytes" | "id" | "key">): Option
     Option.map(() => `${String(entry.id)}-${entry.key}`),
   );
 
-const queried = <Found>(query: () => Promise<Found>): Effect.Effect<Found, StoreFailed> =>
-  Effect.tryPromise({ try: query, catch: storeFailed });
-
 export const newest = Effect.fn("entries.newest")(function* newest(namespace: string, key: string) {
   const { entriesPerKey } = yield* Limits;
-  return yield* queried(() =>
+  return yield* queried((db) =>
     db
       .select()
       .from(entries)
@@ -78,7 +73,7 @@ export const entryOf = Effect.fn("entries.entryOf")(function* entryOf(
   namespace: string,
   { id, key }: BlobRef,
 ) {
-  const found = yield* queried(() =>
+  const found = yield* queried((db) =>
     db
       .select()
       .from(entries)
@@ -90,19 +85,24 @@ export const entryOf = Effect.fn("entries.entryOf")(function* entryOf(
 const objectRange = (
   object: string,
   range: Readonly<{ offset: number; length: number }>,
-): Effect.Effect<Option.Option<R2ObjectBody>, StoreFailed> =>
-  queried(() => env.BUCKET.get(object, { range })).pipe(Effect.map(Option.fromNullishOr));
+): Effect.Effect<Option.Option<StoredObject>, StoreFailed, CacheStore> =>
+  inBucket((bucket) => bucket.get(object, { range })).pipe(Effect.map(Option.fromNullishOr));
 
 const storedValue = Effect.fn("entries.storedValue")(function* storedValue(entry: Entry) {
   const found = yield* objectRange(objectOf(entry), { offset: NOTHING, length: entry.valueBytes });
   if (Option.isNone(found)) {
     return Option.none<Uint8Array>();
   }
-  const buffer = yield* queried(() => found.value.arrayBuffer());
+  const buffer = yield* Effect.tryPromise({
+    try: () => found.value.arrayBuffer(),
+    catch: storeFailed,
+  });
   return Option.some(new Uint8Array(buffer));
 });
 
-export const valueOf = (entry: Entry): Effect.Effect<Option.Option<Uint8Array>, StoreFailed> =>
+export const valueOf = (
+  entry: Entry,
+): Effect.Effect<Option.Option<Uint8Array>, StoreFailed, CacheStore> =>
   Option.match(Option.fromNullishOr(entry.value), {
     onNone: () => storedValue(entry),
     onSome: (text) => fromBase64(text).pipe(Effect.asSome),
@@ -154,12 +154,12 @@ export const remove = Effect.fn("entries.remove")(function* remove(victims: read
     victims,
     Arr.map((victim) => victim.id),
   );
-  yield* queried(() => env.BUCKET.delete(objects));
-  yield* queried(() => db.delete(entries).where(inArray(entries.id, ids)));
+  yield* inBucket((bucket) => bucket.delete(objects));
+  yield* queried((db) => db.delete(entries).where(inArray(entries.id, ids)));
 });
 
 const insert = Effect.fn("entries.insert")(function* insert(incoming: Incoming, inline: boolean) {
-  const rows = yield* queried(() =>
+  const rows = yield* queried((db) =>
     db
       .insert(entries)
       .values({
@@ -184,7 +184,7 @@ export const save = Effect.fn("entries.save")(function* save(incoming: Incoming)
   const saved = yield* insert(incoming, inline);
   const content = objectFor(incoming, inline);
   if (Option.isSome(content)) {
-    yield* queried(() => env.BUCKET.put(objectOf(saved), content.value)).pipe(
+    yield* inBucket((bucket) => bucket.put(objectOf(saved), content.value)).pipe(
       Effect.tapError(() => Effect.ignore(remove([saved]))),
     );
   }
@@ -196,7 +196,7 @@ export const dropOverflow = Effect.fn("entries.dropOverflow")(function* dropOver
   key: string,
 ) {
   const { entriesPerKey } = yield* Limits;
-  const overflow = yield* queried(() =>
+  const overflow = yield* queried((db) =>
     db
       .select(sized)
       .from(entries)
@@ -208,8 +208,10 @@ export const dropOverflow = Effect.fn("entries.dropOverflow")(function* dropOver
   yield* remove(overflow);
 });
 
-export const olderThan = (cutoff: number): Effect.Effect<readonly Sized[], StoreFailed> =>
-  queried(() =>
+export const olderThan = (
+  cutoff: number,
+): Effect.Effect<readonly Sized[], StoreFailed, CacheStore> =>
+  queried((db) =>
     db
       .select(sized)
       .from(entries)
@@ -218,14 +220,14 @@ export const olderThan = (cutoff: number): Effect.Effect<readonly Sized[], Store
       .limit(REMOVAL_BATCH),
   );
 
-export const oldest: Effect.Effect<readonly Sized[], StoreFailed> = queried(() =>
+export const oldest: Effect.Effect<readonly Sized[], StoreFailed, CacheStore> = queried((db) =>
   db.select(sized).from(entries).orderBy(asc(entries.id)).limit(REMOVAL_BATCH),
 );
 
 const summed = (total: number | null): number =>
   Option.getOrElse(Option.fromNullishOr(total), () => NOTHING);
 
-export const storedBytes: Effect.Effect<number, StoreFailed> = queried(() =>
+export const storedBytes: Effect.Effect<number, StoreFailed, CacheStore> = queried((db) =>
   db
     .select({
       values: sum(entries.valueBytes).mapWith(Number),

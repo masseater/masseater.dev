@@ -1,4 +1,5 @@
 import { toolCalls } from "@masseater.dev/mcp-tool-call";
+import type { ToolRunner } from "@masseater.dev/mcp-tool-call";
 import { Match } from "effect";
 
 import type { ToolFailure } from "./tool-failure.ts";
@@ -29,6 +30,8 @@ export const describeFailure = Match.type<ToolFailure>().pipe(
   }),
 );
 
-export const { runTool, runToolIn } = toolCalls<ToolFailure>({
+export type ToolRun<Services> = ToolRunner<ToolFailure, Services>;
+
+export const { runToolIn } = toolCalls<ToolFailure>({
   describe: describeFailure,
 });

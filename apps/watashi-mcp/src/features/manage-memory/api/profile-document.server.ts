@@ -8,6 +8,7 @@ import {
   renderUserMd,
 } from "#/entities/owner-profile/index.ts";
 import type { ProfileSection } from "#/entities/owner-profile/index.ts";
+import type { Database } from "#/shared/db/index.server.ts";
 import type { StorageFailed } from "#/shared/db/index.ts";
 
 const NOT_BUILT = `${DOCUMENT_TITLE}\n\nThe profile has not been built yet.\n`;
@@ -20,7 +21,9 @@ export type ProfileDocument = Readonly<{
 
 const EMPTY: ProfileDocument = { builtAt: "", sections: [], sectionsJa: [] };
 
-export const userMd = (scope: Option.Option<string>): Effect.Effect<string, StorageFailed> =>
+export const userMd = (
+  scope: Option.Option<string>,
+): Effect.Effect<string, StorageFailed, Database> =>
   latestProfile.pipe(
     Effect.map(
       Option.match({
@@ -30,15 +33,16 @@ export const userMd = (scope: Option.Option<string>): Effect.Effect<string, Stor
     ),
   );
 
-export const profileDocument: Effect.Effect<ProfileDocument, StorageFailed> = latestProfile.pipe(
-  Effect.map(
-    Option.match({
-      onNone: () => EMPTY,
-      onSome: (row) => ({
-        builtAt: row.builtAt,
-        sections: parseUserMd(row.markdown),
-        sectionsJa: parseUserMd(row.markdownJa),
+export const profileDocument: Effect.Effect<ProfileDocument, StorageFailed, Database> =
+  latestProfile.pipe(
+    Effect.map(
+      Option.match({
+        onNone: () => EMPTY,
+        onSome: (row) => ({
+          builtAt: row.builtAt,
+          sections: parseUserMd(row.markdown),
+          sectionsJa: parseUserMd(row.markdownJa),
+        }),
       }),
-    }),
-  ),
-);
+    ),
+  );

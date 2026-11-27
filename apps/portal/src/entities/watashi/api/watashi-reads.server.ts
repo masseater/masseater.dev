@@ -9,33 +9,35 @@ import { MemoList } from "#/entities/watashi/model/memo.ts";
 import type { MemoValue } from "#/entities/watashi/model/memo.ts";
 import { PersonalTimeline, mergeTimeline } from "#/entities/watashi/model/timeline.ts";
 import type { TimelineEntry } from "#/entities/watashi/model/timeline.ts";
-import type { PortalFailed } from "#/shared/api/index.server.ts";
-import { jsonBody, personal, rpcBody, watashi } from "#/shared/api/index.server.ts";
+import type { PortalFailed, Upstreams } from "#/shared/api/index.server.ts";
+import { jsonBody, personal, rpcBody } from "#/shared/api/index.server.ts";
 
 const LIFE_EVENTS = { record: "life_event", order: "time", limit: 1000 } as const;
 
 const OWNER_VIEW = "owner";
 
-export const timeline: Effect.Effect<readonly TimelineEntry[], PortalFailed> = Effect.all(
-  {
-    events: jsonBody({ schema: PersonalTimeline, call: () => personal("/timeline.json") }),
-    life: rpcBody({ schema: LifePage, call: () => watashi().lifeRead(LIFE_EVENTS) }),
-  },
-  { concurrency: "unbounded" },
-).pipe(Effect.map(({ events, life }) => mergeTimeline({ personal: events, life: life.items })));
+export const timeline: Effect.Effect<readonly TimelineEntry[], PortalFailed, Upstreams> =
+  Effect.all(
+    {
+      events: jsonBody({ schema: PersonalTimeline, call: personal("/timeline.json") }),
+      life: rpcBody({ schema: LifePage, call: ({ WATASHI }) => WATASHI.lifeRead(LIFE_EVENTS) }),
+    },
+    { concurrency: "unbounded" },
+  ).pipe(Effect.map(({ events, life }) => mergeTimeline({ personal: events, life: life.items })));
 
 export const memoDetail = (
   key: MemoKeyValue,
 ): Effect.Effect<
   Readonly<{ memo: readonly MemoValue[]; revisions: readonly RevisionValue[] }>,
-  PortalFailed
+  PortalFailed,
+  Upstreams
 > =>
   Effect.all(
     {
-      found: rpcBody({ schema: MemoList, call: () => watashi().memoryRead(key) }),
+      found: rpcBody({ schema: MemoList, call: ({ WATASHI }) => WATASHI.memoryRead(key) }),
       history: rpcBody({
         schema: Revisions,
-        call: () => watashi().memoryRead({ ...key, revisions: true }),
+        call: ({ WATASHI }) => WATASHI.memoryRead({ ...key, revisions: true }),
       }),
     },
     { concurrency: "unbounded" },
@@ -43,8 +45,8 @@ export const memoDetail = (
 
 export const conversation = (
   page: Readonly<{ sessionId: string; cursor?: number }>,
-): Effect.Effect<ConversationValue, PortalFailed> =>
+): Effect.Effect<ConversationValue, PortalFailed, Upstreams> =>
   rpcBody({
     schema: Conversation,
-    call: () => watashi().conversationRead({ ...page, view: OWNER_VIEW }),
+    call: ({ WATASHI }) => WATASHI.conversationRead({ ...page, view: OWNER_VIEW }),
   });

@@ -12,7 +12,8 @@ import {
 
 import type { Body } from "#/entities/life-record/@x/memory.ts";
 import { timeOut } from "#/entities/life-record/@x/memory.ts";
-import { db, anyTermMatches, query, termsOf } from "#/shared/db/index.server.ts";
+import type { Database } from "#/shared/db/index.server.ts";
+import { anyTermMatches, query, termsOf } from "#/shared/db/index.server.ts";
 import { memory } from "#/shared/db/index.ts";
 import type { Memory, StorageFailed } from "#/shared/db/index.ts";
 
@@ -87,8 +88,8 @@ const scoreOf =
 export const findMemory = ({
   project,
   name,
-}: MemoryKey): Effect.Effect<Option.Option<Memory>, StorageFailed> =>
-  query(() =>
+}: MemoryKey): Effect.Effect<Option.Option<Memory>, StorageFailed, Database> =>
+  query((db) =>
     db
       .select()
       .from(memory)
@@ -100,7 +101,7 @@ export const searchMemories = ({
   query: text,
   project,
   limit,
-}: MemoryQuery): Effect.Effect<readonly Memory[], StorageFailed> => {
+}: MemoryQuery): Effect.Effect<readonly Memory[], StorageFailed, Database> => {
   const terms = termsOf(text);
   const conditions = [
     eq(memory.retractedAt, NOT_RETRACTED),
@@ -117,7 +118,7 @@ export const searchMemories = ({
       ])(terms),
     ),
   ];
-  return query(() =>
+  return query((db) =>
     db
       .select()
       .from(memory)

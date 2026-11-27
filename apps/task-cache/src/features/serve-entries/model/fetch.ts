@@ -5,6 +5,7 @@ import type { Entry } from "#/entities/entry/index.ts";
 import { spendObjectReads } from "#/entities/spending/index.ts";
 import { Limits } from "#/shared/config/index.ts";
 import { digestOf } from "#/shared/lib/bytes.ts";
+import type { CacheStore } from "#/shared/lib/cache-store.ts";
 import { decodeLookup, encodeCandidates } from "#/shared/lib/envelope.ts";
 import type { Candidate } from "#/shared/lib/envelope.ts";
 import { STATUS, cbor, status } from "#/shared/lib/responses.ts";
@@ -38,7 +39,9 @@ const readable = Effect.fn("serveEntries.readable")(function* readable(found: re
   return inline;
 });
 
-const candidateOf = (entry: Entry): Effect.Effect<Option.Option<Candidate>, StoreFailed> =>
+const candidateOf = (
+  entry: Entry,
+): Effect.Effect<Option.Option<Candidate>, StoreFailed, CacheStore> =>
   valueOf(entry).pipe(
     Effect.map(Option.map((value): Candidate => ({ value, blobId: blobIdOf(entry) }))),
   );

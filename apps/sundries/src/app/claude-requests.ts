@@ -6,7 +6,7 @@ import { runner } from "@r_masseater/workers-tracing/effect";
 import { WorkerEntrypoint } from "cloudflare:workers";
 import { Effect, Logger } from "effect";
 
-import { enqueue, wakeProject } from "#/features/request-claude/index.ts";
+import { enqueue, provideRequests, wakeProject } from "#/features/request-claude/index.ts";
 import type { Woken } from "#/features/request-claude/index.ts";
 
 const runLogged = runner(Logger.layer([Logger.withLeveledConsole(Logger.formatStructured)]));
@@ -17,6 +17,7 @@ export class ClaudeRequests extends WorkerEntrypoint implements ClaudeRequestsRp
       enqueue(request).pipe(
         Effect.zipWith(wakeProject, ({ id }, woke) => ({ id, woke })),
         Effect.orDie,
+        provideRequests(this.env),
         Effect.annotateLogs({ entrypoint: this.ctx.props }),
       ),
     );

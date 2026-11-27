@@ -35,16 +35,13 @@ export const testRules = {
 const NO_FLAKE_MASKING =
   "再試行や flakyTest で不安定なテストを隠さない。待つ対象のイベントを await して直す";
 
-const PLATFORM_MODULE = "cloudflare:workers";
-
 export const testDoubleSyntax: readonly Readonly<{ selector: string; message: string }>[] = [
   {
-    selector: `CallExpression[callee.object.name="vi"][callee.property.name=/^(mock|doMock)$/]:not([arguments.0.value="${PLATFORM_MODULE}"])`,
+    selector: 'CallExpression[callee.object.name="vi"][callee.property.name=/^(mock|doMock)$/]',
     message: NO_TEST_DOUBLES,
   },
   {
-    selector:
-      'CallExpression[callee.object.name="vi"][callee.property.name="stubGlobal"][arguments.0.value="fetch"]',
+    selector: 'CallExpression[callee.object.name="vi"][callee.property.name="stubGlobal"]',
     message: NO_TEST_DOUBLES,
   },
 ];

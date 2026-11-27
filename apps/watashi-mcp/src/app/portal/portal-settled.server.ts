@@ -16,7 +16,9 @@ const failedWith =
 
 export const settled =
   (operation: string) =>
-  (run: Effect.Effect<unknown, ToolFailure>): Effect.Effect<PortalResult> =>
+  <Services>(
+    run: Effect.Effect<unknown, ToolFailure, Services>,
+  ): Effect.Effect<PortalResult, never, Services> =>
     run.pipe(
       Effect.mapError(describeFailure),
       Effect.matchEffect({

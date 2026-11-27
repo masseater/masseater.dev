@@ -1,6 +1,5 @@
 import { afterAll, expect, it } from "@effect/vitest";
 import { Effect } from "effect";
-import { vi } from "vite-plus/test";
 
 import { revokeToken } from "#/features/issue-tokens/index.server.ts";
 import { mintToken } from "#/features/issue-tokens/index.test.support.ts";
@@ -8,14 +7,14 @@ import { mintToken } from "#/features/issue-tokens/index.test.support.ts";
 import { serveConversations } from "./conversation-api.server.ts";
 import {
   closeDatabase,
-  env,
   objects,
   points,
   refusedPuts,
   resetDatabase,
+  provided,
+  sql,
+  gate,
 } from "./upload.test.support.ts";
-
-vi.mock("cloudflare:workers", () => import("./upload.test.support.ts"));
 
 afterAll(() => Effect.runPromise(closeDatabase));
 
@@ -43,16 +42,13 @@ BEGIN SELECT RAISE(ABORT, 'refused by the test'); END`;
 
 type Reply = Readonly<{ status: number; body: unknown }>;
 
-const sql = (statement: string): Effect.Effect<unknown> =>
-  Effect.promise(() => env.DB.prepare(statement).run());
-
 const replyOf = (response: Response): Effect.Effect<Reply> =>
   Effect.promise(() => response.json()).pipe(
     Effect.map((body) => ({ status: response.status, body })),
   );
 
 const send = (request: Request): Effect.Effect<Reply> =>
-  Effect.promise(() => serveConversations(request)).pipe(Effect.flatMap(replyOf));
+  Effect.promise(() => serveConversations(gate)(request)).pipe(Effect.flatMap(replyOf));
 
 const authorized = (token: string): HeadersInit => ({ authorization: `Bearer ${token}` });
 
@@ -77,62 +73,74 @@ const issued = Effect.sync(() => {
 );
 
 it.effect("知らないトークンは 401 で断る", () =>
-  Effect.gen(function* refusesUnknownToken() {
-    yield* issued;
-    const reply = yield* offsetWith("wat_unknown");
-    expect(reply).toStrictEqual({ status: UNAUTHORIZED, body: { error: "invalid token" } });
-  }),
+  provided(
+    Effect.gen(function* refusesUnknownToken() {
+      yield* issued;
+      const reply = yield* offsetWith("wat_unknown");
+      expect(reply).toStrictEqual({ status: UNAUTHORIZED, body: { error: "invalid token" } });
+    }),
+  ),
 );
 
 it.effect("取り消したトークンは 401 で断る", () =>
-  Effect.gen(function* refusesRevokedToken() {
-    const { id, token } = yield* issued;
-    yield* revokeToken(new Request(`https://watashi.masseater.dev/api/tokens?id=${id}`));
-    const reply = yield* offsetWith(token);
-    expect(reply).toStrictEqual({ status: UNAUTHORIZED, body: { error: "invalid token" } });
-  }),
+  provided(
+    Effect.gen(function* refusesRevokedToken() {
+      const { id, token } = yield* issued;
+      yield* revokeToken(new Request(`https://watashi.masseater.dev/api/tokens?id=${id}`));
+      const reply = yield* offsetWith(token);
+      expect(reply).toStrictEqual({ status: UNAUTHORIZED, body: { error: "invalid token" } });
+    }),
+  ),
 );
 
 it.effect("有効なトークンは通し、保存済みの末尾を返す", () =>
-  Effect.gen(function* acceptsToken() {
-    const { token } = yield* issued;
-    const before = yield* offsetWith(token);
-    expect(before).toStrictEqual({ status: OK, body: { committed: FIRST.start } });
-    const stored = yield* send(chunk(token, FIRST));
-    expect(stored).toStrictEqual({ status: OK, body: { committed: FIRST.end } });
-    expect([...objects.keys()]).toStrictEqual([FIRST_OBJECT]);
-  }),
+  provided(
+    Effect.gen(function* acceptsToken() {
+      const { token } = yield* issued;
+      const before = yield* offsetWith(token);
+      expect(before).toStrictEqual({ status: OK, body: { committed: FIRST.start } });
+      const stored = yield* send(chunk(token, FIRST));
+      expect(stored).toStrictEqual({ status: OK, body: { committed: FIRST.end } });
+      expect([...objects.keys()]).toStrictEqual([FIRST_OBJECT]);
+    }),
+  ),
 );
 
 it.effect("start が保存済みの末尾と違えば、409 で末尾を返す", () =>
-  Effect.gen(function* refusesWrongOffset() {
-    const { token } = yield* issued;
-    yield* send(chunk(token, FIRST));
-    const again = yield* send(chunk(token, FIRST));
-    expect(again).toStrictEqual({ status: CONFLICT, body: { expected: FIRST.end } });
-    expect(objects.size).toBe(ONE_OBJECT);
-  }),
+  provided(
+    Effect.gen(function* refusesWrongOffset() {
+      const { token } = yield* issued;
+      yield* send(chunk(token, FIRST));
+      const again = yield* send(chunk(token, FIRST));
+      expect(again).toStrictEqual({ status: CONFLICT, body: { expected: FIRST.end } });
+      expect(objects.size).toBe(ONE_OBJECT);
+    }),
+  ),
 );
 
 it.effect("R2 に置けなければ storage failed を返し、何も確定しない", () =>
-  Effect.gen(function* reportsPutFailure() {
-    const { token } = yield* issued;
-    refusedPuts.add(FIRST_OBJECT);
-    const reply = yield* send(chunk(token, FIRST));
-    expect(reply).toStrictEqual({ status: SERVER_ERROR, body: { error: "storage failed" } });
-    expect(points.at(LAST)).toMatchObject({ indexes: ["error"] });
-    const after = yield* offsetWith(token);
-    expect(after).toStrictEqual({ status: OK, body: { committed: FIRST.start } });
-  }),
+  provided(
+    Effect.gen(function* reportsPutFailure() {
+      const { token } = yield* issued;
+      refusedPuts.add(FIRST_OBJECT);
+      const reply = yield* send(chunk(token, FIRST));
+      expect(reply).toStrictEqual({ status: SERVER_ERROR, body: { error: "storage failed" } });
+      expect(points.at(LAST)).toMatchObject({ indexes: ["error"] });
+      const after = yield* offsetWith(token);
+      expect(after).toStrictEqual({ status: OK, body: { committed: FIRST.start } });
+    }),
+  ),
 );
 
 it.effect("D1 に記録できなければ、置いたオブジェクトを消す", () =>
-  Effect.gen(function* discardsOrphan() {
-    const { token } = yield* issued;
-    yield* sql(REFUSE_CHUNKS);
-    const reply = yield* send(chunk(token, FIRST));
-    yield* sql("DROP TRIGGER refuse_chunks");
-    expect(reply).toStrictEqual({ status: SERVER_ERROR, body: { error: "storage failed" } });
-    expect(objects.size).toBe(NO_OBJECTS);
-  }),
+  provided(
+    Effect.gen(function* discardsOrphan() {
+      const { token } = yield* issued;
+      yield* sql(REFUSE_CHUNKS);
+      const reply = yield* send(chunk(token, FIRST));
+      yield* sql("DROP TRIGGER refuse_chunks");
+      expect(reply).toStrictEqual({ status: SERVER_ERROR, body: { error: "storage failed" } });
+      expect(objects.size).toBe(NO_OBJECTS);
+    }),
+  ),
 );

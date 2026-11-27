@@ -1,15 +1,13 @@
 import { describe, expect, it } from "@effect/vitest";
 import { Effect, MutableRef, Option, Schema } from "effect";
-import { afterAll, beforeEach, vi } from "vite-plus/test";
+import { afterAll, beforeEach } from "vite-plus/test";
 
 import { ResearchAsk, ResearchRequest, SessionRecord } from "#/shared/api/index.ts";
 import type { RecordedSession } from "#/shared/api/index.ts";
-import { closeDatabase, resetDatabase } from "#/shared/lib/d1.test.support.ts";
 
 import { researched } from "./research-memory.ts";
 import { sessionRoutes } from "./session-routes.ts";
-
-vi.mock("cloudflare:workers", () => import("#/shared/lib/d1.test.support.ts"));
+import { closeDatabase, resetDatabase, withSessions } from "./sessions.test.support.ts";
 
 const ORIGIN = "https://kikite.test";
 const ID = "0b6f7c1e-2f3a-4d5b-8c9d-0e1f2a3b4c5d";
@@ -51,8 +49,14 @@ const forwardedText = Effect.suspend(() => Effect.fromOption(MutableRef.get(forw
   Effect.flatMap((next) => Effect.promise(() => next.text())),
 );
 
+const researchRequest = (body: string): Request =>
+  new Request(`${ORIGIN}/api/research`, { method: "POST", body });
+
+const sessionRequest = (body: string): Request =>
+  new Request(`${ORIGIN}/api/sessions/${ID}`, { method: "PUT", body });
+
 const ask = (body: string): Effect.Effect<Response> =>
-  researched(forward)(new Request(`${ORIGIN}/api/research`, { method: "POST", body }));
+  withSessions(researched(forward)(researchRequest(body)));
 
 beforeEach(() => Effect.runPromise(resetDatabase));
 afterAll(() => Effect.runPromise(closeDatabase));
@@ -61,7 +65,7 @@ describe("research memory", () => {
   it.effect("hands the researcher what past sessions were about", () =>
     Effect.gen(function* test() {
       const body = yield* encodeRecord(PAST);
-      yield* sessionRoutes(new Request(`${ORIGIN}/api/sessions/${ID}`, { method: "PUT", body }));
+      yield* withSessions(sessionRoutes(sessionRequest(body)));
       const question = yield* encodeAsk(ASK);
       const response = yield* ask(question);
       expect(response.status).toBe(OK);

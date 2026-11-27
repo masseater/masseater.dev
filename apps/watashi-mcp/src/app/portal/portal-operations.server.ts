@@ -6,18 +6,22 @@ import { MemoryReadInput, MemoryWriteInput } from "#/entities/memory/index.ts";
 import { profileDocument, readMemory, writeMemory } from "#/features/manage-memory/index.server.ts";
 import { routeLifeRead } from "#/features/record-life/index.server.ts";
 import type { ToolFailure } from "#/shared/api/index.ts";
+import type { Database } from "#/shared/db/index.server.ts";
 
 import { decoded } from "./portal-decode.ts";
 
 const ownerWrite = writeMemory({ actor: PORTAL_ACTOR });
 
-export const lifeRead: (input: unknown) => Effect.Effect<unknown, ToolFailure> = (input) =>
-  decoded(LifeReadInput)(input).pipe(Effect.flatMap(routeLifeRead));
+export const lifeRead: (input: unknown) => Effect.Effect<unknown, ToolFailure, Database> = (
+  input,
+) => decoded(LifeReadInput)(input).pipe(Effect.flatMap(routeLifeRead));
 
-export const memoryRead: (input: unknown) => Effect.Effect<unknown, ToolFailure> = (input) =>
-  decoded(MemoryReadInput)(input).pipe(Effect.flatMap(readMemory));
+export const memoryRead: (input: unknown) => Effect.Effect<unknown, ToolFailure, Database> = (
+  input,
+) => decoded(MemoryReadInput)(input).pipe(Effect.flatMap(readMemory));
 
-export const memoryWrite: (input: unknown) => Effect.Effect<unknown, ToolFailure> = (input) =>
-  decoded(MemoryWriteInput)(input).pipe(Effect.flatMap(ownerWrite));
+export const memoryWrite: (input: unknown) => Effect.Effect<unknown, ToolFailure, Database> = (
+  input,
+) => decoded(MemoryWriteInput)(input).pipe(Effect.flatMap(ownerWrite));
 
-export const profile: Effect.Effect<unknown, ToolFailure> = profileDocument;
+export const profile: Effect.Effect<unknown, ToolFailure, Database> = profileDocument;

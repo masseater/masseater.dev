@@ -1,6 +1,7 @@
 import { Effect } from "effect";
 
-import { catalogDb } from "#/shared/db/index.server.ts";
+import { fromCatalog } from "#/shared/db/index.server.ts";
+import type { CatalogDb } from "#/shared/db/index.server.ts";
 import { resetDatabase } from "#/shared/db/index.test.support.ts";
 import { part, partStaff, person, song, video } from "#/shared/db/index.ts";
 
@@ -27,14 +28,14 @@ const THIRD = 3;
 
 export const thumbnailOf = (title: string): string => `https://example.com/thumbnail/${title}.jpg`;
 
-const addSong = (title: string): Effect.Effect<number> =>
-  Effect.promise(() =>
-    catalogDb.insert(song).values({ title, artist: "作者" }).returning({ id: song.id }).get(),
+const addSong = (title: string): Effect.Effect<number, never, CatalogDb> =>
+  fromCatalog((db) =>
+    db.insert(song).values({ title, artist: "作者" }).returning({ id: song.id }).get(),
   ).pipe(Effect.map((row) => row.id));
 
-const addVideo = (title: string): Effect.Effect<number> =>
-  Effect.promise(() =>
-    catalogDb
+const addVideo = (title: string): Effect.Effect<number, never, CatalogDb> =>
+  fromCatalog((db) =>
+    db
       .insert(video)
       .values({
         title,
@@ -46,13 +47,13 @@ const addVideo = (title: string): Effect.Effect<number> =>
       .get(),
   ).pipe(Effect.map((row) => row.id));
 
-const addPerson = (name: string): Effect.Effect<number> =>
-  Effect.promise(() =>
-    catalogDb.insert(person).values({ name }).returning({ id: person.id }).get(),
-  ).pipe(Effect.map((row) => row.id));
+const addPerson = (name: string): Effect.Effect<number, never, CatalogDb> =>
+  fromCatalog((db) => db.insert(person).values({ name }).returning({ id: person.id }).get()).pipe(
+    Effect.map((row) => row.id),
+  );
 
-const addPart = (placed: Placed): Effect.Effect<number> =>
-  Effect.promise(() => catalogDb.insert(part).values(placed).returning({ id: part.id }).get()).pipe(
+const addPart = (placed: Placed): Effect.Effect<number, never, CatalogDb> =>
+  fromCatalog((db) => db.insert(part).values(placed).returning({ id: part.id }).get()).pipe(
     Effect.map((row) => row.id),
   );
 
@@ -86,7 +87,7 @@ const seedPeople = Effect.all(
   { concurrency: 1 },
 );
 
-const seedParts = (songs: Songs, videos: Videos): Effect.Effect<Parts> =>
+const seedParts = (songs: Songs, videos: Videos): Effect.Effect<Parts, never, CatalogDb> =>
   Effect.all(
     {
       opening: addPart({ videoId: videos.longLater, position: FIRST, songId: songs.twiceLater }),
@@ -104,9 +105,9 @@ const seedParts = (songs: Songs, videos: Videos): Effect.Effect<Parts> =>
     { concurrency: 1 },
   );
 
-const seedStaff = (parts: Parts, people: People): Effect.Effect<unknown> =>
-  Effect.promise(() =>
-    catalogDb.insert(partStaff).values([
+const seedStaff = (parts: Parts, people: People): Effect.Effect<unknown, never, CatalogDb> =>
+  fromCatalog((db) =>
+    db.insert(partStaff).values([
       { partId: parts.opening, personId: people.doubleLater, role: "audio" },
       { partId: parts.middle, personId: people.doubleLater, role: "audio" },
       { partId: parts.opening, personId: people.doubleEarlier, role: "video" },

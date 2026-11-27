@@ -11,6 +11,7 @@ import {
 import { distance } from "fastest-levenshtein";
 
 import { InvalidRecord } from "#/shared/api/index.ts";
+import type { Database } from "#/shared/db/index.server.ts";
 import type { LifeRecordName, StorageFailed } from "#/shared/db/index.ts";
 
 import { lower, refOf, stringAt } from "./life-record.ts";
@@ -26,7 +27,7 @@ type Definition = "event_kind" | "metric_definition";
 
 export type ValuesCheck = (
   checked: Readonly<{ record: LifeRecordName; body: Body }>,
-) => Effect.Effect<void, InvalidRecord | StorageFailed>;
+) => Effect.Effect<void, InvalidRecord | StorageFailed, Database>;
 
 type Similar = Readonly<{ name: string; description: string }>;
 
@@ -79,7 +80,7 @@ const similarTo =
 
 const registered =
   (writer: Writer, definition: Definition) =>
-  (name: string): Effect.Effect<Notice, StorageFailed> =>
+  (name: string): Effect.Effect<Notice, StorageFailed, Database> =>
     Effect.gen(function* registerDefinition() {
       const existing = yield* scanAll([definition]);
       const id = yield* insertRecord(writer)({
@@ -98,7 +99,7 @@ const registered =
 
 const ensureDefined =
   (writer: Writer, definition: Definition) =>
-  (name: string): Effect.Effect<Option.Option<Notice>, StorageFailed> =>
+  (name: string): Effect.Effect<Option.Option<Notice>, StorageFailed, Database> =>
     findByLabel({ record: definition, label: name }).pipe(
       Effect.flatMap(
         Option.match({
@@ -162,7 +163,7 @@ const validateKind =
 
 const checkKindValues =
   (body: Body) =>
-  (kind: string): Effect.Effect<void, InvalidRecord | StorageFailed> =>
+  (kind: string): Effect.Effect<void, InvalidRecord | StorageFailed, Database> =>
     findByLabel({ record: "event_kind", label: kind }).pipe(
       Effect.flatMap(validateKind(kind, body)),
     );
@@ -179,7 +180,7 @@ export const checkEventValues: ValuesCheck = ({ record, body }) => {
 
 const kindNotices =
   (writer: Writer, body: Body) =>
-  (kind: string): Effect.Effect<readonly Notice[], InvalidRecord | StorageFailed> =>
+  (kind: string): Effect.Effect<readonly Notice[], InvalidRecord | StorageFailed, Database> =>
     checkKindValues(body)(kind).pipe(
       Effect.andThen(ensureDefined(writer, "event_kind")(kind)),
       Effect.map(Option.toArray),
@@ -187,7 +188,7 @@ const kindNotices =
 
 export const vocabularyNotices =
   (writer: Writer) =>
-  (body: Body): Effect.Effect<readonly Notice[], InvalidRecord | StorageFailed> =>
+  (body: Body): Effect.Effect<readonly Notice[], InvalidRecord | StorageFailed, Database> =>
     Effect.gen(function* registerVocabulary() {
       const kinds = yield* pipe(
         stringAt("kind")(body),

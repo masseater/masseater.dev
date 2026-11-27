@@ -1,5 +1,9 @@
 import { makeD1 } from "@masseater.dev/d1-test";
-import { constVoid } from "effect/Function";
+import { Effect, Layer } from "effect";
+
+import type { Services } from "#/entities/ledger/index.server.ts";
+import { services } from "#/shared/api/index.server.ts";
+import { Database, databaseOf } from "#/shared/db/index.server.ts";
 
 const d1 = makeD1({
   migrations: new URL("../../../drizzle/", import.meta.url).href,
@@ -14,7 +18,10 @@ const d1 = makeD1({
 
 export const { closeDatabase, resetDatabase } = d1;
 
-export const env = {
-  DB: d1.env.DB,
-  TOOL_CALLS: { writeDataPoint: constVoid },
-};
+const drizzled = d1.database.pipe(Effect.map(databaseOf));
+
+/** @internal */
+export const moneyLayer: Layer.Layer<Services> = Layer.mergeAll(
+  services,
+  Layer.effect(Database, drizzled),
+);

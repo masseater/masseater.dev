@@ -1,7 +1,7 @@
 import { countDistinct } from "drizzle-orm";
 import { Array, Effect, Option, Order, pipe } from "effect";
 
-import { NO_ROWS, catalogDb, containing } from "#/shared/db/index.server.ts";
+import { NO_ROWS, containing, fromCatalog } from "#/shared/db/index.server.ts";
 import { partStaff } from "#/shared/db/index.ts";
 
 const byCreditsDescending = Order.flip(
@@ -24,15 +24,15 @@ export const listPeople = Effect.fn("catalog.people")(function* listPeople(
   );
   const [people, counts] = yield* Effect.all(
     [
-      Effect.promise(() =>
-        catalogDb.query.person.findMany({
+      fromCatalog((db) =>
+        db.query.person.findMany({
           columns: { id: true, name: true },
           where,
           orderBy: { name: "asc" },
         }),
       ),
-      Effect.promise(() =>
-        catalogDb
+      fromCatalog((db) =>
+        db
           .select({ personId: partStaff.personId, credits: countDistinct(partStaff.id) })
           .from(partStaff)
           .groupBy(partStaff.personId),

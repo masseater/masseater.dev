@@ -1,7 +1,5 @@
-import type { UpstreamFailed } from "@masseater.dev/mcp-tool-call";
 import type { ClaudeRoutine } from "@masseater.dev/repositories/credential-broker";
-import { env } from "cloudflare:workers";
-import { Effect } from "effect";
+import { Context, Effect } from "effect";
 
 import { brokerFailed } from "#/shared/api/index.ts";
 
@@ -9,21 +7,33 @@ export type Routine = Readonly<{ triggerId: string; token: string }>;
 
 export type Woken = Awaited<ReturnType<ClaudeRoutine["fire"]>>;
 
-const broker = (): Service<ClaudeRoutine> => env.CLAUDE_ROUTINE;
+export type RoutineBroker = Readonly<{
+  fire: () => Promise<Woken>;
+  register: (routine: Routine) => Promise<boolean>;
+}>;
 
-export const wakeProject: Effect.Effect<Woken> = Effect.tryPromise({
-  try: () => broker().fire(),
-  catch: brokerFailed,
-}).pipe(
+export class RoutineService extends Context.Service<RoutineService, RoutineBroker>()(
+  "sundries/features/request-claude/api/claude-routine/RoutineService",
+) {}
+
+const fired = Effect.fn("fired")(function* fired() {
+  const broker = yield* RoutineService;
+  return yield* Effect.tryPromise({ try: () => broker.fire(), catch: brokerFailed });
+});
+
+export const wakeProject: Effect.Effect<Woken, never, RoutineService> = fired().pipe(
   Effect.catchCause((cause) =>
     Effect.logWarning("claude_routine.wake_failed", cause).pipe(Effect.as<Woken>("rejected")),
   ),
 );
 
-export const registerRoutine = (
+export const registerRoutine = Effect.fn("registerRoutine")(function* registerRoutine(
   routine: Routine,
-): Effect.Effect<Readonly<{ registered: boolean }>, UpstreamFailed> =>
-  Effect.tryPromise({
-    try: () => broker().register({ triggerId: routine.triggerId, token: routine.token }),
+) {
+  const broker = yield* RoutineService;
+  const registered = yield* Effect.tryPromise({
+    try: () => broker.register({ triggerId: routine.triggerId, token: routine.token }),
     catch: brokerFailed,
-  }).pipe(Effect.map((registered) => ({ registered })));
+  });
+  return { registered };
+});
