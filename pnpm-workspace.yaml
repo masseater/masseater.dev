@@ -54,7 +54,7 @@ catalog:
   "@r_masseater/h56m-presets": 0.2.1
   "@r_masseater/i68": 0.2.0
   "@r_masseater/mapped-import": 0.1.0
-  "@r_masseater/msch": 0.58.0
+  "@r_masseater/msch": 0.58.1
   "@r_masseater/node-main": 0.1.0
   "@r_masseater/song-format": 0.2.0
   "@r_masseater/vite-plus-adopt": 0.14.0
@@ -251,7 +251,6 @@ catalogs:
 overrides:
   "@remotion/tailwind-v4>tailwindcss": "catalog:stack" # exit: npm:@remotion/tailwind-v4 allows tailwindcss@>=4.3.5
   "@remotion/tailwind-v4>@tailwindcss/webpack": 4.3.5 # exit: npm:@remotion/tailwind-v4 allows @tailwindcss/webpack@>=4.3.5
-  "@r_masseater/vite-plus-adopt": 0.14.0 # exit: npm:@r_masseater/msch requires @r_masseater/vite-plus-adopt@>=0.14.0
   "@r_masseater/h56m-presets>@r_masseater/h56m": ^0.3.0 # exit: npm:@r_masseater/h56m-presets requires @r_masseater/h56m@>=0.3.0
   workerd: 1.20261124.2 # exit: npm:miniflare requires workerd@>=1.20261115.1
   vite@*: "catalog:" # exit: unused
