@@ -1,0 +1,8 @@
+{
+  "slug": "shadcn-ui",
+  "title": "shadcn/ui",
+  "kind": "ui",
+  "url": "https://ui.shadcn.com/",
+  "note": "部品を依存として入れず、コードごと自分のプロジェクトに写して使う配り方",
+  "date": "2026-11-28"
+}
