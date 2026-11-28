@@ -12,7 +12,6 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as StageRouteImport } from './routes/_stage'
 import { Route as FeedDotxmlRouteImport } from './routes/feed[.]xml'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
-import { Route as SashiDotjsonRouteImport } from './routes/sashi[.]json'
 import { Route as SloppediaRouteImport } from './routes/sloppedia'
 import { Route as StageIndexRouteImport } from './routes/_stage/index'
 import { Route as StageSiteRouteImport } from './routes/_stage/_site'
@@ -23,7 +22,6 @@ import { Route as SloppediaCategoriesRouteImport } from './routes/sloppedia/cate
 import { Route as StageSiteAiProducedRouteImport } from './routes/_stage/_site/ai-produced'
 import { Route as StageSiteNikogoriRouteImport } from './routes/_stage/_site/nikogori'
 import { Route as StageSiteProjectsRouteImport } from './routes/_stage/_site/projects'
-import { Route as StageSiteSashiRouteImport } from './routes/_stage/_site/sashi'
 import { Route as StageSiteCategoryIndexRouteImport } from './routes/_stage/_site/$category/index'
 import { Route as StageSiteCategorySlugRouteImport } from './routes/_stage/_site/$category/$slug'
 import { Route as StageSiteSeikinTechniquesIndexRouteImport } from './routes/_stage/_site/seikin-techniques/index'
@@ -41,11 +39,6 @@ const FeedDotxmlRoute = FeedDotxmlRouteImport.update({
 const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
   id: '/robots.txt',
   path: '/robots.txt',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SashiDotjsonRoute = SashiDotjsonRouteImport.update({
-  id: '/sashi.json',
-  path: '/sashi.json',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SloppediaRoute = SloppediaRouteImport.update({
@@ -97,11 +90,6 @@ const StageSiteProjectsRoute = StageSiteProjectsRouteImport.update({
   path: '/projects',
   getParentRoute: () => StageSiteRoute,
 } as any)
-const StageSiteSashiRoute = StageSiteSashiRouteImport.update({
-  id: '/sashi',
-  path: '/sashi',
-  getParentRoute: () => StageSiteRoute,
-} as any)
 const StageSiteCategoryIndexRoute = StageSiteCategoryIndexRouteImport.update({
   id: '/$category/',
   path: '/$category/',
@@ -129,7 +117,6 @@ export interface FileRoutesByFullPath {
   '/': typeof StageIndexRoute
   '/feed.xml': typeof FeedDotxmlRoute
   '/robots.txt': typeof RobotsDottxtRoute
-  '/sashi.json': typeof SashiDotjsonRoute
   '/sloppedia': typeof SloppediaRouteWithChildren
   '/ai-produced/$slug': typeof AiProducedSlugRoute
   '/sloppedia/$slug': typeof SloppediaSlugRoute
@@ -138,7 +125,6 @@ export interface FileRoutesByFullPath {
   '/ai-produced': typeof StageSiteAiProducedRoute
   '/nikogori': typeof StageSiteNikogoriRoute
   '/projects': typeof StageSiteProjectsRoute
-  '/sashi': typeof StageSiteSashiRoute
   '/$category/$slug': typeof StageSiteCategorySlugRoute
   '/seikin-techniques/$slug': typeof StageSiteSeikinTechniquesSlugRoute
   '/$category/': typeof StageSiteCategoryIndexRoute
@@ -147,7 +133,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/feed.xml': typeof FeedDotxmlRoute
   '/robots.txt': typeof RobotsDottxtRoute
-  '/sashi.json': typeof SashiDotjsonRoute
   '/': typeof StageIndexRoute
   '/ai-produced/$slug': typeof AiProducedSlugRoute
   '/sloppedia/$slug': typeof SloppediaSlugRoute
@@ -156,7 +141,6 @@ export interface FileRoutesByTo {
   '/ai-produced': typeof StageSiteAiProducedRoute
   '/nikogori': typeof StageSiteNikogoriRoute
   '/projects': typeof StageSiteProjectsRoute
-  '/sashi': typeof StageSiteSashiRoute
   '/$category/$slug': typeof StageSiteCategorySlugRoute
   '/seikin-techniques/$slug': typeof StageSiteSeikinTechniquesSlugRoute
   '/$category': typeof StageSiteCategoryIndexRoute
@@ -167,7 +151,6 @@ export interface FileRoutesById {
   '/_stage': typeof StageRouteWithChildren
   '/feed.xml': typeof FeedDotxmlRoute
   '/robots.txt': typeof RobotsDottxtRoute
-  '/sashi.json': typeof SashiDotjsonRoute
   '/sloppedia': typeof SloppediaRouteWithChildren
   '/_stage/_site': typeof StageSiteRouteWithChildren
   '/ai-produced/$slug': typeof AiProducedSlugRoute
@@ -178,7 +161,6 @@ export interface FileRoutesById {
   '/_stage/_site/ai-produced': typeof StageSiteAiProducedRoute
   '/_stage/_site/nikogori': typeof StageSiteNikogoriRoute
   '/_stage/_site/projects': typeof StageSiteProjectsRoute
-  '/_stage/_site/sashi': typeof StageSiteSashiRoute
   '/_stage/_site/$category/$slug': typeof StageSiteCategorySlugRoute
   '/_stage/_site/seikin-techniques/$slug': typeof StageSiteSeikinTechniquesSlugRoute
   '/_stage/_site/$category/': typeof StageSiteCategoryIndexRoute
@@ -190,7 +172,6 @@ export interface FileRouteTypes {
     | '/'
     | '/feed.xml'
     | '/robots.txt'
-    | '/sashi.json'
     | '/sloppedia'
     | '/ai-produced/$slug'
     | '/sloppedia/$slug'
@@ -199,7 +180,6 @@ export interface FileRouteTypes {
     | '/ai-produced'
     | '/nikogori'
     | '/projects'
-    | '/sashi'
     | '/$category/$slug'
     | '/seikin-techniques/$slug'
     | '/$category/'
@@ -208,7 +188,6 @@ export interface FileRouteTypes {
   to:
     | '/feed.xml'
     | '/robots.txt'
-    | '/sashi.json'
     | '/'
     | '/ai-produced/$slug'
     | '/sloppedia/$slug'
@@ -217,7 +196,6 @@ export interface FileRouteTypes {
     | '/ai-produced'
     | '/nikogori'
     | '/projects'
-    | '/sashi'
     | '/$category/$slug'
     | '/seikin-techniques/$slug'
     | '/$category'
@@ -227,7 +205,6 @@ export interface FileRouteTypes {
     | '/_stage'
     | '/feed.xml'
     | '/robots.txt'
-    | '/sashi.json'
     | '/sloppedia'
     | '/_stage/_site'
     | '/ai-produced/$slug'
@@ -238,7 +215,6 @@ export interface FileRouteTypes {
     | '/_stage/_site/ai-produced'
     | '/_stage/_site/nikogori'
     | '/_stage/_site/projects'
-    | '/_stage/_site/sashi'
     | '/_stage/_site/$category/$slug'
     | '/_stage/_site/seikin-techniques/$slug'
     | '/_stage/_site/$category/'
@@ -249,7 +225,6 @@ export interface RootRouteChildren {
   StageRoute: typeof StageRouteWithChildren
   FeedDotxmlRoute: typeof FeedDotxmlRoute
   RobotsDottxtRoute: typeof RobotsDottxtRoute
-  SashiDotjsonRoute: typeof SashiDotjsonRoute
   SloppediaRoute: typeof SloppediaRouteWithChildren
   AiProducedSlugRoute: typeof AiProducedSlugRoute
 }
@@ -275,13 +250,6 @@ declare module '@tanstack/react-router' {
       path: '/robots.txt'
       fullPath: '/robots.txt'
       preLoaderRoute: typeof RobotsDottxtRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sashi.json': {
-      id: '/sashi.json'
-      path: '/sashi.json'
-      fullPath: '/sashi.json'
-      preLoaderRoute: typeof SashiDotjsonRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sloppedia': {
@@ -354,13 +322,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StageSiteProjectsRouteImport
       parentRoute: typeof StageSiteRoute
     }
-    '/_stage/_site/sashi': {
-      id: '/_stage/_site/sashi'
-      path: '/sashi'
-      fullPath: '/sashi'
-      preLoaderRoute: typeof StageSiteSashiRouteImport
-      parentRoute: typeof StageSiteRoute
-    }
     '/_stage/_site/$category/': {
       id: '/_stage/_site/$category/'
       path: '/$category'
@@ -396,7 +357,6 @@ interface StageSiteRouteChildren {
   StageSiteAiProducedRoute: typeof StageSiteAiProducedRoute
   StageSiteNikogoriRoute: typeof StageSiteNikogoriRoute
   StageSiteProjectsRoute: typeof StageSiteProjectsRoute
-  StageSiteSashiRoute: typeof StageSiteSashiRoute
   StageSiteCategorySlugRoute: typeof StageSiteCategorySlugRoute
   StageSiteSeikinTechniquesSlugRoute: typeof StageSiteSeikinTechniquesSlugRoute
   StageSiteCategoryIndexRoute: typeof StageSiteCategoryIndexRoute
@@ -407,7 +367,6 @@ const StageSiteRouteChildren: StageSiteRouteChildren = {
   StageSiteAiProducedRoute: StageSiteAiProducedRoute,
   StageSiteNikogoriRoute: StageSiteNikogoriRoute,
   StageSiteProjectsRoute: StageSiteProjectsRoute,
-  StageSiteSashiRoute: StageSiteSashiRoute,
   StageSiteCategorySlugRoute: StageSiteCategorySlugRoute,
   StageSiteSeikinTechniquesSlugRoute: StageSiteSeikinTechniquesSlugRoute,
   StageSiteCategoryIndexRoute: StageSiteCategoryIndexRoute,
@@ -450,7 +409,6 @@ const rootRouteChildren: RootRouteChildren = {
   StageRoute: StageRouteWithChildren,
   FeedDotxmlRoute: FeedDotxmlRoute,
   RobotsDottxtRoute: RobotsDottxtRoute,
-  SashiDotjsonRoute: SashiDotjsonRoute,
   SloppediaRoute: SloppediaRouteWithChildren,
   AiProducedSlugRoute: AiProducedSlugRoute,
 }

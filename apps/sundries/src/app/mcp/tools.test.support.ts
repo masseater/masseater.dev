@@ -159,7 +159,7 @@ const routes: readonly Route[] = [
     answer: () => ok({ merged: true, sha: "merge-sha", message: "merged" }),
   },
   { method: "POST", path: /^\/graphql$/u, answer: ({ graphql }) => graphql },
-  { method: "GET", path: /^\/sashi\.json$/u, answer: ({ sashi }) => sashi },
+  { method: "GET", path: /^\/references\.json$/u, answer: ({ sashi }) => sashi },
 ];
 
 const JsonBody = Schema.fromJsonString(Schema.Unknown);

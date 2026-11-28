@@ -18,9 +18,9 @@ import { ListInput } from "./sashi-input.ts";
 
 export type SashiBindings = Readonly<{ SLOPPEDIA_GITHUB: ContentBroker }>;
 
-const SITE = "https://masseater.dev";
+const SITE = "https://sashi.masseater.dev";
 
-const REFERENCES_URL = `${SITE}/sashi.json`;
+const REFERENCES_URL = `${SITE}/references.json`;
 
 const LIST_INPUT = toolInputOf(ListInput);
 
@@ -66,7 +66,7 @@ const registerList = (server: McpServer): McpServer => {
   server.registerTool(
     "list_sashi_references",
     {
-      description: `List the owner's references for what they want (${SITE}/sashi), newest first. Call it before making something for the owner.`,
+      description: `List the owner's references for what they want (${SITE}), newest first. Call it before making something for the owner.`,
       inputSchema: LIST_INPUT,
       annotations: READ_ONLY,
     },
@@ -96,9 +96,9 @@ export const registerSashiTools = ({
     registerPublishTool({
       broker: SLOPPEDIA_GITHUB,
       name: "write_sashi_reference",
-      description: `Add or rewrite one reference on Sashi (${SITE}/sashi), the owner's shelf of things they point at to say what they want.`,
+      description: `Add or rewrite one reference on Sashi (${SITE}), the owner's shelf of things they point at to say what they want.`,
       schema: toolInputOf(ReferenceInput),
       publication,
-      url: () => `${SITE}/sashi`,
+      url: () => SITE,
     }),
   );

@@ -77,7 +77,7 @@ export const referencesOf = (
     Effect.map((found) => Arr.sort(found, newestFirst)),
   );
 
-export const referencePath = (slug: string): string => `apps/portfolio/content/sashi/${slug}.json`;
+export const referencePath = (slug: string): string => `apps/sashi/content/${slug}.json`;
 
 const fieldsOf = ({
   date,
