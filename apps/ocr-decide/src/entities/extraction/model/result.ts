@@ -1,6 +1,6 @@
 import { INVOICE_FIELDS } from "@r_masseater/ocr-decide";
 import type { FieldValue } from "@r_masseater/ocr-decide";
-import { Option, Array as Arr, pipe } from "effect";
+import { Option, Array as Arr, Schema, pipe } from "effect";
 
 import { COPY } from "#/shared/config/index.ts";
 
@@ -8,10 +8,9 @@ const COST_DIGITS = 5;
 
 const SECOND_DIGITS = 1;
 
-export interface Line {
-  readonly label: string;
-  readonly value: string;
-}
+export const LineSchema = Schema.Struct({ label: Schema.String, value: Schema.String });
+
+export type Line = typeof LineSchema.Type;
 
 const textOf = (value: FieldValue | undefined): string => {
   const found = Option.fromNullishOr(value);

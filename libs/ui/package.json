@@ -18,11 +18,16 @@
     "./heading": "./src/shared/ui/heading.tsx",
     "./page-footer": "./src/shared/ui/page-footer.tsx",
     "./page-header": "./src/shared/ui/page-header.tsx",
+    "./pointer": "./src/shared/lib/pointer.ts",
     "./portfolio": "./src/shared/lib/portfolio.ts",
+    "./input-class": "./src/shared/lib/input-class.ts",
+    "./native-select-class": "./src/shared/lib/native-select-class.ts",
     "./styles.css": "./src/app/styles.css",
+    "./table-class": "./src/shared/lib/table-class.ts",
     "./table": "./src/shared/ui/table/index.ts",
     "./theme.css": "./src/app/theme.css",
     "./titled": "./src/shared/ui/titled.tsx",
+    "./to-wavy-letters": "./src/shared/lib/to-wavy-letters.ts",
     "./web-analytics": "./src/shared/lib/web-analytics.ts"
   },
   "dependencies": {

@@ -1,2 +1,4 @@
-export { SEARCH_INDEX_ORIGIN } from "./search.ts";
+/** @stability experimental */
 export { COPY } from "./copy.ts";
+/** @stability experimental */
+export { AppRoute } from "./routes.ts";

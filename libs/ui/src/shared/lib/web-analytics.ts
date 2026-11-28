@@ -27,3 +27,16 @@ export const beaconScripts = (token: unknown): ReturnType<typeof webAnalyticsBea
   );
 
 export { WEB_ANALYTICS_REPORT_ORIGIN, WEB_ANALYTICS_SCRIPT_ORIGIN } from "security-headers";
+
+const escapeAttribute = (value: string): string =>
+  value.replaceAll("&", "&amp;").replaceAll('"', "&quot;").replaceAll("<", "&lt;");
+
+export const beaconHtml = (token: unknown): string =>
+  pipe(
+    beaconScripts(token),
+    Arr.map(
+      (script) =>
+        `<script defer src="${escapeAttribute(script.src)}" integrity="${escapeAttribute(script.integrity)}" crossorigin="${script.crossOrigin}" data-cf-beacon="${escapeAttribute(script["data-cf-beacon"])}"></script>`,
+    ),
+    Arr.join(""),
+  );

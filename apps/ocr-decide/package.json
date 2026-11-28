@@ -8,19 +8,13 @@
     "#/*": "./src/*"
   },
   "dependencies": {
-    "@effect/atom-react": "catalog:stack",
+    "@effect/ui": "catalog:",
+    "@masseater.dev/effect-ui": "workspace:*",
     "@masseater.dev/ui": "workspace:*",
-    "@masseater.dev/web-ui": "workspace:*",
     "@ocr-decide/measurements": "workspace:*",
     "@r_masseater/ocr-decide": "workspace:*",
-    "@tanstack/react-query": "catalog:stack",
-    "@tanstack/react-router": "catalog:",
-    "@tanstack/react-start": "catalog:stack",
     "effect": "catalog:stack",
-    "lucide-react": "catalog:",
-    "react": "catalog:",
-    "react-dom": "catalog:",
-    "scheduler": "catalog:",
+    "lucide": "catalog:",
     "tailwindcss": "catalog:stack"
   },
   "devDependencies": {
@@ -28,13 +22,11 @@
     "@cloudflare/workers-types": "catalog:",
     "@effect/platform-node": "catalog:",
     "@effect/tsgo": "catalog:stack",
+    "@effect/vitest": "catalog:",
     "@masseater.dev/cloudflare-account": "workspace:*",
     "@masseater.dev/start-site": "workspace:*",
-    "@types/react": "catalog:",
-    "@types/react-dom": "catalog:",
-    "@vitejs/plugin-react": "catalog:",
-    "@vitejs/plugin-rsc": "catalog:",
     "alchemy": "catalog:stack",
+    "happy-dom": "catalog:",
     "typescript": "catalog:stack",
     "vite": "catalog:",
     "vite-plus": "catalog:stack"
