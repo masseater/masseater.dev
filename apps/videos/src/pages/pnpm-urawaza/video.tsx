@@ -1,5 +1,5 @@
-import type { Draw, Look, Shot } from "@masseater.dev/video-kit";
-import { Caption, Character, Credits, Picture, Sfx, imageOf } from "@masseater.dev/video-kit";
+import type { Draw, Look } from "@masseater.dev/video-kit";
+import { Caption, Character, Credits, Sfx, ShotPicture, imageOf } from "@masseater.dev/video-kit";
 import type { ReactNode } from "react";
 import { AbsoluteFill, Img } from "remotion";
 
@@ -14,13 +14,7 @@ const Scene = ({ children }: Readonly<{ children: ReactNode }>): ReactNode => (
   <div className={`${SCENE} flex items-center gap-6 px-16 pb-20`}>{children}</div>
 );
 
-const Pic = ({
-  shot,
-  name,
-  className = "h-[440px] w-[520px]",
-}: Readonly<{ shot: Shot; name: string; className?: string }>): ReactNode => (
-  <Picture className={className} src={imageOf(name)(shot)} />
-);
+const PIC = "h-[440px] w-[520px]";
 
 const Tile = ({ src, text }: Readonly<{ src: string; text: string }>): ReactNode => (
   <div className="font-jp flex w-[470px] flex-col overflow-hidden rounded-lg border-4 border-white bg-white">
@@ -92,43 +86,55 @@ export const draw: Readonly<Record<string, Draw>> = {
   problem: (shot) => (
     <>
       <Scene>
-        <Pic name="hdd_broken" shot={shot} />
+        <ShotPicture className={PIC} name="hdd_broken" shot={shot} />
       </Scene>
       <Sfx at={0} kind="hook" shot={shot} />
     </>
   ),
   cause: (shot) => (
     <Scene>
-      <Pic name="boxes" shot={shot} />
+      <ShotPicture className={PIC} name="boxes" shot={shot} />
     </Scene>
   ),
   trick: (shot) => (
     <>
       <Scene>
-        <Pic className="h-[400px] w-[520px] rounded-2xl bg-white p-10" name="pnpm" shot={shot} />
+        <ShotPicture
+          className="h-[400px] w-[520px] rounded-2xl bg-white p-10"
+          name="pnpm"
+          shot={shot}
+        />
       </Scene>
       <Sfx at={0} kind="pop" shot={shot} />
     </>
   ),
   how: (shot) => (
     <Scene>
-      <Pic className="h-[460px] w-[640px] rounded-lg bg-white p-2" name="pnpm-store" shot={shot} />
+      <ShotPicture
+        className="h-[460px] w-[640px] rounded-lg bg-white p-2"
+        name="pnpm-store"
+        shot={shot}
+      />
     </Scene>
   ),
   speed: (shot) => (
     <Scene>
-      <Pic className="h-[460px] w-[640px] rounded-lg bg-white p-2" name="bench-clean" shot={shot} />
+      <ShotPicture
+        className="h-[460px] w-[640px] rounded-lg bg-white p-2"
+        name="bench-clean"
+        shot={shot}
+      />
     </Scene>
   ),
   start: (shot) => (
     <Scene>
-      <Pic name="pc_worker" shot={shot} />
+      <ShotPicture className={PIC} name="pc_worker" shot={shot} />
     </Scene>
   ),
   ending: (shot) => (
     <>
       <Scene>
-        <Pic name="guts" shot={shot} />
+        <ShotPicture className={PIC} name="guts" shot={shot} />
       </Scene>
       <Sfx at={0} kind="ending" shot={shot} />
       <div className="absolute inset-x-0 bottom-[10px]">

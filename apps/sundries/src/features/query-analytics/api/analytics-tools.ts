@@ -1,4 +1,4 @@
-import { failedAt, READ_ONLY, UpstreamFailed, compactInput } from "@masseater.dev/mcp-tool-call";
+import { failedAt, READ_ONLY, UpstreamFailed, toolInputOf } from "@masseater.dev/mcp-tool-call";
 import type { McpServer } from "@modelcontextprotocol/server";
 import { Array as Arr, DateTime, Effect, Option, Schema, String as Str, pipe } from "effect";
 import { FetchHttpClient, HttpClient, HttpClientRequest, HttpClientResponse } from "effect/http";
@@ -21,7 +21,7 @@ const FILTER_TYPE = "[RumPageloadEventsAdaptiveGroupsFilter_InputObject!]!";
 const DESCRIPTION =
   "Read masseater.dev page views and visits per path; the numbers are private, so never copy them anywhere public.";
 
-const INPUT_SCHEMA = AnalyticsInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
+const INPUT_SCHEMA = toolInputOf(AnalyticsInput);
 
 const groups = ({ alias, order, filter, label }: GroupQuery): string =>
   `${alias}: rumPageloadEventsAdaptiveGroups(limit: ${String(ROW_LIMIT)}, orderBy: [${order}], filter: { AND: ${filter} }) { count sum { visits } dimensions { label: ${label} } }`;
@@ -150,7 +150,7 @@ export const registerAnalyticsTools =
       "read_web_analytics",
       {
         description: DESCRIPTION,
-        inputSchema: compactInput(INPUT_SCHEMA),
+        inputSchema: INPUT_SCHEMA,
         annotations: READ_ONLY,
       },
       (input) =>

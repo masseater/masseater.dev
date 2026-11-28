@@ -1,5 +1,5 @@
 import type { UpstreamFailed } from "@masseater.dev/mcp-tool-call";
-import { compactInput } from "@masseater.dev/mcp-tool-call";
+import { toolInputOf } from "@masseater.dev/mcp-tool-call";
 import type { JoinedTailnet } from "@masseater.dev/repositories/credential-broker";
 import type { McpServer } from "@modelcontextprotocol/server";
 import { Effect, Schema } from "effect";
@@ -18,7 +18,7 @@ const TailnetInput = Schema.Struct({
   }),
 });
 
-const INPUT_SCHEMA = TailnetInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
+const INPUT_SCHEMA = toolInputOf(TailnetInput);
 
 export type Tailnet = Readonly<{ join: (publicKey: string) => Promise<JoinedTailnet> }>;
 
@@ -34,7 +34,7 @@ export const registerTailnetTools =
       "join_tailnet",
       {
         description: DESCRIPTION,
-        inputSchema: compactInput(INPUT_SCHEMA),
+        inputSchema: INPUT_SCHEMA,
         annotations: { readOnlyHint: false, openWorldHint: true },
       },
       (input) => join(tailnet)(input.publicKey).pipe(runTool({ count: () => ONE_JOIN })),

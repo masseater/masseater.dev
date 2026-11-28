@@ -9,7 +9,11 @@ export const Picture = ({
   src,
   at = NOTHING,
   className = "w-4/5",
-}: Readonly<{ src: string; at?: number; className?: string }>): ReactNode => {
+}: Readonly<{
+  src: string;
+  at?: number | undefined;
+  className?: string | undefined;
+}>): ReactNode => {
   const frame = useCurrentFrame();
   return (
     <Box className={`motion ${className}`} vars={popUp({ frame, at })}>
