@@ -127,7 +127,7 @@ interface Stage {
 }
 
 const NARRATING: Stage = {
-  className: "top-[1340px] left-[290px] h-[1682px] w-[1000px]",
+  className: "top-[1000px] left-[180px] h-[1682px] w-[1000px]",
   parts: PARTS,
 };
 
