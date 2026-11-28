@@ -26,6 +26,7 @@ export default defineConfig({
       "delete-secrets": { command: "node bin/delete-secrets.ts", cache: false },
       "secret-keys": { command: "node bin/secret-keys.ts", cache: false },
       "put-secret": { command: "node bin/put-secret.ts", cache: false },
+      "rewrite-history": { command: "node bin/rewrite-history.ts", cache: false },
     },
   },
 });
