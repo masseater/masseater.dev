@@ -17,25 +17,28 @@ type Column = readonly [string, (summary: Summary) => string];
 const COLUMNS: readonly Column[] = [
   [
     "frame ms (med/p90/max)",
-    ({ frameMedianMs, frameP90Ms, frameMaxMs }) =>
+    ({ frameMedianMs, frameP90Ms, frameMaxMs }: Summary): string =>
       `${frameMedianMs.toFixed(TENTHS)}/${frameP90Ms.toFixed(TENTHS)}/${frameMaxMs.toFixed(TENTHS)}`,
   ],
-  ["commit frame ms", ({ commitFrameMs }) => commitFrameMs.toFixed(TENTHS)],
-  ["LoAF max ms", ({ longAnimationFrameMaxMs }) => longAnimationFrameMaxMs.toFixed(WHOLE)],
-  ["blocking ms", ({ blockingMs }) => blockingMs.toFixed(WHOLE)],
-  ["interaction ms", ({ interactionMaxMs }) => interactionMaxMs.toFixed(WHOLE)],
-  ["input delay max ms", ({ inputDelayMaxMs }) => inputDelayMaxMs.toFixed(TENTHS)],
+  ["commit frame ms", ({ commitFrameMs }: Summary): string => commitFrameMs.toFixed(TENTHS)],
+  [
+    "LoAF max ms",
+    ({ longAnimationFrameMaxMs }: Summary): string => longAnimationFrameMaxMs.toFixed(WHOLE),
+  ],
+  ["blocking ms", ({ blockingMs }: Summary): string => blockingMs.toFixed(WHOLE)],
+  ["interaction ms", ({ interactionMaxMs }: Summary): string => interactionMaxMs.toFixed(WHOLE)],
+  ["input delay max ms", ({ inputDelayMaxMs }: Summary): string => inputDelayMaxMs.toFixed(TENTHS)],
   [
     "wheels / deltaY received",
-    ({ wheelsReceived, deltaYReceived }) =>
+    ({ wheelsReceived, deltaYReceived }: Summary): string =>
       `${wheelsReceived.toString()} / ${deltaYReceived.toString()}`,
   ],
   [
     "zoom (expected)",
-    ({ zoom, zoomExpected }) =>
+    ({ zoom, zoomExpected }: Summary): string =>
       `${zoom.toFixed(THOUSANDTHS)} (${zoomExpected.toFixed(THOUSANDTHS)})`,
   ],
-  ["ratio", ({ zoomRatio }) => zoomRatio.toFixed(THOUSANDTHS)],
+  ["ratio", ({ zoomRatio }: Summary): string => zoomRatio.toFixed(THOUSANDTHS)],
 ];
 
 const blockOf = ({ sequence, scale, median }: SummaryRow): string =>

@@ -46,7 +46,7 @@ const KINDS: readonly (readonly [string, (span: TimedSpan) => boolean])[] = [
   ["task", has("vp.task.command")],
   ["action", has("github.action.id")],
   ["step", has("github.step.conclusion")],
-  ["queued", (span) => Str.endsWith(QUEUED_SUFFIX)(span.name)],
+  ["queued", (span: TimedSpan): boolean => Str.endsWith(QUEUED_SUFFIX)(span.name)],
   ["job", has("cicd.pipeline.task.run.id")],
   ["pipeline", has("cicd.pipeline.result")],
 ];
