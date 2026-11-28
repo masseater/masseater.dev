@@ -3,7 +3,7 @@ import type { Draw, Look, Shot, Timeline } from "@masseater.dev/video-kit";
 import { Caption, Picture, PsdNarrator, Sfx, imageOf } from "@masseater.dev/video-kit";
 import { FPS } from "@masseater.dev/video-kit/script";
 import type { SfxKind } from "@masseater.dev/video-kit/script";
-import { Array as Arr, Option, Record as Rec, pipe } from "effect";
+import { Array as Arr, Option, Record as Rec, String as Str, pipe } from "effect";
 import type { ReactNode } from "react";
 import { AbsoluteFill, Easing, Freeze, interpolate, staticFile, useCurrentFrame } from "remotion";
 
@@ -75,23 +75,11 @@ const TSUMUGI: Cast = {
       after: ["v1.!右腕/*ゆびさし"],
       later: NONE,
     },
-    catalog: {
-      before: ["v1.!まゆ/*ごきげん眉", "v1.!目/*基本目セット/!黒目/*カメラ目線"],
-      closed: "v1.!口/*むふ",
+    npm: {
+      before: ["v1.!まゆ/*普通眉", "v1.!目/*基本目セット/!黒目/*カメラ目線"],
+      closed: "v1.!口/*む",
       after: ["v1.!右腕/*ゆびさし"],
       later: NONE,
-    },
-    synced: {
-      before: ["v1.!まゆ/*ごきげん眉", "v1.!目/*にっこり"],
-      closed: "v1.!口/*にしー",
-      after: ["v1.!右腕/*ピース"],
-      later: NONE,
-    },
-    patch: {
-      before: ["v1.!まゆ/*ごきげん眉", "v1.!目/*基本目セット/!黒目/*カメラ目線"],
-      closed: "v1.!口/*むふ",
-      after: ["v1.!右腕/*ゆびさし"],
-      later: ["v1.!目/*にっこり"],
     },
     wow: {
       before: ["v1.!まゆ/*ごきげん眉", "v1.!目/*基本目セット/!黒目/*きらーん"],
@@ -170,21 +158,9 @@ const ZUNDAMON: Cast = {
       after: NONE,
       later: NONE,
     },
-    catalog: {
-      before: [OUTFIT, "v1.!眉/*上がり眉", "v1.!目/*目セット/!黒目/*カメラ目線"],
-      closed: "v1.!口/*ほー",
-      after: NONE,
-      later: NONE,
-    },
-    synced: {
-      before: [OUTFIT, "v1.!眉/*上がり眉"],
-      closed: "v1.!口/*むふ",
-      after: ["v1.!目/*にっこり", "v1.!顔色/*ほっぺ赤め", ZUNDA_ARM("右", "手を挙げる")],
-      later: NONE,
-    },
-    patch: {
-      before: [OUTFIT, "v1.!眉/*上がり眉", "v1.!目/*目セット/!黒目/*カメラ目線"],
-      closed: "v1.!口/*ほー",
+    npm: {
+      before: [OUTFIT, "v1.!眉/*困り眉1", "v1.!目/*目セット/!黒目/*カメラ目線"],
+      closed: "v1.!口/*むー",
       after: NONE,
       later: NONE,
     },
@@ -210,12 +186,6 @@ const ZUNDAMON: Cast = {
       before: [OUTFIT, "v1.!眉/*上がり眉", "v1.!目/*目セット/!黒目/*カメラ目線"],
       closed: "v1.!口/*ほー",
       after: NONE,
-      later: NONE,
-    },
-    other: {
-      before: [OUTFIT, "v1.!眉/*上がり眉", "v1.!目/*目セット/!黒目/*カメラ目線"],
-      closed: "v1.!口/*むふ",
-      after: [ZUNDA_ARM("右", "指差し")],
       later: NONE,
     },
     wow: {
@@ -296,8 +266,12 @@ const partsOf = (cast: Cast, timeline: Timeline, frame: number): readonly Part[]
     Option.getOrElse(() => cast.idle.before),
   );
 
-const CROUCH_FRAMES = 10;
-const DASH_FRAMES = 10;
+const NOTHING = 0;
+const CROUCH_FRAMES = 3;
+const DASH_FRAMES = 5;
+const BACK_AT = 12;
+const RETURN_FRAMES = 5;
+const AWAY = 1500;
 const STREAKS = [
   { top: 240, width: 520, speed: 150, offset: 0 },
   { top: 300, width: 760, speed: 190, offset: 300 },
@@ -309,15 +283,20 @@ const STREAKS = [
 const SCREEN = 1080;
 
 const dashX = (frame: number): number =>
-  interpolate(frame, [0, CROUCH_FRAMES, CROUCH_FRAMES + DASH_FRAMES], [0, -40, 1500], {
-    easing: Easing.in((time) => Easing.cubic(time)),
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-  });
-
+  Math.min(
+    interpolate(frame, [0, CROUCH_FRAMES, CROUCH_FRAMES + DASH_FRAMES], [0, -30, AWAY], {
+      easing: Easing.in((time) => Easing.cubic(time)),
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp",
+    }),
+    interpolate(frame, [BACK_AT, BACK_AT + RETURN_FRAMES], [AWAY, 0], {
+      easing: Easing.out((time) => Easing.cubic(time)),
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp",
+    }),
+  );
 const OFFSTAGE = -900;
 const DASH_CUT = "punch";
-const DASH_LEAD = CROUCH_FRAMES + DASH_FRAMES + 1;
 
 interface Span {
   readonly from: number;
@@ -342,7 +321,17 @@ const dashOf = (timeline: Timeline, frame: number): number =>
     Arr.findFirst(
       ({ id, from, duration }) => id === DASH_CUT && frame >= from && frame < from + duration,
     ),
-    Option.map(({ from, duration }) => dashX(frame - (from + duration - DASH_LEAD))),
+    Option.map(({ from, lines }) =>
+      dashX(
+        frame -
+          from -
+          pipe(
+            Arr.head(lines),
+            Option.map((line) => line.from),
+            Option.getOrElse(() => NOTHING),
+          ),
+      ),
+    ),
     Option.getOrElse(() => 0),
   );
 
@@ -526,7 +515,6 @@ const YELLOW = "#ffd400";
 const ALARM = "#ff6b5b";
 const GROW_FRAMES = 14;
 const GROW = Easing.out(Easing.poly(3));
-const NOTHING = 0;
 const SETTLED = 60;
 const FULL = 1;
 
@@ -558,7 +546,9 @@ const Store = (): ReactNode => {
   const linked = grow(frame, GROW_FRAMES);
   return (
     <div className={`${AREA} font-jp text-white`}>
-      <div className="mb-4 text-center text-[56px] font-black text-white/80">3つのプロジェクト</div>
+      <div className="font-code mb-4 text-center text-[72px] leading-none font-bold text-[#ffd400]">
+        pnpm
+      </div>
       <div className="flex justify-between">
         {pipe(
           PROJECTS,
@@ -704,6 +694,87 @@ const slamOf = (frame: number, at: number): number =>
 
 const shownOf = (frame: number, at: number): number => Number(frame >= at);
 
+const COPY_GAP = 3;
+
+const Copies = ({ children }: Readonly<{ children: ReactNode }>): ReactNode => {
+  const frame = useCurrentFrame();
+  return (
+    <div className={`${AREA} font-jp flex flex-col gap-6 text-white`}>
+      {children}
+      <div className="flex justify-between">
+        {pipe(
+          PROJECTS,
+          Arr.map((name, column) => (
+            <div
+              className="flex w-[300px] flex-col items-center gap-3 rounded-[14px] border-[5px] border-white/85 px-3 pt-2 pb-4"
+              key={name}
+            >
+              <span className="text-[90px] leading-none font-black">{name}</span>
+              <span className="font-code text-[30px] text-white/60">node_modules</span>
+              {pipe(
+                PACKAGES,
+                Arr.map((pkg, row) => {
+                  const at = (column * PACKAGES.length + row) * COPY_GAP;
+                  return (
+                    <span
+                      className="font-code w-full rounded-[10px] bg-[#ff6b5b] py-1 text-center text-[40px] text-[#1b1b1b]"
+                      key={pkg}
+                      style={{ opacity: shownOf(frame, at), scale: String(slamOf(frame, at)) }}
+                    >
+                      {pkg}
+                    </span>
+                  );
+                }),
+              )}
+            </div>
+          )),
+        )}
+      </div>
+    </div>
+  );
+};
+
+const COPY_COUNT = PROJECTS.length * PACKAGES.length;
+
+const CopySfx = ({ shot }: Readonly<{ shot: Shot }>): ReactNode =>
+  pipe(
+    Arr.range(0, COPY_COUNT - 1),
+    Arr.map((index) => <Sfx at={index * COPY_GAP} key={index} kind="pop" shot={shot} />),
+  );
+
+const DOTS = 4;
+const DOT_FRAMES = 6;
+
+const Waiting = (): ReactNode => {
+  const frame = useCurrentFrame();
+  return (
+    <div className="font-code rounded-[14px] bg-[#0b0d10] px-7 py-3 text-[56px] text-white/90">
+      $ npm install{pipe("...", Str.slice(0, Math.floor(frame / DOT_FRAMES) % DOTS))}
+    </div>
+  );
+};
+
+const Label = ({ text, color }: Readonly<{ text: string; color: string }>): ReactNode => (
+  <div className="font-code text-center text-[72px] leading-none font-bold" style={{ color }}>
+    {text}
+  </div>
+);
+
+const Versus = (): ReactNode => {
+  const frame = useCurrentFrame();
+  return (
+    <div className={`${AREA} font-code flex items-center justify-center gap-12 font-bold`}>
+      <span className="text-[150px] text-[#ff6b5b]" style={{ scale: String(slamOf(frame, 0)) }}>
+        npm
+      </span>
+      <span className="font-jp text-[70px] text-white/80">と</span>
+      <span className="text-[150px] text-[#ffd400]" style={{ scale: String(slamOf(frame, 6)) }}>
+        pnpm
+      </span>
+    </div>
+  );
+};
+
 const Features = ({ since = 0, at = 0 }: Readonly<{ since?: number; at?: number }>): ReactNode => {
   const frame = useCurrentFrame() + since;
   return (
@@ -729,134 +800,6 @@ const Features = ({ since = 0, at = 0 }: Readonly<{ since?: number; at?: number 
 
 const ERROR = "#ff6b5b";
 const PASS = "#3ddc84";
-
-interface Repo {
-  readonly path: string;
-  readonly version: string;
-}
-
-const REPOS: readonly Repo[] = [
-  { path: "apps/web", version: "4.0.7" },
-  { path: "apps/api", version: "4.1.2" },
-  { path: "libs/kit", version: "4.0.0" },
-];
-const LATEST = "4.1.2";
-const REPO_GAP = 4;
-
-type Stage = "mess" | "catalog" | "synced";
-
-interface Pin {
-  readonly text: string;
-  readonly color: string;
-}
-
-const PINS: Readonly<Record<Stage, (repo: Repo) => Pin>> = {
-  mess: (repo) => ({
-    text: repo.version,
-    color: pick({ [LATEST]: "#ffffff" }, repo.version, ALARM),
-  }),
-  catalog: () => ({ text: "catalog:", color: YELLOW }),
-  synced: () => ({ text: `${LATEST} ✓`, color: PASS }),
-};
-const ENTER: Readonly<Record<Stage, number>> = { mess: 0, catalog: -SETTLED, synced: -SETTLED };
-
-const Repos = ({ stage, at = 0 }: Readonly<{ stage: Stage; at?: number }>): ReactNode => {
-  const frame = useCurrentFrame();
-  return (
-    <div className="flex flex-col gap-4">
-      {pipe(
-        REPOS,
-        Arr.map((repo, index) => {
-          const pin = PINS[stage](repo);
-          return (
-            <div
-              className="font-code flex items-baseline gap-6 rounded-[14px] bg-[#0b0d10] px-7 py-3"
-              key={repo.path}
-              style={{
-                opacity: grow(frame, at + index * REPO_GAP),
-                scale: String(slamOf(frame, at + index * REPO_GAP)),
-              }}
-            >
-              <span className="w-[230px] text-[40px] text-white/60">{repo.path}</span>
-              <span className="text-[48px] text-white/90">effect</span>
-              <span
-                className="ml-auto text-[56px] leading-none font-bold"
-                style={{ color: pin.color }}
-              >
-                {pin.text}
-              </span>
-            </div>
-          );
-        }),
-      )}
-    </div>
-  );
-};
-
-const YAML_LINES = ["catalog:", `  effect: ${LATEST}`] as const;
-const PATCH_LINES = [
-  "overrides:",
-  "  esbuild: 0.25.12",
-  "patchedDependencies:",
-  "  rollup: patches/fix.patch",
-] as const;
-
-const Yaml = ({
-  patchAt = NOTHING,
-  goneAt = NOTHING,
-  patched = false,
-}: Readonly<{ patchAt?: number; goneAt?: number; patched?: boolean }>): ReactNode => {
-  const frame = useCurrentFrame();
-  const gone = pipe(
-    Option.some(grow(frame, goneAt)),
-    Option.filter(() => goneAt > NOTHING),
-    Option.getOrElse(() => NOTHING),
-  );
-  return (
-    <div className="font-code flex flex-col rounded-[16px] border-[4px] border-[#ffd400] bg-[#0b0d10] px-8 py-4 text-[50px] leading-snug">
-      <span className="text-[36px] text-white/60">pnpm-workspace.yaml</span>
-      {pipe(
-        YAML_LINES,
-        Arr.map((line) => (
-          <span className="whitespace-pre text-white" key={line}>
-            {line}
-          </span>
-        )),
-      )}
-      {pipe(
-        PATCH_LINES,
-        Arr.filter(() => patched),
-        Arr.map((line, index) => (
-          <span
-            className="relative self-start whitespace-pre text-[#ffd400]"
-            key={line}
-            style={{
-              opacity: grow(frame, patchAt + index * REPO_GAP) * (FULL - gone * 0.6),
-              translate: `${String((FULL - grow(frame, patchAt + index * REPO_GAP)) * 80)}px 0`,
-            }}
-          >
-            {line}
-            <span
-              className="absolute top-1/2 left-0 h-[6px] rounded-full bg-[#ff6b5b]"
-              style={{ width: `${String(gone * 100)}%` }}
-            />
-          </span>
-        )),
-      )}
-    </div>
-  );
-};
-
-const Workspace = ({
-  stage,
-  at = ENTER[stage],
-  children,
-}: Readonly<{ stage: Stage; at?: number; children?: ReactNode }>): ReactNode => (
-  <div className="font-jp absolute inset-x-[70px] top-[300px] flex flex-col gap-5">
-    {children}
-    <Repos at={at} stage={stage} />
-  </div>
-);
 
 const Done = (): ReactNode => {
   const frame = useCurrentFrame();
@@ -1011,47 +954,26 @@ export const draw: Readonly<Record<string, Draw>> = {
   intro: (shot) => <Intro shot={shot} />,
   mess: (shot) => (
     <>
-      <Workspace stage="mess" />
-      {pipe(
-        REPOS,
-        Arr.map((repo, index) => (
-          <Sfx at={index * REPO_GAP} key={repo.path} kind="pop" shot={shot} />
-        )),
-      )}
+      <Copies>
+        <Label color="#ffffff" text="node_modules × 3" />
+      </Copies>
+      <CopySfx shot={shot} />
       <Sfx at={0} kind="hook" shot={shot} />
     </>
   ),
-  ask: () => <Workspace at={-SETTLED} stage="mess" />,
+  ask: () => (
+    <Freeze frame={SETTLED}>
+      <Copies>
+        <Waiting />
+      </Copies>
+    </Freeze>
+  ),
   try: () => (
     <div className={`${AREA} flex items-center justify-center`}>
       <div className="font-code rounded-[18px] bg-[#0b0d10] px-12 py-8 text-[84px] font-bold text-[#ffd400]">
         $ pnpm install
       </div>
     </div>
-  ),
-  catalog: (shot) => (
-    <>
-      <Workspace stage="catalog">
-        <Yaml />
-      </Workspace>
-      <Sfx at={0} kind="pop" shot={shot} />
-    </>
-  ),
-  synced: (shot) => (
-    <>
-      <Workspace stage="synced">
-        <Yaml />
-      </Workspace>
-      <Sfx at={0} kind="stamp" shot={shot} />
-    </>
-  ),
-  patch: (shot) => (
-    <>
-      <div className="font-jp absolute inset-x-[70px] top-[300px]">
-        <Yaml goneAt={lineStart(shot, 1)} patchAt={6} patched />
-      </div>
-      <Sfx at={6} kind="pop" shot={shot} />
-    </>
   ),
   wow: (shot) => (
     <>
@@ -1067,16 +989,24 @@ export const draw: Readonly<Record<string, Draw>> = {
         <Done />
       </Freeze>
       <Sfx at={0} kind="stamp" shot={shot} />
-      <Sfx at={shot.duration - DASH_LEAD + CROUCH_FRAMES - 2} kind="dash" shot={shot} />
+      <Sfx at={lineStart(shot, 0) + CROUCH_FRAMES} kind="dash" shot={shot} />
     </>
   ),
-  why: () => <Store />,
-  disk: (shot) => <Sharing shot={shot} />,
-  other: () => (
-    <Freeze frame={SETTLED}>
-      <Disk />
-    </Freeze>
+  why: (shot) => (
+    <>
+      <Versus />
+      <Sfx at={0} kind="stamp" shot={shot} />
+    </>
   ),
+  npm: (shot) => (
+    <>
+      <Copies>
+        <Label color="#ff6b5b" text="npm" />
+      </Copies>
+      <CopySfx shot={shot} />
+    </>
+  ),
+  disk: (shot) => <Sharing shot={shot} />,
   more: (shot) => (
     <>
       <Features />
