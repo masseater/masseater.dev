@@ -8,6 +8,7 @@ import { Route as CredentialsRouteImport } from './routes/credentials'
 import { Route as MoneyRouteImport } from './routes/money'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as RecordsRouteImport } from './routes/records'
+import { Route as SchedulesRouteImport } from './routes/schedules'
 import { Route as SearchRouteImport } from './routes/search'
 import { Route as SlidesRouteImport } from './routes/slides'
 import { Route as TimelineRouteImport } from './routes/timeline'
@@ -41,6 +42,11 @@ const ProfileRoute = ProfileRouteImport.update({
 const RecordsRoute = RecordsRouteImport.update({
   id: '/records',
   path: '/records',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SchedulesRoute = SchedulesRouteImport.update({
+  id: '/schedules',
+  path: '/schedules',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SearchRoute = SearchRouteImport.update({
@@ -95,6 +101,7 @@ export interface FileRoutesByFullPath {
   '/money': typeof MoneyRoute
   '/profile': typeof ProfileRoute
   '/records': typeof RecordsRoute
+  '/schedules': typeof SchedulesRoute
   '/search': typeof SearchRoute
   '/slides': typeof SlidesRoute
   '/timeline': typeof TimelineRoute
@@ -111,6 +118,7 @@ export interface FileRoutesByTo {
   '/money': typeof MoneyRoute
   '/profile': typeof ProfileRoute
   '/records': typeof RecordsRoute
+  '/schedules': typeof SchedulesRoute
   '/search': typeof SearchRoute
   '/slides': typeof SlidesRoute
   '/timeline': typeof TimelineRoute
@@ -128,6 +136,7 @@ export interface FileRoutesById {
   '/money': typeof MoneyRoute
   '/profile': typeof ProfileRoute
   '/records': typeof RecordsRoute
+  '/schedules': typeof SchedulesRoute
   '/search': typeof SearchRoute
   '/slides': typeof SlidesRoute
   '/timeline': typeof TimelineRoute
@@ -146,6 +155,7 @@ export interface FileRouteTypes {
     | '/money'
     | '/profile'
     | '/records'
+    | '/schedules'
     | '/search'
     | '/slides'
     | '/timeline'
@@ -162,6 +172,7 @@ export interface FileRouteTypes {
     | '/money'
     | '/profile'
     | '/records'
+    | '/schedules'
     | '/search'
     | '/slides'
     | '/timeline'
@@ -178,6 +189,7 @@ export interface FileRouteTypes {
     | '/money'
     | '/profile'
     | '/records'
+    | '/schedules'
     | '/search'
     | '/slides'
     | '/timeline'
@@ -195,6 +207,7 @@ export interface RootRouteChildren {
   MoneyRoute: typeof MoneyRoute
   ProfileRoute: typeof ProfileRoute
   RecordsRoute: typeof RecordsRoute
+  SchedulesRoute: typeof SchedulesRoute
   SearchRoute: typeof SearchRoute
   SlidesRoute: typeof SlidesRoute
   TimelineRoute: typeof TimelineRoute
@@ -241,6 +254,13 @@ declare module '@tanstack/react-router' {
       path: '/records'
       fullPath: '/records'
       preLoaderRoute: typeof RecordsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/schedules': {
+      id: '/schedules'
+      path: '/schedules'
+      fullPath: '/schedules'
+      preLoaderRoute: typeof SchedulesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/search': {
@@ -315,6 +335,7 @@ const rootRouteChildren: RootRouteChildren = {
   MoneyRoute: MoneyRoute,
   ProfileRoute: ProfileRoute,
   RecordsRoute: RecordsRoute,
+  SchedulesRoute: SchedulesRoute,
   SearchRoute: SearchRoute,
   SlidesRoute: SlidesRoute,
   TimelineRoute: TimelineRoute,

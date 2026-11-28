@@ -1,8 +1,9 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
+import type { TableHeadVariant } from "#/shared/lib/table-class.ts";
+
 import { TableHead } from "./table-head.tsx";
-import type { TableHeadVariant } from "./table-head.tsx";
 import { TableHeader } from "./table-header.tsx";
 import { TableRow } from "./table-row.tsx";
 

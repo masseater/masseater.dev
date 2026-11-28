@@ -1,4 +1,4 @@
-import { index, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { index, integer, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
 
 export const claudeRequests = sqliteTable(
   "claude_requests",
@@ -11,6 +11,13 @@ export const claudeRequests = sqliteTable(
     threadUrl: text("thread_url"),
     reply: text("reply"),
     repliedAt: integer("replied_at"),
+    project: text("project"),
+    scheduleId: text("schedule_id"),
+    slot: integer("slot"),
+    wokenAt: integer("woken_at"),
   },
-  (table) => [index("claude_requests_taken_at_idx").on(table.takenAt)],
+  (table) => [
+    index("claude_requests_taken_at_idx").on(table.takenAt),
+    uniqueIndex("claude_requests_schedule_slot_idx").on(table.scheduleId, table.slot),
+  ],
 );

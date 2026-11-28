@@ -47,7 +47,7 @@ catalog:
   lighthouse: 13.6.0
   miniflare: 4.20260730.0
   puppeteer-core: 25.18.1
-  tonal: 6.9.0
+  tonal: 6.10.0
   "@fontsource/m-plus-rounded-1c": 5.3.0
   "@codemirror/autocomplete": 6.20.4
   "@codemirror/commands": 6.11.2
@@ -71,7 +71,7 @@ catalog:
   "@r_masseater/i68": 0.2.0
   "@r_masseater/intent-book": 0.3.2
   "@r_masseater/mapped-import": 0.1.0
-  "@r_masseater/msch": 0.65.0
+  "@r_masseater/msch": 0.65.1
   "@r_masseater/node-main": 0.1.0
   "@r_masseater/song-format": 0.2.0
   "@r_masseater/vite-plus-adopt": 0.14.0
@@ -130,6 +130,7 @@ catalog:
   mdast-util-directive: 3.2.1
   remark-directive: 4.0.0
   "@xyflow/react": 13.0.3
+  lucide: 1.83.0
   lucide-react: 1.80.0
   niconico-embed-player: 0.1.2
   budoux: 0.10.4
@@ -226,10 +227,10 @@ catalog:
   "@types/dom-speech-recognition": 0.0.12
   oauth4webapi: 3.8.9
   agents: 0.34.0
-  "@earendil-works/pi-ai": 1.6.0
-  "@earendil-works/pi-durable": 1.6.0
-  "@earendil-works/pi-schema": 1.6.0
-  "@earendil-works/chord": 1.6.0
+  "@earendil-works/pi-ai": 1.6.1
+  "@earendil-works/pi-durable": 1.6.1
+  "@earendil-works/pi-schema": 1.6.1
+  "@earendil-works/chord": 1.6.1
   "@types/sshpk": 1.17.5
   sshpk: 1.18.0
   dejavu-fonts-ttf: 2.37.3
@@ -270,7 +271,14 @@ catalogs:
     typescript: 7.1.0-beta
     vite-plus: 1.8.0
 overrides:
-  "@vitest/browser-playwright": 5.1.1 # exit: npm:vite-plus requires vitest@>=5.1.2
+  "@vitest/browser-playwright": 5.1.2 # exit: npm:vite-plus requires vitest@>=5.1.2
+  vitest: 5.1.2 # exit: npm:vite-plus requires vitest@>=5.1.2
+  "@vitest/browser": 5.1.2 # exit: npm:vite-plus requires vitest@>=5.1.2
+  "@vitest/browser-preview": 5.1.2 # exit: npm:vite-plus requires vitest@>=5.1.2
+  "@vitest/mocker": 5.1.2 # exit: npm:vite-plus requires vitest@>=5.1.2
+  "@vitest/pretty-format": 5.1.2 # exit: npm:vite-plus requires vitest@>=5.1.2
+  "@vitest/spy": 5.1.2 # exit: npm:vite-plus requires vitest@>=5.1.2
+  "@vitest/utils": 5.1.2 # exit: npm:vite-plus requires vitest@>=5.1.2
   "@remotion/tailwind-v4>tailwindcss": "catalog:stack" # exit: npm:@remotion/tailwind-v4 allows tailwindcss@>=4.3.5
   "@remotion/tailwind-v4>@tailwindcss/webpack": 4.3.5 # exit: npm:@remotion/tailwind-v4 allows @tailwindcss/webpack@>=4.3.5
   workerd: 1.20261125.1 # exit: npm:miniflare requires workerd@>=1.20261115.1
@@ -396,6 +404,7 @@ minimumReleaseAgeExclude:
   - "@effect/sql-sqlite-node@4.1.7"
   - "@effect/vitest@4.1.7"
   - effect@4.1.7
+  - lucide@1.83.0
 
 cargo:
   enabled: true

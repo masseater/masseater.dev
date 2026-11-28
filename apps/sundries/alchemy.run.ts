@@ -36,6 +36,7 @@ const worker = Effect.gen(function* worker() {
     placement: JAPAN_PLACEMENT,
     domain: SITE_HOST,
     workersDev: false,
+    crons: ["* * * * *"],
     env: {
       TOOL_CALLS,
       CLAUDE_REQUESTS,

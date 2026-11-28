@@ -1,19 +1,24 @@
 import type {
   CredentialStatusRpc,
   MoneyPortalRpc,
+  SchedulesRpc,
   SlidesRpc,
   WatashiPortalRpc,
 } from "@masseater.dev/portal-protocol";
 
 import type { WebEnv } from "./alchemy.run.ts";
 
-type BoundEnv = Omit<WebEnv, "PERSONAL" | "WATASHI" | "MONEY" | "SLIDES" | "CREDENTIALS"> &
+type BoundEnv = Omit<
+  WebEnv,
+  "PERSONAL" | "WATASHI" | "MONEY" | "SLIDES" | "CREDENTIALS" | "SCHEDULES"
+> &
   Readonly<{
     PERSONAL: Fetcher;
     WATASHI: Service<WatashiPortalRpc>;
     MONEY: Service<MoneyPortalRpc>;
     SLIDES: Service<SlidesRpc>;
     CREDENTIALS: Service<CredentialStatusRpc>;
+    SCHEDULES: Service<SchedulesRpc>;
   }>;
 
 declare module "cloudflare:workers" {

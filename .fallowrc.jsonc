@@ -163,6 +163,12 @@
       "entryPoints": ["src/app/index.{ts,tsx}", "src/pages/*/*.{ts,tsx}"],
     },
     {
+      "name": "effect-ui-site",
+      "enablers": ["@effect/ui"],
+      "entryPointRole": "runtime",
+      "entryPoints": ["src/app/entry.{server,client}.ts"],
+    },
+    {
       "name": "alchemy-stacks",
       "enablers": ["alchemy"],
       "entryPoints": ["alchemy.*.ts"],

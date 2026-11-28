@@ -1,4 +1,5 @@
 import {
+  OVERWRITE,
   READ_ONLY,
   WRITE,
   one,
@@ -7,22 +8,28 @@ import {
   toolInputOf,
 } from "@masseater.dev/mcp-tool-call";
 import type { McpServer } from "@modelcontextprotocol/server";
-import { Effect, Option, pipe } from "effect";
+import { Array as Arr, Effect, Option, pipe } from "effect";
 
 import { runTool } from "#/shared/api/index.ts";
 
 import {
+  CreateScheduleInput,
+  GetScheduleInput,
   ListInput,
+  ListSchedulesInput,
   ReplyInput,
   RoutineInput,
   SendInput,
   TakeInput,
+  UpdateScheduleInput,
 } from "./claude-request-input.ts";
 import { RequestsDb, answer, listed, requestsDbOf, take } from "./claude-requests.ts";
 import type { ClaudeRequest } from "./claude-requests.ts";
 import { RoutineService, registerRoutine } from "./claude-routine.ts";
 import type { RoutineBroker } from "./claude-routine.ts";
-import { sendRequest } from "./send-request.ts";
+import { scheduleViews } from "./schedule-views.ts";
+import { createSchedule, findSchedule, updateSchedule } from "./schedules.ts";
+import { sendOrRun } from "./send-request.ts";
 
 export type RequestBindings = Readonly<{
   CLAUDE_REQUESTS: D1Database;
@@ -38,10 +45,21 @@ type Provide = <Value, Failure>(
 ) => Effect.Effect<Value, Failure>;
 
 const SEND_DESCRIPTION =
-  "Send a request to the owner's Claude Code project, which does it and replies.";
+  "Send a request to the owner's Claude Code project, which does it and replies. Give text, or a schedule id to run that schedule now.";
 
 const TAKE_DESCRIPTION =
-  "Claim every untaken request for the owner's Claude Code project, oldest first, then answer each with reply_to_request.";
+  "Claim every untaken request for your claude.ai project, oldest first, then answer each with reply_to_request.";
+
+const LIST_SCHEDULES_DESCRIPTION =
+  "List the schedules that send requests to the owner's projects, with their next and last runs.";
+
+const GET_SCHEDULE_DESCRIPTION = "Read one schedule.";
+
+const CREATE_SCHEDULE_DESCRIPTION =
+  "Create a schedule. At each cron time it queues its prompt as a request for its project.";
+
+const UPDATE_SCHEDULE_DESCRIPTION =
+  "Change the given fields of a schedule. Set enabled to false to stop it.";
 
 const REPLY_DESCRIPTION = "Answer a request from take_claude_requests.";
 
@@ -60,6 +78,14 @@ const ROUTINE_SCHEMA = toolInputOf(RoutineInput);
 
 const LIST_SCHEMA = toolInputOf(ListInput);
 
+const LIST_SCHEDULES_SCHEMA = toolInputOf(ListSchedulesInput);
+
+const GET_SCHEDULE_SCHEMA = toolInputOf(GetScheduleInput);
+
+const CREATE_SCHEDULE_SCHEMA = toolInputOf(CreateScheduleInput);
+
+const UPDATE_SCHEDULE_SCHEMA = toolInputOf(UpdateScheduleInput);
+
 const count = (requests: readonly ClaudeRequest[]): number => requests.length;
 
 const registerSend = (provide: Provide): Register =>
@@ -71,10 +97,7 @@ const registerSend = (provide: Provide): Register =>
       annotations: WRITE,
     },
     (input, ctx) =>
-      sendRequest({ text: input.text, sender: clientOf(ctx) }).pipe(
-        provide,
-        runTool({ count: one }),
-      ),
+      sendOrRun({ input, sender: clientOf(ctx) }).pipe(provide, runTool({ count: one })),
   );
 
 const registerTake = (provide: Provide): Register =>
@@ -85,7 +108,7 @@ const registerTake = (provide: Provide): Register =>
       inputSchema: TAKE_SCHEMA,
       annotations: WRITE,
     },
-    () => take.pipe(provide, runTool({ count })),
+    (input) => take(Option.fromNullishOr(input.project)).pipe(provide, runTool({ count })),
   );
 
 const registerReply = (provide: Provide): Register =>
@@ -107,7 +130,11 @@ const registerList = (provide: Provide): Register =>
       inputSchema: LIST_SCHEMA,
       annotations: READ_ONLY,
     },
-    (input) => listed(Option.fromNullishOr(input.after)).pipe(provide, runTool({ count })),
+    (input) =>
+      listed({
+        from: Option.fromNullishOr(input.after),
+        schedule: Option.fromNullishOr(input.schedule),
+      }).pipe(provide, runTool({ count })),
   );
 
 const registerRoutineTool = (provide: Provide): Register =>
@@ -119,6 +146,52 @@ const registerRoutineTool = (provide: Provide): Register =>
       annotations: WRITE,
     },
     (input) => registerRoutine(input).pipe(provide, runTool({ count: one })),
+  );
+
+const registerListSchedules = (provide: Provide): Register =>
+  registeredTool(
+    {
+      name: "list_schedules",
+      description: LIST_SCHEDULES_DESCRIPTION,
+      inputSchema: LIST_SCHEDULES_SCHEMA,
+      annotations: READ_ONLY,
+    },
+    () => scheduleViews.pipe(provide, runTool({ count: Arr.length })),
+  );
+
+const registerGetSchedule = (provide: Provide): Register =>
+  registeredTool(
+    {
+      name: "get_schedule",
+      description: GET_SCHEDULE_DESCRIPTION,
+      inputSchema: GET_SCHEDULE_SCHEMA,
+      annotations: READ_ONLY,
+    },
+    (input) => findSchedule(input.id).pipe(provide, runTool({ count: one })),
+  );
+
+const registerCreateSchedule = (provide: Provide): Register =>
+  registeredTool(
+    {
+      name: "create_schedule",
+      description: CREATE_SCHEDULE_DESCRIPTION,
+      inputSchema: CREATE_SCHEDULE_SCHEMA,
+      annotations: WRITE,
+    },
+    (input, ctx) =>
+      createSchedule({ input, changedBy: clientOf(ctx) }).pipe(provide, runTool({ count: one })),
+  );
+
+const registerUpdateSchedule = (provide: Provide): Register =>
+  registeredTool(
+    {
+      name: "update_schedule",
+      description: UPDATE_SCHEDULE_DESCRIPTION,
+      inputSchema: UPDATE_SCHEDULE_SCHEMA,
+      annotations: OVERWRITE,
+    },
+    (input, ctx) =>
+      updateSchedule({ input, changedBy: clientOf(ctx) }).pipe(provide, runTool({ count: one })),
   );
 
 export const provideRequests =
@@ -142,5 +215,9 @@ export const registerClaudeRequestTools =
       registerReply(provide),
       registerList(provide),
       registerRoutineTool(provide),
+      registerListSchedules(provide),
+      registerGetSchedule(provide),
+      registerCreateSchedule(provide),
+      registerUpdateSchedule(provide),
     );
   };

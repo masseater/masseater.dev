@@ -14,4 +14,5 @@ export const COPY = {
   measurements: "20 枚で比べた結果",
   ocrEngines: "OCR エンジンの日本語の読み取りを比べた結果",
   unreadable: "画像を開けなかった",
+  notFound: "ページが見つからない",
 } as const;
