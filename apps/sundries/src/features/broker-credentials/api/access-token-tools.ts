@@ -1,9 +1,9 @@
 import type { UpstreamFailed } from "@masseater.dev/mcp-tool-call";
-import { compactInput } from "@masseater.dev/mcp-tool-call";
+import { toolInputOf } from "@masseater.dev/mcp-tool-call";
 import type { AccessSite } from "@masseater.dev/repositories/access-sites";
 import type { SiteToken } from "@masseater.dev/repositories/credential-broker";
 import type { McpServer } from "@modelcontextprotocol/server";
-import { Effect, Match, Schema } from "effect";
+import { Effect, Match } from "effect";
 
 import { brokerFailed, runTool } from "#/shared/api/index.ts";
 
@@ -14,10 +14,7 @@ const ONE_TOKEN = 1;
 const DESCRIPTION =
   "Return an OAuth access token for one of the owner's sites behind Cloudflare Access.";
 
-const INPUT_SCHEMA = AccessTokenInput.pipe(
-  Schema.toStandardSchemaV1,
-  Schema.toStandardJSONSchemaV1,
-);
+const INPUT_SCHEMA = toolInputOf(AccessTokenInput);
 
 type IssuedToken = Exclude<SiteToken, Readonly<{ status: "failed" }>>;
 
@@ -46,7 +43,7 @@ export const registerAccessTokenTools =
       "get_access_token",
       {
         description: DESCRIPTION,
-        inputSchema: compactInput(INPUT_SCHEMA),
+        inputSchema: INPUT_SCHEMA,
         annotations: { readOnlyHint: true, openWorldHint: true },
       },
       (input) => siteToken(tokens)(input.site).pipe(runTool({ count: () => ONE_TOKEN })),

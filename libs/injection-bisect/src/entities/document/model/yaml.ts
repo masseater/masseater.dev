@@ -1,8 +1,9 @@
-import { Array as Arr, Match, Option, String as Str, Record as Rec, pipe, Order } from "effect";
+import { Array as Arr, Match, Option, String as Str, Record as Rec, pipe } from "effect";
 import { Parser as YamlParser, isCollection, parseDocument } from "yaml";
 
 import type { Parser, Span, Unit } from "./parser.ts";
 import { PROSE } from "./prose.ts";
+import { inSourceOrder, spansOf } from "./span-tree.ts";
 
 const ENTRIES = 2;
 
@@ -82,15 +83,7 @@ const ownSpan = (text: string, value: unknown): readonly Span[] => {
   return [];
 };
 
-const spansIn = (text: string, value: unknown): readonly Span[] => [
-  ...ownSpan(text, value),
-  ...pipe(
-    childrenOf(value),
-    Arr.flatMap((child) => spansIn(text, child)),
-  ),
-];
-
-const byStart = Order.mapInput(Order.Number, (span: Span) => span.start);
+const spansIn = spansOf<unknown>({ own: ownSpan, children: childrenOf });
 
 const yamlUnitsOf = (text: string): readonly Unit[] => {
   const spans = pipe(
@@ -99,7 +92,7 @@ const yamlUnitsOf = (text: string): readonly Unit[] => {
     Arr.filter(({ start, end }) => PROSE.test(Str.slice(start, end)(text))),
   );
   return pipe(
-    Arr.sort(spans, byStart),
+    inSourceOrder(spans),
     Arr.map(({ start, end }): Unit => ({ kind: "prose", start, end })),
   );
 };

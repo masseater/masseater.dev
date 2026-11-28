@@ -8,6 +8,7 @@ import tailwindcss from "@tailwindcss/vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
 import rsc from "@vitejs/plugin-rsc";
+import { lapse } from "lapse";
 import { defineConfig } from "vite-plus";
 import type { PluginOption } from "vite-plus";
 
@@ -66,5 +67,5 @@ export default defineConfig(({ mode }) => ({
     server: { deps: { external: ["miniflare", "workerd"] } },
     testTimeout: 30_000,
   },
-  plugins: appPlugins(mode),
+  plugins: [lapse(), ...appPlugins(mode)],
 }));

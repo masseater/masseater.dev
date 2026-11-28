@@ -3,7 +3,14 @@ import { describe, expect, test } from "vite-plus/test";
 
 import { ASSET_CACHE_CONTROL, SECURITY_HEADERS } from "#/entities/policy/index.ts";
 
-import { headerLines, headersFileFor, inlineScriptHashes, pageSlug, sourceHash } from "./static.ts";
+import {
+  headerLines,
+  headersFileFor,
+  inlineScriptHashes,
+  inlineStyleHashes,
+  pageSlug,
+  sourceHash,
+} from "./static.ts";
 import type { PageHeaders } from "./static.ts";
 
 const CSP = "Content-Security-Policy";
@@ -84,5 +91,12 @@ describe("inlineScriptHashes", () => {
       Effect.runPromise(
         inlineScriptHashes('<script></script><script src="/a.js"></script><script></script>'),
       ),
+    ).resolves.toStrictEqual(["'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU='"]));
+});
+
+describe("inlineStyleHashes", () => {
+  test("style の本文を、重複を除いてハッシュにする", () =>
+    expect(
+      Effect.runPromise(inlineStyleHashes("<style></style><p></p><style></style>")),
     ).resolves.toStrictEqual(["'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU='"]));
 });

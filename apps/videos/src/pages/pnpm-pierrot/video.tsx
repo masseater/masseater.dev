@@ -4,7 +4,7 @@ import {
   Caption,
   Character,
   Credits,
-  Picture,
+  ShotPicture,
   imageOf,
   Sfx,
   TitleBar,
@@ -50,18 +50,17 @@ const Panel = ({ children }: Readonly<{ children: ReactNode }>): ReactNode => (
   </div>
 );
 
-const ScreenShot = ({ shot, name }: Readonly<{ shot: Shot; name: string }>): ReactNode => (
-  <Panel>
-    <Picture
-      className="w-full rounded-2xl border-[6px] border-[#333] bg-white p-3"
-      src={imageOf(name)(shot)}
-    />
-  </Panel>
-);
+const SCREEN = "w-full rounded-2xl border-[6px] border-[#333] bg-white p-3";
 
-const Illust = ({ shot, name }: Readonly<{ shot: Shot; name: string }>): ReactNode => (
+const ILLUST = "h-[560px] w-[640px]";
+
+const Pane = ({
+  shot,
+  name,
+  className,
+}: Readonly<{ shot: Shot; name: string; className: string }>): ReactNode => (
   <Panel>
-    <Picture className="h-[560px] w-[640px]" src={imageOf(name)(shot)} />
+    <ShotPicture className={className} name={name} shot={shot} />
   </Panel>
 );
 
@@ -133,19 +132,19 @@ export const draw: Readonly<Record<string, Draw>> = {
       </div>
     </Panel>
   ),
-  speed: (shot) => <ScreenShot name="bench-clean" shot={shot} />,
+  speed: (shot) => <Pane className={SCREEN} name="bench-clean" shot={shot} />,
   surprise: (shot) => (
     <>
-      <Illust name="rocket" shot={shot} />
+      <Pane className={ILLUST} name="rocket" shot={shot} />
       <Sfx at={0} kind="pop" shot={shot} />
     </>
   ),
-  disk: (shot) => <ScreenShot name="pnpm-store" shot={shot} />,
-  switch: (shot) => <Illust name="laptop_chara" shot={shot} />,
-  caution: (shot) => <Illust name="headache" shot={shot} />,
+  disk: (shot) => <Pane className={SCREEN} name="pnpm-store" shot={shot} />,
+  switch: (shot) => <Pane className={ILLUST} name="laptop_chara" shot={shot} />,
+  caution: (shot) => <Pane className={ILLUST} name="headache" shot={shot} />,
   ending: (shot) => (
     <>
-      <Illust name="guts" shot={shot} />
+      <Pane className={ILLUST} name="guts" shot={shot} />
       <Sfx at={0} kind="ending" shot={shot} />
       <div className="absolute inset-x-0 bottom-[20px]">
         <Credits shot={shot} />

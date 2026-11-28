@@ -1,0 +1,22 @@
+{
+  "name": "lapse",
+  "version": "0.0.0",
+  "private": true,
+  "description": "A Vite plugin that makes Vitest export a span for every test file, import and test whenever an OpenTelemetry endpoint is set, so that the time of tests reaches the same files as the rest of the measurement.",
+  "type": "module",
+  "imports": {
+    "#/*": "./src/*"
+  },
+  "exports": {
+    ".": "./src/app/index.ts"
+  },
+  "dependencies": {
+    "@opentelemetry/exporter-trace-otlp-http": "catalog:",
+    "@opentelemetry/sdk-node": "catalog:",
+    "effect": "catalog:stack"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "vite-plus": "catalog:stack"
+  }
+}

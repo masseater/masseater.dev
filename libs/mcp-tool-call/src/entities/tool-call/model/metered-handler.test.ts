@@ -4,6 +4,7 @@ import { Effect, Schema } from "effect";
 
 import { meteredMcpHandler } from "./metered-handler.ts";
 import { encodeJson, one, toolCalls } from "./tool-call.ts";
+import { toolInputOf } from "./tool-input.ts";
 
 const taggedError = Schema.TaggedError;
 
@@ -35,7 +36,7 @@ const Input = Schema.Struct({
   project: Schema.optional(Schema.String),
 });
 
-const INPUT_SCHEMA = Input.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
+const INPUT_SCHEMA = toolInputOf(Input);
 
 const lookup = (key: string): Effect.Effect<Readonly<{ found: string }>, Missing> =>
   Effect.succeed({ found: key }).pipe(

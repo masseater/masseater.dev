@@ -14,7 +14,7 @@ use crate::entities::song::{NICONICO, PROGRESS, SONGS, YOUTUBE};
 
 const PAGE: usize = 100;
 const INTERVAL: Duration = Duration::from_secs(1);
-const TRIES: u32 = 3;
+const TRIES: u32 = 8;
 const TIMEOUT: Duration = Duration::from_secs(60);
 const CHECKPOINT: usize = 20;
 

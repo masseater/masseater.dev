@@ -1,4 +1,4 @@
-import { one, WRITE, compactInput } from "@masseater.dev/mcp-tool-call";
+import { one, WRITE, toolInputOf } from "@masseater.dev/mcp-tool-call";
 import { Label, TOKEN_SCOPES } from "@masseater.dev/watashi-protocol";
 import type { CallToolResult, McpServer } from "@modelcontextprotocol/server";
 import { Option, Schema } from "effect";
@@ -24,7 +24,7 @@ const IssueInput = Schema.Struct({
 
 type IssueRequest = typeof IssueInput.Type;
 
-const ISSUE_SCHEMA = IssueInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
+const ISSUE_SCHEMA = toolInputOf(IssueInput);
 
 const DESCRIPTION = "Issue a token for the watashi HTTP API.";
 
@@ -43,7 +43,7 @@ export const registerTokenTools =
       TOOL,
       {
         description: DESCRIPTION,
-        inputSchema: compactInput(ISSUE_SCHEMA),
+        inputSchema: ISSUE_SCHEMA,
         annotations: WRITE,
       },
       (input) => issuing(runTool)(input),

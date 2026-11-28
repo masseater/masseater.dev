@@ -24,6 +24,7 @@
     "@fontsource/noto-serif-jp": "catalog:",
     "@fontsource/zen-kurenaido": "catalog:",
     "@types/node": "catalog:",
+    "lapse": "workspace:*",
     "vite-plus": "catalog:stack"
   }
 }

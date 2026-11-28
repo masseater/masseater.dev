@@ -22,6 +22,7 @@
     "effect": "catalog:stack"
   },
   "devDependencies": {
+    "lapse": "workspace:*",
     "vite-plus": "catalog:stack"
   }
 }
