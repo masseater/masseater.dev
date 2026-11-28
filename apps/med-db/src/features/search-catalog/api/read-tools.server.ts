@@ -1,7 +1,6 @@
-import { READ_ONLY, compactInput } from "@masseater.dev/mcp-tool-call";
+import { READ_ONLY, toolInputOf } from "@masseater.dev/mcp-tool-call";
 import type { McpServer } from "@modelcontextprotocol/server";
 import type { DrizzleD1Database } from "drizzle-orm/d1";
-import { Schema } from "effect";
 
 import { IdInput, KeywordInput, VideoSearchInput } from "#/entities/catalog/index.ts";
 import { getSong, listSongs } from "#/entities/song/index.server.ts";
@@ -10,21 +9,9 @@ import { orMissing, runTool } from "#/shared/api/index.server.ts";
 import type { CatalogRelations } from "#/shared/db/index.server.ts";
 import { keywordOf } from "#/shared/db/index.server.ts";
 
-const KEYWORD_SCHEMA = KeywordInput.pipe(
-  Schema.toStandardSchemaV1,
-  Schema.toStandardJSONSchemaV1,
-  compactInput,
-);
-const ID_SCHEMA = IdInput.pipe(
-  Schema.toStandardSchemaV1,
-  Schema.toStandardJSONSchemaV1,
-  compactInput,
-);
-const VIDEO_SEARCH_SCHEMA = VideoSearchInput.pipe(
-  Schema.toStandardSchemaV1,
-  Schema.toStandardJSONSchemaV1,
-  compactInput,
-);
+const KEYWORD_SCHEMA = toolInputOf(KeywordInput);
+const ID_SCHEMA = toolInputOf(IdInput);
+const VIDEO_SEARCH_SCHEMA = toolInputOf(VideoSearchInput);
 
 export const registerReadTools =
   (db: DrizzleD1Database<CatalogRelations>) =>

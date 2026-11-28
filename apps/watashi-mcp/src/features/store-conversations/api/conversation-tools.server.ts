@@ -1,6 +1,6 @@
-import { one, READ_ONLY, compactInput } from "@masseater.dev/mcp-tool-call";
+import { one, READ_ONLY, toolInputOf } from "@masseater.dev/mcp-tool-call";
 import type { CallToolResult, McpServer } from "@modelcontextprotocol/server";
-import { Effect, Option, Schema } from "effect";
+import { Effect, Option } from "effect";
 
 import { listSessions, readConversation } from "#/entities/conversation/index.server.ts";
 import type { ConversationObjects } from "#/entities/conversation/index.server.ts";
@@ -9,7 +9,7 @@ import type { Input } from "#/entities/conversation/index.ts";
 import type { ToolRun } from "#/shared/api/index.server.ts";
 import type { Database } from "#/shared/db/index.server.ts";
 
-const READ_SCHEMA = ReadInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
+const READ_SCHEMA = toolInputOf(ReadInput);
 
 const DESCRIPTION =
   "Read the owner's conversations with AI (Claude Code transcripts, secrets redacted).";
@@ -34,7 +34,7 @@ export const registerConversationTools =
       "conversation_read",
       {
         description: DESCRIPTION,
-        inputSchema: compactInput(READ_SCHEMA),
+        inputSchema: READ_SCHEMA,
         annotations: READ_ONLY,
       },
       (input) =>

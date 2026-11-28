@@ -2,13 +2,16 @@ import { Link } from "@tanstack/react-router";
 import { useMemo } from "react";
 import type { ReactNode } from "react";
 
-import type { MemoValue } from "#/entities/watashi/index.ts";
-import { RetractedNote } from "#/entities/watashi/index.ts";
+import type { MemoValue } from "#/entities/watashi/model/memo.ts";
+import { RetractedNote } from "#/entities/watashi/ui/retracted-note.tsx";
 import { shownTime } from "#/shared/model/index.ts";
 import { Row } from "#/shared/ui/index.ts";
 
 export const MemoRow = ({ memo }: Readonly<{ memo: MemoValue }>): ReactNode => {
-  const params = useMemo(() => ({ project: memo.project, name: memo.name }), [memo]);
+  const params = useMemo(
+    () => ({ project: memo.project, name: memo.name }),
+    [memo.project, memo.name],
+  );
   return (
     <Row lead={shownTime(memo.updatedAt)}>
       <Link

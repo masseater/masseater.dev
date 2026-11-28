@@ -1,4 +1,5 @@
 import { expect, it } from "@effect/vitest";
+import { toolInputOf } from "@masseater.dev/mcp-tool-call";
 import { Client, InMemoryTransport } from "@modelcontextprotocol/client";
 import type { CallToolResult, ContentBlock, TextContent } from "@modelcontextprotocol/client";
 import { McpServer, createMcpHandler } from "@modelcontextprotocol/server";
@@ -59,7 +60,7 @@ const fakeTwilog = (self: string): McpServer => {
   server.registerTool(
     "get_twitter_posts",
     {
-      inputSchema: UpstreamInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1),
+      inputSchema: toolInputOf(UpstreamInput),
     },
     (input) => {
       received.current = [...received.current, input];

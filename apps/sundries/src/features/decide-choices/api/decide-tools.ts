@@ -1,4 +1,4 @@
-import { READ_ONLY, compactInput, failedAt } from "@masseater.dev/mcp-tool-call";
+import { READ_ONLY, failedAt, toolInputOf } from "@masseater.dev/mcp-tool-call";
 import type { UpstreamFailed } from "@masseater.dev/mcp-tool-call";
 import type { McpServer } from "@modelcontextprotocol/server";
 import { runWorkersAi } from "@r_masseater/workers-tracing/workers-ai";
@@ -15,7 +15,7 @@ const MODEL_SELECTOR = "clef-flash";
 const DESCRIPTION =
   "Answer choice questions about given text with the Clef Flash decision model. Returns the chosen option and each option's probability per question. Selects only; never writes text.";
 
-const INPUT_SCHEMA = DecideInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
+const INPUT_SCHEMA = toolInputOf(DecideInput);
 
 const fail = failedAt("decision model");
 
@@ -64,7 +64,7 @@ export const registerDecideTools =
       "decide",
       {
         description: DESCRIPTION,
-        inputSchema: compactInput(INPUT_SCHEMA),
+        inputSchema: INPUT_SCHEMA,
         annotations: READ_ONLY,
       },
       (input) =>

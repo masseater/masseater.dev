@@ -1,4 +1,4 @@
-import { failedAt, READ_ONLY, compactInput } from "@masseater.dev/mcp-tool-call";
+import { failedAt, READ_ONLY, toolInputOf } from "@masseater.dev/mcp-tool-call";
 import type { McpServer } from "@modelcontextprotocol/server";
 import { runWorkersAi } from "@r_masseater/workers-tracing/workers-ai";
 import { Array as Arr, Effect, Option, Order, Schema, flow, pipe } from "effect";
@@ -25,11 +25,8 @@ const SlideMetadata = Schema.Struct({
 
 type Slide = typeof SlideMetadata.Type;
 
-const SEARCH_SCHEMA = SlideSearchInput.pipe(
-  Schema.toStandardSchemaV1,
-  Schema.toStandardJSONSchemaV1,
-);
-const DECK_SCHEMA = DeckInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
+const SEARCH_SCHEMA = toolInputOf(SlideSearchInput);
+const DECK_SCHEMA = toolInputOf(DeckInput);
 
 const fail = failedAt("slide index");
 
@@ -130,7 +127,7 @@ const registerSearch =
       "search_slides",
       {
         description: "Search the owner's slide decks by meaning, one slide per result.",
-        inputSchema: compactInput(SEARCH_SCHEMA),
+        inputSchema: SEARCH_SCHEMA,
         annotations: READ_ONLY,
       },
       (input) =>
@@ -150,7 +147,7 @@ const registerGetDeck =
       "get_deck",
       {
         description: "Return the text of every slide in a deck, in page order.",
-        inputSchema: compactInput(DECK_SCHEMA),
+        inputSchema: DECK_SCHEMA,
         annotations: READ_ONLY,
       },
       (input) => getDeck(bindings, input.deck).pipe(runTool({ count: (slides) => slides.length })),
