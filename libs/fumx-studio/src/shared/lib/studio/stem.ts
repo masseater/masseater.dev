@@ -172,34 +172,22 @@ interface Reading {
   readonly start: number;
   readonly length: number;
   readonly read: number;
+  readonly channels: number;
 }
 
-const monoRead = (stem: Stem, out: Unpacked, { start, length, read }: Reading): void => {
-  for (let index = FIRST; index < length; index += ONE) {
-    const value = (stem.data[read + index] ?? SILENT) * stem.scale;
-    out.left[start + index] = value;
-    out.right[start + index] = value;
-  }
-};
-
-const stereoRead = (stem: Stem, out: Unpacked, { start, length, read }: Reading): void => {
-  for (let index = FIRST; index < length; index += ONE) {
-    out.left[start + index] = (stem.data[read + index * STEREO] ?? SILENT) * stem.scale;
-    out.right[start + index] = (stem.data[read + index * STEREO + ONE] ?? SILENT) * stem.scale;
-  }
-};
-
 const unpackedSegment = (stem: Stem, out: Unpacked, at: number): void => {
-  const reading = {
+  const { start, length, read, channels }: Reading = {
     start: stem.segments[at + AT.start] ?? SILENT,
     length: stem.segments[at + AT.length] ?? SILENT,
     read: stem.segments[at + AT.offset] ?? SILENT,
+    channels: stem.segments[at + AT.channels] ?? ONE,
   };
-  if (stem.segments[at + AT.channels] === STEREO) {
-    stereoRead(stem, out, reading);
-    return;
+  const rightOffset = channels - ONE;
+  for (let index = FIRST; index < length; index += ONE) {
+    const from = read + index * channels;
+    out.left[start + index] = (stem.data[from] ?? SILENT) * stem.scale;
+    out.right[start + index] = (stem.data[from + rightOffset] ?? SILENT) * stem.scale;
   }
-  monoRead(stem, out, reading);
 };
 
 export const unpacked = (stem: Stem): Unpacked => {

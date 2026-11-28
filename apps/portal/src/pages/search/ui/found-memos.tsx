@@ -1,10 +1,9 @@
 import { Array as Arr, pipe } from "effect";
 import type { ReactNode } from "react";
 
+import { MemoRow } from "#/entities/watashi/index.ts";
 import { useFoundMemos } from "#/pages/search/api/search-query.ts";
 import { RowList, Section } from "#/shared/ui/index.ts";
-
-import { FoundMemoRow } from "./found-memo-row.tsx";
 
 const TITLE = "作業メモ";
 
@@ -15,7 +14,7 @@ export const FoundMemos = ({ keyword }: Readonly<{ keyword: string }>): ReactNod
       <RowList label={TITLE}>
         {pipe(
           memos,
-          Arr.map((memo) => <FoundMemoRow key={memo.ref} memo={memo} />),
+          Arr.map((memo) => <MemoRow key={memo.ref} memo={memo} />),
         )}
       </RowList>
     </Section>

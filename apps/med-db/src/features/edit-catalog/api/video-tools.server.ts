@@ -1,7 +1,6 @@
-import { OVERWRITE, WRITE, compactInput } from "@masseater.dev/mcp-tool-call";
+import { OVERWRITE, WRITE, toolInputOf } from "@masseater.dev/mcp-tool-call";
 import type { McpServer } from "@modelcontextprotocol/server";
 import type { DrizzleD1Database } from "drizzle-orm/d1";
-import { Schema } from "effect";
 
 import { CreateVideoInput, IdInput, UpdateVideoInput } from "#/entities/catalog/index.ts";
 import { runTool } from "#/shared/api/index.server.ts";
@@ -17,11 +16,7 @@ export const registerVideoTools =
       {
         description:
           "メドレー・合作・単品などの動画を登録する。パート表は set_video_parts で登録する",
-        inputSchema: CreateVideoInput.pipe(
-          Schema.toStandardSchemaV1,
-          Schema.toStandardJSONSchemaV1,
-          compactInput,
-        ),
+        inputSchema: toolInputOf(CreateVideoInput),
         annotations: WRITE,
       },
       (input) => runTool(db)(createVideo(input)),
@@ -30,11 +25,7 @@ export const registerVideoTools =
       "update_video",
       {
         description: "動画の情報のうち、指定した項目だけを書き換える。null を渡すと消す",
-        inputSchema: UpdateVideoInput.pipe(
-          Schema.toStandardSchemaV1,
-          Schema.toStandardJSONSchemaV1,
-          compactInput,
-        ),
+        inputSchema: toolInputOf(UpdateVideoInput),
         annotations: WRITE,
       },
       (input) => runTool(db)(updateVideo(input)),
@@ -43,11 +34,7 @@ export const registerVideoTools =
       "delete_video",
       {
         description: "動画をパート表ごと消す",
-        inputSchema: IdInput.pipe(
-          Schema.toStandardSchemaV1,
-          Schema.toStandardJSONSchemaV1,
-          compactInput,
-        ),
+        inputSchema: toolInputOf(IdInput),
         annotations: OVERWRITE,
       },
       ({ id }) => runTool(db)(deleteVideo(id)),

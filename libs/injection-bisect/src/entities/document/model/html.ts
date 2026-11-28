@@ -1,9 +1,10 @@
-import { Array as Arr, Match, Option, Order, String as Str, pipe } from "effect";
+import { Array as Arr, Match, Option, String as Str, pipe } from "effect";
 import { parse } from "parse5";
 import type { DefaultTreeAdapterMap } from "parse5";
 
 import type { Parser, Span } from "./parser.ts";
 import { PROSE } from "./prose.ts";
+import { inSourceOrder, spansOf } from "./span-tree.ts";
 
 type Node = DefaultTreeAdapterMap["node"];
 
@@ -125,22 +126,14 @@ const childrenOf = (node: Node): readonly Node[] =>
     Match.orElse(() => []),
   );
 
-const spansIn = (text: string, node: Node): readonly Span[] => [
-  ...ownSpans(text, node),
-  ...pipe(
-    childrenOf(node),
-    Arr.flatMap((child) => spansIn(text, child)),
-  ),
-];
-
-const byStart = Order.mapInput(Order.Number, ({ start }: Span) => start);
+const spansIn = spansOf<Node>({ own: ownSpans, children: childrenOf });
 
 const htmlUnitsOf = (text: string): readonly Span[] => {
   const spans = pipe(
     spansIn(text, parse(text, { sourceCodeLocationInfo: true })),
     Arr.filter(({ start, end }) => pipe(text, Str.slice(start, end), Str.trim) !== ""),
   );
-  return Arr.sort(spans, byStart);
+  return inSourceOrder(spans);
 };
 
 export const htmlParser: Parser = {

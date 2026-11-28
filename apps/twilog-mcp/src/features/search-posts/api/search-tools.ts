@@ -1,10 +1,10 @@
 import type { UpstreamFailed } from "@masseater.dev/mcp-tool-call";
-import { failedAt, compactInput } from "@masseater.dev/mcp-tool-call";
+import { failedAt, toolInputOf } from "@masseater.dev/mcp-tool-call";
 import type { SiteToken } from "@masseater.dev/repositories/credential-broker";
 import { TWILOG_ACCOUNTS, twilogTarget } from "@masseater.dev/repositories/oauth-targets";
 import type { OAuthTargetId, TwilogAccount } from "@masseater.dev/repositories/oauth-targets";
 import type { McpServer } from "@modelcontextprotocol/server";
-import { Array as Arr, Context, Effect, Match, Number as Num, Option, Schema, pipe } from "effect";
+import { Array as Arr, Context, Effect, Match, Number as Num, Option, pipe } from "effect";
 
 import { runTool } from "#/shared/api/index.ts";
 
@@ -38,7 +38,7 @@ const NO_POSTS = 0;
 const DESCRIPTION =
   "Search the owner's X (Twitter) posts, likes and bookmarks on Twilog across all linked accounts.";
 
-const INPUT_SCHEMA = SearchInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
+const INPUT_SCHEMA = toolInputOf(SearchInput);
 
 const brokerFailed = failedAt("credential broker");
 
@@ -130,7 +130,7 @@ export const registerSearchTools =
       TOOL,
       {
         description: DESCRIPTION,
-        inputSchema: compactInput(INPUT_SCHEMA),
+        inputSchema: INPUT_SCHEMA,
         annotations: { readOnlyHint: true, openWorldHint: true },
       },
       (input) =>

@@ -14,6 +14,7 @@ export {
   Character,
   Footage,
   Picture,
+  ShotPicture,
   Shout,
   TitleBar,
 } from "#/widgets/look/index.ts";
