@@ -1,0 +1,17 @@
+{
+  "https://builds.dotnet.microsoft.com/dotnet/Sdk/11.0.100/dotnet-sdk-11.0.100-linux-arm64.tar.gz": "699951697c76af6ba714fbbe9b45372d1f189d00f303a67ba2e90d53acf630b2",
+  "https://builds.dotnet.microsoft.com/dotnet/Sdk/11.0.100/dotnet-sdk-11.0.100-linux-x64.tar.gz": "6fdb8822f47ccdba28f507dcd5d92e632d5b99cd27908d6838f0cc575be33baf",
+  "https://builds.dotnet.microsoft.com/dotnet/Sdk/11.0.100/dotnet-sdk-11.0.100-osx-arm64.tar.gz": "a2e6635ffec544e9a7a98bde44d75bfbc71b2c19b33c3c088774ef2498edf380",
+  "https://builds.dotnet.microsoft.com/dotnet/Sdk/11.0.100/dotnet-sdk-11.0.100-osx-x64.tar.gz": "7e2adb537cf3259e75261c6a2f45e4aeb461e4974573ae8ffb7b1b70f0e652f1",
+  "https://builds.dotnet.microsoft.com/dotnet/Sdk/11.0.100/dotnet-sdk-11.0.100-win-x64.zip": "ae800f1fa1a6428e0d7c740bb745d9414f15334118c51e246dab9850b738fadd",
+  "https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.166.0/otelcol_0.166.0_darwin_amd64.tar.gz": "4a396c877df9345c7d7e401d5a81fbc6321db45ee6d7ea1918af3ec027a9de61",
+  "https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.166.0/otelcol_0.166.0_darwin_arm64.tar.gz": "9109647af93b40ed737d21c7f7e00d82abbf1726d73a53f1ce65411006648c79",
+  "https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.166.0/otelcol_0.166.0_linux_amd64.tar.gz": "b2feb1185c156dc9def40d800afe58977bc2c85b2560274147a4f631f3e0deda",
+  "https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.166.0/otelcol_0.166.0_linux_arm64.tar.gz": "5f7fd2c0481d04074ac9d94e5b565da1a5e7e4df15dd59a8172f5a8f95d2bec3",
+  "https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.166.0/otelcol_0.166.0_windows_amd64.tar.gz": "20462a8d1dc069c5e2727c71ba0fe03370a63edb16f66c4de405696241f6c37c",
+  "https://github.com/open-telemetry/weaver/releases/download/v0.28.0/weaver-aarch64-apple-darwin.tar.xz": "b334b37372325f77374b461fd6a11d38bc050122832eb83a9732fcd6831a5ab1",
+  "https://github.com/open-telemetry/weaver/releases/download/v0.28.0/weaver-aarch64-unknown-linux-gnu.tar.xz": "dab3251667c64e7bf5e20f294667a5ac9c041ee21212f8390e6affe70c487ddc",
+  "https://github.com/open-telemetry/weaver/releases/download/v0.28.0/weaver-x86_64-apple-darwin.tar.xz": "40dd65d72b43bc97041b849203e450b322cd786629af8f926cfd2d05798d9ca4",
+  "https://github.com/open-telemetry/weaver/releases/download/v0.28.0/weaver-x86_64-pc-windows-msvc.zip": "23204db0d97bee60a51bb4e9ee0c185ea3cc5f788ceb51b0ded2135d297ccf10",
+  "https://github.com/open-telemetry/weaver/releases/download/v0.28.0/weaver-x86_64-unknown-linux-gnu.tar.xz": "9878e2d56ad82ae441b0b527377a4f6001ae19f4af362fb0a4d951884f59ab61"
+}

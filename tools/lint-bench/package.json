@@ -17,6 +17,7 @@
     "effect": "catalog:stack"
   },
   "devDependencies": {
+    "@r_masseater/vite-plus-adopt": "catalog:",
     "@types/node": "catalog:",
     "lapse": "workspace:*",
     "vite-plus": "catalog:stack"

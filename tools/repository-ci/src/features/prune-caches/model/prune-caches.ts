@@ -40,7 +40,7 @@ const TARGETS: readonly Readonly<{
   group: (entry: Entry) => string;
 }>[] = [
   { prefix: "pnpm-store-Linux-X64-", group: sameKind },
-  { prefix: "mise-v1-", group: sameKind },
+  { prefix: "vpa-tools-", group: sameKind },
   { prefix: "vite-task-", group: sameKind },
   { prefix: "oxlint-plugin-decision-", group: sameKind },
   { prefix: "msch-", group: sameRun },

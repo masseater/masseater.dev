@@ -24,16 +24,10 @@ if ! dpkg -s "${linux_packages[@]}" >/dev/null 2>&1; then
   apt-get update -qq >&2
   apt-get install -y -qq "${linux_packages[@]}" >&2
 fi
-if ! command -v mise >/dev/null 2>&1; then
-  curl -fsSL https://mise.run | MISE_VERSION=v2026.11.14 sh >&2
-  export PATH="$HOME/.local/bin:$PATH"
-fi
-mise trust --quiet mise.toml
-mise install --locked >&2
 if ! grep -qs "^\[profile.dev\]" "$HOME/.cargo/config.toml"; then
   printf "[profile.dev]\ndebug = 0\n\n[profile.test]\ndebug = 0\n" >>"$HOME/.cargo/config.toml"
 fi
-echo "export PATH=\"$CLAUDE_PROJECT_DIR/.pnpm/rust/bin:$HOME/.local/bin:$HOME/.local/share/mise/shims:\$PATH\" DOTNET_NOLOGO=1 DOTNET_CLI_TELEMETRY_OPTOUT=1 VP_RUN_CONCURRENCY_LIMIT=2" >>"$CLAUDE_ENV_FILE"
+echo "export PATH=\"$CLAUDE_PROJECT_DIR/.pnpm/rust/bin:$HOME/.local/bin:\$PATH:$CLAUDE_PROJECT_DIR/node_modules/.bin\" DOTNET_NOLOGO=1 DOTNET_CLI_TELEMETRY_OPTOUT=1 VP_RUN_CONCURRENCY_LIMIT=2" >>"$CLAUDE_ENV_FILE"
 vp env on >&2
 vp install --frozen-lockfile >&2
 if [ ! -d node_modules/.vite/task-cache ]; then
@@ -49,7 +43,7 @@ fi
 
 settings="$HOME/.claude/settings.json"
 [ -s "$settings" ] || echo "{}" >"$settings"
-collector="pgrep -x otelcol >/dev/null || [ -z \"\${CLAUDE_CODE_REMOTE_SESSION_ID:-}\" ] || { export OTEL_FILES=\"\$HOME/.claude/otel/\$CLAUDE_CODE_REMOTE_SESSION_ID\"; mkdir -p \"\$OTEL_FILES\"; setsid $(mise which otelcol) --config $CLAUDE_PROJECT_DIR/.github/actions/setup/otelcol.yaml --config $CLAUDE_PROJECT_DIR/.claude/otelcol.yaml >\"\$OTEL_FILES/collector.log\" 2>&1 </dev/null & }"
+collector="pgrep -x otelcol >/dev/null || [ -z \"\${CLAUDE_CODE_REMOTE_SESSION_ID:-}\" ] || { export OTEL_FILES=\"\$HOME/.claude/otel/\$CLAUDE_CODE_REMOTE_SESSION_ID\"; mkdir -p \"\$OTEL_FILES\"; setsid $CLAUDE_PROJECT_DIR/node_modules/.bin/otelcol --config $CLAUDE_PROJECT_DIR/.github/actions/setup/otelcol.yaml --config $CLAUDE_PROJECT_DIR/.claude/otelcol.yaml >\"\$OTEL_FILES/collector.log\" 2>&1 </dev/null & }"
 keep="[ -d /mnt/project-files ] && [ -n \"\${CLAUDE_CODE_REMOTE_SESSION_ID:-}\" ] && mkdir -p /mnt/project-files/telemetry/claude-code/\$CLAUDE_CODE_REMOTE_SESSION_ID/ && cp \$HOME/.claude/otel/\$CLAUDE_CODE_REMOTE_SESSION_ID/*.jsonl /mnt/project-files/telemetry/claude-code/\$CLAUDE_CODE_REMOTE_SESSION_ID/ || true"
 jq --arg start "$collector" --arg stop "$keep" '
   def own($event; $command): [.hooks[$event] // [] | .[] | select((.hooks[0].command // "") | test("otelcol|telemetry/claude-code") | not)] + [{hooks: [{type: "command", command: $command}]}];
