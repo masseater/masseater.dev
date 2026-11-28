@@ -24,8 +24,11 @@ const TachieSchema = Schema.Union([PsdTachieSchema, ImageTachieSchema]);
 /** @internal */
 export type TachieEntry = typeof TachieSchema.Type;
 
+const Lead = Schema.Finite.pipe(Schema.optionalKey);
+const Take = Schema.Struct({ seconds: Schema.Finite, lead: Lead });
+
 const ManifestSchema = Schema.Struct({
-  narration: Schema.Record(Schema.String, Schema.Struct({ seconds: Schema.Finite })),
+  narration: Schema.Record(Schema.String, Take),
   speakers: Schema.Record(Schema.String, Schema.String),
   tachie: Schema.optionalKey(Schema.Record(Schema.String, TachieSchema)),
 });

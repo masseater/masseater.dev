@@ -62,4 +62,4 @@ export const narrationKey = ({
     ),
   ).pipe(Effect.map((buffer) => Str.slice(NOTHING, KEY_LENGTH)(new Uint8Array(buffer).toHex())));
 
-export type Narration = Readonly<Record<string, Readonly<{ seconds: number }>>>;
+export type Narration = Readonly<Record<string, Readonly<{ seconds: number; lead?: number }>>>;

@@ -132,6 +132,7 @@ export interface Fitted {
   readonly query: QueryType;
 
   readonly speeds: readonly number[];
+  readonly onset: number;
 }
 
 const scaled = (mora: MoraType, consonant: number, vowel: number): MoraType => ({
@@ -198,6 +199,7 @@ export const fitBeats = ({ query, counts, beats, speed, lead }: FitRequest): Fit
     Option.getOrElse(Arr.get(factors, owner), () => natural);
   return {
     query: { ...query, accent_phrases: rescaled({ placed, owners, factorOf }) },
+    onset,
     speeds: pipe(
       factors,
       Arr.map((factor) => ONE / factor),

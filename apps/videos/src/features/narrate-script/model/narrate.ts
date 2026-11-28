@@ -27,9 +27,13 @@ export type Services = FileSystem.FileSystem | Path.Path | HttpClient.HttpClient
 /** @internal */
 export type Failure = VideoError | PlatformError.PlatformError | Config.ConfigError;
 
-interface Recorded {
-  readonly key: string;
+interface Take {
   readonly seconds: number;
+  readonly lead?: number;
+}
+
+interface Recorded extends Take {
+  readonly key: string;
   readonly made: boolean;
 }
 
@@ -65,18 +69,18 @@ const synthesizeTo = ({
   parts,
   beats,
   file,
-}: SpokenLine & Readonly<{ file: string }>): Effect.Effect<number, Failure, Services> =>
+}: SpokenLine & Readonly<{ file: string }>): Effect.Effect<Take, Failure, Services> =>
   Effect.gen(function* synthesizeFile() {
     const fileSystem = yield* FileSystem.FileSystem;
     const path = yield* Path.Path;
-    const wav = yield* synthesize({ style: voice, text: spoken, speed, parts, beats });
+    const { wav, lead } = yield* synthesize({ style: voice, text: spoken, speed, parts, beats });
     const seconds = wavSeconds(wav);
     if (Option.isNone(seconds)) {
       return yield* videoError(`「${spoken}」の WAV にデータがない`);
     }
     yield* fileSystem.makeDirectory(path.dirname(file), { recursive: true });
     yield* fileSystem.writeFile(file, wav);
-    return seconds.value;
+    return { seconds: seconds.value, lead };
   });
 
 const recordLine = ({
@@ -91,10 +95,10 @@ const recordLine = ({
     const known = Rec.get(manifest.narration, key);
     const exists = yield* fileSystem.exists(file);
     if (Option.isSome(known) && exists) {
-      return { key, seconds: known.value.seconds, made: false };
+      return { key, ...known.value, made: false };
     }
-    const seconds = yield* synthesizeTo({ ...line, file });
-    return { key, seconds, made: true };
+    const take = yield* synthesizeTo({ ...line, file });
+    return { key, ...take, made: true };
   });
 
 const spokenLines = (script: VideoScript): readonly SpokenLine[] =>
@@ -172,7 +176,7 @@ const narrateAll = (script: VideoScript): Effect.Effect<Narrated, Failure, Servi
     );
     const fresh = pipe(
       recorded,
-      Arr.map(({ key, seconds }) => [key, { seconds }] as const),
+      Arr.map(({ key, made: _made, ...take }) => [key, take] as const),
       Rec.fromEntries,
     );
     yield* writeManifest({
