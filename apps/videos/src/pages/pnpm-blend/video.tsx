@@ -92,7 +92,7 @@ const Board = ({ timeline }: Readonly<{ timeline: Timeline }>): ReactNode => (
     <div className="absolute inset-x-0 top-[64px] h-[18px] bg-[#9a5a33]" />
     <div className="absolute inset-x-0 top-0 bottom-[28px] overflow-hidden">
       <PsdNarrator
-        className="top-[1076px] left-[366px] h-[1682px] w-[1000px]"
+        className="top-[1340px] left-[366px] h-[1682px] w-[1000px]"
         parts={PARTS}
         psd={staticFile(tachiePsdPath(TACHIE))}
         timeline={timeline}
