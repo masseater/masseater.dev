@@ -316,7 +316,7 @@ permissions:
   fallow:
     skills: true
   modern-web-guidance:
-    skills: false
+    skills: true
 peerDependencyRules:
   allowAny:
     - vite
