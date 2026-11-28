@@ -1,0 +1,44 @@
+diff --git a/dist/esm/start-compiler/server-fn-resolver-module.js b/dist/esm/start-compiler/server-fn-resolver-module.js
+index 27b94ec71b92938e19f6588273812252b174c942..81fb6b8e2725e62e3c70353fea923019fb997d46 100644
+--- a/dist/esm/start-compiler/server-fn-resolver-module.js
++++ b/dist/esm/start-compiler/server-fn-resolver-module.js
+@@ -14,7 +14,7 @@ function generateServerFnResolverModule(opts) {
+ 	}).join(",\n  ");
+ 	const clientReferencedCheck = opts.includeClientReferencedCheck ? `
+   if (access.origin === 'client' && !serverFnInfo.isClientReferenced) {
+-    throw new Error('Server function not accessible from client: ' + id)
++    throw Object.assign(new Error('Server function not accessible from client: ' + id), { status: 404 })
+   }
+ ` : "";
+ 	const resolveModule = opts.memoizeModules ? "serverFnInfo.module ??= await serverFnInfo.importer()" : "serverFnInfo.module ?? (await serverFnInfo.importer())";
+@@ -27,7 +27,7 @@ const manifest = {
+ export async function getServerFnById(id, access) {
+   const serverFnInfo = manifest[id]
+   if (!serverFnInfo) {
+-    throw new Error('Server function info not found for ' + id)
++    throw Object.assign(new Error('Server function info not found for ' + id), { status: 404 })
+   }
+ ${clientReferencedCheck}
+   const fnModule = ${resolveModule}
+diff --git a/src/start-compiler/server-fn-resolver-module.ts b/src/start-compiler/server-fn-resolver-module.ts
+index 2d50376a39e68fef1745b770131d6ba8fdf4d5ca..ccb46874ae482452e6feb633856f4fca4e4d2210 100644
+--- a/src/start-compiler/server-fn-resolver-module.ts
++++ b/src/start-compiler/server-fn-resolver-module.ts
+@@ -42,7 +42,7 @@ export function generateServerFnResolverModule(
+   const clientReferencedCheck = opts.includeClientReferencedCheck
+     ? `
+   if (access.origin === 'client' && !serverFnInfo.isClientReferenced) {
+-    throw new Error('Server function not accessible from client: ' + id)
++    throw Object.assign(new Error('Server function not accessible from client: ' + id), { status: 404 })
+   }
+ `
+     : ''
+@@ -61,7 +61,7 @@ const manifest = {
+ export async function getServerFnById(id, access) {
+   const serverFnInfo = manifest[id]
+   if (!serverFnInfo) {
+-    throw new Error('Server function info not found for ' + id)
++    throw Object.assign(new Error('Server function info not found for ' + id), { status: 404 })
+   }
+ ${clientReferencedCheck}
+   const fnModule = ${resolveModule}

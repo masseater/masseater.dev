@@ -18,6 +18,7 @@
     "./heading": "./src/shared/ui/heading.tsx",
     "./page-footer": "./src/shared/ui/page-footer.tsx",
     "./page-header": "./src/shared/ui/page-header.tsx",
+    "./page-swap": "./src/shared/lib/page-swap.ts",
     "./pointer": "./src/shared/lib/pointer.ts",
     "./portfolio": "./src/shared/lib/portfolio.ts",
     "./input-class": "./src/shared/lib/input-class.ts",

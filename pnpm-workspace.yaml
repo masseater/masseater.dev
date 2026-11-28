@@ -376,6 +376,7 @@ audit:
 patchedDependencies:
   "@voidzero-dev/vite-plus-core@8.3.8001": patches/@voidzero-dev__vite-plus-core@8.3.8001.patch # exit: npm:@voidzero-dev/vite-plus-core@>8.3.8001
   "@tanstack/intent@0.5.6": patches/@tanstack__intent@0.5.6.patch # exit: npm:@tanstack/intent@>0.5.6
+  "@tanstack/start-plugin-core@1.172.0": patches/@tanstack__start-plugin-core@1.172.0.patch # exit: npm:@tanstack/start-plugin-core@>1.172.0
 minimumReleaseAgeExclude:
   - "@voidzero-dev/vite-plus-core@8.3.8001"
   - "@voidzero-dev/vite-plus-darwin-arm64@1.8.0"

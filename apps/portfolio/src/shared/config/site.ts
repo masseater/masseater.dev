@@ -20,3 +20,10 @@ export const site = {
   xHandle: `@${portfolio.xUser}`,
   links: portfolio.links,
 } as const;
+
+export const filePaths = [
+  site.feedPath,
+  site.robotsPath,
+  site.securityTxtPath,
+  `/${site.sitemapFile}`,
+] as const;
