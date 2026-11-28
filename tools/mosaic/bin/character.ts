@@ -52,20 +52,23 @@ const fetchSongs = Effect.fn("fetchSongs")(function* fetchSongs(mosaic: string, 
   );
   if (!fetched) {
     yield* warn(
-      `The songs of ${slug} were not all fetched, so the pool is built from what was fetched`,
+      `The songs of ${slug} were not all fetched, so the pool waits for the next run, which resumes from what was fetched`,
     );
   }
+  return fetched;
 });
 
 const build = Effect.fn("build")(function* build(slug: string) {
   const mosaic = yield* inRepository(MOSAIC);
   const jobIndex = yield* Config.Int("JOB_INDEX").pipe(Config.withDefault(FIRST_JOB));
   yield* Effect.sleep(Duration.seconds((jobIndex % STAGGER_SLOTS) * STAGGER_SECONDS));
-  yield* fetchSongs(mosaic, slug);
-  yield* Effect.forEach(STEPS, (step) => mustSucceed({ command: mosaic, args: [step, slug] }), {
-    concurrency: 1,
-    discard: true,
-  });
+  const fetched = yield* fetchSongs(mosaic, slug);
+  if (fetched) {
+    yield* Effect.forEach(STEPS, (step) => mustSucceed({ command: mosaic, args: [step, slug] }), {
+      concurrency: 1,
+      discard: true,
+    });
+  }
 });
 
 const character = Effect.gen(function* character() {
