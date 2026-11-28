@@ -76,12 +76,8 @@ const repository = repositoryConfig({
 });
 
 export default defineConfig({
-  ...repository,
+  ...withOtelEnv(repository),
   plugins: [lapse()],
-  run: {
-    ...repository.run,
-    tasks: { ...repository.run?.tasks, test: withOtelEnv(repository.run?.tasks?.test) },
-  },
   skills: {
     "artouc/stop-describe-ui": {
       commit: "251a859f6e40645030e1ae69fa4b501c851eac9c",

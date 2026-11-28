@@ -1,4 +1,4 @@
-import { Option } from "effect";
+import { Option, Predicate } from "effect";
 
 const SDK = new URL("./sdk.config.ts", import.meta.url).pathname;
 
@@ -12,9 +12,25 @@ export const configOf = (endpoint: Option.Option<string>): Readonly<Record<strin
     }),
   });
 
-export const withOtelEnv = <const Task extends { readonly cache?: unknown }>(
-  task: Task,
-): Task & Readonly<{ cache: Readonly<{ untrackedEnv: string[] }> }> => ({
-  ...task,
-  cache: { ...(typeof task.cache === "object" ? task.cache : {}), untrackedEnv: OTEL_ENV },
-});
+type Tasks = Readonly<Record<string, unknown>>;
+
+const recordOr = (value: unknown): Tasks =>
+  Option.getOrElse(Option.liftPredicate(value, Predicate.isObject), () => ({}));
+
+export const withOtelEnv = <const Config extends { readonly run?: unknown }>(
+  config: Config,
+): Config => {
+  const run = recordOr(config.run);
+  const tasks = recordOr(run["tasks"]);
+  const test = recordOr(tasks["test"]);
+  return {
+    ...config,
+    run: {
+      ...run,
+      tasks: {
+        ...tasks,
+        test: { ...test, cache: { ...recordOr(test["cache"]), untrackedEnv: OTEL_ENV } },
+      },
+    },
+  };
+};
