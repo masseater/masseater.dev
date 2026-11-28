@@ -4,15 +4,20 @@ import type { ChildProcessSpawner } from "effect/process";
 
 import { lastRecorded } from "#/entities/deployment/index.ts";
 import type { DeploymentRecord } from "#/entities/deployment/index.ts";
+import { lockfileAt, sameResolution } from "#/entities/lockfile/index.ts";
 import { closure, neighborsIn } from "#/entities/workspace/index.ts";
 import type { Packages } from "#/entities/workspace/index.ts";
 
 const ROOT = ".";
+const LOCK = "pnpm-lock.yaml";
+const SETTINGS = "pnpm-workspace.yaml";
+const HEAD = "HEAD";
 
 const SHARED: readonly ((file: string) => boolean)[] = [
   Str.startsWith(".github/actions/"),
   Str.startsWith("patches/"),
-  (file): boolean => !Str.includes("/")(file) && !Str.endsWith(".md")(file),
+  (file): boolean =>
+    !Str.includes("/")(file) && !Str.endsWith(".md")(file) && file !== LOCK && file !== SETTINGS,
 ];
 
 const isShared =
@@ -44,6 +49,21 @@ export type Changes = Readonly<{
   extra?: (directory: string) => readonly string[];
 }>;
 
+const dependenciesChanged = Effect.fn("dependenciesChanged")(function* dependenciesChanged(
+  sha: string,
+  changed: readonly string[],
+  directories: readonly string[],
+) {
+  if (!Arr.contains(changed, LOCK)) {
+    return Arr.contains(changed, SETTINGS);
+  }
+  return yield* pipe(
+    Effect.all([lockfileAt(sha), lockfileAt(HEAD)], { concurrency: 1 }),
+    Effect.map(([before, after]) => !sameResolution({ before, after, directories })),
+    Effect.orElseSucceed(() => true),
+  );
+});
+
 /** @internal */
 export const isChanged = Effect.fn("isChanged")(function* isChanged(
   { packages, record, workflows, extra = (): readonly string[] => [] }: Changes,
@@ -68,11 +88,11 @@ export const isChanged = Effect.fn("isChanged")(function* isChanged(
       directories,
       Arr.some((directory) => Str.startsWith(`${directory}/`)(file)),
     );
-  return pipe(
-    files,
-    Option.match({
-      onNone: () => true,
-      onSome: (changed: readonly string[]) => pipe(changed, Arr.some(touched)),
-    }),
-  );
+  if (Option.isNone(last) || Option.isNone(files)) {
+    return true;
+  }
+  if (pipe(files.value, Arr.some(touched))) {
+    return true;
+  }
+  return yield* dependenciesChanged(last.value, files.value, directories);
 });
