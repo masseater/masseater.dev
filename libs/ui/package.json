@@ -11,6 +11,7 @@
     ".": "./src/app/index.ts",
     "./backdrop-palette": "./src/shared/lib/backdrop-palette.ts",
     "./badge": "./src/shared/ui/badge.tsx",
+    "./button-variants": "./src/shared/lib/button-variants.ts",
     "./button": "./src/shared/ui/button.tsx",
     "./cn": "./src/shared/lib/cn.ts",
     "./color-scheme": "./src/shared/lib/color-scheme.ts",
