@@ -49,7 +49,7 @@ export const script: VideoScript = {
       say: ["このファイル、バグの応急処置も\nまとめて置けるんだよね", "直ったら消せばOK"],
     },
     { id: "wow", voice: ZUNDAMON, say: ["インストールも\nもう終わってるのだ！？"] },
-    { id: "punch", say: ["**{爆速|ばくそく}**\nっしょ"], hold: 0.6 },
+    { id: "punch", say: ["**{爆速|ばくそく}**\nっしょ"], hold: 0.7 },
     { id: "why", voice: ZUNDAMON, say: ["なんでそんなに速いのだ？"] },
     {
       id: "disk",

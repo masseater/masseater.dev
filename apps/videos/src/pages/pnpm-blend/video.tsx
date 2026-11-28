@@ -296,8 +296,28 @@ const partsOf = (cast: Cast, timeline: Timeline, frame: number): readonly Part[]
     Option.getOrElse(() => cast.idle.before),
   );
 
-const SLIDE_FRAMES = 6;
+const CROUCH_FRAMES = 10;
+const DASH_FRAMES = 10;
+const STREAKS = [
+  { top: 240, width: 520, speed: 150, offset: 0 },
+  { top: 300, width: 760, speed: 190, offset: 300 },
+  { top: 545, width: 440, speed: 170, offset: 620 },
+  { top: 770, width: 680, speed: 210, offset: 140 },
+  { top: 840, width: 560, speed: 160, offset: 820 },
+  { top: 905, width: 820, speed: 200, offset: 460 },
+] as const;
+const SCREEN = 1080;
+
+const dashX = (frame: number): number =>
+  interpolate(frame, [0, CROUCH_FRAMES, CROUCH_FRAMES + DASH_FRAMES], [0, -40, 1500], {
+    easing: Easing.in((time) => Easing.cubic(time)),
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
+
 const OFFSTAGE = -900;
+const DASH_CUT = "punch";
+const DASH_LEAD = CROUCH_FRAMES + DASH_FRAMES + 1;
 
 interface Span {
   readonly from: number;
@@ -316,27 +336,25 @@ const staysOf = (cast: Cast, timeline: Timeline): readonly Span[] => {
   );
 };
 
+const dashOf = (timeline: Timeline, frame: number): number =>
+  pipe(
+    timeline.cuts,
+    Arr.findFirst(
+      ({ id, from, duration }) => id === DASH_CUT && frame >= from && frame < from + duration,
+    ),
+    Option.map(({ from, duration }) => dashX(frame - (from + duration - DASH_LEAD))),
+    Option.getOrElse(() => 0),
+  );
+
 const slideOf = (cast: Cast, timeline: Timeline, frame: number): number => {
   if (cast.always) {
-    return 0;
+    return dashOf(timeline, frame);
   }
-  const visibility = pipe(
+  const shown = pipe(
     staysOf(cast, timeline),
-    Arr.map((span) =>
-      Math.min(
-        interpolate(frame, [span.from - SLIDE_FRAMES, span.from], [0, 1], {
-          extrapolateLeft: "clamp",
-          extrapolateRight: "clamp",
-        }),
-        interpolate(frame, [span.to, span.to + SLIDE_FRAMES], [1, 0], {
-          extrapolateLeft: "clamp",
-          extrapolateRight: "clamp",
-        }),
-      ),
-    ),
-    (shown) => Math.max(0, ...shown),
+    Arr.some((span) => frame >= span.from && frame < span.to),
   );
-  return OFFSTAGE * (1 - Easing.out((time) => Easing.cubic(time))(visibility));
+  return OFFSTAGE * (1 - Number(shown));
 };
 
 const Board = ({ timeline }: Readonly<{ timeline: Timeline }>): ReactNode => {
@@ -385,27 +403,6 @@ const LightLeak = (): ReactNode => {
   );
 };
 
-const CROUCH_FRAMES = 10;
-const DASH_FRAMES = 10;
-const TRAILS = [0, 1, 2, 3] as const;
-const TRAIL_LAG = 1.6;
-const STREAKS = [
-  { top: 240, width: 520, speed: 150, offset: 0 },
-  { top: 330, width: 760, speed: 190, offset: 300 },
-  { top: 470, width: 440, speed: 170, offset: 620 },
-  { top: 600, width: 680, speed: 210, offset: 140 },
-  { top: 720, width: 560, speed: 160, offset: 820 },
-  { top: 840, width: 820, speed: 200, offset: 460 },
-] as const;
-const SCREEN = 1080;
-
-const dashX = (frame: number): number =>
-  interpolate(frame, [0, CROUCH_FRAMES, CROUCH_FRAMES + DASH_FRAMES], [-40, 0, 1500], {
-    easing: Easing.in((time) => Easing.cubic(time)),
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-  });
-
 const Streak = ({
   streak,
   frame,
@@ -428,30 +425,13 @@ const Streak = ({
   );
 };
 
-const Dash = ({ children }: Readonly<{ children: ReactNode }>): ReactNode => {
+const Dash = (): ReactNode => {
   const frame = useCurrentFrame();
-  const squash = interpolate(frame, [0, CROUCH_FRAMES], [1, 0.92], { extrapolateRight: "clamp" });
   return (
     <AbsoluteFill className="overflow-hidden">
       {pipe(
         STREAKS,
         Arr.map((streak) => <Streak frame={frame} key={streak.top} streak={streak} />),
-      )}
-      {pipe(
-        TRAILS,
-        Arr.map((trail) => (
-          <AbsoluteFill
-            className="origin-bottom"
-            key={trail}
-            style={{
-              translate: `${String(dashX(frame - trail * TRAIL_LAG))}px 0`,
-              scale: `1 ${String(squash)}`,
-              opacity: (TRAILS.length - trail) / TRAILS.length / (trail + 1),
-            }}
-          >
-            {children}
-          </AbsoluteFill>
-        )),
       )}
     </AbsoluteFill>
   );
@@ -1082,13 +1062,12 @@ export const draw: Readonly<Record<string, Draw>> = {
   ),
   punch: (shot) => (
     <>
-      <Dash>
-        <Freeze frame={SETTLED}>
-          <Done />
-        </Freeze>
-      </Dash>
+      <Dash />
+      <Freeze frame={SETTLED}>
+        <Done />
+      </Freeze>
       <Sfx at={0} kind="stamp" shot={shot} />
-      <Sfx at={CROUCH_FRAMES - 2} kind="dash" shot={shot} />
+      <Sfx at={shot.duration - DASH_LEAD + CROUCH_FRAMES - 2} kind="dash" shot={shot} />
     </>
   ),
   why: () => <Store />,
