@@ -3,6 +3,7 @@
   "title": "GOV.UK Design System",
   "kind": "site",
   "url": "https://design-system.service.gov.uk/",
+  "image": "https://design-system.service.gov.uk/assets/images/govuk-opengraph-image.png",
   "note": "部品ごとに、使う場面、使わない場面、調べた根拠を書く。説明の粒度の手本",
   "date": "2026-11-28"
 }

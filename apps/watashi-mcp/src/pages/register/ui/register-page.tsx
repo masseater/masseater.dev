@@ -1,17 +1,14 @@
-import { registerPasskey } from "@masseater.dev/owner-auth";
-import { ActionPanel } from "@masseater.dev/owner-auth/ui";
-import { Button } from "@masseater.dev/ui/button";
+import { PasskeyScreen } from "@masseater.dev/owner-auth/ui";
 import type { ReactNode } from "react";
 
 import { SITE_NAME } from "#/shared/config/index.ts";
 
 export const RegisterPage = (): ReactNode => (
-  <ActionPanel
-    button={Button}
+  <PasskeyScreen
+    kind="register"
     title={SITE_NAME}
     label="パスキーを登録"
     done="登録しました"
     failed="登録できませんでした"
-    action={registerPasskey}
   />
 );

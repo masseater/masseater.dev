@@ -1,17 +1,14 @@
-import { signInWithPasskey } from "@masseater.dev/owner-auth";
-import { ActionPanel } from "@masseater.dev/owner-auth/ui";
-import { Button } from "@masseater.dev/ui/button";
+import { PasskeyScreen } from "@masseater.dev/owner-auth/ui";
 import type { ReactNode } from "react";
 
 import { SITE_NAME } from "#/shared/config/index.ts";
 
 export const SignInPage = (): ReactNode => (
-  <ActionPanel
-    button={Button}
+  <PasskeyScreen
+    kind="sign-in"
     title={SITE_NAME}
     label="パスキーでログイン"
     done="ログインしました"
     failed="ログインできませんでした"
-    action={signInWithPasskey}
   />
 );

@@ -28,6 +28,12 @@
       {
         "name": "@effect/language-service",
         "diagnostics": false,
+        "allowedExperimentalApis": [
+          "@effect/ui",
+          "@effect/ui-kit",
+          "@masseater.dev/effect-ui",
+          "@masseater.dev/owner-auth"
+        ],
         "allowedUnstableApis": [
           "@effect/ai-openrouter",
           "@effect/atom-react",
@@ -35,6 +41,8 @@
           "@effect/platform-node",
           "@effect/platform-node-shared",
           "@effect/sql-sqlite-node",
+          "@effect/ui",
+          "@effect/ui-kit",
           "@effect/vitest",
           "effect/Crypto",
           "effect/FileSystem",
