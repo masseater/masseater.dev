@@ -23,7 +23,7 @@ audio-fetch = { path = "../../../libs/audio-fetch" }
 media-notes = { path = "../../../libs/media-notes" }
 reqwest = { version = "=0.13.5", default-features = false, features = ["rustls"] }
 schemars = "=1.2.3"
-sha2 = "=0.11.1"
+sha2 = "=0.11.2"
 specta = { version = "=2.0.0-rc.28", features = ["derive"] }
 specta-typescript = "=0.0.15"
 tokio = { version = "=1.54.1", features = ["fs", "rt", "sync"] }
