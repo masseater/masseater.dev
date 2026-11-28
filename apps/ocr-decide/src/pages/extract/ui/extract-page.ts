@@ -30,23 +30,27 @@ export const ExtractPage = Html.component({
     ChangedWay: (step, { way }) => step.evolve({ way: () => way }),
   },
   view: (html, model) =>
-    html.main.class("vt-match mx-auto flex max-w-2xl flex-col gap-6 px-4 py-12 md:px-8").children(
-      html.h1.class("text-2xl font-bold").children(COPY.title),
-      PicturePicker(html, {
-        key: "picker",
-        onEmit: { ChangedPicture: ({ picture }) => ExtractPageMessage.ChangedPicture({ picture }) },
-      }),
-      Option.match(model.picture, {
-        onNone: () => false,
-        onSome: (picture) => PicturePreview({ html, picture }),
-      }),
-      WayField({
-        html,
-        way: model.way,
-        onChange: (way) => ExtractPageMessage.ChangedWay({ way }),
-      }),
-      RunPanel(html, { key: "run", props: model }),
-      PageLink({ html, route: AppRoute.Measurements() }).children(COPY.measurements),
-      PageLink({ html, route: AppRoute.OcrEngines() }).children(COPY.ocrEngines),
-    ),
+    html.main
+      .class("vt-match mx-auto flex w-full max-w-2xl flex-col gap-6 px-4 py-12 md:px-8")
+      .children(
+        html.h1.class("text-2xl font-bold").children(COPY.title),
+        PicturePicker(html, {
+          key: "picker",
+          onEmit: {
+            ChangedPicture: ({ picture }) => ExtractPageMessage.ChangedPicture({ picture }),
+          },
+        }),
+        Option.match(model.picture, {
+          onNone: () => false,
+          onSome: (picture) => PicturePreview({ html, picture }),
+        }),
+        WayField({
+          html,
+          way: model.way,
+          onChange: (way) => ExtractPageMessage.ChangedWay({ way }),
+        }),
+        RunPanel(html, { key: "run", props: model }),
+        PageLink({ html, route: AppRoute.Measurements() }).children(COPY.measurements),
+        PageLink({ html, route: AppRoute.OcrEngines() }).children(COPY.ocrEngines),
+      ),
 });
