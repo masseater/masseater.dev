@@ -252,6 +252,7 @@ overrides:
   "@remotion/tailwind-v4>tailwindcss": "catalog:stack" # exit: npm:@remotion/tailwind-v4 allows tailwindcss@>=4.3.5
   "@remotion/tailwind-v4>@tailwindcss/webpack": 4.3.5 # exit: npm:@remotion/tailwind-v4 allows @tailwindcss/webpack@>=4.3.5
   "@r_masseater/vite-plus-adopt": 0.14.0 # exit: npm:@r_masseater/msch requires @r_masseater/vite-plus-adopt@>=0.14.0
+  "@r_masseater/h56m-presets>@r_masseater/h56m": ^0.3.0 # exit: npm:@r_masseater/h56m-presets requires @r_masseater/h56m@>=0.3.0
   workerd: 1.20261124.2 # exit: npm:miniflare requires workerd@>=1.20261115.1
   vite@*: "catalog:" # exit: unused
   fflate@>=0.7.0 <0.7.5: ^0.8.0 # exit: unused
