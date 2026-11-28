@@ -55,7 +55,7 @@ export const speedOf =
     return Option.getOrElse(Arr.get(speed, index), () => Timing.SPEED_SCALE);
   };
 
-export const PART = "|";
+const PART = "|";
 
 export const partsOf = (say: string): readonly string[] => Str.split(PART)(say);
 
