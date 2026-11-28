@@ -1,6 +1,8 @@
 import type { VideoScript } from "@masseater.dev/video-kit/script";
 import {
   narrationKey,
+  partsOf,
+  relativeBeatsOf,
   speedOf,
   spokenOf,
   voiceOf,
@@ -37,10 +39,15 @@ export interface Narrated {
   readonly kept: number;
 }
 
-interface LineRequest {
+interface SpokenLine {
   readonly voice: number;
   readonly spoken: string;
   readonly speed: number;
+  readonly parts: readonly string[];
+  readonly beats: readonly number[];
+}
+
+interface LineRequest extends SpokenLine {
   readonly manifest: Manifest;
 }
 
@@ -55,16 +62,14 @@ const synthesizeTo = ({
   voice,
   spoken,
   speed,
+  parts,
+  beats,
   file,
-}: Readonly<{ voice: number; spoken: string; speed: number; file: string }>): Effect.Effect<
-  number,
-  Failure,
-  Services
-> =>
+}: SpokenLine & Readonly<{ file: string }>): Effect.Effect<number, Failure, Services> =>
   Effect.gen(function* synthesizeFile() {
     const fileSystem = yield* FileSystem.FileSystem;
     const path = yield* Path.Path;
-    const wav = yield* synthesize({ style: voice, text: spoken, speed });
+    const wav = yield* synthesize({ style: voice, text: spoken, speed, parts, beats });
     const seconds = wavSeconds(wav);
     if (Option.isNone(seconds)) {
       return yield* videoError(`「${spoken}」の WAV にデータがない`);
@@ -75,29 +80,22 @@ const synthesizeTo = ({
   });
 
 const recordLine = ({
-  voice,
-  spoken,
-  speed,
   manifest,
+  ...line
 }: LineRequest): Effect.Effect<Recorded, Failure, Services> =>
   Effect.gen(function* record() {
     const fileSystem = yield* FileSystem.FileSystem;
-    const key = yield* narrationKey({ speaker: voice, spoken, speed });
+    const { voice, spoken, speed, beats } = line;
+    const key = yield* narrationKey({ speaker: voice, spoken, speed, beats });
     const file = yield* fileOf(key);
     const known = Rec.get(manifest.narration, key);
     const exists = yield* fileSystem.exists(file);
     if (Option.isSome(known) && exists) {
       return { key, seconds: known.value.seconds, made: false };
     }
-    const seconds = yield* synthesizeTo({ voice, spoken, speed, file });
+    const seconds = yield* synthesizeTo({ ...line, file });
     return { key, seconds, made: true };
   });
-
-interface SpokenLine {
-  readonly voice: number;
-  readonly spoken: string;
-  readonly speed: number;
-}
 
 const spokenLines = (script: VideoScript): readonly SpokenLine[] =>
   pipe(
@@ -105,10 +103,15 @@ const spokenLines = (script: VideoScript): readonly SpokenLine[] =>
     Arr.flatMap((cut) =>
       pipe(
         cut.say,
-        Arr.map((say) => ({
+        Arr.map((say, index) => ({
           voice: voiceOf(script)(cut),
-          speed: speedOf(cut),
+          speed: speedOf(cut)(index),
           spoken: spokenOf({ say, readings: script.readings }),
+          parts: pipe(
+            partsOf(say),
+            Arr.map((part) => spokenOf({ say: part, readings: script.readings })),
+          ),
+          beats: relativeBeatsOf(cut)(index),
         })),
       ),
     ),
@@ -164,7 +167,7 @@ const narrateAll = (script: VideoScript): Effect.Effect<Narrated, Failure, Servi
     const portraits = yield* portraitsOf(voices);
     const recorded = yield* Effect.forEach(
       spokenLines(script),
-      ({ voice, spoken, speed }) => recordLine({ voice, spoken, speed, manifest }),
+      (line) => recordLine({ ...line, manifest }),
       { concurrency: 1 },
     );
     const fresh = pipe(

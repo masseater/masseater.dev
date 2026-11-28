@@ -5,6 +5,8 @@ export {
   voicesOf,
   narrationKey,
   planTimeline,
+  partsOf,
+  relativeBeatsOf,
   speedOf,
   spokenOf,
 } from "#/entities/cut/index.ts";

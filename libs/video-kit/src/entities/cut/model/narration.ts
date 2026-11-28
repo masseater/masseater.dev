@@ -4,6 +4,7 @@ import { NOTHING, Timing } from "#/shared/config/index.ts";
 import { plainOf, segmentsOf } from "#/shared/lib/segment.ts";
 
 import type { VideoScript } from "./cut.ts";
+import { unpartedOf } from "./cut.ts";
 
 const KEY_LENGTH = 24;
 const SPACE = " ";
@@ -15,7 +16,7 @@ export const spokenOf = ({
   say,
   readings,
 }: Readonly<{ say: string; readings: VideoScript["readings"] }>): string => {
-  let spoken = plainOf(segmentsOf(say));
+  let spoken = plainOf(segmentsOf(unpartedOf(say)));
   for (const [word, reading] of pipe(
     Rec.toEntries(readings),
     Arr.sortWith(lengthOf, Order.flip(Order.Number)),
@@ -25,15 +26,39 @@ export const spokenOf = ({
   return Str.replaceAll(SPACE, Str.empty)(spoken);
 };
 
+const NO_BEATS: readonly number[] = [];
+const LINE = "\n";
+
+const keyText = ({
+  speaker,
+  spoken,
+  speed,
+  beats,
+}: Readonly<{
+  speaker: number;
+  spoken: string;
+  speed: number;
+  beats: readonly number[];
+}>): string => {
+  const head = [String(speaker), String(speed), spoken];
+  return pipe(beats, Arr.map(String), Arr.prependAll(head), Arr.join(LINE));
+};
+
 export const narrationKey = ({
   speaker,
   spoken,
   speed = Timing.SPEED_SCALE,
-}: Readonly<{ speaker: number; spoken: string; speed?: number }>): Effect.Effect<string> =>
+  beats = NO_BEATS,
+}: Readonly<{
+  speaker: number;
+  spoken: string;
+  speed?: number;
+  beats?: readonly number[];
+}>): Effect.Effect<string> =>
   Effect.promise(() =>
     crypto.subtle.digest(
       HASH,
-      new TextEncoder().encode(`${String(speaker)}\n${String(speed)}\n${spoken}`),
+      new TextEncoder().encode(keyText({ speaker, spoken, speed, beats })),
     ),
   ).pipe(Effect.map((buffer) => Str.slice(NOTHING, KEY_LENGTH)(new Uint8Array(buffer).toHex())));
 

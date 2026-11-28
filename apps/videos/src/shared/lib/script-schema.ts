@@ -6,12 +6,14 @@ const Formats = Schema.Array(FormatSchema);
 const Lines = Schema.Array(Schema.String);
 const Seconds = Schema.optionalKey(Schema.Finite);
 
+const Speeds = Schema.Array(Schema.Finite);
+
 const CutSchema = Schema.Struct({
   id: Schema.String,
   say: Lines,
   at: Schema.Finite.pipe(Schema.Array, Schema.optionalKey),
   hold: Seconds,
-  speed: Schema.optionalKey(Schema.Finite),
+  speed: Schema.optionalKey(Schema.Union([Schema.Finite, Speeds])),
   formats: Schema.optionalKey(Formats),
   voice: Schema.optionalKey(Schema.Finite),
 });

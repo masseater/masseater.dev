@@ -1,11 +1,15 @@
 import type { Draw, Look, Shot } from "@masseater.dev/video-kit";
 import { Caption, Credits, Picture, Sfx, Terminal, imageOf } from "@masseater.dev/video-kit";
-import { Array as Arr, Option, pipe } from "effect";
+import { FPS } from "@masseater.dev/video-kit/script";
+import type { SfxKind } from "@masseater.dev/video-kit/script";
+import { Array as Arr, Option, Record as Rec, pipe } from "effect";
 import type { ReactNode } from "react";
 import { AbsoluteFill, Easing, Img, interpolate, staticFile, useCurrentFrame } from "remotion";
 
 import { tachiePath } from "#/shared/config/index.ts";
 import { pick } from "#/shared/lib/pick.ts";
+
+import { INTRO_STEPS } from "./script.ts";
 
 const BOLD =
   "caption-outline text-[72px] font-bold whitespace-pre-line [--outline:#1b1b1b] [--stroke:0.14em]";
@@ -144,97 +148,84 @@ const Source = (): ReactNode => (
 
 const HIT_FRAMES = 5;
 
-const Hit = ({ at, children }: Readonly<{ at: number; children: ReactNode }>): ReactNode => {
+const CALL_RED = `text-[190px] ${RED_LOOK}`;
+const POP_FROM = 1.35;
+const STEP_SFX: Readonly<Record<string, SfxKind>> = { "3": "stamp" };
+const sfxOf = (step: number): SfxKind =>
+  Option.getOrElse(Rec.get(STEP_SFX, String(step)), (): SfxKind => "pop");
+const POP_EASING = Easing.out(Easing.poly(3));
+
+const stepFrames = pipe(
+  INTRO_STEPS,
+  Arr.map((seconds) => Math.round(seconds * FPS)),
+);
+
+const Pop = ({ step, children }: Readonly<{ step: number; children: ReactNode }>): ReactNode => {
   const frame = useCurrentFrame();
-  const scale = interpolate(frame, [at, at + HIT_FRAMES], [1.25, 1], {
-    easing: Easing.out(Easing.poly(3)),
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-  });
-  return <AbsoluteFill style={{ scale: String(scale) }}>{children}</AbsoluteFill>;
+  return pipe(
+    Arr.get(stepFrames, step),
+    Option.filter((at) => frame >= at),
+    Option.map((at) => (
+      <div
+        key={step}
+        style={{
+          scale: String(
+            interpolate(frame, [at, at + HIT_FRAMES], [POP_FROM, 1], {
+              easing: POP_EASING,
+              extrapolateRight: "clamp",
+            }),
+          ),
+        }}
+      >
+        {children}
+      </div>
+    )),
+    Option.getOrNull,
+  );
 };
 
-const BIG_RED = `text-[380px] ${RED_LOOK}`;
-
-const SCENES: readonly ((shot: Shot) => ReactNode)[] = [
-  (shot): ReactNode => (
-    <AbsoluteFill className="items-center justify-center gap-10">
-      <div className="caption-outline font-jp text-[70px] font-black [--outline:#111] [--stroke:0.18em]">
-        次世代のパッケージマネージャ
-      </div>
-      <Picture className="size-[260px] rounded-[56px] bg-white p-10" src={imageOf("pnpm")(shot)} />
-      <div className="caption-plain font-sans text-[220px] leading-none font-semibold italic">
-        pnpm
+const Intro = ({ shot }: Readonly<{ shot: Shot }>): ReactNode => (
+  <>
+    <AbsoluteFill className="items-center justify-start gap-8 pt-[190px]">
+      <Pop step={0}>
+        <div className="caption-outline font-jp text-[70px] font-black [--outline:#111] [--stroke:0.18em]">
+          次世代のパッケージマネージャ
+        </div>
+      </Pop>
+      <Pop step={0}>
+        <div className="flex items-center gap-8">
+          <Picture
+            className="size-[180px] rounded-[40px] bg-white p-7"
+            src={imageOf("pnpm")(shot)}
+          />
+          <div className="caption-plain font-sans text-[200px] leading-none font-semibold italic">
+            pnpm
+          </div>
+        </div>
+      </Pop>
+      <Pop step={1}>
+        <div className="font-jp flex items-baseline text-[#ffd400]">
+          <span className="text-[330px] leading-none font-black tracking-[-0.08em]">30</span>
+          <span className="text-[130px] font-black">秒で</span>
+        </div>
+      </Pop>
+      <div className="flex items-center gap-6">
+        <Pop step={2}>
+          <div className="caption-outline font-jp text-[130px] font-black [--outline:#111] [--stroke:0.16em]">
+            つむぎが
+          </div>
+        </Pop>
+        <Pop step={3}>
+          <div className={CALL_RED}>解説</div>
+        </Pop>
       </div>
     </AbsoluteFill>
-  ),
-  (): ReactNode => (
-    <AbsoluteFill className="items-center justify-center bg-[#ffd400]">
-      <div className="font-jp flex items-baseline text-[#111]">
-        <span className="text-[520px] leading-none font-black tracking-[-0.08em]">30</span>
-        <span className="text-[160px] font-black">秒で</span>
-      </div>
-    </AbsoluteFill>
-  ),
-  (): ReactNode => (
-    <AbsoluteFill className="overflow-hidden bg-[#f3e9d8]">
-      <Img
-        className="absolute top-[-700px] left-[-2400px] w-[5296px] max-w-none rotate-[-6deg]"
-        src={staticFile(tachiePath("tsumugi"))}
-      />
-      <Img
-        className="absolute bottom-[300px] left-[60px] w-[960px]"
-        src={staticFile(tachiePath("tsumugi-logo"))}
-      />
-    </AbsoluteFill>
-  ),
-  (): ReactNode => (
-    <>
-      <AbsoluteFill className="items-center justify-center">
-        <div className={BIG_RED}>解説</div>
-      </AbsoluteFill>
-      <LightLeak />
-    </>
-  ),
-];
-
-const Intro = ({ shot }: Readonly<{ shot: Shot }>): ReactNode => {
-  const frame = useCurrentFrame();
-  const beats = pipe(
-    shot.lines,
-    Arr.map(({ from }) => from),
-  );
-  const scene = pipe(
-    beats,
-    Arr.findLastIndex((from) => frame >= from),
-    Option.flatMap((step) =>
-      Option.all({ at: Arr.get(beats, step), render: Arr.get(SCENES, step) }),
-    ),
-  );
-  return (
-    <>
-      <AbsoluteFill className="bg-[#0b0d10]" />
-      {pipe(
-        scene,
-        Option.map(({ at, render }) => (
-          <Hit at={at} key="scene">
-            {render(shot)}
-          </Hit>
-        )),
-        Option.getOrNull,
-      )}
-      {pipe(
-        Arr.dropRight(beats, 1),
-        Arr.map((from) => <Sfx at={from} key={from} kind="pop" shot={shot} />),
-      )}
-      {pipe(
-        Arr.last(beats),
-        Option.map((from) => <Sfx at={from} key="stamp" kind="stamp" shot={shot} />),
-        Option.getOrNull,
-      )}
-    </>
-  );
-};
+    {pipe(
+      stepFrames,
+      Arr.map((from, index) => <Sfx at={from} key={from} kind={sfxOf(index)} shot={shot} />),
+    )}
+  </>
+);
 
 export const look: Partial<Look> = {
   backdrop: () => <Board />,
