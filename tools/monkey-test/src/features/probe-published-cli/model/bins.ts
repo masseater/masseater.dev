@@ -18,7 +18,7 @@ export const ManifestSchema = Schema.Struct({
   deprecated: Schema.optional(Schema.String),
 });
 
-type Manifest = typeof ManifestSchema.Type;
+export type Manifest = typeof ManifestSchema.Type;
 
 export type PublishedBin = Readonly<{ name: string; version: string; bins: readonly string[] }>;
 
