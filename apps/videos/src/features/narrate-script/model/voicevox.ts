@@ -117,6 +117,14 @@ export interface Utterance {
 
 const NATURAL_SPEED = { min: 0.8, max: 2 } as const;
 const SPEED_AS_GIVEN = 1;
+const NO_LEAD = 0;
+
+/** @internal */
+export interface Voiced {
+  readonly wav: Uint8Array;
+
+  readonly lead: number;
+}
 
 /** @internal */
 export type Effects<Value> = Effect.Effect<
@@ -160,11 +168,11 @@ const checkSpeeds = (text: string, speeds: readonly number[]): Effect.Effect<voi
 const fittedOf = (
   { text, speed, parts, beats }: Utterance,
   speaker: string,
-): Effects<Readonly<{ query: QueryType; speed: number }>> =>
+): Effects<Readonly<{ query: QueryType; speed: number; lead: number }>> =>
   Effect.gen(function* fitted() {
     const query = yield* queryOf(text, speaker);
     if (!Arr.isReadonlyArrayNonEmpty(beats)) {
-      return { query, speed };
+      return { query, speed, lead: NO_LEAD };
     }
     const counts = yield* Effect.forEach(
       parts,
@@ -176,16 +184,16 @@ const fittedOf = (
     }
     const fit = fitBeats({ query, counts, beats, speed, lead: PRE_PHONEME_SECONDS });
     yield* checkSpeeds(text, fit.speeds);
-    return { query: fit.query, speed: SPEED_AS_GIVEN };
+    return { query: fit.query, speed: SPEED_AS_GIVEN, lead: fit.onset };
   });
 
 /** @internal */
-export const synthesize = (utterance: Utterance): Effects<Uint8Array> =>
+export const synthesize = (utterance: Utterance): Effects<Voiced> =>
   Effect.gen(function* synthesizeLine() {
     const engine = yield* VOICEVOX_URL;
     const client = yield* okClient;
     const speaker = String(utterance.style);
-    const { query, speed } = yield* fittedOf(utterance, speaker);
+    const { query, speed, lead } = yield* fittedOf(utterance, speaker);
     const request = yield* HttpClientRequest.post(`${engine}/synthesis`).pipe(
       HttpClientRequest.setUrlParams({ speaker }),
       HttpClientRequest.bodyJson({
@@ -198,5 +206,5 @@ export const synthesize = (utterance: Utterance): Effects<Uint8Array> =>
     );
     const response = yield* client.execute(request).pipe(Effect.mapError(failedWith));
     const buffer = yield* response.arrayBuffer.pipe(Effect.mapError(failedWith));
-    return new Uint8Array(buffer);
+    return { wav: new Uint8Array(buffer), lead };
   });

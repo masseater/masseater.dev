@@ -77,9 +77,9 @@ const Panel = ({ shot, name }: Readonly<{ shot: Shot; name: string }>): ReactNod
 const Board = (): ReactNode => (
   <AbsoluteFill className="bg-[#285a41]">
     <div className="absolute inset-x-0 top-[64px] h-[18px] bg-[#9a5a33]" />
-    <div className="absolute right-[-60px] bottom-[28px] h-[800px] w-[720px] overflow-hidden">
+    <div className="absolute inset-x-0 top-0 bottom-[28px] overflow-hidden">
       <Img
-        className="absolute top-[-40px] left-[-300px] w-[920px] max-w-none"
+        className="absolute top-[1052px] left-[490px] w-[920px] max-w-none"
         src={staticFile(tachiePath("tsumugi"))}
       />
     </div>
@@ -148,7 +148,6 @@ const Source = (): ReactNode => (
 
 const HIT_FRAMES = 5;
 
-const CALL_RED = `text-[190px] ${RED_LOOK}`;
 const POP_FROM = 1.35;
 const STEP_SFX: Readonly<Record<string, SfxKind>> = { "3": "stamp" };
 const sfxOf = (step: number): SfxKind =>
@@ -216,7 +215,9 @@ const Intro = ({ shot }: Readonly<{ shot: Shot }>): ReactNode => (
           </div>
         </Pop>
         <Pop step={3}>
-          <div className={CALL_RED}>解説</div>
+          <div className="caption-outline font-jp text-[130px] font-black [--outline:#111] [--stroke:0.16em]">
+            解説
+          </div>
         </Pop>
       </div>
     </AbsoluteFill>

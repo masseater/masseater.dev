@@ -14,6 +14,7 @@ interface Recorded {
   readonly segments: readonly Segment[];
   readonly key: string;
   readonly seconds: Option.Option<number>;
+  readonly lead: number;
 }
 
 export interface LinesRequest {
@@ -41,6 +42,12 @@ const recordingOf = (
         Rec.get(key),
         Option.map(({ seconds }) => seconds),
       ),
+      lead: pipe(
+        sources.narration,
+        Rec.get(key),
+        Option.flatMap(({ lead }) => Option.fromNullishOr(lead)),
+        Option.getOrElse(() => NOTHING),
+      ),
     })),
   );
 
@@ -61,11 +68,19 @@ const lineAt = (sources: Sources, entry: Recorded, from: number): TimedLine => {
 const startsOf = (cut: Cut): readonly number[] =>
   Arr.flatMap(lineBeatsOf(cut), (beats) => Option.toArray(Arr.head(beats)));
 
-const startOf = (starts: readonly number[], index: number, cursor: number): number =>
-  Option.match(Arr.get(starts, index), {
-    onNone: () => cursor,
-    onSome: (seconds) => frames(seconds),
-  });
+interface Slot {
+  readonly index: number;
+  readonly cursor: number;
+  readonly lead: number;
+}
+
+const startOf =
+  (starts: readonly number[]) =>
+  ({ index, cursor, lead }: Slot): number =>
+    Option.match(Arr.get(starts, index), {
+      onNone: () => cursor,
+      onSome: (seconds) => Math.max(NOTHING, frames(seconds - lead)),
+    });
 
 const firstCursor = (starts: readonly number[]): number => {
   if (Arr.isReadonlyArrayNonEmpty(starts)) {
@@ -82,7 +97,7 @@ const placeLines = (
   pipe(
     recorded,
     Arr.mapAccum(firstCursor(starts), (cursor, entry, index) => {
-      const timed = lineAt(sources, entry, startOf(starts, index, cursor));
+      const timed = lineAt(sources, entry, startOf(starts)({ index, cursor, lead: entry.lead }));
       return [timed.from + timed.duration + frames(Timing.LINE_GAP_SECONDS), timed];
     }),
     ([, lines]) => lines,

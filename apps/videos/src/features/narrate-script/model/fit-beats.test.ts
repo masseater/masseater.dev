@@ -41,7 +41,11 @@ const vowelOnsets = (fitted: QueryType): readonly number[] =>
         phrase.moras,
         Arr.flatMap((each) => [each.consonant_length ?? NONE, each.vowel_length]),
       ),
-      phrase.pause_mora?.vowel_length ?? NONE,
+      ...pipe(
+        Option.fromNullishOr(phrase.pause_mora),
+        Option.map((pause) => pause.vowel_length),
+        Option.toArray,
+      ),
     ]),
     Arr.mapAccum(LEAD, (time, length) => [time + length, time]),
     ([, starts]) => starts,

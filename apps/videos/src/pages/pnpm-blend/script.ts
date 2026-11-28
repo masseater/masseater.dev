@@ -3,6 +3,7 @@ import type { VideoScript } from "@masseater.dev/video-kit/script";
 import { BGM, IMAGES, SHOTS } from "#/shared/config/index.ts";
 import { VIDEO_START, onBeat } from "#/shared/lib/beat.ts";
 
+const INTRO_SPEED = 2;
 const INTRO_BEATS = { length: 3, voice: 5, call: 6 } as const;
 
 export const INTRO_STEPS: readonly number[] = [
@@ -28,8 +29,9 @@ export const script: VideoScript = {
   cuts: [
     {
       id: "intro",
-      say: ["次世代のパッケージマネージャ\npnpmを|30秒で|つむぎが|解説"],
+      say: ["次世代のパッケージマネージャ\npnpmを", "30秒で|つむぎが|解説"],
       at: INTRO_STEPS,
+      speed: [INTRO_SPEED],
     },
     { id: "hook", say: ["npmのインストール\n遅すぎない？"] },
     { id: "try", say: ["pnpmに変えてみたら"] },
