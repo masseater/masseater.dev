@@ -67,7 +67,7 @@ export const script: VideoScript = {
       voice: ZUNDAMON,
       say: ["さっそく前のプロジェクトも\npnpmにしてみるのだ", "…あれ、動かないのだ？"],
     },
-    { id: "fix", say: ["pnpmは依存に{厳|きび}しめなの", "設定1行で\nnpmと同じ置き方にできるよ"] },
+    { id: "fix", say: ["pnpmは依存に{厳|きび}しめなの", "設定で\nnpmと同じ置き方にできるよ"] },
     { id: "ending", say: ["ね、もうnpmには\n戻れないっしょ？"] },
     { id: "join", voice: ZUNDAMON, say: ["全部のプロジェクト\n変えるのだ！"], hold: 0.5 },
   ],

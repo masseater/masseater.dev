@@ -986,7 +986,7 @@ const OldTool = ({
         </span>
       </div>
       <div
-        className="font-code self-start rounded-[12px] bg-[#ffd400] px-6 py-2 text-[52px] font-bold text-[#1b1b1b]"
+        className="font-code flex flex-col rounded-[16px] border-[4px] border-[#ffd400] bg-[#0b0d10] px-8 py-4 text-[52px] leading-snug"
         style={{
           opacity: pipe(
             Option.some(grow(frame, failAt)),
@@ -995,7 +995,8 @@ const OldTool = ({
           ),
         }}
       >
-        nodeLinker: hoisted
+        <span className="text-[36px] text-white/60">pnpm-workspace.yaml</span>
+        <span className="font-bold text-[#ffd400]">nodeLinker: hoisted</span>
       </div>
     </div>
   );
