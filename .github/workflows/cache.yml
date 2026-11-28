@@ -16,6 +16,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
+      actions: write
       contents: read
       id-token: write
     concurrency:
@@ -36,6 +37,7 @@ jobs:
         run: echo "files=$(find ~/.cache/pnpm/v12 -type f 2>/dev/null | wc -l)" >> "$GITHUB_OUTPUT"
       - uses: $/.github/actions/setup
         with:
+          save-store: "true"
           session-path: "true"
           rust-cache: "false"
           sccache: "true"
@@ -65,6 +67,10 @@ jobs:
         with:
           path: ~/.cache/pnpm/v12
           key: pnpm-metadata-${{ github.run_id }}-${{ github.run_attempt }}
+      - if: always()
+        run: vp run -r prune-caches
+        env:
+          GH_TOKEN: ${{ github.token }}
 
   ci-telemetry:
     needs: [cache]
