@@ -65,6 +65,7 @@ const answerButtons = ConsentPromptDef.fragment(
     ),
 );
 
+/** @stability experimental */
 export const ConsentPromptNoDeps = ConsentPromptDef.make({
   init: () => ({ status: "idle" }),
   update: {
@@ -100,6 +101,7 @@ export const ConsentPromptNoDeps = ConsentPromptDef.make({
   },
 });
 
+/** @stability experimental */
 export const ConsentPrompt = ConsentPromptNoDeps.pipe(
   Component.provide([ClientName.layer, AnswerConsent.layer]),
 );

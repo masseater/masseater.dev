@@ -6,6 +6,7 @@ import { Schema } from "effect";
 import { PasskeyKind, PasskeyPanelMessage } from "./passkey-panel-message.ts";
 import { StartPasskey } from "./start-passkey.ts";
 
+/** @stability experimental */
 export const PasskeyPanelNoDeps = Html.component({
   name: "PasskeyPanel",
   props: Schema.Struct({
@@ -39,4 +40,5 @@ export const PasskeyPanelNoDeps = Html.component({
     ),
 });
 
+/** @stability experimental */
 export const PasskeyPanel = PasskeyPanelNoDeps.pipe(Component.provide(StartPasskey.layer));

@@ -3,6 +3,7 @@ import type { ButtonElement, ButtonProps } from "@effect/ui-kit";
 import { buttonVariants } from "@masseater.dev/ui/button-variants";
 import type { VariantProps } from "class-variance-authority";
 
+/** @stability experimental */
 export type ButtonOptions<Msg> = Readonly<{
   html: { readonly button: ButtonElement<Msg> };
   element?: ButtonElement<Msg> | undefined;
@@ -11,6 +12,7 @@ export type ButtonOptions<Msg> = Readonly<{
 }> &
   Readonly<VariantProps<typeof buttonVariants>>;
 
+/** @stability experimental */
 export const Button = <Msg>({
   html,
   variant,

@@ -28,6 +28,12 @@
       {
         "name": "@effect/language-service",
         "diagnostics": false,
+        "allowedExperimentalApis": [
+          "@effect/ui",
+          "@effect/ui-kit",
+          "@masseater.dev/effect-ui",
+          "@masseater.dev/owner-auth"
+        ],
         "allowedUnstableApis": [
           "@effect/ai-openrouter",
           "@effect/atom-react",

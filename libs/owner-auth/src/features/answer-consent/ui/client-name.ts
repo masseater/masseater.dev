@@ -3,6 +3,7 @@ import { Effect, Schema } from "effect";
 
 import { fetchClientName } from "#/features/answer-consent/model/consent.ts";
 
+/** @stability experimental */
 export class ClientName extends Query.Service<ClientName>()("answer-consent/ClientName", {
   args: { clientId: Schema.String },
   success: Schema.String,

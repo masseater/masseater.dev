@@ -5,6 +5,7 @@ import { answerConsent } from "#/features/answer-consent/model/consent.ts";
 
 import { ConsentPromptMessage } from "./consent-prompt-message.ts";
 
+/** @stability experimental */
 export class AnswerConsent extends Command.Service<AnswerConsent>()(
   "answer-consent/AnswerConsent",
   {

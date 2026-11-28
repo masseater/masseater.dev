@@ -7,6 +7,7 @@ import { PasskeyKind, PasskeyPanelMessage } from "./passkey-panel-message.ts";
 
 const FLOWS = { register: registerPasskey, "sign-in": signInWithPasskey } as const;
 
+/** @stability experimental */
 export class StartPasskey extends Command.Service<StartPasskey>()("sign-in-passkey/StartPasskey", {
   args: { kind: PasskeyKind },
   success: PasskeyPanelMessage,
