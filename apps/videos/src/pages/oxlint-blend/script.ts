@@ -59,7 +59,6 @@ export const script: VideoScript = {
     {
       id: "more",
       say: ["それだけじゃないよ！", "型チェックも移行も\n**全部**できるし！"],
-      hold: 0.8,
     },
     {
       id: "strong",

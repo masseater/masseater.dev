@@ -317,7 +317,6 @@ const partsOf = (
     Option.getOrElse(() => cast.idle.before),
   );
 
-const SLIDE_FRAMES = 6;
 const OFFSTAGE = -900;
 
 const STAY_FRAMES = 150;
@@ -353,23 +352,11 @@ const slideOf = (cast: Cast, timeline: Timeline, frame: number): number => {
   if (cast.always) {
     return 0;
   }
-  const visibility = pipe(
+  const shown = pipe(
     staysOf(cast, timeline),
-    Arr.map((span) =>
-      Math.min(
-        interpolate(frame, [span.from - SLIDE_FRAMES, span.from], [0, 1], {
-          extrapolateLeft: "clamp",
-          extrapolateRight: "clamp",
-        }),
-        interpolate(frame, [span.to, span.to + SLIDE_FRAMES], [1, 0], {
-          extrapolateLeft: "clamp",
-          extrapolateRight: "clamp",
-        }),
-      ),
-    ),
-    (shown) => Math.max(0, ...shown),
+    Arr.some((span) => frame >= span.from && frame < span.to),
   );
-  return OFFSTAGE * (1 - Easing.out((time) => Easing.cubic(time))(visibility));
+  return shown ? 0 : OFFSTAGE;
 };
 
 const Board = ({ timeline }: Readonly<{ timeline: Timeline }>): ReactNode => {
@@ -842,7 +829,6 @@ interface Loop {
 
 const SAVE_LOOP: Loop = { trigger: "保存", every: 7 };
 const AGENT_LOOP: Loop = { trigger: "AIの編集", every: 4 };
-const LOOP_ROWS = 6;
 
 const ROW_POP_FROM = 1.08;
 
@@ -853,38 +839,43 @@ const rowPopOf = (frame: number, at: number): number =>
     extrapolateRight: "clamp",
   });
 
+const NEWEST_TOP = 760;
+const ROW_PITCH = 92;
+const OFF_TOP = -ROW_PITCH;
+
 const Loops = ({ loop }: Readonly<{ loop: Loop }>): ReactNode => {
   const frame = useCurrentFrame();
   const count = Math.floor(frame / loop.every) + 1;
-  const first = Math.max(1, count - LOOP_ROWS + 1);
   return (
-    <div className={`${AREA} font-jp flex flex-col justify-end px-[30px]`}>
-      <div className="flex flex-col gap-3">
-        {pipe(
-          Arr.range(first, count),
-          Arr.map((index) => (
-            <div
-              className="font-code flex h-[80px] items-center gap-6 rounded-[12px] bg-[#0b0d10] px-6 text-[46px]"
-              key={index}
-              style={{
-                scale: String(rowPopOf(frame, (index - 1) * loop.every)),
-              }}
-            >
-              <span className="w-[110px] text-white/50 tabular-nums">
-                #{String(index)}
-              </span>
-              <span className="font-jp font-bold text-white">
-                {loop.trigger}
-              </span>
-              <span className="text-white/60">→ oxlint</span>
-              <span className="ml-auto font-bold" style={{ color: PASS }}>
-                ✓
-              </span>
-            </div>
-          )),
-        )}
-      </div>
-    </div>
+    <AbsoluteFill className="font-jp">
+      {pipe(
+        Arr.range(1, count),
+        Arr.map((index) => ({
+          index,
+          top: NEWEST_TOP - (frame / loop.every - (index - 1)) * ROW_PITCH,
+        })),
+        Arr.filter(({ top }) => top > OFF_TOP),
+        Arr.map(({ index, top }) => (
+          <div
+            className="font-code absolute inset-x-[110px] flex h-[80px] items-center gap-6 rounded-[12px] bg-[#0b0d10] px-6 text-[46px]"
+            key={index}
+            style={{
+              top,
+              scale: String(rowPopOf(frame, (index - 1) * loop.every)),
+            }}
+          >
+            <span className="w-[110px] text-white/50 tabular-nums">
+              #{String(index)}
+            </span>
+            <span className="font-jp font-bold text-white">{loop.trigger}</span>
+            <span className="text-white/60">→ oxlint</span>
+            <span className="ml-auto font-bold" style={{ color: PASS }}>
+              ✓
+            </span>
+          </div>
+        )),
+      )}
+    </AbsoluteFill>
   );
 };
 
