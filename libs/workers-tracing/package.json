@@ -108,7 +108,7 @@
     "provenance": true
   },
   "scripts": {
-    "prepublishOnly": "node -e \"if (!process.env.npm_config_user_agent?.startsWith('pnpm/')) { console.error('npm publish leaves catalog: in dependencies. Publish the tarball from vp pm pack instead.'); process.exit(1) }\" && vp run build"
+    "prepublishOnly": "vp exec msch-publish prepublish ."
   },
   "devDependencies": {
     "@alchemy.run/cloudflare": "catalog:stack",
