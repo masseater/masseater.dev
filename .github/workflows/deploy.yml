@@ -96,6 +96,7 @@ jobs:
     needs: [bootstrap, broker]
     if: ${{ !cancelled() && needs.bootstrap.outputs.stacks != '' && needs.bootstrap.outputs.stacks != '[]' }}
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     environment: production
     permissions:
       contents: read

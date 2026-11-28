@@ -26,6 +26,9 @@ export const d1Tasks = {
 const UNAUTHENTICATED = 401;
 const RETRIES = 5;
 const RETRY_DELAY_SECONDS = 5;
+const CONNECT_TIMEOUT_SECONDS = 10;
+const ATTEMPT_TIMEOUT_SECONDS = 30;
+const TOTAL_TIMEOUT_SECONDS = 180;
 
 export const rejectsUnauthenticated = (mcpUrl: string): string =>
-  `test "$(curl --silent --output /dev/null --write-out '%{http_code}' --retry ${RETRIES} --retry-delay ${RETRY_DELAY_SECONDS} --retry-all-errors --request POST --header 'content-type: application/json' --data '{}' ${mcpUrl})" = ${UNAUTHENTICATED}`;
+  `test "$(curl --silent --output /dev/null --write-out '%{http_code}' --retry ${RETRIES} --retry-delay ${RETRY_DELAY_SECONDS} --retry-all-errors --retry-max-time ${TOTAL_TIMEOUT_SECONDS} --connect-timeout ${CONNECT_TIMEOUT_SECONDS} --max-time ${ATTEMPT_TIMEOUT_SECONDS} --request POST --header 'content-type: application/json' --data '{}' ${mcpUrl})" = ${UNAUTHENTICATED}`;
