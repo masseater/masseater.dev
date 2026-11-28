@@ -26,36 +26,57 @@ const literalOf = ({ value, param }: Spanned): Segment =>
     }),
   );
 
-const tempoSegments = ({ tempo }: SongOutline): readonly Segment[] => [
-  text("  readonly tempo: { readonly bpm: "),
-  literalOf(tempo.bpm),
-  text("; readonly numerator: "),
-  literalOf(tempo.numerator),
-  text("; readonly denominator: "),
-  literalOf(tempo.denominator),
-  text(" };\n"),
+type Field = readonly [name: string, value: readonly Segment[]];
+
+const objectOf = (fields: readonly Field[]): readonly Segment[] => [
+  text("{ "),
+  ...pipe(
+    fields,
+    Arr.map(([name, value]) => [text(`readonly ${name}: `), ...value]),
+    Arr.intersperse([text("; ")]),
+    Arr.flatten,
+  ),
+  text(" }"),
 ];
 
-const markerSegments = ({ markers }: SongOutline): readonly Segment[] =>
+const tempoSegments = ({ tempo }: SongOutline): readonly Segment[] => [
+  text("  readonly tempo: "),
+  ...objectOf([
+    ["bpm", [literalOf(tempo.bpm)]],
+    ["numerator", [literalOf(tempo.numerator)]],
+    ["denominator", [literalOf(tempo.denominator)]],
+  ]),
+  text(";\n"),
+];
+
+const elementsOf = (type: string, fieldsOf: readonly (readonly Field[])[]): readonly Segment[] =>
   pipe(
-    markers,
-    Arr.flatMap(({ marker, name, time }) => [
-      text("    Marker & { readonly name: "),
-      ...keyOf(name, marker.name),
-      text("; readonly time: "),
-      literalOf({ value: marker.time, param: time }),
-      text(" },\n"),
-    ]),
+    fieldsOf,
+    Arr.flatMap((fields) => [text(`    ${type} & `), ...objectOf(fields), text(",\n")]),
+  );
+
+const markerSegments = ({ markers }: SongOutline): readonly Segment[] =>
+  elementsOf(
+    "Marker",
+    pipe(
+      markers,
+      Arr.map(({ marker, name, time }) => [
+        ["name", keyOf(name, marker.name)],
+        ["time", [literalOf({ value: marker.time, param: time })]],
+      ]),
+    ),
   );
 
 const trackSegments = ({ tracks }: SongOutline): readonly Segment[] =>
-  pipe(
-    tracks,
-    Arr.flatMap(({ track, name }) => [
-      text(`    Track & { readonly index: ${String(track.index)}; readonly name: `),
-      ...keyOf(name, track.name),
-      text(" },\n"),
-    ]),
+  elementsOf(
+    "Track",
+    pipe(
+      tracks,
+      Arr.map(({ track, name }) => [
+        ["index", [text(String(track.index))]],
+        ["name", keyOf(name, track.name)],
+      ]),
+    ),
   );
 
 const missingSegments = (missing: readonly Param[]): readonly Segment[] =>

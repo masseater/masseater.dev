@@ -1,4 +1,4 @@
-import { failedAt, READ_ONLY, toolInputOf } from "@masseater.dev/mcp-tool-call";
+import { failedAt, READ_ONLY, toolInputOf, registeredTool } from "@masseater.dev/mcp-tool-call";
 import type { McpServer } from "@modelcontextprotocol/server";
 import { runWorkersAi } from "@r_masseater/workers-tracing/workers-ai";
 import { Array as Arr, Effect, Option, Order, Schema, flow, pipe } from "effect";
@@ -120,40 +120,32 @@ const getDeck = Effect.fn("getDeck")(function* getDeck(bindings: SlideBindings, 
   );
 });
 
-const registerSearch =
-  (bindings: SlideBindings) =>
-  (server: McpServer): McpServer => {
-    server.registerTool(
-      "search_slides",
-      {
-        description: "Search the owner's slide decks by meaning, one slide per result.",
-        inputSchema: SEARCH_SCHEMA,
-        annotations: READ_ONLY,
-      },
-      (input) =>
-        searchSlides(bindings, {
-          query: input.query,
-          limit: input.limit ?? DEFAULT_SLIDE_LIMIT,
-          deck: Option.fromNullishOr(input.deck),
-        }).pipe(runTool({ count: (slides) => slides.length })),
-    );
-    return server;
-  };
+const registerSearch = (bindings: SlideBindings): ((server: McpServer) => McpServer) =>
+  registeredTool(
+    {
+      name: "search_slides",
+      description: "Search the owner's slide decks by meaning, one slide per result.",
+      inputSchema: SEARCH_SCHEMA,
+      annotations: READ_ONLY,
+    },
+    (input) =>
+      searchSlides(bindings, {
+        query: input.query,
+        limit: input.limit ?? DEFAULT_SLIDE_LIMIT,
+        deck: Option.fromNullishOr(input.deck),
+      }).pipe(runTool({ count: (slides) => slides.length })),
+  );
 
-const registerGetDeck =
-  (bindings: SlideBindings) =>
-  (server: McpServer): McpServer => {
-    server.registerTool(
-      "get_deck",
-      {
-        description: "Return the text of every slide in a deck, in page order.",
-        inputSchema: DECK_SCHEMA,
-        annotations: READ_ONLY,
-      },
-      (input) => getDeck(bindings, input.deck).pipe(runTool({ count: (slides) => slides.length })),
-    );
-    return server;
-  };
+const registerGetDeck = (bindings: SlideBindings): ((server: McpServer) => McpServer) =>
+  registeredTool(
+    {
+      name: "get_deck",
+      description: "Return the text of every slide in a deck, in page order.",
+      inputSchema: DECK_SCHEMA,
+      annotations: READ_ONLY,
+    },
+    (input) => getDeck(bindings, input.deck).pipe(runTool({ count: (slides) => slides.length })),
+  );
 
 export const registerSlideTools = (bindings: SlideBindings): ((server: McpServer) => McpServer) =>
   flow(registerSearch(bindings), registerGetDeck(bindings));

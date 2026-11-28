@@ -1,6 +1,5 @@
-import { QueryClient } from "@tanstack/react-query";
-import { createRouter } from "@tanstack/react-router";
-import { setupRouterSsrQueryIntegration } from "@tanstack/react-router-ssr-query";
+import { queryRouterWith } from "@masseater.dev/start-shell/query-router";
+import type { createRouter } from "@tanstack/react-router";
 
 import { NotFound } from "#/widgets/not-found/index.ts";
 
@@ -15,17 +14,8 @@ declare module "@tanstack/react-router" {
   }
 }
 
-export const getRouter = (): AppRouter => {
-  const queryClient = new QueryClient();
-  const router = createRouter({
-    routeTree,
-    context: { queryClient },
-    scrollRestoration: true,
-    defaultPreload: "intent",
-    defaultPreloadStaleTime: 0,
+export const getRouter = (): AppRouter =>
+  queryRouterWith({
     defaultNotFoundComponent: NotFound,
     defaultViewTransition: { types: transitionTypes },
-  });
-  setupRouterSsrQueryIntegration({ router, queryClient });
-  return router;
-};
+  })(routeTree);

@@ -1,8 +1,8 @@
 import { Array as Arr, Option, Order, Schema, String as Str, pipe } from "effect";
 
-import { shownTime, sortKey } from "#/shared/model/index.ts";
+import { sortKey } from "#/shared/model/index.ts";
 
-import { headline, labelsOf } from "./life-item.ts";
+import { datedOf, labelsOf } from "./life-item.ts";
 import type { LifeItemValue } from "./life-item.ts";
 
 const PersonalEvent = Schema.Struct({
@@ -52,12 +52,12 @@ const fromPersonal = (events: readonly PersonalEventValue[]): readonly TimelineE
 
 const fromLife = (item: LifeItemValue): readonly TimelineEntry[] =>
   pipe(
-    Option.fromUndefinedOr(item.at),
-    Option.map((at): TimelineEntry => ({
-      key: item.ref,
-      when: shownTime(at),
+    datedOf(item),
+    Option.map(({ key, at, shown, title }): TimelineEntry => ({
+      key,
+      when: shown,
       order: sortKey(at),
-      title: headline(item),
+      title,
       note: "",
       labels: labelsOf(item),
     })),

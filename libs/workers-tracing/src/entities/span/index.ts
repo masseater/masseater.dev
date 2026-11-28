@@ -1,4 +1,4 @@
-export { markedAt, missingOf, render, spanOf, traceOf } from "./lib/trace-tree.ts";
+export { markedAt, missingOf, render, spanOf, traceIdsOf, traceOf } from "./lib/trace-tree.ts";
 export type { ReceivedSpan } from "./lib/trace-tree.ts";
 export {
   TraceRequest,

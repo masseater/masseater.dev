@@ -1,5 +1,5 @@
 import type { UpstreamFailed } from "@masseater.dev/mcp-tool-call";
-import { toolInputOf } from "@masseater.dev/mcp-tool-call";
+import { toolInputOf, registeredTool } from "@masseater.dev/mcp-tool-call";
 import type { JoinedTailnet } from "@masseater.dev/repositories/credential-broker";
 import type { McpServer } from "@modelcontextprotocol/server";
 import { Effect, Schema } from "effect";
@@ -27,17 +27,13 @@ const join =
   (publicKey: string): Effect.Effect<JoinedTailnet, UpstreamFailed> =>
     Effect.tryPromise({ try: () => tailnet.join(publicKey), catch: brokerFailed });
 
-export const registerTailnetTools =
-  (tailnet: Tailnet) =>
-  (server: McpServer): McpServer => {
-    server.registerTool(
-      "join_tailnet",
-      {
-        description: DESCRIPTION,
-        inputSchema: INPUT_SCHEMA,
-        annotations: { readOnlyHint: false, openWorldHint: true },
-      },
-      (input) => join(tailnet)(input.publicKey).pipe(runTool({ count: () => ONE_JOIN })),
-    );
-    return server;
-  };
+export const registerTailnetTools = (tailnet: Tailnet): ((server: McpServer) => McpServer) =>
+  registeredTool(
+    {
+      name: "join_tailnet",
+      description: DESCRIPTION,
+      inputSchema: INPUT_SCHEMA,
+      annotations: { readOnlyHint: false, openWorldHint: true },
+    },
+    (input) => join(tailnet)(input.publicKey).pipe(runTool({ count: () => ONE_JOIN })),
+  );
