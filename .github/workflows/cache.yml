@@ -47,6 +47,7 @@ jobs:
           key: msch-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}
           restore-keys: msch-
       - uses: masseater/typescript-template/.github/actions/verify@9d0fe8a13d313a1110407250085e8ddb0d7e3e13
+        timeout-minutes: 30
         with:
           github-token: ${{ github.token }}
           full-history: "true"
