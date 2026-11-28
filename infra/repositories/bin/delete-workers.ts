@@ -1,17 +1,10 @@
 #!/usr/bin/env node
-import { fromApiToken } from "@distilled.cloud/cloudflare/Credentials";
 import { deleteScript, listScripts } from "@distilled.cloud/cloudflare/workers";
 import { runMainWith } from "@r_masseater/node-main";
-import { Array as Arr, Config, Console, Effect, Layer, Stream } from "effect";
-import { layer as fetchHttpClient } from "effect/http/FetchHttpClient";
+import { Array as Arr, Config, Console, Effect, Stream } from "effect";
 
+import { cloudflare } from "./lib/cloudflare.ts";
 import { requestedNames } from "./lib/requested-names.ts";
-
-const cloudflare = Layer.unwrap(
-  Config.Redacted("CLOUDFLARE_API_TOKEN").pipe(
-    Effect.map((apiToken) => Layer.mergeAll(fromApiToken({ apiToken }), fetchHttpClient)),
-  ),
-);
 
 const deleteWorkers = Effect.gen(function* deleteWorkers() {
   const accountId = yield* Config.String("CLOUDFLARE_ACCOUNT_ID");
