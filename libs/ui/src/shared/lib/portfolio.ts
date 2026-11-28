@@ -15,7 +15,6 @@ export const portfolio = {
     slog: "Slog",
     sloppedia: "Sloppedia",
     nikogori: "Nikogori",
-    sashi: "Sashi",
     "ai-produced": "AI Produced",
   },
 } as const;

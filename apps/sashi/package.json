@@ -1,0 +1,29 @@
+{
+  "name": "sashi",
+  "version": "0.0.0",
+  "private": true,
+  "description": "sashi.masseater.dev, a static site where the owner collects and publishes the references that stand in for what they want.",
+  "bin": {
+    "write-site": "./bin/write-site.ts"
+  },
+  "type": "module",
+  "imports": {
+    "#/*": "./src/*"
+  },
+  "dependencies": {
+    "@effect/platform-node": "catalog:",
+    "@masseater.dev/sashi": "workspace:*",
+    "effect": "catalog:stack",
+    "escape-html": "catalog:",
+    "security-headers": "workspace:*"
+  },
+  "devDependencies": {
+    "@alchemy.run/cloudflare": "catalog:stack",
+    "@masseater.dev/cloudflare-account": "workspace:*",
+    "@types/escape-html": "catalog:",
+    "@types/node": "catalog:",
+    "alchemy": "catalog:stack",
+    "typescript": "catalog:stack",
+    "vite-plus": "catalog:stack"
+  }
+}
