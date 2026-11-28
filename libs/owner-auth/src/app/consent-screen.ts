@@ -1,3 +1,2 @@
-export { ActionPanel } from "#/shared/ui/action-panel.tsx";
-export type { ButtonComponent } from "#/shared/ui/button-component.ts";
+export { PasskeyScreen } from "#/features/sign-in-passkey/index.ts";
 export { ConsentForm } from "#/features/answer-consent/index.ts";
