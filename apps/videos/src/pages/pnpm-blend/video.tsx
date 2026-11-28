@@ -111,6 +111,18 @@ const TSUMUGI: Cast = {
       after: ["v1.!右腕/*ピース", "v1.顔色/ほっぺ赤め"],
       later: NONE,
     },
+    more: {
+      before: ["v1.!まゆ/*ごきげん眉", "v1.!目/*基本目セット/!黒目/*カメラ目線"],
+      closed: "v1.!口/*むふ",
+      after: ["v1.!右腕/*ゆびさし"],
+      later: ["v1.!目/*基本目セット/!黒目/*きらーん"],
+    },
+    updates: {
+      before: ["v1.!まゆ/*ごきげん眉", "v1.!目/*基本目セット/!黒目/*きらーん"],
+      closed: "v1.!口/*にしー",
+      after: ["v1.!右腕/*ピース"],
+      later: NONE,
+    },
     caveat: { before: ["v1.!まゆ/*普通眉"], closed: "v1.!口/*む", after: NONE, later: NONE },
     fix: {
       before: ["v1.!まゆ/*ごきげん眉", "v1.!目/*基本目セット/!黒目/*カメラ目線"],
@@ -176,11 +188,23 @@ const ZUNDAMON: Cast = {
       after: ["v1.!目/*〇〇", "v1.!顔色/*ほっぺ赤め"],
       later: NONE,
     },
-    caveat: {
-      before: [OUTFIT, "v1.!眉/*困り眉1", "v1.!目/*目セット/!黒目/*目逸らし"],
-      closed: "v1.!口/*むー",
-      after: ["v1.記号など/汗3", "v1.!枝豆/*枝豆萎え", ZUNDA_ARM("右", "口元")],
+    strong: {
+      before: [OUTFIT, "v1.!眉/*上がり眉"],
+      closed: "v1.!口/*ほあー",
+      after: ["v1.!目/*〇〇", "v1.!顔色/*ほっぺ赤め", ZUNDA_ARM("右", "手を挙げる")],
       later: NONE,
+    },
+    caveat: {
+      before: [OUTFIT, "v1.!眉/*上がり眉", "v1.!目/*目セット/!黒目/*カメラ目線"],
+      closed: "v1.!口/*むふ",
+      after: NONE,
+      later: [
+        "v1.!眉/*困り眉1",
+        "v1.!目/*目セット/!黒目/*目逸らし",
+        "v1.記号など/汗3",
+        "v1.!枝豆/*枝豆萎え",
+        ZUNDA_ARM("右", "口元"),
+      ],
     },
     fix: {
       before: [OUTFIT, "v1.!眉/*上がり眉"],
@@ -793,41 +817,85 @@ const Sharing = ({ shot }: Readonly<{ shot: Shot }>): ReactNode => {
   return <Store />;
 };
 
-interface Update {
-  readonly version: string;
-  readonly feature: string;
-}
+const FEATURES = [
+  "catalogs",
+  "pnpm patch",
+  "pnpm dlx",
+  "pnpm env",
+  "--filter",
+  "approve-builds",
+  "minimumReleaseAge",
+  "pnpm add crate:",
+  "Rustツールチェーン",
+  "エージェントスキル",
+  "audit deprecations",
+] as const;
+const FEATURE_GAP = 3;
+const SLAM_FRAMES = 5;
+const SLAM_FROM = 1.35;
 
-const UPDATES: readonly Update[] = [
-  { version: "11.0", feature: "minimumReleaseAge" },
-  { version: "12.4", feature: "pnpm add crate:" },
-  { version: "12.11", feature: "Rustツールチェーン" },
-  { version: "12.11", feature: "エージェントスキル" },
-];
-const UPDATE_GAP = 7;
+const slamOf = (frame: number, at: number): number =>
+  interpolate(frame, [at, at + SLAM_FRAMES], [SLAM_FROM, FULL], {
+    easing: Easing.out((time) => Easing.cubic(time)),
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
 
-const Updates = ({ since = 0 }: Readonly<{ since?: number }>): ReactNode => {
+const shownOf = (frame: number, at: number): number => Number(frame >= at);
+
+const Features = ({ since = 0, at = 0 }: Readonly<{ since?: number; at?: number }>): ReactNode => {
   const frame = useCurrentFrame() + since;
   return (
-    <div className={`${AREA} font-jp flex flex-col justify-center gap-6`}>
+    <div className="font-jp absolute inset-x-[60px] top-[330px] flex h-[540px] flex-wrap content-center justify-center gap-3">
       {pipe(
-        UPDATES,
-        Arr.map((update, index) => (
-          <div
-            className="flex items-center gap-8 rounded-[14px] bg-[#0b0d10] px-8 py-4"
-            key={update.feature}
+        FEATURES,
+        Arr.map((feature, index) => (
+          <span
+            className="font-code rounded-[12px] bg-[#0b0d10] px-4 py-1 text-[44px] font-bold text-white odd:text-[#ffd400]"
+            key={feature}
             style={{
-              opacity: grow(frame, index * UPDATE_GAP),
-              translate: `${String((FULL - grow(frame, index * UPDATE_GAP)) * 120)}px 0`,
+              opacity: shownOf(frame, at + index * FEATURE_GAP),
+              scale: String(slamOf(frame, at + index * FEATURE_GAP)),
             }}
           >
-            <span className="font-code w-[200px] text-[60px] font-bold text-[#ffd400]">
-              v{update.version}
-            </span>
-            <span className="text-[56px] font-black text-white">{update.feature}</span>
-          </div>
+            {feature}
+          </span>
         )),
       )}
+    </div>
+  );
+};
+
+const FIRST_MINOR = 0;
+const LAST_MINOR = 24;
+const COUNT_FRAMES = 36;
+
+const Releases = ({ since = 0 }: Readonly<{ since?: number }>): ReactNode => {
+  const frame = useCurrentFrame() + since;
+  const minor = Math.floor(
+    interpolate(frame, [0, COUNT_FRAMES], [FIRST_MINOR, LAST_MINOR], {
+      easing: Easing.in((time) => Easing.quad(time)),
+      extrapolateRight: "clamp",
+    }),
+  );
+  return (
+    <div className={`${AREA} font-jp flex flex-col items-center justify-center gap-8`}>
+      <div className="font-code text-[150px] leading-none font-bold text-[#ffd400]">
+        v12.{String(minor)}
+      </div>
+      <div className="flex flex-wrap justify-center gap-[8px]">
+        {pipe(
+          Arr.range(FIRST_MINOR, LAST_MINOR),
+          Arr.map((step) => (
+            <span
+              className="size-[24px] rounded-full bg-[#ffd400]"
+              key={step}
+              style={{ opacity: pipe(Number(step <= minor), (lit) => 0.18 + lit * 0.82) }}
+            />
+          )),
+        )}
+      </div>
+      <div className="font-code text-[48px] text-white/85">2026/08/26 → 11/26</div>
     </div>
   );
 };
@@ -835,7 +903,10 @@ const Updates = ({ since = 0 }: Readonly<{ since?: number }>): ReactNode => {
 const ERROR = "#ff6b5b";
 const PASS = "#3ddc84";
 
-const OldTool = ({ fixed }: Readonly<{ fixed: boolean }>): ReactNode => {
+const OldTool = ({
+  fixed,
+  failAt = NOTHING,
+}: Readonly<{ fixed: boolean; failAt?: number }>): ReactNode => {
   const frame = useCurrentFrame();
   const result = pipe(
     Option.some({ text: "✓ build done", color: PASS }),
@@ -844,9 +915,12 @@ const OldTool = ({ fixed }: Readonly<{ fixed: boolean }>): ReactNode => {
   );
   return (
     <div className={`${AREA} font-jp flex flex-col gap-6`}>
-      <div className="font-code flex flex-col gap-3 rounded-[16px] bg-[#0b0d10] px-8 py-6 text-[44px] leading-snug">
-        <span className="text-white/90">$ old-tool build</span>
-        <span className="font-bold whitespace-pre-line" style={{ color: result.color }}>
+      <div className="font-code flex flex-col gap-3 rounded-[16px] bg-[#0b0d10] px-8 py-6 text-[52px] leading-snug">
+        <span className="text-white/90">$ pnpm run build</span>
+        <span
+          className="font-bold whitespace-pre-line"
+          style={{ color: result.color, opacity: grow(frame, failAt) }}
+        >
           {result.text}
         </span>
       </div>
@@ -972,19 +1046,25 @@ export const draw: Readonly<Record<string, Draw>> = {
     </>
   ),
   disk: (shot) => <Sharing shot={shot} />,
-  updates: (shot) => (
+  more: (shot) => (
     <>
-      <Updates />
+      <Features />
       {pipe(
-        UPDATES,
-        Arr.map((update, index) => (
-          <Sfx at={index * UPDATE_GAP} key={update.feature} kind="pop" shot={shot} />
+        FEATURES,
+        Arr.map((feature, index) => (
+          <Sfx at={index * FEATURE_GAP} key={feature} kind="pop" shot={shot} />
         )),
       )}
     </>
   ),
-  plenty: () => <Updates since={SETTLED} />,
-  caveat: () => <OldTool fixed={false} />,
+  updates: (shot) => (
+    <>
+      <Releases />
+      <Sfx at={COUNT_FRAMES} kind="stamp" shot={shot} />
+    </>
+  ),
+  strong: () => <Releases since={SETTLED} />,
+  caveat: (shot) => <OldTool failAt={lineStart(shot, 1)} fixed={false} />,
   fix: () => <OldTool fixed />,
   ending: (shot) => (
     <>
