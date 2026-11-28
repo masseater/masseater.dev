@@ -1,13 +1,13 @@
-import { SecretsStore } from "@alchemy.run/cloudflare";
-import { makeRandom } from "alchemy";
+import { D1, SecretsStore } from "@alchemy.run/cloudflare";
+import { RemovalPolicy, makeRandom } from "alchemy";
 import { Config, Effect, Option, Redacted, Schema, pipe } from "effect";
 
 import { grantBindings, WORKFLOW_GITHUB_GRANTS } from "#/entities/credential/index.ts";
 import type { GitHubAppEnv } from "#/entities/credential/index.ts";
-import { relocatedDatabase } from "#/features/relocate-database/index.ts";
 import { PREFIX } from "#/shared/config/index.ts";
 
-const GITHUB_APP_DATABASE = `${PREFIX}GitHubApp-prod-zcxmorxkzgzaqw2z`;
+const GITHUB_APP_DATABASE = `${PREFIX}GitHubApp-prod-zcxmorxkzgzaqw2z-japan`;
+const JAPAN_DATABASE_HINT = "apac";
 const SEAL_KEY_BYTES = 32;
 
 const encodeJson = Schema.encodeEffect(Schema.fromJsonString(Schema.Unknown));
@@ -59,10 +59,11 @@ export const ciKeys = Effect.fn("ciKeys")(function* ciKeys(store: SecretsStore.S
 
 export const githubAppStore = Effect.all(
   {
-    GITHUB_APP: relocatedDatabase("GitHubApp", {
+    GITHUB_APP: D1.Database("GitHubAppJapan", {
       name: GITHUB_APP_DATABASE,
+      primaryLocationHint: JAPAN_DATABASE_HINT,
       migrations: "./github-app-migrations",
-    }),
+    }).pipe(RemovalPolicy.protect()),
     SEAL_KEY: makeRandom("SealKey", { bytes: SEAL_KEY_BYTES }),
   },
   { concurrency: 1 },
