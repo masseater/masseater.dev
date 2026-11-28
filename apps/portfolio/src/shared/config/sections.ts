@@ -6,6 +6,7 @@ export const sections = [
   "slog",
   "sloppedia",
   "nikogori",
+  "sashi",
   "ai-produced",
 ] as const;
 
@@ -36,6 +37,11 @@ export const sectionMeta = {
     title: portfolio.sections.nikogori,
     description: "AI がコードだけで描いた絵",
     titleTransition: "vt-category-nikogori",
+  },
+  sashi: {
+    title: portfolio.sections.sashi,
+    description: "好みを伝えるための参照",
+    titleTransition: "vt-category-sashi",
   },
   "ai-produced": {
     title: portfolio.sections["ai-produced"],

@@ -20,7 +20,7 @@ export const pages = [
     Arr.map((path) => ({ path })),
   ),
   ...pipe(
-    [site.feedPath, site.robotsPath],
+    [site.feedPath, site.referencesPath, site.robotsPath],
     Arr.map((path) => ({ path, sitemap: { exclude: true } })),
   ),
   ...pipe(

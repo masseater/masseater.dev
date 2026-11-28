@@ -1,3 +1,5 @@
+import { createMcpHandler } from "@modelcontextprotocol/server";
+import type { McpServer } from "@modelcontextprotocol/server";
 import {
   Array as Arr,
   Effect,
@@ -12,7 +14,9 @@ import type { DefaultBodyType, StrictRequest } from "msw";
 import { http } from "msw/http";
 import { setupServer } from "msw/node";
 
-import type { SloppediaBroker } from "#/features/edit-sloppedia/index.ts";
+import type { ContentBroker } from "#/shared/api/index.ts";
+
+import { serverOf } from "./tools.ts";
 
 export type Answer = Readonly<{ status: number; body: unknown }>;
 
@@ -22,6 +26,7 @@ export type Scene = Readonly<{
   openPulls: Readonly<Record<string, number>>;
   commit: Answer;
   graphql: Answer;
+  sashi: Answer;
 }>;
 
 export type Sent = Readonly<{ method: string; path: string; body: unknown }>;
@@ -82,6 +87,7 @@ const DEFAULT_SCENE: Scene = {
   openPulls: {},
   commit: created({ content: { sha: "file-sha" }, commit: { sha: "commit-sha" } }),
   graphql: ok({ data: { enablePullRequestAutoMerge: {} } }),
+  sashi: ok({ references: [] }),
 };
 
 const scene = MutableRef.make(DEFAULT_SCENE);
@@ -153,6 +159,7 @@ const routes: readonly Route[] = [
     answer: () => ok({ merged: true, sha: "merge-sha", message: "merged" }),
   },
   { method: "POST", path: /^\/graphql$/u, answer: ({ graphql }) => graphql },
+  { method: "GET", path: /^\/sashi\.json$/u, answer: ({ sashi }) => sashi },
 ];
 
 const JsonBody = Schema.fromJsonString(Schema.Unknown);
@@ -220,6 +227,68 @@ export const setScene = (overrides: Partial<Scene>): void => {
 
 export const sentRequests = (): readonly Sent[] => MutableRef.get(sent);
 
-export const broker: SloppediaBroker = {
+export const broker: ContentBroker = {
   fetch: (): Promise<Response> => Promise.resolve(new Response("token")),
 };
+
+const TextContent = Schema.Struct({ type: Schema.String, text: Schema.String });
+
+const CallResult = Schema.Struct({
+  content: Schema.Array(TextContent),
+  isError: Schema.optionalKey(Schema.Boolean),
+});
+
+const ToolResult = Schema.fromJsonString(Schema.Struct({ result: CallResult }));
+
+const decodeToolResult = Schema.decodeEffect(ToolResult);
+
+const DATA_LINE = /^data: (?<json>.+)$/mu;
+
+const encodeJson = Schema.encodeEffect(Schema.fromJsonString(Schema.Unknown));
+
+export const callTool = ({
+  register,
+  name,
+  arguments: input,
+}: Readonly<{
+  register: (server: McpServer) => McpServer;
+  name: string;
+  arguments: unknown;
+}>): Effect.Effect<Readonly<{ isError: boolean; text: string }>> =>
+  Effect.gen(function* callRegisteredTool() {
+    const body = yield* encodeJson({
+      jsonrpc: "2.0",
+      id: 1,
+      method: "tools/call",
+      params: { name, arguments: input },
+    });
+    const response = yield* Effect.promise(() =>
+      createMcpHandler(() => register(serverOf())).fetch(
+        new Request("https://sundries.masseater.dev/mcp", {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+            accept: "application/json, text/event-stream",
+          },
+          body,
+        }),
+      ),
+    );
+    const text = yield* Effect.promise(() => response.text());
+    const json = pipe(
+      text,
+      Str.match(DATA_LINE),
+      Option.flatMap(({ groups }) => Option.fromNullishOr(groups)),
+      Option.flatMap(Rec.get("json")),
+      Option.getOrElse(() => text),
+    );
+    const { result } = yield* decodeToolResult(json);
+    return {
+      isError: result.isError ?? false,
+      text: pipe(
+        result.content,
+        Arr.map((item) => item.text),
+        Arr.join("\n"),
+      ),
+    };
+  }).pipe(Effect.orDie);
