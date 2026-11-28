@@ -1,13 +1,27 @@
 import { outputOf, writeOutputs } from "@r_masseater/github-workflow";
-import { Array as Arr, Effect, Option, Record as Rec, Schema, pipe } from "effect";
+import { Array as Arr, Config, Effect, Option, Record as Rec, Schema, pipe } from "effect";
 
-import { Stacks, deployed } from "#/entities/deployment/index.ts";
+import { Stacks, deployed, staged } from "#/entities/deployment/index.ts";
+import type { DeploymentRecord } from "#/entities/deployment/index.ts";
 import { nameOf, workspace } from "#/entities/workspace/index.ts";
 
 import { isChanged } from "./changes.ts";
 
-const TASK = "deploy:production";
 const WORKFLOWS = [".github/workflows/deploy.yml"];
+
+type Stage = Readonly<{
+  task: string;
+  output: string;
+  record: (stack: string) => DeploymentRecord;
+}>;
+
+const STAGES: readonly Stage[] = [
+  { task: "deploy:bootstrap", output: "bootstrap", record: staged("deploy:bootstrap") },
+  { task: "deploy:tailnet", output: "tailnet", record: staged("deploy:tailnet") },
+  { task: "deploy:broker", output: "broker", record: staged("deploy:broker") },
+  { task: "deploy:zone", output: "zone", record: staged("deploy:zone") },
+  { task: "deploy:production", output: "stacks", record: deployed },
+];
 
 const Task = Schema.Struct({
   package: Schema.String,
@@ -81,21 +95,34 @@ const stacksOf = (tasks: Tasks): readonly Stack[] => {
   );
 };
 
-/** @internal */
-export const planDeploys = Effect.gen(function* planDeploys() {
+const changedStacks = Effect.fn("changedStacks")(function* changedStacks(stage: Stage) {
   const plan = yield* outputOf({
     command: "vp",
-    args: ["run", "--dry-run", "--json", "-r", TASK],
+    args: ["run", "--dry-run", "--json", "-r", stage.task],
   }).pipe(Effect.flatMap(Schema.decodeEffect(Plan)));
   const { packages } = yield* workspace;
-  const changed = yield* Effect.filter(stacksOf(plan.plan), (stack) =>
-    isChanged({ packages, record: deployed, workflows: WORKFLOWS }, stack),
-  );
-  const stacks = yield* Schema.encodeEffect(Stacks)(
+  const force = yield* Config.Boolean("FORCE").pipe(Config.withDefault(false));
+  const isStale = Effect.fn("isStale")(function* isStale(stack: Stack) {
+    if (force) {
+      return true;
+    }
+    return yield* isChanged({ packages, record: stage.record, workflows: WORKFLOWS }, stack);
+  });
+  const changed = yield* Effect.filter(stacksOf(plan.plan), isStale);
+  return yield* Schema.encodeEffect(Stacks)(
     pipe(
       changed,
       Arr.map(({ name, filter }) => ({ name, filter })),
     ),
   );
-  yield* writeOutputs({ stacks });
+});
+
+/** @internal */
+export const planDeploys = Effect.gen(function* planDeploys() {
+  const planned = yield* Effect.forEach(
+    STAGES,
+    (stage) => changedStacks(stage).pipe(Effect.map((stacks) => [stage.output, stacks] as const)),
+    { concurrency: 1 },
+  );
+  yield* writeOutputs(Rec.fromEntries(planned));
 });
