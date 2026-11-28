@@ -1,0 +1,21 @@
+{
+  "name": "lap",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Runs a command with an OpenTelemetry Collector beside it, so that a git hook or an install leaves its time as files that work-metrics reads.",
+  "bin": {
+    "lap": "./bin/lap.ts"
+  },
+  "type": "module",
+  "imports": {
+    "#/*": "./src/*"
+  },
+  "dependencies": {
+    "@r_masseater/node-main": "catalog:",
+    "effect": "catalog:stack"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "vite-plus": "catalog:stack"
+  }
+}
