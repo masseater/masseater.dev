@@ -4,6 +4,7 @@
   "private": true,
   "description": "holons.masseater.dev, a static page with the zoomable figure of the owner's nested holons.",
   "bin": {
+    "measure-zoom": "./bin/measure-zoom.ts",
     "write-site": "./bin/write-site.ts"
   },
   "type": "module",
@@ -18,8 +19,11 @@
   "devDependencies": {
     "@alchemy.run/cloudflare": "catalog:stack",
     "@masseater.dev/cloudflare-account": "workspace:*",
+    "@r_masseater/web-vitals-flow": "workspace:*",
     "@types/node": "catalog:",
     "alchemy": "catalog:stack",
+    "chrome-launcher": "catalog:",
+    "puppeteer-core": "catalog:",
     "typescript": "catalog:stack",
     "vite-plus": "catalog:stack"
   }
