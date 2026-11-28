@@ -42,7 +42,7 @@ export const OcrEnginesPageNoDeps = Html.component({
         ),
     });
     return html.main
-      .class("vt-match mx-auto flex max-w-4xl flex-col gap-8 px-4 py-12 md:px-8")
+      .class("vt-match mx-auto flex w-full max-w-4xl flex-col gap-8 px-4 py-12 md:px-8")
       .children(
         html.h1.class("text-2xl font-bold").children(COPY.title),
         html.p.class("text-sm leading-relaxed").children(COPY.lead),

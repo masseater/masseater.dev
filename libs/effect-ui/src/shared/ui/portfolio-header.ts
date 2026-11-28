@@ -86,7 +86,7 @@ export const PortfolioHeader = <Msg>(html: Html.H<Msg>): HtmlElement<Msg, "heade
     .class("flex flex-col items-center gap-6 px-6 pt-8")
     .children(
       html.div
-        .class("flex w-full items-center justify-between gap-4")
+        .class("flex w-full flex-wrap items-center justify-between gap-x-4 gap-y-2")
         .children(Logo(html), SocialLinks(html)),
       SectionLinks(html),
     );
