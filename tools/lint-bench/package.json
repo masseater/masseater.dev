@@ -12,7 +12,7 @@
     "#package.json": "./package.json"
   },
   "dependencies": {
-    "@r_masseater/h56m-presets": "catalog:",
+    "@r_masseater/h56m": "catalog:",
     "@r_masseater/node-main": "catalog:",
     "effect": "catalog:stack"
   },

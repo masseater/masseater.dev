@@ -1,6 +1,6 @@
 import { API_TOKEN_BYTES, API_TOKEN_PREFIX } from "@masseater.dev/watashi-protocol";
 import type { H56mConfig } from "@r_masseater/h56m";
-import { betterleaks } from "@r_masseater/h56m-presets";
+import { betterleaks } from "@r_masseater/h56m/presets";
 import { Array as Arr, pipe } from "effect";
 
 const BASE64_BITS = 6;

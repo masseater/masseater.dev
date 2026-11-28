@@ -1,6 +1,6 @@
 import { homedir } from "node:os";
 
-import { betterleaks } from "@r_masseater/h56m-presets";
+import { betterleaks } from "@r_masseater/h56m/presets";
 import {
   Array as Arr,
   Console,
@@ -152,7 +152,7 @@ const setup = Effect.fn("lint-bench.setup")(function* setup() {
   const config = {
     ...tools.config,
     "fu4-presets": path.join(repository, "libs", "fu4-presets", "src", "app", "index.ts"),
-    "h56m-presets": path.join(repository, "libs", "h56m-presets", "src", "app", "index.ts"),
+    "h56m-presets": import.meta.resolve("@r_masseater/h56m/presets"),
     "betterleaks.toml": betterleaks,
   };
   return {
