@@ -1,10 +1,10 @@
-import { Array as Arr, Config, Effect, Option, Order, Schema, pipe } from "effect";
+import { Array as Arr, Config, Effect, Option, Schema, pipe } from "effect";
 import { HttpClient, HttpClientRequest, HttpClientResponse } from "effect/http";
 
 import { isPublicPage } from "#/features/find-public-hosts/model/page-host.ts";
+import { keepAnsweringHosts } from "#/shared/lib/keep-answering-hosts.ts";
 
 const API = "https://api.cloudflare.com/client/v4/accounts";
-const CONCURRENCY = 8;
 
 const Domains = Schema.Struct({
   result: Schema.Array(Schema.Struct({ hostname: Schema.String })),
@@ -44,12 +44,7 @@ const probed = Effect.fn("monkey.hosts.probe")(function* probed(hostname: string
 
 const listedPublic = Effect.fn("monkey.hosts.listed")(function* listedPublic() {
   const hostnames = yield* customDomains();
-  const probes = yield* Effect.forEach(hostnames, probed, { concurrency: CONCURRENCY });
-  return pipe(
-    probes,
-    Arr.flatMap((probe) => Option.toArray(probe)),
-    Arr.sortWith((name) => name, Order.String),
-  );
+  return yield* keepAnsweringHosts({ hostnames, probe: probed });
 });
 
 const findPublic = Effect.fn("monkey.hosts")(function* findPublic(given: readonly string[]) {
