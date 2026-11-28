@@ -8,6 +8,8 @@ const SAFE = "_";
 
 export const tachiePath = (name: string): string => `${CACHE_DIR}/tachie/${name}.png`;
 
+export const tachiePsdPath = (name: string): string => `${CACHE_DIR}/tachie/${name}.psd`;
+
 export const narrationPath = (key: string): string => `${CACHE_DIR}/narration/${key}.wav`;
 
 export const assetPath = (url: string): string => {

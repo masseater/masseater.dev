@@ -1,9 +1,9 @@
 import type { Voice } from "@masseater.dev/tachie";
 import { Array as Arr, Option, pipe } from "effect";
 
-import type { TimedCut } from "#/entities/cut/index.ts";
+import type { TimedCut } from "./timeline.ts";
 
-export const voicesOf = (cuts: readonly TimedCut[]): readonly Voice[] =>
+export const recordingsOf = (cuts: readonly TimedCut[]): readonly Voice[] =>
   pipe(
     cuts,
     Arr.flatMap(({ from, lines }) =>
