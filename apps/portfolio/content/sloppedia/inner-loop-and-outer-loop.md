@@ -1,6 +1,6 @@
 ---
-title: "Inner loop and outer loop"
-description: "Two terms for the feedback cycles of software development. The inner loop is the local cycle before a push, and the outer loop is the shared cycle after it. AI agents have changed both."
+title: "内部ループと外部ループ"
+description: "ソフトウェア開発のフィードバックサイクルを表す2つの用語。内部ループはプッシュ前のローカルサイクルであり、外部ループはプッシュ後の共有サイクルである。AIエージェントはその両方を変えた。"
 tags: ["Software development", "Continuous integration", "AI agents", "Software in 2026"]
 published: true
 infobox:
@@ -14,80 +14,80 @@ infobox:
     value: "November 28, 2026"
 ---
 
-The inner loop and the outer loop are two terms for the feedback cycles of software development. The inner loop is the local cycle a developer repeats before pushing code. The outer loop is the shared cycle that starts after the push. Since 2025, writers on AI agents have used the same two words for other splits, so the meaning depends on the author.
+内部ループと外部ループは、ソフトウェア開発におけるフィードバックサイクルを指す2つの用語である。内部ループとは、開発者がコードをプッシュする前に繰り返すローカルサイクルのことである。外側ループは、プッシュ後に開始される共有サイクルである。2025年以降、AIエージェントの執筆者は他の分割に対しても同じ2つの単語を使用しているため、意味は著者によって異なる。
 
-This article was written by an AI, Claude, from the sources listed in the footnotes. The sources were read on November 28, 2026.
+この記事は、脚注に記載された出典に基づき、AIのClaudeによって執筆された。ソースは2026年11月28日に閲覧された。
 
-## The classic split
+## 古典的な分割
 
-Microsoft Learn defines the inner loop as the iterative process a developer performs when writing, building and debugging code[^ms-learn]. For a library it has five steps: coding, building, testing, debugging and committing. For a web front end the build and test steps become bundling and refreshing[^ms-learn]. The cycle is local, fast, frequent and individual, and it ends at the commit. Teams want it as short as possible[^ms-learn].
+Microsoft Learnでは、インナーループを、開発者がコードの記述、ビルド、デバッグを行う際の反復的なプロセスと定義している[^ms-learn]。ライブラリには、コーディング、ビルド、テスト、デバッグ、コミットという5つのステップがある。Webフロントエンドの場合、ビルドとテストの手順はバンドルとリフレッシュになる[^ms-learn]。サイクルはローカルで高速かつ頻繁で個別的なものであり、コミットで終了する。チームはできるだけ短くしたいと考えている[^ms-learn]。
 
-The outer loop begins after the code leaves the developer's machine. It covers the pull request, code review, scans, security checks, merging and deployment. Its feedback arrives in minutes to hours instead of seconds to minutes[^ms-learn]. Sonar summarizes the difference in one line. The inner loop optimizes for speed, and the outer loop optimizes for confidence[^sonar].
+外側のループは、コードが開発者のマシンから離れた後に始まる。プルリクエスト、コードレビュー、スキャン、セキュリティチェック、マージ、およびデプロイをカバーする。フィードバックは、数秒から数分ではなく、数分から数時間かけて届く[^ms-learn]。Sonarは相違点を1行で要約する。内部ループは速度を、外部ループは信頼性をそれぞれ最適化する[^sonar]。
 
-|               | Inner loop                     | Outer loop                            |
-| ------------- | ------------------------------ | ------------------------------------- |
-| Where it runs | The developer's machine        | Shared systems such as CI and review  |
-| Boundary      | Ends at the commit or the push | Starts after the push                 |
-| Typical steps | Edit, build, run, test, debug  | Review, CI, integration tests, deploy |
-| Feedback time | Seconds to minutes             | Minutes to hours                      |
-| Optimized for | Speed                          | Confidence                            |
+|                    | 内部ループ                           | 外側ループ                         |
+| ------------------ | ------------------------------------ | ---------------------------------- |
+| 実行される場所     | 開発者のマシン                       | CIやレビューなどの共有システム     |
+| 境界               | コミットまたはプッシュで終わる       | プッシュ後に開始される             |
+| 一般的な手順       | 編集、ビルド、実行、テスト、デバッグ | レビュー、CI、統合テスト、デプロイ |
+| フィードバック時間 | 秒から分                             | 分単位から時間単位まで             |
+| 最適化済み         | 速度                                 | 信頼                               |
 
-Most of the classic advice is about shortening the inner loop. Microsoft Learn gives a monolith as the bad case, where a change to one function means waiting ten minutes or more for the full build and test suite[^ms-learn]. Its remedies are incremental builds, caching and modularization, with [Bazel](/sloppedia/bazel), Buck, Gradle, ccache, sccache and [Vite](/sloppedia/vite) as examples[^ms-learn].
+定番のアドバイスの多くは、内部ループの短縮に関するものだ。Microsoft Learnでは、単一の関数を変更するとビルドとテストスイートの完全な完成まで10分以上待たなければならないという、モノリス型のケースが想定されている[^ms-learn]。その対策には、インクリメンタルビルド、キャッシュ、モジュール化があり、[Bazel](/sloppedia/bazel)、Buck、Gradle、ccache、sccache、[Vite](/sloppedia/vite)などが挙げられる[^ms-learn]。
 
-The earliest dated source this article could verify is the Microsoft Learn page, whose front matter is dated October 13, 2025. That date does not show where the term came from. Its origin is not established here.
+本記事で確認できる最古の日付の出典はMicrosoft Learnのページであり、その前書きには2025年10月13日という日付が記載されている。その日付からは、その用語の由来が読み取れない。その起源はここには確定していない。
 
-## What AI agents changed
+## AIエージェントが変えたもの
 
-When an agent writes the code, the inner loop no longer needs a human at the keyboard. Augment Code describes agents that now run the write, build, test and debug cycle on their own[^augment]. It still draws the line at the commit, with pre-commit work inside and post-push delivery outside[^augment].
+エージェントがコードを記述すると、内部ループはキーボードに人間を介する必要がなくなる。Augment Codeは、書き込み、ビルド、テスト、デバッグのサイクルを自律的に実行するエージェントを記述している[^augment]。依然としてコミットで線引きがされており、内部ではプレコミット作業、外部ではプッシュ後の配信が行われる[^augment]。
 
-OpenHands argued in December 2025 that most AI tools had so far sped up the inner loop only. Its author, Robert Brennan, says a developer hits a limit at around two to three local agents. Agents on cloud infrastructure can run in the dozens or the thousands, which suits work that starts after the push, such as fixing a newly published vulnerability with hundreds or thousands of concurrent agents[^openhands]. The post is written by a vendor that sells such agents.
+OpenHandsは2025年12月、ほとんどのAIツールがこれまでインナーループのみを高速化してきたと主張した。著者のロバート・ブレナン氏は、開発者がローカルエージェントを2〜3個程度まで利用すると限界に達すると述べている。クラウドインフラストラクチャ上のエージェントは数十から数千台まで稼働可能であり、これは数百から数千台のエージェントが同時に稼働して新たに公開された脆弱性を修正するといった、プッシュ後に開始される作業に適している[^openhands]。この投稿は、こうしたエージェントを販売しているベンダーによって書かれている。
 
-The faster inner loop pushes the load onto the outer loop. Sonar reports that the median pull request has roughly doubled in size over a year. In codebases that rely heavily on AI, the largest pull requests have grown threefold[^sonar]. Fowler's site gives the cause in plain terms. Agents generate code faster than humans can inspect it by hand, so a human who gatekeeps every line becomes the bottleneck[^fowler].
+高速な内部ループが負荷を外部ループに押し付ける。Sonarの報告によると、プルリクエストの中央値は1年でおよそ2倍に増加した。AIに大きく依存しているコードベースでは、最大規模のプルリクエストが3倍に増加した[^sonar]。ファウラーのサイトでは、原因が分かりやすく説明されている。エージェントは人間が手作業で確認するよりも速くコードを生成するため、すべての行をゲートキーピングする人間がボトルネックとなる[^fowler]。
 
-Sonar's answer is to move verification left, into the inner loop, instead of removing it[^sonar]. Fowler's site answers differently. The human should stop reviewing each line and work on the harness that makes the agent produce good code[^fowler].
+Sonarの回答は、検証を削除するのではなく、左の内側ループに移動させることだ[^sonar]。ファウラーのサイトでは回答が異なる。人間は各行のレビューを止め、エージェントに良質なコードを出力させるハーネスの開発に取り組むべきだ[^fowler]。
 
-## Other senses of the words
+## 単語のその他の用法
 
-Since 2025, several authors have reused the two words with different boundaries. The table lists the senses found in the sources read for this article.
+2025年以降、複数の著者が異なる境界を持つ2つの単語を再利用している。表には、本記事で参照した資料に含まれる語義が記載されている。
 
-| Sense                          | Inner loop                                  | Outer loop                                           | Source                                                                 |
-| ------------------------------ | ------------------------------------------- | ---------------------------------------------------- | ---------------------------------------------------------------------- |
-| Before and after the push      | Local work before the push                  | Delivery after the push                              | Microsoft Learn, Sonar, Augment Code, OpenHands                        |
-| Three tiers                    | Seconds to minutes, request, output, verify | Weeks to months, architecture and the organization   | Gene Kim and Steve Yegge's book Vibe Coding, via IT Revolution[^itrev] |
-| Inside a task and across tasks | What the agent does within one task         | What the agent carries across turns and sessions     | Philipp Schmid[^schmid]                                                |
-| Building and improving         | Turns a task into a verified change         | Improves the agent's instructions, context and tools | Praveen Govindaraj[^govindaraj]                                        |
+| 意味                           | 内部ループ                            | 外側ループ                                               | ソース                                                                             |
+| ------------------------------ | ------------------------------------- | -------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| プッシュ前後                   | プッシュ前のローカル作業              | プッシュ後の配信                                         | Microsoft Learn、Sonar、Augment Code、OpenHands                                    |
+| 3つの階層                      | 秒から分、リクエスト、出力、検証      | 週単位から月単位、アーキテクチャと組織                   | ジーン・キムとスティーブ・イェッゲの著書『Vibe Coding』、IT Revolution経由[^itrev] |
+| タスク内およびタスクをまたいで | エージェントが1つのタスク内で行う処理 | エージェントがターンやセッションをまたいで引き継ぐもの   | フィリップ・シュミット[^schmid]                                                    |
+| 構築と改善                     | タスクを検証済みの変更に変換する      | エージェントの指示、コンテキスト、およびツールを改善する | プラヴィーン・ゴヴィンダラージ[^govindaraj]                                        |
 
-The three-tier model adds a middle loop that runs for hours to days. It covers continuity between sessions and the coordination of parallel agents[^itrev]. IT Revolution says that developers once worked within a simple inner and outer loop model[^itrev]. A vendor article from July 2026 also lists three loops, which close in minutes, in tens of minutes to hours, and in days to weeks. In that article the middle loop is the developer's own feedback[^puppygraph].
+3層モデルでは、数時間から数日にわたって動作する中間ループが追加される。セッション間の継続性と、並列エージェントの連携について扱っている[^itrev]。IT革命によれば、開発者はかつて単純な内部・外部ループモデルの中で働いていたという[^itrev]。2026年7月のベンダー記事にも、数分で完了するループが3つ、数分から数時間、そして数日から数週間で完了するループが挙げられている。その記事では、ミドルループは開発者自身のフィードバックである[^puppygraph]。
 
-Kief Morris on Fowler's site does not use the two words as his main terms. He splits the work into a why loop and a how loop. The how loop contains smaller loops, and the innermost one generates and tests code[^fowler]. A human can stay in the loop, checking every output. A human can also stay on the loop, changing the harness that the agent runs in[^fowler]. Morris notes that others call the on-the-loop work a middle loop[^fowler].
+ファウラーのサイトにあるキーフ・モリスは、これら2つの単語をメイン用語として使用していない。彼は作業を「なぜ」ループと「どのように」ループに分けている。howループにはより小さなループが含まれており、最も内側のループがコードを生成してテストする[^fowler]。人間は、すべての出力を確認しながら状況を把握し続けることができる。人間もまた、エージェントが実行するハーネスを変更することで、状況を把握し続けることができる[^fowler]。モリスは、オン・ザ・ループの作業をミドルループ[^fowler]と呼ぶ人もいると指摘している。
 
-Schmid places the split inside the agent. The inner loop is about reliability within a task, where the agent writes code, runs tests, fixes and repeats. The outer loop is about getting smarter over time, as lessons carry across turns through files such as AGENTS.md[^schmid]. Govindaraj's wording is close. The inner loop builds software, and the outer loop improves the system that builds it[^govindaraj].
+シュミットは分割をエージェント内に配置する。内部ループはタスク内の信頼性に関するもので、エージェントがコードを記述し、テストを実行し、修正し、これを繰り返す。外側のループは、AGENTS.md[^schmid]のようなファイルを通じてターンをまたいで教訓が引き継がれていくため、時間をかけてより高度になっていく。ゴヴィンダラジの言い回しは近い。内部ループはソフトウェアを構築し、外部ループはそれを構築するシステムを改善する[^govindaraj]。
 
-## How to tell which sense is meant
+## どの意味で使われているか見分ける方法
 
-The senses differ in what separates the two loops. In the classic sense it is the push. In the three-tier sense it is the time scale. In the agent senses it is whether the loop improves the code or improves the agent. An article that uses the words without a definition cannot be compared with another until the boundary is known.
+2つのループを隔てる境界は、感覚によって異なる。古典的な意味では、それはプッシュである。3層の意味では、タイムスケールのことである。エージェントは、ループがコードを改善するのか、あるいはエージェントを改善するのかを検知する。定義のない用語を用いた記事は、境界が判明するまで他の記事と比較することはできない。
 
-## How Sloppedia's owner splits them
+## Sloppediaのオーナーによる分割方法
 
-The owner of Sloppedia, masseater, uses the classic sense in their own repositories. A pre-push hook runs the same checks as the full verify task, so the inner loop ends with a complete check on the machine[^masseater-dev]. The owner has also said that no check should gate each pull request before the merge. A merge queue merges every ready pull request. If the main branch turns red afterward, the failure should be detected and fixed on main[^owner]. This is a statement of the owner's practice on November 27, 2026, not a general recommendation.
+Sloppediaの所有者であるmasseaterは、自身のリポジトリにおいて古典的な意味を用いている。プリプッシュフックはフル検証タスクと同じチェックを実行するため、内部ループはマシン[^masseater-dev]の完全なチェックで終了する。オーナーはまた、マージ前に各プルリクエストにチェックを課すべきではないと述べている。マージキューは、準備が整ったプルリクエストをすべてマージする。その後、メインブランチが赤くなった場合は、main[^owner]で障害を検出し、修正すべきである。これは2026年11月27日時点における所有者の運用方針を示すものであり、一般的な推奨事項ではない。
 
-[^ms-learn]: Microsoft「[Understand the Inner Loop](https://learn.microsoft.com/en-us/training/modules/implement-tools-track-usage-flow/2-understand-inner-loop)」Microsoft Learn。2026年11月28日に閲覧。
+[^ms-learn]: Microsoft「[Understand the Inner Loop](https://learn.microsoft.com/en-us/training/modules/implement-tools-track-usage-flow/2-understand-inner-loop)」Microsoft Learn。2026年11月28日閲覧。
 
-[^sonar]: Sonar「[What is inner loop development?](https://www.sonarsource.com/resources/library/inner-loop-development/)」2026年10月1日。2026年11月28日に閲覧。
+[^sonar]: Sonar「[インナーループ開発とは？](https://www.sonarsource.com/resources/library/inner-loop-development/)」2026年10月1日。2026年11月28日閲覧。
 
-[^augment]: Ani Galstian「[Inner Loop vs Outer Loop: How AI Agents Redraw the Boundary](https://www.augmentcode.com/guides/inner-loop-vs-outer-loop-ai-agents)」Augment Code、2026年7月24日。2026年11月28日に閲覧。
+[^augment]: Ani Galstian「[Inner Loop vs Outer Loop: How AI Agents Redraw the Boundary](https://www.augmentcode.com/guides/inner-loop-vs-outer-loop-ai-agents)」Augment Code、2026年7月24日。2026年11月28日閲覧。
 
-[^openhands]: Robert Brennan「[Agents in the Outer Loop](https://openhands.dev/blog/20251202-agents-in-the-outer-loop)」OpenHands、2025年12月2日。2026年11月28日に閲覧。
+[^openhands]: Robert Brennan「[Agents in the Outer Loop](https://openhands.dev/blog/20251202-agents-in-the-outer-loop)」OpenHands, 2025年12月2日. 2026年11月28日閲覧。
 
-[^fowler]: Kief Morris「[Humans and Agents in Software Engineering Loops](https://www.martinfowler.com/articles/exploring-gen-ai/humans-and-agents.html)」martinfowler.com、2026年3月4日。2026年11月28日に閲覧。
+[^fowler]: Kief Morris「[Humans and Agents in Software Engineering Loops](https://www.martinfowler.com/articles/exploring-gen-ai/humans-and-agents.html)」martinfowler.com、2026年3月4日。2026年11月28日閲覧。
 
-[^itrev]: Leah Brown「[The Three Developer Loops: A New Framework for AI-Assisted Coding](https://itrevolution.com/articles/the-three-developer-loops-a-new-framework-for-ai-assisted-coding/)」IT Revolution、2025年10月20日。2026年11月28日に閲覧。
+[^itrev]: Leah Brown「[The Three Developer Loops: A New Framework for AI-Assisted Coding](https://itrevolution.com/articles/the-three-developer-loops-a-new-framework-for-ai-assisted-coding/)」IT Revolution、2025年10月20日。2026年11月28日閲覧。
 
-[^schmid]: Philipp Schmid「[Agents: Inner Loop vs Outer Loop](https://www.philschmid.de/inner-loop-vs-outer-loop)」2026年2月20日。2026年11月28日に閲覧。
+[^schmid]: Philipp Schmid「[Agents: Inner Loop vs Outer Loop](https://www.philschmid.de/inner-loop-vs-outer-loop)」2026年2月20日。2026年11月28日閲覧。
 
-[^govindaraj]: Praveen Govindaraj「[Two Loops: One Builds Your Code, One Improves Your AI Agent](https://dev.to/praveen_govi_ai/two-loops-one-builds-your-code-one-improves-your-ai-agent-chapter-12-of-the-agentic-development-10ba)」DEV Community、10月28日の投稿。2026年11月28日に閲覧。
+[^govindaraj]: Praveen Govindaraj「[Two Loops: One Builds Your Code, One Improves Your AI Agent](https://dev.to/praveen_govi_ai/two-loops-one-builds-your-code-one-improves-your-ai-agent-chapter-12-of-the-agentic-development-10ba)」DEV Community、10月28日の投稿。2026年11月28日閲覧。
 
-[^puppygraph]: Sa Wang「[What Is Loop Engineering? Definition & Process](https://www.puppygraph.com/learn/loop-engineering)」PuppyGraph、2026年7月31日。2026年11月28日に閲覧。
+[^puppygraph]: Sa Wang「[ループエンジニアリングとは？定義とプロセス](https://www.puppygraph.com/learn/loop-engineering)」PuppyGraph、2026年7月31日。2026年11月28日閲覧。
 
 [^masseater-dev]: masseater.dev リポジトリの CLAUDE.md。2026年11月28日に閲覧。
 
