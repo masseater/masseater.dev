@@ -70,10 +70,10 @@ export const script: VideoScript = {
       voice: ZUNDAMON,
       say: [
         "じゃあボクのプロジェクト\nでも試すのだ",
-        "…あれ、いつもの\nプラグインが使えないのだ？",
+        "…あれ、いつものESLintの\nプラグインはどうなるのだ？",
       ],
     },
-    { id: "fix", say: ["それ、設定に足せば\nそのまま使えるよ"] },
+    { id: "fix", say: ["ESLintのプラグインも\nそのまま使えるよ"] },
     { id: "ending", say: ["ね、もうlint待ちには\n戻れないっしょ？"] },
     {
       id: "join",

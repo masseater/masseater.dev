@@ -952,9 +952,9 @@ const Plugin = ({ failAt }: Readonly<{ failAt: number }>): ReactNode => {
           className={shown === FULL ? "font-bold" : "hidden"}
           style={{ color: ALARM, opacity: grow(frame, failAt) }}
         >
-          ✗ Rule &apos;my-team/no-raw-sql&apos;
+          ✗ Rule not found:
           <br />
-          {"  "}not found
+          {"  "}playwright/no-focused-test
         </span>
       </div>
     </div>
@@ -968,9 +968,11 @@ interface ConfigLine {
 
 const CONFIG: readonly ConfigLine[] = [
   { text: "{" },
-  { text: '  "jsPlugins": ["./lint/my-team.js"],', added: true },
+  { text: '  "jsPlugins": [', added: true },
+  { text: '    "eslint-plugin-playwright"', added: true },
+  { text: "  ],", added: true },
   { text: '  "rules": {' },
-  { text: '    "my-team/no-raw-sql": "error"' },
+  { text: '    "playwright/no-focused-test": "error"' },
   { text: "  }" },
   { text: "}" },
 ];
@@ -983,7 +985,7 @@ const Config = (): ReactNode => {
         <div className="font-code bg-[#1d2128] px-6 py-2 text-[34px] text-white/70">
           .oxlintrc.json
         </div>
-        <div className="font-code flex flex-col py-4 text-[38px] leading-[1.6] whitespace-pre">
+        <div className="font-code flex flex-col py-4 text-[32px] leading-[1.6] whitespace-pre">
           {pipe(
             CONFIG,
             Arr.map((line) =>
