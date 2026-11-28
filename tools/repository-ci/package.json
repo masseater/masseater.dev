@@ -4,6 +4,9 @@
   "private": true,
   "description": "Vite+ tasks main's verify job uses for Actions caches, failed-deploy Issues, the stacks to deploy and the zenn branch.",
   "type": "module",
+  "imports": {
+    "#/*": "./src/*"
+  },
   "dependencies": {
     "@r_masseater/github-workflow": "catalog:",
     "@r_masseater/node-main": "catalog:",
