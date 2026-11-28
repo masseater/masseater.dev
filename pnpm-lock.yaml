@@ -387,6 +387,9 @@ catalogs:
     '@r_masseater/song-format':
       specifier: 0.2.0
       version: 0.2.0
+    '@r_masseater/vite-plus-adopt':
+      specifier: 0.14.0
+      version: 0.14.0
     '@r_masseater/vitest-otlp':
       specifier: 0.2.2
       version: 0.2.2
@@ -881,7 +884,6 @@ catalogs:
 overrides:
   '@remotion/tailwind-v4>tailwindcss': 4.3.5
   '@remotion/tailwind-v4>@tailwindcss/webpack': 4.3.5
-  '@r_masseater/vite-plus-adopt': 0.14.0
   workerd: 1.20261125.1
   vite@*: npm:@voidzero-dev/vite-plus-core@8.3.8001
   fflate@>=0.7.0 <0.7.5: ^0.8.0
@@ -4459,7 +4461,7 @@ importers:
         specifier: 'catalog:'
         version: 4.1.5(effect@4.1.5)(redis@6.2.1(@opentelemetry/api@1.10.0))
       '@r_masseater/vite-plus-adopt':
-        specifier: 0.14.0
+        specifier: 'catalog:'
         version: 0.14.0(fd972526ff38f40389436e208cce42b9)
       '@r_masseater/vitest-otlp':
         specifier: 'catalog:'
