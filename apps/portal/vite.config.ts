@@ -2,6 +2,7 @@ import { alchemyTasks, deployTo } from "@masseater.dev/cloudflare-account/run-ta
 import tailwindcss from "@tailwindcss/vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
+import { lapse } from "lapse";
 import { defineConfig } from "vite-plus";
 import type { PluginOption } from "vite-plus";
 
@@ -27,5 +28,5 @@ export default defineConfig(({ mode }) => ({
     },
   },
   test: { include: ["src/**/*.test.{ts,tsx}"] },
-  plugins: appPlugins(mode),
+  plugins: [lapse(), ...appPlugins(mode)],
 }));

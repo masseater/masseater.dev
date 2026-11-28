@@ -52,6 +52,7 @@
     "alchemy": "catalog:stack",
     "auth": "catalog:",
     "drizzle-kit": "catalog:stack",
+    "lapse": "workspace:*",
     "typescript": "catalog:stack",
     "vite": "catalog:",
     "vite-plus": "catalog:stack"

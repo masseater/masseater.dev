@@ -10,6 +10,7 @@ import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
 import rsc from "@vitejs/plugin-rsc";
 import { Option } from "effect";
+import { lapse } from "lapse";
 import { defineConfig } from "vite-plus";
 import type { PluginOption } from "vite-plus";
 
@@ -53,5 +54,5 @@ export default defineConfig(({ mode }) => ({
     },
   },
   test: { isolate: true, include: ["src/**/*.test.{ts,tsx}"] },
-  plugins: appPlugins(mode),
+  plugins: [lapse(), ...appPlugins(mode)],
 }));

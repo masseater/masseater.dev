@@ -22,6 +22,7 @@
     "@masseater.dev/cloudflare-account": "workspace:*",
     "@types/node": "catalog:",
     "alchemy": "catalog:stack",
+    "lapse": "workspace:*",
     "vite-plus": "catalog:stack"
   }
 }

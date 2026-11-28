@@ -1,3 +1,4 @@
+import { lapse } from "lapse";
 import { defineConfig } from "vite-plus";
 
 export default defineConfig({
@@ -12,6 +13,7 @@ export default defineConfig({
       "ja:rescore": { command: "node bin/ja-rescore.ts", cache: false },
     },
   },
+  plugins: [lapse()],
   test: {
     include: ["src/**/*.test.ts"],
   },

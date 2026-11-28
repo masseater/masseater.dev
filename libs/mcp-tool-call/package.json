@@ -19,7 +19,8 @@
   "devDependencies": {
     "@cloudflare/workers-types": "catalog:",
     "@effect/vitest": "catalog:",
-    "effect": "catalog:stack"
+    "effect": "catalog:stack",
+    "lapse": "workspace:*"
   },
   "peerDependencies": {
     "effect": "^4.0.0"

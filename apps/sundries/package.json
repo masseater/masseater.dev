@@ -28,6 +28,7 @@
     "@masseater.dev/d1-test": "workspace:*",
     "@masseater.dev/repositories": "workspace:*",
     "alchemy": "catalog:stack",
+    "lapse": "workspace:*",
     "msw": "catalog:",
     "typescript": "catalog:stack",
     "vite-plus": "catalog:stack"
