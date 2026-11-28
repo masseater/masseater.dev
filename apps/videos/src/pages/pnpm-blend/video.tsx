@@ -40,6 +40,7 @@ const LOG = [
   "Done in 175ms using pnpm v12.23.0",
 ];
 
+const TACHIE = "tsumugi3";
 const SCROLL_PER_FRAME = 2.4;
 const FLASH_FRAMES = 9;
 const CUT_IN_FRAMES = 7;
@@ -81,8 +82,8 @@ const Board = (): ReactNode => (
     <div className="absolute inset-x-0 top-[64px] h-[18px] bg-[#9a5a33]" />
     <div className="absolute inset-x-0 top-0 bottom-[28px] overflow-hidden">
       <Img
-        className="absolute top-[1052px] left-[300px] w-[920px] max-w-none"
-        src={staticFile(tachiePath("tsumugi"))}
+        className="absolute top-[1076px] left-[366px] w-[1000px] max-w-none"
+        src={staticFile(tachiePath(TACHIE))}
       />
     </div>
     <div className="absolute inset-x-0 bottom-0 h-[28px] bg-[#9a5a33]" />
@@ -132,8 +133,8 @@ const CutIn = (): ReactNode => {
       style={{ scale: String(zoom), opacity: interpolate(frame, [0, 2], [0, 1]) }}
     >
       <Img
-        className="absolute top-[-1090px] left-[-2708px] w-[5296px] max-w-none rotate-[-6deg]"
-        src={staticFile(tachiePath("tsumugi"))}
+        className="absolute top-[-470px] left-[-1050px] w-[3246px] max-w-none rotate-[-6deg]"
+        src={staticFile(tachiePath(TACHIE))}
       />
     </div>
   );
@@ -223,6 +224,320 @@ const Intro = ({ shot }: Readonly<{ shot: Shot }>): ReactNode => (
   </>
 );
 
+const AREA = "absolute inset-x-[50px] top-[450px] h-[760px]";
+const CHALK = "#f4f1e8";
+const YELLOW = "#ffd400";
+const ALARM = "#ff6b5b";
+const GROW_FRAMES = 14;
+const GROW = Easing.out(Easing.poly(3));
+const NOTHING = 0;
+const FULL = 1;
+
+const grow = (frame: number, from: number): number =>
+  interpolate(frame, [from, from + GROW_FRAMES], [NOTHING, FULL], {
+    easing: GROW,
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
+
+const lineStart = (shot: Shot, index: number): number =>
+  pipe(
+    Arr.get(shot.lines, index),
+    Option.map(({ from }) => from),
+    Option.getOrElse(() => NOTHING),
+  );
+
+const NPM_SECONDS = 43.1;
+const ONE_DECIMAL = 1;
+
+const SlowInstall = ({ shot }: Readonly<{ shot: Shot }>): ReactNode => {
+  const frame = useCurrentFrame();
+  const elapsed = interpolate(frame, [NOTHING, shot.duration], [NOTHING, NPM_SECONDS], {
+    extrapolateRight: "clamp",
+  });
+  const filled = interpolate(frame, [NOTHING, shot.duration], [0.04, 0.22]);
+  return (
+    <div className={`${AREA} font-jp flex flex-col justify-center gap-10`}>
+      <div className="font-code text-[76px] text-white/90">$ npm install</div>
+      <div className="h-[120px] w-full rounded-[10px] border-[6px] border-white/85 p-[8px]">
+        <div
+          className="h-full rounded-[4px] bg-[#ff6b5b]"
+          style={{ width: `${String(filled * 100)}%` }}
+        />
+      </div>
+      <div className="flex items-baseline justify-end gap-4 text-white">
+        <span className="text-[202px] leading-none font-black tabular-nums">
+          {elapsed.toFixed(ONE_DECIMAL)}
+        </span>
+        <span className="text-[86px] font-black">秒…</span>
+      </div>
+      <div className="text-right text-[38px] text-white/55">
+        初回インストール（pnpm.io/benchmarks）
+      </div>
+    </div>
+  );
+};
+
+interface Bar {
+  readonly label: string;
+  readonly seconds: number;
+  readonly color: string;
+}
+
+const AGAIN: readonly Bar[] = [
+  { label: "1回目", seconds: 4.6, color: CHALK },
+  { label: "2回目", seconds: 0.2, color: YELLOW },
+];
+
+const LONGEST = 4.6;
+const BAR_GAP = 8;
+
+const TwiceBars = (): ReactNode => {
+  const frame = useCurrentFrame();
+  return (
+    <div className={`${AREA} font-jp flex flex-col justify-center gap-16`}>
+      {pipe(
+        AGAIN,
+        Arr.map((bar, index) => (
+          <div className="flex flex-col gap-4" key={bar.label}>
+            <div className="flex items-baseline justify-between text-white">
+              <span className="text-[81px] font-black">{bar.label}</span>
+              <span className="text-[148px] leading-none font-black" style={{ color: bar.color }}>
+                {bar.seconds}
+                <span className="text-[76px]">秒</span>
+              </span>
+            </div>
+            <div className="h-[130px] w-full">
+              <div
+                className="h-full min-w-[18px] rounded-[8px]"
+                style={{
+                  background: bar.color,
+                  width: `${String((bar.seconds / LONGEST) * 100 * grow(frame, index * BAR_GAP))}%`,
+                }}
+              />
+            </div>
+          </div>
+        )),
+      )}
+    </div>
+  );
+};
+
+const PROJECTS = ["A", "B", "C"] as const;
+const FLAT = ["react", "vite", "esbuild", "rollup", "typescript"] as const;
+const TRANSITIVE = new Set<string>(["esbuild", "rollup"]);
+const PACKAGES = pipe(
+  FLAT,
+  Arr.filter((name) => !TRANSITIVE.has(name)),
+);
+const STAGGER = 4;
+
+const Store = (): ReactNode => {
+  const frame = useCurrentFrame();
+  const linked = grow(frame, GROW_FRAMES);
+  return (
+    <div className={`${AREA} font-jp text-white`}>
+      <div className="flex justify-between">
+        {pipe(
+          PROJECTS,
+          Arr.map((name, index) => (
+            <div
+              className="flex w-[300px] flex-col items-center rounded-[14px] border-[5px] border-white/85 py-4 font-black"
+              key={name}
+              style={{ translate: `0 ${String((FULL - grow(frame, index * STAGGER)) * 40)}px` }}
+            >
+              <span className="text-[40px] whitespace-nowrap text-white/75">プロジェクト</span>
+              <span className="text-[96px] leading-none">{name}</span>
+            </div>
+          )),
+        )}
+      </div>
+      <svg className="h-[200px] w-full" viewBox="0 0 980 170">
+        {pipe(
+          [150, 490, 830],
+          Arr.map((x) => (
+            <line
+              key={x}
+              stroke={YELLOW}
+              strokeDasharray="14 12"
+              strokeLinecap="round"
+              strokeWidth="8"
+              x1={x}
+              x2={490 + (x - 490) * 0.35}
+              y1={10}
+              y2={10 + 150 * linked}
+            />
+          )),
+        )}
+      </svg>
+      <div className="mx-auto flex w-[900px] flex-col items-center gap-5 rounded-[18px] border-[6px] border-[#ffd400] px-8 py-7">
+        <div className="text-[65px] font-black text-[#ffd400]">PCに1つだけ</div>
+        <div className="flex gap-5">
+          {pipe(
+            PACKAGES,
+            Arr.map((name) => (
+              <div
+                className="font-code rounded-[10px] bg-white px-5 py-2 text-[51px] text-[#1b1b1b]"
+                key={name}
+              >
+                {name}
+              </div>
+            )),
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+interface Usage {
+  readonly label: string;
+  readonly copies: number;
+  readonly color: string;
+}
+
+const USAGE: readonly Usage[] = [
+  { label: "npm", copies: 3, color: ALARM },
+  { label: "pnpm", copies: 1, color: YELLOW },
+];
+
+const COPY_WIDTH = 30;
+
+const Disk = (): ReactNode => {
+  const frame = useCurrentFrame();
+  return (
+    <div className={`${AREA} font-jp flex flex-col justify-center gap-14 text-white`}>
+      <div className="text-[59px] font-black text-white/80">プロジェクト3つ分の容量</div>
+      {pipe(
+        USAGE,
+        Arr.map((usage, row) => (
+          <div className="flex items-center gap-6" key={usage.label}>
+            <span className="font-code w-[230px] text-[76px] font-bold">{usage.label}</span>
+            <div className="flex h-[140px] flex-1 gap-[6px]">
+              {pipe(
+                Arr.range(1, usage.copies),
+                Arr.map((copy) => (
+                  <div
+                    className="h-full rounded-[6px]"
+                    key={copy}
+                    style={{
+                      background: usage.color,
+                      width: `${String(COPY_WIDTH * grow(frame, (row + copy) * STAGGER))}%`,
+                    }}
+                  />
+                )),
+              )}
+            </div>
+          </div>
+        )),
+      )}
+    </div>
+  );
+};
+
+const DiskFrom = ({ at }: Readonly<{ at: number }>): ReactNode => {
+  const frame = useCurrentFrame();
+  return (
+    <div style={{ opacity: grow(frame, at) }}>
+      <Disk />
+    </div>
+  );
+};
+
+const Sharing = ({ shot }: Readonly<{ shot: Shot }>): ReactNode => {
+  const frame = useCurrentFrame();
+  const second = lineStart(shot, 1);
+  if (second > NOTHING && frame >= second) {
+    return <DiskFrom at={second} />;
+  }
+  return <Store />;
+};
+
+const MISSING = "esbuild";
+
+const ROW_LOOK = {
+  away: {
+    border: "3px dashed rgb(255 255 255 / 0.35)",
+    background: "transparent",
+    color: "rgb(255 255 255 / 0.35)",
+  },
+  here: { border: "3px solid transparent", background: "rgb(255 255 255 / 0.9)", color: "#1b1b1b" },
+} as const;
+
+const MARK = {
+  found: { text: "○", color: "#1f9d55" },
+  lost: { text: "✕", color: ALARM },
+} as const;
+
+const markOf = (hidden: boolean): (typeof MARK)[keyof typeof MARK] => {
+  if (hidden) {
+    return MARK.lost;
+  }
+  return MARK.found;
+};
+
+const rowLookOf = (away: boolean): (typeof ROW_LOOK)[keyof typeof ROW_LOOK] => {
+  if (away) {
+    return ROW_LOOK.away;
+  }
+  return ROW_LOOK.here;
+};
+
+const Mark = ({ hidden, frame }: Readonly<{ hidden: boolean; frame: number }>): ReactNode => {
+  const mark = markOf(hidden);
+  return (
+    <span
+      className="text-[54px] font-black"
+      style={{ color: mark.color, opacity: grow(frame, GROW_FRAMES) }}
+    >
+      {mark.text}
+    </span>
+  );
+};
+
+const Modules = ({
+  title,
+  hidden,
+  frame,
+}: Readonly<{ title: string; hidden: boolean; frame: number }>): ReactNode => (
+  <div className="flex w-[475px] flex-col gap-3 rounded-[14px] border-[5px] border-white/85 p-6">
+    <div className="font-code text-[54px] font-bold text-white">{title}</div>
+    <div className="font-code text-[40px] text-white/60">node_modules/</div>
+    {pipe(
+      FLAT,
+      Arr.map((name) => (
+        <div
+          className="font-code flex items-center justify-between rounded-[8px] px-4 py-1 text-[46px]"
+          key={name}
+          style={rowLookOf(hidden && TRANSITIVE.has(name))}
+        >
+          <span>{name}</span>
+          {pipe(
+            Option.liftPredicate(name, (each) => each === MISSING),
+            Option.map(() => <Mark frame={frame} hidden={hidden} key="mark" />),
+            Option.getOrNull,
+          )}
+        </div>
+      )),
+    )}
+  </div>
+);
+
+const OldTool = (): ReactNode => {
+  const frame = useCurrentFrame();
+  return (
+    <div className={`${AREA} font-jp flex flex-col items-center gap-6`}>
+      <div className="rounded-full bg-white px-8 py-2 text-[51px] font-black text-[#1b1b1b]">
+        古いツール「esbuild どこ？」
+      </div>
+      <div className="flex w-full justify-between">
+        <Modules frame={frame} hidden={false} title="npm" />
+        <Modules frame={frame} hidden title="pnpm" />
+      </div>
+    </div>
+  );
+};
+
 export const look: Partial<Look> = {
   backdrop: () => <Board />,
   overlay: () => "",
@@ -243,7 +558,7 @@ export const draw: Readonly<Record<string, Draw>> = {
   intro: (shot) => <Intro shot={shot} />,
   hook: (shot) => (
     <>
-      <Panel name="pnpm-home" shot={shot} />
+      <SlowInstall shot={shot} />
       <Sfx at={0} kind="hook" shot={shot} />
     </>
   ),
@@ -262,25 +577,19 @@ export const draw: Readonly<Record<string, Draw>> = {
       <Sfx at={0} kind="stamp" shot={shot} />
     </>
   ),
-  again: (shot) => (
+  again: () => (
     <>
-      <Panel name="pnpm-bench2" shot={shot} />
+      <TwiceBars />
       <LightLeak />
     </>
   ),
-  disk: (shot) => <Panel name="pnpm-motivation" shot={shot} />,
-  caveat: (shot) => <Panel name="pnpm-bench" shot={shot} />,
+  disk: (shot) => <Sharing shot={shot} />,
+  caveat: () => <OldTool />,
   ending: (shot) => (
     <>
       <Panel name="pnpm-home" shot={shot} />
       <LightLeak />
       <Sfx at={0} kind="ending" shot={shot} />
-      <div className="font-jp absolute top-[1100px] left-[40px] text-[26px] leading-[1.5] font-bold text-white/45">
-        {pipe(
-          shot.credits,
-          Arr.map((credit) => <p key={credit}>{credit}</p>),
-        )}
-      </div>
     </>
   ),
 };
