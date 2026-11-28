@@ -3,6 +3,7 @@
   "title": "段階的開示",
   "kind": "concept",
   "url": "https://en.wikipedia.org/wiki/Progressive_disclosure",
+  "image": "https://upload.wikimedia.org/wikipedia/commons/7/7d/Expander.png?utm_source=en.wikipedia.org&utm_campaign=index&utm_content=thumbnail_unscaled",
   "note": "最初は必要なものだけを見せ、要求に応じて詳細を出す設計",
   "date": "2026-11-28"
 }

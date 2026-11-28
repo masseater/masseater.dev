@@ -3,6 +3,7 @@
   "title": "shadcn/ui",
   "kind": "ui",
   "url": "https://ui.shadcn.com/",
+  "image": "https://ui.shadcn.com/og?title=The%20Foundation%20for%20your%20Design%20System&description=Composable%2C%20accessible%20components%20with%20thoughtful%20defaults.%20Build%20your%20own%20component%20library%20with%20code%20you%20can%20customize%2C%20extend%2C%20and%20make%20your%20own.",
   "note": "部品を依存として入れず、コードごと自分のプロジェクトに写して使う配り方",
   "date": "2026-11-28"
 }

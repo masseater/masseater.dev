@@ -3,6 +3,7 @@
   "title": "web.dev Learn Design",
   "kind": "ui",
   "url": "https://web.dev/learn/design",
+  "image": "https://web.dev/learn/design/card.png",
   "note": "レスポンシブ、色、ダークモードなど、画面作りの基礎を実装つきで学ぶ講座",
   "date": "2026-11-28"
 }

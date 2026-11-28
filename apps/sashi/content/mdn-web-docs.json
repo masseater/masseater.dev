@@ -3,6 +3,7 @@
   "title": "MDN Web Docs",
   "kind": "site",
   "url": "https://developer.mozilla.org/ja/",
+  "image": "https://developer.mozilla.org/mdn-social-image.46ac2375.png",
   "note": "Web 技術の仕様を、定義、例、互換性の表の順に書く参照ドキュメント",
   "date": "2026-11-28"
 }

@@ -5,6 +5,7 @@ const MAX_NOTE = 200;
 
 const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/u;
 const WEB_URL = /^https?:\/\//u;
+const IMAGE_URL = /^https:\/\//u;
 const DATE = /^\d{4}-\d{2}-\d{2}$/u;
 
 export const KINDS = ["site", "ui", "video", "music", "image", "concept"] as const;
@@ -35,6 +36,11 @@ const Url = Schema.String.check(Schema.isPattern(WEB_URL)).annotate({
   description: "Link to the work. Leave out for a concept",
 });
 
+const Image = Schema.String.check(Schema.isPattern(IMAGE_URL)).annotate({
+  description:
+    "Address of the work's preview image, such as its og:image. Shown as the thumbnail by linking to the original, never copied",
+});
+
 const At = Schema.NonEmptyString.annotate({
   description: "The part that matters in a video or song, such as 1:02-1:14",
 });
@@ -47,6 +53,7 @@ export const ReferenceFields = Schema.Struct({
   title: Title,
   kind: KindSchema,
   url: Schema.optionalKey(Url),
+  image: Schema.optionalKey(Image),
   at: Schema.optionalKey(At),
   note: Note,
 });
@@ -92,6 +99,7 @@ const fieldsOf = ({
       ["title", input.title],
       ["kind", input.kind],
       ["url", input.url],
+      ["image", input.image],
       ["at", input.at],
       ["note", input.note],
       ["date", date],

@@ -40,10 +40,28 @@ const factsHtml = (facts: readonly string[]): string =>
     Arr.join(""),
   );
 
+const initialOf = ({ title }: Reference): string =>
+  pipe(
+    Arr.fromIterable(title),
+    Arr.head,
+    Option.getOrElse(() => ""),
+  );
+
+const thumbOf = (reference: Reference): string =>
+  pipe(
+    Option.fromNullishOr(reference.image),
+    Option.match({
+      onNone: () =>
+        `<div class="thumb empty" aria-hidden="true"><span>${escapeHtml(initialOf(reference))}</span></div>`,
+      onSome: (src) =>
+        `<div class="thumb"><img src="${escapeHtml(src)}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer"></div>`,
+    }),
+  );
+
 const itemHtml =
   (showKind: boolean) =>
   (reference: Reference): string =>
-    `<li><div class="head">${nameOf(reference)}</div><p>${escapeHtml(reference.note)}</p><div class="facts">${factsHtml(factsOf(reference, showKind))}</div></li>`;
+    `<li>${thumbOf(reference)}<div class="body"><div class="head">${nameOf(reference)}</div><p>${escapeHtml(reference.note)}</p><div class="facts">${factsHtml(factsOf(reference, showKind))}</div></div></li>`;
 
 const linkHtml =
   (current: Section) =>
