@@ -50,20 +50,20 @@ catalog:
   "@modelcontextprotocol/server": 2.4.0
   auth: 1.7.28
   "@r_masseater/github-workflow": 0.1.0
-  "@r_masseater/h56m": 0.2.0
+  "@r_masseater/h56m": 0.3.0
   "@r_masseater/h56m-presets": 0.2.1
   "@r_masseater/i68": 0.2.0
   "@r_masseater/mapped-import": 0.1.0
-  "@r_masseater/msch": 0.57.2
+  "@r_masseater/msch": 0.58.0
   "@r_masseater/node-main": 0.1.0
   "@r_masseater/song-format": 0.2.0
-  "@r_masseater/vite-plus-adopt": 0.13.0
+  "@r_masseater/vite-plus-adopt": 0.14.0
   "@r_masseater/vitest-otlp": 0.2.2
   "@discordjs/voice": 0.19.2
   "@snazzah/davey": 0.2.0
   discord.js: 14.28.1
   discord-api-types: 0.38.60
-  "@cloudflare/workers-types": 5.20261124.1
+  "@cloudflare/workers-types": 5.20261124.2
   "@effect/platform-node": 4.1.5
   "@effect/platform-node-shared": 4.1.5
   "@effect/sql-sqlite-node": 4.1.5
@@ -71,12 +71,12 @@ catalog:
   "@effect/opentelemetry": 4.1.5
   "@zip.js/zip.js": 2.25.0
   sharp: 0.35.5
-  hyparquet: 1.33.1
+  hyparquet: 1.33.2
   fzstd: 0.1.1
   "@types/three": 0.187.0
   "@pixiv/three-vrm": 3.6.0
   sqlite-vec: 0.1.9
-  "@types/node": 26.6.6
+  "@types/node": 26.6.7
   vite: npm:@voidzero-dev/vite-plus-core@8.3.8001
   "@tanstack/react-query-devtools": 5.108.4
   "@vitejs/plugin-react": 6.3.0
@@ -171,7 +171,7 @@ catalog:
   "@fontsource/zen-kurenaido": 5.3.1
   fastest-levenshtein: 1.0.16
   "@cfworker/json-schema": 4.1.6
-  "@openrouter/sdk": 1.5.135
+  "@openrouter/sdk": 1.5.138
   recharts: 3.11.1
   ml-confusion-matrix: 2.0.0
   forecast-calibration-kit: 0.1.2
@@ -183,7 +183,7 @@ catalog:
   react: 19.3.1
   react-dom: 19.3.1
   "@types/youtube": 0.3.0
-  "@types/react": 19.3.0
+  "@types/react": 19.3.1
   "@types/react-dom": 19.3.0
   scheduler: 0.28.0
   "@tanstack/react-router": 1.170.46
@@ -201,7 +201,7 @@ catalog:
   "@tauri-apps/api": 2.12.5
   "@tauri-apps/cli": 2.12.6
   "@tauri-apps/plugin-opener": 2.7.3
-  "@anthropic-ai/claude-agent-sdk": 0.3.331
+  "@anthropic-ai/claude-agent-sdk": 0.3.332
   "@types/dom-speech-recognition": 0.0.12
   oauth4webapi: 3.8.9
   agents: 0.34.0
@@ -251,8 +251,8 @@ catalogs:
 overrides:
   "@remotion/tailwind-v4>tailwindcss": "catalog:stack" # exit: npm:@remotion/tailwind-v4 allows tailwindcss@>=4.3.5
   "@remotion/tailwind-v4>@tailwindcss/webpack": 4.3.5 # exit: npm:@remotion/tailwind-v4 allows @tailwindcss/webpack@>=4.3.5
-  "@r_masseater/vite-plus-adopt": 0.13.0 # exit: npm:@r_masseater/msch requires @r_masseater/vite-plus-adopt@>=0.13.0
-  workerd: 1.20261124.1 # exit: npm:miniflare requires workerd@>=1.20261115.1
+  "@r_masseater/vite-plus-adopt": 0.14.0 # exit: npm:@r_masseater/msch requires @r_masseater/vite-plus-adopt@>=0.13.0
+  workerd: 1.20261124.2 # exit: npm:miniflare requires workerd@>=1.20261115.1
   vite@*: "catalog:" # exit: unused
   fflate@>=0.7.0 <0.7.5: ^0.8.0 # exit: unused
   glob@>=9.0.0 <=14.0.1: ^14.0.2 # exit: unused
