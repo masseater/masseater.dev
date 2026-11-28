@@ -149,13 +149,6 @@
       "currentValueTemplate": "main",
       "datasourceTemplate": "git-refs",
       "packageNameTemplate": "https://github.com/{{{depName}}}"
-    },
-    {
-      "customType": "regex",
-      "managerFilePatterns": ["/^\\.claude/hooks/session-start\\.sh$/"],
-      "matchStrings": ["MISE_VERSION=(?<currentValue>v[0-9.]+)"],
-      "depNameTemplate": "jdx/mise",
-      "datasourceTemplate": "github-releases"
     }
   ],
   "rollbackPrs": false,

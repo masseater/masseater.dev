@@ -5001,6 +5001,9 @@ importers:
         specifier: catalog:stack
         version: 4.1.7
     devDependencies:
+      '@r_masseater/vite-plus-adopt':
+        specifier: 'catalog:'
+        version: 0.15.0(d62ced182d8080c748b4310b6f806ce6)
       '@types/node':
         specifier: 'catalog:'
         version: 26.6.10
