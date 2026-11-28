@@ -57,9 +57,6 @@ const PUBLIC_PROFILES: Readonly<Record<string, Pick<RepositoryProps, "descriptio
       description:
         "Claude Code plugin: TypeSafe-judged hooks that make Claude finish the job before it reports",
     },
-    msa: {
-      description: "Masseater agent. based on pi.",
-    },
     skills: {
       description: "masseater's shared agent skills, installed with the skills CLI",
     },
@@ -77,6 +74,7 @@ const ARCHIVES: ReadonlySet<string> = new Set([
   "lint-kit",
   "measure-everything",
   "medley-database",
+  "msa",
   "mst-ja-decision-bench",
   "oxlint-typed-rules",
   "rpp-kit",
