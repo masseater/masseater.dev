@@ -3,6 +3,8 @@ export const ACCESS_SITES = [
   "kikite.masseater.dev",
   "yohaku.masseater.dev",
   "portal.masseater.dev",
+  "sundries.masseater.dev",
+  "twilog.masseater.dev",
 ] as const;
 
 export const ACCESS_TEAM_ORIGIN = "https://masseater.cloudflareaccess.com";
