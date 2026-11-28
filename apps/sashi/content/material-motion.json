@@ -1,0 +1,8 @@
+{
+  "slug": "material-motion",
+  "title": "Material の動き",
+  "kind": "ui",
+  "url": "https://m3.material.io/styles/motion/overview",
+  "note": "画面の遷移や変化に、時間と曲線の決まりを与えて一貫させる指針",
+  "date": "2026-11-28"
+}
