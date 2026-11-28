@@ -6,12 +6,25 @@ on:
   schedule:
     - cron: "17 18 * * *"
   workflow_dispatch:
+    inputs:
+      otel:
+        description: Whether the shards export OpenTelemetry spans of their tests; turn it off, with the cache off too, to measure what exporting costs
+        type: boolean
+        default: true
+      cache:
+        description: Whether the shards read and write the remote task cache; turn it off to make every test run
+        type: boolean
+        default: true
+      deploy:
+        description: Whether main deploys after the shards; turn it off to measure without touching production
+        type: boolean
+        default: true
 
 permissions: {}
 
 env:
   TAKUMI_GUARD_TOKEN: ${{ secrets.TAKUMI_GUARD_TOKEN }}
-  VP_REMOTE_CACHE: ${{ github.event_name == 'schedule' && 'off' || 'read-write' }}
+  VP_REMOTE_CACHE: ${{ (github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && !inputs.cache)) && 'off' || 'read-write' }}
 
 jobs:
   shard:
@@ -25,10 +38,10 @@ jobs:
       matrix:
         shard: [0, 1, 2, 3, 4, 5]
     concurrency:
-      group: verify-${{ github.ref }}-${{ matrix.shard }}
+      group: verify-${{ github.ref }}-${{ matrix.shard }}-${{ github.event_name == 'workflow_dispatch' && github.run_id || '' }}
     env:
       OTEL_TRACES_EXPORTER: otlp
-      OTEL_EXPORTER_OTLP_ENDPOINT: http://127.0.0.1:4318
+      OTEL_EXPORTER_OTLP_ENDPOINT: ${{ (github.event_name != 'workflow_dispatch' || inputs.otel) && 'http://127.0.0.1:4318' || '' }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -115,7 +128,7 @@ jobs:
         run: gh workflow run update-branches.yml --repo "$GITHUB_REPOSITORY" --ref "$DEFAULT_BRANCH"
 
   deploy:
-    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.deploy))
     permissions:
       contents: read
       deployments: write
