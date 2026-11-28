@@ -1,7 +1,8 @@
+import { containingPattern } from "@masseater.dev/like-pattern";
 import { countDistinct } from "drizzle-orm";
 import { Array, Effect, Option, Order, pipe } from "effect";
 
-import { NO_ROWS, containing, fromCatalog } from "#/shared/db/index.server.ts";
+import { NO_ROWS, fromCatalog } from "#/shared/db/index.server.ts";
 import { partStaff } from "#/shared/db/index.ts";
 
 const byCreditsDescending = Order.flip(
@@ -16,8 +17,8 @@ export const listPeople = Effect.fn("catalog.people")(function* listPeople(
       onNone: () => ({}),
       onSome: (value) => ({
         OR: [
-          { name: { like: containing(value) } },
-          { aliases: { alias: { like: containing(value) } } },
+          { name: { like: containingPattern(value) } },
+          { aliases: { alias: { like: containingPattern(value) } } },
         ],
       }),
     }),
