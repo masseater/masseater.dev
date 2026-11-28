@@ -7,7 +7,7 @@ import type { Cut, VideoScript } from "./cut.ts";
 import { isIn, voiceOf, voicesOf } from "./cut.ts";
 import { frames } from "./frames.ts";
 import { timeLines } from "./lines.ts";
-import type { Sources, TimedCut, TimedLine, Timeline } from "./timeline.ts";
+import type { Music, Sources, TimedCut, TimedLine, Timeline } from "./timeline.ts";
 
 const spokenLength = (lines: readonly TimedLine[]): number =>
   Option.match(Arr.last(lines), {
@@ -29,10 +29,13 @@ const timeCut = (
     })),
   );
 
-const bgmOf = (script: VideoScript, sources: Sources): Option.Option<string> =>
+const bgmOf = (script: VideoScript, sources: Sources): Option.Option<Music> =>
   pipe(
     Option.fromNullishOr(script.bgm),
-    Option.map(({ url }) => sources.assetSrc(url)),
+    Option.map(({ url, start }) => ({
+      src: sources.assetSrc(url),
+      start: frames(start ?? NOTHING),
+    })),
   );
 
 const NO_CREDITS: readonly string[] = [];

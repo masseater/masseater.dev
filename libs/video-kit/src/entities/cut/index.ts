@@ -7,6 +7,7 @@ export type { Narration } from "./model/narration.ts";
 export { planTimeline } from "./model/plan.ts";
 export type {
   ImageTachie,
+  Music,
   PsdTachie,
   Shot,
   Sources,
