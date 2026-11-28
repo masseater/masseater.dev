@@ -1,6 +1,6 @@
-import { one, OVERWRITE, READ_ONLY, compactInput, clientOf } from "@masseater.dev/mcp-tool-call";
+import { one, OVERWRITE, READ_ONLY, clientOf, toolInputOf } from "@masseater.dev/mcp-tool-call";
 import type { CallToolResult, McpServer } from "@modelcontextprotocol/server";
-import { Schema, pipe } from "effect";
+import { pipe } from "effect";
 
 import { LifeReadInput, LifeStatsInput, LifeWriteInput } from "#/entities/life-record/index.ts";
 import type { LifeReadValue } from "#/entities/life-record/index.ts";
@@ -11,11 +11,11 @@ import { routeLifeRead } from "./life-read-route.server.ts";
 import { lifeStats } from "./life-stats.server.ts";
 import { writeLife } from "./life-write.server.ts";
 
-const WRITE_SCHEMA = LifeWriteInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
+const WRITE_SCHEMA = toolInputOf(LifeWriteInput);
 
-const READ_SCHEMA = LifeReadInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
+const READ_SCHEMA = toolInputOf(LifeReadInput);
 
-const STATS_SCHEMA = LifeStatsInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
+const STATS_SCHEMA = toolInputOf(LifeStatsInput);
 
 const WRITE_DESCRIPTION =
   "Write the owner's life records when the owner tells you about events, health, mood, meals, spending, people, media, plans, goals or reflections.";
@@ -32,7 +32,7 @@ const registerWrite =
       "life_write",
       {
         description: WRITE_DESCRIPTION,
-        inputSchema: compactInput(WRITE_SCHEMA),
+        inputSchema: WRITE_SCHEMA,
         annotations: OVERWRITE,
       },
       (input, ctx) =>
@@ -55,7 +55,7 @@ const registerRead =
       "life_read",
       {
         description: READ_DESCRIPTION,
-        inputSchema: compactInput(READ_SCHEMA),
+        inputSchema: READ_SCHEMA,
         annotations: READ_ONLY,
       },
       (input) => readLife(runTool)(input),
@@ -70,7 +70,7 @@ const registerStats =
       "life_stats",
       {
         description: STATS_DESCRIPTION,
-        inputSchema: compactInput(STATS_SCHEMA),
+        inputSchema: STATS_SCHEMA,
         annotations: READ_ONLY,
       },
       (input) => lifeStats(input).pipe(runTool({ count: (stats) => stats.length })),

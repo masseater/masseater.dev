@@ -7,7 +7,7 @@ import {
   repos,
 } from "@distilled.cloud/github";
 import type { UpstreamFailed } from "@masseater.dev/mcp-tool-call";
-import { failedAt, one, WRITE, compactInput } from "@masseater.dev/mcp-tool-call";
+import { failedAt, one, WRITE, toolInputOf } from "@masseater.dev/mcp-tool-call";
 import type { McpServer } from "@modelcontextprotocol/server";
 import { Array as Arr, Effect, Layer, Option, Redacted, Schema, pipe } from "effect";
 import { FetchHttpClient, HttpClient, HttpClientRequest, HttpClientResponse } from "effect/http";
@@ -42,7 +42,7 @@ const GraphqlResult = Schema.Struct({ errors: Schema.optionalKey(GraphqlErrors) 
 
 const DESCRIPTION = `Add or rewrite an article in Sloppedia (${SITE}/sloppedia/), the owner's opinionated Wikipedia-like encyclopedia.`;
 
-const INPUT_SCHEMA = ArticleInput.pipe(Schema.toStandardSchemaV1, Schema.toStandardJSONSchemaV1);
+const INPUT_SCHEMA = toolInputOf(ArticleInput);
 
 const githubLayer = Layer.provideMerge(GithubProtocol, FetchHttpClient.layer);
 
@@ -180,7 +180,7 @@ export const registerSloppediaTools =
       "write_sloppedia_article",
       {
         description: DESCRIPTION,
-        inputSchema: compactInput(INPUT_SCHEMA),
+        inputSchema: INPUT_SCHEMA,
         annotations: WRITE,
       },
       (input) => writeArticle(broker, input).pipe(runGithubTool({ count: one })),

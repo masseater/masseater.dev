@@ -1,7 +1,6 @@
-import { OVERWRITE, WRITE, compactInput } from "@masseater.dev/mcp-tool-call";
+import { OVERWRITE, WRITE, toolInputOf } from "@masseater.dev/mcp-tool-call";
 import type { McpServer } from "@modelcontextprotocol/server";
 import type { DrizzleD1Database } from "drizzle-orm/d1";
-import { Schema } from "effect";
 
 import { SongAliasInput } from "#/entities/catalog/index.ts";
 import { runTool } from "#/shared/api/index.server.ts";
@@ -9,11 +8,7 @@ import type { CatalogRelations } from "#/shared/db/index.server.ts";
 
 import { addSongAlias, removeSongAlias } from "./song-write.server.ts";
 
-const ALIAS_SCHEMA = SongAliasInput.pipe(
-  Schema.toStandardSchemaV1,
-  Schema.toStandardJSONSchemaV1,
-  compactInput,
-);
+const ALIAS_SCHEMA = toolInputOf(SongAliasInput);
 
 export const registerSongAliasTools =
   (db: DrizzleD1Database<CatalogRelations>) =>

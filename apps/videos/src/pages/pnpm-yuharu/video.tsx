@@ -4,7 +4,7 @@ import {
   Caption,
   Character,
   Credits,
-  Picture,
+  ShotPicture,
   Rating,
   Sfx,
   imageOf,
@@ -38,7 +38,7 @@ const Visual = ({
   size = "h-[600px] w-[760px]",
 }: Readonly<{ shot: Shot; name: string; size?: string }>): ReactNode => (
   <div className="absolute inset-x-0 top-[250px] flex h-[640px] items-center justify-center">
-    <Picture className={size} src={imageOf(name)(shot)} />
+    <ShotPicture className={size} name={name} shot={shot} />
   </div>
 );
 
@@ -65,7 +65,7 @@ export const look: Partial<Look> = {
         />
       </div>
       <div className="absolute bottom-[300px] left-[40px] h-[130px] w-[130px] rounded-2xl bg-white p-3">
-        <Picture className="size-full" src={imageOf("pnpm")(shot)} />
+        <ShotPicture className="size-full" name="pnpm" shot={shot} />
       </div>
     </>
   ),
