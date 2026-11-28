@@ -50,13 +50,13 @@ Sonarの回答は、検証を取り除くのではなく、インナーループ
 
 2025年以降、複数の著者が異なる境界を持つ2つの単語を再利用している。表には、本記事で参照した資料に含まれる語義が記載されている。
 
-| 意味                           | インナーループ                                       | アウターループ                                                             | 出典                                                                               |
-| ------------------------------ | ---------------------------------------------------- | -------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| プッシュ前後                   | プッシュ前のローカル作業                             | プッシュ後の配信                                                           | Microsoft Learn、Sonar、Augment Code、OpenHands                                    |
-| 3つの階層                      | 秒から分、リクエスト、出力、検証                     | 週単位から月単位、アーキテクチャと組織                                     | ジーン・キムとスティーブ・イェッゲの著書『Vibe Coding』、IT Revolution経由[^itrev] |
-| タスク内およびタスクをまたいで | エージェントが1つのタスク内で行う処理                | エージェントがターンやセッションをまたいで引き継ぐもの                     | フィリップ・シュミット[^schmid]                                                    |
-| 構築と改善                     | タスクを検証済みの変更に変換する                     | エージェントの指示、コンテキスト、およびツールを改善する                   | プラヴィーン・ゴヴィンダラージ[^govindaraj]                                        |
-| Code and the outside world     | Agents write, verify and merge code toward an intent | Bots gather bug reports and requests from outside and start the inner loop | Lauren Tan[^postgrok][^aie-talk]                                                   |
+| 意味                           | インナーループ                                                 | アウターループ                                                         | 出典                                                                               |
+| ------------------------------ | -------------------------------------------------------------- | ---------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| プッシュ前後                   | プッシュ前のローカル作業                                       | プッシュ後の配信                                                       | Microsoft Learn、Sonar、Augment Code、OpenHands                                    |
+| 3つの階層                      | 秒から分、リクエスト、出力、検証                               | 週単位から月単位、アーキテクチャと組織                                 | ジーン・キムとスティーブ・イェッゲの著書『Vibe Coding』、IT Revolution経由[^itrev] |
+| タスク内およびタスクをまたいで | エージェントが1つのタスク内で行う処理                          | エージェントがターンやセッションをまたいで引き継ぐもの                 | フィリップ・シュミット[^schmid]                                                    |
+| 構築と改善                     | タスクを検証済みの変更に変換する                               | エージェントの指示、コンテキスト、およびツールを改善する               | プラヴィーン・ゴヴィンダラージ[^govindaraj]                                        |
+| コードと外部世界               | エージェントは、意図に沿ってコードを記述、検証し、マージする。 | ボットは外部からのバグ報告やリクエストを収集し、内部ループを起動する。 | ローレン・タン[^postgrok][^aie-talk]                                               |
 
 3層モデルでは、数時間から数日にわたって動作する中間ループが追加される。セッション間の継続性と、並列エージェントの連携について扱っている[^itrev]。IT Revolution によれば、開発者はかつて単純なインナーとアウターの2つのループのモデルで働いていたという[^itrev]。2026年7月のベンダー記事にも、3つのループが挙げられている。それぞれ数分、数十分から数時間、数日から数週間で閉じる。その記事では、ミドルループは開発者自身のフィードバックである[^puppygraph]。
 
@@ -64,17 +64,17 @@ Sonarの回答は、検証を取り除くのではなく、インナーループ
 
 シュミットは分割をエージェント内に配置する。インナーループはタスク内の信頼性に関するもので、エージェントがコードを書いてテストを走らせ、直して繰り返す。アウターループは時間とともに賢くなることに関するもので、AGENTS.md のようなファイルを通じて教訓がターンをまたいで引き継がれる[^schmid]。ゴヴィンダラジの言い回しは近い。インナーループはソフトウェアを構築し、アウターループはそれを構築するシステムを改善する[^govindaraj]。
 
-## Agentic loops at SpaceX
+## SpaceXにおけるエージェント型ループ
 
-Lauren Tan, who uses the handle poteto, works on Grok Bot at SpaceX AI[^aie-speaker]. She created pstack, a plugin of agent skills for Cursor[^pstack]. On October 2, 2026, she described her own work with two loops in a livestream hosted by Matt Pocock. That video could not be read for this article. The passages below come from a note that quotes its auto-generated captions with timestamps, and such captions garble names[^postgrok].
+ハンドル名のpotetoを使用しているLauren Tanは、SpaceX AI[^aie-speaker]でGrok Botに携わっている。彼女はCursor[^pstack]向けのエージェントスキル用プラグインであるpstackを開発した。2026年10月2日、彼女はマット・ポコックが主催したライブ配信の中で、2つのループを用いた自身の作業について説明した。その動画はこの記事では読み取れなかった。以下の記述は、タイムスタンプ付きの自動生成キャプションを引用している注記に由来しており、そうしたキャプションは名前を伏せている[^postgrok]。
 
-In that note she says that Cursor projects are her inner loop and Grok Bot is her outer loop. The inner loop is her agent engineers working on the code toward a snapshot of her intent. The outer loop is everything outside the codebase, such as bug reports in Slack, Linear or X. A bot subscribes to a channel, reproduces a report with a verification skill and confirms that the bug still exists on the main branch. It then files the report into a Cursor project, where a coordinator agent groups related reports instead of starting one agent per bug[^postgrok].
+そのノートの中で、彼女はCursorプロジェクトを内ループ、Grok Botを外ループだと述べている。内部ループは、コードに取り組む彼女のエージェントエンジニアたちが、彼女の意図のスナップショットへと向かうものである。外側のループとは、SlackやLinear、Xにおけるバグ報告など、コードベース外のあらゆるものを指す。ボットがチャンネルをサブスクライブし、検証スキルでレポートを再現して、メインブランチに依然としてバグが存在することを確認する。その後、レポートをCursorプロジェクトにファイルし、コーディネーターエージェントがバグごとに個別のエージェントを起動するのではなく、関連するレポートをグループ化する。[^postgrok]
 
-This split uses neither the push nor the time scale as its boundary. The inner loop writes, verifies and merges code. The outer loop brings in what happens outside the code and decides what the inner loop works on. It is close to the outer loop of the vendor article above, which is driven by users and bug reports[^puppygraph].
+この分割では、プッシュもタイムスケールも境界として使用していない。内部ループはコードの書き込み、検証、およびマージを行う。外側のループはコードの外側で起きていることを取り込み、内側のループが何を処理するかを決定する。これは、ユーザーやバグ報告[^puppygraph]によって駆動される、前述のベンダー記事の外ループに近い。
 
-Her talk at the AI Engineer conference, "All Code Is Slop (Except Mine)", runs 17 minutes. In it she says that if the inner coding loop produces slop, automating that loop only produces more slop. She then names connectors and routines that start Cursor cloud agents and projects as a way to build the outer loop when the inner loop is ready[^aie-talk]. The transcript uses the words outer loop once and does not define them.
+AI Engineerカンファレンスでの彼女の講演「All Code Is Slop (Except Mine)」は、17分間である。その中で彼女は、内部のコーディングループがスロップを発生させると、そのループを自動化することでさらにスロップが増えると述べている。続いて彼女は、内部ループの準備が整った際に外部ループを構築するための手段として、Cursor cloudエージェントやプロジェクトを起動するコネクタやルーチンの名称を挙げている[^aie-talk]。トランスクリプトでは「outer loop」という単語が一度だけ使用されており、定義はされていない。
 
-The talk gives the scale of her practice. She shipped 3,000 pull requests to production in the previous month, and her team shipped 11,000, with a revert rate of about half a percent. In the livestream she gave about 2,500 for a month and said that they were not 2,500 features[^aie-talk][^postgrok]. Her code review has shrunk to reading verification artifacts. Agents merge most of their own pull requests. She samples the results, reads the commit log afterward, and reverts or adds a lint rule when something is wrong[^aie-talk][^postgrok]. These figures are her own, and no independent audit of them was found.
+その講演では、彼女の実務の規模が示されている。彼女は前月に3,000件のプルリクエストを本番環境に配信し、チームは11,000件を配信した。リバート率は約0.5%だった。ライブ配信で彼女は1ヶ月間約2,500と述べ、それらは2,500個の機能ではないと語った[^aie-talk][^postgrok]。彼女のコードレビューは、検証アーティファクトの読解にまで縮小してしまった。エージェントは自身のプルリクエストの大部分をマージする。彼女は結果をサンプリングし、その後コミットログを読み、何か問題があればリバートしたりリントルールを追加したりする[^aie-talk][^postgrok]。これらの数値は彼女自身のものであり、独立した監査は行われていない。
 
 ## どの意味で使われているか見分ける方法
 
