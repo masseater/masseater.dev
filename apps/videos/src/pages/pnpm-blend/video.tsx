@@ -65,9 +65,9 @@ interface Scene {
 
 interface Cast {
   readonly voice: number;
+  readonly always: boolean;
   readonly psd: string;
   readonly className: string;
-  readonly blink: Part;
   readonly mouth: Mouth;
   readonly idle: Scene;
   readonly scenes: Readonly<Record<string, Scene>>;
@@ -78,9 +78,9 @@ const NONE: readonly Part[] = [];
 
 const TSUMUGI: Cast = {
   voice: 8,
+  always: true,
   psd: "tsumugi3",
-  className: "top-[1010px] left-[330px] h-[1682px] w-[1000px]",
-  blink: { kind: "blink", closed: "v1.!目/*閉じ", open: "v1.!目/*基本目セット" },
+  className: "top-[1130px] left-[330px] h-[1682px] w-[1000px]",
   mouth: { half: "v1.!口/*お", open: "v1.!口/*わあ" },
   idle: { before: NONE, closed: "v1.!口/*ほほえみ", after: NONE, later: NONE },
   scenes: {
@@ -106,7 +106,7 @@ const TSUMUGI: Cast = {
     again: {
       before: ["v1.!まゆ/*ごきげん眉", "v1.!目/*基本目セット/!黒目/*きらーん"],
       closed: "v1.!口/*にしー",
-      after: ["v1.!左腕/*ピース", "v1.顔色/ほっぺ赤め"],
+      after: ["v1.!右腕/*ピース", "v1.顔色/ほっぺ赤め"],
       later: NONE,
     },
     caveat: { before: ["v1.!まゆ/*普通眉"], closed: "v1.!口/*む", after: NONE, later: NONE },
@@ -132,13 +132,13 @@ const TSUMUGI: Cast = {
 };
 
 const OUTFIT = "v1.*服装1/*いつもの服";
-const ZUNDA_ARM = (side: "右" | "左", pose: string): string => `v1.*服装1/!${side}腕/*${pose}`;
+const ZUNDA_ARM = (side: "右", pose: string): string => `v1.*服装1/!${side}腕/*${pose}`;
 
 const ZUNDAMON: Cast = {
   voice: 3,
+  always: false,
   psd: "zundamon",
-  className: "top-[960px] left-[-250px] h-[1600px] w-[1050px]",
-  blink: { kind: "blink", closed: "v1.!目/*UU", open: "v1.!目/*目セット" },
+  className: "top-[1260px] left-[-180px] h-[1300px] w-[853px]",
   mouth: { half: "v1.!口/*ほあ", open: "v1.!口/*ほあー" },
   idle: { before: [OUTFIT, "v1.!眉/*普通眉"], closed: "v1.!口/*むー", after: NONE, later: NONE },
   scenes: {
@@ -153,7 +153,7 @@ const ZUNDAMON: Cast = {
       closed: "v1.!口/*むー",
       open: "v1.!口/*んあー",
       after: ["v1.記号など/汗2", "v1.!顔色/かげり", "v1.!枝豆/*枝豆萎え"],
-      later: [ZUNDA_ARM("右", "苦しむ"), ZUNDA_ARM("左", "苦しむ")],
+      later: [ZUNDA_ARM("右", "苦しむ")],
     },
     try: {
       before: [OUTFIT, "v1.!眉/*上がり眉", "v1.!目/*目セット/!黒目/*カメラ目線"],
@@ -165,7 +165,7 @@ const ZUNDAMON: Cast = {
       before: [OUTFIT, "v1.!眉/*上がり眉"],
       closed: "v1.!口/*ほあ",
       after: ["v1.!目/*〇〇", "v1.記号など/汗1"],
-      later: [ZUNDA_ARM("右", "手を挙げる"), ZUNDA_ARM("左", "手を挙げる")],
+      later: [ZUNDA_ARM("右", "手を挙げる")],
     },
     again: {
       before: [OUTFIT, "v1.!眉/*上がり眉"],
@@ -176,7 +176,7 @@ const ZUNDAMON: Cast = {
     caveat: {
       before: [OUTFIT, "v1.!眉/*困り眉1", "v1.!目/*目セット/!黒目/*目逸らし"],
       closed: "v1.!口/*むー",
-      after: ["v1.記号など/汗3", "v1.!枝豆/*枝豆萎え", ZUNDA_ARM("左", "考える")],
+      after: ["v1.記号など/汗3", "v1.!枝豆/*枝豆萎え", ZUNDA_ARM("右", "口元")],
       later: NONE,
     },
     fix: {
@@ -210,7 +210,6 @@ const partsOf = (cast: Cast, timeline: Timeline, frame: number): readonly Part[]
       const scene = Option.getOrElse(Option.fromNullishOr(cast.scenes[cut.id]), () => cast.idle);
       return [
         ...scene.before,
-        cast.blink,
         {
           kind: "volume-mouth",
           closed: scene.closed,
@@ -225,8 +224,37 @@ const partsOf = (cast: Cast, timeline: Timeline, frame: number): readonly Part[]
         ),
       ];
     }),
-    Option.getOrElse(() => [...cast.idle.before, cast.blink]),
+    Option.getOrElse(() => cast.idle.before),
   );
+
+const SLIDE_FRAMES = 6;
+const OFFSTAGE = -900;
+
+const slideOf = (cast: Cast, timeline: Timeline, frame: number): number => {
+  if (cast.always) {
+    return 0;
+  }
+  const visibility = pipe(
+    timeline.cuts,
+    Arr.filter((cut) => cut.voice === cast.voice),
+    Arr.map((cut) =>
+      Math.min(
+        interpolate(frame, [cut.from - SLIDE_FRAMES, cut.from], [0, 1], {
+          extrapolateLeft: "clamp",
+          extrapolateRight: "clamp",
+        }),
+        interpolate(
+          frame,
+          [cut.from + cut.duration, cut.from + cut.duration + SLIDE_FRAMES],
+          [1, 0],
+          { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
+        ),
+      ),
+    ),
+    (shown) => Math.max(0, ...shown),
+  );
+  return OFFSTAGE * (1 - Easing.out((time) => Easing.cubic(time))(visibility));
+};
 
 const Board = ({ timeline }: Readonly<{ timeline: Timeline }>): ReactNode => {
   const frame = useCurrentFrame();
@@ -237,14 +265,19 @@ const Board = ({ timeline }: Readonly<{ timeline: Timeline }>): ReactNode => {
         {pipe(
           CAST,
           Arr.map((cast) => (
-            <PsdNarrator
-              className={cast.className}
+            <div
+              className="absolute inset-0"
               key={cast.psd}
-              parts={partsOf(cast, timeline, frame)}
-              psd={staticFile(tachiePsdPath(cast.psd))}
-              timeline={timeline}
-              voice={cast.voice}
-            />
+              style={{ translate: `${String(slideOf(cast, timeline, frame))}px 0` }}
+            >
+              <PsdNarrator
+                className={cast.className}
+                parts={partsOf(cast, timeline, frame)}
+                psd={staticFile(tachiePsdPath(cast.psd))}
+                timeline={timeline}
+                voice={cast.voice}
+              />
+            </div>
           )),
         )}
       </div>
@@ -729,6 +762,45 @@ const Sharing = ({ shot }: Readonly<{ shot: Shot }>): ReactNode => {
   return <Store />;
 };
 
+interface Update {
+  readonly version: string;
+  readonly feature: string;
+}
+
+const UPDATES: readonly Update[] = [
+  { version: "11.0", feature: "minimumReleaseAge" },
+  { version: "12.4", feature: "pnpm add crate:" },
+  { version: "12.11", feature: "Rustツールチェーン" },
+  { version: "12.11", feature: "エージェントスキル" },
+];
+const UPDATE_GAP = 7;
+
+const Updates = ({ since = 0 }: Readonly<{ since?: number }>): ReactNode => {
+  const frame = useCurrentFrame() + since;
+  return (
+    <div className={`${AREA} font-jp flex flex-col justify-center gap-6`}>
+      {pipe(
+        UPDATES,
+        Arr.map((update, index) => (
+          <div
+            className="flex items-center gap-8 rounded-[14px] bg-[#0b0d10] px-8 py-4"
+            key={update.feature}
+            style={{
+              opacity: grow(frame, index * UPDATE_GAP),
+              translate: `${String((FULL - grow(frame, index * UPDATE_GAP)) * 120)}px 0`,
+            }}
+          >
+            <span className="font-code w-[200px] text-[60px] font-bold text-[#ffd400]">
+              v{update.version}
+            </span>
+            <span className="text-[56px] font-black text-white">{update.feature}</span>
+          </div>
+        )),
+      )}
+    </div>
+  );
+};
+
 const ERROR = "#ff6b5b";
 const PASS = "#3ddc84";
 
@@ -869,6 +941,18 @@ export const draw: Readonly<Record<string, Draw>> = {
     </>
   ),
   disk: (shot) => <Sharing shot={shot} />,
+  updates: (shot) => (
+    <>
+      <Updates />
+      {pipe(
+        UPDATES,
+        Arr.map((update, index) => (
+          <Sfx at={index * UPDATE_GAP} key={update.feature} kind="pop" shot={shot} />
+        )),
+      )}
+    </>
+  ),
+  plenty: () => <Updates since={SETTLED} />,
   caveat: () => <OldTool fixed={false} />,
   fix: () => <OldTool fixed />,
   ending: (shot) => (
