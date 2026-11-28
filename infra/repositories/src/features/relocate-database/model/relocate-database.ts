@@ -28,12 +28,9 @@ export const relocatedDatabase = Effect.fn("relocatedDatabase")(function* reloca
   id: string,
   { migrations, name }: Readonly<{ migrations: string; name: string }>,
 ) {
-  const legacy = yield* D1.Database(id, { name, migrations }).pipe(RemovalPolicy.destroy());
-  const japan = yield* D1.Database(`${id}Japan`, {
+  return yield* D1.Database(`${id}Japan`, {
     name: `${name}-japan`,
     primaryLocationHint: JAPAN_HINT,
     migrations,
   }).pipe(RemovalPolicy.protect());
-  yield* CopyRows(`${id}Rows`, { source: legacy.databaseId, target: japan.databaseId });
-  return japan;
 });
