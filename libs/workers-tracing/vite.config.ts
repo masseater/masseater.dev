@@ -1,7 +1,7 @@
 import { LOCKED } from "@r_masseater/msch/locked-inputs";
 import { checkPackage, createPackageFromTarballData } from "@r_masseater/vite-plus-adopt/attw";
 import { otlp } from "@r_masseater/vitest-otlp";
-import { lapse } from "lapse";
+import { OTEL_ENV, lapse } from "lapse";
 import { defineConfig } from "vite-plus";
 
 export default defineConfig({
@@ -15,7 +15,7 @@ export default defineConfig({
   },
   run: {
     tasks: {
-      test: { command: "vp test run", cache: LOCKED },
+      test: { command: "vp test run", cache: { ...LOCKED, untrackedEnv: OTEL_ENV } },
       build: { command: "vp pack", cache: LOCKED },
     },
   },

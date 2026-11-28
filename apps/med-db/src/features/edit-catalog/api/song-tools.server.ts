@@ -1,7 +1,6 @@
-import { OVERWRITE, WRITE, compactInput } from "@masseater.dev/mcp-tool-call";
+import { OVERWRITE, WRITE, toolInputOf } from "@masseater.dev/mcp-tool-call";
 import type { McpServer } from "@modelcontextprotocol/server";
 import type { DrizzleD1Database } from "drizzle-orm/d1";
-import { Schema } from "effect";
 
 import { CreateSongInput, IdInput, MergeInput, UpdateSongInput } from "#/entities/catalog/index.ts";
 import { runTool } from "#/shared/api/index.server.ts";
@@ -9,26 +8,10 @@ import type { CatalogRelations } from "#/shared/db/index.server.ts";
 
 import { createSong, deleteSong, mergeSongs, updateSong } from "./song-write.server.ts";
 
-const CREATE_SCHEMA = CreateSongInput.pipe(
-  Schema.toStandardSchemaV1,
-  Schema.toStandardJSONSchemaV1,
-  compactInput,
-);
-const UPDATE_SCHEMA = UpdateSongInput.pipe(
-  Schema.toStandardSchemaV1,
-  Schema.toStandardJSONSchemaV1,
-  compactInput,
-);
-const ID_SCHEMA = IdInput.pipe(
-  Schema.toStandardSchemaV1,
-  Schema.toStandardJSONSchemaV1,
-  compactInput,
-);
-const MERGE_SCHEMA = MergeInput.pipe(
-  Schema.toStandardSchemaV1,
-  Schema.toStandardJSONSchemaV1,
-  compactInput,
-);
+const CREATE_SCHEMA = toolInputOf(CreateSongInput);
+const UPDATE_SCHEMA = toolInputOf(UpdateSongInput);
+const ID_SCHEMA = toolInputOf(IdInput);
+const MERGE_SCHEMA = toolInputOf(MergeInput);
 
 export const registerSongTools =
   (db: DrizzleD1Database<CatalogRelations>) =>

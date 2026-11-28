@@ -17,7 +17,7 @@
     "@masseater.dev/yohaku-protocol": "workspace:*",
     "@r_masseater/node-main": "catalog:",
     "effect": "catalog:stack",
-    "quicktype-core": "26.0.0"
+    "quicktype-core": "catalog:"
   },
   "devDependencies": {
     "@types/node": "catalog:",

@@ -38,7 +38,7 @@
     "provenance": true
   },
   "scripts": {
-    "prepublishOnly": "vp run build"
+    "prepublishOnly": "vp exec msch-publish prepublish ."
   },
   "dependencies": {
     "@huggingface/transformers": "catalog:stack"

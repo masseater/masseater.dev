@@ -76,6 +76,7 @@ const grantKeyOf = (repository: GrantedRepository, environment?: string): string
 export const EXPOSURE_GRANT_KEY = grantKeyOf("masseater.dev", "exposure");
 
 export const RED_MAIN_GRANT_KEYS: readonly string[] = [
+  grantKeyOf("ai-produced"),
   grantKeyOf("masseater.dev"),
   grantKeyOf("ecosystems"),
 ];

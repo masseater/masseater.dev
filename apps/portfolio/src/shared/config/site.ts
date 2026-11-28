@@ -9,6 +9,7 @@ export const site = {
   ogLocale: "ja_JP",
   ogImage: { path: "/og.png", width: 1200, height: 630, type: "image/png" },
   feedPath: "/feed.xml",
+  referencesPath: "/sashi.json",
   starsApiPath: "/api/stars",
   tracesPath: "/otlp/v1/traces",
   telemetryService: "masseater-dev-web",

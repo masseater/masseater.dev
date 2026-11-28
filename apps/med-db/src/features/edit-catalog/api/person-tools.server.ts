@@ -1,7 +1,6 @@
-import { OVERWRITE, READ_ONLY, compactInput } from "@masseater.dev/mcp-tool-call";
+import { OVERWRITE, READ_ONLY, toolInputOf } from "@masseater.dev/mcp-tool-call";
 import type { McpServer } from "@modelcontextprotocol/server";
 import type { DrizzleD1Database } from "drizzle-orm/d1";
-import { Schema } from "effect";
 
 import { getStats } from "#/entities/catalog/index.server.ts";
 import { IdInput, KeywordInput, MergeInput } from "#/entities/catalog/index.ts";
@@ -12,16 +11,8 @@ import { keywordOf } from "#/shared/db/index.server.ts";
 
 import { mergePeople } from "./person-write.server.ts";
 
-const KEYWORD_SCHEMA = KeywordInput.pipe(
-  Schema.toStandardSchemaV1,
-  Schema.toStandardJSONSchemaV1,
-  compactInput,
-);
-const ID_SCHEMA = IdInput.pipe(
-  Schema.toStandardSchemaV1,
-  Schema.toStandardJSONSchemaV1,
-  compactInput,
-);
+const KEYWORD_SCHEMA = toolInputOf(KeywordInput);
+const ID_SCHEMA = toolInputOf(IdInput);
 
 export const registerPersonTools =
   (db: DrizzleD1Database<CatalogRelations>) =>
@@ -53,11 +44,7 @@ export const registerPersonTools =
       "merge_people",
       {
         description: "重複した担当者をまとめる。消す側の名前と別名義は残す側の別名義になる",
-        inputSchema: MergeInput.pipe(
-          Schema.toStandardSchemaV1,
-          Schema.toStandardJSONSchemaV1,
-          compactInput,
-        ),
+        inputSchema: toolInputOf(MergeInput),
         annotations: OVERWRITE,
       },
       (input) => runTool(db)(mergePeople(input)),

@@ -14,6 +14,7 @@
     "@masseater.dev/cloudflare-account": "workspace:*",
     "@masseater.dev/daw-view": "workspace:*",
     "@masseater.dev/fumx-studio": "workspace:*",
+    "@masseater.dev/sashi": "workspace:*",
     "@masseater.dev/sloppedia": "workspace:*",
     "@masseater.dev/ui": "workspace:*",
     "@r_masseater/workers-tracing": "workspace:*",

@@ -14,6 +14,18 @@ fetchRetryMaxtimeout: 120000
 catalogMode: prefer
 
 catalog:
+  "@tauri-apps/plugin-autostart": 2.7.0
+  "@tauri-apps/plugin-dialog": 2.8.4
+  node-html-parser: 9.0.7
+  "@vitest/browser-playwright": 5.1.1
+  playwright: 1.65.1
+  ts-content-mapper: 0.1.1
+  "@fontsource-variable/roboto-flex": 5.3.0
+  "@paper-design/shaders-react": 0.0.82
+  "@paper-design/shaders": 0.0.82
+  "@tanstack/router-core": 1.171.39
+  quicktype-core: 26.0.0
+  "@mediapipe/tasks-vision": 1.2.3
   cborg: 7.0.0
   msw: 3.0.7
   reflect-metadata: 0.2.2
@@ -55,7 +67,7 @@ catalog:
   "@r_masseater/i68": 0.2.0
   "@r_masseater/intent-book": 0.3.2
   "@r_masseater/mapped-import": 0.1.0
-  "@r_masseater/msch": 0.59.1
+  "@r_masseater/msch": 0.61.1
   "@r_masseater/node-main": 0.1.0
   "@r_masseater/song-format": 0.2.0
   "@r_masseater/vite-plus-adopt": 0.14.0
@@ -77,7 +89,7 @@ catalog:
   "@types/three": 0.187.0
   "@pixiv/three-vrm": 3.6.0
   sqlite-vec: 0.1.9
-  "@types/node": 26.6.7
+  "@types/node": 26.6.10
   vite: npm:@voidzero-dev/vite-plus-core@8.3.8001
   "@tanstack/react-query-devtools": 5.108.4
   "@vitejs/plugin-react": 6.3.0
@@ -112,7 +124,7 @@ catalog:
   mdast-util-directive: 3.2.1
   remark-directive: 4.0.0
   "@xyflow/react": 13.0.3
-  lucide-react: 1.79.0
+  lucide-react: 1.80.0
   niconico-embed-player: 0.1.2
   budoux: 0.10.4
   mdast-util-to-string: 4.0.0
@@ -184,7 +196,7 @@ catalog:
   react: 19.3.1
   react-dom: 19.3.1
   "@types/youtube": 0.3.0
-  "@types/react": 19.3.1
+  "@types/react": 19.3.2
   "@types/react-dom": 19.3.0
   scheduler: 0.28.0
   "@tanstack/react-router": 1.170.46

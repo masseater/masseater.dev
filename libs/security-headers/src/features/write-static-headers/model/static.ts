@@ -11,6 +11,7 @@ const encoder = new TextEncoder();
 const INDEX_PAGE = /(?<=^|\/)index\.html$/u;
 const HTML_EXTENSION = /\.html$/u;
 const INLINE_SCRIPT = /<script(?![^>]*\ssrc=)[^>]*>(?<body>[\s\S]*?)<\/script>/gu;
+const INLINE_STYLE = /<style[^>]*>(?<body>[\s\S]*?)<\/style>/gu;
 const MAX_RULES = 100;
 
 export const headerLines = (headers: Readonly<Record<string, string>>): readonly string[] =>
@@ -61,24 +62,32 @@ export const sourceHash = (body: string): Effect.Effect<string> =>
     Effect.map((digest) => `'sha256-${Base64.encode(new Uint8Array(digest))}'`),
   );
 
-const scriptBodies = (html: string): readonly string[] =>
-  pipe(
-    html,
-    Str.matchAll(INLINE_SCRIPT),
-    Arr.fromIterable,
-    Arr.map((match) =>
-      pipe(
-        Option.fromNullishOr(match.groups),
-        Option.flatMap(Rec.get("body")),
-        Option.getOrElse(() => ""),
+const inlineBodies =
+  (pattern: RegExp) =>
+  (html: string): readonly string[] =>
+    pipe(
+      html,
+      Str.matchAll(pattern),
+      Arr.fromIterable,
+      Arr.map((match) =>
+        pipe(
+          Option.fromNullishOr(match.groups),
+          Option.flatMap(Rec.get("body")),
+          Option.getOrElse(() => ""),
+        ),
       ),
-    ),
-  );
+    );
 
-export const inlineScriptHashes = (html: string): Effect.Effect<readonly string[]> =>
-  pipe(scriptBodies(html), Arr.dedupe, (items) =>
-    Effect.forEach(items, sourceHash, { concurrency: 1 }),
-  );
+const inlineHashes =
+  (pattern: RegExp) =>
+  (html: string): Effect.Effect<readonly string[]> =>
+    pipe(inlineBodies(pattern)(html), Arr.dedupe, (items) =>
+      Effect.forEach(items, sourceHash, { concurrency: 1 }),
+    );
+
+export const inlineScriptHashes = inlineHashes(INLINE_SCRIPT);
+
+export const inlineStyleHashes = inlineHashes(INLINE_STYLE);
 
 export const pageSlug = (page: string): string =>
   pipe(page, Str.replace(INDEX_PAGE, ""), Str.replace(HTML_EXTENSION, ""));
