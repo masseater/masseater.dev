@@ -68,5 +68,5 @@
       }
     ]
   },
-  "include": ["*.ts", "scripts/*.ts"]
+  "include": ["*.ts"]
 }
