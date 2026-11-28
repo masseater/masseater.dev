@@ -111,7 +111,7 @@ export default defineConfig({
       skills: ["feature-sliced-design"],
     },
     "masseater/skills": {
-      commit: "2746694ffaadef09e0ec0058cc160665f1f82a98",
+      commit: "b638eeeaad0143a0f4dd522a18aa2c5c01b9984f",
       root: "plugins/masseater-skills/skills",
       skills: "all",
     },
