@@ -1,4 +1,6 @@
+import { startingPattern } from "@masseater.dev/like-pattern";
 import { and, count, desc, eq, like, max, ne } from "drizzle-orm";
+import type { SQL } from "drizzle-orm";
 import { Array as Arr, Effect, Schema, pipe } from "effect";
 
 import type { Body } from "#/entities/life-record/index.ts";
@@ -44,22 +46,18 @@ export const memoryProjects: Effect.Effect<Body, StorageFailed, Database> = quer
   })),
 );
 
+const viewsUnder = (prefix: string): SQL | undefined =>
+  and(
+    like(memory.name, startingPattern(prefix)),
+    ne(memory.view, NO_VIEW),
+    eq(memory.retractedAt, NOT_RETRACTED),
+  );
+
 const viewsOf = ({
   prefix,
 }: typeof MemoryViewsInput.Type): Effect.Effect<Body, StorageFailed, Database> =>
   query((db) =>
-    db
-      .select()
-      .from(memory)
-      .where(
-        and(
-          like(memory.name, `${prefix}%`),
-          ne(memory.view, NO_VIEW),
-          eq(memory.retractedAt, NOT_RETRACTED),
-        ),
-      )
-      .orderBy(desc(memory.name))
-      .limit(VIEW_LIMIT),
+    db.select().from(memory).where(viewsUnder(prefix)).orderBy(desc(memory.name)).limit(VIEW_LIMIT),
   ).pipe(Effect.map((rows) => ({ items: pipe(rows, Arr.map(memoryItem)) })));
 
 export const memoryViews = (input: unknown): Effect.Effect<Body, ToolFailure, Database> =>

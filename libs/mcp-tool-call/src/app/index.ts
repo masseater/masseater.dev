@@ -23,3 +23,5 @@ export type {
   ToolRunner,
 } from "#/entities/tool-call/index.ts";
 export { UpstreamFailed, failedAt } from "#/shared/lib/upstream-failed.ts";
+export { skillCatalog, withSkills } from "#/features/serve-skills/index.ts";
+export type { ServerSkill } from "#/features/serve-skills/index.ts";

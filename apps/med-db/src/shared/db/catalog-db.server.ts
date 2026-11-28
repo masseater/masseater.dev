@@ -27,8 +27,6 @@ export const fromCatalog = Effect.fn("catalog.read")(function* fromCatalog<Found
 
 export const NO_ROWS = 0;
 
-export const containing = (keyword: string): string => `%${keyword}%`;
-
 export const keywordOf = (raw: string | undefined): Option.Option<string> =>
   Option.fromUndefinedOr(raw).pipe(
     Option.map((value) => Str.trim(value)),

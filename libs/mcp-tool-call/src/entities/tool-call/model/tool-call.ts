@@ -11,7 +11,12 @@ export type FailureText = Readonly<{ errorTag: string; text: string }>;
 export type Counted<Value> = Readonly<{ count: (value: Value) => number }>;
 
 type ToolOutcome =
-  | Readonly<{ status: "ok"; resultCount: number; text: string }>
+  | Readonly<{
+      status: "ok";
+      resultCount: number;
+      text: string;
+      structured: Option.Option<Record<string, unknown>>;
+    }>
   | (FailureText & Readonly<{ status: "error" }>);
 
 export type Describe<Failure> = Readonly<{ describe: (failure: Failure) => FailureText }>;
@@ -46,6 +51,9 @@ const textOf = (value: unknown): Effect.Effect<string> =>
     onSome: Effect.succeed,
   });
 
+const structuredOf = (value: unknown): Option.Option<Record<string, unknown>> =>
+  Option.liftPredicate(value, Predicate.isObject);
+
 const toOutcome =
   <Failure>(describe: Describe<Failure>["describe"]) =>
   <Value>(count: (value: Value) => number) =>
@@ -56,15 +64,24 @@ const toOutcome =
       onFailure: (failure) => Effect.succeed({ status: "error" as const, ...describe(failure) }),
       onSuccess: (value) =>
         textOf(value).pipe(
-          Effect.map((text) => ({ status: "ok" as const, resultCount: count(value), text })),
+          Effect.map((text) => ({
+            status: "ok" as const,
+            resultCount: count(value),
+            text,
+            structured: structuredOf(value),
+          })),
         ),
     });
 
 const toResult = (outcome: ToolOutcome): CallToolResult =>
   Match.value(outcome).pipe(
     Match.discriminatorsExhaustive("status")({
-      ok: ({ text, resultCount }) => ({
+      ok: ({ text, resultCount, structured }) => ({
         content: [{ type: "text" as const, text }],
+        ...Option.match(structured, {
+          onNone: () => ({}),
+          onSome: (structuredContent) => ({ structuredContent }),
+        }),
         isError: false,
         _meta: { [RESULT_COUNT_META]: resultCount },
       }),

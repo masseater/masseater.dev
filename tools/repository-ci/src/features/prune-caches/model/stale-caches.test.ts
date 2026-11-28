@@ -21,18 +21,15 @@ const staleKeys = (
 it("keeps the newest entry of each shard and drops the older runs of that shard", () => {
   const stale = staleKeys(
     [
-      `vite-task-Linux-X64-${NEWEST}-1-shard-0`,
-      `vite-task-Linux-X64-${NEWEST}-1-shard-3`,
-      `vite-task-Linux-X64-${MIDDLE}-1-shard-0`,
-      `vite-task-Linux-X64-${MIDDLE}-2-shard-3`,
-      `vite-task-Linux-X64-${OLDEST}-1-shard-5`,
+      `msch-${NEWEST}-1-shard-0`,
+      `msch-${NEWEST}-1-shard-3`,
+      `msch-${MIDDLE}-1-shard-0`,
+      `msch-${MIDDLE}-2-shard-3`,
+      `msch-${OLDEST}-1-shard-5`,
     ],
     sameRun,
   );
-  expect(stale).toStrictEqual([
-    `vite-task-Linux-X64-${MIDDLE}-1-shard-0`,
-    `vite-task-Linux-X64-${MIDDLE}-2-shard-3`,
-  ]);
+  expect(stale).toStrictEqual([`msch-${MIDDLE}-1-shard-0`, `msch-${MIDDLE}-2-shard-3`]);
 });
 
 it("keeps the newest persisted entry per package", () => {
