@@ -25,6 +25,8 @@ export const script: VideoScript = {
     lint: "リント",
     AI: "エーアイ",
     爆速: "ばくそく",
+    Rust: "ラスト",
+    CPU: "シーピーユー",
   },
   bgm: { ...BGM, loudThrough: "intro" },
   images: { ...IMAGES, ...SHOTS },
@@ -50,6 +52,11 @@ export const script: VideoScript = {
     { id: "try", say: ["Oxlintに変えてみ？"] },
     { id: "wow", voice: ZUNDAMON, say: ["えっ、もう\n終わったのだ！？"] },
     { id: "punch", say: ["**{爆速|ばくそく}**\nっしょ"], hold: 0.6 },
+    { id: "why", voice: ZUNDAMON, say: ["なんでこんなに\n速いのだ？"] },
+    {
+      id: "reason",
+      say: ["Rust製だし、", "CPUのコアを全部使って\n並列で回すんだよね"],
+    },
     {
       id: "save",
       voice: ZUNDAMON,

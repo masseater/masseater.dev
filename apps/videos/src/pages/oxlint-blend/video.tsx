@@ -14,6 +14,7 @@ import type { ReactNode } from "react";
 import {
   AbsoluteFill,
   Easing,
+  Img,
   interpolate,
   staticFile,
   useCurrentFrame,
@@ -110,6 +111,15 @@ const TSUMUGI: Cast = {
       after: NONE,
       later: NONE,
     },
+    reason: {
+      before: [
+        "v1.!まゆ/*ごきげん眉",
+        "v1.!目/*基本目セット/!黒目/*カメラ目線",
+      ],
+      closed: "v1.!口/*むふ",
+      after: ["v1.!右腕/*ゆびさし"],
+      later: NONE,
+    },
     agent: {
       before: ["v1.!まゆ/*ごきげん眉", "v1.!目/*基本目セット/!黒目/*きらーん"],
       closed: "v1.!口/*にしー",
@@ -167,7 +177,7 @@ const ZUNDA_ARM = (side: "右", pose: string): string =>
 
 const ZUNDAMON: Cast = {
   voice: 3,
-  always: false,
+  always: true,
   facing: "-scale-x-100",
   psd: "zundamon",
   className: "top-[1260px] left-[-180px] h-[1300px] w-[853px]",
@@ -204,6 +214,12 @@ const ZUNDAMON: Cast = {
       ],
       closed: "v1.!口/*ほー",
       after: NONE,
+      later: NONE,
+    },
+    why: {
+      before: [OUTFIT, "v1.!眉/*困り眉1"],
+      closed: "v1.!口/*ほあ",
+      after: ["v1.!目/*〇〇"],
       later: NONE,
     },
     wow: {
@@ -358,7 +374,7 @@ const dashOf = (cast: Cast, timeline: Timeline, frame: number): number =>
   pipe(
     timeline.cuts,
     Arr.findFirst((cut) => cut.id === DASH_CUT),
-    Option.filter(() => cast.always),
+    Option.filter(() => cast === TSUMUGI),
     Option.filter(
       (cut) => frame >= cut.from && frame < cut.from + cut.duration,
     ),
@@ -936,6 +952,124 @@ const Highlights = ({
   );
 };
 
+const CORES = 8;
+const CORE_PHASE = 3;
+const STABLE_URL = "oxc.rs/blog/2025-06-10-oxlint-stable";
+const CORE_ROWS = [
+  {
+    logo: "eslint",
+    name: "ESLint",
+    note: "JavaScript・1コア",
+    busy: 1,
+    color: ALARM,
+    period: 90,
+    time: "33.5秒",
+    line: 0,
+  },
+  {
+    logo: "oxlint",
+    name: "Oxlint",
+    note: "Rust・1コア",
+    busy: 1,
+    color: PASS,
+    period: 14,
+    time: "1.84秒",
+    line: 0,
+  },
+  {
+    logo: "oxlint",
+    name: "Oxlint",
+    note: "Rust・全コア並列",
+    busy: CORES,
+    color: PASS,
+    period: 14,
+    time: "0.62秒",
+    line: 1,
+  },
+] as const;
+const PERCENT = 100;
+
+const fillOf = (frame: number, period: number, index: number): number =>
+  frame < 0
+    ? NOTHING
+    : (((frame + index * CORE_PHASE) % period) / period) * PERCENT;
+
+const Reason = ({ shot }: Readonly<{ shot: Shot }>): ReactNode => {
+  const frame = useCurrentFrame();
+  return (
+    <div className="font-jp absolute inset-x-[60px] top-[180px] flex h-[700px] flex-col items-center justify-center gap-8">
+      <div
+        className="flex items-center gap-6"
+        style={{ scale: String(slamOf(frame, NOTHING)) }}
+      >
+        <div className="flex size-[130px] items-center justify-center rounded-[28px] bg-white p-3">
+          <Img className="size-full object-contain" src={imageOf("rust")(shot)} />
+        </div>
+        <span className="text-[120px] leading-none font-black text-[#ffd400]">
+          Rust製
+        </span>
+      </div>
+      <div className="flex w-full flex-col gap-5 rounded-[20px] bg-[#0b0d10] px-6 py-6">
+        {pipe(
+          CORE_ROWS,
+          Arr.map((row) => {
+            const at = row.line === 0 ? NOTHING : lineStart(shot, row.line);
+            return (
+              <div
+                className="flex items-center gap-4"
+                key={row.note}
+                style={{
+                  opacity: shownOf(frame, at),
+                  scale: String(slamOf(frame, at)),
+                }}
+              >
+                <Img
+                  className="size-[64px] rounded-[12px] bg-white object-contain p-1"
+                  src={imageOf(row.logo)(shot)}
+                />
+                <div className="flex w-[240px] flex-col leading-tight whitespace-nowrap">
+                  <span className="font-code text-[36px] font-bold text-white">
+                    {row.name}
+                  </span>
+                  <span className="text-[22px] font-bold text-white/60">
+                    {row.note}
+                  </span>
+                </div>
+                <div className="flex gap-[6px]">
+                  {Arr.makeBy(CORES, (index) => (
+                    <div
+                      className="relative h-[72px] w-[36px] overflow-hidden rounded-[6px] bg-white/12"
+                      key={index}
+                    >
+                      <div
+                        className="absolute inset-x-0 bottom-0"
+                        style={{
+                          background: row.color,
+                          height: `${String(index < row.busy ? fillOf(frame - at, row.period, index) : NOTHING)}%`,
+                        }}
+                      />
+                    </div>
+                  ))}
+                </div>
+                <span
+                  className="font-code ml-auto text-[40px] font-bold"
+                  style={{ color: row.color }}
+                >
+                  {row.time}
+                </span>
+              </div>
+            );
+          }),
+        )}
+      </div>
+      <div className="flex flex-col items-center text-[28px] font-bold text-white/60">
+        <span>Oxlint v1.0公式ベンチマーク（同じ設定）</span>
+        <span className="font-code text-[24px]">{STABLE_URL}</span>
+      </div>
+    </div>
+  );
+};
+
 const FLIP_AT = 10;
 
 const Plugin = ({ failAt }: Readonly<{ failAt: number }>): ReactNode => {
@@ -1023,9 +1157,12 @@ const Config = (): ReactNode => {
 
 const POP_FRAMES = 8;
 const STRIKE_AT = 4;
-const STRIKE_WIDTH = 290;
+const STRIKE_WIDTH = 380;
 
-const TryNow = ({ since = 0 }: Readonly<{ since?: number }>): ReactNode => {
+const TryNow = ({
+  shot,
+  since = 0,
+}: Readonly<{ shot: Shot; since?: number }>): ReactNode => {
   const frame = useCurrentFrame() + since;
   const pop = interpolate(frame, [0, POP_FRAMES], [0.6, 1], {
     easing: Easing.out(Easing.back(1.8)),
@@ -1035,8 +1172,12 @@ const TryNow = ({ since = 0 }: Readonly<{ since?: number }>): ReactNode => {
     <div
       className={`${AREA} font-jp flex flex-col items-center justify-center gap-10`}
     >
-      <div className="font-code flex items-center gap-8 text-[84px] font-bold">
-        <span className="relative text-white/60">
+      <div className="font-code flex items-center gap-6 text-[72px] font-bold">
+        <span className="relative flex items-center gap-4 text-white/60">
+          <Img
+            className="size-[84px] rounded-[16px] bg-white object-contain p-2 opacity-60"
+            src={imageOf("eslint")(shot)}
+          />
           ESLint
           <span
             className="absolute top-1/2 left-[-10px] h-[10px] rounded-full bg-[#ff6b5b]"
@@ -1046,7 +1187,13 @@ const TryNow = ({ since = 0 }: Readonly<{ since?: number }>): ReactNode => {
           />
         </span>
         <span className="text-white">→</span>
-        <span className="text-[#ffd400]">Oxlint</span>
+        <span className="flex items-center gap-4 text-[#ffd400]">
+          <Img
+            className="size-[84px] rounded-[16px] bg-white object-contain p-2"
+            src={imageOf("oxlint")(shot)}
+          />
+          Oxlint
+        </span>
       </div>
       <div className="text-[56px] font-black text-white">設定ごと移すなら</div>
       <div
@@ -1119,6 +1266,14 @@ export const draw: Readonly<Record<string, Draw>> = {
       />
     </>
   ),
+  why: () => <Instant since={SETTLED} />,
+  reason: (shot) => (
+    <>
+      <Reason shot={shot} />
+      <Sfx at={0} kind="stamp" shot={shot} />
+      <Sfx at={lineStart(shot, 1)} kind="pop" shot={shot} />
+    </>
+  ),
   save: () => <Loops loop={SAVE_LOOP} />,
   agent: () => <Loops loop={AGENT_LOOP} />,
   more: (shot) => (
@@ -1150,10 +1305,10 @@ export const draw: Readonly<Record<string, Draw>> = {
   ),
   ending: (shot) => (
     <>
-      <TryNow />
+      <TryNow shot={shot} />
       <LightLeak />
       <Sfx at={0} kind="ending" shot={shot} />
     </>
   ),
-  join: () => <TryNow since={SETTLED} />,
+  join: (shot) => <TryNow shot={shot} since={SETTLED} />,
 };
