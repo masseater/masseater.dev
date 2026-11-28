@@ -1,4 +1,4 @@
 /** @internal */
-export { openedAtom } from "./model/media";
-export { keyOf, pageOf } from "./model/media";
-export { MediaMeta } from "./ui/media-meta";
+export { openedAtom } from "./model/media.ts";
+export { keyOf, pageOf } from "./model/media.ts";
+export { MediaMeta } from "./ui/media-meta.tsx";
