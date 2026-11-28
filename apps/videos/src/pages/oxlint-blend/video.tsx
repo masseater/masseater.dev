@@ -632,7 +632,7 @@ const ESLINT_SECONDS = 21;
 const OXLINT_SECONDS = 0.18;
 const CRAWL_AT = [0, 0.25, 0.5, 0.62, 1] as const;
 const COUNT_SHARE = 0.85;
-const CLOCK_TURN = 40;
+const CLOCK_TURN = 12;
 
 const Clock = ({
   frame,
@@ -748,7 +748,7 @@ const Install = ({
         />
       </div>
       <div className="flex items-center justify-between gap-4 text-white">
-        <Clock color={run.color} frame={finished ? NOTHING : shown} />
+        <Clock color={run.color} frame={finished ? NOTHING : frame} />
         <span
           className="ml-auto text-[180px] leading-none font-black tabular-nums"
           style={{ color: run.color }}
