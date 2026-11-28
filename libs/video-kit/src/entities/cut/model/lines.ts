@@ -55,12 +55,24 @@ const lineAt = (sources: Sources, entry: Recorded, from: number): TimedLine => {
   };
 };
 
-const placeLines = (sources: Sources, recorded: readonly Recorded[]): readonly TimedLine[] =>
+const NO_STARTS: readonly number[] = [];
+
+const startOf = (starts: readonly number[], index: number, cursor: number): number =>
+  Option.match(Arr.get(starts, index), {
+    onNone: () => cursor,
+    onSome: (seconds) => Math.max(cursor, frames(seconds)),
+  });
+
+const placeLines = (
+  sources: Sources,
+  recorded: readonly Recorded[],
+  starts: readonly number[],
+): readonly TimedLine[] =>
   pipe(
     recorded,
-    Arr.mapAccum(frames(Timing.SCENE_PADDING_SECONDS), (cursor, entry) => {
-      const timed = lineAt(sources, entry, cursor);
-      return [cursor + timed.duration + frames(Timing.LINE_GAP_SECONDS), timed];
+    Arr.mapAccum(frames(Timing.SCENE_PADDING_SECONDS), (cursor, entry, index) => {
+      const timed = lineAt(sources, entry, startOf(starts, index, cursor));
+      return [timed.from + timed.duration + frames(Timing.LINE_GAP_SECONDS), timed];
     }),
     ([, lines]) => lines,
   );
@@ -68,4 +80,6 @@ const placeLines = (sources: Sources, recorded: readonly Recorded[]): readonly T
 export const timeLines = (request: LinesRequest): Effect.Effect<readonly TimedLine[]> =>
   Effect.forEach(request.cut.say, (say) => recordingOf(request, say), {
     concurrency: "unbounded",
-  }).pipe(Effect.map((recorded) => placeLines(request.sources, recorded)));
+  }).pipe(
+    Effect.map((recorded) => placeLines(request.sources, recorded, request.cut.at ?? NO_STARTS)),
+  );

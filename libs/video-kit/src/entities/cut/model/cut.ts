@@ -5,6 +5,7 @@ import type { Format } from "#/shared/config/index.ts";
 export type Cut = Readonly<{
   id: string;
   say: readonly string[];
+  at?: readonly number[];
   hold?: number;
   formats?: readonly Format[];
   voice?: number;

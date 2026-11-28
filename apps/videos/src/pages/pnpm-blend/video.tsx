@@ -8,22 +8,20 @@ import {
   Terminal,
   imageOf,
 } from "@masseater.dev/video-kit";
-import { Array as Arr, Option, Record as Rec, pipe } from "effect";
+import { Array as Arr, Option, pipe } from "effect";
 import type { ReactNode } from "react";
 import { AbsoluteFill, Easing, Img, interpolate, staticFile, useCurrentFrame } from "remotion";
 
 import { tachiePath } from "#/shared/config/index.ts";
+import { pick } from "#/shared/lib/pick.ts";
 
 const BOLD =
   "caption-outline text-[68px] font-bold whitespace-pre-line [--outline:#111] [--stroke:0.2em]";
 const RED =
   "caption-outline text-[260px] leading-none tracking-[-0.06em] scale-x-[0.86] [--fill:#ff1e1e] [--outline:#2a0000] [--stroke:0.16em] [--emphasis:#ff1e1e] drop-shadow-[0_10px_0_rgb(0_0_0/0.8)]";
 
-const CAPTION: Readonly<Record<string, string>> = { punch: RED };
+const CAPTION: Readonly<Record<string, string>> = { punch: RED, intro: "hidden" };
 const CAPTION_TOP: Readonly<Record<string, string>> = { punch: "top-[620px]" };
-
-const pick = (record: Readonly<Record<string, string>>, key: string, fallback: string): string =>
-  Option.getOrElse(Rec.get(record, key), () => fallback);
 
 const RUN = [
   "$ pnpm add react vite typescript",
@@ -134,6 +132,93 @@ const Source = (): ReactNode => (
   </div>
 );
 
+const HIT_FRAMES = 5;
+
+const Hit = ({ at, children }: Readonly<{ at: number; children: ReactNode }>): ReactNode => {
+  const frame = useCurrentFrame();
+  const scale = interpolate(frame, [at, at + HIT_FRAMES], [1.25, 1], {
+    easing: Easing.out(Easing.cubic),
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
+  return <AbsoluteFill style={{ scale: String(scale) }}>{children}</AbsoluteFill>;
+};
+
+const BIG_RED = RED.replace("text-[260px]", "text-[380px]");
+
+const SCENES: readonly ((shot: Shot) => ReactNode)[] = [
+  (shot) => (
+    <AbsoluteFill className="items-center justify-center gap-10">
+      <div className="caption-outline font-jp text-[70px] font-black [--outline:#111] [--stroke:0.18em]">
+        次世代のパッケージマネージャ
+      </div>
+      <Picture className="size-[260px] rounded-[56px] bg-white p-10" src={imageOf("pnpm")(shot)} />
+      <div className="caption-plain font-sans text-[220px] leading-none font-semibold italic">
+        pnpm
+      </div>
+    </AbsoluteFill>
+  ),
+  () => (
+    <AbsoluteFill className="items-center justify-center bg-[#ffd400]">
+      <div className="font-jp flex items-baseline text-[#111]">
+        <span className="text-[520px] leading-none font-black tracking-[-0.08em]">30</span>
+        <span className="text-[160px] font-black">秒で</span>
+      </div>
+    </AbsoluteFill>
+  ),
+  () => (
+    <AbsoluteFill className="overflow-hidden bg-[#f3e9d8]">
+      <Img
+        className="absolute top-[-700px] left-[-2400px] w-[5296px] max-w-none rotate-[-6deg]"
+        src={staticFile(tachiePath("tsumugi"))}
+      />
+      <Img
+        className="absolute bottom-[300px] left-[60px] w-[960px]"
+        src={staticFile(tachiePath("tsumugi-logo"))}
+      />
+    </AbsoluteFill>
+  ),
+  () => (
+    <>
+      <AbsoluteFill className="items-center justify-center">
+        <div className={BIG_RED}>解説</div>
+      </AbsoluteFill>
+      <LightLeak />
+    </>
+  ),
+];
+
+const Intro = ({ shot }: Readonly<{ shot: Shot }>): ReactNode => {
+  const frame = useCurrentFrame();
+  const beats = pipe(
+    shot.lines,
+    Arr.map(({ from }) => from),
+  );
+  const scene = pipe(
+    Arr.findLastIndex(beats, (from) => frame >= from),
+    Option.flatMap((step) =>
+      Option.all({ at: Arr.get(beats, step), render: Arr.get(SCENES, step) }),
+    ),
+  );
+  return (
+    <>
+      <AbsoluteFill className="bg-[#0b0d10]" />
+      {Option.match(scene, {
+        onNone: () => "",
+        onSome: ({ at, render }) => <Hit at={at}>{render(shot)}</Hit>,
+      })}
+      {pipe(
+        Arr.dropRight(beats, 1),
+        Arr.map((from) => <Sfx at={from} key={from} kind="pop" shot={shot} />),
+      )}
+      {Option.match(Arr.last(beats), {
+        onNone: () => "",
+        onSome: (from) => <Sfx at={from} kind="stamp" shot={shot} />,
+      })}
+    </>
+  );
+};
+
 export const look: Partial<Look> = {
   backdrop: () => <AbsoluteFill className="bg-black" />,
   overlay: () => "",
@@ -151,6 +236,7 @@ export const look: Partial<Look> = {
 };
 
 export const draw: Readonly<Record<string, Draw>> = {
+  intro: (shot) => <Intro shot={shot} />,
   hook: (shot) => (
     <>
       <Footage
