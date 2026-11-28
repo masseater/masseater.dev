@@ -17,7 +17,7 @@ inputs:
     description: Whether Rust compiles through sccache, which fetches each crate's compiled output from the GitHub Actions cache only when a Rust task really runs
     default: "false"
   telemetry:
-    description: Whether a job that installs the native tools starts the OpenTelemetry Collector, which writes what it receives over OTLP on 127.0.0.1:4318 and the CPU and memory of the runner to files that the telemetry-files action keeps
+    description: Whether a job that installs the native tools starts the OpenTelemetry Collector, which writes what it receives over OTLP on 127.0.0.1:4318 and the CPU, memory, disk space and network traffic of the runner to files that the telemetry-files action keeps
     default: "false"
 runs:
   using: composite
