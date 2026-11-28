@@ -1,7 +1,7 @@
 import { String as Str } from "effect";
 import { describe, expect, it } from "vite-plus/test";
 
-import { containingPattern, startingPattern } from "./pattern.ts";
+import { containingPattern, searchKeyOf, startingPattern } from "./pattern.ts";
 
 const PATTERN_BYTES = 50;
 
@@ -41,5 +41,16 @@ describe("startingPattern", () => {
 
   it("長い語は 50 バイトに収まる先頭部分にする", () => {
     expect(bytesOf(startingPattern(LONG))).toBeLessThanOrEqual(PATTERN_BYTES);
+  });
+});
+
+describe("searchKeyOf", () => {
+  it("% と _ を全角に置き換える", () => {
+    expect(searchKeyOf("100%_a")).toBe("100％＿a");
+  });
+
+  it("パターンの語にも同じ置き換えをする", () => {
+    expect(containingPattern("%")).toBe("%％%");
+    expect(startingPattern("a_")).toBe("a＿%");
   });
 });

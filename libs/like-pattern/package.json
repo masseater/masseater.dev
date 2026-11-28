@@ -2,15 +2,17 @@
   "name": "@masseater.dev/like-pattern",
   "version": "0.0.0",
   "private": true,
-  "description": "LIKE patterns for search terms that fit D1's 50-byte pattern limit.",
+  "description": "Search keys and LIKE patterns that match search terms literally on D1.",
   "type": "module",
   "imports": {
     "#/*": "./src/*"
   },
   "exports": {
-    ".": "./src/features/build-pattern/index.ts"
+    ".": "./src/features/build-pattern/index.ts",
+    "./column": "./src/entities/search-key/index.ts"
   },
   "dependencies": {
+    "drizzle-orm": "catalog:stack",
     "effect": "catalog:stack"
   },
   "devDependencies": {

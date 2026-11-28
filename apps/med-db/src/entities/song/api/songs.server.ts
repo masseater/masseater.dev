@@ -1,8 +1,8 @@
-import { containingPattern } from "@masseater.dev/like-pattern";
 import { countDistinct, isNotNull } from "drizzle-orm";
-import { Array, Effect, Option, Order, pipe } from "effect";
+import { Array, Effect, Order, pipe } from "effect";
+import type { Option } from "effect";
 
-import { NO_ROWS, fromCatalog } from "#/shared/db/index.server.ts";
+import { NO_ROWS, fromCatalog, keyOrAliasMatches } from "#/shared/db/index.server.ts";
 import { part } from "#/shared/db/index.ts";
 
 const byUsesDescending = Order.flip(
@@ -12,18 +12,7 @@ const byUsesDescending = Order.flip(
 export const listSongs = Effect.fn("catalog.songs")(function* listSongs(
   keyword: Option.Option<string>,
 ) {
-  const where = keyword.pipe(
-    Option.match({
-      onNone: () => ({}),
-      onSome: (value) => ({
-        OR: [
-          { title: { like: containingPattern(value) } },
-          { artist: { like: containingPattern(value) } },
-          { aliases: { alias: { like: containingPattern(value) } } },
-        ],
-      }),
-    }),
-  );
+  const where = keyOrAliasMatches(keyword);
   const [songs, counts] = yield* Effect.all(
     [
       fromCatalog((db) =>

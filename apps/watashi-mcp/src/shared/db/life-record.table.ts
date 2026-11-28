@@ -1,3 +1,4 @@
+import { searchKeyColumns } from "@masseater.dev/like-pattern/column";
 import { index, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 import { retractableColumns } from "./retractable.ts";
@@ -27,6 +28,7 @@ export const lifeRecord = sqliteTable(
     dayEnd: text("day_end").notNull().default(""),
     body: text("body").notNull(),
     searchText: text("search_text").notNull().default(""),
+    ...searchKeyColumns,
     ...retractableColumns,
   },
   (table) => [

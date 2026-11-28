@@ -142,3 +142,43 @@ it.effect("LIKE のパターン長の上限を超える検索語でも、先頭�
     }),
   ),
 );
+
+const memo = (name: string, description: string, content: string) =>
+  ({ project: "assistant", name, description, content }) as const;
+
+const writeWildcards = Effect.gen(function* writesWildcards() {
+  yield* resetDatabase;
+  yield* Effect.forEach(
+    [
+      memo("juice", "果汁", "果汁 100% のジュース"),
+      memo("snake", "snake_case", "名前の付け方"),
+      memo("plain", "ただの記録", "記号を含まない"),
+    ],
+    writeMemory(writer),
+    { concurrency: 1 },
+  );
+  yield* writeLife(writer)([{ ...night, text: "50% オフの夜" }]);
+});
+
+it.effect("検索語の % と _ は文字として探し、すべての記録には当たらない", () =>
+  provided(
+    Effect.gen(function* searchesWildcards() {
+      yield* writeWildcards;
+      const percent = yield* watashiSearch({ query: "%" });
+      const underscore = yield* watashiSearch({ query: "_" });
+      expect(percent).toMatchObject({ total: 2, countsByStore: { life: 1, memory: 1 } });
+      expect(underscore).toMatchObject({ total: 1, countsByStore: { memory: 1 } });
+    }),
+  ),
+);
+
+it.effect("書き換えた記録も % と _ を文字として探す", () =>
+  provided(
+    Effect.gen(function* searchesUpdated() {
+      yield* writeWildcards;
+      yield* writeMemory(writer)(memo("plain", "ただの記録", "a_b を含むようになった"));
+      const updated = yield* watashiSearch({ query: "_" });
+      expect(updated).toMatchObject({ total: 2, countsByStore: { memory: 2 } });
+    }),
+  ),
+);

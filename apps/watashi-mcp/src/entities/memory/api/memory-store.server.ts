@@ -117,13 +117,7 @@ export const searchMemories = ({
       Option.map((name) => eq(memory.project, name)),
       Option.toArray,
     ),
-    ...Option.toArray(
-      anyTermMatches((pattern) => [
-        like(memory.name, pattern),
-        like(memory.description, pattern),
-        like(memory.content, pattern),
-      ])(terms),
-    ),
+    ...Option.toArray(anyTermMatches((pattern) => [like(memory.searchKey, pattern)])(terms)),
   ];
   return query((db) =>
     db

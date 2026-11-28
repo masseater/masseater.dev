@@ -63,7 +63,7 @@ const startsBefore = (to: string): SQL | undefined =>
   or(eq(lifeRecord.dayStart, NONE), lte(lifeRecord.dayStart, to));
 
 const termCondition = (terms: readonly string[]): Option.Option<SQL> =>
-  anyTermMatches((pattern) => [like(lifeRecord.searchText, pattern)])(terms);
+  anyTermMatches((pattern) => [like(lifeRecord.searchKey, pattern)])(terms);
 
 const conditionsOf = ({
   records,

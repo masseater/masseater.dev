@@ -1,1 +1,1 @@
-export { containingPattern, startingPattern } from "./model/pattern.ts";
+export { containingPattern, searchKeyOf, startingPattern } from "./model/pattern.ts";

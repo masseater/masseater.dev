@@ -48,7 +48,7 @@ export const memoryProjects: Effect.Effect<Body, StorageFailed, Database> = quer
 
 const viewsUnder = (prefix: string): SQL | undefined =>
   and(
-    like(memory.name, startingPattern(prefix)),
+    like(memory.searchKey, startingPattern(prefix)),
     ne(memory.view, NO_VIEW),
     eq(memory.retractedAt, NOT_RETRACTED),
   );

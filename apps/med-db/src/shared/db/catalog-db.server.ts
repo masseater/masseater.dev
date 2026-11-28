@@ -1,3 +1,4 @@
+import { containingPattern } from "@masseater.dev/like-pattern";
 import type { BatchItem } from "drizzle-orm/batch";
 import { drizzle } from "drizzle-orm/d1";
 import type { DrizzleD1Database } from "drizzle-orm/d1";
@@ -26,6 +27,22 @@ export const fromCatalog = Effect.fn("catalog.read")(function* fromCatalog<Found
 });
 
 export const NO_ROWS = 0;
+
+export const keyOrAliasMatches = (
+  keyword: Option.Option<string>,
+): Readonly<{
+  OR?: [
+    Readonly<{ searchKey: Readonly<{ like: string }> }>,
+    Readonly<{ aliases: Readonly<{ searchKey: Readonly<{ like: string }> }> }>,
+  ];
+}> =>
+  Option.match(keyword, {
+    onNone: () => ({}),
+    onSome: (value) => {
+      const key = { searchKey: { like: containingPattern(value) } };
+      return { OR: [key, { aliases: key }] };
+    },
+  });
 
 export const keywordOf = (raw: string | undefined): Option.Option<string> =>
   Option.fromUndefinedOr(raw).pipe(

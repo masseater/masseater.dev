@@ -46,3 +46,12 @@ it.effect("語の一部に当たる曲を返す", () =>
     expect(songs).toHaveLength(SONGS_USED_TWICE);
   }),
 );
+
+it.effect("語の % と _ は文字として探し、すべてには当たらない", () =>
+  Effect.gen(function* searchesWildcards() {
+    const percent = yield* listedFor("%");
+    const underscore = yield* listedFor("_");
+    expect(percent).toStrictEqual({ songs: [], videos: [], people: [] });
+    expect(underscore).toStrictEqual({ songs: [], videos: [], people: [] });
+  }),
+);

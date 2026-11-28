@@ -1,3 +1,4 @@
+import { searchKeyColumns } from "@masseater.dev/like-pattern/column";
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 export const video = sqliteTable("video", {
@@ -13,4 +14,5 @@ export const video = sqliteTable("video", {
   thumbnailUrl: text("thumbnail_url"),
   note: text(),
   comment: text(),
+  ...searchKeyColumns,
 });

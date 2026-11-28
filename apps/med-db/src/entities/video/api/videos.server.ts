@@ -1,5 +1,5 @@
 import { containingPattern } from "@masseater.dev/like-pattern";
-import { and, countDistinct, eq, like, or } from "drizzle-orm";
+import { and, countDistinct, eq, like } from "drizzle-orm";
 import type { SQL } from "drizzle-orm";
 import { Array, Effect, Option, pipe } from "effect";
 
@@ -9,13 +9,7 @@ import { part, video } from "#/shared/db/index.ts";
 
 const keywordCondition = (filter: VideoFilter): SQL | undefined =>
   keywordOf(filter.keyword).pipe(
-    Option.map((value) =>
-      or(
-        like(video.title, containingPattern(value)),
-        like(video.videoId, containingPattern(value)),
-        like(video.uploader, containingPattern(value)),
-      ),
-    ),
+    Option.map((value) => like(video.searchKey, containingPattern(value))),
     Option.getOrUndefined,
   );
 
