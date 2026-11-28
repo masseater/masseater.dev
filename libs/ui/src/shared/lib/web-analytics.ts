@@ -1,4 +1,4 @@
-import { Array as Arr, Option, Schema, pipe } from "effect";
+import { Array as Arr, Option, Schema, String as Str, pipe } from "effect";
 import { WEB_ANALYTICS_SCRIPT_ORIGIN } from "security-headers";
 
 const BEACON_VERSION = "v8c78df7c7c0f484497ecbca7046644da1771523124516";
@@ -29,7 +29,12 @@ export const beaconScripts = (token: unknown): ReturnType<typeof webAnalyticsBea
 export { WEB_ANALYTICS_REPORT_ORIGIN, WEB_ANALYTICS_SCRIPT_ORIGIN } from "security-headers";
 
 const escapeAttribute = (value: string): string =>
-  value.replaceAll("&", "&amp;").replaceAll('"', "&quot;").replaceAll("<", "&lt;");
+  pipe(
+    value,
+    Str.replaceAll("&", "&amp;"),
+    Str.replaceAll('"', "&quot;"),
+    Str.replaceAll("<", "&lt;"),
+  );
 
 export const beaconHtml = (token: unknown): string =>
   pipe(

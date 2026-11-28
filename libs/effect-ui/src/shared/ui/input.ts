@@ -3,7 +3,7 @@ import type { InputElement, InputProps } from "@effect/ui-kit";
 import { INPUT_CLASS } from "@masseater.dev/ui/input-class";
 
 /** @stability experimental */
-export type { InputElement };
+export type { InputElement } from "@effect/ui-kit";
 
 /** @stability experimental */
 export type InputOptions<Msg> = Readonly<{
