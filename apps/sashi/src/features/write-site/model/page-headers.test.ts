@@ -8,12 +8,16 @@ describe("pageHeaders", () => {
     expect(pageHeaders).toContain("default-src 'self';");
   });
 
+  test("すべてのパスに当てる 1 つのルールにする", () => {
+    expect(pageHeaders).toMatch(/^\/\*\n[^]*\n$/u);
+  });
+
   test("他サイトのサムネ画像だけは https から読ませる", () => {
     expect(pageHeaders).toContain("img-src 'self' data: https:;");
   });
 
   test("他サイトの画像を読めるよう COEP を credentialless にする", () => {
-    expect(pageHeaders).toContain("! Cross-Origin-Embedder-Policy");
     expect(pageHeaders).toContain("Cross-Origin-Embedder-Policy: credentialless");
+    expect(pageHeaders).not.toContain("require-corp");
   });
 });
