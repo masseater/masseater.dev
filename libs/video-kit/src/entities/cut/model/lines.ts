@@ -1,6 +1,7 @@
 import { Array as Arr, Effect, Option, Record as Rec, pipe } from "effect";
 
 import { NOTHING, Timing } from "#/shared/config/index.ts";
+import { writtenOf } from "#/shared/lib/ruby.ts";
 import type { Segment } from "#/shared/lib/segment.ts";
 import { segmentsOf } from "#/shared/lib/segment.ts";
 
@@ -23,6 +24,9 @@ export interface LinesRequest {
   readonly sources: Sources;
 }
 
+const writtenSegmentsOf = (say: string): readonly Segment[] =>
+  segmentsOf(unpartedOf(writtenOf(say)));
+
 const recordingOf = (
   { script, cut, sources }: LinesRequest,
   say: string,
@@ -35,7 +39,7 @@ const recordingOf = (
     beats: relativeBeatsOf(cut)(index),
   }).pipe(
     Effect.map((key) => ({
-      segments: segmentsOf(unpartedOf(say)),
+      segments: writtenSegmentsOf(say),
       key,
       seconds: pipe(
         sources.narration,

@@ -66,6 +66,7 @@ interface Scene {
 interface Cast {
   readonly voice: number;
   readonly always: boolean;
+  readonly facing: string;
   readonly psd: string;
   readonly className: string;
   readonly mouth: Mouth;
@@ -79,6 +80,7 @@ const NONE: readonly Part[] = [];
 const TSUMUGI: Cast = {
   voice: 8,
   always: true,
+  facing: "",
   psd: "tsumugi3",
   className: "top-[1130px] left-[330px] h-[1682px] w-[1000px]",
   mouth: { half: "v1.!口/*お", open: "v1.!口/*わあ" },
@@ -137,6 +139,7 @@ const ZUNDA_ARM = (side: "右", pose: string): string => `v1.*服装1/!${side}�
 const ZUNDAMON: Cast = {
   voice: 3,
   always: false,
+  facing: "-scale-x-100",
   psd: "zundamon",
   className: "top-[1260px] left-[-180px] h-[1300px] w-[853px]",
   mouth: { half: "v1.!口/*ほあ", open: "v1.!口/*ほあー" },
@@ -270,13 +273,15 @@ const Board = ({ timeline }: Readonly<{ timeline: Timeline }>): ReactNode => {
               key={cast.psd}
               style={{ translate: `${String(slideOf(cast, timeline, frame))}px 0` }}
             >
-              <PsdNarrator
-                className={cast.className}
-                parts={partsOf(cast, timeline, frame)}
-                psd={staticFile(tachiePsdPath(cast.psd))}
-                timeline={timeline}
-                voice={cast.voice}
-              />
+              <div className={`absolute ${cast.className} ${cast.facing}`}>
+                <PsdNarrator
+                  className="inset-0"
+                  parts={partsOf(cast, timeline, frame)}
+                  psd={staticFile(tachiePsdPath(cast.psd))}
+                  timeline={timeline}
+                  voice={cast.voice}
+                />
+              </div>
             </div>
           )),
         )}
