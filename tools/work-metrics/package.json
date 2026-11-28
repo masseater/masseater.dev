@@ -15,7 +15,8 @@
     "@distilled.cloud/github": "catalog:",
     "@r_masseater/node-main": "catalog:",
     "@r_masseater/vitest-otlp": "catalog:",
-    "effect": "catalog:stack"
+    "effect": "catalog:stack",
+    "fflate": "catalog:"
   },
   "devDependencies": {
     "@types/node": "catalog:",

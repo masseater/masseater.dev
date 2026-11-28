@@ -20,3 +20,8 @@ const MINIMUM_DIRECTORIES = 1;
 
 /** @internal */
 export const dirsFlag = Flag.String("dir").pipe(Flag.atLeast(MINIMUM_DIRECTORIES));
+
+const DEFAULT_TOP = 20;
+
+/** @internal */
+export const topFlag = Flag.Int("top").pipe(Flag.withDefault(DEFAULT_TOP));
