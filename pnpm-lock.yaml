@@ -372,6 +372,15 @@ catalogs:
     '@plussub/srt-vtt-parser':
       specifier: 2.0.5
       version: 2.0.5
+    '@pnpm/deps.path':
+      specifier: 1101.0.11
+      version: 1101.0.11
+    '@pnpm/lockfile.fs':
+      specifier: 1100.2.20
+      version: 1100.2.20
+    '@pnpm/logger':
+      specifier: 1100.0.0
+      version: 1100.0.0
     '@pnpm/workspace.projects-reader':
       specifier: 1101.1.9
       version: 1101.1.9
@@ -5043,6 +5052,15 @@ importers:
 
   tools/repository-ci:
     dependencies:
+      '@pnpm/deps.path':
+        specifier: 'catalog:'
+        version: 1101.0.11
+      '@pnpm/lockfile.fs':
+        specifier: 'catalog:'
+        version: 1100.2.20(@pnpm/logger@1100.0.0)
+      '@pnpm/logger':
+        specifier: 'catalog:'
+        version: 1100.0.0
       '@r_masseater/github-workflow':
         specifier: 'catalog:'
         version: 0.1.0(effect@4.1.5)

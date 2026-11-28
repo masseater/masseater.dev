@@ -8,6 +8,9 @@
     "#/*": "./src/*"
   },
   "dependencies": {
+    "@pnpm/deps.path": "catalog:",
+    "@pnpm/lockfile.fs": "catalog:",
+    "@pnpm/logger": "catalog:",
     "@r_masseater/github-workflow": "catalog:",
     "@r_masseater/node-main": "catalog:",
     "effect": "catalog:stack"
