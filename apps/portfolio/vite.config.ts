@@ -51,7 +51,11 @@ export default defineConfig({
         command: "alchemy deploy --config alchemy.zone.ts --stage prod --yes",
         cache: false,
       },
-      build: { command: "vp build && sequoia inject", cache: LOCKED },
+      build: {
+        command:
+          "vp build && intent-book node_modules/@r_masseater/* ../../node_modules/@r_masseater/* --out dist/package-docs --no-landing && rm dist/package-docs/.intent-book && cp -R dist/package-docs/. dist/client/ && rm -r dist/package-docs && sequoia inject",
+        cache: LOCKED,
+      },
       ...d1Tasks,
       "standard-site": {
         command: "vpx bin/standard-site.ts && vpx bin/standard-site-paths.ts && sequoia publish",
