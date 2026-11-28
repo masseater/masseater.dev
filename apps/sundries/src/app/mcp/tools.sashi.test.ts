@@ -29,7 +29,7 @@ afterAll(() => {
 
 const register = registerSashiTools({ SLOPPEDIA_GITHUB: broker });
 
-const PATH = "apps/portfolio/content/sashi/quiet-site.json";
+const PATH = "apps/sashi/content/quiet-site.json";
 
 const OK = 200;
 
