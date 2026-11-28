@@ -233,25 +233,51 @@ const partsOf = (cast: Cast, timeline: Timeline, frame: number): readonly Part[]
 const SLIDE_FRAMES = 6;
 const OFFSTAGE = -900;
 
+const STAY_FRAMES = 150;
+
+interface Span {
+  readonly from: number;
+  readonly to: number;
+}
+
+const staysOf = (cast: Cast, timeline: Timeline): readonly Span[] => {
+  const spans: Span[] = [];
+  const lines = pipe(
+    timeline.cuts,
+    Arr.filter((cut) => cut.voice === cast.voice),
+  );
+  for (const cut of lines) {
+    const span = { from: cut.from, to: cut.from + cut.duration };
+    const joined = pipe(
+      Arr.last(spans),
+      Option.filter((last) => span.from - last.to <= STAY_FRAMES),
+      Option.map((last) => ({ from: last.from, to: span.to })),
+    );
+    if (Option.isSome(joined)) {
+      spans.splice(-1, 1, joined.value);
+    } else {
+      spans.push(span);
+    }
+  }
+  return spans;
+};
+
 const slideOf = (cast: Cast, timeline: Timeline, frame: number): number => {
   if (cast.always) {
     return 0;
   }
   const visibility = pipe(
-    timeline.cuts,
-    Arr.filter((cut) => cut.voice === cast.voice),
-    Arr.map((cut) =>
+    staysOf(cast, timeline),
+    Arr.map((span) =>
       Math.min(
-        interpolate(frame, [cut.from - SLIDE_FRAMES, cut.from], [0, 1], {
+        interpolate(frame, [span.from - SLIDE_FRAMES, span.from], [0, 1], {
           extrapolateLeft: "clamp",
           extrapolateRight: "clamp",
         }),
-        interpolate(
-          frame,
-          [cut.from + cut.duration, cut.from + cut.duration + SLIDE_FRAMES],
-          [1, 0],
-          { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
-        ),
+        interpolate(frame, [span.to, span.to + SLIDE_FRAMES], [1, 0], {
+          extrapolateLeft: "clamp",
+          extrapolateRight: "clamp",
+        }),
       ),
     ),
     (shown) => Math.max(0, ...shown),
