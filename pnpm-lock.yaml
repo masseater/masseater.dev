@@ -373,8 +373,8 @@ catalogs:
       specifier: 0.2.0
       version: 0.2.0
     '@r_masseater/intent-book':
-      specifier: 0.3.1
-      version: 0.3.1
+      specifier: 0.3.2
+      version: 0.3.2
     '@r_masseater/mapped-import':
       specifier: 0.1.0
       version: 0.1.0
@@ -2225,7 +2225,7 @@ importers:
         version: 3.1.1(rollup@4.64.5)(supports-color@10.2.2)
       '@r_masseater/intent-book':
         specifier: 'catalog:'
-        version: 0.3.1(effect@4.1.5)(redis@6.2.1(@opentelemetry/api@1.10.0))(supports-color@10.2.2)
+        version: 0.3.2(effect@4.1.5)(redis@6.2.1(@opentelemetry/api@1.10.0))(supports-color@10.2.2)
       '@r_masseater/song-format':
         specifier: 'catalog:'
         version: 0.2.0(1067add04fe033c7ade96cb6223ef9f1)
@@ -8518,8 +8518,8 @@ packages:
       vite:
         optional: true
 
-  '@r_masseater/intent-book@0.3.1':
-    resolution: {integrity: sha512-NFqZBpWMorIdnKarUqqNGIW2YAdvYjDXxJ45mivFUEGqPaREbfbml3G41lTQwSGS6Rx4rBZyzoZ5tKIZzdNUCg==}
+  '@r_masseater/intent-book@0.3.2':
+    resolution: {integrity: sha512-xUjm4RJjwCN7e4jC4Pa8iq2mz4RQxW+AZVEPR/JXUujsuiqa+PFx/tJdukM2XK1RdalleRwfj9NPZRmnWhE1Cg==}
     engines: {node: '>=26.13.1'}
     hasBin: true
     peerDependencies:
@@ -21003,7 +21003,7 @@ snapshots:
       - ts-content-mapper
       - utf-8-validate
 
-  '@r_masseater/intent-book@0.3.1(effect@4.1.5)(redis@6.2.1(@opentelemetry/api@1.10.0))(supports-color@10.2.2)':
+  '@r_masseater/intent-book@0.3.2(effect@4.1.5)(redis@6.2.1(@opentelemetry/api@1.10.0))(supports-color@10.2.2)':
     dependencies:
       '@r_masseater/node-main': 0.1.0(effect@4.1.5)(redis@6.2.1(@opentelemetry/api@1.10.0))
       '@shikijs/rehype': 4.6.0
