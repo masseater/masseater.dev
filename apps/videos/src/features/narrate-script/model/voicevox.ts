@@ -1,4 +1,3 @@
-import { Timing } from "@masseater.dev/video-kit/script";
 import { Array as Arr, Effect, Option, Schema, pipe } from "effect";
 import type { Config } from "effect";
 import { HttpClient, HttpClientRequest, HttpClientResponse } from "effect/http";
@@ -108,12 +107,14 @@ export const speakerPortraits = (
 export interface Utterance {
   readonly style: number;
   readonly text: string;
+  readonly speed: number;
 }
 
 /** @internal */
 export const synthesize = ({
   style,
   text,
+  speed,
 }: Utterance): Effect.Effect<Uint8Array, VideoError | Config.ConfigError, HttpClient.HttpClient> =>
   Effect.gen(function* synthesizeLine() {
     const engine = yield* VOICEVOX_URL;
@@ -129,7 +130,7 @@ export const synthesize = ({
       HttpClientRequest.setUrlParams({ speaker }),
       HttpClientRequest.bodyJson({
         ...query,
-        speedScale: Timing.SPEED_SCALE,
+        speedScale: speed,
         prePhonemeLength: PRE_PHONEME_SECONDS,
         postPhonemeLength: POST_PHONEME_SECONDS,
       }),

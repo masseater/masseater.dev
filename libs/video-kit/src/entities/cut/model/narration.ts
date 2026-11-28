@@ -28,11 +28,12 @@ export const spokenOf = ({
 export const narrationKey = ({
   speaker,
   spoken,
-}: Readonly<{ speaker: number; spoken: string }>): Effect.Effect<string> =>
+  speed = Timing.SPEED_SCALE,
+}: Readonly<{ speaker: number; spoken: string; speed?: number }>): Effect.Effect<string> =>
   Effect.promise(() =>
     crypto.subtle.digest(
       HASH,
-      new TextEncoder().encode(`${String(speaker)}\n${String(Timing.SPEED_SCALE)}\n${spoken}`),
+      new TextEncoder().encode(`${String(speaker)}\n${String(speed)}\n${spoken}`),
     ),
   ).pipe(Effect.map((buffer) => Str.slice(NOTHING, KEY_LENGTH)(new Uint8Array(buffer).toHex())));
 

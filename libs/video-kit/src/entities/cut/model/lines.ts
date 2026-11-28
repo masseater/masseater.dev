@@ -1,11 +1,11 @@
 import { Array as Arr, Effect, Option, Record as Rec, pipe } from "effect";
 
-import { Timing } from "#/shared/config/index.ts";
+import { NOTHING, Timing } from "#/shared/config/index.ts";
 import type { Segment } from "#/shared/lib/segment.ts";
 import { segmentsOf } from "#/shared/lib/segment.ts";
 
 import type { Cut, VideoScript } from "./cut.ts";
-import { voiceOf } from "./cut.ts";
+import { speedOf, voiceOf } from "./cut.ts";
 import { emphasisAtOf, estimateSeconds, frames } from "./frames.ts";
 import { narrationKey, spokenOf } from "./narration.ts";
 import type { Sources, TimedLine } from "./timeline.ts";
@@ -28,6 +28,7 @@ const recordingOf = (
 ): Effect.Effect<Recorded> =>
   narrationKey({
     speaker: voiceOf(script)(cut),
+    speed: speedOf(cut),
     spoken: spokenOf({ say, readings: script.readings }),
   }).pipe(
     Effect.map((key) => ({
@@ -60,8 +61,15 @@ const NO_STARTS: readonly number[] = [];
 const startOf = (starts: readonly number[], index: number, cursor: number): number =>
   Option.match(Arr.get(starts, index), {
     onNone: () => cursor,
-    onSome: (seconds) => Math.max(cursor, frames(seconds)),
+    onSome: (seconds) => frames(seconds),
   });
+
+const firstCursor = (starts: readonly number[]): number => {
+  if (Arr.isReadonlyArrayNonEmpty(starts)) {
+    return NOTHING;
+  }
+  return frames(Timing.SCENE_PADDING_SECONDS);
+};
 
 const placeLines = (
   sources: Sources,
@@ -70,7 +78,7 @@ const placeLines = (
 ): readonly TimedLine[] =>
   pipe(
     recorded,
-    Arr.mapAccum(frames(Timing.SCENE_PADDING_SECONDS), (cursor, entry, index) => {
+    Arr.mapAccum(firstCursor(starts), (cursor, entry, index) => {
       const timed = lineAt(sources, entry, startOf(starts, index, cursor));
       return [timed.from + timed.duration + frames(Timing.LINE_GAP_SECONDS), timed];
     }),

@@ -11,6 +11,7 @@ const CutSchema = Schema.Struct({
   say: Lines,
   at: Schema.Finite.pipe(Schema.Array, Schema.optionalKey),
   hold: Seconds,
+  speed: Schema.optionalKey(Schema.Finite),
   formats: Schema.optionalKey(Formats),
   voice: Schema.optionalKey(Schema.Finite),
 });
@@ -21,6 +22,7 @@ const BgmSchema = Schema.Struct({
   credit: Schema.String,
   page: Schema.optionalKey(Schema.String),
   start: Seconds,
+  loudThrough: Schema.optionalKey(Schema.String),
 });
 const Readings = Schema.Record(Schema.String, Schema.String);
 const Cuts = Schema.Array(CutSchema);
