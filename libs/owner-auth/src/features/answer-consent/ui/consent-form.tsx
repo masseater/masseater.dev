@@ -21,16 +21,7 @@ const ConsentScreen = ({
 }>): ReactNode => {
   const mount = useCallback(
     (container: HTMLElement) =>
-      BrowserHost.mount(
-        ConsentPrompt,
-        {
-          scope,
-          clientId,
-          ...(redirectUri === undefined ? {} : { redirectUri }),
-          ...(requestedScope === undefined ? {} : { requestedScope }),
-        },
-        container,
-      ),
+      BrowserHost.mount(ConsentPrompt, { scope, clientId, redirectUri, requestedScope }, container),
     [scope, clientId, redirectUri, requestedScope],
   );
   return <EffectIsland mount={mount} />;

@@ -1,35 +1,10 @@
-import { Command, Component, UiSchema } from "@effect/ui";
+import { Component } from "@effect/ui";
 import { Html } from "@effect/ui/html";
 import { Button } from "@masseater.dev/effect-ui";
-import { Effect, Schema } from "effect";
+import { Schema } from "effect";
 
-import { registerPasskey, signInWithPasskey } from "#/features/sign-in-passkey/model/flows.ts";
-
-const PasskeyKind = Schema.Literals(["register", "sign-in"]);
-
-export const PasskeyPanelMessage = UiSchema.TaggedEnum({
-  ClickedStart: {},
-  SucceededStartPasskey: {},
-  FailedStartPasskey: {},
-});
-
-const FLOWS = { register: registerPasskey, "sign-in": signInWithPasskey } as const;
-
-export class StartPasskey extends Command.Service<StartPasskey>()("sign-in-passkey/StartPasskey", {
-  args: { kind: PasskeyKind },
-  success: PasskeyPanelMessage,
-}) {
-  static readonly layer = this.toLayer(
-    Effect.succeed(({ kind }) =>
-      Effect.tryPromise(() => FLOWS[kind]()).pipe(
-        Effect.match({
-          onSuccess: () => PasskeyPanelMessage.SucceededStartPasskey(),
-          onFailure: () => PasskeyPanelMessage.FailedStartPasskey(),
-        }),
-      ),
-    ),
-  );
-}
+import { PasskeyKind, PasskeyPanelMessage } from "./passkey-panel-message.ts";
+import { StartPasskey } from "./start-passkey.ts";
 
 export const PasskeyPanelNoDeps = Html.component({
   name: "PasskeyPanel",
@@ -45,21 +20,22 @@ export const PasskeyPanelNoDeps = Html.component({
 }).make({
   init: () => ({ status: "idle" }),
   update: {
-    ClickedStart: ($) =>
-      $.evolve({ status: "pending" }).run(StartPasskey.make({ kind: $.props.kind })),
-    SucceededStartPasskey: ($) => $.evolve({ status: "success" }),
-    FailedStartPasskey: ($) => $.evolve({ status: "error" }),
+    ClickedStart: (step) =>
+      step.evolve({ status: "pending" }).run(StartPasskey.make({ kind: step.props.kind })),
+    SucceededStartPasskey: (step) => step.evolve({ status: "success" }),
+    FailedStartPasskey: (step) => step.evolve({ status: "error" }),
   },
-  view: (h, model) =>
-    h.section.class("flex flex-col gap-4").children(
-      h.h1.class("text-2xl font-bold").children(h.props.title),
-      Button(h, {
+  view: (html, model) =>
+    html.section.class("flex flex-col gap-4").children(
+      html.h1.class("text-2xl font-bold").children(html.props.title),
+      Button({
+        html,
         props: { disabled: model.status === "pending" || model.status === "success" },
         onPress: PasskeyPanelMessage.ClickedStart(),
-      }).children(h.props.label),
-      model.status === "success" && h.output(h.props.done),
+      }).children(html.props.label),
+      model.status === "success" && html.output(html.props.done),
       model.status === "error" &&
-        h.p.attr("role", "alert").class("text-destructive text-sm").children(h.props.failed),
+        html.p.attr("role", "alert").class("text-destructive text-sm").children(html.props.failed),
     ),
 });
 

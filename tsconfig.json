@@ -35,6 +35,8 @@
           "@effect/platform-node",
           "@effect/platform-node-shared",
           "@effect/sql-sqlite-node",
+          "@effect/ui",
+          "@effect/ui-kit",
           "@effect/vitest",
           "effect/Crypto",
           "effect/FileSystem",
