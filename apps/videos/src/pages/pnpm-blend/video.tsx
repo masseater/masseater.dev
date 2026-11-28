@@ -1,5 +1,5 @@
 import type { Draw, Look, Shot } from "@masseater.dev/video-kit";
-import { Caption, Credits, Picture, Sfx, Terminal, imageOf } from "@masseater.dev/video-kit";
+import { Caption, Picture, Sfx, Terminal, imageOf } from "@masseater.dev/video-kit";
 import { FPS } from "@masseater.dev/video-kit/script";
 import type { SfxKind } from "@masseater.dev/video-kit/script";
 import { Array as Arr, Option, Record as Rec, pipe } from "effect";
@@ -53,16 +53,18 @@ const Console = ({
   </div>
 );
 
+const PANEL_ZOOM = 1.03;
+
 const FOCUS: Readonly<Record<string, string>> = {
-  "pnpm-home": "50% 4%",
-  "pnpm-bench": "50% 58%",
-  "pnpm-bench2": "50% 46%",
-  "pnpm-motivation": "50% 30%",
+  "pnpm-home": "50% 11.7%",
+  "pnpm-bench": "50% 69.5%",
+  "pnpm-bench2": "50% 55.9%",
+  "pnpm-motivation": "50% 40.6%",
 };
 
 const Panel = ({ shot, name }: Readonly<{ shot: Shot; name: string }>): ReactNode => {
   const frame = useCurrentFrame();
-  const scale = interpolate(frame, [0, shot.duration], [1, 1.06]);
+  const scale = interpolate(frame, [0, shot.duration], [1, PANEL_ZOOM]);
   return (
     <div className="absolute inset-x-0 top-[440px] h-[640px] overflow-hidden bg-white">
       <Img
@@ -79,7 +81,7 @@ const Board = (): ReactNode => (
     <div className="absolute inset-x-0 top-[64px] h-[18px] bg-[#9a5a33]" />
     <div className="absolute inset-x-0 top-0 bottom-[28px] overflow-hidden">
       <Img
-        className="absolute top-[1052px] left-[490px] w-[920px] max-w-none"
+        className="absolute top-[1052px] left-[300px] w-[920px] max-w-none"
         src={staticFile(tachiePath("tsumugi"))}
       />
     </div>
@@ -280,8 +282,11 @@ export const draw: Readonly<Record<string, Draw>> = {
       <Panel name="pnpm-home" shot={shot} />
       <LightLeak />
       <Sfx at={0} kind="ending" shot={shot} />
-      <div className="absolute inset-x-0 top-[1096px]">
-        <Credits shot={shot} />
+      <div className="font-jp absolute top-[1100px] left-[40px] text-[26px] leading-[1.5] font-bold text-white/45">
+        {pipe(
+          shot.credits,
+          Arr.map((credit) => <p key={credit}>{credit}</p>),
+        )}
       </div>
     </>
   ),
