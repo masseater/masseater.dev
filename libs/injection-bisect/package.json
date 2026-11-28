@@ -52,9 +52,6 @@
     "access": "public",
     "provenance": true
   },
-  "scripts": {
-    "prepublishOnly": "vp exec msch-publish prepublish ."
-  },
   "dependencies": {
     "@effect/ai-openrouter": "catalog:",
     "@jupyterlab/nbformat": "catalog:",
