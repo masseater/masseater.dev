@@ -61,3 +61,5 @@ export const BGM = {
   page: "https://dl.tracks.co.jp/?m=7497ab",
   credit: "しゃろう",
 } as const;
+
+export const BGM_BEAT = { bpm: 148, first: 0.395 } as const;

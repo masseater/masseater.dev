@@ -12,6 +12,8 @@ import {
 import { Option, Record as Rec } from "effect";
 import type { ReactNode } from "react";
 
+import { pick } from "#/shared/lib/pick.ts";
+
 const ZUNDAMON = [3, 1, 7, 5, 22, 38, 75, 76];
 const METAN = [2, 0, 6, 4, 36, 37];
 
@@ -32,9 +34,6 @@ const TOPICS: Readonly<Record<string, string>> = {
   disk: "容量",
   caution: "注意点",
 };
-
-const pick = (record: Readonly<Record<string, string>>, key: string, fallback: string): string =>
-  Option.getOrElse(Rec.get(record, key), () => fallback);
 
 const Topic = ({ text }: Readonly<{ text: string }>): ReactNode => (
   <div className="font-jp absolute inset-x-0 top-[400px] flex justify-center">

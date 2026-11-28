@@ -9,6 +9,7 @@ const Seconds = Schema.optionalKey(Schema.Finite);
 const CutSchema = Schema.Struct({
   id: Schema.String,
   say: Lines,
+  at: Schema.optionalKey(Schema.Array(Schema.Finite)),
   hold: Seconds,
   formats: Schema.optionalKey(Formats),
   voice: Schema.optionalKey(Schema.Finite),
