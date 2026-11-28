@@ -10,8 +10,6 @@ const START_TIMEOUT_SECONDS = 180;
 const POLL_SECONDS = 1;
 const KILL_AFTER_SECONDS = 2;
 
-type Services = ChildProcessSpawner.ChildProcessSpawner | HttpClient.HttpClient;
-
 const answers = Effect.fn("monkey.desktop.answers")(function* answers(url: string) {
   const client = yield* HttpClient.HttpClient;
   yield* client.get(url);
@@ -49,5 +47,8 @@ const started = Effect.fn("monkey.desktop.serve")(function* started(app: Desktop
 /** @internal */
 export const serveDevServer = (
   app: DesktopApp,
-): Effect.Effect<boolean, never, Services | Scope.Scope> =>
-  started(app).pipe(Effect.orElseSucceed(() => false));
+): Effect.Effect<
+  boolean,
+  never,
+  ChildProcessSpawner.ChildProcessSpawner | HttpClient.HttpClient | Scope.Scope
+> => started(app).pipe(Effect.orElseSucceed(() => false));
