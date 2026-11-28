@@ -2247,6 +2247,9 @@ importers:
       '@masseater.dev/sloppedia':
         specifier: workspace:*
         version: link:../../libs/sloppedia
+      '@masseater.dev/start-shell':
+        specifier: workspace:*
+        version: link:../../libs/start-shell
       '@masseater.dev/ui':
         specifier: workspace:*
         version: link:../../libs/ui

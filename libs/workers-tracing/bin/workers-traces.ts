@@ -21,7 +21,7 @@ import {
 import { Command, Flag } from "effect/cli";
 import { FetchHttpClient, HttpClient } from "effect/http";
 
-import { markedAt, missingOf, render, spanOf, traceOf } from "#/entities/span/index.ts";
+import { markedAt, missingOf, render, spanOf, traceIdsOf, traceOf } from "#/entities/span/index.ts";
 import type { ReceivedSpan } from "#/entities/span/index.ts";
 
 const DEFAULT_SINK = "workers-tracing-sink";
@@ -91,13 +91,6 @@ const spansWhere = Effect.fn("workers-traces.spansWhere")(function* spansWhere(
     Arr.getSomes,
   );
 });
-
-const traceIdsOf = (spans: readonly ReceivedSpan[]): readonly string[] =>
-  pipe(
-    spans,
-    Arr.map(({ traceId }) => traceId),
-    Arr.dedupe,
-  );
 
 const query = Effect.fn("workers-traces.query")(function* query(
   options: Query,

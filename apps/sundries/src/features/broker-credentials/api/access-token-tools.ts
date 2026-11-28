@@ -1,5 +1,5 @@
 import type { UpstreamFailed } from "@masseater.dev/mcp-tool-call";
-import { toolInputOf } from "@masseater.dev/mcp-tool-call";
+import { toolInputOf, registeredTool } from "@masseater.dev/mcp-tool-call";
 import type { AccessSite } from "@masseater.dev/repositories/access-sites";
 import type { SiteToken } from "@masseater.dev/repositories/credential-broker";
 import type { McpServer } from "@modelcontextprotocol/server";
@@ -36,17 +36,15 @@ const siteToken =
       catch: brokerFailed,
     }).pipe(Effect.flatMap(issued));
 
-export const registerAccessTokenTools =
-  (tokens: AccessTokens) =>
-  (server: McpServer): McpServer => {
-    server.registerTool(
-      "get_access_token",
-      {
-        description: DESCRIPTION,
-        inputSchema: INPUT_SCHEMA,
-        annotations: { readOnlyHint: true, openWorldHint: true },
-      },
-      (input) => siteToken(tokens)(input.site).pipe(runTool({ count: () => ONE_TOKEN })),
-    );
-    return server;
-  };
+export const registerAccessTokenTools = (
+  tokens: AccessTokens,
+): ((server: McpServer) => McpServer) =>
+  registeredTool(
+    {
+      name: "get_access_token",
+      description: DESCRIPTION,
+      inputSchema: INPUT_SCHEMA,
+      annotations: { readOnlyHint: true, openWorldHint: true },
+    },
+    (input) => siteToken(tokens)(input.site).pipe(runTool({ count: () => ONE_TOKEN })),
+  );

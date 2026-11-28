@@ -1,4 +1,4 @@
-import { one, READ_ONLY, toolInputOf } from "@masseater.dev/mcp-tool-call";
+import { one, READ_ONLY, toolInputOf, registeredTool } from "@masseater.dev/mcp-tool-call";
 import type { CallToolResult, McpServer } from "@modelcontextprotocol/server";
 import { Effect, Option } from "effect";
 
@@ -27,21 +27,19 @@ const reading =
   (input: Input, sessionId: string): Promise<CallToolResult> =>
     readConversation(readRequestOf({ input, sessionId })).pipe(runTool({ count: one }));
 
-export const registerConversationTools =
-  (runTool: ToolRun<Database | ConversationObjects>) =>
-  (server: McpServer): McpServer => {
-    server.registerTool(
-      "conversation_read",
-      {
-        description: DESCRIPTION,
-        inputSchema: READ_SCHEMA,
-        annotations: READ_ONLY,
-      },
-      (input) =>
-        Option.match(Option.fromUndefinedOr(input.sessionId), {
-          onNone: () => listing(runTool)(input),
-          onSome: (sessionId) => reading(runTool)(input, sessionId),
-        }),
-    );
-    return server;
-  };
+export const registerConversationTools = (
+  runTool: ToolRun<Database | ConversationObjects>,
+): ((server: McpServer) => McpServer) =>
+  registeredTool(
+    {
+      name: "conversation_read",
+      description: DESCRIPTION,
+      inputSchema: READ_SCHEMA,
+      annotations: READ_ONLY,
+    },
+    (input) =>
+      Option.match(Option.fromUndefinedOr(input.sessionId), {
+        onNone: () => listing(runTool)(input),
+        onSome: (sessionId) => reading(runTool)(input, sessionId),
+      }),
+  );

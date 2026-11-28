@@ -33,49 +33,51 @@ export interface VariantFile {
 
 const MISSING = "";
 
-const fetchMosaic = (path: string): Effect.Effect<Mosaic, FetchError, HttpClient.HttpClient> =>
-  HttpClient.get(`${BASE_PATH}/${path}`).pipe(
-    Effect.flatMap(HttpClientResponse.filterStatusOk),
-    Effect.flatMap(HttpClientResponse.schemaBodyJson(PublishedMosaic)),
-    Effect.withSpan("mosaic.manifest", { attributes: { path } }),
-  );
+interface Resource<Value> {
+  readonly key: string;
+  readonly fetch: (path: string) => Effect.Effect<Value, FetchError, HttpClient.HttpClient>;
+}
 
-const fetchCandidates = (
-  path: string,
-): Effect.Effect<CandidateList, FetchError, HttpClient.HttpClient> =>
-  HttpClient.get(`${BASE_PATH}/${path}`).pipe(
-    Effect.flatMap(HttpClientResponse.filterStatusOk),
-    Effect.flatMap(HttpClientResponse.schemaBodyJson(Candidates)),
-    Effect.withSpan("mosaic.candidates", { attributes: { path } }),
-  );
-
-const fetchTiles = (path: string): Effect.Effect<TileList, FetchError, HttpClient.HttpClient> =>
-  HttpClient.get(`${BASE_PATH}/${path}`).pipe(
-    Effect.flatMap(HttpClientResponse.filterStatusOk),
-    Effect.flatMap(HttpClientResponse.schemaBodyJson(Tiles)),
-    Effect.withSpan("mosaic.tiles", { attributes: { path } }),
-  );
-
-export const mosaicQuery = (slug: string): Query<Mosaic> => {
-  const path = manifestPath(slug);
+const resourceOf = <Codec extends Schema.Constraint & { readonly DecodingServices: never }>({
+  key,
+  span,
+  schema,
+}: Readonly<{ key: string; span: string; schema: Codec }>): Resource<Codec["Type"]> => {
+  const decode = HttpClientResponse.schemaBodyJson(schema);
   return {
-    queryKey: ["mosaic", path],
-    queryFn: ({ signal }) => runtime.runPromise(fetchMosaic(path), { signal }),
-    staleTime: Number.POSITIVE_INFINITY,
+    key,
+    fetch: (path) =>
+      HttpClient.get(`${BASE_PATH}/${path}`).pipe(
+        Effect.flatMap(HttpClientResponse.filterStatusOk),
+        Effect.flatMap(decode),
+        Effect.withSpan(span, { attributes: { path } }),
+      ),
   };
 };
+
+const queryOf =
+  <Value>(resource: Resource<Value>) =>
+  (path: string): Query<Value> => ({
+    queryKey: [resource.key, path],
+    queryFn: ({ signal }) => runtime.runPromise(resource.fetch(path), { signal }),
+    staleTime: Number.POSITIVE_INFINITY,
+  });
+
+const mosaicAt = queryOf(
+  resourceOf({ key: "mosaic", span: "mosaic.manifest", schema: PublishedMosaic }),
+);
+const candidatesAt = queryOf(
+  resourceOf({ key: "candidates", span: "mosaic.candidates", schema: Candidates }),
+);
+const tilesAt = queryOf(resourceOf({ key: "tiles", span: "mosaic.tiles", schema: Tiles }));
+
+export const mosaicQuery = (slug: string): Query<Mosaic> => mosaicAt(manifestPath(slug));
 
 export const candidatesQuery = ({
   slug,
   mosaic,
-}: Omit<VariantFile, "variant">): Query<CandidateList> => {
-  const path = `${slugPath(slug)}/${mosaic.candidates}`;
-  return {
-    queryKey: ["candidates", path],
-    queryFn: ({ signal }) => runtime.runPromise(fetchCandidates(path), { signal }),
-    staleTime: Number.POSITIVE_INFINITY,
-  };
-};
+}: Omit<VariantFile, "variant">): Query<CandidateList> =>
+  candidatesAt(`${slugPath(slug)}/${mosaic.candidates}`);
 
 const variantPath = ({ slug, mosaic, variant }: VariantFile): string =>
   pipe(
@@ -85,12 +87,6 @@ const variantPath = ({ slug, mosaic, variant }: VariantFile): string =>
       onSome: ({ version }) => versionPath({ slug, variant, version }),
     }),
   );
-
-const tilesAt = (path: string): Query<TileList> => ({
-  queryKey: ["tiles", path],
-  queryFn: ({ signal }) => runtime.runPromise(fetchTiles(path), { signal }),
-  staleTime: Number.POSITIVE_INFINITY,
-});
 
 export const tilesQuery = (file: VariantFile): Query<TileList> =>
   tilesAt(`${variantPath(file)}/${file.mosaic.tiles}`);
