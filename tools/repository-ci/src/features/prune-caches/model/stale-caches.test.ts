@@ -1,4 +1,4 @@
-import { Array as Arr } from "effect";
+import { Array as Arr, pipe } from "effect";
 import { expect, it } from "vite-plus/test";
 
 import { sameKind, sameRun, staleOf } from "./stale-caches.ts";
@@ -11,12 +11,11 @@ const staleKeys = (
   keys: readonly string[],
   group: (entry: Readonly<{ key: string }>) => string,
 ): readonly string[] =>
-  Arr.map(
-    staleOf(
-      Arr.map(keys, (key) => ({ key })),
-      group,
-    ),
-    ({ key }) => key,
+  pipe(
+    keys,
+    Arr.map((key) => ({ key })),
+    (entries) => staleOf(entries, (entry) => group(entry)),
+    Arr.map(({ key }) => key),
   );
 
 it("keeps the newest entry of each shard and drops the older runs of that shard", () => {
