@@ -35,9 +35,6 @@
     ".": "./src/app/index.ts",
     "./package.json": "./package.json"
   },
-  "scripts": {
-    "prepublishOnly": "vp exec msch-publish prepublish ."
-  },
   "dependencies": {
     "@effect/ai-openrouter": "catalog:",
     "fast-png": "catalog:",

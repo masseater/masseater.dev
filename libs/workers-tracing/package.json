@@ -107,9 +107,6 @@
     "access": "public",
     "provenance": true
   },
-  "scripts": {
-    "prepublishOnly": "vp exec msch-publish prepublish ."
-  },
   "devDependencies": {
     "@alchemy.run/cloudflare": "catalog:stack",
     "@cloudflare/workers-types": "catalog:",
