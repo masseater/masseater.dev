@@ -1,4 +1,4 @@
-import { READ_ONLY, failedAt, toolInputOf } from "@masseater.dev/mcp-tool-call";
+import { READ_ONLY, failedAt, registeredTool, toolInputOf } from "@masseater.dev/mcp-tool-call";
 import {
   ReferenceInput,
   ReferenceSchema,
@@ -62,18 +62,15 @@ const listReferences = Effect.fn("listReferences")(function* listReferences(
 
 const runFetchTool = runToolIn(FetchHttpClient.layer);
 
-const registerList = (server: McpServer): McpServer => {
-  server.registerTool(
-    "list_sashi_references",
-    {
-      description: `List the owner's references for what they want (${SITE}), newest first. Call it before making something for the owner.`,
-      inputSchema: LIST_INPUT,
-      annotations: READ_ONLY,
-    },
-    (input) => listReferences(input).pipe(runFetchTool({ count: (found) => found.length })),
-  );
-  return server;
-};
+const registerList: (server: McpServer) => McpServer = registeredTool(
+  {
+    name: "list_sashi_references",
+    description: `List the owner's references for what they want (${SITE}), newest first. Call it before making something for the owner.`,
+    inputSchema: LIST_INPUT,
+    annotations: READ_ONLY,
+  },
+  (input) => listReferences(input).pipe(runFetchTool({ count: (found) => found.length })),
+);
 
 const publication = Effect.fn("publication")(function* publication(
   input: typeof ReferenceInput.Type,

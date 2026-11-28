@@ -7,7 +7,7 @@ import {
   repos,
 } from "@distilled.cloud/github";
 import type { UpstreamFailed } from "@masseater.dev/mcp-tool-call";
-import { WRITE, failedAt, one } from "@masseater.dev/mcp-tool-call";
+import { WRITE, failedAt, one, registeredTool } from "@masseater.dev/mcp-tool-call";
 import type { McpServer, StandardSchemaWithJSON } from "@modelcontextprotocol/server";
 import { Array as Arr, Effect, Layer, Option, Redacted, Schema, pipe } from "effect";
 import { FetchHttpClient, HttpClient, HttpClientRequest, HttpClientResponse } from "effect/http";
@@ -196,22 +196,20 @@ const publishFile = (
 
 const runGithubTool = runToolIn(githubLayer);
 
-export const registerPublishTool =
-  <Encoded, Decoded>(tool: PublishTool<Encoded, Decoded>) =>
-  (server: McpServer): McpServer => {
-    server.registerTool(
-      tool.name,
-      {
-        description: tool.description,
-        inputSchema: tool.schema,
-        annotations: WRITE,
-      },
-      (input) =>
-        tool.publication(input).pipe(
-          Effect.flatMap((publication) => publishFile(tool.broker, publication)),
-          Effect.map((pull) => ({ pull, url: tool.url(input) })),
-          runGithubTool({ count: one }),
-        ),
-    );
-    return server;
-  };
+export const registerPublishTool = <Encoded, Decoded>(
+  tool: PublishTool<Encoded, Decoded>,
+): ((server: McpServer) => McpServer) =>
+  registeredTool(
+    {
+      name: tool.name,
+      description: tool.description,
+      inputSchema: tool.schema,
+      annotations: WRITE,
+    },
+    (input) =>
+      tool.publication(input).pipe(
+        Effect.flatMap((publication) => publishFile(tool.broker, publication)),
+        Effect.map((pull) => ({ pull, url: tool.url(input) })),
+        runGithubTool({ count: one }),
+      ),
+  );
