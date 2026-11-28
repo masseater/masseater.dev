@@ -238,17 +238,17 @@ catalogs:
       specifier: 1.0.0-rc.20
       version: 1.0.0-rc.20
     '@earendil-works/chord':
-      specifier: 1.6.0
-      version: 1.6.0
+      specifier: 1.6.1
+      version: 1.6.1
     '@earendil-works/pi-ai':
-      specifier: 1.6.0
-      version: 1.6.0
+      specifier: 1.6.1
+      version: 1.6.1
     '@earendil-works/pi-durable':
-      specifier: 1.6.0
-      version: 1.6.0
+      specifier: 1.6.1
+      version: 1.6.1
     '@earendil-works/pi-schema':
-      specifier: 1.6.0
-      version: 1.6.0
+      specifier: 1.6.1
+      version: 1.6.1
     '@effect/ai-openrouter':
       specifier: 4.1.7
       version: 4.1.7
@@ -832,8 +832,8 @@ catalogs:
       specifier: 0.187.0
       version: 0.187.0
     tonal:
-      specifier: 6.9.0
-      version: 6.9.0
+      specifier: 6.10.0
+      version: 6.10.0
     ts-content-mapper:
       specifier: 0.1.1
       version: 0.1.1
@@ -1301,7 +1301,7 @@ importers:
         version: link:../../libs/ui
       '@r_masseater/i68':
         specifier: 'catalog:'
-        version: 0.2.0(29ae4a4d84adc84ea32ff9e9e90a0ab3)
+        version: 0.2.0(0d20a2964aec585dff96090cc2f94162)
       '@r_masseater/song-format':
         specifier: 'catalog:'
         version: 0.2.0(817be6c7dbe153ec1b2a9f3d78987565)
@@ -3001,16 +3001,16 @@ importers:
         version: 4.1.6
       '@earendil-works/chord':
         specifier: 'catalog:'
-        version: 1.6.0(esbuild@0.28.1)(react@19.3.1)(ws@8.22.1)
+        version: 1.6.1(esbuild@0.28.1)(react@19.3.1)(ws@8.22.1)
       '@earendil-works/pi-ai':
         specifier: 'catalog:'
-        version: 1.6.0(@aws-sdk/credential-provider-node@3.972.84)(@modelcontextprotocol/sdk@1.32.2(@cfworker/json-schema@4.1.6)(supports-color@10.2.2)(zod@4.6.7))(@smithy/signature-v4@5.7.5)(google-auth-library@10.9.1(supports-color@10.2.2))(supports-color@10.2.2)(undici@7.30.2)(ws@8.22.1)(zod@4.6.7)
+        version: 1.6.1(@modelcontextprotocol/sdk@1.32.2(@cfworker/json-schema@4.1.6)(supports-color@10.2.2)(zod@4.6.7))(@smithy/signature-v4@5.7.5)(google-auth-library@10.9.1(supports-color@10.2.2))(supports-color@10.2.2)(undici@7.30.2)(ws@8.22.1)(zod@4.6.7)
       '@earendil-works/pi-durable':
         specifier: 'catalog:'
-        version: 1.6.0(@aws-sdk/credential-provider-node@3.972.84)(@modelcontextprotocol/sdk@1.32.2(@cfworker/json-schema@4.1.6)(supports-color@10.2.2)(zod@4.6.7))(@smithy/signature-v4@5.7.5)(esbuild@0.28.1)(google-auth-library@10.9.1(supports-color@10.2.2))(react@19.3.1)(supports-color@10.2.2)(undici@7.30.2)(ws@8.22.1)(zod@4.6.7)
+        version: 1.6.1(@modelcontextprotocol/sdk@1.32.2(@cfworker/json-schema@4.1.6)(supports-color@10.2.2)(zod@4.6.7))(@smithy/signature-v4@5.7.5)(esbuild@0.28.1)(google-auth-library@10.9.1(supports-color@10.2.2))(react@19.3.1)(supports-color@10.2.2)(undici@7.30.2)(ws@8.22.1)(zod@4.6.7)
       '@earendil-works/pi-schema':
         specifier: 'catalog:'
-        version: 1.6.0
+        version: 1.6.1
       '@masseater.dev/mcp-tool-call':
         specifier: workspace:*
         version: link:../../libs/mcp-tool-call
@@ -3049,7 +3049,7 @@ importers:
         version: 1.169.7(@rspack/core@2.3.0(@swc/helpers@0.5.23))(@vitejs/plugin-rsc@0.5.39(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(esbuild@0.28.1)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(rolldown@1.2.16)(rollup@4.64.5)(supports-color@10.2.2)(webpack@5.105.0(esbuild@0.28.1)(lightningcss@1.33.0)(postcss@8.5.32)(uglify-js@3.19.3))
       agents:
         specifier: 'catalog:'
-        version: 0.34.0(0355d33e30012b127f3fca7f0a9cf165)
+        version: 0.34.0(e854283d23f553495cc5b48c0094692e)
       better-auth:
         specifier: catalog:stack
         version: 1.7.28(0b16e6a32225b74ecdf713ad5115b791)
@@ -3885,7 +3885,7 @@ importers:
         version: 4.1.7
       tonal:
         specifier: 'catalog:'
-        version: 6.9.0
+        version: 6.10.0
     devDependencies:
       '@effect/vitest':
         specifier: 'catalog:'
@@ -5579,8 +5579,8 @@ packages:
     resolution: {integrity: sha512-L+Z85anONJd8MaiuraO4wRxATCdEejBZ3K3eymzWI5JPXa9sOS9CkIm72PBKqXKX+Z9p9NGMX5AIMXm0LEflgw==}
     engines: {node: '>=20.0.0'}
 
-  '@aws-sdk/credential-provider-node@3.972.84':
-    resolution: {integrity: sha512-oHt854odINVwzwsh+c5x69j0ajm4DbqqqVJ+O1ECsCIZeMDAbzFpXItaqP7UZstJj/ATdTk/KFSH0LaNAgV+kA==}
+  '@aws-sdk/credential-provider-node@3.972.82':
+    resolution: {integrity: sha512-znDkEOGXB8W3kG1LJUKP3foBZY/9qLM0eil/DxWXSp37XsdsRLQHE/d/OaCGGVgKpA6znR38h/+INk8do1FjiA==}
     engines: {node: '>=20.0.0'}
 
   '@aws-sdk/credential-provider-process@3.972.72':
@@ -6304,8 +6304,8 @@ packages:
   '@dual-bundle/import-meta-resolve@4.2.1':
     resolution: {integrity: sha512-id+7YRUgoUX6CgV0DtuhirQWodeeA7Lf4i2x71JS/vtA5pRb/hIGWlw+G6MeXvsM+MXrz0VAydTGElX1rAfgPg==}
 
-  '@earendil-works/chord@1.6.0':
-    resolution: {integrity: sha512-8dQXEKUR6qQPc4zNEblmv6hEfr2JAAU+nUprt+mhtdfRRZzl1At5ZhnJqTqesElAdR7RpAyaRIAilyteNHzyWA==}
+  '@earendil-works/chord@1.6.1':
+    resolution: {integrity: sha512-uoMFLrKMAOnfHhGdOuJgKyYsfn160djhs+sYJbW5zQ0qgVbkFQXaUEs8YdFcaTpYsASoL5AvIGvRVC2TUD7gXw==}
     engines: {node: '>=22.19.0'}
     peerDependencies:
       esbuild: ^0.28.2
@@ -6319,25 +6319,25 @@ packages:
       ws:
         optional: true
 
-  '@earendil-works/pi-ai@1.6.0':
-    resolution: {integrity: sha512-9hL+eygFDEiFp//cydeUfmFsKmEqpmvsNPb10Y1W8+m5K9O+sx1hMStfu6nukrBD5sl6mP4RykCYBBNEgsVLfw==}
+  '@earendil-works/pi-ai@1.6.1':
+    resolution: {integrity: sha512-EyorgVyA2s4MxNl7YOapzOpdxrc8HUgxHEIOo8QRMK35P7PCOsSiWzMLf6ixKl3/obkg7I3wGJWHq+FdbUz43g==}
     engines: {node: '>=22.19.0'}
     hasBin: true
 
-  '@earendil-works/pi-codemode@1.6.0':
-    resolution: {integrity: sha512-GAgAy7iJCVbeiuqq2dTIuNj3aXTMUeTF8Nu8LZs72e8ueGGDU5L3/D8VxzTHALIpQ1/q8u1tfmB3iYS2Nopchw==}
+  '@earendil-works/pi-codemode@1.6.1':
+    resolution: {integrity: sha512-xogcFe38Ek/9cabCz6sP52FjUKtuNDwLmqeM1aQiwOF5rg7jZ//FRpnMeYyhvRyod2UYhhf/ojfg6rRdXi0peQ==}
     engines: {node: '>=22.19.0'}
 
-  '@earendil-works/pi-durable@1.6.0':
-    resolution: {integrity: sha512-nyPjInj/7ZjLEUCDMS7oNGRj1ynftOCVqXilWRBhIuT/xoRHrPy5yFNle/64hvs3F1rukMZ7Ar/4reA7auvUWQ==}
+  '@earendil-works/pi-durable@1.6.1':
+    resolution: {integrity: sha512-hhKQg7FDsp25+pvIodqYZEEYTqKA/lBvHYJqHwwqb/zIc0hHq45HK6hQ7BnMHIyjsI7ev9P8qLCQlwxiFblm8A==}
     engines: {node: '>=22.19.0'}
 
-  '@earendil-works/pi-schema@1.6.0':
-    resolution: {integrity: sha512-jD0VRCUcFzWQ5zN82pOuoHNN42/3pu4E5krtpiKknvPq4g2m+fuO38lj+xnZhuVpYcd2G0qlmr8lE6ZMzkad7Q==}
+  '@earendil-works/pi-schema@1.6.1':
+    resolution: {integrity: sha512-Q/6W4IiDdIQUochCuvXFpglTByNTFTuMYvMqXjcRiOnxOl/3mQYLAZpZTpBSRWiS4WgeV7NyH/8dQp6ipYZeNg==}
     engines: {node: '>=22.19.0'}
 
-  '@earendil-works/pi-telemetry@1.6.0':
-    resolution: {integrity: sha512-MNL0TvtpgoSfX7mBLSVgzxTW6yvT8VLEpHvbWnZsIp92FtqVvx+4q9DxWZdX8KvcQqBs0GseAgVnLdVFinjN9Q==}
+  '@earendil-works/pi-telemetry@1.6.1':
+    resolution: {integrity: sha512-3gyjVQlVrPwEq7ZCea8++prMwUkuNXM3v/mzTJ9knJAhqrYLxSVAjYzA1iC3KLq8ismmSQIcnFp++qTwQwNToA==}
     engines: {node: '>=22.19.0'}
 
   '@effect/ai-openrouter@4.1.7':
@@ -6985,9 +6985,9 @@ packages:
   '@glideapps/ts-necessities@2.2.3':
     resolution: {integrity: sha512-gXi0awOZLHk3TbW55GZLCPP6O+y/b5X1pBXKBVckFONSwF1z1E5ND2BGJsghQFah+pW7pkkyFb2VhUQI2qhL5w==}
 
-  '@google/genai@2.32.0':
-    resolution: {integrity: sha512-60c79uXpR0a47bmGqDxbXEBuQUalNmwo5mx5kqb91jIW4FoqpsLSt86DeVhRhtH5+s/16Wqxt3sXzFQn2U1OHQ==}
-    engines: {node: '>=20.0.0'}
+  '@google/genai@3.6.1':
+    resolution: {integrity: sha512-DQIkZkl+VoZc+RUSaJ41vRuywjQDpP0t/oUf5/ddQhNW6JsPjVULW2EgHmuJ1mrr6ACtrmUdPlqtNXF1yfKySg==}
+    engines: {node: '>=22.0.0'}
     peerDependencies:
       '@modelcontextprotocol/sdk': ^1.25.2
     peerDependenciesMeta:
@@ -11583,8 +11583,8 @@ packages:
   '@tonaljs/chord-type@5.4.0':
     resolution: {integrity: sha512-u1SPlf0HIZg/7s4IjJAEyClhBhGE8QhhEqzbtlHyMPsrBFRYENTfvTRKUOEPfds5U7Va5NQkuQoDuf/L4Cqw3w==}
 
-  '@tonaljs/chord@6.4.0':
-    resolution: {integrity: sha512-VqkswgJ/5FWXxgDklvqtkdUHT4hyoNGKPyUbv5ZQto8fbJDnFyYjxguKV1tSYKpQLBWdGJC29wCORxuTKq0S3A==}
+  '@tonaljs/chord@6.5.0':
+    resolution: {integrity: sha512-Q/7Y6fUy8kFxyJnVzhlba7WDLf4B0PLPCKtYbWBwXFIaWltZvv9fTMiG+ve0XYFDkX14nh917SI74gmQ2GLTPA==}
 
   '@tonaljs/collection@4.9.2':
     resolution: {integrity: sha512-84mpufrZj+KBVY80SyhQpTp9xQwQYh9iu/D7qlc7WP76au1I0AE/pou2pexTnMS6mFFlB+cAPO0gmMSshbBHKg==}
@@ -11625,8 +11625,8 @@ packages:
   '@tonaljs/pitch@5.0.3':
     resolution: {integrity: sha512-2OpxK/p0NaOymVdlxgJxruFAt2pHfFIkPxkQ3PKQqMXhaza+SXG1Kxpo0jpuAjw946LlQ3KBC+GJRSncjYtoKA==}
 
-  '@tonaljs/progression@4.11.3':
-    resolution: {integrity: sha512-cTv2jnMjBtUvwhrXk4hPw4ZL6SF+AMfYIWwwaeErd/9KEpYmkHpeaM1ZrHPpDXQQ9UgG6SEp3IR9uwaKXBd5Pw==}
+  '@tonaljs/progression@4.11.4':
+    resolution: {integrity: sha512-cs2Y6jnEL0nYZ9X6k96z0g7LjgQreZGUHsQXza/0ATHVaImucGCkzye1rU583EnKEGpw1EGbCa13kNQSc5WoFA==}
 
   '@tonaljs/range@4.9.8':
     resolution: {integrity: sha512-tq6kIXHrRlzcsHjkR4X7sWlWry/WrQd/KtTSQMyefZN/dSzZTfpr+TiHLWpKuut0ujKWrMC3S1H0/MfCEfLgKA==}
@@ -11640,20 +11640,20 @@ packages:
   '@tonaljs/scale-type@4.10.0':
     resolution: {integrity: sha512-EEL3WL8tN3PGUfmbldwBrR03K/UI8PTJv80iO1dV0FId3/Zrad94+/AcqmCYZtyDdP3GATjHMy2jstxmcOJFHQ==}
 
-  '@tonaljs/scale@4.15.0':
-    resolution: {integrity: sha512-HEWKQawmHvrgTMfzzNVZwCmPThKRE/xHBDhBtKYYmGn3fWCRIPlnigNkDK9Ms+gYlFpZpsun+d9ot7OQZuNOHw==}
+  '@tonaljs/scale@4.15.1':
+    resolution: {integrity: sha512-gvKVlcY5HxwFCI7HMVZ24MR2OWk2TcuuoR/ssYRi29KrOoUMf/Fm9kyPtYztH34B6ONERLb6qBkcSrqZURy0kA==}
 
   '@tonaljs/time-signature@4.10.2':
     resolution: {integrity: sha512-2bQD0Ow92prw+vof0Wzgpa8fTr1chnxqy8vrilpBXQjlca+owMT6PlH1/KaCxeWMowfOHZWI9MvIEuhAxK/UzQ==}
 
-  '@tonaljs/voice-leading@5.1.8':
-    resolution: {integrity: sha512-CQmvJ9Z9muU1MlMNuAqPSUdX5w31QUpKz4VgMIa1oA6ORkHpTm74c/N0THOsKWLU8RBD2vccvlt//jUHD4690A==}
+  '@tonaljs/voice-leading@5.2.0':
+    resolution: {integrity: sha512-Qmq7UTfTjzQmiv4BY/aaMwORr0mlSpnyn7+Bm1PcLlaaWNDjQHNtLnjYlmRcdKFJYUDC2t5uf5TcwqnAuGen+A==}
 
-  '@tonaljs/voicing-dictionary@5.1.10':
-    resolution: {integrity: sha512-yphmc+ce318oTSu42oS0VWQHfVFHFTHmvTNAXvxE3YyN/ZIi9kqAqPVYskyDq3BEz5U4buUnpt9E4QjwTIhP7g==}
+  '@tonaljs/voicing-dictionary@5.1.11':
+    resolution: {integrity: sha512-5DLo8RGhysHaez7ZkM/Xd4f6sBhDfiRmDNA51+ocGx32lL2gEzkqwA5xAy//7YCztJ2Yg0sqEO3V8U8bL7hTJw==}
 
-  '@tonaljs/voicing@5.2.3':
-    resolution: {integrity: sha512-PCoPeJgiwg2Tb+8jRIljXmivnrZmIWckERlLnPy3i2j0ZfzE1vgYxsJeQwkglkfyQMql4KaX4lSHsV2U1NdECg==}
+  '@tonaljs/voicing@5.3.0':
+    resolution: {integrity: sha512-+M2hTei4GzgxEkppjxU8i1UHobotz1Ej37jc0Z6YiMfC3ZGCnnXE8Cqj/alavtHUTk0hM0InJRGUjEzRjP6Wmw==}
 
   '@tsrs/darwin-arm64@7.1.0-beta.tsrs4':
     resolution: {integrity: sha512-Be1McQGyHipWIjnkvytZmh7Wi4YVATvTfiEuPX34kfk+W7QCtTdUUHnuLZ7bzwy8LgL9VDCmyvQtWiF3MENxBQ==}
@@ -17246,8 +17246,8 @@ packages:
     resolution: {integrity: sha512-A5F0cM6+mDleacLIEUkmfpkBbnHJFV1d2rprHU2MXNk7mlxHq2zGojA+SRvQD1RoMo9gqjZPWEaKG4v1BQ48lw==}
     engines: {node: ^20.19.0 || ^22.13.0 || >=24}
 
-  tonal@6.9.0:
-    resolution: {integrity: sha512-aLMzb1Olqh94NSsAAAdPpAmipmb2bX9tfGbdHVpTIUkgYonav2k/CBzgzQ2ha5O504dCImMr3FHVZez4d70T4A==}
+  tonal@6.10.0:
+    resolution: {integrity: sha512-luls2pScA5B0rWhtMopU5GhQ6fDtc5AhZ+AV9mbu1sd4r9ZzsAgnlfJFHACxzDsjIJTIrDXM+Enur9LA3LcMIQ==}
 
   totalist@3.0.1:
     resolution: {integrity: sha512-sf4i37nQ2LBx4m3wB74y+ubopq6W/dIzXg0FDGjsYnZHVa1Da8FH853wlL2gtUhg+xJXjfk3kUZS3BRoQeoQBQ==}
@@ -18334,7 +18334,7 @@ snapshots:
   '@aws-sdk/client-bedrock-runtime@3.1127.0':
     dependencies:
       '@aws-sdk/core': 3.981.0
-      '@aws-sdk/credential-provider-node': 3.972.84
+      '@aws-sdk/credential-provider-node': 3.972.82
       '@aws-sdk/eventstream-handler-node': 3.972.42
       '@aws-sdk/middleware-eventstream': 3.972.38
       '@aws-sdk/middleware-websocket': 3.972.66
@@ -18400,7 +18400,7 @@ snapshots:
       '@smithy/types': 4.20.0
       tslib: 2.8.1
 
-  '@aws-sdk/credential-provider-node@3.972.84':
+  '@aws-sdk/credential-provider-node@3.972.82':
     dependencies:
       '@aws-sdk/credential-provider-env': 3.972.72
       '@aws-sdk/credential-provider-http': 3.972.74
@@ -19336,29 +19336,29 @@ snapshots:
 
   '@dual-bundle/import-meta-resolve@4.2.1': {}
 
-  '@earendil-works/chord@1.6.0(esbuild@0.28.1)(react@19.3.1)(ws@8.22.1)':
+  '@earendil-works/chord@1.6.1(esbuild@0.28.1)(react@19.3.1)(ws@8.22.1)':
     dependencies:
-      '@earendil-works/pi-schema': 1.6.0
-      '@earendil-works/pi-telemetry': 1.6.0
+      '@earendil-works/pi-schema': 1.6.1
+      '@earendil-works/pi-telemetry': 1.6.1
     optionalDependencies:
       esbuild: 0.28.1
       react: 19.3.1
       ws: 8.22.1
 
-  '@earendil-works/pi-ai@1.6.0(@aws-sdk/credential-provider-node@3.972.84)(@modelcontextprotocol/sdk@1.32.2(@cfworker/json-schema@4.1.6)(supports-color@10.2.2)(zod@4.6.7))(@smithy/signature-v4@5.7.5)(google-auth-library@10.9.1(supports-color@10.2.2))(supports-color@10.2.2)(undici@7.30.2)(ws@8.22.1)(zod@4.6.7)':
+  '@earendil-works/pi-ai@1.6.1(@modelcontextprotocol/sdk@1.32.2(@cfworker/json-schema@4.1.6)(supports-color@10.2.2)(zod@4.6.7))(@smithy/signature-v4@5.7.5)(google-auth-library@10.9.1(supports-color@10.2.2))(supports-color@10.2.2)(undici@7.30.2)(ws@8.22.1)(zod@4.6.7)':
     dependencies:
       '@anthropic-ai/sdk': 0.129.0(zod@4.6.7)
       '@aws-sdk/client-bedrock-runtime': 3.1127.0
-      '@earendil-works/pi-schema': 1.6.0
-      '@earendil-works/pi-telemetry': 1.6.0
-      '@google/genai': 2.32.0(@modelcontextprotocol/sdk@1.32.2(@cfworker/json-schema@4.1.6)(supports-color@10.2.2)(zod@4.6.7))(supports-color@10.2.2)
+      '@aws-sdk/credential-provider-node': 3.972.82
+      '@earendil-works/pi-schema': 1.6.1
+      '@earendil-works/pi-telemetry': 1.6.1
+      '@google/genai': 3.6.1(@modelcontextprotocol/sdk@1.32.2(@cfworker/json-schema@4.1.6)(supports-color@10.2.2)(zod@4.6.7))(supports-color@10.2.2)
       '@smithy/node-http-handler': 4.12.1
       http-proxy-agent: 9.1.0(supports-color@10.2.2)
       https-proxy-agent: 9.1.0(supports-color@10.2.2)
-      openai: 7.59.0(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.5)(google-auth-library@10.9.1(supports-color@10.2.2))(undici@7.30.2)(ws@8.22.1)(zod@4.6.7)
+      openai: 7.59.0(@aws-sdk/credential-provider-node@3.972.82)(@smithy/signature-v4@5.7.5)(google-auth-library@10.9.1(supports-color@10.2.2))(undici@7.30.2)(ws@8.22.1)(zod@4.6.7)
       partial-json: 0.1.7
     transitivePeerDependencies:
-      - '@aws-sdk/credential-provider-node'
       - '@modelcontextprotocol/sdk'
       - '@smithy/hash-node'
       - '@smithy/signature-v4'
@@ -19371,21 +19371,20 @@ snapshots:
       - ws
       - zod
 
-  '@earendil-works/pi-codemode@1.6.0':
+  '@earendil-works/pi-codemode@1.6.1':
     dependencies:
       quickjs-wasi: 3.6.2
 
-  '@earendil-works/pi-durable@1.6.0(@aws-sdk/credential-provider-node@3.972.84)(@modelcontextprotocol/sdk@1.32.2(@cfworker/json-schema@4.1.6)(supports-color@10.2.2)(zod@4.6.7))(@smithy/signature-v4@5.7.5)(esbuild@0.28.1)(google-auth-library@10.9.1(supports-color@10.2.2))(react@19.3.1)(supports-color@10.2.2)(undici@7.30.2)(ws@8.22.1)(zod@4.6.7)':
+  '@earendil-works/pi-durable@1.6.1(@modelcontextprotocol/sdk@1.32.2(@cfworker/json-schema@4.1.6)(supports-color@10.2.2)(zod@4.6.7))(@smithy/signature-v4@5.7.5)(esbuild@0.28.1)(google-auth-library@10.9.1(supports-color@10.2.2))(react@19.3.1)(supports-color@10.2.2)(undici@7.30.2)(ws@8.22.1)(zod@4.6.7)':
     dependencies:
-      '@earendil-works/chord': 1.6.0(esbuild@0.28.1)(react@19.3.1)(ws@8.22.1)
-      '@earendil-works/pi-ai': 1.6.0(@aws-sdk/credential-provider-node@3.972.84)(@modelcontextprotocol/sdk@1.32.2(@cfworker/json-schema@4.1.6)(supports-color@10.2.2)(zod@4.6.7))(@smithy/signature-v4@5.7.5)(google-auth-library@10.9.1(supports-color@10.2.2))(supports-color@10.2.2)(undici@7.30.2)(ws@8.22.1)(zod@4.6.7)
-      '@earendil-works/pi-codemode': 1.6.0
-      '@earendil-works/pi-schema': 1.6.0
-      '@earendil-works/pi-telemetry': 1.6.0
+      '@earendil-works/chord': 1.6.1(esbuild@0.28.1)(react@19.3.1)(ws@8.22.1)
+      '@earendil-works/pi-ai': 1.6.1(@modelcontextprotocol/sdk@1.32.2(@cfworker/json-schema@4.1.6)(supports-color@10.2.2)(zod@4.6.7))(@smithy/signature-v4@5.7.5)(google-auth-library@10.9.1(supports-color@10.2.2))(supports-color@10.2.2)(undici@7.30.2)(ws@8.22.1)(zod@4.6.7)
+      '@earendil-works/pi-codemode': 1.6.1
+      '@earendil-works/pi-schema': 1.6.1
+      '@earendil-works/pi-telemetry': 1.6.1
       '@silvia-odwyer/photon': 0.3.3
       diff: 8.0.4
     transitivePeerDependencies:
-      - '@aws-sdk/credential-provider-node'
       - '@modelcontextprotocol/sdk'
       - '@smithy/hash-node'
       - '@smithy/signature-v4'
@@ -19400,9 +19399,9 @@ snapshots:
       - ws
       - zod
 
-  '@earendil-works/pi-schema@1.6.0': {}
+  '@earendil-works/pi-schema@1.6.1': {}
 
-  '@earendil-works/pi-telemetry@1.6.0': {}
+  '@earendil-works/pi-telemetry@1.6.1': {}
 
   '@effect/ai-openrouter@4.1.7(effect@4.1.7)':
     dependencies:
@@ -19824,7 +19823,7 @@ snapshots:
 
   '@glideapps/ts-necessities@2.2.3': {}
 
-  '@google/genai@2.32.0(@modelcontextprotocol/sdk@1.32.2(@cfworker/json-schema@4.1.6)(supports-color@10.2.2)(zod@4.6.7))(supports-color@10.2.2)':
+  '@google/genai@3.6.1(@modelcontextprotocol/sdk@1.32.2(@cfworker/json-schema@4.1.6)(supports-color@10.2.2)(zod@4.6.7))(supports-color@10.2.2)':
     dependencies:
       google-auth-library: 10.9.1(supports-color@10.2.2)
       p-retry: 4.6.2
@@ -21659,14 +21658,14 @@ snapshots:
       - redis
       - utf-8-validate
 
-  '@r_masseater/i68@0.2.0(29ae4a4d84adc84ea32ff9e9e90a0ab3)':
+  '@r_masseater/i68@0.2.0(0d20a2964aec585dff96090cc2f94162)':
     dependencies:
       '@effect/platform-node': 4.1.7(effect@4.1.7)(redis@6.2.1(@opentelemetry/api@1.10.0))
       '@r_masseater/song-format': 0.2.0(817be6c7dbe153ec1b2a9f3d78987565)
       effect: 4.1.7
       vite-plus: 1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.10)(@vitest/browser-playwright@5.1.1)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.10)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
     optionalDependencies:
-      tonal: 6.9.0
+      tonal: 6.10.0
       vite: '@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)'
     transitivePeerDependencies:
       - '@effect/platform-node-shared'
@@ -21797,7 +21796,7 @@ snapshots:
       fast-xml-parser: 5.12.1
       langium: 4.4.2
       midi-file: 1.2.4
-      tonal: 6.9.0
+      tonal: 6.10.0
       vite-plus: 1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.10)(@vitest/browser-playwright@5.1.1)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.10)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
       vscode-languageserver: 11.0.1
     optionalDependencies:
@@ -24516,7 +24515,7 @@ snapshots:
       '@tonaljs/pcset': 4.10.6
       '@tonaljs/pitch-interval': 6.3.0
 
-  '@tonaljs/chord@6.4.0':
+  '@tonaljs/chord@6.5.0':
     dependencies:
       '@tonaljs/chord-detect': 4.11.0
       '@tonaljs/chord-type': 5.4.0
@@ -24595,9 +24594,9 @@ snapshots:
 
   '@tonaljs/pitch@5.0.3': {}
 
-  '@tonaljs/progression@4.11.3':
+  '@tonaljs/progression@4.11.4':
     dependencies:
-      '@tonaljs/chord': 6.4.0
+      '@tonaljs/chord': 6.5.0
       '@tonaljs/chord-type': 5.4.0
       '@tonaljs/pitch-distance': 5.1.1
       '@tonaljs/pitch-interval': 6.3.0
@@ -24621,9 +24620,9 @@ snapshots:
     dependencies:
       '@tonaljs/pcset': 4.10.6
 
-  '@tonaljs/scale@4.15.0':
+  '@tonaljs/scale@4.15.1':
     dependencies:
-      '@tonaljs/chord': 6.4.0
+      '@tonaljs/chord': 6.5.0
       '@tonaljs/chord-detect': 4.11.0
       '@tonaljs/chord-type': 5.4.0
       '@tonaljs/collection': 4.9.2
@@ -24635,24 +24634,24 @@ snapshots:
 
   '@tonaljs/time-signature@4.10.2': {}
 
-  '@tonaljs/voice-leading@5.1.8':
+  '@tonaljs/voice-leading@5.2.0':
     dependencies:
       '@tonaljs/note': 4.12.7
 
-  '@tonaljs/voicing-dictionary@5.1.10':
+  '@tonaljs/voicing-dictionary@5.1.11':
     dependencies:
-      '@tonaljs/chord': 6.4.0
+      '@tonaljs/chord': 6.5.0
       '@tonaljs/note': 4.12.7
-      '@tonaljs/voice-leading': 5.1.8
+      '@tonaljs/voice-leading': 5.2.0
 
-  '@tonaljs/voicing@5.2.3':
+  '@tonaljs/voicing@5.3.0':
     dependencies:
-      '@tonaljs/chord': 6.4.0
+      '@tonaljs/chord': 6.5.0
       '@tonaljs/interval': 5.2.0
       '@tonaljs/note': 4.12.7
       '@tonaljs/range': 4.9.8
-      '@tonaljs/voice-leading': 5.1.8
-      '@tonaljs/voicing-dictionary': 5.1.10
+      '@tonaljs/voice-leading': 5.2.0
+      '@tonaljs/voicing-dictionary': 5.1.11
 
   '@tsrs/darwin-arm64@7.1.0-beta.tsrs4':
     optional: true
@@ -25397,7 +25396,7 @@ snapshots:
 
   agent-base@9.0.0: {}
 
-  agents@0.34.0(0355d33e30012b127f3fca7f0a9cf165):
+  agents@0.34.0(e854283d23f553495cc5b48c0094692e):
     dependencies:
       '@babel/plugin-proposal-decorators': 8.0.2(@babel/core@8.1.0)
       '@cfworker/json-schema': 4.1.6
@@ -25413,10 +25412,10 @@ snapshots:
       yaml: 2.9.1
       zod: 4.6.7
     optionalDependencies:
-      '@earendil-works/chord': 1.6.0(esbuild@0.28.1)(react@19.3.1)(ws@8.22.1)
-      '@earendil-works/pi-ai': 1.6.0(@aws-sdk/credential-provider-node@3.972.84)(@modelcontextprotocol/sdk@1.32.2(@cfworker/json-schema@4.1.6)(supports-color@10.2.2)(zod@4.6.7))(@smithy/signature-v4@5.7.5)(google-auth-library@10.9.1(supports-color@10.2.2))(supports-color@10.2.2)(undici@7.30.2)(ws@8.22.1)(zod@4.6.7)
-      '@earendil-works/pi-durable': 1.6.0(@aws-sdk/credential-provider-node@3.972.84)(@modelcontextprotocol/sdk@1.32.2(@cfworker/json-schema@4.1.6)(supports-color@10.2.2)(zod@4.6.7))(@smithy/signature-v4@5.7.5)(esbuild@0.28.1)(google-auth-library@10.9.1(supports-color@10.2.2))(react@19.3.1)(supports-color@10.2.2)(undici@7.30.2)(ws@8.22.1)(zod@4.6.7)
-      '@earendil-works/pi-schema': 1.6.0
+      '@earendil-works/chord': 1.6.1(esbuild@0.28.1)(react@19.3.1)(ws@8.22.1)
+      '@earendil-works/pi-ai': 1.6.1(@modelcontextprotocol/sdk@1.32.2(@cfworker/json-schema@4.1.6)(supports-color@10.2.2)(zod@4.6.7))(@smithy/signature-v4@5.7.5)(google-auth-library@10.9.1(supports-color@10.2.2))(supports-color@10.2.2)(undici@7.30.2)(ws@8.22.1)(zod@4.6.7)
+      '@earendil-works/pi-durable': 1.6.1(@modelcontextprotocol/sdk@1.32.2(@cfworker/json-schema@4.1.6)(supports-color@10.2.2)(zod@4.6.7))(@smithy/signature-v4@5.7.5)(esbuild@0.28.1)(google-auth-library@10.9.1(supports-color@10.2.2))(react@19.3.1)(supports-color@10.2.2)(undici@7.30.2)(ws@8.22.1)(zod@4.6.7)
+      '@earendil-works/pi-schema': 1.6.1
       '@modelcontextprotocol/sdk': 1.32.2(@cfworker/json-schema@4.1.6)(supports-color@10.2.2)(zod@4.6.7)
       '@modelcontextprotocol/server': 2.4.0
       react: 19.3.1
@@ -28978,9 +28977,9 @@ snapshots:
       is-docker: 2.2.1
       is-wsl: 2.2.0
 
-  openai@7.59.0(@aws-sdk/credential-provider-node@3.972.84)(@smithy/signature-v4@5.7.5)(google-auth-library@10.9.1(supports-color@10.2.2))(undici@7.30.2)(ws@8.22.1)(zod@4.6.7):
+  openai@7.59.0(@aws-sdk/credential-provider-node@3.972.82)(@smithy/signature-v4@5.7.5)(google-auth-library@10.9.1(supports-color@10.2.2))(undici@7.30.2)(ws@8.22.1)(zod@4.6.7):
     optionalDependencies:
-      '@aws-sdk/credential-provider-node': 3.972.84
+      '@aws-sdk/credential-provider-node': 3.972.82
       '@smithy/signature-v4': 5.7.5
       google-auth-library: 10.9.1(supports-color@10.2.2)
       undici: 7.30.2
@@ -30789,11 +30788,11 @@ snapshots:
     dependencies:
       eslint-visitor-keys: 5.0.1
 
-  tonal@6.9.0:
+  tonal@6.10.0:
     dependencies:
       '@tonaljs/abc-notation': 4.9.5
       '@tonaljs/array': 4.8.7
-      '@tonaljs/chord': 6.4.0
+      '@tonaljs/chord': 6.5.0
       '@tonaljs/chord-type': 5.4.0
       '@tonaljs/collection': 4.9.2
       '@tonaljs/core': 5.0.6
@@ -30804,16 +30803,16 @@ snapshots:
       '@tonaljs/mode': 4.9.8
       '@tonaljs/note': 4.12.7
       '@tonaljs/pcset': 4.10.6
-      '@tonaljs/progression': 4.11.3
+      '@tonaljs/progression': 4.11.4
       '@tonaljs/range': 4.9.8
       '@tonaljs/rhythm-pattern': 1.0.2
       '@tonaljs/roman-numeral': 4.10.1
-      '@tonaljs/scale': 4.15.0
+      '@tonaljs/scale': 4.15.1
       '@tonaljs/scale-type': 4.10.0
       '@tonaljs/time-signature': 4.10.2
-      '@tonaljs/voice-leading': 5.1.8
-      '@tonaljs/voicing': 5.2.3
-      '@tonaljs/voicing-dictionary': 5.1.10
+      '@tonaljs/voice-leading': 5.2.0
+      '@tonaljs/voicing': 5.3.0
+      '@tonaljs/voicing-dictionary': 5.1.11
 
   totalist@3.0.1: {}
 

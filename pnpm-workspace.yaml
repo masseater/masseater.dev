@@ -47,7 +47,7 @@ catalog:
   lighthouse: 13.6.0
   miniflare: 4.20260730.0
   puppeteer-core: 25.18.1
-  tonal: 6.9.0
+  tonal: 6.10.0
   "@fontsource/m-plus-rounded-1c": 5.3.0
   "@codemirror/autocomplete": 6.20.4
   "@codemirror/commands": 6.11.2
@@ -226,10 +226,10 @@ catalog:
   "@types/dom-speech-recognition": 0.0.12
   oauth4webapi: 3.8.9
   agents: 0.34.0
-  "@earendil-works/pi-ai": 1.6.0
-  "@earendil-works/pi-durable": 1.6.0
-  "@earendil-works/pi-schema": 1.6.0
-  "@earendil-works/chord": 1.6.0
+  "@earendil-works/pi-ai": 1.6.1
+  "@earendil-works/pi-durable": 1.6.1
+  "@earendil-works/pi-schema": 1.6.1
+  "@earendil-works/chord": 1.6.1
   "@types/sshpk": 1.17.5
   sshpk: 1.18.0
   dejavu-fonts-ttf: 2.37.3
