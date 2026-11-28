@@ -1,1 +1,1 @@
-vp run verify
+node tools/lap/bin/lap.ts pre-push -- vp run verify

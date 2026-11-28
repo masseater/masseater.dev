@@ -1,2 +1,2 @@
-GOMEMLIMIT=4GiB vp staged
-vp exec msch --staged
+node tools/lap/bin/lap.ts staged -- env GOMEMLIMIT=4GiB vp staged
+node tools/lap/bin/lap.ts msch-staged -- vp exec msch --staged
