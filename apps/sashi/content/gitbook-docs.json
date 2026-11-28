@@ -1,0 +1,8 @@
+{
+  "slug": "gitbook-docs",
+  "title": "GitBook のドキュメント",
+  "kind": "site",
+  "url": "https://gitbook.com/docs/",
+  "note": "サイドバーの項目ごとに別ページになる、ドキュメントの見せ方の基準",
+  "date": "2026-11-28"
+}
