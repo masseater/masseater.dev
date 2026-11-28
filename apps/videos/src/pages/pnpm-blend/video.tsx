@@ -1,12 +1,12 @@
-import type { Draw, Look, Shot } from "@masseater.dev/video-kit";
-import { Caption, Picture, Sfx, Terminal, imageOf } from "@masseater.dev/video-kit";
+import type { Draw, Look, Shot, Timeline } from "@masseater.dev/video-kit";
+import { Caption, Picture, PsdNarrator, Sfx, Terminal, imageOf } from "@masseater.dev/video-kit";
 import { FPS } from "@masseater.dev/video-kit/script";
 import type { SfxKind } from "@masseater.dev/video-kit/script";
 import { Array as Arr, Option, Record as Rec, pipe } from "effect";
 import type { ReactNode } from "react";
 import { AbsoluteFill, Easing, Img, interpolate, staticFile, useCurrentFrame } from "remotion";
 
-import { tachiePath } from "#/shared/config/index.ts";
+import { tachiePath, tachiePsdPath } from "#/shared/config/index.ts";
 import { pick } from "#/shared/lib/pick.ts";
 
 import { INTRO_STEPS } from "./script.ts";
@@ -77,13 +77,25 @@ const Panel = ({ shot, name }: Readonly<{ shot: Shot; name: string }>): ReactNod
   );
 };
 
-const Board = (): ReactNode => (
+const PARTS = [
+  { kind: "blink", closed: "v1.!目/*閉じ", open: "v1.!目/*基本目セット" },
+  {
+    kind: "volume-mouth",
+    closed: "v1.!口/*ほほえみ",
+    half: "v1.!口/*お",
+    open: "v1.!口/*わあ",
+  },
+] as const;
+
+const Board = ({ timeline }: Readonly<{ timeline: Timeline }>): ReactNode => (
   <AbsoluteFill className="bg-[#285a41]">
     <div className="absolute inset-x-0 top-[64px] h-[18px] bg-[#9a5a33]" />
     <div className="absolute inset-x-0 top-0 bottom-[28px] overflow-hidden">
-      <Img
-        className="absolute top-[1076px] left-[366px] w-[1000px] max-w-none"
-        src={staticFile(tachiePath(TACHIE))}
+      <PsdNarrator
+        className="top-[1076px] left-[366px] h-[1682px] w-[1000px]"
+        parts={PARTS}
+        psd={staticFile(tachiePsdPath(TACHIE))}
+        timeline={timeline}
       />
     </div>
     <div className="absolute inset-x-0 bottom-0 h-[28px] bg-[#9a5a33]" />
@@ -539,7 +551,7 @@ const OldTool = (): ReactNode => {
 };
 
 export const look: Partial<Look> = {
-  backdrop: () => <Board />,
+  backdrop: (timeline) => <Board timeline={timeline} />,
   overlay: () => "",
   frame: (shot, content) => (
     <>

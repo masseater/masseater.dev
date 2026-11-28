@@ -14,6 +14,7 @@ export {
   Character,
   Footage,
   Picture,
+  PsdNarrator,
   ShotPicture,
   Shout,
   TitleBar,
