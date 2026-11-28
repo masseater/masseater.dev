@@ -4,6 +4,9 @@
 @source "../shared/ui/titled.tsx";
 @source "../shared/ui/table";
 @source "../shared/lib/button-variants.ts";
+@source "../shared/lib/table-class.ts";
+@source "../shared/lib/input-class.ts";
+@source "../shared/lib/native-select-class.ts";
 
 :root {
   --background: oklch(1 0 0);

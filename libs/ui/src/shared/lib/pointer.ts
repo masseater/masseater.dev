@@ -1,10 +1,16 @@
-import type { PointerEventHandler } from "react";
-
 const CENTER = "0.5";
 const POINTER_ATTRIBUTE = "data-pointer";
 const STAGE_LAYER = "[data-stage-layer]";
 
 type RectSide = "left" | "top" | "width" | "height";
+
+export type PointerSource = Readonly<{
+  currentTarget: HTMLElement;
+  clientX: number;
+  clientY: number;
+}>;
+
+export type PointerStage = Readonly<{ currentTarget: HTMLElement }>;
 
 type Locate = (
   pointer: Readonly<{ clientX: number; clientY: number; rect: Readonly<Record<RectSide, number>> }>,
@@ -28,8 +34,8 @@ const place = (
 };
 
 const pointerFollower =
-  (locate: Locate, targets: Targets): PointerEventHandler<HTMLElement> =>
-  (event) => {
+  (locate: Locate, targets: Targets) =>
+  (event: PointerSource): void => {
     const { left, top, width, height } = event.currentTarget.getBoundingClientRect();
     const { ratioX, ratioY } = locate({
       clientX: event.clientX,
@@ -44,8 +50,8 @@ const pointerFollower =
   };
 
 const pointerReleaser =
-  (targets: Targets): PointerEventHandler<HTMLElement> =>
-  ({ currentTarget }) => {
+  (targets: Targets) =>
+  ({ currentTarget }: PointerStage): void => {
     place(targets(currentTarget), { active: false, ratioX: CENTER, ratioY: CENTER });
   };
 

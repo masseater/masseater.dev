@@ -1,3 +1,4 @@
+import { plugin as effectUi } from "@effect/ui/html/HtmlServerVite";
 import tailwindcss from "@tailwindcss/vite";
 import { devtools } from "@tanstack/devtools-vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
@@ -19,39 +20,48 @@ export interface SiteOptions {
   readonly locked: readonly BuildInput[];
 }
 
+export type EffectUiSiteOptions = Omit<SiteOptions, "searchIndexOrigin"> &
+  Readonly<{ entry: string }>;
+
 const SITEMAP_FILE = "sitemap.xml";
 
-export const startSiteConfig = ({
+const siteConfig = ({
   basePath,
-  searchIndexOrigin,
   assetHeaderArgs,
   locked,
-}: SiteOptions): UserConfig =>
-  defineConfig({
-    base: `${basePath}/`,
-    run: {
-      tasks: {
-        dev: { command: "alchemy dev", cache: false },
-        build: {
-          command: `vp build && write-asset-headers ${assetHeaderArgs}`,
-          cache: { input: [...locked] },
-        },
-        deploy: { command: "alchemy deploy", cache: false },
-        "deploy:production": {
-          command: "alchemy deploy --stage production --yes",
-          cache: false,
-        },
-        destroy: { command: "alchemy destroy", cache: false },
+}: Omit<SiteOptions, "searchIndexOrigin">): Pick<
+  UserConfig,
+  "base" | "environments" | "preview" | "run" | "test"
+> => ({
+  base: `${basePath}/`,
+  run: {
+    tasks: {
+      dev: { command: "alchemy dev", cache: false },
+      build: {
+        command: `vp build && write-asset-headers ${assetHeaderArgs}`,
+        cache: { input: [...locked] },
       },
+      deploy: { command: "alchemy deploy", cache: false },
+      "deploy:production": {
+        command: "alchemy deploy --stage production --yes",
+        cache: false,
+      },
+      destroy: { command: "alchemy destroy", cache: false },
     },
-    preview: { host: "127.0.0.1" },
-    environments: { client: { build: { outDir: `dist/client${basePath}` } } },
-    test: {
-      projects: [
-        { extends: false, test: { name: "app", include: ["src/**/*.test.{ts,tsx}"] } },
-        { extends: false, test: { name: "alchemy", include: ["*.test.ts"] } },
-      ],
-    },
+  },
+  preview: { host: "127.0.0.1" },
+  environments: { client: { build: { outDir: `dist/client${basePath}` } } },
+  test: {
+    projects: [
+      { extends: false, test: { name: "app", include: ["src/**/*.test.{ts,tsx}"] } },
+      { extends: false, test: { name: "alchemy", include: ["*.test.ts"] } },
+    ],
+  },
+});
+
+export const startSiteConfig = ({ searchIndexOrigin, ...options }: SiteOptions): UserConfig =>
+  defineConfig({
+    ...siteConfig(options),
     plugins: [
       devtools(),
       tailwindcss(),
@@ -68,4 +78,10 @@ export const startSiteConfig = ({
       rsc(),
       viteReact(),
     ],
+  });
+
+export const effectUiSiteConfig = ({ entry, ...options }: EffectUiSiteOptions): UserConfig =>
+  defineConfig({
+    ...siteConfig(options),
+    plugins: [tailwindcss(), effectUi({ entry })],
   });

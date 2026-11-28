@@ -32,7 +32,8 @@
           "@effect/ui",
           "@effect/ui-kit",
           "@masseater.dev/effect-ui",
-          "@masseater.dev/owner-auth"
+          "@masseater.dev/owner-auth",
+          "ocr-decide"
         ],
         "allowedUnstableApis": [
           "@effect/ai-openrouter",

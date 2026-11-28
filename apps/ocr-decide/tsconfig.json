@@ -4,6 +4,6 @@
   "include": ["src", "*.ts"],
   "compilerOptions": {
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
-    "types": ["vite/client", "@cloudflare/workers-types"]
+    "types": ["vite/client", "@cloudflare/workers-types", "@effect/ui/html/HtmlServerViteDocument"]
   }
 }

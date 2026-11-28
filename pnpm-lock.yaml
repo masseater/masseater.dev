@@ -412,8 +412,8 @@ catalogs:
       specifier: 0.1.0
       version: 0.1.0
     '@r_masseater/msch':
-      specifier: 0.65.0
-      version: 0.65.0
+      specifier: 0.65.1
+      version: 0.65.1
     '@r_masseater/node-main':
       specifier: 0.1.0
       version: 0.1.0
@@ -678,6 +678,9 @@ catalogs:
     linguist-languages:
       specifier: 9.5.0
       version: 9.5.0
+    lucide:
+      specifier: 1.83.0
+      version: 1.83.0
     lucide-react:
       specifier: 1.80.0
       version: 1.80.0
@@ -973,7 +976,7 @@ importers:
         version: 0.73.7
       '@r_masseater/msch':
         specifier: 'catalog:'
-        version: 0.65.0(090e7736fc403159371a301fbb18c8e9)
+        version: 0.65.1(090e7736fc403159371a301fbb18c8e9)
       '@r_masseater/workers-tracing':
         specifier: workspace:*
         version: link:libs/workers-tracing
@@ -1113,7 +1116,7 @@ importers:
         version: link:../../infra/tauri-app
       '@r_masseater/msch':
         specifier: 'catalog:'
-        version: 0.65.0(090e7736fc403159371a301fbb18c8e9)
+        version: 0.65.1(090e7736fc403159371a301fbb18c8e9)
       '@tauri-apps/cli':
         specifier: 'catalog:'
         version: 2.12.6
@@ -1344,7 +1347,7 @@ importers:
         version: link:../../infra/tauri-app
       '@r_masseater/msch':
         specifier: 'catalog:'
-        version: 0.65.0(090e7736fc403159371a301fbb18c8e9)
+        version: 0.65.1(090e7736fc403159371a301fbb18c8e9)
       '@tauri-apps/cli':
         specifier: 'catalog:'
         version: 2.12.6
@@ -2009,45 +2012,27 @@ importers:
 
   apps/ocr-decide:
     dependencies:
-      '@effect/atom-react':
-        specifier: catalog:stack
-        version: 4.1.7(effect@4.1.7)(react@19.3.1)(scheduler@0.28.0)
+      '@effect/ui':
+        specifier: 'catalog:'
+        version: https://pkg.pr.new/Effect-TS/ui/@effect/ui@7922dfd(effect@4.1.7)
+      '@masseater.dev/effect-ui':
+        specifier: workspace:*
+        version: link:../../libs/effect-ui
       '@masseater.dev/ui':
         specifier: workspace:*
         version: link:../../libs/ui
-      '@masseater.dev/web-ui':
-        specifier: workspace:*
-        version: link:../../libs/web-ui
       '@ocr-decide/measurements':
         specifier: workspace:*
         version: link:../../libs/ocr-measurements
       '@r_masseater/ocr-decide':
         specifier: workspace:*
         version: link:../../libs/ocr-decide
-      '@tanstack/react-query':
-        specifier: catalog:stack
-        version: 5.108.4(@types/react@19.3.2)(react@19.3.1)
-      '@tanstack/react-router':
-        specifier: 'catalog:'
-        version: 1.170.46(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
-      '@tanstack/react-start':
-        specifier: catalog:stack
-        version: 1.169.7(@rspack/core@2.3.0(@swc/helpers@0.5.23))(@vitejs/plugin-rsc@0.5.39(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(esbuild@0.28.1)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(rolldown@1.2.16)(rollup@4.64.5)(supports-color@10.2.2)(webpack@5.105.0(esbuild@0.28.1)(lightningcss@1.33.0)(postcss@8.5.32)(uglify-js@3.19.3))
       effect:
         specifier: catalog:stack
         version: 4.1.7
-      lucide-react:
+      lucide:
         specifier: 'catalog:'
-        version: 1.80.0(@types/react@19.3.2)(react@19.3.1)
-      react:
-        specifier: 'catalog:'
-        version: 19.3.1
-      react-dom:
-        specifier: 'catalog:'
-        version: 19.3.1(react@19.3.1)
-      scheduler:
-        specifier: 'catalog:'
-        version: 0.28.0
+        version: 1.83.0
       tailwindcss:
         specifier: catalog:stack
         version: 4.3.5
@@ -2064,27 +2049,21 @@ importers:
       '@effect/tsgo':
         specifier: catalog:stack
         version: 0.73.7
+      '@effect/vitest':
+        specifier: 'catalog:'
+        version: 4.1.7(effect@4.1.7)(vitest@5.1.1)
       '@masseater.dev/cloudflare-account':
         specifier: workspace:*
         version: link:../../infra/cloudflare-account
       '@masseater.dev/start-site':
         specifier: workspace:*
         version: link:../../infra/start-site
-      '@types/react':
-        specifier: 'catalog:'
-        version: 19.3.2
-      '@types/react-dom':
-        specifier: 'catalog:'
-        version: 19.3.0(@types/react@19.3.2)
-      '@vitejs/plugin-react':
-        specifier: 'catalog:'
-        version: 6.3.0(@rolldown/plugin-babel@0.2.4(@babel/core@8.1.0)(@babel/runtime@7.29.7)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(rolldown@1.2.16))(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))
-      '@vitejs/plugin-rsc':
-        specifier: 'catalog:'
-        version: 0.5.39(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       alchemy:
         specifier: catalog:stack
         version: 2.0.0-beta.87(@effect/platform-node@4.1.7(effect@4.1.7)(redis@6.2.1(@opentelemetry/api@1.10.0)))(@types/react@19.3.2)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(effect@4.1.7)(ws@8.22.1)
+      happy-dom:
+        specifier: 'catalog:'
+        version: 21.0.4
       typescript:
         specifier: catalog:stack
         version: 7.1.0-beta
@@ -2102,7 +2081,7 @@ importers:
         version: link:../../libs/component-release
       '@r_masseater/msch':
         specifier: 'catalog:'
-        version: 0.65.0(090e7736fc403159371a301fbb18c8e9)
+        version: 0.65.1(090e7736fc403159371a301fbb18c8e9)
       '@r_masseater/node-main':
         specifier: 'catalog:'
         version: 0.1.0(effect@4.1.7)(redis@6.2.1(@opentelemetry/api@1.10.0))
@@ -2671,7 +2650,7 @@ importers:
         version: link:../../infra/tauri-app
       '@r_masseater/msch':
         specifier: 'catalog:'
-        version: 0.65.0(090e7736fc403159371a301fbb18c8e9)
+        version: 0.65.1(090e7736fc403159371a301fbb18c8e9)
       '@tauri-apps/cli':
         specifier: 'catalog:'
         version: 2.12.6
@@ -3183,7 +3162,7 @@ importers:
         version: link:../../infra/tauri-app
       '@r_masseater/msch':
         specifier: 'catalog:'
-        version: 0.65.0(090e7736fc403159371a301fbb18c8e9)
+        version: 0.65.1(090e7736fc403159371a301fbb18c8e9)
       '@r_masseater/node-main':
         specifier: 'catalog:'
         version: 0.1.0(effect@4.1.7)(redis@6.2.1(@opentelemetry/api@1.10.0))
@@ -3265,7 +3244,7 @@ importers:
         version: link:../../infra/tauri-app
       '@r_masseater/msch':
         specifier: 'catalog:'
-        version: 0.65.0(090e7736fc403159371a301fbb18c8e9)
+        version: 0.65.1(090e7736fc403159371a301fbb18c8e9)
       '@tauri-apps/cli':
         specifier: 'catalog:'
         version: 2.12.6
@@ -3359,7 +3338,7 @@ importers:
         version: link:../../infra/tauri-app
       '@r_masseater/msch':
         specifier: 'catalog:'
-        version: 0.65.0(090e7736fc403159371a301fbb18c8e9)
+        version: 0.65.1(090e7736fc403159371a301fbb18c8e9)
       '@r_masseater/node-main':
         specifier: 'catalog:'
         version: 0.1.0(effect@4.1.7)(redis@6.2.1(@opentelemetry/api@1.10.0))
@@ -3583,6 +3562,9 @@ importers:
       '@effect/platform-node':
         specifier: 'catalog:'
         version: 4.1.7(effect@4.1.7)(redis@6.2.1(@opentelemetry/api@1.10.0))
+      '@effect/ui':
+        specifier: 'catalog:'
+        version: https://pkg.pr.new/Effect-TS/ui/@effect/ui@7922dfd(effect@4.1.7)
       '@masseater.dev/ui':
         specifier: workspace:*
         version: link:../../libs/ui
@@ -3631,7 +3613,7 @@ importers:
         version: link:../../libs/browser-test
       '@r_masseater/msch':
         specifier: 'catalog:'
-        version: 0.65.0(090e7736fc403159371a301fbb18c8e9)
+        version: 0.65.1(090e7736fc403159371a301fbb18c8e9)
       '@tailwindcss/vite':
         specifier: 'catalog:'
         version: 4.3.5(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))
@@ -3662,7 +3644,7 @@ importers:
     devDependencies:
       '@r_masseater/msch':
         specifier: 'catalog:'
-        version: 0.65.0(090e7736fc403159371a301fbb18c8e9)
+        version: 0.65.1(090e7736fc403159371a301fbb18c8e9)
       vite-plus:
         specifier: catalog:stack
         version: 1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.10)(@vitest/browser-playwright@5.1.1)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.10)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
@@ -3755,7 +3737,7 @@ importers:
     devDependencies:
       '@r_masseater/msch':
         specifier: 'catalog:'
-        version: 0.65.0(090e7736fc403159371a301fbb18c8e9)
+        version: 0.65.1(090e7736fc403159371a301fbb18c8e9)
       vite-plus:
         specifier: catalog:stack
         version: 1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.10)(@vitest/browser-playwright@5.1.1)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.10)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
@@ -3808,9 +3790,15 @@ importers:
       '@masseater.dev/ui':
         specifier: workspace:*
         version: link:../ui
+      '@paper-design/shaders':
+        specifier: 'catalog:'
+        version: 0.0.82
       class-variance-authority:
         specifier: 'catalog:'
         version: 0.7.1
+      lucide:
+        specifier: 'catalog:'
+        version: 1.83.0
     devDependencies:
       '@effect/vitest':
         specifier: 'catalog:'
@@ -3854,7 +3842,7 @@ importers:
         version: 4.1.7(effect@4.1.7)(vitest@5.1.1)
       '@r_masseater/msch':
         specifier: 'catalog:'
-        version: 0.65.0(090e7736fc403159371a301fbb18c8e9)
+        version: 0.65.1(090e7736fc403159371a301fbb18c8e9)
       vite-plus:
         specifier: catalog:stack
         version: 1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.10)(@vitest/browser-playwright@5.1.1)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.10)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
@@ -4110,7 +4098,7 @@ importers:
     devDependencies:
       '@r_masseater/msch':
         specifier: 'catalog:'
-        version: 0.65.0(090e7736fc403159371a301fbb18c8e9)
+        version: 0.65.1(090e7736fc403159371a301fbb18c8e9)
       vite-plus:
         specifier: catalog:stack
         version: 1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.10)(@vitest/browser-playwright@5.1.1)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.10)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
@@ -4286,7 +4274,7 @@ importers:
         version: 0.73.7
       '@r_masseater/msch':
         specifier: 'catalog:'
-        version: 0.65.0(090e7736fc403159371a301fbb18c8e9)
+        version: 0.65.1(090e7736fc403159371a301fbb18c8e9)
       '@types/node':
         specifier: 'catalog:'
         version: 26.6.10
@@ -4310,7 +4298,7 @@ importers:
     devDependencies:
       '@r_masseater/msch':
         specifier: 'catalog:'
-        version: 0.65.0(090e7736fc403159371a301fbb18c8e9)
+        version: 0.65.1(090e7736fc403159371a301fbb18c8e9)
       vite-plus:
         specifier: catalog:stack
         version: 1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.10)(@vitest/browser-playwright@5.1.1)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.10)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
@@ -5014,7 +5002,7 @@ importers:
     devDependencies:
       '@r_masseater/msch':
         specifier: 'catalog:'
-        version: 0.65.0(090e7736fc403159371a301fbb18c8e9)
+        version: 0.65.1(090e7736fc403159371a301fbb18c8e9)
       vite-plus:
         specifier: catalog:stack
         version: 1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.10)(@vitest/browser-playwright@5.1.1)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.10)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
@@ -5116,7 +5104,7 @@ importers:
     devDependencies:
       '@r_masseater/msch':
         specifier: 'catalog:'
-        version: 0.65.0(090e7736fc403159371a301fbb18c8e9)
+        version: 0.65.1(090e7736fc403159371a301fbb18c8e9)
       vite-plus:
         specifier: catalog:stack
         version: 1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.10)(@vitest/browser-playwright@5.1.1)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.10)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
@@ -5199,7 +5187,7 @@ importers:
         version: 1.2.3
       '@r_masseater/msch':
         specifier: 'catalog:'
-        version: 0.65.0(090e7736fc403159371a301fbb18c8e9)
+        version: 0.65.1(090e7736fc403159371a301fbb18c8e9)
       vite-plus:
         specifier: catalog:stack
         version: 1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.10)(@vitest/browser-playwright@5.1.1)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.10)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
@@ -5277,7 +5265,7 @@ importers:
     devDependencies:
       '@r_masseater/msch':
         specifier: 'catalog:'
-        version: 0.65.0(090e7736fc403159371a301fbb18c8e9)
+        version: 0.65.1(090e7736fc403159371a301fbb18c8e9)
       vite-plus:
         specifier: catalog:stack
         version: 1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.10)(@vitest/browser-playwright@5.1.1)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.10)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
@@ -9005,8 +8993,8 @@ packages:
       effect: ^4.1.0
       vite-plus: ^1.8.0
 
-  '@r_masseater/msch@0.65.0':
-    resolution: {integrity: sha512-ogbaNt14MiY8fKaLw7iolr0kmNHXLnlJWAHLRQekq088VhbVQsUVkAm/hRdjHxyuyI3fwVIJe4r9oG4Fk80jQw==}
+  '@r_masseater/msch@0.65.1':
+    resolution: {integrity: sha512-2HpAF+jSmSGhwBreyw0HjUVmXSIf9OALh88vKQ4FIgMIQDj5nqSM/hBT3sLEW6fsClKIhCKCoYZVHEJE3GWhBQ==}
     engines: {node: '>=26.13.1'}
     hasBin: true
     peerDependencies:
@@ -9126,21 +9114,21 @@ packages:
       vite: '*'
       vite-plus: '>=1.8.0'
 
-  '@r_masseater/y8-linux-x64-gnu@0.4.1':
-    resolution: {integrity: sha512-lOFBLiQKlPHJwODAZV6VZMurNcfmhYwnjRPaijL5Uy7KNjwU8MSx0x7AA0ZU7q2Km9QGW53plKk2Hw8S/IPH4Q==}
+  '@r_masseater/y8-linux-x64-gnu@0.5.0':
+    resolution: {integrity: sha512-7Bnx5KM8365ZVpdB4Bh7tx9bcvYudC4SvXiH3r0aeKvCh9KgT28StKNCysR/FqynSifCNmtx/LUDjo4FNCEFUw==}
     engines: {node: '>=26.13.1'}
     cpu: [x64]
     os: [linux]
     libc: [glibc]
 
-  '@r_masseater/y8-win32-x64-msvc@0.4.1':
-    resolution: {integrity: sha512-t6Xl8p71ZZJ3aczRu4JDXML2iOrmARTBqw+olz8VidXLLARw+D8ZYIuUqXZBqRgi6C4vksflhYIZafWvxTL+hw==}
+  '@r_masseater/y8-win32-x64-msvc@0.5.0':
+    resolution: {integrity: sha512-GT5fULymvzg/R3S6+SjEirHDYxyVVOO1NFOsskeOPrlF6zkpSD5cQ8mVKlYl+rESq3WXz7LxwvPPtaaXOsvgJg==}
     engines: {node: '>=26.13.1'}
     cpu: [x64]
     os: [win32]
 
-  '@r_masseater/y8@0.4.1':
-    resolution: {integrity: sha512-ZKX8FcUJfc5Strxvn+TsvxvAflHQN8PS7cYIQGVfe2ZFYDM8oiJvoDVCMBDHUw1TvDlrhQFnYF9SaJ576C18Ug==}
+  '@r_masseater/y8@0.5.0':
+    resolution: {integrity: sha512-8s4O1kn9292YCnUs4y0YR08t2QhgN2B2nW/U2xyRpGxegQMUoDVZCEgaPU81WBXkzOcJpqsY8CgDlKNSgroyQw==}
     engines: {node: '>=26.13.1'}
     hasBin: true
     peerDependencies:
@@ -15280,6 +15268,9 @@ packages:
     peerDependenciesMeta:
       '@types/react':
         optional: true
+
+  lucide@1.83.0:
+    resolution: {integrity: sha512-KdqRJfmHDHSAOYyVEVWuZCsGmPaNeQzEJ1blq78YAUuXETw5IT47fCosgEFLKtlyexODoJZDWASv+LG5MoV/ZA==}
 
   lz-string@1.5.0:
     resolution: {integrity: sha512-h5bgJWpxJNswbU7qCrV0tIKQCaS3blPDrqKWx+QxzuzL1zGUzij9XCWLrSLsJPu5t+eWA/ycetzYAO5IOMcWAQ==}
@@ -21708,7 +21699,7 @@ snapshots:
       - redis
       - utf-8-validate
 
-  '@r_masseater/msch@0.65.0(090e7736fc403159371a301fbb18c8e9)':
+  '@r_masseater/msch@0.65.1(090e7736fc403159371a301fbb18c8e9)':
     dependencies:
       '@commitlint/config-conventional': 21.2.4
       '@effect/platform-node': 4.1.7(effect@4.1.7)(redis@6.2.1(@opentelemetry/api@1.10.0))
@@ -21725,10 +21716,10 @@ snapshots:
       '@r_masseater/h56m': 0.3.0(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(effect@4.1.7)(redis@6.2.1(@opentelemetry/api@1.10.0))(vite-plus@1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.10)(@vitest/browser-playwright@5.1.1)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.10)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))
       '@r_masseater/oxlint-plugin-decision': 0.8.0(@effect/platform-node-shared@4.1.7(effect@4.1.7))(effect@4.1.7)(oxlint@1.94.0(oxlint-tsgolint@7.0.2008)(vite-plus@1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.10)(@vitest/browser-playwright@5.1.1)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.10)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)))
       '@r_masseater/oxlint-typed-rules': 0.5.0(effect@4.1.7)(typescript@7.1.0-beta)
-      '@r_masseater/textlint-rule-preset-ja': 0.2.1(@r_masseater/y8@0.4.1(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(effect@4.1.7)(markdownlint@0.42.2(supports-color@10.2.2))(minimatch@11.0.9)(redis@6.2.1(@opentelemetry/api@1.10.0))(vite-plus@1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.10)(@vitest/browser-playwright@5.1.1)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.10)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)))(effect@4.1.7)(minimatch@11.0.9)
+      '@r_masseater/textlint-rule-preset-ja': 0.2.1(@r_masseater/y8@0.5.0(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(effect@4.1.7)(markdownlint@0.42.2(supports-color@10.2.2))(minimatch@11.0.9)(redis@6.2.1(@opentelemetry/api@1.10.0))(vite-plus@1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.10)(@vitest/browser-playwright@5.1.1)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.10)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)))(effect@4.1.7)(minimatch@11.0.9)
       '@r_masseater/vite-plus-adopt': 0.14.0(81184a161b079591de168de0f448aa57)
       '@r_masseater/wism': 0.4.0(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(effect@4.1.7)(redis@6.2.1(@opentelemetry/api@1.10.0))(vite-plus@1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.10)(@vitest/browser-playwright@5.1.1)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.10)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))
-      '@r_masseater/y8': 0.4.1(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(effect@4.1.7)(markdownlint@0.42.2(supports-color@10.2.2))(minimatch@11.0.9)(redis@6.2.1(@opentelemetry/api@1.10.0))(vite-plus@1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.10)(@vitest/browser-playwright@5.1.1)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.10)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))
+      '@r_masseater/y8': 0.5.0(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(effect@4.1.7)(markdownlint@0.42.2(supports-color@10.2.2))(minimatch@11.0.9)(redis@6.2.1(@opentelemetry/api@1.10.0))(vite-plus@1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.10)(@vitest/browser-playwright@5.1.1)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.10)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))
       '@shadcn/lint': 0.2.5(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))
       '@tanstack/intent': 0.5.6(patch_hash=6a437296d250871cc7a7bf8a24c623bc98963f6b76ce91ae6ef37bd765613196)
       '@textlint-ja/textlint-rule-preset-ai-writing': 1.7.2
@@ -21741,15 +21732,12 @@ snapshots:
       htmlparser2: 12.0.0
       modern-web-guidance: 1.0.2
       oxlint-plugin-eslint: 1.95.0
-      remark-parse: 11.0.0(supports-color@10.2.2)
       semver: 7.8.6
       sql-parser-cst: 0.45.0
       synckit: 0.12.3
       textlint-rule-preset-ja-technical-writing: 12.1.0(supports-color@10.2.2)
       toml-eslint-parser: 1.0.3
       typescript: 7.1.0-beta
-      unified: 11.0.5
-      unist-util-visit: 5.2.0
       vite: '@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)'
       vite-plus: 1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.10)(@vitest/browser-playwright@5.1.1)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.10)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
       yaml: 2.9.1
@@ -21806,9 +21794,9 @@ snapshots:
       '@r_masseater/mapped-import': 0.1.0(effect@4.1.7)(redis@6.2.1(@opentelemetry/api@1.10.0))(vite-plus@1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.10)(@vitest/browser-playwright@5.1.1)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.10)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))
       ts-content-mapper: 0.1.1
 
-  ? '@r_masseater/textlint-rule-preset-ja@0.2.1(@r_masseater/y8@0.4.1(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(effect@4.1.7)(markdownlint@0.42.2(supports-color@10.2.2))(minimatch@11.0.9)(redis@6.2.1(@opentelemetry/api@1.10.0))(vite-plus@1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.10)(@vitest/browser-playwright@5.1.1)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.10)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)))(effect@4.1.7)(minimatch@11.0.9)'
+  ? '@r_masseater/textlint-rule-preset-ja@0.2.1(@r_masseater/y8@0.5.0(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(effect@4.1.7)(markdownlint@0.42.2(supports-color@10.2.2))(minimatch@11.0.9)(redis@6.2.1(@opentelemetry/api@1.10.0))(vite-plus@1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.10)(@vitest/browser-playwright@5.1.1)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.10)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)))(effect@4.1.7)(minimatch@11.0.9)'
   : dependencies:
-      '@r_masseater/y8': 0.4.1(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(effect@4.1.7)(markdownlint@0.42.2(supports-color@10.2.2))(minimatch@11.0.9)(redis@6.2.1(@opentelemetry/api@1.10.0))(vite-plus@1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.10)(@vitest/browser-playwright@5.1.1)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.10)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))
+      '@r_masseater/y8': 0.5.0(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(effect@4.1.7)(markdownlint@0.42.2(supports-color@10.2.2))(minimatch@11.0.9)(redis@6.2.1(@opentelemetry/api@1.10.0))(vite-plus@1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.10)(@vitest/browser-playwright@5.1.1)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.10)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))
       effect: 4.1.7
       sentence-splitter: 5.1.0
     optionalDependencies:
@@ -21879,21 +21867,21 @@ snapshots:
       - redis
       - utf-8-validate
 
-  '@r_masseater/y8-linux-x64-gnu@0.4.1':
+  '@r_masseater/y8-linux-x64-gnu@0.5.0':
     optional: true
 
-  '@r_masseater/y8-win32-x64-msvc@0.4.1':
+  '@r_masseater/y8-win32-x64-msvc@0.5.0':
     optional: true
 
-  '@r_masseater/y8@0.4.1(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(effect@4.1.7)(markdownlint@0.42.2(supports-color@10.2.2))(minimatch@11.0.9)(redis@6.2.1(@opentelemetry/api@1.10.0))(vite-plus@1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.10)(@vitest/browser-playwright@5.1.1)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.10)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))':
+  '@r_masseater/y8@0.5.0(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(effect@4.1.7)(markdownlint@0.42.2(supports-color@10.2.2))(minimatch@11.0.9)(redis@6.2.1(@opentelemetry/api@1.10.0))(vite-plus@1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.10)(@vitest/browser-playwright@5.1.1)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.10)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))':
     dependencies:
       '@effect/platform-node': 4.1.7(effect@4.1.7)(redis@6.2.1(@opentelemetry/api@1.10.0))
       effect: 4.1.7
       vite-plus: 1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.10)(@vitest/browser-playwright@5.1.1)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.10)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
       yaml: 2.9.1
     optionalDependencies:
-      '@r_masseater/y8-linux-x64-gnu': 0.4.1
-      '@r_masseater/y8-win32-x64-msvc': 0.4.1
+      '@r_masseater/y8-linux-x64-gnu': 0.5.0
+      '@r_masseater/y8-win32-x64-msvc': 0.5.0
       markdownlint: 0.42.2(supports-color@10.2.2)
       minimatch: 11.0.9
       vite: '@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)'
@@ -28034,6 +28022,8 @@ snapshots:
       react: 19.3.1
     optionalDependencies:
       '@types/react': 19.3.2
+
+  lucide@1.83.0: {}
 
   lz-string@1.5.0: {}
 

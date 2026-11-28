@@ -22,7 +22,8 @@ export interface Loaded {
   readonly type: string;
 }
 
-const failure = (cause: unknown): PictureError => PictureError.make({ reason: String(cause) });
+export const failure = (cause: unknown): PictureError =>
+  PictureError.make({ reason: String(cause) });
 
 const sizeOf = ({
   width,
