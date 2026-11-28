@@ -421,8 +421,8 @@ catalogs:
       specifier: 0.2.1
       version: 0.2.1
     '@r_masseater/vite-plus-adopt':
-      specifier: 0.15.0
-      version: 0.15.0
+      specifier: 0.16.0
+      version: 0.16.0
     '@r_masseater/vitest-otlp':
       specifier: 0.2.2
       version: 0.2.2
@@ -4794,7 +4794,7 @@ importers:
         version: 4.1.7(effect@4.1.7)(redis@6.2.1(@opentelemetry/api@1.10.0))
       '@r_masseater/vite-plus-adopt':
         specifier: 'catalog:'
-        version: 0.15.0(d62ced182d8080c748b4310b6f806ce6)
+        version: 0.16.0(d62ced182d8080c748b4310b6f806ce6)
       '@r_masseater/vitest-otlp':
         specifier: 'catalog:'
         version: 0.2.2(effect@4.1.7)(redis@6.2.1(@opentelemetry/api@1.10.0))(vite-plus@1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.10)(@vitest/browser-playwright@5.1.2)(@vitest/ui@5.1.2)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.10)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))
@@ -5006,7 +5006,7 @@ importers:
     devDependencies:
       '@r_masseater/vite-plus-adopt':
         specifier: 'catalog:'
-        version: 0.15.0(d62ced182d8080c748b4310b6f806ce6)
+        version: 0.16.0(d62ced182d8080c748b4310b6f806ce6)
       '@types/node':
         specifier: 'catalog:'
         version: 26.6.10
@@ -9110,6 +9110,34 @@ packages:
 
   '@r_masseater/vite-plus-adopt@0.15.0':
     resolution: {integrity: sha512-dzvLHePdntOnpJKkM4nw6S/AGoa2SjfM1lzqwIOUkHdzCFufg2VnPEZO2vDDOoUF1g0sZdfbZMat/hcxMsc81g==}
+    engines: {node: '>=26.13.1'}
+    hasBin: true
+    peerDependencies:
+      '@andrewbranch/untar.js': '>=1.0.4'
+      '@loaderkit/resolve': '>=1.0.6'
+      cjs-module-lexer: '>=2.3.0'
+      effect: ^4.1.0
+      fflate: '>=0.8.3'
+      typescript: '>=7.1.0-beta'
+      validate-npm-package-name: '>=8.0.0'
+      vite: '*'
+      vite-plus: '>=1.8.0'
+    peerDependenciesMeta:
+      '@andrewbranch/untar.js':
+        optional: true
+      '@loaderkit/resolve':
+        optional: true
+      cjs-module-lexer:
+        optional: true
+      fflate:
+        optional: true
+      typescript:
+        optional: true
+      validate-npm-package-name:
+        optional: true
+
+  '@r_masseater/vite-plus-adopt@0.16.0':
+    resolution: {integrity: sha512-WRFUBmC27jbidtKsoHIUftfdlSBcKApRuAIh5ljll7zf1HXLuUs35z4jmfM7jaPaZ4dh6lixwn5Q7PKkX3hVqg==}
     engines: {node: '>=26.13.1'}
     hasBin: true
     peerDependencies:
@@ -21859,6 +21887,40 @@ snapshots:
       minimatch: 11.0.9
 
   '@r_masseater/vite-plus-adopt@0.15.0(d62ced182d8080c748b4310b6f806ce6)':
+    dependencies:
+      '@commitlint/format': 21.2.3
+      '@commitlint/lint': 21.2.4
+      '@commitlint/load': 21.2.4(typescript@7.1.0-beta)
+      '@commitlint/types': 21.2.3
+      '@pnpm/logger': 1100.0.0
+      '@pnpm/workspace.projects-reader': 1101.1.9(@pnpm/logger@1100.0.0)
+      '@pnpm/workspace.workspace-manifest-reader': 1100.3.4
+      '@r_masseater/h56m': 0.3.0(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(effect@4.1.7)(redis@6.2.1(@opentelemetry/api@1.10.0))(vite-plus@1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.10)(@vitest/browser-playwright@5.1.2)(@vitest/ui@5.1.2)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.10)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))
+      '@r_masseater/node-main': 0.1.0(effect@4.1.7)(redis@6.2.1(@opentelemetry/api@1.10.0))
+      '@textlint/config-loader': 16.1.3(supports-color@10.2.2)
+      '@textlint/kernel': 16.1.3(supports-color@10.2.2)
+      '@textlint/utils': 16.1.3
+      effect: 4.1.7
+      minimatch: 11.0.9
+      semver: 7.8.6
+      textlint: 16.1.3(supports-color@10.2.2)
+      vite: '@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)'
+      vite-plus: 1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.10)(@vitest/browser-playwright@5.1.2)(@vitest/ui@5.1.2)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.10)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
+      yaml: 2.9.1
+    optionalDependencies:
+      '@andrewbranch/untar.js': 1.0.4
+      '@loaderkit/resolve': 1.0.6
+      cjs-module-lexer: 2.3.0
+      fflate: 0.8.3
+      typescript: 7.1.0-beta
+      validate-npm-package-name: 8.0.0
+    transitivePeerDependencies:
+      - bufferutil
+      - redis
+      - supports-color
+      - utf-8-validate
+
+  '@r_masseater/vite-plus-adopt@0.16.0(d62ced182d8080c748b4310b6f806ce6)':
     dependencies:
       '@commitlint/format': 21.2.3
       '@commitlint/lint': 21.2.4
