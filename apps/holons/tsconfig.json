@@ -2,6 +2,7 @@
   "extends": "../../tsconfig.json",
   "include": ["src", "bin", "*.ts"],
   "compilerOptions": {
-    "types": ["node"]
+    "types": ["node"],
+    "lib": ["ESNext", "DOM", "DOM.Iterable"]
   }
 }
