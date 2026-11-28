@@ -36,7 +36,8 @@ const changedSince = (
     Effect.option,
   );
 
-type Changes = Readonly<{
+/** @internal */
+export type Changes = Readonly<{
   packages: Packages;
   record: (name: string) => DeploymentRecord;
   workflows: readonly string[];
