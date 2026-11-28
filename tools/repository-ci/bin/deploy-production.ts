@@ -1,12 +1,15 @@
 #!/usr/bin/env node
 import { fail, mustSucceed } from "@r_masseater/github-workflow";
 import { runMain } from "@r_masseater/node-main";
-import { Array as Arr, Config, Effect, Result, Schema, pipe } from "effect";
+import { Array as Arr, Config, Duration, Effect, Result, Schema, pipe } from "effect";
 
 import { workspace } from "./lib/changes.ts";
 import { Stacks, deployed, record } from "./lib/deployment.ts";
 
 type Stack = (typeof Stacks.Type)[number];
+
+const STACK_TIMEOUT_MINUTES = 20;
+const STACK_TIMEOUT = Duration.minutes(STACK_TIMEOUT_MINUTES);
 
 const deploy = Effect.fn("deploy")(function* deploy(root: string, { name, filter }: Stack) {
   yield* Effect.annotateCurrentSpan({ stack: name });
@@ -25,7 +28,7 @@ runMain("deploy-production")(
     const { workspaceRoot } = yield* workspace;
     const results = yield* Effect.forEach(
       stacks,
-      (stack) => Effect.result(deploy(workspaceRoot, stack)),
+      (stack) => deploy(workspaceRoot, stack).pipe(Effect.timeout(STACK_TIMEOUT), Effect.result),
       { concurrency: "unbounded" },
     );
     return yield* pipe(
