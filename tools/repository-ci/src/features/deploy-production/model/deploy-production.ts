@@ -15,7 +15,7 @@ const SNAPSHOT_AFTER = Duration.minutes(SNAPSHOT_AFTER_MINUTES);
 
 const deploy = Effect.fn("deploy")(function* deploy(root: string, { name, filter }: Stack) {
   yield* Effect.annotateCurrentSpan({ stack: name });
-  yield* Effect.forkScoped(snapshotAfter(name, SNAPSHOT_AFTER));
+  yield* Effect.forkScoped(snapshotAfter(name, SNAPSHOT_AFTER).pipe(Effect.ignore));
   yield* mustSucceed({
     command: "vp",
     args: ["run", "--log", "labeled", "--filter", filter, "deploy:production"],
@@ -23,7 +23,7 @@ const deploy = Effect.fn("deploy")(function* deploy(root: string, { name, filter
   });
   const deployment = deployed(name);
   yield* record(deployment);
-}, Effect.scoped);
+});
 
 /** @internal */
 export const deployProduction = Effect.gen(function* deployProduction() {
@@ -31,7 +31,12 @@ export const deployProduction = Effect.gen(function* deployProduction() {
   const { workspaceRoot } = yield* workspace;
   const results = yield* Effect.forEach(
     stacks,
-    (stack) => deploy(workspaceRoot, stack).pipe(Effect.timeout(STACK_TIMEOUT), Effect.result),
+    (stack) =>
+      deploy(workspaceRoot, stack).pipe(
+        Effect.scoped,
+        Effect.timeout(STACK_TIMEOUT),
+        Effect.result,
+      ),
     { concurrency: "unbounded" },
   );
   return yield* pipe(
