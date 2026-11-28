@@ -379,8 +379,8 @@ catalogs:
       specifier: 0.1.0
       version: 0.1.0
     '@r_masseater/msch':
-      specifier: 0.58.1
-      version: 0.58.1
+      specifier: 0.59.0
+      version: 0.59.0
     '@r_masseater/node-main':
       specifier: 0.1.0
       version: 0.1.0
@@ -884,6 +884,7 @@ catalogs:
 overrides:
   '@remotion/tailwind-v4>tailwindcss': 4.3.5
   '@remotion/tailwind-v4>@tailwindcss/webpack': 4.3.5
+  '@r_masseater/h56m-presets>@r_masseater/h56m': ^0.3.0
   workerd: 1.20261125.1
   vite@*: npm:@voidzero-dev/vite-plus-core@8.3.8001
   fflate@>=0.7.0 <0.7.5: ^0.8.0
@@ -912,7 +913,7 @@ importers:
         version: 0.73.7
       '@r_masseater/msch':
         specifier: 'catalog:'
-        version: 0.58.1(cba22f25021ff73e78ab680381844dcc)
+        version: 0.59.0(cba22f25021ff73e78ab680381844dcc)
       '@r_masseater/workers-tracing':
         specifier: workspace:*
         version: link:libs/workers-tracing
@@ -1049,7 +1050,7 @@ importers:
         version: link:../../infra/tauri-app
       '@r_masseater/msch':
         specifier: 'catalog:'
-        version: 0.58.1(cba22f25021ff73e78ab680381844dcc)
+        version: 0.59.0(cba22f25021ff73e78ab680381844dcc)
       '@tauri-apps/cli':
         specifier: 'catalog:'
         version: 2.12.6
@@ -1274,7 +1275,7 @@ importers:
         version: link:../../infra/tauri-app
       '@r_masseater/msch':
         specifier: 'catalog:'
-        version: 0.58.1(cba22f25021ff73e78ab680381844dcc)
+        version: 0.59.0(cba22f25021ff73e78ab680381844dcc)
       '@tauri-apps/cli':
         specifier: 'catalog:'
         version: 2.12.6
@@ -1980,7 +1981,7 @@ importers:
         version: link:../../libs/component-release
       '@r_masseater/msch':
         specifier: 'catalog:'
-        version: 0.58.1(cba22f25021ff73e78ab680381844dcc)
+        version: 0.59.0(cba22f25021ff73e78ab680381844dcc)
       '@r_masseater/node-main':
         specifier: 'catalog:'
         version: 0.1.0(effect@4.1.5)(redis@6.2.1(@opentelemetry/api@1.10.0))
@@ -2494,7 +2495,7 @@ importers:
         version: link:../../infra/tauri-app
       '@r_masseater/msch':
         specifier: 'catalog:'
-        version: 0.58.1(cba22f25021ff73e78ab680381844dcc)
+        version: 0.59.0(cba22f25021ff73e78ab680381844dcc)
       '@tauri-apps/cli':
         specifier: 'catalog:'
         version: 2.12.6
@@ -2988,7 +2989,7 @@ importers:
         version: link:../../infra/tauri-app
       '@r_masseater/msch':
         specifier: 'catalog:'
-        version: 0.58.1(cba22f25021ff73e78ab680381844dcc)
+        version: 0.59.0(cba22f25021ff73e78ab680381844dcc)
       '@r_masseater/node-main':
         specifier: 'catalog:'
         version: 0.1.0(effect@4.1.5)(redis@6.2.1(@opentelemetry/api@1.10.0))
@@ -3070,7 +3071,7 @@ importers:
         version: link:../../infra/tauri-app
       '@r_masseater/msch':
         specifier: 'catalog:'
-        version: 0.58.1(cba22f25021ff73e78ab680381844dcc)
+        version: 0.59.0(cba22f25021ff73e78ab680381844dcc)
       '@tauri-apps/cli':
         specifier: 'catalog:'
         version: 2.12.6
@@ -3164,7 +3165,7 @@ importers:
         version: link:../../infra/tauri-app
       '@r_masseater/msch':
         specifier: 'catalog:'
-        version: 0.58.1(cba22f25021ff73e78ab680381844dcc)
+        version: 0.59.0(cba22f25021ff73e78ab680381844dcc)
       '@r_masseater/node-main':
         specifier: 'catalog:'
         version: 0.1.0(effect@4.1.5)(redis@6.2.1(@opentelemetry/api@1.10.0))
@@ -3430,7 +3431,7 @@ importers:
         version: link:../../libs/browser-test
       '@r_masseater/msch':
         specifier: 'catalog:'
-        version: 0.58.1(cba22f25021ff73e78ab680381844dcc)
+        version: 0.59.0(cba22f25021ff73e78ab680381844dcc)
       '@tailwindcss/vite':
         specifier: 'catalog:'
         version: 4.3.5(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.7)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))
@@ -3461,7 +3462,7 @@ importers:
     devDependencies:
       '@r_masseater/msch':
         specifier: 'catalog:'
-        version: 0.58.1(cba22f25021ff73e78ab680381844dcc)
+        version: 0.59.0(cba22f25021ff73e78ab680381844dcc)
       vite-plus:
         specifier: catalog:stack
         version: 1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.7)(@vitest/browser-playwright@5.1.1)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.7)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.7)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
@@ -3554,7 +3555,7 @@ importers:
     devDependencies:
       '@r_masseater/msch':
         specifier: 'catalog:'
-        version: 0.58.1(cba22f25021ff73e78ab680381844dcc)
+        version: 0.59.0(cba22f25021ff73e78ab680381844dcc)
       vite-plus:
         specifier: catalog:stack
         version: 1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.7)(@vitest/browser-playwright@5.1.1)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.7)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.7)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
@@ -3607,7 +3608,7 @@ importers:
         version: 4.1.5(effect@4.1.5)(vitest@5.1.1)
       '@r_masseater/msch':
         specifier: 'catalog:'
-        version: 0.58.1(cba22f25021ff73e78ab680381844dcc)
+        version: 0.59.0(cba22f25021ff73e78ab680381844dcc)
       vite-plus:
         specifier: catalog:stack
         version: 1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.7)(@vitest/browser-playwright@5.1.1)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.7)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.7)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
@@ -3832,7 +3833,7 @@ importers:
     devDependencies:
       '@r_masseater/msch':
         specifier: 'catalog:'
-        version: 0.58.1(cba22f25021ff73e78ab680381844dcc)
+        version: 0.59.0(cba22f25021ff73e78ab680381844dcc)
       vite-plus:
         specifier: catalog:stack
         version: 1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.7)(@vitest/browser-playwright@5.1.1)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.7)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.7)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
@@ -3996,7 +3997,7 @@ importers:
         version: 0.73.7
       '@r_masseater/msch':
         specifier: 'catalog:'
-        version: 0.58.1(cba22f25021ff73e78ab680381844dcc)
+        version: 0.59.0(cba22f25021ff73e78ab680381844dcc)
       '@types/node':
         specifier: 'catalog:'
         version: 26.6.7
@@ -4020,7 +4021,7 @@ importers:
     devDependencies:
       '@r_masseater/msch':
         specifier: 'catalog:'
-        version: 0.58.1(cba22f25021ff73e78ab680381844dcc)
+        version: 0.59.0(cba22f25021ff73e78ab680381844dcc)
       vite-plus:
         specifier: catalog:stack
         version: 1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.7)(@vitest/browser-playwright@5.1.1)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.7)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.7)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
@@ -4645,7 +4646,7 @@ importers:
     dependencies:
       '@r_masseater/h56m-presets':
         specifier: 'catalog:'
-        version: 0.2.1(@r_masseater/h56m@0.2.0(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.7)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(effect@4.1.5)(redis@6.2.1(@opentelemetry/api@1.10.0))(vite-plus@1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.7)(@vitest/browser-playwright@5.1.1)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.7)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.7)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)))
+        version: 0.2.1(@r_masseater/h56m@0.3.0(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.7)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(effect@4.1.5)(redis@6.2.1(@opentelemetry/api@1.10.0))(vite-plus@1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.7)(@vitest/browser-playwright@5.1.1)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.7)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.7)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)))
       '@r_masseater/node-main':
         specifier: 'catalog:'
         version: 0.1.0(effect@4.1.5)(redis@6.2.1(@opentelemetry/api@1.10.0))
@@ -4677,7 +4678,7 @@ importers:
     devDependencies:
       '@r_masseater/msch':
         specifier: 'catalog:'
-        version: 0.58.1(cba22f25021ff73e78ab680381844dcc)
+        version: 0.59.0(cba22f25021ff73e78ab680381844dcc)
       vite-plus:
         specifier: catalog:stack
         version: 1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.7)(@vitest/browser-playwright@5.1.1)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.7)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.7)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
@@ -4776,7 +4777,7 @@ importers:
     devDependencies:
       '@r_masseater/msch':
         specifier: 'catalog:'
-        version: 0.58.1(cba22f25021ff73e78ab680381844dcc)
+        version: 0.59.0(cba22f25021ff73e78ab680381844dcc)
       vite-plus:
         specifier: catalog:stack
         version: 1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.7)(@vitest/browser-playwright@5.1.1)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.7)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.7)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
@@ -4844,7 +4845,7 @@ importers:
         version: 1.2.3
       '@r_masseater/msch':
         specifier: 'catalog:'
-        version: 0.58.1(cba22f25021ff73e78ab680381844dcc)
+        version: 0.59.0(cba22f25021ff73e78ab680381844dcc)
       vite-plus:
         specifier: catalog:stack
         version: 1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.7)(@vitest/browser-playwright@5.1.1)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.7)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.7)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
@@ -4919,7 +4920,7 @@ importers:
     devDependencies:
       '@r_masseater/msch':
         specifier: 'catalog:'
-        version: 0.58.1(cba22f25021ff73e78ab680381844dcc)
+        version: 0.59.0(cba22f25021ff73e78ab680381844dcc)
       vite-plus:
         specifier: catalog:stack
         version: 1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.7)(@vitest/browser-playwright@5.1.1)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.7)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.7)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
@@ -8478,13 +8479,6 @@ packages:
     peerDependencies:
       effect: ^4.1.0
 
-  '@r_masseater/h56m-linux-x64-gnu@0.2.0':
-    resolution: {integrity: sha512-G/IFAZetPuHc3UOE2ppaxtXLfNb5mqp4ZgdKAcRdruroreidwIIHvrXLSfUnkw7xkXTsCSqpjLmDbcQ7LDlhdA==}
-    engines: {node: v26.13.1}
-    cpu: [x64]
-    os: [linux]
-    libc: [glibc]
-
   '@r_masseater/h56m-linux-x64-gnu@0.3.0':
     resolution: {integrity: sha512-wINuFfR3+sQUN+fePy+F3cnULZ2VTN1nOIOmWKvDdFTp6ACzi8WePvmqNwf/SDoubqSD4eyapmRfME5TEpIujg==}
     engines: {node: '>=26.13.1'}
@@ -8497,33 +8491,13 @@ packages:
     engines: {node: '>=26.13.1'}
     deprecated: Merged into @r_masseater/h56m/presets. Install @r_masseater/h56m instead.
     peerDependencies:
-      '@r_masseater/h56m': ^0.2.0
-
-  '@r_masseater/h56m-win32-x64-msvc@0.2.0':
-    resolution: {integrity: sha512-MjvgOrdUw5Oa62jVFy5FAS3pDGLC/x0crGEyH6c6eI1OjYTdSJDA90bx+jtBf94m73Ndnwo5nwjDtXgvztjB8g==}
-    engines: {node: v26.13.1}
-    cpu: [x64]
-    os: [win32]
+      '@r_masseater/h56m': ^0.3.0
 
   '@r_masseater/h56m-win32-x64-msvc@0.3.0':
     resolution: {integrity: sha512-Q4XQaVc0v8Xl4PnH4eno1TOf2Y984usjDBnEbdyzj58+G4VoPWocc48kjCZo40Dz217Ki7kpIBMyGRbP/TeCRQ==}
     engines: {node: '>=26.13.1'}
     cpu: [x64]
     os: [win32]
-
-  '@r_masseater/h56m@0.2.0':
-    resolution: {integrity: sha512-22rMtXOBbJWFbNFlooXj6JEUca44886FscMWmJ/aQO5MinNw7jd+2g1Z8yD8pkIFj8J9gBSQsIvH4gHvDgqwzA==}
-    engines: {node: v26.13.1}
-    hasBin: true
-    peerDependencies:
-      effect: ^4.1.2
-      vite: '*'
-      vite-plus: '>=1.5.0'
-    peerDependenciesMeta:
-      vite:
-        optional: true
-      vite-plus:
-        optional: true
 
   '@r_masseater/h56m@0.3.0':
     resolution: {integrity: sha512-2W99Qih77K8KWVUfzKsquiItdnfxzuyciYnHziUfMwOUnI+tGgATENQGR1y2hRHU1kXsxfA6+OPo/oRNDqhfCQ==}
@@ -8559,8 +8533,8 @@ packages:
       effect: ^4.1.0
       vite-plus: ^1.8.0
 
-  '@r_masseater/msch@0.58.1':
-    resolution: {integrity: sha512-3c9duUhU7tWGISN7WuyatY11cwIEgwZGNbiVdMOf/cSJc0avDmz9TIbx/tpmzQwlO5nDGqcwiGc2ucW3C15ipA==}
+  '@r_masseater/msch@0.59.0':
+    resolution: {integrity: sha512-kwjkPtBy7oh5O/wAr+xa3AtgHuE10jkb2Yo6acO63kGupBqEF2KqUBMob/tHsDysW6JquXvHlmKgm0gf2xrHnQ==}
     engines: {node: '>=26.13.1'}
     hasBin: true
     peerDependencies:
@@ -20990,39 +20964,15 @@ snapshots:
     dependencies:
       effect: 4.1.5
 
-  '@r_masseater/h56m-linux-x64-gnu@0.2.0':
-    optional: true
-
   '@r_masseater/h56m-linux-x64-gnu@0.3.0':
     optional: true
-
-  '@r_masseater/h56m-presets@0.2.1(@r_masseater/h56m@0.2.0(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.7)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(effect@4.1.5)(redis@6.2.1(@opentelemetry/api@1.10.0))(vite-plus@1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.7)(@vitest/browser-playwright@5.1.1)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.7)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.7)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)))':
-    dependencies:
-      '@r_masseater/h56m': 0.2.0(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.7)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(effect@4.1.5)(redis@6.2.1(@opentelemetry/api@1.10.0))(vite-plus@1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.7)(@vitest/browser-playwright@5.1.1)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.7)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.7)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))
 
   '@r_masseater/h56m-presets@0.2.1(@r_masseater/h56m@0.3.0(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.7)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(effect@4.1.5)(redis@6.2.1(@opentelemetry/api@1.10.0))(vite-plus@1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.7)(@vitest/browser-playwright@5.1.1)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.7)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.7)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)))':
     dependencies:
       '@r_masseater/h56m': 0.3.0(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.7)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(effect@4.1.5)(redis@6.2.1(@opentelemetry/api@1.10.0))(vite-plus@1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.7)(@vitest/browser-playwright@5.1.1)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.7)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.7)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))
 
-  '@r_masseater/h56m-win32-x64-msvc@0.2.0':
-    optional: true
-
   '@r_masseater/h56m-win32-x64-msvc@0.3.0':
     optional: true
-
-  '@r_masseater/h56m@0.2.0(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.7)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(effect@4.1.5)(redis@6.2.1(@opentelemetry/api@1.10.0))(vite-plus@1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.7)(@vitest/browser-playwright@5.1.1)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.7)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.7)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))':
-    dependencies:
-      '@effect/platform-node': 4.1.5(effect@4.1.5)(redis@6.2.1(@opentelemetry/api@1.10.0))
-      effect: 4.1.5
-    optionalDependencies:
-      '@r_masseater/h56m-linux-x64-gnu': 0.2.0
-      '@r_masseater/h56m-win32-x64-msvc': 0.2.0
-      vite: '@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.7)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)'
-      vite-plus: 1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.7)(@vitest/browser-playwright@5.1.1)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.7)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.7)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
-    transitivePeerDependencies:
-      - bufferutil
-      - redis
-      - utf-8-validate
 
   '@r_masseater/h56m@0.3.0(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.7)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(effect@4.1.5)(redis@6.2.1(@opentelemetry/api@1.10.0))(vite-plus@1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.7)(@vitest/browser-playwright@5.1.1)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.7)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.7)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))':
     dependencies:
@@ -21066,7 +21016,7 @@ snapshots:
       - redis
       - utf-8-validate
 
-  '@r_masseater/msch@0.58.1(cba22f25021ff73e78ab680381844dcc)':
+  '@r_masseater/msch@0.59.0(cba22f25021ff73e78ab680381844dcc)':
     dependencies:
       '@commitlint/config-conventional': 21.2.4
       '@effect/platform-node': 4.1.5(effect@4.1.5)(redis@6.2.1(@opentelemetry/api@1.10.0))
