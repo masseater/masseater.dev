@@ -5,6 +5,13 @@ import { VIDEO_START, onBeat } from "#/shared/lib/beat.ts";
 
 const INTRO_BEATS = { length: 3, voice: 5, call: 6 } as const;
 
+export const INTRO_STEPS: readonly number[] = [
+  VIDEO_START,
+  onBeat(INTRO_BEATS.length),
+  onBeat(INTRO_BEATS.voice),
+  onBeat(INTRO_BEATS.call),
+];
+
 export const script: VideoScript = {
   title: "pnpm",
   formats: ["vertical"],
@@ -21,14 +28,8 @@ export const script: VideoScript = {
   cuts: [
     {
       id: "intro",
-      say: ["次世代のパッケージマネージャ\npnpmを", "30秒で", "つむぎが", "解説"],
-      at: [
-        VIDEO_START,
-        onBeat(INTRO_BEATS.length),
-        onBeat(INTRO_BEATS.voice),
-        onBeat(INTRO_BEATS.call),
-      ],
-      speed: 2,
+      say: ["次世代のパッケージマネージャ\npnpmを|30秒で|つむぎが|解説"],
+      at: INTRO_STEPS,
     },
     { id: "hook", say: ["npmのインストール\n遅すぎない？"] },
     { id: "try", say: ["pnpmに変えてみたら"] },

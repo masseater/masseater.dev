@@ -5,7 +5,7 @@ import type { Segment } from "#/shared/lib/segment.ts";
 import { segmentsOf } from "#/shared/lib/segment.ts";
 
 import type { Cut, VideoScript } from "./cut.ts";
-import { speedOf, voiceOf } from "./cut.ts";
+import { lineBeatsOf, relativeBeatsOf, speedOf, unpartedOf, voiceOf } from "./cut.ts";
 import { emphasisAtOf, estimateSeconds, frames } from "./frames.ts";
 import { narrationKey, spokenOf } from "./narration.ts";
 import type { Sources, TimedLine } from "./timeline.ts";
@@ -25,14 +25,16 @@ export interface LinesRequest {
 const recordingOf = (
   { script, cut, sources }: LinesRequest,
   say: string,
+  index: number,
 ): Effect.Effect<Recorded> =>
   narrationKey({
     speaker: voiceOf(script)(cut),
-    speed: speedOf(cut),
+    speed: speedOf(cut)(index),
     spoken: spokenOf({ say, readings: script.readings }),
+    beats: relativeBeatsOf(cut)(index),
   }).pipe(
     Effect.map((key) => ({
-      segments: segmentsOf(say),
+      segments: segmentsOf(unpartedOf(say)),
       key,
       seconds: pipe(
         sources.narration,
@@ -56,7 +58,8 @@ const lineAt = (sources: Sources, entry: Recorded, from: number): TimedLine => {
   };
 };
 
-const NO_STARTS: readonly number[] = [];
+const startsOf = (cut: Cut): readonly number[] =>
+  Arr.flatMap(lineBeatsOf(cut), (beats) => Option.toArray(Arr.head(beats)));
 
 const startOf = (starts: readonly number[], index: number, cursor: number): number =>
   Option.match(Arr.get(starts, index), {
@@ -86,8 +89,6 @@ const placeLines = (
   );
 
 export const timeLines = (request: LinesRequest): Effect.Effect<readonly TimedLine[]> =>
-  Effect.forEach(request.cut.say, (say) => recordingOf(request, say), {
+  Effect.forEach(request.cut.say, (say, index) => recordingOf(request, say, index), {
     concurrency: "unbounded",
-  }).pipe(
-    Effect.map((recorded) => placeLines(request.sources, recorded, request.cut.at ?? NO_STARTS)),
-  );
+  }).pipe(Effect.map((recorded) => placeLines(request.sources, recorded, startsOf(request.cut))));

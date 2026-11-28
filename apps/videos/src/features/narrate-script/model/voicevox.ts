@@ -1,10 +1,13 @@
-import { Array as Arr, Effect, Option, Schema, pipe } from "effect";
+import { Array as Arr, Effect, Number as Num, Option, Schema, pipe } from "effect";
 import type { Config } from "effect";
 import { HttpClient, HttpClientRequest, HttpClientResponse } from "effect/http";
 
 import { VOICEVOX_URL } from "#/shared/config/index.ts";
 import { failedWith, videoError } from "#/shared/lib/video-error.ts";
 import type { VideoError } from "#/shared/lib/video-error.ts";
+
+import { Query, fitBeats, moraCount } from "./fit-beats.ts";
+import type { QueryType } from "./fit-beats.ts";
 
 const PRE_PHONEME_SECONDS = 0.05;
 const POST_PHONEME_SECONDS = 0.1;
@@ -28,8 +31,6 @@ const SpeakerInfo = Schema.Struct({
 });
 
 const Speakers = Schema.Array(Speaker);
-
-const AudioQuery = Schema.Record(Schema.String, Schema.Unknown);
 
 const okClient: Effect.Effect<HttpClient.HttpClient, never, HttpClient.HttpClient> =
   HttpClient.HttpClient.pipe(Effect.map(HttpClient.filterStatusOk));
@@ -108,24 +109,78 @@ export interface Utterance {
   readonly style: number;
   readonly text: string;
   readonly speed: number;
+
+  readonly parts: readonly string[];
+
+  readonly beats: readonly number[];
 }
 
+const NATURAL_SPEED = { min: 0.8, max: 2 } as const;
+const SPEED_AS_GIVEN = 1;
+
+type Effects<Value> = Effect.Effect<Value, VideoError | Config.ConfigError, HttpClient.HttpClient>;
+
+const queryOf = (text: string, speaker: string): Effects<QueryType> =>
+  Effect.gen(function* query() {
+    const engine = yield* VOICEVOX_URL;
+    const client = yield* okClient;
+    return yield* HttpClientRequest.post(`${engine}/audio_query`).pipe(
+      HttpClientRequest.setUrlParams({ text, speaker }),
+      client.execute,
+      Effect.flatMap(HttpClientResponse.schemaBodyJson(Query)),
+      Effect.mapError(failedWith),
+    );
+  });
+
+const isNatural = (speed: number): boolean =>
+  speed >= NATURAL_SPEED.min && speed <= NATURAL_SPEED.max;
+const SHOWN_DIGITS = 2;
+
+const checkSpeeds = (text: string, speeds: readonly number[]): Effect.Effect<void, VideoError> => {
+  if (pipe(speeds, Arr.every(isNatural))) {
+    return Effect.void;
+  }
+  const shown = pipe(
+    speeds,
+    Arr.map((value) => value.toFixed(SHOWN_DIGITS)),
+    Arr.join(", "),
+  );
+  return Effect.fail(
+    videoError(
+      `「${text}」を拍に合わせると話す速さが ${shown} になり、自然に聞こえる ${String(NATURAL_SPEED.min)}〜${String(NATURAL_SPEED.max)} を外れる`,
+    ),
+  );
+};
+
+const fittedOf = (
+  { text, speed, parts, beats }: Utterance,
+  speaker: string,
+): Effects<Readonly<{ query: QueryType; speed: number }>> =>
+  Effect.gen(function* fitted() {
+    const query = yield* queryOf(text, speaker);
+    if (!Arr.isReadonlyArrayNonEmpty(beats)) {
+      return { query, speed };
+    }
+    const counts = yield* Effect.forEach(
+      parts,
+      (part) => queryOf(part, speaker).pipe(Effect.map(moraCount)),
+      { concurrency: 1 },
+    );
+    if (Num.sumAll(counts) !== moraCount(query)) {
+      return yield* videoError(`「${text}」を区切った部分のモーラ数が全体と合わない`);
+    }
+    const fit = fitBeats({ query, counts, beats, speed, lead: PRE_PHONEME_SECONDS });
+    yield* checkSpeeds(text, fit.speeds);
+    return { query: fit.query, speed: SPEED_AS_GIVEN };
+  });
+
 /** @internal */
-export const synthesize = ({
-  style,
-  text,
-  speed,
-}: Utterance): Effect.Effect<Uint8Array, VideoError | Config.ConfigError, HttpClient.HttpClient> =>
+export const synthesize = (utterance: Utterance): Effects<Uint8Array> =>
   Effect.gen(function* synthesizeLine() {
     const engine = yield* VOICEVOX_URL;
     const client = yield* okClient;
-    const speaker = String(style);
-    const query = yield* HttpClientRequest.post(`${engine}/audio_query`).pipe(
-      HttpClientRequest.setUrlParams({ text, speaker }),
-      client.execute,
-      Effect.flatMap(HttpClientResponse.schemaBodyJson(AudioQuery)),
-      Effect.mapError(failedWith),
-    );
+    const speaker = String(utterance.style);
+    const { query, speed } = yield* fittedOf(utterance, speaker);
     const request = yield* HttpClientRequest.post(`${engine}/synthesis`).pipe(
       HttpClientRequest.setUrlParams({ speaker }),
       HttpClientRequest.bodyJson({
