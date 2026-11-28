@@ -26,6 +26,7 @@
   "devDependencies": {
     "@effect/vitest": "catalog:",
     "@r_masseater/vitest-otlp": "catalog:",
+    "lapse": "workspace:*",
     "typescript": "catalog:stack",
     "vite-plus": "catalog:stack"
   }

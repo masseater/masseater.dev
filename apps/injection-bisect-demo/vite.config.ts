@@ -1,5 +1,6 @@
 import { startSiteConfig } from "@masseater.dev/start-site/vite";
 import { LOCKED } from "@r_masseater/msch/locked-inputs";
+import { lapse } from "lapse";
 import { mergeConfig } from "vite-plus";
 
 import { BASE_PATH } from "./src/shared/config/base-path.ts";
@@ -14,6 +15,7 @@ export default mergeConfig(
   }),
   {
     run: { tasks: { verify: { command: [], dependsOn: ["build"] } } },
+    plugins: [lapse()],
     test: { isolate: true },
   },
 );

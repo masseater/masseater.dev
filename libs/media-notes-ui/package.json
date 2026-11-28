@@ -24,6 +24,7 @@
     "@effect/vitest": "catalog:",
     "@types/react": "catalog:",
     "@types/youtube": "catalog:",
+    "lapse": "workspace:*",
     "vite-plus": "catalog:stack"
   }
 }

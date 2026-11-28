@@ -42,6 +42,7 @@
     "@vitejs/plugin-rsc": "catalog:",
     "@webgpu/types": "catalog:",
     "alchemy": "catalog:stack",
+    "lapse": "workspace:*",
     "typescript": "catalog:stack",
     "vite": "catalog:",
     "vite-plus": "catalog:stack",

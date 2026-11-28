@@ -123,6 +123,7 @@
     "alchemy": "catalog:stack",
     "effect": "catalog:stack",
     "elysia": "catalog:stack",
+    "lapse": "workspace:*",
     "miniflare": "catalog:",
     "publint": "catalog:",
     "typescript": "catalog:stack",

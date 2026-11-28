@@ -31,6 +31,7 @@
   "devDependencies": {
     "@effect/vitest": "catalog:",
     "@types/react": "catalog:",
+    "lapse": "workspace:*",
     "react": "catalog:",
     "vite": "catalog:"
   },
