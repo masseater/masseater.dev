@@ -3,6 +3,7 @@
   "title": "WAI-ARIA Authoring Practices",
   "kind": "ui",
   "url": "https://www.w3.org/WAI/ARIA/apg/",
+  "image": "https://www.w3.org/WAI/assets/images/social-sharing-default.jpg",
   "note": "タブ、ダイアログ、コンボボックスなどの部品について、キーボード操作と読み上げの決まりを示す",
   "date": "2026-11-28"
 }

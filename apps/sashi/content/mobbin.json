@@ -3,6 +3,7 @@
   "title": "Mobbin",
   "kind": "site",
   "url": "https://mobbin.com/",
+  "image": "https://mobbin.com/mobbin-marketing-pages/images/og/mobbin.png",
   "note": "実在するアプリの画面を、画面の種類や操作の流れごとに集めた UI の参照集",
   "date": "2026-11-28"
 }
