@@ -9,6 +9,7 @@ import {
   NotebookPen,
   Presentation,
   Search,
+  Timer,
   UserRound,
   Wallet,
 } from "lucide-react";
@@ -45,6 +46,7 @@ export const NAV_GROUPS: readonly NavGroup[] = [
       { label: "お金", to: "/money" },
       { label: "スライド", to: "/slides" },
       { label: "認証情報", to: "/credentials" },
+      { label: "定期タスク", to: "/schedules" },
     ],
   },
 ];
@@ -60,5 +62,6 @@ export const NAV_ICONS: Readonly<Record<PortalPath, LucideIcon>> = {
   "/money": Wallet,
   "/slides": Presentation,
   "/credentials": KeyRound,
+  "/schedules": Timer,
   "/search": Search,
 };

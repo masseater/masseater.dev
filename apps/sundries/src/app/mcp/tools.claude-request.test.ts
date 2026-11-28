@@ -1,38 +1,23 @@
 import { expect, it } from "@effect/vitest";
-import { authInfoOf } from "@masseater.dev/mcp-tool-call";
-import { createMcpHandler } from "@modelcontextprotocol/server";
-import {
-  Array as Arr,
-  Boolean as Bool,
-  Effect,
-  Option,
-  Record as Rec,
-  Schema,
-  String as Str,
-  pipe,
-} from "effect";
+import { Array as Arr, Effect, Schema, pipe } from "effect";
 import { afterAll, beforeEach } from "vite-plus/test";
 
-import { registerClaudeRequestTools } from "#/features/request-claude/index.ts";
-
 import {
-  bindings,
+  call,
   closeDatabase,
   resetDatabase,
+  value,
   wakes,
 } from "./claude-request-tools.test.support.ts";
-import { serverOf } from "./tools.ts";
+import type { Args } from "./claude-request-tools.test.support.ts";
 
 beforeEach(() => {
   wakes.outcome = "rejected";
   wakes.count = 0;
+  wakes.projects = [];
   return Effect.runPromise(resetDatabase);
 });
 afterAll(() => Effect.runPromise(closeDatabase));
-
-type Args = Readonly<Record<string, unknown>>;
-
-type Called = Readonly<{ isError: boolean; text: string }>;
 
 const MUSE = "muse";
 
@@ -43,21 +28,6 @@ const THREAD_URL = "https://claude.ai/code/project/p?thread=t";
 const MISSING_ID = 99;
 
 const SENT_ONCE = 1;
-
-const DATA_LINE = /^data: (?<json>.+)$/mu;
-
-const CallResult = Schema.Struct({
-  content: Schema.Array(Schema.Struct({ type: Schema.String, text: Schema.String })),
-  isError: Schema.optionalKey(Schema.Boolean),
-});
-
-const decodeResult = Schema.decodeEffect(
-  Schema.fromJsonString(Schema.Struct({ result: CallResult })),
-);
-
-const decodeJson = Schema.decodeEffect(Schema.fromJsonString(Schema.Unknown));
-
-const encodeJson = Schema.encodeEffect(Schema.fromJsonString(Schema.Unknown));
 
 const RequestRow = Schema.Struct({
   id: Schema.Int,
@@ -76,73 +46,20 @@ const decodeSent = Schema.decodeUnknownEffect(
   Schema.Struct({ id: Schema.Int, woke: Schema.String }),
 );
 
-const mcpRequest = (body: string): Request =>
-  new Request("https://sundries.masseater.dev/mcp", {
-    method: "POST",
-    headers: { "content-type": "application/json", accept: "application/json, text/event-stream" },
-    body,
-  });
-
-const payloadOf = (text: string): string =>
-  pipe(
-    text,
-    Str.match(DATA_LINE),
-    Option.flatMap(({ groups }) => Option.fromNullishOr(groups)),
-    Option.flatMap(Rec.get("json")),
-    Option.getOrElse(() => text),
-  );
-
-const call = (client: string, name: string, args: Args): Effect.Effect<Called> =>
-  Effect.gen(function* called() {
-    const body = yield* encodeJson({
-      jsonrpc: "2.0",
-      id: 1,
-      method: "tools/call",
-      params: { name, arguments: args },
-    });
-    const found = yield* bindings;
-    const response = yield* Effect.promise(() =>
-      createMcpHandler(() => registerClaudeRequestTools(found)(serverOf())).fetch(
-        mcpRequest(body),
-        {
-          authInfo: authInfoOf({ azp: client }),
-        },
-      ),
-    );
-    const text = yield* Effect.promise(() => response.text());
-    const { result } = yield* decodeResult(payloadOf(text));
-    const joined = pipe(
-      result.content,
-      Arr.map((item) => item.text),
-      Arr.join("\n"),
-    );
-    return { isError: result.isError ?? false, text: joined };
-  }).pipe(Effect.orDie);
-
-const value = (client: string, name: string, args: Args): Effect.Effect<unknown> =>
-  call(client, name, args).pipe(
-    Effect.flatMap(({ isError, text }) =>
-      Bool.match(isError, {
-        onTrue: () => Effect.die(text),
-        onFalse: () => decodeJson(text).pipe(Effect.orDie),
-      }),
-    ),
-  );
-
 const send = (text: string): Effect.Effect<number> =>
-  value(MUSE, "send_to_claude", { text }).pipe(
+  value(MUSE)("send_to_claude")({ text }).pipe(
     Effect.flatMap(decodeId),
     Effect.map(({ id }) => id),
     Effect.orDie,
   );
 
-const take = value(THREAD, "take_claude_requests", {}).pipe(
+const take = value(THREAD)("take_claude_requests")({}).pipe(
   Effect.flatMap(decodeRows),
   Effect.orDie,
 );
 
 const list = (args: Args): Effect.Effect<readonly (typeof RequestRow.Type)[]> =>
-  value(MUSE, "list_claude_replies", args).pipe(Effect.flatMap(decodeRows), Effect.orDie);
+  value(MUSE)("list_claude_replies")(args).pipe(Effect.flatMap(decodeRows), Effect.orDie);
 
 it.effect("送った依頼は 1 度だけ、古い順に受け取られる", () =>
   Effect.gen(function* takenOnce() {
@@ -167,7 +84,7 @@ it.effect("返事とスレッドの URL は送った側の一覧に出る", () =
   Effect.gen(function* replied() {
     const id = yield* send("記事を直して");
     yield* take;
-    yield* value(THREAD, "reply_to_request", { id, reply: "直した", threadUrl: THREAD_URL });
+    yield* value(THREAD)("reply_to_request")({ id, reply: "直した", threadUrl: THREAD_URL });
     const rows = yield* list({});
     expect(rows).toMatchObject([{ id, reply: "直した", threadUrl: THREAD_URL }]);
     expect(
@@ -196,7 +113,7 @@ it.effect("after を渡すと、その id より後だけを古い順に返す",
 
 it.effect("無い id への返事は replied: false を返す", () =>
   Effect.gen(function* missing() {
-    const result = yield* value(THREAD, "reply_to_request", {
+    const result = yield* value(THREAD)("reply_to_request")({
       id: MISSING_ID,
       reply: "直した",
       threadUrl: THREAD_URL,
@@ -207,7 +124,7 @@ it.effect("無い id への返事は replied: false を返す", () =>
 
 it.effect("空の依頼は受け付けない", () =>
   Effect.gen(function* empty() {
-    const { isError } = yield* call(MUSE, "send_to_claude", { text: "" });
+    const { isError } = yield* call(MUSE)("send_to_claude")({ text: "" });
     const taken = yield* take;
     expect(isError).toBe(true);
     expect(taken).toStrictEqual([]);
@@ -217,7 +134,7 @@ it.effect("空の依頼は受け付けない", () =>
 it.effect("送った依頼は未取得のまま残し、本文なしでプロジェクトを起こす", () =>
   Effect.gen(function* woken() {
     wakes.outcome = "fired";
-    const sent = yield* value(MUSE, "send_to_claude", { text: "記事を直して" }).pipe(
+    const sent = yield* value(MUSE)("send_to_claude")({ text: "記事を直して" }).pipe(
       Effect.flatMap(decodeSent),
       Effect.orDie,
     );
@@ -235,7 +152,7 @@ it.effect("送った依頼は未取得のまま残し、本文なしでプロジ
 
 it.effect("起こせなかった依頼は未取得のまま残り、受け取りタスクが拾える", () =>
   Effect.gen(function* rejected() {
-    const sent = yield* value(MUSE, "send_to_claude", { text: "記事を直して" }).pipe(
+    const sent = yield* value(MUSE)("send_to_claude")({ text: "記事を直して" }).pipe(
       Effect.flatMap(decodeSent),
       Effect.orDie,
     );
@@ -252,7 +169,7 @@ it.effect("起こせなかった依頼は未取得のまま残り、受け取り
 
 it.effect("中継のルーティンを broker に登録する", () =>
   Effect.gen(function* registered() {
-    const result = yield* value(MUSE, "register_claude_routine", {
+    const result = yield* value(MUSE)("register_claude_routine")({
       triggerId: "trig_01Test",
       token: "sk-ant-oat01-test",
     });

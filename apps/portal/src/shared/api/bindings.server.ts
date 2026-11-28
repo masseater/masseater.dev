@@ -1,6 +1,7 @@
 import type {
   CredentialStatusRpc,
   MoneyPortalRpc,
+  SchedulesRpc,
   SlidesRpc,
   WatashiPortalRpc,
 } from "@masseater.dev/portal-protocol";
@@ -16,6 +17,7 @@ export type UpstreamBindings = Readonly<{
   MONEY: Methods<MoneyPortalRpc>;
   SLIDES: Methods<SlidesRpc>;
   CREDENTIALS: Methods<CredentialStatusRpc>;
+  SCHEDULES: Methods<SchedulesRpc>;
 }>;
 
 export class Upstreams extends Context.Service<Upstreams, UpstreamBindings>()(
