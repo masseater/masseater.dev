@@ -8,75 +8,75 @@ backend = "core:dotnet"
 specifiers = ["11.0.100"]
 
 [[tools."github:open-telemetry/opentelemetry-collector-releases"]]
-version = "0.165.0"
+version = "0.166.0"
 backend = "github:open-telemetry/opentelemetry-collector-releases"
-specifiers = ["0.165.0"]
+specifiers = ["v0.166.0"]
 
 [tools."github:open-telemetry/opentelemetry-collector-releases".options]
 asset_pattern = "otelcol_*_linux_arm64.tar.gz"
 
 [tools."github:open-telemetry/opentelemetry-collector-releases"."platforms.linux-arm64"]
-checksum = "sha256:e59c320b90885610e346f3f82d2ceca55c5c30ede1549fd14cce577d175901cd"
+checksum = "sha256:5f7fd2c0481d04074ac9d94e5b565da1a5e7e4df15dd59a8172f5a8f95d2bec3"
 checksum_source = "mise-versions"
-url = "https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.165.0/otelcol_0.165.0_linux_arm64.tar.gz"
-url_api = "https://api.github.com/repos/open-telemetry/opentelemetry-collector-releases/releases/assets/719738763"
+url = "https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.166.0/otelcol_0.166.0_linux_arm64.tar.gz"
+url_api = "https://api.github.com/repos/open-telemetry/opentelemetry-collector-releases/releases/assets/789375871"
 
 [tools."github:open-telemetry/opentelemetry-collector-releases"."platforms.linux-arm64-musl"]
-checksum = "sha256:e59c320b90885610e346f3f82d2ceca55c5c30ede1549fd14cce577d175901cd"
+checksum = "sha256:5f7fd2c0481d04074ac9d94e5b565da1a5e7e4df15dd59a8172f5a8f95d2bec3"
 checksum_source = "mise-versions"
-url = "https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.165.0/otelcol_0.165.0_linux_arm64.tar.gz"
-url_api = "https://api.github.com/repos/open-telemetry/opentelemetry-collector-releases/releases/assets/719738763"
+url = "https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.166.0/otelcol_0.166.0_linux_arm64.tar.gz"
+url_api = "https://api.github.com/repos/open-telemetry/opentelemetry-collector-releases/releases/assets/789375871"
 
 [[tools."github:open-telemetry/opentelemetry-collector-releases"]]
-version = "0.165.0"
+version = "0.166.0"
 backend = "github:open-telemetry/opentelemetry-collector-releases"
-specifiers = ["0.165.0"]
+specifiers = ["v0.166.0"]
 
 [tools."github:open-telemetry/opentelemetry-collector-releases".options]
 asset_pattern = "otelcol_*_linux_amd64.tar.gz"
 
 [tools."github:open-telemetry/opentelemetry-collector-releases"."platforms.linux-x64"]
-checksum = "sha256:78570dd4bd6570bc41eb327869ef913bbf91b87dd8170ebebbf43bec71f6370d"
+checksum = "sha256:b2feb1185c156dc9def40d800afe58977bc2c85b2560274147a4f631f3e0deda"
 checksum_source = "mise-versions"
-url = "https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.165.0/otelcol_0.165.0_linux_amd64.tar.gz"
-url_api = "https://api.github.com/repos/open-telemetry/opentelemetry-collector-releases/releases/assets/719738623"
+url = "https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.166.0/otelcol_0.166.0_linux_amd64.tar.gz"
+url_api = "https://api.github.com/repos/open-telemetry/opentelemetry-collector-releases/releases/assets/789375728"
 
 [tools."github:open-telemetry/opentelemetry-collector-releases"."platforms.linux-x64-musl"]
-checksum = "sha256:78570dd4bd6570bc41eb327869ef913bbf91b87dd8170ebebbf43bec71f6370d"
+checksum = "sha256:b2feb1185c156dc9def40d800afe58977bc2c85b2560274147a4f631f3e0deda"
 checksum_source = "mise-versions"
-url = "https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.165.0/otelcol_0.165.0_linux_amd64.tar.gz"
-url_api = "https://api.github.com/repos/open-telemetry/opentelemetry-collector-releases/releases/assets/719738623"
+url = "https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.166.0/otelcol_0.166.0_linux_amd64.tar.gz"
+url_api = "https://api.github.com/repos/open-telemetry/opentelemetry-collector-releases/releases/assets/789375728"
 
 [[tools."github:open-telemetry/opentelemetry-collector-releases"]]
-version = "0.165.0"
+version = "0.166.0"
 backend = "github:open-telemetry/opentelemetry-collector-releases"
-specifiers = ["0.165.0"]
+specifiers = ["v0.166.0"]
 
 [tools."github:open-telemetry/opentelemetry-collector-releases".options]
 asset_pattern = "otelcol_*_darwin_arm64.tar.gz"
 
 [tools."github:open-telemetry/opentelemetry-collector-releases"."platforms.macos-arm64"]
-checksum = "sha256:1d68c0f41011a571199cd9489b04dd554e12091cacba862803a5c8ef0004d32a"
+checksum = "sha256:9109647af93b40ed737d21c7f7e00d82abbf1726d73a53f1ce65411006648c79"
 checksum_source = "mise-versions"
-url = "https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.165.0/otelcol_0.165.0_darwin_arm64.tar.gz"
-url_api = "https://api.github.com/repos/open-telemetry/opentelemetry-collector-releases/releases/assets/719738336"
+url = "https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.166.0/otelcol_0.166.0_darwin_arm64.tar.gz"
+url_api = "https://api.github.com/repos/open-telemetry/opentelemetry-collector-releases/releases/assets/789375526"
 
 [[tools."github:open-telemetry/opentelemetry-collector-releases"]]
-version = "0.165.0"
+version = "0.166.0"
 backend = "github:open-telemetry/opentelemetry-collector-releases"
-specifiers = ["0.165.0"]
+specifiers = ["v0.166.0"]
 
 [tools."github:open-telemetry/opentelemetry-collector-releases"."platforms.macos-x64"]
-checksum = "sha256:3abe452b96764b126cb43b1440e0f8e02903ee02c48a4e7f2584d740bf6ff71b"
+checksum = "sha256:4a396c877df9345c7d7e401d5a81fbc6321db45ee6d7ea1918af3ec027a9de61"
 checksum_source = "mise-versions"
-url = "https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.165.0/otelcol_0.165.0_darwin_amd64.tar.gz"
-url_api = "https://api.github.com/repos/open-telemetry/opentelemetry-collector-releases/releases/assets/719738209"
+url = "https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.166.0/otelcol_0.166.0_darwin_amd64.tar.gz"
+url_api = "https://api.github.com/repos/open-telemetry/opentelemetry-collector-releases/releases/assets/789375530"
 
 [tools."github:open-telemetry/opentelemetry-collector-releases"."platforms.windows-x64"]
-checksum = "sha256:e5db5558e57e05044c62998d3f635082f945f362920a335224360272b4aacc17"
+checksum = "sha256:20462a8d1dc069c5e2727c71ba0fe03370a63edb16f66c4de405696241f6c37c"
 checksum_source = "mise-versions"
-url = "https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.165.0/otelcol_0.165.0_windows_amd64.tar.gz"
-url_api = "https://api.github.com/repos/open-telemetry/opentelemetry-collector-releases/releases/assets/719681775"
+url = "https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.166.0/otelcol_0.166.0_windows_amd64.tar.gz"
+url_api = "https://api.github.com/repos/open-telemetry/opentelemetry-collector-releases/releases/assets/789362000"
 
 [[tools."github:open-telemetry/weaver"]]
 version = "0.28.0"
