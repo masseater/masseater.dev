@@ -9,12 +9,7 @@ import type { ConfigError } from "effect/Config";
 import { ciKeys, encodedGrants, githubAppStore } from "./src/app/broker-env.ts";
 import { brokerProviders } from "./src/app/broker-providers.ts";
 import { tailnetFederation } from "./src/features/join-tailnet/model/tailnet-federation.ts";
-import {
-  CREDENTIAL_BROKER_AUDIENCE,
-  HOURLY_CRON,
-  IDLE_CHECK_CRON,
-  PREFIX,
-} from "./src/shared/config/broker-names.ts";
+import { CREDENTIAL_BROKER_AUDIENCE, PREFIX } from "./src/shared/config/broker-names.ts";
 
 const DOMAIN = "masseater.dev";
 const CREDENTIAL_BROKER_HOST = `credentials.${DOMAIN}`;
@@ -48,7 +43,7 @@ const broker: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: 
       logpush: true,
       domain: CREDENTIAL_BROKER_HOST,
       workersDev: false,
-      crons: [HOURLY_CRON, IDLE_CHECK_CRON],
+      crons: ["41 * * * *"],
       env: {
         ROOT_TOKEN,
         ...keys,
