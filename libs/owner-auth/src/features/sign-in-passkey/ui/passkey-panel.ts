@@ -7,6 +7,7 @@ import { PasskeyKind, PasskeyPanelMessage } from "./passkey-panel-message.ts";
 import { StartPasskey } from "./start-passkey.ts";
 
 /** @stability experimental */
+// oxlint-disable-next-line effecttsgo/missing-pipeable-signature -- Effect UI components are called as (html, options)
 export const PasskeyPanelNoDeps = Html.component({
   name: "PasskeyPanel",
   props: Schema.Struct({
@@ -41,4 +42,5 @@ export const PasskeyPanelNoDeps = Html.component({
 });
 
 /** @stability experimental */
+// oxlint-disable-next-line effecttsgo/missing-pipeable-signature -- Effect UI components are called as (html, options)
 export const PasskeyPanel = PasskeyPanelNoDeps.pipe(Component.provide(StartPasskey.layer));

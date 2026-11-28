@@ -66,6 +66,7 @@ const answerButtons = ConsentPromptDef.fragment(
 );
 
 /** @stability experimental */
+// oxlint-disable-next-line effecttsgo/missing-pipeable-signature -- Effect UI components are called as (html, options)
 export const ConsentPromptNoDeps = ConsentPromptDef.make({
   init: () => ({ status: "idle" }),
   update: {
@@ -102,6 +103,7 @@ export const ConsentPromptNoDeps = ConsentPromptDef.make({
 });
 
 /** @stability experimental */
+// oxlint-disable-next-line effecttsgo/missing-pipeable-signature -- Effect UI components are called as (html, options)
 export const ConsentPrompt = ConsentPromptNoDeps.pipe(
   Component.provide([ClientName.layer, AnswerConsent.layer]),
 );
