@@ -1,4 +1,4 @@
-import { Array as Arr, String as Str, pipe } from "effect";
+import { Array as Arr, Match, String as Str, pipe } from "effect";
 
 const READ_ONLY_METHODS = ["GET", "HEAD", "OPTIONS"] as const;
 
@@ -17,8 +17,19 @@ export const isReadOnly = (method: string): boolean =>
     Arr.some((allowed) => allowed === Str.toUpperCase(method)),
   );
 
-export const shouldAbort = (request: RequestFacts): boolean =>
-  !isReadOnly(request.method) || (request.isNavigation && originOf(request.url) !== request.origin);
+export type Answer = "abort" | "fulfill" | "continue";
+
+const leavesOrigin = (request: RequestFacts): boolean =>
+  request.isNavigation && originOf(request.url) !== request.origin;
+
+const writes = (request: RequestFacts): boolean => !isReadOnly(request.method);
+
+export const answerOf = (request: RequestFacts): Answer =>
+  Match.value(request).pipe(
+    Match.when(leavesOrigin, () => "abort" as const),
+    Match.when(writes, () => "fulfill" as const),
+    Match.orElse(() => "continue" as const),
+  );
 
 export const carriesBearer = (request: RequestFacts): boolean =>
   originOf(request.url) === request.origin;

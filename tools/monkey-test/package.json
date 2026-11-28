@@ -8,12 +8,15 @@
     "#/*": "./src/*"
   },
   "dependencies": {
+    "@modelcontextprotocol/client": "catalog:",
     "@r_masseater/node-main": "catalog:",
     "effect": "catalog:stack",
     "gremlins.js": "catalog:",
     "playwright": "catalog:"
   },
   "devDependencies": {
+    "@effect/vitest": "catalog:",
+    "@modelcontextprotocol/server": "catalog:",
     "@types/node": "catalog:",
     "vite-plus": "catalog:stack"
   }

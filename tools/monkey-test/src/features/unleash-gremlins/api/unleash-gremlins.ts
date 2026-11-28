@@ -1,4 +1,6 @@
 import { Array as Arr, Effect, pipe } from "effect";
+import type { HttpClient } from "effect/http";
+import type { ChildProcessSpawner } from "effect/process";
 
 import type { Finding } from "#/entities/finding/index.ts";
 import { unleashOrigin } from "#/features/unleash-gremlins/api/unleash-origin.ts";
@@ -16,5 +18,10 @@ const unleashAll = Effect.fn("monkey.gremlins")(function* unleashAll(targets: re
 });
 
 /** @internal */
-export const unleashGremlins = (targets: readonly Target[]): Effect.Effect<readonly Finding[]> =>
-  Effect.scoped(unleashAll(targets));
+export const unleashGremlins = (
+  targets: readonly Target[],
+): Effect.Effect<
+  readonly Finding[],
+  never,
+  ChildProcessSpawner.ChildProcessSpawner | HttpClient.HttpClient
+> => Effect.scoped(unleashAll(targets));

@@ -1,11 +1,12 @@
 import { createRequire } from "node:module";
 
-import { Effect, Option } from "effect";
+import { Effect, Match, Option, pipe } from "effect";
 import type { Scope } from "effect";
 import type { Browser, BrowserContext, Route } from "playwright";
 
 import { guardScript } from "#/features/unleash-gremlins/model/guard-script.ts";
-import { carriesBearer, shouldAbort } from "#/features/unleash-gremlins/model/request-rules.ts";
+import { answerOf, carriesBearer } from "#/features/unleash-gremlins/model/request-rules.ts";
+import type { RequestFacts } from "#/features/unleash-gremlins/model/request-rules.ts";
 import { inBrowser } from "#/shared/lib/browser.ts";
 import type { BrowserFailure } from "#/shared/lib/browser.ts";
 
@@ -15,7 +16,25 @@ export type Setup = Readonly<{
   init: Option.Option<string>;
 }>;
 
+const NO_CONTENT = 204;
 const GREMLINS = createRequire(import.meta.url).resolve("gremlins.js/dist/gremlins.min.js");
+
+const continued = (
+  input: Readonly<{ setup: Setup; route: Route; facts: RequestFacts }>,
+): Effect.Effect<void, BrowserFailure> => {
+  const { setup, route, facts } = input;
+  const withToken = pipe(
+    setup.bearer,
+    Option.filter(() => carriesBearer(facts)),
+  );
+  return Option.match(withToken, {
+    onNone: () => inBrowser(() => route.continue()),
+    onSome: (token) => {
+      const headers = { ...route.request().headers(), authorization: `Bearer ${token}` };
+      return inBrowser(() => route.continue({ headers }));
+    },
+  });
+};
 
 const handled = (
   input: Readonly<{ setup: Setup; route: Route }>,
@@ -28,14 +47,11 @@ const handled = (
     origin: setup.origin,
     isNavigation: request.isNavigationRequest(),
   };
-  if (shouldAbort(facts)) {
-    return inBrowser(() => route.abort());
-  }
-  if (Option.isSome(setup.bearer) && carriesBearer(facts)) {
-    const headers = { ...request.headers(), authorization: `Bearer ${setup.bearer.value}` };
-    return inBrowser(() => route.continue({ headers }));
-  }
-  return inBrowser(() => route.continue());
+  return Match.value(answerOf(facts)).pipe(
+    Match.when("abort", () => inBrowser(() => route.abort())),
+    Match.when("fulfill", () => inBrowser(() => route.fulfill({ status: NO_CONTENT }))),
+    Match.orElse(() => continued({ setup, route, facts })),
+  );
 };
 
 const configured = (

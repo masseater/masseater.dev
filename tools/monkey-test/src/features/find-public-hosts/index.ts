@@ -1,1 +1,1 @@
-export { findPublicHosts } from "./api/find-public-hosts.ts";
+export { findCustomDomains, findPublicHosts } from "./api/find-public-hosts.ts";
