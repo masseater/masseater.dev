@@ -20,6 +20,7 @@ it.effect("成功した呼び出しは JSON の本文と件数を返す", () =>
     );
     expect(result).toStrictEqual({
       content: [{ type: "text", text: '{"found":"x"}' }],
+      structuredContent: { found: "x" },
       isError: false,
       _meta: { [RESULT_COUNT_META]: one() },
     });
