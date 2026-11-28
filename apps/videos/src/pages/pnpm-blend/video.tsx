@@ -20,12 +20,7 @@ const RED = `text-[260px] ${RED_LOOK}`;
 const CAPTION: Readonly<Record<string, string>> = { punch: RED, intro: "hidden" };
 const CAPTION_TOP: Readonly<Record<string, string>> = { punch: "top-[620px]" };
 
-const RUN = [
-  "$ pnpm add react vite typescript",
-  "Packages: +18",
-  "++++++++++++++++++",
-  "Done in 4.6s using pnpm v12.23.0",
-];
+const RUN = ["$ pnpm install", "++++++++++++++++", "Done in 4.0s"];
 
 const LOG = [
   ...RUN,
@@ -37,7 +32,7 @@ const LOG = [
   "+ typescript 7.0.2",
   "+ vite 8.3.8",
   "$ rm -rf node_modules && pnpm install",
-  "Done in 175ms using pnpm v12.23.0",
+  "Done in 407ms using pnpm v12.23.0",
 ];
 
 const TACHIE = "tsumugi3";
@@ -49,33 +44,10 @@ const Console = ({
   rows,
   at,
 }: Readonly<{ rows: readonly string[]; at: readonly number[] }>): ReactNode => (
-  <div className="absolute inset-x-0 top-[440px] flex justify-center px-6 [&>div]:scale-[1.1]">
+  <div className="absolute inset-x-0 top-[440px] flex justify-center px-6 [&>div]:scale-[1.45]">
     <Terminal at={at} rows={rows} />
   </div>
 );
-
-const PANEL_ZOOM = 1.03;
-
-const FOCUS: Readonly<Record<string, string>> = {
-  "pnpm-home": "50% 11.7%",
-  "pnpm-bench": "50% 69.5%",
-  "pnpm-bench2": "50% 55.9%",
-  "pnpm-motivation": "50% 40.6%",
-};
-
-const Panel = ({ shot, name }: Readonly<{ shot: Shot; name: string }>): ReactNode => {
-  const frame = useCurrentFrame();
-  const scale = interpolate(frame, [0, shot.duration], [1, PANEL_ZOOM]);
-  return (
-    <div className="absolute inset-x-0 top-[440px] h-[640px] overflow-hidden bg-white">
-      <Img
-        className="size-full object-cover"
-        src={imageOf(name)(shot)}
-        style={{ objectPosition: pick(FOCUS, name, "50% 0%"), scale: String(scale) }}
-      />
-    </div>
-  );
-};
 
 const PARTS = [
   { kind: "blink", closed: "v1.!目/*閉じ", open: "v1.!目/*基本目セット" },
@@ -92,7 +64,7 @@ const Board = ({ timeline }: Readonly<{ timeline: Timeline }>): ReactNode => (
     <div className="absolute inset-x-0 top-[64px] h-[18px] bg-[#9a5a33]" />
     <div className="absolute inset-x-0 top-0 bottom-[28px] overflow-hidden">
       <PsdNarrator
-        className="top-[1340px] left-[366px] h-[1682px] w-[1000px]"
+        className="top-[1340px] left-[170px] h-[1682px] w-[1000px]"
         parts={PARTS}
         psd={staticFile(tachiePsdPath(TACHIE))}
         timeline={timeline}
@@ -121,7 +93,7 @@ const Log = (): ReactNode => {
   return (
     <AbsoluteFill className="overflow-hidden bg-[#0b0d10]">
       <div
-        className="font-code px-6 text-[34px] leading-[1.45] whitespace-pre text-[#8b949e] opacity-45"
+        className="font-code px-6 text-[34px] leading-[1.45] whitespace-pre text-[#8b949e] opacity-20 blur-[2px]"
         style={{ translate: `0 ${String(200 - frame * SCROLL_PER_FRAME)}px` }}
       >
         {pipe(
@@ -200,31 +172,31 @@ const Pop = ({ step, children }: Readonly<{ step: number; children: ReactNode }>
 
 const Intro = ({ shot }: Readonly<{ shot: Shot }>): ReactNode => (
   <>
-    <AbsoluteFill className="items-center justify-start gap-10 pt-[170px]">
+    <AbsoluteFill className="items-center justify-start gap-6 pt-[250px]">
       <Pop step={0}>
-        <div className="caption-outline font-jp text-[74px] font-black whitespace-nowrap [--outline:#111] [--stroke:0.18em]">
+        <div className="caption-outline font-jp text-[62px] font-black whitespace-nowrap [--outline:#111] [--stroke:0.18em]">
           次世代のパッケージマネージャ
         </div>
       </Pop>
       <Pop step={1}>
         <div className="flex items-center gap-8">
           <Picture
-            className="size-[230px] rounded-[50px] bg-white p-9"
+            className="size-[200px] rounded-[44px] bg-white p-8"
             src={imageOf("pnpm")(shot)}
           />
-          <div className="caption-plain font-sans text-[260px] leading-none font-semibold italic">
+          <div className="caption-plain font-sans text-[220px] leading-none font-semibold italic">
             pnpm
           </div>
         </div>
       </Pop>
       <Pop step={2}>
         <div className="font-jp flex items-baseline text-[#ffd400]">
-          <span className="text-[440px] leading-none font-black tracking-[-0.08em]">30</span>
-          <span className="text-[170px] font-black">秒で</span>
+          <span className="text-[380px] leading-none font-black tracking-[-0.08em]">30</span>
+          <span className="text-[150px] font-black">秒で</span>
         </div>
       </Pop>
       <Pop step={3}>
-        <div className="caption-outline font-jp text-[170px] font-black [--outline:#111] [--stroke:0.16em]">
+        <div className="caption-outline font-jp text-[116px] font-black [--outline:#111] [--stroke:0.16em]">
           つむぎが解説
         </div>
       </Pop>
@@ -236,7 +208,7 @@ const Intro = ({ shot }: Readonly<{ shot: Shot }>): ReactNode => (
   </>
 );
 
-const AREA = "absolute inset-x-[50px] top-[450px] h-[760px]";
+const AREA = "absolute inset-x-[80px] top-[430px] h-[620px]";
 const CHALK = "#f4f1e8";
 const YELLOW = "#ffd400";
 const ALARM = "#ff6b5b";
@@ -260,31 +232,37 @@ const lineStart = (shot: Shot, index: number): number =>
   );
 
 const NPM_SECONDS = 43.1;
+const COUNT_SHARE = 0.85;
 const ONE_DECIMAL = 1;
 
 const SlowInstall = ({ shot }: Readonly<{ shot: Shot }>): ReactNode => {
   const frame = useCurrentFrame();
-  const elapsed = interpolate(frame, [NOTHING, shot.duration], [NOTHING, NPM_SECONDS], {
-    extrapolateRight: "clamp",
-  });
-  const filled = interpolate(frame, [NOTHING, shot.duration], [0.04, 0.22]);
+  const elapsed = interpolate(
+    frame,
+    [NOTHING, shot.duration * COUNT_SHARE],
+    [NOTHING, NPM_SECONDS],
+    {
+      extrapolateRight: "clamp",
+    },
+  );
+  const filled = elapsed / NPM_SECONDS;
   return (
     <div className={`${AREA} font-jp flex flex-col justify-center gap-10`}>
       <div className="font-code text-[76px] text-white/90">$ npm install</div>
-      <div className="h-[120px] w-full rounded-[10px] border-[6px] border-white/85 p-[8px]">
+      <div className="h-[100px] w-full shrink-0 rounded-[10px] border-[6px] border-white/85 p-[8px]">
         <div
           className="h-full rounded-[4px] bg-[#ff6b5b]"
           style={{ width: `${String(filled * 100)}%` }}
         />
       </div>
       <div className="flex items-baseline justify-end gap-4 text-white">
-        <span className="text-[202px] leading-none font-black tabular-nums">
+        <span className="text-[180px] leading-none font-black tabular-nums">
           {elapsed.toFixed(ONE_DECIMAL)}
         </span>
         <span className="text-[86px] font-black">秒…</span>
       </div>
-      <div className="text-right text-[38px] text-white/55">
-        初回インストール（pnpm.io/benchmarks）
+      <div className="text-[48px] font-bold text-white/70">
+        同じプロジェクトの初回（pnpm.io/benchmarks）
       </div>
     </div>
   );
@@ -297,34 +275,44 @@ interface Bar {
 }
 
 const AGAIN: readonly Bar[] = [
-  { label: "1回目", seconds: 4.6, color: CHALK },
-  { label: "2回目", seconds: 0.2, color: YELLOW },
+  { label: "1回目", seconds: 4, color: CHALK },
+  { label: "2回目", seconds: 0.4, color: YELLOW },
 ];
 
-const LONGEST = 4.6;
+const RACE: readonly Bar[] = [
+  { label: "npm", seconds: 43.1, color: ALARM },
+  { label: "pnpm", seconds: 4, color: YELLOW },
+];
+
 const BAR_GAP = 8;
 
-const TwiceBars = (): ReactNode => {
+const Bars = ({ bars }: Readonly<{ bars: readonly Bar[] }>): ReactNode => {
   const frame = useCurrentFrame();
+  const longest = Math.max(
+    ...pipe(
+      bars,
+      Arr.map((bar) => bar.seconds),
+    ),
+  );
   return (
-    <div className={`${AREA} font-jp flex flex-col justify-center gap-16`}>
+    <div className={`${AREA} font-jp flex flex-col justify-center gap-10`}>
       {pipe(
-        AGAIN,
+        bars,
         Arr.map((bar, index) => (
           <div className="flex flex-col gap-4" key={bar.label}>
             <div className="flex items-baseline justify-between text-white">
               <span className="text-[81px] font-black">{bar.label}</span>
               <span className="text-[148px] leading-none font-black" style={{ color: bar.color }}>
-                {bar.seconds}
+                {bar.seconds.toFixed(ONE_DECIMAL)}
                 <span className="text-[76px]">秒</span>
               </span>
             </div>
-            <div className="h-[130px] w-full">
+            <div className="h-[100px] w-full">
               <div
                 className="h-full min-w-[18px] rounded-[8px]"
                 style={{
                   background: bar.color,
-                  width: `${String((bar.seconds / LONGEST) * 100 * grow(frame, index * BAR_GAP))}%`,
+                  width: `${String((bar.seconds / longest) * 100 * grow(frame, index * BAR_GAP))}%`,
                 }}
               />
             </div>
@@ -349,6 +337,7 @@ const Store = (): ReactNode => {
   const linked = grow(frame, GROW_FRAMES);
   return (
     <div className={`${AREA} font-jp text-white`}>
+      <div className="mb-4 text-center text-[56px] font-black text-white/80">3つのプロジェクト</div>
       <div className="flex justify-between">
         {pipe(
           PROJECTS,
@@ -358,15 +347,14 @@ const Store = (): ReactNode => {
               key={name}
               style={{ translate: `0 ${String((FULL - grow(frame, index * STAGGER)) * 40)}px` }}
             >
-              <span className="text-[40px] whitespace-nowrap text-white/75">プロジェクト</span>
-              <span className="text-[96px] leading-none">{name}</span>
+              <span className="text-[110px] leading-none">{name}</span>
             </div>
           )),
         )}
       </div>
-      <svg className="h-[200px] w-full" viewBox="0 0 980 170">
+      <svg className="h-[110px] w-full" viewBox="0 0 920 110">
         {pipe(
-          [150, 490, 830],
+          [150, 460, 770],
           Arr.map((x) => (
             <line
               key={x}
@@ -375,9 +363,9 @@ const Store = (): ReactNode => {
               strokeLinecap="round"
               strokeWidth="8"
               x1={x}
-              x2={490 + (x - 490) * 0.35}
+              x2={460 + (x - 460) * 0.35}
               y1={10}
-              y2={10 + 150 * linked}
+              y2={10 + 90 * linked}
             />
           )),
         )}
@@ -477,8 +465,8 @@ const ROW_LOOK = {
 } as const;
 
 const MARK = {
-  found: { text: "○", color: "#1f9d55" },
-  lost: { text: "✕", color: ALARM },
+  found: { text: "見える", color: "#1f9d55" },
+  lost: { text: "見えない", color: ALARM },
 } as const;
 
 const markOf = (hidden: boolean): (typeof MARK)[keyof typeof MARK] => {
@@ -499,7 +487,7 @@ const Mark = ({ hidden, frame }: Readonly<{ hidden: boolean; frame: number }>): 
   const mark = markOf(hidden);
   return (
     <span
-      className="text-[54px] font-black"
+      className="font-jp text-[34px] font-black"
       style={{ color: mark.color, opacity: grow(frame, GROW_FRAMES) }}
     >
       {mark.text}
@@ -512,14 +500,14 @@ const Modules = ({
   hidden,
   frame,
 }: Readonly<{ title: string; hidden: boolean; frame: number }>): ReactNode => (
-  <div className="flex w-[475px] flex-col gap-3 rounded-[14px] border-[5px] border-white/85 p-6">
+  <div className="flex w-[400px] flex-col gap-3 rounded-[14px] border-[5px] border-white/85 p-5">
     <div className="font-code text-[54px] font-bold text-white">{title}</div>
     <div className="font-code text-[40px] text-white/60">node_modules/</div>
     {pipe(
       FLAT,
       Arr.map((name) => (
         <div
-          className="font-code flex items-center justify-between rounded-[8px] px-4 py-1 text-[46px]"
+          className="font-code flex items-center justify-between rounded-[8px] px-3 py-1 text-[42px]"
           key={name}
           style={rowLookOf(hidden && TRANSITIVE.has(name))}
         >
@@ -535,16 +523,46 @@ const Modules = ({
   </div>
 );
 
+const FIX_AT = 24;
+
 const OldTool = (): ReactNode => {
   const frame = useCurrentFrame();
   return (
     <div className={`${AREA} font-jp flex flex-col items-center gap-6`}>
       <div className="rounded-full bg-white px-8 py-2 text-[51px] font-black text-[#1b1b1b]">
-        古いツール「esbuild どこ？」
+        古いツールがesbuildを探すと…
       </div>
-      <div className="flex w-full justify-between">
+      <div className="flex w-full gap-4">
         <Modules frame={frame} hidden={false} title="npm" />
         <Modules frame={frame} hidden title="pnpm" />
+      </div>
+      <div
+        className="flex flex-col self-start rounded-[12px] border-[4px] border-dashed border-[#ffd400] px-6 py-3 text-[#ffd400]"
+        style={{ opacity: grow(frame, FIX_AT) }}
+      >
+        <span className="text-[44px] font-black">設定1行で回避できる</span>
+        <span className="font-code text-[36px]">nodeLinker: hoisted</span>
+      </div>
+    </div>
+  );
+};
+
+const POP_FRAMES = 8;
+
+const TryNow = (): ReactNode => {
+  const frame = useCurrentFrame();
+  const pop = interpolate(frame, [0, POP_FRAMES], [0.6, 1], {
+    easing: Easing.out(Easing.back(1.8)),
+    extrapolateRight: "clamp",
+  });
+  return (
+    <div className={`${AREA} font-jp flex flex-col items-center justify-center gap-10`}>
+      <div className="text-[64px] font-black text-white">今すぐ試すなら</div>
+      <div
+        className="font-code rounded-[18px] bg-[#0b0d10] px-12 py-8 text-[92px] font-bold text-[#ffd400]"
+        style={{ scale: String(pop) }}
+      >
+        npx get-pnpm
       </div>
     </div>
   );
@@ -574,10 +592,10 @@ export const draw: Readonly<Record<string, Draw>> = {
       <Sfx at={0} kind="hook" shot={shot} />
     </>
   ),
-  try: () => <Console at={[0, 24, 36, 44]} rows={RUN} />,
+  try: () => <Console at={[0, 24, 40]} rows={RUN} />,
   wow: (shot) => (
     <>
-      <Console at={[0, 0, 0, 0]} rows={RUN} />
+      <Bars bars={RACE} />
       <LightLeak />
       <Sfx at={0} kind="pop" shot={shot} />
     </>
@@ -591,7 +609,7 @@ export const draw: Readonly<Record<string, Draw>> = {
   ),
   again: () => (
     <>
-      <TwiceBars />
+      <Bars bars={AGAIN} />
       <LightLeak />
     </>
   ),
@@ -599,7 +617,7 @@ export const draw: Readonly<Record<string, Draw>> = {
   caveat: () => <OldTool />,
   ending: (shot) => (
     <>
-      <Panel name="pnpm-home" shot={shot} />
+      <TryNow />
       <LightLeak />
       <Sfx at={0} kind="ending" shot={shot} />
     </>
