@@ -1,13 +1,5 @@
 import type { Draw, Look, Shot } from "@masseater.dev/video-kit";
-import {
-  Caption,
-  Credits,
-  Footage,
-  Picture,
-  Sfx,
-  Terminal,
-  imageOf,
-} from "@masseater.dev/video-kit";
+import { Caption, Credits, Picture, Sfx, Terminal, imageOf } from "@masseater.dev/video-kit";
 import { Array as Arr, Option, pipe } from "effect";
 import type { ReactNode } from "react";
 import { AbsoluteFill, Easing, Img, interpolate, staticFile, useCurrentFrame } from "remotion";
@@ -16,7 +8,7 @@ import { tachiePath } from "#/shared/config/index.ts";
 import { pick } from "#/shared/lib/pick.ts";
 
 const BOLD =
-  "caption-outline text-[68px] font-bold whitespace-pre-line [--outline:#111] [--stroke:0.2em]";
+  "caption-outline text-[72px] font-bold whitespace-pre-line [--outline:#1b1b1b] [--stroke:0.14em]";
 const RED_LOOK =
   "caption-outline leading-none tracking-[-0.06em] scale-x-[0.86] [--fill:#ff1e1e] [--outline:#2a0000] [--stroke:0.16em] [--emphasis:#ff1e1e] drop-shadow-[0_10px_0_rgb(0_0_0/0.8)]";
 const RED = `text-[260px] ${RED_LOOK}`;
@@ -52,28 +44,45 @@ const Console = ({
   rows,
   at,
 }: Readonly<{ rows: readonly string[]; at: readonly number[] }>): ReactNode => (
-  <AbsoluteFill className="items-center justify-start bg-[#15171b] px-8 pt-[300px] [&>div]:scale-[1.15]">
+  <div className="absolute inset-x-0 top-[440px] flex justify-center px-6 [&>div]:scale-[1.1]">
     <Terminal at={at} rows={rows} />
-  </AbsoluteFill>
+  </div>
 );
 
-const Screen = ({ shot, name }: Readonly<{ shot: Shot; name: string }>): ReactNode => {
+const FOCUS: Readonly<Record<string, string>> = {
+  "pnpm-home": "50% 4%",
+  "pnpm-bench": "50% 58%",
+  "pnpm-bench2": "50% 46%",
+  "pnpm-motivation": "50% 30%",
+};
+
+const Panel = ({ shot, name }: Readonly<{ shot: Shot; name: string }>): ReactNode => {
   const frame = useCurrentFrame();
-  const scale = interpolate(frame, [0, shot.duration], [1, 1.08]);
+  const scale = interpolate(frame, [0, shot.duration], [1, 1.06]);
   return (
-    <AbsoluteFill className="items-center justify-start bg-[#1b1d21] pt-[260px]">
+    <div className="absolute inset-x-0 top-[440px] h-[640px] overflow-hidden bg-white">
       <Img
-        className="absolute size-full scale-125 object-cover opacity-40 blur-3xl"
+        className="size-full object-cover"
         src={imageOf(name)(shot)}
+        style={{ objectPosition: pick(FOCUS, name, "50% 0%"), scale: String(scale) }}
       />
-      <Img
-        className="w-full shadow-[0_30px_80px_rgb(0_0_0/0.6)]"
-        src={imageOf(name)(shot)}
-        style={{ scale: String(scale) }}
-      />
-    </AbsoluteFill>
+    </div>
   );
 };
+
+const Board = (): ReactNode => (
+  <AbsoluteFill className="bg-[#285a41]">
+    <div className="absolute inset-x-0 top-[64px] h-[18px] bg-[#9a5a33]" />
+    <div className="absolute right-[-60px] bottom-[28px] h-[800px] w-[720px] overflow-hidden">
+      <Img
+        className="absolute top-[-40px] left-[-300px] w-[920px] max-w-none"
+        src={staticFile(tachiePath("tsumugi"))}
+      />
+    </div>
+    <div className="absolute inset-x-0 bottom-0 h-[28px] bg-[#9a5a33]" />
+    <div className="absolute bottom-[28px] left-[120px] h-[22px] w-[150px] bg-[#f1efe9]" />
+  </AbsoluteFill>
+);
 
 const LightLeak = (): ReactNode => {
   const frame = useCurrentFrame();
@@ -228,13 +237,13 @@ const Intro = ({ shot }: Readonly<{ shot: Shot }>): ReactNode => {
 };
 
 export const look: Partial<Look> = {
-  backdrop: () => <AbsoluteFill className="bg-black" />,
+  backdrop: () => <Board />,
   overlay: () => "",
   frame: (shot, content) => (
     <>
       {content}
       <div
-        className={`absolute inset-x-[50px] flex justify-center ${pick(CAPTION_TOP, shot.id, "top-[1400px]")}`}
+        className={`absolute inset-x-[50px] flex justify-center ${pick(CAPTION_TOP, shot.id, "top-[150px] h-[270px] items-end")}`}
       >
         <Caption className={pick(CAPTION, shot.id, BOLD)} shot={shot} />
       </div>
@@ -247,20 +256,7 @@ export const draw: Readonly<Record<string, Draw>> = {
   intro: (shot) => <Intro shot={shot} />,
   hook: (shot) => (
     <>
-      <Footage
-        className="blur-[6px] brightness-[0.35]"
-        shot={shot}
-        src={imageOf("pnpm-home")(shot)}
-      />
-      <AbsoluteFill className="items-center justify-start gap-5 pt-[420px]">
-        <Picture
-          className="size-[200px] rounded-[44px] bg-white p-8 shadow-[0_12px_40px_rgb(0_0_0/0.45)]"
-          src={imageOf("pnpm")(shot)}
-        />
-        <div className="caption-plain font-sans text-[170px] leading-none font-semibold italic">
-          pnpm
-        </div>
-      </AbsoluteFill>
+      <Panel name="pnpm-home" shot={shot} />
       <Sfx at={0} kind="hook" shot={shot} />
     </>
   ),
@@ -281,18 +277,18 @@ export const draw: Readonly<Record<string, Draw>> = {
   ),
   again: (shot) => (
     <>
-      <Screen name="pnpm-bench2" shot={shot} />
+      <Panel name="pnpm-bench2" shot={shot} />
       <LightLeak />
     </>
   ),
-  disk: (shot) => <Footage shot={shot} src={imageOf("pnpm-motivation")(shot)} />,
-  caveat: (shot) => <Screen name="pnpm-bench" shot={shot} />,
+  disk: (shot) => <Panel name="pnpm-motivation" shot={shot} />,
+  caveat: (shot) => <Panel name="pnpm-bench" shot={shot} />,
   ending: (shot) => (
     <>
-      <Footage shot={shot} src={imageOf("pnpm-home")(shot)} />
+      <Panel name="pnpm-home" shot={shot} />
       <LightLeak />
       <Sfx at={0} kind="ending" shot={shot} />
-      <div className="absolute inset-x-0 bottom-[20px]">
+      <div className="absolute inset-x-0 top-[1096px]">
         <Credits shot={shot} />
       </div>
     </>
