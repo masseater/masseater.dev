@@ -1,6 +1,6 @@
 export { ColumnHeadings } from "./column-headings.tsx";
 export type { ColumnHeading } from "./column-headings.tsx";
-export type { TableHeadVariant } from "./table-head.tsx";
+export type { TableHeadVariant } from "#/shared/lib/table-class.ts";
 export { Table } from "./table.tsx";
 export { TableBody } from "./table-body.tsx";
 export { TableCaption } from "./table-caption.tsx";

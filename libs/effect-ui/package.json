@@ -15,7 +15,9 @@
     "@effect/ui": "catalog:",
     "@effect/ui-kit": "catalog:",
     "@masseater.dev/ui": "workspace:*",
-    "class-variance-authority": "catalog:"
+    "@paper-design/shaders": "catalog:",
+    "class-variance-authority": "catalog:",
+    "lucide": "catalog:"
   },
   "devDependencies": {
     "@effect/vitest": "catalog:",

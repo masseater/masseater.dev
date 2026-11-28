@@ -1,1 +1,2 @@
-export { RunPanel } from "./ui/run-panel.tsx";
+/** @stability experimental */
+export { RunPanel } from "./ui/run-panel.ts";

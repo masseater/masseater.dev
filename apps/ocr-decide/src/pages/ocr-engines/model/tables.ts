@@ -1,6 +1,8 @@
 import type { EngineRun, JaBenchSummary } from "@ocr-decide/measurements/ja-bench-schema";
 import { Array as Arr, pipe } from "effect";
 
+import type { Column } from "#/shared/ui/value-table.ts";
+
 import { COPY } from "./copy.ts";
 
 const PERCENT = 100;
@@ -11,16 +13,14 @@ const SECOND_DIGITS = 2;
 
 const NONE = 0;
 
-export interface Column {
-  readonly id: string;
-  readonly label: string;
-  readonly cell: (run: EngineRun) => string;
-}
+/** @stability experimental */
+export type EngineColumn = Column<EngineRun>;
 
+/** @stability experimental */
 export interface Table {
   readonly id: string;
   readonly title: string;
-  readonly columns: readonly Column[];
+  readonly columns: readonly EngineColumn[];
 }
 
 const percent = (rate: number): string => `${Math.round(rate * PERCENT)}%`;
@@ -59,6 +59,7 @@ const categoryTable = ({
   ),
 });
 
+/** @stability experimental */
 export const tablesOf = (summary: JaBenchSummary): readonly Table[] => [
   OVERALL,
   categoryTable({ summary, id: "synthetic", title: COPY.synthetic }),

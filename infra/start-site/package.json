@@ -19,6 +19,7 @@
   "dependencies": {
     "@alchemy.run/cloudflare": "catalog:stack",
     "@effect/platform-node": "catalog:",
+    "@effect/ui": "catalog:",
     "@masseater.dev/ui": "workspace:*",
     "@masseater.dev/web-ui": "workspace:*",
     "@tailwindcss/vite": "catalog:",

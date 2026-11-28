@@ -1,1 +1,2 @@
-export { ExtractPage } from "./ui/extract-page.tsx";
+/** @stability experimental */
+export { ExtractPage } from "./ui/extract-page.ts";

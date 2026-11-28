@@ -1,6 +1,7 @@
 import type { ComponentProps, ReactNode } from "react";
 
 import { cn } from "#/shared/lib/cn.ts";
+import { TABLE_CLASS, TABLE_CONTAINER_CLASS } from "#/shared/lib/table-class.ts";
 
 const FOCUSABLE = 0;
 
@@ -22,13 +23,9 @@ export const Table = ({
     data-slot="table-container"
     aria-label={label}
     aria-labelledby={labelledBy}
-    className={cn("relative w-full overflow-x-auto", containerClassName)}
+    className={cn(TABLE_CONTAINER_CLASS, containerClassName)}
     tabIndex={FOCUSABLE}
   >
-    <table
-      data-slot="table"
-      className={cn("w-full caption-bottom text-sm", className)}
-      {...props}
-    />
+    <table data-slot="table" className={cn(TABLE_CLASS, className)} {...props} />
   </section>
 );

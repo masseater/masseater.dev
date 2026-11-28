@@ -179,6 +179,6 @@ export default defineConfig({
   },
   msch: {
     workspaceAgentsMd: true,
-    comments: { allow: ["(?:note|pass|text|glyphs|dispatch):"] },
+    comments: { allow: ["(?:note|pass|text|glyphs|dispatch):", "^app-html$"] },
   },
 });
