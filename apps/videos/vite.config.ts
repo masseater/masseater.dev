@@ -12,6 +12,8 @@ export default defineConfig({
           files: ["src/pages/*/video.tsx"],
           rules: {
             "no-magic-numbers": "off",
+            "max-lines": "off",
+            "max-lines-per-function": "off",
             "react/only-export-components": "off",
             "react/jsx-no-literals": "off",
             "react/no-multi-comp": "off",
