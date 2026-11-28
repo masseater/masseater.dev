@@ -141,6 +141,7 @@ jobs:
     permissions:
       contents: read
       id-token: write
+      issues: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -157,6 +158,12 @@ jobs:
       - run: vp run -r private-names
         env:
           CHECKOUTS: ${{ github.workspace }} ${{ github.workspace }}/.skills-checkout
+      - if: ${{ always() && github.ref == 'refs/heads/main' }}
+        run: vp run -r deploy-failure
+        env:
+          GH_TOKEN: ${{ github.token }}
+          NEEDS: ${{ format('{{"deploy":{{"result":"{0}"}},"private-names":{{"result":"{1}"}}}}', needs.deploy.result, job.status) }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}
 
   exposure:
     needs: [deploy]
@@ -167,31 +174,8 @@ jobs:
       id-token: write
     uses: $/.github/workflows/exposure.yml
 
-  deploy-failure:
-    needs: [deploy, private-names]
-    if: ${{ !cancelled() && github.ref == 'refs/heads/main' }}
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      issues: write
-    concurrency:
-      group: deploy-failure
-      cancel-in-progress: true
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-      - uses: $/.github/actions/setup
-        with:
-          native: "false"
-      - run: vp run -r deploy-failure
-        env:
-          GH_TOKEN: ${{ github.token }}
-          NEEDS: ${{ toJSON(needs) }}
-          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}
-
   ci-telemetry:
-    needs: [shard, verify, wake, deploy, private-names, exposure, deploy-failure]
+    needs: [shard, verify, wake, deploy, private-names, exposure]
     if: always()
     runs-on: ubuntu-latest
     permissions:
