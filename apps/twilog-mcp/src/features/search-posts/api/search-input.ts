@@ -1,7 +1,7 @@
 import { TWILOG_ACCOUNTS } from "@masseater.dev/repositories/oauth-targets";
-import { Schema } from "effect";
+import { DateTime, Option, Schema, String as Str, pipe } from "effect";
 
-const DATE = /^20\d{6}$/u;
+const DATE = /^(?<year>20\d{2})(?<month>\d{2})(?<day>\d{2})$/u;
 
 const FIRST_PAGE = 1;
 
@@ -9,7 +9,26 @@ const Account = Schema.Literals(TWILOG_ACCOUNTS);
 
 const Timeline = Schema.Literals(["tweets", "likes", "bookmarks"]);
 
-const Day = Schema.String.check(Schema.isPattern(DATE));
+const isoOf = (text: string): string => pipe(text, Str.replace(DATE, "$<year>-$<month>-$<day>"));
+
+const isCalendarDay = (text: string): boolean =>
+  DATE.test(text) &&
+  pipe(
+    DateTime.make(`${isoOf(text)}T00:00:00Z`),
+    Option.exists((time) => DateTime.formatIsoDateUtc(time) === isoOf(text)),
+  );
+
+const Day = Schema.String.check(
+  Schema.makeFilter((text: string) => isCalendarDay(text) || `"${text}" is not a day in YYYYMMDD`),
+);
+
+const ordered = Schema.makeFilter(
+  ({ startDate, endDate }: Readonly<{ startDate?: string; endDate?: string }>) =>
+    pipe(
+      Option.all([Option.fromUndefinedOr(startDate), Option.fromUndefinedOr(endDate)]),
+      Option.match({ onNone: () => true, onSome: ([start, end]) => start <= end }),
+    ) || "endDate must be the same day as startDate or later",
+);
 
 const Page = Schema.Int.check(Schema.isGreaterThanOrEqualTo(FIRST_PAGE)).annotate({
   description: "Page number, applied to each account. Each account reports its own maxPage.",
@@ -39,6 +58,6 @@ export const SearchInput = Schema.Struct({
   includeRetweets: Schema.optionalKey(
     Schema.Boolean.annotate({ description: "Include retweets. Defaults to false." }),
   ),
-});
+}).check(ordered);
 
 export type SearchRequest = typeof SearchInput.Type;

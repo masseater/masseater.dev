@@ -1,4 +1,4 @@
-import { Schema } from "effect";
+import { Option, Result, Schema, pipe } from "effect";
 
 import {
   EventKindBody,
@@ -18,6 +18,7 @@ import {
 import { LIFE_RECORDS, SOURCES } from "#/shared/db/index.ts";
 
 import { BUCKETS } from "./life-groups.ts";
+import { dayBound, parseTime } from "./life-time.ts";
 
 const MIN_ONE = 1;
 
@@ -36,6 +37,24 @@ const Text = Schema.NonEmptyString;
 const Names = Schema.Array(Text);
 
 const Source = Schema.Literals(SOURCES).pick(["said", "provided", "imported"]);
+
+const Moment = Time.check(
+  Schema.makeFilter((text: string) =>
+    Result.match(parseTime(text), { onFailure: (message) => message, onSuccess: () => true }),
+  ),
+);
+
+type Span = Readonly<{ from?: string; to?: string }>;
+
+const inOrder = ({ from, to }: Span): boolean =>
+  pipe(
+    Option.all([dayBound("start")(from), dayBound("end")(to)]),
+    Option.match({ onNone: () => true, onSome: ([start, end]) => start <= end }),
+  );
+
+const ordered = Schema.makeFilter(
+  (span: Span) => inOrder(span) || "to must be the same day as from or later",
+);
 
 const RevisionNumber = Schema.Int.check(Schema.isGreaterThanOrEqualTo(MIN_ONE));
 
@@ -142,15 +161,15 @@ export const LifeReadInput = Schema.Struct({
   ),
   query: Schema.optionalKey(Text),
   from: Schema.optionalKey(
-    Time.annotate({ description: "ISO 8601. A time without a zone is Asia/Tokyo" }),
+    Moment.annotate({ description: "ISO 8601. A time without a zone is Asia/Tokyo" }),
   ),
-  to: Schema.optionalKey(Time),
+  to: Schema.optionalKey(Moment),
   kinds: Schema.optionalKey(Names),
   people: Schema.optionalKey(Names),
   place: Schema.optionalKey(Text),
   tags: Schema.optionalKey(Names),
   about: Schema.optionalKey(Text),
-  asOf: Schema.optionalKey(Time),
+  asOf: Schema.optionalKey(Moment),
   topics: Schema.optionalKey(Names),
   withHistory: Schema.optionalKey(Schema.Boolean),
   mediaType: Schema.optionalKey(Schema.Literals(MEDIA_TYPES)),
@@ -166,7 +185,7 @@ export const LifeReadInput = Schema.Struct({
       description: `metric_goal periods to look back. Default ${DEFAULT_PERIODS}`,
     }),
   ),
-});
+}).check(ordered);
 
 const Bound = Schema.optionalKey(Schema.Finite);
 
@@ -178,7 +197,7 @@ const Condition = Schema.Struct({
   lte: Bound,
 });
 
-const Period = Schema.Struct({ from: Time, to: Time });
+const Period = Schema.Struct({ from: Moment, to: Moment }).check(ordered);
 
 const MIN_BINS = 2;
 
@@ -201,13 +220,13 @@ const CompareTo = Schema.Union([Period, Schema.Literal("previousYear"), Schema.N
 
 export const LifeStatsInput = Schema.Struct({
   metrics: Metrics,
-  from: Time.annotate({ description: "ISO 8601, inclusive like to" }),
-  to: Time,
+  from: Moment.annotate({ description: "ISO 8601, inclusive like to" }),
+  to: Moment,
   bucket: Schema.optionalKey(Schema.Literals(BUCKETS)),
   compareTo: Schema.optionalKey(CompareTo),
   where: Condition.pipe(Schema.Array, Schema.optionalKey),
   groupBy: Schema.optionalKey(GroupBy),
-});
+}).check(ordered);
 
 export type WriteItemValue = typeof WriteItem.Type;
 

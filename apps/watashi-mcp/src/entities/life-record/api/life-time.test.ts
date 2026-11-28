@@ -30,6 +30,12 @@ describe("日時の読み方", () => {
     expect(Result.isFailure(parseTime("2026-13-01"))).toBe(true);
   });
 
+  it("暦に無い日は日付でも時刻でも断り、うるう日は通す", () => {
+    expect(Result.isFailure(parseTime("2026-02-30"))).toBe(true);
+    expect(Result.isFailure(parseTime("2026-02-30T10:00"))).toBe(true);
+    expect(stored("2028-02-29")).toBe("2028-02-29");
+  });
+
   it("時刻は UTC と日本時間の両方で返す", () => {
     expect(timeOut("2026-11-08T10:00:00.000Z")).toStrictEqual({
       utc: "2026-11-08T10:00:00.000Z",

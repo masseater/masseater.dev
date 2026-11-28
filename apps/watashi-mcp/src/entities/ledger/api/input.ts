@@ -1,15 +1,16 @@
 import type { StandardSchemaWithJSON } from "@modelcontextprotocol/server";
-import { Schema, pipe } from "effect";
+import { Schema, String as Str, pipe } from "effect";
 
 import { AccountClassSchema } from "#/entities/ledger/model/accounts.ts";
 import { CategorySchema } from "#/entities/ledger/model/categories.ts";
 import { ColumnsSchema } from "#/entities/ledger/model/csv-columns.ts";
+import { MONTH, isCalendarDay } from "#/shared/lib/index.ts";
 
 type InputSchema = Schema.ConstraintDecoder<unknown> & Schema.Constraint;
 
-const MONTH = /^\d{4}-(?:0[1-9]|1[0-2])$/u;
+const CURSOR = /^\d{4}-\d{2}-\d{2}\|[1-9]\d{0,14}$/u;
 
-const DAY = /^\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\d|3[01])$/u;
+const DAY_LENGTH = 10;
 
 const ACCOUNT_ID = /^[a-z0-9][a-z0-9-]*$/u;
 
@@ -25,7 +26,20 @@ const Month = Schema.String.check(Schema.isPattern(MONTH)).annotate({
   description: "YYYY-MM",
 });
 
-const Day = Schema.String.check(Schema.isPattern(DAY)).annotate({ description: "YYYY-MM-DD" });
+const Day = Schema.String.check(
+  Schema.makeFilter(
+    (text: string) => isCalendarDay(text) || `"${text}" is not a day in YYYY-MM-DD`,
+  ),
+).annotate({ description: "YYYY-MM-DD" });
+
+const isCursor = (text: string): boolean =>
+  CURSOR.test(text) && isCalendarDay(pipe(text, Str.takeLeft(DAY_LENGTH)));
+
+const Cursor = Schema.String.check(
+  Schema.makeFilter(
+    (text: string) => isCursor(text) || "cursor must be next from the previous page",
+  ),
+).annotate({ description: "next from the previous page" });
 
 const Yen = Schema.Int;
 
@@ -111,9 +125,7 @@ const ListTransactionsFields = {
   ...PERIOD_FIELDS,
   account: Schema.optionalKey(AccountId),
   category: Schema.optionalKey(CategorySchema),
-  cursor: Schema.optionalKey(
-    Schema.NonEmptyString.annotate({ description: "next from the previous page" }),
-  ),
+  cursor: Schema.optionalKey(Cursor),
 };
 
 const BalanceSheetInputSchema = Schema.Struct({

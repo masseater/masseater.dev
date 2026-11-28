@@ -1,5 +1,7 @@
 import { DateTime, Effect, Option, Result, String as Str, pipe } from "effect";
 
+import { MONTH, isCalendarDay } from "#/shared/lib/index.ts";
+
 const PRECISIONS = ["day", "month", "year"] as const;
 
 export type Precision = (typeof PRECISIONS)[number];
@@ -23,10 +25,6 @@ const JST_OFFSET = JST_HOURS * MILLIS_PER_HOUR;
 const JST_SUFFIX = "+09:00";
 
 const YEAR = /^\d{4}$/u;
-
-const MONTH = /^\d{4}-(?:0[1-9]|1[0-2])$/u;
-
-const DAY = /^\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\d|3[01])$/u;
 
 const INSTANT = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d{1,9})?)?(?:Z|[+-]\d{2}:?\d{2})?$/u;
 
@@ -65,13 +63,14 @@ const precisionOf = (date: string): Precision => {
   return "day";
 };
 
-const isDate = (input: string): boolean => YEAR.test(input) || MONTH.test(input) || DAY.test(input);
+const isDate = (input: string): boolean =>
+  YEAR.test(input) || MONTH.test(input) || isCalendarDay(input);
 
 export const parseTime = (input: string): Result.Result<TimeValue, string> => {
   if (isDate(input)) {
     return Result.succeed({ kind: "date", date: input, precision: precisionOf(input) });
   }
-  if (!INSTANT.test(input)) {
+  if (!INSTANT.test(input) || !isCalendarDay(pipe(input, Str.takeLeft(DATE_LENGTH)))) {
     return Result.fail(`"${input}" is not a valid time. ${TIME_FORMAT}`);
   }
   if (ZONE.test(input)) {

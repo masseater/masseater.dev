@@ -54,7 +54,7 @@ const Text = Schema.NonEmptyString;
 
 export const Time = Schema.NonEmptyString;
 
-export const Ref = Schema.String.check(Schema.isPattern(/^[a-z_]+:\d+$/u)).annotate({
+export const Ref = Schema.String.check(Schema.isPattern(/^[a-z_]+:[1-9]\d{0,14}$/u)).annotate({
   description: "Such as life_event:12",
 });
 
