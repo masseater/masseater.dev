@@ -1,0 +1,26 @@
+{
+  "name": "holons",
+  "version": "0.0.0",
+  "private": true,
+  "description": "holons.masseater.dev, a static page with the zoomable figure of the owner's nested holons.",
+  "bin": {
+    "write-site": "./bin/write-site.ts"
+  },
+  "type": "module",
+  "imports": {
+    "#/*": "./src/*"
+  },
+  "dependencies": {
+    "@effect/platform-node": "catalog:",
+    "effect": "catalog:stack",
+    "security-headers": "workspace:*"
+  },
+  "devDependencies": {
+    "@alchemy.run/cloudflare": "catalog:stack",
+    "@masseater.dev/cloudflare-account": "workspace:*",
+    "@types/node": "catalog:",
+    "alchemy": "catalog:stack",
+    "typescript": "catalog:stack",
+    "vite-plus": "catalog:stack"
+  }
+}

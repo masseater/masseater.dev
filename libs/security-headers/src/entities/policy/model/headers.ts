@@ -47,16 +47,25 @@ const workerDirective = (worker: readonly string[] | undefined): readonly string
     ),
   );
 
+const fontDirective = (font: readonly string[] | undefined): readonly string[] =>
+  Arr.fromOption(
+    Option.map(Option.fromNullishOr(font), (sources) =>
+      pipe(["font-src 'self'", ...sources], Arr.join(" ")),
+    ),
+  );
+
 export const contentSecurityPolicy = ({
   script,
   style,
   worker,
+  font,
   image = [],
   styleAttr = false,
 }: Readonly<{
   script: readonly string[];
   style: readonly string[];
   worker?: readonly string[];
+  font?: readonly string[];
   image?: readonly string[];
   styleAttr?: boolean;
 }>): string =>
@@ -67,6 +76,7 @@ export const contentSecurityPolicy = ({
       pipe(["style-src 'self'", ...style], Arr.join(" ")),
       ...Arr.fromOption(Option.liftPredicate("style-src-attr 'unsafe-inline'", () => styleAttr)),
       ...workerDirective(worker),
+      ...fontDirective(font),
       pipe(["img-src 'self' data:", ...image], Arr.join(" ")),
       `connect-src 'self' ${WEB_ANALYTICS_REPORT_ORIGIN}`,
       OBJECT_SOURCE_NONE,
