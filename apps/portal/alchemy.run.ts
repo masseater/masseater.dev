@@ -6,6 +6,7 @@ import { ownerStack } from "@masseater.dev/owner-stack";
 import type {
   CredentialStatusRpc,
   MoneyPortalRpc,
+  SchedulesRpc,
   SlidesRpc,
   WatashiPortalRpc,
 } from "@masseater.dev/portal-protocol";
@@ -38,6 +39,7 @@ const upstreams = Effect.gen(function* upstreams() {
     MONEY: Workers.WorkerEntrypoint<MoneyPortalRpc>(watashi, "MoneyPortal"),
     SLIDES: Workers.WorkerEntrypoint<SlidesRpc>(sundries, "Slides"),
     CREDENTIALS: Workers.WorkerEntrypoint<CredentialStatusRpc>(broker, "CredentialStatus"),
+    SCHEDULES: Workers.WorkerEntrypoint<SchedulesRpc>(sundries, "Schedules"),
   };
 });
 

@@ -30,6 +30,7 @@ const upstreams: UpstreamBindings = {
   MONEY: { read: unused },
   SLIDES: { search: unused },
   CREDENTIALS: { list: unused },
+  SCHEDULES: { list: unused },
 };
 
 const handle = servingUpstreams(upstreams)(watashiRoutes.handle);
