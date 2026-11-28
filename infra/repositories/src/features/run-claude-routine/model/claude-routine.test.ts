@@ -66,7 +66,7 @@ test("登録したルーティンを封をして置き、押すと API に Beare
         routine: { triggerId: TRIGGER, token: TOKEN },
       });
       const { client, sent } = yield* recording(OK);
-      const outcome = yield* fireRoutine(env).pipe(
+      const outcome = yield* fireRoutine(env, Option.none()).pipe(
         Effect.provideService(HttpClient.HttpClient, client),
       );
       expect(registered).toBe(true);
@@ -102,7 +102,7 @@ test("未登録なら送らずに missing を返す", () =>
     Effect.gen(function* missing() {
       const { env } = memoryStore();
       const { client, sent } = yield* recording(OK);
-      const outcome = yield* fireRoutine(env).pipe(
+      const outcome = yield* fireRoutine(env, Option.none()).pipe(
         Effect.provideService(HttpClient.HttpClient, client),
       );
       const requests = yield* Ref.get(sent);
@@ -117,9 +117,45 @@ test("API が拒んだら rejected を返す", () =>
       const { env } = memoryStore();
       yield* registerRoutine({ env, routine: { triggerId: TRIGGER, token: TOKEN } });
       const { client } = yield* recording(FORBIDDEN);
-      const outcome = yield* fireRoutine(env).pipe(
+      const outcome = yield* fireRoutine(env, Option.none()).pipe(
         Effect.provideService(HttpClient.HttpClient, client),
       );
       expect(outcome).toBe("rejected");
+    }),
+  ));
+
+const OTHER_TRIGGER = "trig_01OtherProject";
+
+const PROJECT = "aredoko";
+
+const registerBoth = (env: ReturnType<typeof memoryStore>["env"]): Effect.Effect<void> =>
+  Effect.andThen(
+    registerRoutine({ env, routine: { triggerId: TRIGGER, token: TOKEN } }),
+    registerRoutine({ env, routine: { triggerId: OTHER_TRIGGER, token: TOKEN, project: PROJECT } }),
+  ).pipe(Effect.asVoid);
+
+const urls = (requests: readonly Sent[]): readonly string[] =>
+  pipe(
+    requests,
+    Arr.map(({ url }) => url),
+  );
+
+test("プロジェクト名を付けた登録は別に置き、その名前で押したときだけ使う", () =>
+  Effect.runPromise(
+    Effect.gen(function* perProject() {
+      const { env, rows } = memoryStore();
+      yield* registerBoth(env);
+      const { client, sent } = yield* recording(OK);
+      const outcomes = yield* Effect.forEach(
+        [Option.some(PROJECT), Option.some("nowhere"), Option.some("../x")],
+        (project) => fireRoutine(env, project),
+        { concurrency: 1 },
+      ).pipe(Effect.provideService(HttpClient.HttpClient, client));
+      const requests = yield* Ref.get(sent);
+      expect(Option.isSome(rows.get(`${ROW}:${PROJECT}`))).toBe(true);
+      expect(outcomes).toStrictEqual(["fired", "missing", "missing"]);
+      expect(urls(requests)).toStrictEqual([
+        `https://api.anthropic.com/v1/claude_code/routines/${OTHER_TRIGGER}/fire`,
+      ]);
     }),
   ));

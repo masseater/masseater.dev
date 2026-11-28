@@ -1,6 +1,6 @@
 import { runner } from "@r_masseater/workers-tracing/effect";
 import { WorkerEntrypoint } from "cloudflare:workers";
-import { Layer, Logger } from "effect";
+import { Layer, Logger, Option } from "effect";
 import { FetchHttpClient } from "effect/http";
 
 import {
@@ -22,7 +22,7 @@ export class ClaudeRoutine extends WorkerEntrypoint<AppStoreEnv> implements Clau
     return runner(services)(registerRoutine({ env: this.env, routine }));
   }
 
-  public fire(): Promise<FireOutcome> {
-    return runner(services)(fireRoutine(this.env));
+  public fire(project?: string): Promise<FireOutcome> {
+    return runner(services)(fireRoutine(this.env, Option.fromNullishOr(project)));
   }
 }
