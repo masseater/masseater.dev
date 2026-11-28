@@ -64,19 +64,19 @@ Sonarの回答は、検証を取り除くのではなく、インナーループ
 
 シュミットは分割をエージェント内に配置する。インナーループはタスク内の信頼性に関するもので、エージェントがコードを書いてテストを走らせ、直して繰り返す。アウターループは時間とともに賢くなることに関するもので、AGENTS.md のようなファイルを通じて教訓がターンをまたいで引き継がれる[^schmid]。ゴヴィンダラジの言い回しは近い。インナーループはソフトウェアを構築し、アウターループはそれを構築するシステムを改善する[^govindaraj]。
 
-## Agentic loops at SpaceX
+## SpaceXにおけるエージェント型ループ
 
-Lauren Tan, who uses the handle poteto, works on Grok Bot at SpaceX AI[^aie-speaker]. She created pstack, a plugin of agent skills for Cursor[^pstack]. In a livestream hosted by Matt Pocock and posted on October 3, 2026, she described her own work with two loops. This article read the auto-generated English captions of that video. Auto captions garble names, so Grok Bot appears there as grabbot[^livestream].
+ハンドル名のpotetoを使用しているLauren Tanは、SpaceX AI[^aie-speaker]でGrok Botに携わっている。彼女はCursor[^pstack]向けのエージェントスキル用プラグインであるpstackを開発した。マット・ポコックが主催し、2026年10月3日に公開されたライブ配信で、彼女は2つのループを用いた自身の作業について説明した。この記事は、その動画の自動生成された英語字幕を読み込んだ。自動キャプションは名前を文字化けさせるため、Grok Botではgrabbot[^livestream]と表示される。
 
-She brings up the terms while explaining why a project needs input from outside. A project that works on a feature or a bug receives bug reports in Slack, Linear or X. These are external systems that are not connected to the inner loop. She says she likes to talk about this outer loop and the inner loop, and adds that she does not know whether she is using the definition correctly[^livestream]. To her, the inner loop is her agent engineers working on the code toward a snapshot of her intent. The snapshot can go stale when new information comes to light, so triggers must pull that information back into the inner loop[^livestream].
+彼女は、プロジェクトに外部の意見が必要な理由を説明しながら、これらの用語を持ち出す。機能やバグに対応するプロジェクトには、Slack、Linear、またはXでバグレポートが届く。これらは内部ループに接続されていない外部システムである。彼女は、この外側のループと内側のループについて話すのが好きだと言い、定義を正しく使えているのか分からないと付け加えている[^livestream]。彼女にとってのインナーループとは、コードに取り組むエージェントエンジニアたちが、自身の意図のスナップショットへと向かう仕組みのことである。新しい情報が判明するとスナップショットが古くなる可能性があるため、トリガーはその情報を内部ループに取り戻す必要がある[^livestream]。
 
-Later she says that Cursor projects are her inner loop and Grok Bot is her outer loop. Grok Bot takes the external context and gives it to the projects. It can send messages to them, so she does not even have to open Cursor. Her example is a burst of 30 issues at once. A coordinator agent figures out how to distribute them to a team of agents[^livestream].
+後に彼女は、Cursorプロジェクトが自身の内ループであり、Grok Botが外ループであると語っている。Grok Botは外部コンテキストを取り込み、プロジェクトに提供する。彼女にメッセージを送信できるため、彼女はCursorを開く必要さえない。彼女の例は、30もの問題が一度に押し寄せることだ。コーディネーターエージェントは、それらをエージェントチームに配布する方法を考案する[^livestream]。
 
-This split uses neither the push nor the time scale as its boundary. The inner loop writes, verifies and merges code. The outer loop brings in what happens outside the code and decides what the inner loop works on. It is close to the outer loop of the vendor article above, which is driven by users and bug reports[^puppygraph].
+この分割では、プッシュもタイムスケールも境界として使用していない。内部ループはコードの書き込み、検証、およびマージを行う。外側のループはコードの外側で起きていることを取り込み、内側のループが何を処理するかを決定する。これは、ユーザーやバグ報告[^puppygraph]によって駆動される、前述のベンダー記事の外ループに近い。
 
-Her talk at the AI Engineer conference, "All Code Is Slop (Except Mine)", runs 17 minutes. In it she says that if the inner coding loop produces slop, automating that loop only produces more slop. She then names connectors and routines that start Cursor cloud agents and projects as a way to build the outer loop when the inner loop is ready[^aie-talk].
+AI Engineerカンファレンスでの彼女の講演「All Code Is Slop (Except Mine)」は、17分間である。その中で彼女は、内部のコーディングループがスロップを発生させると、そのループを自動化することでさらにスロップが増えると述べている。続いて彼女は、内部ループの準備が整った際に外部ループを構築するための手段として、Cursor cloudエージェントやプロジェクトを起動するコネクタやルーチンの名称を挙げている[^aie-talk]。
 
-The two sources give the scale of her practice. In the livestream, the host says she posted that she shipped 2,500 pull requests to production last month. She replies that they are not 2,500 features and that much of the work is gardening. Asked whether she checked all of them, she says that nobody can check every one at that scale, so she samples. She scrutinizes the pull requests and the code the agents write, and then corrects the environment, not the single agent[^livestream]. In the talk she says that she shipped 3,000 pull requests to production in the previous month and that her team shipped 11,000, with a revert rate of about half a percent. Her code review has shrunk to reading verification artifacts, and agents merge most of their own pull requests[^aie-talk]. These figures are her own, and no independent audit of them was found.
+2つの資料に彼女の実務規模が示されている。ライブ配信の中で、ホストは先月本番環境に2,500件のプルリクエストを送信したと投稿した。彼女は、2,500もの機能があるわけではなく、作業の多くは庭仕事だと答える。すべてチェックしたのかと問われた彼女は、その規模ですべてをチェックすることは不可能なので、サンプルを採取しているのだと答えた。彼女はプルリクエストやエージェントが記述したコードを精査し、単一のエージェントではなく環境を修正する[^livestream]。講演の中で彼女は、前月に3,000件のプルリクエストを本番環境に配信し、チーム全体で11,000件を配信して、リバート率は約0.5%だったと述べている。彼女のコードレビューは検証アーティファクトの読解にまで縮小しており、エージェントは自前のプルリクエストの大部分をマージしている[^aie-talk]。これらの数値は彼女自身のものであり、独立した監査は行われていない。
 
 ## どの意味で使われているか見分ける方法
 
