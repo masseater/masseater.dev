@@ -46,6 +46,7 @@
     "@fontsource/noto-sans-jp": "catalog:",
     "@masseater.dev/d1-test": "workspace:*",
     "@mdx-js/rollup": "catalog:",
+    "@r_masseater/intent-book": "catalog:",
     "@r_masseater/song-format": "catalog:",
     "@resvg/resvg-js": "catalog:",
     "@shikijs/rehype": "catalog:",
