@@ -1,6 +1,6 @@
 import { homedir } from "node:os";
 
-import { betterleaks } from "@r_masseater/h56m-presets";
+import { betterleaks } from "@r_masseater/h56m/presets";
 import {
   Array as Arr,
   Console,
