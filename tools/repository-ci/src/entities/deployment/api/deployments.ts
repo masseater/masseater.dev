@@ -1,26 +1,12 @@
 import { getJson, post, postJson, warn } from "@r_masseater/github-workflow";
 import { Array as Arr, Config, Effect, Option, Schema, pipe } from "effect";
 
+import { isProduction } from "#/entities/deployment/model/deployment.ts";
+import type { DeploymentRecord } from "#/entities/deployment/model/deployment.ts";
+
 const Deployments = Schema.Array(Schema.Struct({ sha: Schema.String }));
 
 const Created = Schema.Struct({ id: Schema.Int });
-
-const PRODUCTION = "production";
-
-/** @internal */
-export const Stacks = Schema.Struct({ name: Schema.String, filter: Schema.String }).pipe(
-  Schema.Array,
-  Schema.fromJsonString,
-);
-
-/** @internal */
-export type DeploymentRecord = Readonly<{ environment: string; task: string }>;
-
-/** @internal */
-export const deployed = (stack: string): DeploymentRecord => ({
-  environment: PRODUCTION,
-  task: `deploy:${stack}`,
-});
 
 /** @internal */
 export const lastRecorded = Effect.fn("lastRecorded")(
@@ -52,7 +38,7 @@ export const record = Effect.fn("record")(function* record({
       environment,
       auto_merge: false,
       required_contexts: [],
-      production_environment: environment === PRODUCTION,
+      production_environment: isProduction(environment),
       description: task,
     },
   });

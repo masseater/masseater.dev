@@ -36,7 +36,7 @@
     "./package.json": "./package.json"
   },
   "scripts": {
-    "prepublishOnly": "vp run build"
+    "prepublishOnly": "vp exec msch-publish prepublish ."
   },
   "dependencies": {
     "@effect/ai-openrouter": "catalog:",
