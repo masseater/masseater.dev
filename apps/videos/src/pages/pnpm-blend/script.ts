@@ -4,6 +4,7 @@ import { BGM, IMAGES, SHOTS } from "#/shared/config/index.ts";
 import { VIDEO_START, onBeat } from "#/shared/lib/beat.ts";
 
 const INTRO_SPEED = 2;
+const ZUNDAMON = 3;
 const INTRO_BEATS = { name: 1, length: 3, voice: 5, call: 6 } as const;
 
 export const INTRO_STEPS: readonly number[] = [
@@ -38,14 +39,16 @@ export const script: VideoScript = {
       ],
       speed: [INTRO_SPEED],
     },
-    { id: "wait", say: ["まだ…？"], hold: 0.9 },
-    { id: "hook", say: ["npmのインストール\n遅すぎない？"] },
-    { id: "try", say: ["pnpmに変えてみたら"] },
-    { id: "wow", say: ["4秒で終わった"] },
-    { id: "punch", say: ["**爆速**"], hold: 0.6 },
-    { id: "again", say: ["2回目は**0.4秒**"] },
-    { id: "disk", say: ["パッケージは\nPCに1つだけ置くから", "容量もほぼ増えない"] },
-    { id: "caveat", say: ["古いツールだと\n動かないこともあるけど", "設定1行で直る"] },
-    { id: "ending", say: ["もうnpmには戻れない"], hold: 0.5 },
+    { id: "wait", voice: ZUNDAMON, say: ["まだ終わらないのだ…"], hold: 0.6 },
+    { id: "hook", voice: ZUNDAMON, say: ["npmのインストール\n遅すぎるのだ"] },
+    { id: "try", say: ["pnpmに変えてみ？"] },
+    { id: "wow", voice: ZUNDAMON, say: ["4秒で終わったのだ！？"] },
+    { id: "punch", say: ["**爆速**っしょ"], hold: 0.6 },
+    { id: "again", say: ["2回目なら**0.4秒**"] },
+    { id: "disk", say: ["パッケージは\nPCに1つだけ置くから", "容量もほぼ増えないんだよね"] },
+    { id: "caveat", voice: ZUNDAMON, say: ["古いツールが\n動かないのだ…"] },
+    { id: "fix", say: ["設定1行で直るよ"] },
+    { id: "ending", say: ["これ味わっちゃうと\nもうnpmには戻れないっしょ"] },
+    { id: "join", voice: ZUNDAMON, say: ["ボクも今すぐ\n変えるのだ！"], hold: 0.5 },
   ],
 };

@@ -1,6 +1,6 @@
 import type { Part } from "@masseater.dev/tachie";
 import { PsdCharacter } from "@masseater.dev/tachie";
-import { Array as Arr, pipe } from "effect";
+import { Array as Arr, Option, pipe } from "effect";
 import type { ReactNode } from "react";
 import { useCurrentFrame } from "remotion";
 
@@ -28,29 +28,38 @@ export const PsdNarrator = ({
   psd,
   parts,
   className,
+  voice,
 }: Readonly<{
   timeline: Timeline;
+  voice?: number;
   psd: string;
   parts: readonly Part[];
   className: string;
 }>): ReactNode => {
   const frame = useCurrentFrame();
-  const speakers = pipe(
+  const cuts = pipe(
     timeline.cuts,
-    Arr.map(({ voice }) => voice),
+    Arr.filter((cut) =>
+      Option.match(Option.fromNullishOr(voice), {
+        onNone: () => true,
+        onSome: (only) => cut.voice === only,
+      }),
+    ),
   );
-  const hop = hopOf({ cuts: timeline.cuts, voices: speakers, frame });
+  const hop = hopOf({
+    cuts,
+    voices: pipe(
+      cuts,
+      Arr.map((cut) => cut.voice),
+    ),
+    frame,
+  });
   return (
     <Box
       className={`motion pointer-events-none absolute origin-bottom ${className}`}
       vars={poseOf(hop, frame)}
     >
-      <PsdCharacter
-        className="size-full"
-        parts={parts}
-        psd={psd}
-        voices={recordingsOf(timeline.cuts)}
-      />
+      <PsdCharacter className="size-full" parts={parts} psd={psd} voices={recordingsOf(cuts)} />
     </Box>
   );
 };
