@@ -1,6 +1,6 @@
 # masseater.dev
 
-Follow `masseater-ecosystem`, a skill in masseater/skills that says which skills to load in each situation. `vp install` puts the skills in `.agents/skills/`.
+Follow `masseater-style`, a skill in masseater/skills that says which skills to load in each situation. `vp install` puts the skills in `.agents/skills/`.
 
 Each workspace has its own AGENTS.md describing it and the rules that apply only there. Read it before changing that workspace.
 
