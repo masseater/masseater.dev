@@ -1,0 +1,28 @@
+{
+  "name": "@masseater.dev/sashi",
+  "version": "0.0.0",
+  "private": true,
+  "description": "The shape of a reference on Sashi, the owner's shelf of references for what they want, shared by the site that shows them and the MCP that writes them.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/masseater/masseater.dev.git",
+    "directory": "libs/sashi"
+  },
+  "type": "module",
+  "imports": {
+    "#/*": "./src/*"
+  },
+  "exports": {
+    ".": "./src/app/index.ts"
+  },
+  "dependencies": {
+    "effect": "catalog:stack"
+  },
+  "devDependencies": {
+    "@effect/vitest": "catalog:",
+    "vite-plus": "catalog:stack"
+  },
+  "peerDependencies": {
+    "effect": "^4.0.0"
+  }
+}

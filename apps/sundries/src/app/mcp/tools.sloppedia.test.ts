@@ -1,21 +1,20 @@
 import { expect, it } from "@effect/vitest";
-import { createMcpHandler } from "@modelcontextprotocol/server";
-import { Array as Arr, Effect, Option, Record as Rec, Schema, String as Str, pipe } from "effect";
+import { Array as Arr, Effect, String as Str, pipe } from "effect";
 import { afterAll, beforeAll, beforeEach } from "vite-plus/test";
 
 import { registerSloppediaTools } from "#/features/edit-sloppedia/index.ts";
 
 import {
   broker,
+  callTool,
   MAIN_SHA,
   NEW_PULL,
   REPO,
   sentRequests,
   setScene,
   github,
-} from "./sloppedia-tools.test.support.ts";
-import type { Sent } from "./sloppedia-tools.test.support.ts";
-import { serverOf } from "./tools.ts";
+} from "./tools.test.support.ts";
+import type { Sent } from "./tools.test.support.ts";
 
 beforeAll(() => {
   github.listen({ onUnhandledFrame: "error" });
@@ -47,60 +46,11 @@ const ARTICLE = {
   body: "Web 開発は、Web の開発である。\n",
 };
 
-const TextContent = Schema.Struct({ type: Schema.String, text: Schema.String });
-
-const CallResult = Schema.Struct({
-  content: Schema.Array(TextContent),
-  isError: Schema.optionalKey(Schema.Boolean),
+const writeArticle = callTool({
+  register: registerSloppediaTools({ SLOPPEDIA_GITHUB: broker }),
+  name: "write_sloppedia_article",
+  arguments: ARTICLE,
 });
-
-const ToolResult = Schema.fromJsonString(Schema.Struct({ result: CallResult }));
-
-const decodeToolResult = Schema.decodeEffect(ToolResult);
-
-const DATA_LINE = /^data: (?<json>.+)$/mu;
-
-const toolCall = {
-  jsonrpc: "2.0",
-  id: 1,
-  method: "tools/call",
-  params: { name: "write_sloppedia_article", arguments: ARTICLE },
-};
-
-const encodeJson = Schema.encodeEffect(Schema.fromJsonString(Schema.Unknown));
-
-const writeArticle = Effect.gen(function* writeArticle() {
-  const body = yield* encodeJson(toolCall);
-  const response = yield* Effect.promise(() =>
-    createMcpHandler(() => registerSloppediaTools(broker)(serverOf())).fetch(
-      new Request("https://sundries.masseater.dev/mcp", {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-          accept: "application/json, text/event-stream",
-        },
-        body,
-      }),
-    ),
-  );
-  const text = yield* Effect.promise(() => response.text());
-  const json = pipe(
-    text,
-    Str.match(DATA_LINE),
-    Option.flatMap(({ groups }) => Option.fromNullishOr(groups)),
-    Option.flatMap(Rec.get("json")),
-    Option.getOrElse(() => text),
-  );
-  const { result } = yield* decodeToolResult(json);
-  return {
-    isError: result.isError ?? false,
-    text: pipe(
-      result.content,
-      Arr.map((item) => item.text),
-      Arr.join("\n"),
-    ),
-  };
-}).pipe(Effect.orDie);
 
 const sentTo = (method: string, path: string): readonly Sent[] =>
   pipe(
@@ -168,7 +118,7 @@ it.effect("記事の書き込みが失敗したら、失敗した手順を返す
     setScene({ commit: { status: CONFLICT, body: { message: "sha does not match" } } });
     const { isError, text } = yield* writeArticle;
     expect(isError).toBe(true);
-    expect(pipe(text, Str.includes("commit article"))).toBe(true);
+    expect(pipe(text, Str.includes("commit file"))).toBe(true);
     expect(sentTo("POST", `${REPO}/pulls`)).toStrictEqual([]);
   }),
 );

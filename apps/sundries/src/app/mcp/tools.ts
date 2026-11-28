@@ -5,8 +5,10 @@ import { registerBrokerTools } from "#/features/broker-credentials/index.ts";
 import type { BrokerBindings } from "#/features/broker-credentials/index.ts";
 import { registerDecideTools } from "#/features/decide-choices/index.ts";
 import type { DecideBindings } from "#/features/decide-choices/index.ts";
+import { registerSashiTools } from "#/features/edit-sashi/index.ts";
+import type { SashiBindings } from "#/features/edit-sashi/index.ts";
 import { registerSloppediaTools } from "#/features/edit-sloppedia/index.ts";
-import type { SloppediaBroker } from "#/features/edit-sloppedia/index.ts";
+import type { SloppediaBindings } from "#/features/edit-sloppedia/index.ts";
 import { registerAnalyticsTools } from "#/features/query-analytics/index.ts";
 import type { AnalyticsBindings } from "#/features/query-analytics/index.ts";
 import { registerClaudeRequestTools } from "#/features/request-claude/index.ts";
@@ -23,13 +25,15 @@ export type ToolBindings = AnalyticsBindings &
   BrokerBindings &
   DecideBindings &
   RequestBindings &
+  SashiBindings &
   SlideBindings &
-  Readonly<{ SLOPPEDIA_GITHUB: SloppediaBroker }>;
+  SloppediaBindings;
 
 export const registerTools = (env: ToolBindings): McpServer =>
   pipe(
     serverOf(),
-    registerSloppediaTools(env.SLOPPEDIA_GITHUB),
+    registerSloppediaTools(env),
+    registerSashiTools(env),
     registerAnalyticsTools(env),
     registerSlideTools(env),
     registerBrokerTools(env),
