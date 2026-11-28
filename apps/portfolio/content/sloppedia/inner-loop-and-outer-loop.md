@@ -56,7 +56,7 @@ Sonarの回答は、検証を取り除くのではなく、インナーループ
 | 3つの階層                      | 秒から分、リクエスト、出力、検証                           | 週単位から月単位、アーキテクチャと組織                       | ジーン・キムとスティーブ・イェッゲの著書『Vibe Coding』、IT Revolution経由[^itrev] |
 | タスク内およびタスクをまたいで | エージェントが1つのタスク内で行う処理                      | エージェントがターンやセッションをまたいで引き継ぐもの       | フィリップ・シュミット[^schmid]                                                    |
 | 構築と改善                     | タスクを検証済みの変更に変換する                           | エージェントの指示、コンテキスト、およびツールを改善する     | プラヴィーン・ゴヴィンダラージ[^govindaraj]                                        |
-| コードと外の世界               | エージェントが意図に沿ってコードを書き、検証してマージする | ボットが外からのバグ報告や要望を集め、インナーループを動かす | Lauren Tan[^postgrok][^aie-talk]                                                   |
+| コードと外の世界               | エージェントが意図に沿ってコードを書き、検証してマージする | ボットが外からのバグ報告や要望を集め、インナーループを動かす | Lauren Tan[^livestream][^aie-talk]                                                 |
 
 3層モデルでは、数時間から数日にわたって動作する中間ループが追加される。セッション間の継続性と、並列エージェントの連携について扱っている[^itrev]。IT Revolution によれば、開発者はかつて単純なインナーとアウターの2つのループのモデルで働いていたという[^itrev]。2026年7月のベンダー記事にも、3つのループが挙げられている。それぞれ数分、数十分から数時間、数日から数週間で閉じる。その記事では、ミドルループは開発者自身のフィードバックである[^puppygraph]。
 
@@ -64,17 +64,19 @@ Sonarの回答は、検証を取り除くのではなく、インナーループ
 
 シュミットは分割をエージェント内に配置する。インナーループはタスク内の信頼性に関するもので、エージェントがコードを書いてテストを走らせ、直して繰り返す。アウターループは時間とともに賢くなることに関するもので、AGENTS.md のようなファイルを通じて教訓がターンをまたいで引き継がれる[^schmid]。ゴヴィンダラジの言い回しは近い。インナーループはソフトウェアを構築し、アウターループはそれを構築するシステムを改善する[^govindaraj]。
 
-## SpaceX でのエージェントのループ
+## Agentic loops at SpaceX
 
-Lauren Tan は、poteto というハンドル名で知られ、SpaceX AI で Grok Bot に携わっている[^aie-speaker]。Cursor 向けのエージェントスキルのプラグインである pstack を作った[^pstack]。2026年10月2日、Matt Pocock が主催したライブ配信で、2つのループを使った自身の作業を説明した。この動画は本記事では読めなかった。以下の記述は、自動生成された字幕をタイムスタンプ付きで引用したノートによる。こうした字幕は固有名詞を誤変換する[^postgrok]。
+Lauren Tan, who uses the handle poteto, works on Grok Bot at SpaceX AI[^aie-speaker]. She created pstack, a plugin of agent skills for Cursor[^pstack]. In a livestream hosted by Matt Pocock and posted on October 3, 2026, she described her own work with two loops. This article read the auto-generated English captions of that video. Auto captions garble names, so Grok Bot appears there as grabbot[^livestream].
 
-このノートで Tan は、Cursor のプロジェクトが自分のインナーループで、Grok Bot が自分のアウターループだと述べている。インナーループは、エージェントのエンジニアたちが、Tan の意図のスナップショットに向けてコードに取り組むことである。アウターループは、Slack、Linear、X のバグ報告など、コードベースの外にあるものすべてを指す。ボットがチャンネルを購読し、検証スキルで報告を再現して、main ブランチにもバグが残っていることを確かめる。そのうえで報告を Cursor のプロジェクトに登録する。プロジェクトのコーディネーターエージェントは、バグごとにエージェントを起動せず、関連する報告をまとめる[^postgrok]。
+She brings up the terms while explaining why a project needs input from outside. A project that works on a feature or a bug receives bug reports in Slack, Linear or X. These are external systems that are not connected to the inner loop. She says she likes to talk about this outer loop and the inner loop, and adds that she does not know whether she is using the definition correctly[^livestream]. To her, the inner loop is her agent engineers working on the code toward a snapshot of her intent. The snapshot can go stale when new information comes to light, so triggers must pull that information back into the inner loop[^livestream].
 
-この分け方は、プッシュも時間の長さも境界にしていない。インナーループはコードを書き、検証し、マージする。アウターループはコードの外で起きていることを取り込み、インナーループが何に取り組むかを決める。ユーザーやバグ報告で動く、前述のベンダー記事のアウターループに近い[^puppygraph]。
+Later she says that Cursor projects are her inner loop and Grok Bot is her outer loop. Grok Bot takes the external context and gives it to the projects. It can send messages to them, so she does not even have to open Cursor. Her example is a burst of 30 issues at once. A coordinator agent figures out how to distribute them to a team of agents[^livestream].
 
-AI Engineer カンファレンスでの Tan の講演「All Code Is Slop (Except Mine)」は17分である。講演で Tan は、インナーのコーディングループが slop を出すなら、そのループを自動化しても slop が増えるだけだと述べている。インナーループが整ったら、Cursor のクラウドエージェントやプロジェクトを起動するコネクタとルーチンで、アウターループを作ればよいという[^aie-talk]。書き起こしに outer loop という語は一度だけ出てくるが、定義はない。
+This split uses neither the push nor the time scale as its boundary. The inner loop writes, verifies and merges code. The outer loop brings in what happens outside the code and decides what the inner loop works on. It is close to the outer loop of the vendor article above, which is driven by users and bug reports[^puppygraph].
 
-講演では、Tan の実務の規模が語られている。Tan が前の月に本番へ出したプルリクエストは3,000件で、チームでは11,000件、取り消し率は約0.5%だった。ライブ配信では、ある月の件数として約2,500を挙げ、これは2,500の機能ではないと述べた[^aie-talk][^postgrok]。コードレビューは検証の成果物を読むだけに縮んだ。エージェントはプルリクエストの大半を自分でマージする。Tan は結果を抜き取りで確かめ、後からコミットログを読み、問題があれば取り消すか lint ルールを足す[^aie-talk][^postgrok]。これらは Tan 自身の数字で、独立した監査は見つからなかった。
+Her talk at the AI Engineer conference, "All Code Is Slop (Except Mine)", runs 17 minutes. In it she says that if the inner coding loop produces slop, automating that loop only produces more slop. She then names connectors and routines that start Cursor cloud agents and projects as a way to build the outer loop when the inner loop is ready[^aie-talk].
+
+The two sources give the scale of her practice. In the livestream, the host says she posted that she shipped 2,500 pull requests to production last month. She replies that they are not 2,500 features and that much of the work is gardening. Asked whether she checked all of them, she says that nobody can check every one at that scale, so she samples. She scrutinizes the pull requests and the code the agents write, and then corrects the environment, not the single agent[^livestream]. In the talk she says that she shipped 3,000 pull requests to production in the previous month and that her team shipped 11,000, with a revert rate of about half a percent. Her code review has shrunk to reading verification artifacts, and agents merge most of their own pull requests[^aie-talk]. These figures are her own, and no independent audit of them was found.
 
 ## どの意味で使われているか見分ける方法
 
@@ -106,7 +108,7 @@ Sloppedia の持ち主の masseaterは、自身のリポジトリにおいて古
 
 [^pstack]: Lauren Tan「[pstack](https://github.com/cursor/plugins/blob/main/pstack/README.md)」Cursor の plugins リポジトリ。2026年11月28日に閲覧。
 
-[^postgrok]: postgrok「[YouTube: Poteto on shipping thousands of PRs with agents](https://postgrok.com/sources/2026-10-05-youtube-poteto-software-factory)」2026年10月5日。Matt Pocock の配信（2026年10月2日）の自動字幕の抜粋。2026年11月28日に閲覧。
+[^livestream]: Matt Pocock「[LIVE: Poteto (creator of pstack) on shipping 1,000's of PR's a month at SpaceX](https://www.youtube.com/watch?v=MN9dGgmLyso)」YouTube、2026年10月3日。英語の自動字幕を読んだ。2026年11月28日に閲覧。
 
 [^aie-talk]: Lauren Tan「[All Code Is Slop (Except Mine)](https://ai.engineer/talks/O_zcc6Xl12g-all-code-is-slop-except-mine)」AI Engineer。書き起こしを読んだ。2026年11月28日に閲覧。
 
