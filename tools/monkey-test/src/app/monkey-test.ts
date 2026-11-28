@@ -5,8 +5,8 @@ import { lineOf, sortedFindings } from "#/entities/finding/index.ts";
 import type { Finding } from "#/entities/finding/index.ts";
 import { seedOfDay } from "#/entities/horde-seed/index.ts";
 import { findCustomDomains, findPublicHosts } from "#/features/find-public-hosts/index.ts";
-import { fuzzMcp } from "#/features/fuzz-mcp/index.ts";
 import { probePublishedCli } from "#/features/probe-published-cli/index.ts";
+import { fuzzMcp } from "#/features/probe-tools/index.ts";
 import { readAccessTokens } from "#/features/read-access-tokens/index.ts";
 import {
   desktopTargetsOf,

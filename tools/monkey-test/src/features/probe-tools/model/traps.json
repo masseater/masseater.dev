@@ -20,7 +20,7 @@
       { "name": "nul", "value": "\u0000" },
       { "name": "traversal", "value": "../../../etc/passwd" },
       { "name": "sql", "value": "' OR 1=1 --" },
-      { "name": "bidi", "value": "😀‮" },
+      { "name": "bidi", "value": "😀\u202E" },
       { "name": "number", "value": 0 },
       { "name": "null", "value": null }
     ],

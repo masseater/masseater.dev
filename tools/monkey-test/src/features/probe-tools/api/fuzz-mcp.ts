@@ -1,9 +1,9 @@
 import { Array as Arr, Console, Duration, Effect, Option, Record as Rec, pipe } from "effect";
 
 import type { Finding } from "#/entities/finding/index.ts";
-import { connectMcp } from "#/features/fuzz-mcp/api/connect-mcp.ts";
-import { findMcpHosts } from "#/features/fuzz-mcp/api/find-mcp-hosts.ts";
-import { fuzzClient } from "#/features/fuzz-mcp/api/fuzz-client.ts";
+import { connectMcp } from "#/features/probe-tools/api/connect-mcp.ts";
+import { findMcpHosts } from "#/features/probe-tools/api/find-mcp-hosts.ts";
+import { fuzzClient } from "#/features/probe-tools/api/fuzz-client.ts";
 
 const CALL_TIMEOUT_SECONDS = 30;
 

@@ -2,8 +2,8 @@ import { Client, StreamableHTTPClientTransport } from "@modelcontextprotocol/cli
 import { Effect } from "effect";
 import type { Scope } from "effect";
 
-import { outcomeOfError } from "#/features/fuzz-mcp/model/outcome.ts";
-import type { Outcome } from "#/features/fuzz-mcp/model/outcome.ts";
+import { outcomeOfError } from "#/features/probe-tools/model/outcome.ts";
+import type { Outcome } from "#/features/probe-tools/model/outcome.ts";
 
 const MCP_PATH = "/mcp";
 

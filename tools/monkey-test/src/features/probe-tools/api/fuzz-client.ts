@@ -3,14 +3,14 @@ import { Array as Arr, Duration, Effect, Equivalence, Option, pipe } from "effec
 
 import { findingOf } from "#/entities/finding/index.ts";
 import type { Finding } from "#/entities/finding/index.ts";
-import { attemptsOf } from "#/features/fuzz-mcp/model/arguments.ts";
-import type { Attempt } from "#/features/fuzz-mcp/model/arguments.ts";
+import { attemptsOf } from "#/features/probe-tools/model/arguments.ts";
+import type { Attempt } from "#/features/probe-tools/model/arguments.ts";
 import {
   findingOfCall,
   outcomeOfError,
   outcomeOfResult,
-} from "#/features/fuzz-mcp/model/outcome.ts";
-import type { Outcome } from "#/features/fuzz-mcp/model/outcome.ts";
+} from "#/features/probe-tools/model/outcome.ts";
+import type { Outcome } from "#/features/probe-tools/model/outcome.ts";
 
 export type Fuzz = Readonly<{
   client: Client;

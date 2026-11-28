@@ -1,7 +1,7 @@
 import { Effect, Option, pipe } from "effect";
 import { HttpClient } from "effect/http";
 
-import { isMcpEndpoint } from "#/features/fuzz-mcp/model/mcp-endpoint.ts";
+import { isMcpEndpoint } from "#/features/probe-tools/model/mcp-endpoint.ts";
 import { keepAnsweringHosts } from "#/shared/lib/keep-answering-hosts.ts";
 
 const MCP_PATH = "/mcp";
