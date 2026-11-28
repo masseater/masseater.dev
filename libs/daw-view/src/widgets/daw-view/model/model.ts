@@ -55,17 +55,16 @@ export const settled = (model: Model): Model => {
   };
 };
 
-export const mixedWith =
-  (mixing: Mixing) =>
+const remixedBy =
+  (next: (mixing: Mixing) => Mixing) =>
   (model: Model): Model =>
-    settled({ ...model, mixing });
+    settled({ ...model, mixing: next(model.mixing) });
+
+export const mixedWith = (mixing: Mixing): ((model: Model) => Model) => remixedBy(() => mixing);
 
 export const unmixed: (model: Model) => Model = mixedWith(UNMIXED);
 
-export const flippedBy =
-  (change: Change) =>
-  (model: Model): Model =>
-    settled({ ...model, mixing: toggled(change)(model.mixing) });
+export const flippedBy = (change: Change): ((model: Model) => Model) => remixedBy(toggled(change));
 
 const EMPTY: Size = { width: NONE, height: NONE };
 

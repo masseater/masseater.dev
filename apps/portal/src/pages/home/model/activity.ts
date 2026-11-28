@@ -3,7 +3,7 @@ import { Array as Arr, Option, Order, Predicate, Record as Rec, String as Str, p
 import type { SettingsValue, TransactionValue } from "#/entities/money/index.ts";
 import type { DeckValue } from "#/entities/slide/index.ts";
 import type { LifeItemValue, MemoValue, SessionValue } from "#/entities/watashi/index.ts";
-import { headline, placeOf } from "#/entities/watashi/index.ts";
+import { datedOf, placeOf } from "#/entities/watashi/index.ts";
 import type { PortalPath } from "#/shared/config/index.ts";
 import { jstMinute, shownTime } from "#/shared/model/index.ts";
 
@@ -48,12 +48,12 @@ export const timeOf = (activity: Activity): string =>
 
 const fromRecord = (item: LifeItemValue): Option.Option<Activity> =>
   pipe(
-    Option.fromUndefinedOr(item.at),
-    Option.map((at) => ({
-      key: item.ref,
+    datedOf(item),
+    Option.map(({ key, shown, title }) => ({
+      key,
       kind: "record",
-      stamp: shownTime(at),
-      title: headline(item),
+      stamp: shown,
+      title,
       context: item.place ?? item.kind ?? "",
       link: { kind: "page", to: "/records" },
     })),

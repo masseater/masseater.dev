@@ -1,5 +1,6 @@
 import { pathPartsOf } from "@masseater.dev/aredoko-protocol";
 import { Array, Effect, FileSystem, Path, Schema, String, pipe } from "effect";
+import { Hex } from "effect/encoding";
 import { SqlClient } from "effect/sql";
 
 import { bundleFolder, companionsOf, kindOf } from "#/entities/package/index.ts";
@@ -9,9 +10,6 @@ import type { LooseFile } from "#/shared/unitypackage/index.ts";
 const UNITY_ROOT = "Assets/aredoko";
 const GUID_LENGTH = 32;
 const GUID_START = 0;
-const HEX = 16;
-const HEX_DIGITS = 2;
-const PAD = "0";
 const SEPARATOR = "/";
 
 const LooseRow = Schema.Struct({
@@ -24,18 +22,10 @@ type Loose = typeof LooseRow.Type;
 
 const encoder = new TextEncoder();
 
-const hexOf = (bytes: Uint8Array): string =>
-  pipe(
-    globalThis.Array.from(bytes, (byte) =>
-      pipe(byte.toString(HEX), String.padStart(HEX_DIGITS, PAD)),
-    ),
-    Array.join(""),
-  );
-
 const guidOf = (pathname: string): Effect.Effect<string> =>
   Effect.promise(() => crypto.subtle.digest("SHA-256", encoder.encode(pathname))).pipe(
     Effect.map((digest) =>
-      pipe(hexOf(new Uint8Array(digest)), String.slice(GUID_START, GUID_LENGTH)),
+      pipe(Hex.encode(new Uint8Array(digest)), String.slice(GUID_START, GUID_LENGTH)),
     ),
   );
 

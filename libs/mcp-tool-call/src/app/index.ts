@@ -4,6 +4,7 @@ export { meteredMcpHandler } from "#/entities/tool-call/index.ts";
 export type { MeteredFetch } from "#/entities/tool-call/index.ts";
 export { authInfoOf, clientOf, compactInput, toolInputOf } from "#/entities/tool-call/index.ts";
 export type { CallContext, CallerClaims } from "#/entities/tool-call/index.ts";
+export { registeredTool } from "#/features/register-tool/index.ts";
 export { mcpWorker } from "#/shared/lib/mcp-worker.ts";
 export {
   NO_PROJECT,

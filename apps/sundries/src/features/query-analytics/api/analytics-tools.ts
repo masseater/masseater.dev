@@ -1,4 +1,10 @@
-import { failedAt, READ_ONLY, UpstreamFailed, toolInputOf } from "@masseater.dev/mcp-tool-call";
+import {
+  failedAt,
+  READ_ONLY,
+  UpstreamFailed,
+  toolInputOf,
+  registeredTool,
+} from "@masseater.dev/mcp-tool-call";
 import type { McpServer } from "@modelcontextprotocol/server";
 import { Array as Arr, DateTime, Effect, Option, Schema, String as Str, pipe } from "effect";
 import { FetchHttpClient, HttpClient, HttpClientRequest, HttpClientResponse } from "effect/http";
@@ -143,21 +149,19 @@ const readReport = Effect.fn("readReport")(function* readReport(
 
 const runHttpTool = runToolIn(FetchHttpClient.layer);
 
-export const registerAnalyticsTools =
-  (bindings: AnalyticsBindings) =>
-  (server: McpServer): McpServer => {
-    server.registerTool(
-      "read_web_analytics",
-      {
-        description: DESCRIPTION,
-        inputSchema: INPUT_SCHEMA,
-        annotations: READ_ONLY,
-      },
-      (input) =>
-        readReport(bindings, {
-          path: Option.fromNullishOr(input.path),
-          days: input.days ?? DEFAULT_DAYS,
-        }).pipe(runHttpTool({ count: (report) => report.byPath.length })),
-    );
-    return server;
-  };
+export const registerAnalyticsTools = (
+  bindings: AnalyticsBindings,
+): ((server: McpServer) => McpServer) =>
+  registeredTool(
+    {
+      name: "read_web_analytics",
+      description: DESCRIPTION,
+      inputSchema: INPUT_SCHEMA,
+      annotations: READ_ONLY,
+    },
+    (input) =>
+      readReport(bindings, {
+        path: Option.fromNullishOr(input.path),
+        days: input.days ?? DEFAULT_DAYS,
+      }).pipe(runHttpTool({ count: (report) => report.byPath.length })),
+  );

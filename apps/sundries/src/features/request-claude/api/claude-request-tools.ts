@@ -1,4 +1,11 @@
-import { READ_ONLY, WRITE, one, clientOf, toolInputOf } from "@masseater.dev/mcp-tool-call";
+import {
+  READ_ONLY,
+  WRITE,
+  one,
+  clientOf,
+  registeredTool,
+  toolInputOf,
+} from "@masseater.dev/mcp-tool-call";
 import type { McpServer } from "@modelcontextprotocol/server";
 import { Effect, Option, pipe } from "effect";
 
@@ -55,84 +62,64 @@ const LIST_SCHEMA = toolInputOf(ListInput);
 
 const count = (requests: readonly ClaudeRequest[]): number => requests.length;
 
-const registerSend =
-  (provide: Provide): Register =>
-  (server) => {
-    server.registerTool(
-      "send_to_claude",
-      {
-        description: SEND_DESCRIPTION,
-        inputSchema: SEND_SCHEMA,
-        annotations: WRITE,
-      },
-      (input, ctx) =>
-        sendRequest({ text: input.text, sender: clientOf(ctx) }).pipe(
-          provide,
-          runTool({ count: one }),
-        ),
-    );
-    return server;
-  };
+const registerSend = (provide: Provide): Register =>
+  registeredTool(
+    {
+      name: "send_to_claude",
+      description: SEND_DESCRIPTION,
+      inputSchema: SEND_SCHEMA,
+      annotations: WRITE,
+    },
+    (input, ctx) =>
+      sendRequest({ text: input.text, sender: clientOf(ctx) }).pipe(
+        provide,
+        runTool({ count: one }),
+      ),
+  );
 
-const registerTake =
-  (provide: Provide): Register =>
-  (server) => {
-    server.registerTool(
-      "take_claude_requests",
-      {
-        description: TAKE_DESCRIPTION,
-        inputSchema: TAKE_SCHEMA,
-        annotations: WRITE,
-      },
-      () => take.pipe(provide, runTool({ count })),
-    );
-    return server;
-  };
+const registerTake = (provide: Provide): Register =>
+  registeredTool(
+    {
+      name: "take_claude_requests",
+      description: TAKE_DESCRIPTION,
+      inputSchema: TAKE_SCHEMA,
+      annotations: WRITE,
+    },
+    () => take.pipe(provide, runTool({ count })),
+  );
 
-const registerReply =
-  (provide: Provide): Register =>
-  (server) => {
-    server.registerTool(
-      "reply_to_request",
-      {
-        description: REPLY_DESCRIPTION,
-        inputSchema: REPLY_SCHEMA,
-        annotations: WRITE,
-      },
-      (input) => answer(input).pipe(provide, runTool({ count: one })),
-    );
-    return server;
-  };
+const registerReply = (provide: Provide): Register =>
+  registeredTool(
+    {
+      name: "reply_to_request",
+      description: REPLY_DESCRIPTION,
+      inputSchema: REPLY_SCHEMA,
+      annotations: WRITE,
+    },
+    (input) => answer(input).pipe(provide, runTool({ count: one })),
+  );
 
-const registerList =
-  (provide: Provide): Register =>
-  (server) => {
-    server.registerTool(
-      "list_claude_replies",
-      {
-        description: LIST_DESCRIPTION,
-        inputSchema: LIST_SCHEMA,
-        annotations: READ_ONLY,
-      },
-      (input) => listed(Option.fromNullishOr(input.after)).pipe(provide, runTool({ count })),
-    );
-    return server;
-  };
+const registerList = (provide: Provide): Register =>
+  registeredTool(
+    {
+      name: "list_claude_replies",
+      description: LIST_DESCRIPTION,
+      inputSchema: LIST_SCHEMA,
+      annotations: READ_ONLY,
+    },
+    (input) => listed(Option.fromNullishOr(input.after)).pipe(provide, runTool({ count })),
+  );
 
-const registerRoutineTool =
-  (provide: Provide): Register =>
-  (server) => {
-    server.registerTool(
-      "register_claude_routine",
-      {
-        description: ROUTINE_DESCRIPTION,
-        inputSchema: ROUTINE_SCHEMA,
-        annotations: WRITE,
-      },
-      (input) => registerRoutine(input).pipe(provide, runTool({ count: one })),
-    );
-    return server;
-  };
+const registerRoutineTool = (provide: Provide): Register =>
+  registeredTool(
+    {
+      name: "register_claude_routine",
+      description: ROUTINE_DESCRIPTION,
+      inputSchema: ROUTINE_SCHEMA,
+      annotations: WRITE,
+    },
+    (input) => registerRoutine(input).pipe(provide, runTool({ count: one })),
+  );
 
 export const provideRequests =
   (bindings: RequestBindings) =>

@@ -1,4 +1,4 @@
-import { one, WRITE, toolInputOf } from "@masseater.dev/mcp-tool-call";
+import { one, WRITE, toolInputOf, registeredTool } from "@masseater.dev/mcp-tool-call";
 import { Label, TOKEN_SCOPES } from "@masseater.dev/watashi-protocol";
 import type { CallToolResult, McpServer } from "@modelcontextprotocol/server";
 import { Option, Schema } from "effect";
@@ -36,17 +36,10 @@ const issuing =
       label: Option.getOrElse(Option.fromUndefinedOr(input.label), () => ""),
     }).pipe(runTool({ count: one }));
 
-export const registerTokenTools =
-  (runTool: ToolRun<Database>) =>
-  (server: McpServer): McpServer => {
-    server.registerTool(
-      TOOL,
-      {
-        description: DESCRIPTION,
-        inputSchema: ISSUE_SCHEMA,
-        annotations: WRITE,
-      },
-      (input) => issuing(runTool)(input),
-    );
-    return server;
-  };
+export const registerTokenTools = (
+  runTool: ToolRun<Database>,
+): ((server: McpServer) => McpServer) =>
+  registeredTool(
+    { name: TOOL, description: DESCRIPTION, inputSchema: ISSUE_SCHEMA, annotations: WRITE },
+    (input) => issuing(runTool)(input),
+  );

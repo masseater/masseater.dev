@@ -1,6 +1,6 @@
 import { Array as Arr, Option, Schema, String as Str, pipe } from "effect";
 
-import { TimeOut } from "#/shared/model/index.ts";
+import { TimeOut, shownTime } from "#/shared/model/index.ts";
 
 const Names = Schema.Array(Schema.String);
 
@@ -49,6 +49,19 @@ export const headline = (item: LifeItemValue): string =>
     Arr.map(Option.fromUndefinedOr),
     Option.firstSomeOf,
     Option.getOrElse(() => item.ref),
+  );
+
+export type DatedItem = Readonly<{
+  key: string;
+  at: NonNullable<LifeItemValue["at"]>;
+  shown: string;
+  title: string;
+}>;
+
+export const datedOf = (item: LifeItemValue): Option.Option<DatedItem> =>
+  pipe(
+    Option.fromUndefinedOr(item.at),
+    Option.map((at) => ({ key: item.ref, at, shown: shownTime(at), title: headline(item) })),
   );
 
 export const labelsOf = (item: LifeItemValue): readonly string[] =>
