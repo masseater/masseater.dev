@@ -1,13 +1,15 @@
-import { outputOf, writeOutputs } from "@r_masseater/github-workflow";
+import { writeOutputs } from "@r_masseater/github-workflow";
 import { Array as Arr, Config, Effect, Option, Record as Rec, Schema, pipe } from "effect";
 
 import { Stacks, deployed, staged } from "#/entities/deployment/index.ts";
 import type { DeploymentRecord } from "#/entities/deployment/index.ts";
-import { nameOf, workspace } from "#/entities/workspace/index.ts";
+import { closure, nameOf, workspace } from "#/entities/workspace/index.ts";
+import type { Packages, Tasks } from "#/entities/workspace/index.ts";
 
 import { isChanged } from "./changes.ts";
 
 const WORKFLOWS = [".github/workflows/deploy.yml"];
+const CONCURRENCY = 8;
 
 type Stage = Readonly<{
   task: string;
@@ -23,22 +25,13 @@ const STAGES: readonly Stage[] = [
   { task: "deploy:production", output: "stacks", record: deployed },
 ];
 
-const Task = Schema.Struct({
-  package: Schema.String,
-  dependsOn: Schema.String.pipe(Schema.Array, Schema.optionalKey),
-});
-
-const Plan = Schema.fromJsonString(Schema.Struct({ plan: Schema.Record(Schema.String, Task) }));
-
-type Tasks = (typeof Plan.Type)["plan"];
-
 type Labels = Readonly<Record<string, string>>;
 
 type Stack = Readonly<{ name: string; filter: string; directories: readonly string[] }>;
 
-const dependenciesOf = (task: typeof Task.Type): readonly string[] => task.dependsOn ?? [];
+const dependenciesOf = (task: Tasks[string]): readonly string[] => task.dependsOn ?? [];
 
-const edgesOf = ([id, task]: readonly [string, typeof Task.Type]): readonly (readonly [
+const edgesOf = ([id, task]: readonly [string, Tasks[string]]): readonly (readonly [
   string,
   string,
 ])[] =>
@@ -95,12 +88,26 @@ const stacksOf = (tasks: Tasks): readonly Stack[] => {
   );
 };
 
-const changedStacks = Effect.fn("changedStacks")(function* changedStacks(stage: Stage) {
-  const plan = yield* outputOf({
-    command: "vp",
-    args: ["run", "--dry-run", "--json", "-r", stage.task],
-  }).pipe(Effect.flatMap(Schema.decodeEffect(Plan)));
-  const { packages } = yield* workspace;
+const stageTasks = (tasks: Tasks, task: string): Tasks => {
+  const roots = pipe(
+    Rec.toEntries(tasks),
+    Arr.filter(([, { name }]) => name === task),
+    Arr.map(([id]) => id),
+  );
+  const ids = closure((id: string) => dependenciesOf(tasks[id] ?? { package: id, name: id }))(
+    roots,
+  );
+  return pipe(
+    Rec.toEntries(tasks),
+    Arr.filter(([id]) => Arr.contains(ids, id)),
+    Rec.fromEntries,
+  );
+};
+
+const changedStacks = Effect.fn("changedStacks")(function* changedStacks(
+  stage: Stage,
+  { tasks, packages }: Readonly<{ tasks: Tasks; packages: Packages }>,
+) {
   const force = yield* Config.Boolean("FORCE").pipe(Config.withDefault(false));
   const isStale = Effect.fn("isStale")(function* isStale(stack: Stack) {
     if (force) {
@@ -108,7 +115,9 @@ const changedStacks = Effect.fn("changedStacks")(function* changedStacks(stage: 
     }
     return yield* isChanged({ packages, record: stage.record, workflows: WORKFLOWS }, stack);
   });
-  const changed = yield* Effect.filter(stacksOf(plan.plan), isStale);
+  const changed = yield* Effect.filter(stacksOf(stageTasks(tasks, stage.task)), isStale, {
+    concurrency: CONCURRENCY,
+  });
   return yield* Schema.encodeEffect(Stacks)(
     pipe(
       changed,
@@ -119,9 +128,13 @@ const changedStacks = Effect.fn("changedStacks")(function* changedStacks(stage: 
 
 /** @internal */
 export const planDeploys = Effect.gen(function* planDeploys() {
+  const { tasks, packages } = yield* workspace;
   const planned = yield* Effect.forEach(
     STAGES,
-    (stage) => changedStacks(stage).pipe(Effect.map((stacks) => [stage.output, stacks] as const)),
+    (stage) =>
+      changedStacks(stage, { tasks, packages }).pipe(
+        Effect.map((stacks) => [stage.output, stacks] as const),
+      ),
     { concurrency: 1 },
   );
   yield* writeOutputs(Rec.fromEntries(planned));
