@@ -20,6 +20,7 @@ const BgmSchema = Schema.Struct({
   url: Schema.String,
   credit: Schema.String,
   page: Schema.optionalKey(Schema.String),
+  start: Seconds,
 });
 const Readings = Schema.Record(Schema.String, Schema.String);
 const Cuts = Schema.Array(CutSchema);

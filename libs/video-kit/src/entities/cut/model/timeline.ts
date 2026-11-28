@@ -45,6 +45,11 @@ export interface PsdTachie {
 
 export type Tachie = ImageTachie | PsdTachie;
 
+export interface Music {
+  readonly src: string;
+  readonly start: number;
+}
+
 export interface Timeline {
   readonly format: Format;
   readonly fps: number;
@@ -52,7 +57,7 @@ export interface Timeline {
   readonly height: number;
   readonly durationInFrames: number;
   readonly cuts: readonly TimedCut[];
-  readonly bgm: Option.Option<string>;
+  readonly bgm: Option.Option<Music>;
   readonly sfx: Readonly<Record<SfxKind, string>>;
   readonly credits: readonly string[];
   readonly tachie: Option.Option<Tachie>;
