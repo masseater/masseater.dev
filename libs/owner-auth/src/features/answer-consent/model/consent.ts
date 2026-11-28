@@ -1,5 +1,4 @@
 import { run } from "@r_masseater/workers-tracing/effect";
-import { queryOptions } from "@tanstack/react-query";
 import { Array as Arr, Effect, Option, Schema, String as Str, pipe } from "effect";
 
 import { authClient } from "#/shared/api/index.ts";
@@ -88,7 +87,7 @@ export const consentView = ({
   }),
 });
 
-const fetchClientName = (clientId: string): Promise<string> =>
+export const fetchClientName = (clientId: string): Promise<string> =>
   run(
     Effect.promise(() =>
       authClient.oauth2.publicClient({
@@ -101,14 +100,6 @@ const fetchClientName = (clientId: string): Promise<string> =>
       ),
     ),
   );
-
-export const clientNameQuery = (
-  clientId: string,
-): ReturnType<typeof queryOptions<string, Error, string, readonly ["oauth-client", string]>> =>
-  queryOptions({
-    queryKey: ["oauth-client", clientId] as const,
-    queryFn: () => fetchClientName(clientId),
-  });
 
 export const answerConsent = (accept: boolean): Promise<unknown> =>
   authClient.oauth2.consent({ accept, fetchOptions: { throw: true } });

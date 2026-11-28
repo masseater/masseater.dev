@@ -1,0 +1,35 @@
+{
+  "name": "@masseater.dev/effect-ui",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Shared Effect UI components of masseater.dev, with the React bridge that mounts them.",
+  "type": "module",
+  "imports": {
+    "#/*": "./src/*"
+  },
+  "exports": {
+    ".": "./src/app/index.ts",
+    "./sources.css": "./src/app/sources.css"
+  },
+  "dependencies": {
+    "@effect/ui": "catalog:",
+    "@effect/ui-kit": "catalog:",
+    "@masseater.dev/ui": "workspace:*",
+    "class-variance-authority": "catalog:"
+  },
+  "devDependencies": {
+    "@effect/vitest": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "effect": "catalog:stack",
+    "happy-dom": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "typescript": "catalog:stack",
+    "vite-plus": "catalog:stack"
+  },
+  "peerDependencies": {
+    "effect": "^4.1.6",
+    "react": "^19.0.0"
+  }
+}

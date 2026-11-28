@@ -1,25 +1,49 @@
+import { BrowserHost } from "@effect/ui/html";
+import { EffectIsland } from "@masseater.dev/effect-ui";
 import { Option } from "effect";
+import { useCallback } from "react";
 import type { ReactNode } from "react";
 
 import type { ConsentSearchParams } from "#/features/answer-consent/model/consent.ts";
-import type { ButtonComponent } from "#/shared/ui/button-component.ts";
 
-import { ConsentPrompt } from "./consent-prompt.tsx";
+import { ConsentPrompt } from "./consent-prompt.ts";
+
+const ConsentScreen = ({
+  scope,
+  clientId,
+  redirectUri,
+  requestedScope,
+}: Readonly<{
+  scope: string;
+  clientId: string;
+  redirectUri: string | undefined;
+  requestedScope: string | undefined;
+}>): ReactNode => {
+  const mount = useCallback(
+    (container: HTMLElement) =>
+      BrowserHost.mount(
+        ConsentPrompt,
+        {
+          scope,
+          clientId,
+          ...(redirectUri === undefined ? {} : { redirectUri }),
+          ...(requestedScope === undefined ? {} : { requestedScope }),
+        },
+        container,
+      ),
+    [scope, clientId, redirectUri, requestedScope],
+  );
+  return <EffectIsland mount={mount} />;
+};
 
 export const ConsentForm = ({
-  button,
   scope,
   search,
-}: Readonly<{
-  button: ButtonComponent;
-  scope: string;
-  search: ConsentSearchParams;
-}>): ReactNode =>
+}: Readonly<{ scope: string; search: ConsentSearchParams }>): ReactNode =>
   Option.match(Option.fromUndefinedOr(search.client_id), {
     onNone: () => false,
     onSome: (clientId) => (
-      <ConsentPrompt
-        button={button}
+      <ConsentScreen
         scope={scope}
         clientId={clientId}
         redirectUri={search.redirect_uri}
