@@ -9,6 +9,7 @@ import {
 } from "@r_masseater/msch/lint";
 import { workspaceSettings } from "@r_masseater/msch/workspace-settings";
 import { restrictedSyntax as unguardedWorkersAi } from "@r_masseater/workers-tracing/oxlint";
+import { lapse } from "lapse";
 import { defineConfig } from "vite-plus";
 
 const workspace = await workspaceSettings({
@@ -18,6 +19,7 @@ const workspace = await workspaceSettings({
 });
 
 export default defineConfig({
+  plugins: [lapse()],
   ...repositoryConfig({
     workspace,
     overrides: [

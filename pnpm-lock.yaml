@@ -937,6 +937,9 @@ importers:
       fallow-type-aware:
         specifier: catalog:stack
         version: 3.48.0(tsrs@7.1.0-beta.tsrs5)
+      lapse:
+        specifier: workspace:*
+        version: link:libs/lapse
       oxlint-tsgolint:
         specifier: 'catalog:'
         version: 7.0.2008
