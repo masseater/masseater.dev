@@ -4,13 +4,18 @@ import { Array as Arr, Config, Duration, Effect, Result, Schema, pipe } from "ef
 import { Stacks, deployed, record } from "#/entities/deployment/index.ts";
 import { workspace } from "#/entities/workspace/index.ts";
 
+import { snapshotAfter } from "./snapshot.ts";
+
 type Stack = (typeof Stacks.Type)[number];
 
-const STACK_TIMEOUT_MINUTES = 20;
+const STACK_TIMEOUT_MINUTES = 10;
 const STACK_TIMEOUT = Duration.minutes(STACK_TIMEOUT_MINUTES);
+const SNAPSHOT_AFTER_MINUTES = 7;
+const SNAPSHOT_AFTER = Duration.minutes(SNAPSHOT_AFTER_MINUTES);
 
 const deploy = Effect.fn("deploy")(function* deploy(root: string, { name, filter }: Stack) {
   yield* Effect.annotateCurrentSpan({ stack: name });
+  yield* Effect.forkScoped(snapshotAfter(name, SNAPSHOT_AFTER));
   yield* mustSucceed({
     command: "vp",
     args: ["run", "--log", "labeled", "--filter", filter, "deploy:production"],
@@ -18,7 +23,7 @@ const deploy = Effect.fn("deploy")(function* deploy(root: string, { name, filter
   });
   const deployment = deployed(name);
   yield* record(deployment);
-});
+}, Effect.scoped);
 
 /** @internal */
 export const deployProduction = Effect.gen(function* deployProduction() {
