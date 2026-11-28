@@ -25,6 +25,5 @@ export { LifeList } from "./ui/life-list.tsx";
 export type { TimelineEntry } from "./model/timeline.ts";
 export type { SessionValue } from "./model/session.ts";
 export type { ConversationValue, UtteranceValue } from "./model/conversation.ts";
-export { MemoRow } from "./ui/memo-row.tsx";
 export { RetractedNote } from "./ui/retracted-note.tsx";
 export { ViewNodes } from "./ui/view/view-nodes.tsx";

@@ -3,9 +3,10 @@ import { Array as Arr, Option, Record as Rec, pipe } from "effect";
 import { useMemo } from "react";
 import type { ReactNode } from "react";
 
-import { MemoRow } from "#/entities/watashi/index.ts";
 import { useMemos } from "#/pages/memos/api/memos-query.ts";
 import { RowList, Card, CardHeader, SearchField } from "#/shared/ui/index.ts";
+
+import { MemoRow } from "./memo-row.tsx";
 
 const route = getRouteApi("/memos/");
 
