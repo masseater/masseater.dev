@@ -3,6 +3,8 @@ import type { VideoScript } from "@masseater.dev/video-kit/script";
 import { BGM, IMAGES, SHOTS } from "#/shared/config/index.ts";
 import { onBeat } from "#/shared/lib/beat.ts";
 
+const INTRO_BEATS = { tool: 0, length: 5, voice: 8, call: 10 } as const;
+
 export const script: VideoScript = {
   title: "pnpm",
   formats: ["vertical"],
@@ -20,7 +22,12 @@ export const script: VideoScript = {
     {
       id: "intro",
       say: ["次世代のパッケージマネージャ\npnpmを", "30秒で", "つむぎが", "解説"],
-      at: [onBeat(0), onBeat(5), onBeat(8), onBeat(10)],
+      at: [
+        onBeat(INTRO_BEATS.tool),
+        onBeat(INTRO_BEATS.length),
+        onBeat(INTRO_BEATS.voice),
+        onBeat(INTRO_BEATS.call),
+      ],
       hold: 0.3,
     },
     { id: "hook", say: ["npmのインストール\n遅すぎない？"] },
