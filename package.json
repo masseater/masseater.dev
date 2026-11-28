@@ -21,6 +21,7 @@
     "fallow": "catalog:stack",
     "fallow-similar-code": "catalog:stack",
     "fallow-type-aware": "catalog:stack",
+    "lapse": "workspace:*",
     "oxlint-tsgolint": "catalog:",
     "tsrs": "catalog:stack",
     "typescript": "catalog:stack",
