@@ -2,7 +2,7 @@ import { Function as Fn, Option, Record as Rec } from "effect";
 
 const ARITY = 3;
 
-type Table = Readonly<Record<string, string>>;
+export type Table = Readonly<Record<string, string>>;
 
 export const pick: {
   (key: string, fallback: string): (record: Table) => string;
