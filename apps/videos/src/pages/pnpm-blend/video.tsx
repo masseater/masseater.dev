@@ -16,9 +16,10 @@ const BOLD =
   "caption-outline text-[68px] font-bold whitespace-pre-line [--outline:#1b1b1b] [--stroke:0.14em]";
 const RED_LOOK =
   "caption-outline leading-none tracking-[-0.06em] scale-x-[0.86] [--fill:#ff1e1e] [--outline:#2a0000] [--stroke:0.16em] [--emphasis:#ff1e1e] drop-shadow-[0_10px_0_rgb(0_0_0/0.8)]";
-const RED = `text-[260px] ${RED_LOOK}`;
+const RED = `text-[180px] ${RED_LOOK}`;
 
 const CAPTION: Readonly<Record<string, string>> = { punch: RED, intro: "hidden" };
+const VOICE_FILL: Readonly<Record<string, string>> = { "3": "[--fill:#c6f28a]" };
 const CAPTION_TOP: Readonly<Record<string, string>> = { punch: "top-[620px]" };
 
 const RUN = ["$ pnpm install", "++++++++++++++++", "Done in 4.0s"];
@@ -37,7 +38,6 @@ const LOG = [
   "Done in 407ms using pnpm v12.23.0",
 ];
 
-const TACHIE = "tsumugi3";
 const SCROLL_PER_FRAME = 2.4;
 const FLASH_FRAMES = 9;
 
@@ -50,20 +50,10 @@ const Console = ({
   </div>
 );
 
-const BLINK = { kind: "blink", closed: "v1.!目/*閉じ", open: "v1.!目/*基本目セット" } as const;
-
-const mouthOf = (closed: string, open = "v1.!口/*わあ"): Part => ({
-  kind: "volume-mouth",
-  closed,
-  half: "v1.!口/*お",
-  open,
-  alwaysApply: true,
-});
-
-const PARTS: readonly Part[] = [BLINK, mouthOf("v1.!口/*ほほえみ")];
-
-const HALF = 0.5;
-const CENTER = "top-[1000px] left-[30px] h-[1682px] w-[1000px]";
+interface Mouth {
+  readonly half: string;
+  readonly open: string;
+}
 
 interface Scene {
   readonly before: readonly Part[];
@@ -73,102 +63,190 @@ interface Scene {
   readonly later: readonly Part[];
 }
 
-const SCENES: Readonly<Record<string, Scene>> = {
-  wait: {
-    before: ["v1.!目/*基本目セット/!黒目/*目逸らし"],
-    closed: "v1.!口/*む",
-    open: "v1.!口/*△",
-    after: [],
-    later: ["v1.!まゆ/*困り眉", "v1.表情記号/汗"],
-  },
-  hook: {
-    before: ["v1.!まゆ/*困り眉", "v1.!目/*基本目セット/!黒目/*目逸らし"],
-    closed: "v1.!口/*む",
-    open: "v1.!口/*えあー",
-    after: ["v1.表情記号/汗", "v1.表情記号/なみだめ", "v1.顔色/かげり"],
-    later: ["v1.!右腕/*口元"],
-  },
-  try: {
-    before: ["v1.!まゆ/*困り眉", "v1.!目/*基本目セット/!黒目/*カメラ目線"],
-    closed: "v1.!口/*むん",
-    after: ["v1.!右腕/*ゆびさし"],
-    later: [],
-  },
-  wow: {
-    before: [],
-    closed: "v1.!口/*おあー",
-    after: ["v1.!目/*〇〇", "v1.表情記号/汗"],
-    later: [],
-  },
-  again: {
-    before: ["v1.!まゆ/*ごきげん眉", "v1.!目/*基本目セット/!黒目/*きらーん"],
-    closed: "v1.!口/*にしー",
-    after: ["v1.!左腕/*ピース", "v1.顔色/ほっぺ赤め"],
-    later: [],
-  },
-  caveat: {
-    before: ["v1.!まゆ/*困り眉"],
-    closed: "v1.!口/*む",
-    open: "v1.!口/*えあー",
-    after: ["v1.表情記号/汗"],
-    later: ["v1.!まゆ/*ごきげん眉", "v1.!口/*にしー"],
-  },
-  ending: {
-    before: ["v1.!まゆ/*ごきげん眉"],
-    closed: "v1.!口/*わあーい",
-    after: [],
-    later: ["v1.!目/*にっこり", "v1.!右腕/*ピース"],
-  },
-};
-
-interface Stage {
+interface Cast {
+  readonly voice: number;
+  readonly psd: string;
   readonly className: string;
-  readonly parts: readonly Part[];
+  readonly blink: Part;
+  readonly mouth: Mouth;
+  readonly idle: Scene;
+  readonly scenes: Readonly<Record<string, Scene>>;
 }
 
-const NARRATING: Stage = {
-  className: "top-[1000px] left-[180px] h-[1682px] w-[1000px]",
-  parts: PARTS,
+const HALF = 0.5;
+const NONE: readonly Part[] = [];
+
+const TSUMUGI: Cast = {
+  voice: 8,
+  psd: "tsumugi3",
+  className: "top-[1010px] left-[330px] h-[1682px] w-[1000px]",
+  blink: { kind: "blink", closed: "v1.!目/*閉じ", open: "v1.!目/*基本目セット" },
+  mouth: { half: "v1.!口/*お", open: "v1.!口/*わあ" },
+  idle: { before: NONE, closed: "v1.!口/*ほほえみ", after: NONE, later: NONE },
+  scenes: {
+    wait: { before: ["v1.!まゆ/*普通眉"], closed: "v1.!口/*む", after: NONE, later: NONE },
+    hook: {
+      before: ["v1.!まゆ/*ごきげん眉"],
+      closed: "v1.!口/*むふ",
+      after: NONE,
+      later: ["v1.!目/*にっこり"],
+    },
+    try: {
+      before: ["v1.!まゆ/*ごきげん眉", "v1.!目/*基本目セット/!黒目/*カメラ目線"],
+      closed: "v1.!口/*むん",
+      after: ["v1.!右腕/*ゆびさし"],
+      later: NONE,
+    },
+    wow: {
+      before: ["v1.!まゆ/*ごきげん眉", "v1.!目/*基本目セット/!黒目/*きらーん"],
+      closed: "v1.!口/*にしー",
+      after: NONE,
+      later: NONE,
+    },
+    again: {
+      before: ["v1.!まゆ/*ごきげん眉", "v1.!目/*基本目セット/!黒目/*きらーん"],
+      closed: "v1.!口/*にしー",
+      after: ["v1.!左腕/*ピース", "v1.顔色/ほっぺ赤め"],
+      later: NONE,
+    },
+    caveat: { before: ["v1.!まゆ/*普通眉"], closed: "v1.!口/*む", after: NONE, later: NONE },
+    fix: {
+      before: ["v1.!まゆ/*ごきげん眉", "v1.!目/*基本目セット/!黒目/*カメラ目線"],
+      closed: "v1.!口/*にしー",
+      after: ["v1.!右腕/*ゆびさし"],
+      later: NONE,
+    },
+    ending: {
+      before: ["v1.!まゆ/*ごきげん眉"],
+      closed: "v1.!口/*わあーい",
+      after: NONE,
+      later: ["v1.!目/*にっこり", "v1.!右腕/*ピース"],
+    },
+    join: {
+      before: ["v1.!まゆ/*ごきげん眉", "v1.!目/*にっこり"],
+      closed: "v1.!口/*わあーい",
+      after: ["v1.!右腕/*ピース"],
+      later: NONE,
+    },
+  },
 };
 
-const stageOf = (timeline: Timeline, frame: number): Stage =>
+const OUTFIT = "v1.*服装1/*いつもの服";
+const ZUNDA_ARM = (side: "右" | "左", pose: string): string => `v1.*服装1/!${side}腕/*${pose}`;
+
+const ZUNDAMON: Cast = {
+  voice: 3,
+  psd: "zundamon",
+  className: "top-[960px] left-[-250px] h-[1600px] w-[1050px]",
+  blink: { kind: "blink", closed: "v1.!目/*UU", open: "v1.!目/*目セット" },
+  mouth: { half: "v1.!口/*ほあ", open: "v1.!口/*ほあー" },
+  idle: { before: [OUTFIT, "v1.!眉/*普通眉"], closed: "v1.!口/*むー", after: NONE, later: NONE },
+  scenes: {
+    wait: {
+      before: [OUTFIT, "v1.!眉/*困り眉1", "v1.!目/*目セット/!黒目/*目逸らし"],
+      closed: "v1.!口/*むー",
+      after: NONE,
+      later: ["v1.記号など/汗1"],
+    },
+    hook: {
+      before: [OUTFIT, "v1.!眉/*困り眉2", "v1.!目/*目セット/!黒目/*目逸らし2"],
+      closed: "v1.!口/*むー",
+      open: "v1.!口/*んあー",
+      after: ["v1.記号など/汗2", "v1.!顔色/かげり", "v1.!枝豆/*枝豆萎え"],
+      later: [ZUNDA_ARM("右", "苦しむ"), ZUNDA_ARM("左", "苦しむ")],
+    },
+    try: {
+      before: [OUTFIT, "v1.!眉/*上がり眉", "v1.!目/*目セット/!黒目/*カメラ目線"],
+      closed: "v1.!口/*ほー",
+      after: NONE,
+      later: NONE,
+    },
+    wow: {
+      before: [OUTFIT, "v1.!眉/*上がり眉"],
+      closed: "v1.!口/*ほあ",
+      after: ["v1.!目/*〇〇", "v1.記号など/汗1"],
+      later: [ZUNDA_ARM("右", "手を挙げる"), ZUNDA_ARM("左", "手を挙げる")],
+    },
+    again: {
+      before: [OUTFIT, "v1.!眉/*上がり眉"],
+      closed: "v1.!口/*ほあー",
+      after: ["v1.!目/*〇〇", "v1.!顔色/*ほっぺ赤め"],
+      later: NONE,
+    },
+    caveat: {
+      before: [OUTFIT, "v1.!眉/*困り眉1", "v1.!目/*目セット/!黒目/*目逸らし"],
+      closed: "v1.!口/*むー",
+      after: ["v1.記号など/汗3", "v1.!枝豆/*枝豆萎え", ZUNDA_ARM("左", "考える")],
+      later: NONE,
+    },
+    fix: {
+      before: [OUTFIT, "v1.!眉/*上がり眉"],
+      closed: "v1.!口/*ほあ",
+      after: ["v1.!目/*〇〇"],
+      later: NONE,
+    },
+    ending: {
+      before: [OUTFIT, "v1.!眉/*普通眉", "v1.!目/*目セット/!黒目/*カメラ目線"],
+      closed: "v1.!口/*むふ",
+      after: NONE,
+      later: NONE,
+    },
+    join: {
+      before: [OUTFIT, "v1.!眉/*上がり眉"],
+      closed: "v1.!口/*むふ",
+      after: ["v1.!目/*にっこり", "v1.!顔色/*ほっぺ赤め", ZUNDA_ARM("右", "手を挙げる")],
+      later: NONE,
+    },
+  },
+};
+
+const CAST = [ZUNDAMON, TSUMUGI] as const;
+
+const partsOf = (cast: Cast, timeline: Timeline, frame: number): readonly Part[] =>
   pipe(
     timeline.cuts,
     Arr.findFirst(({ from, duration }) => frame >= from && frame < from + duration),
-    Option.flatMap((cut) =>
-      pipe(
-        Option.fromNullishOr(SCENES[cut.id]),
-        Option.map((scene) => ({
-          className: CENTER,
-          parts: [
-            ...scene.before,
-            BLINK,
-            mouthOf(scene.closed, scene.open),
-            ...scene.after,
-            ...pipe(
-              scene.later,
-              Arr.filter(() => frame >= cut.from + cut.duration * HALF),
-            ),
-          ],
-        })),
-      ),
-    ),
-    Option.getOrElse(() => NARRATING),
+    Option.map((cut) => {
+      const scene = Option.getOrElse(Option.fromNullishOr(cast.scenes[cut.id]), () => cast.idle);
+      return [
+        ...scene.before,
+        cast.blink,
+        {
+          kind: "volume-mouth",
+          closed: scene.closed,
+          half: cast.mouth.half,
+          open: scene.open ?? cast.mouth.open,
+          alwaysApply: true,
+        } as const,
+        ...scene.after,
+        ...pipe(
+          scene.later,
+          Arr.filter(() => frame >= cut.from + cut.duration * HALF),
+        ),
+      ];
+    }),
+    Option.getOrElse(() => [...cast.idle.before, cast.blink]),
   );
 
 const Board = ({ timeline }: Readonly<{ timeline: Timeline }>): ReactNode => {
   const frame = useCurrentFrame();
-  const stage = stageOf(timeline, frame);
   return (
     <AbsoluteFill className="bg-[#285a41]">
       <div className="absolute inset-x-0 top-[64px] h-[18px] bg-[#9a5a33]" />
       <div className="absolute inset-x-0 top-0 bottom-[28px] overflow-hidden">
-        <PsdNarrator
-          className={stage.className}
-          parts={stage.parts}
-          psd={staticFile(tachiePsdPath(TACHIE))}
-          timeline={timeline}
-        />
+        {pipe(
+          CAST,
+          Arr.map((cast) => (
+            <PsdNarrator
+              className={cast.className}
+              key={cast.psd}
+              parts={partsOf(cast, timeline, frame)}
+              psd={staticFile(tachiePsdPath(cast.psd))}
+              timeline={timeline}
+              voice={cast.voice}
+            />
+          )),
+        )}
       </div>
       <div className="absolute inset-x-0 bottom-0 h-[28px] bg-[#9a5a33]" />
       <div className="absolute bottom-[28px] left-[120px] h-[22px] w-[150px] bg-[#f1efe9]" />
@@ -263,7 +341,7 @@ const Dash = (): ReactNode => {
           <Img
             className="absolute top-[760px] left-[100px] w-[1000px] max-w-none origin-bottom rotate-[12deg]"
             key={trail}
-            src={staticFile(tachiePath(TACHIE))}
+            src={staticFile(tachiePath(TSUMUGI.psd))}
             style={{
               translate: `${String(dashX(frame - trail * TRAIL_LAG))}px 0`,
               scale: `1 ${String(squash)}`,
@@ -654,10 +732,8 @@ const Sharing = ({ shot }: Readonly<{ shot: Shot }>): ReactNode => {
 const ERROR = "#ff6b5b";
 const PASS = "#3ddc84";
 
-const OldTool = ({ shot }: Readonly<{ shot: Shot }>): ReactNode => {
+const OldTool = ({ fixed }: Readonly<{ fixed: boolean }>): ReactNode => {
   const frame = useCurrentFrame();
-  const fixedAt = lineStart(shot, 1);
-  const fixed = fixedAt > NOTHING && frame >= fixedAt;
   const result = pipe(
     Option.some({ text: "✓ build done", color: PASS }),
     Option.filter(() => fixed),
@@ -673,7 +749,13 @@ const OldTool = ({ shot }: Readonly<{ shot: Shot }>): ReactNode => {
       </div>
       <div
         className="font-code self-start rounded-[12px] bg-[#ffd400] px-6 py-2 text-[52px] font-bold text-[#1b1b1b]"
-        style={{ opacity: grow(frame, fixedAt) }}
+        style={{
+          opacity: pipe(
+            Option.some(grow(frame, NOTHING)),
+            Option.filter(() => fixed),
+            Option.getOrElse(() => NOTHING),
+          ),
+        }}
       >
         nodeLinker: hoisted
       </div>
@@ -682,11 +764,12 @@ const OldTool = ({ shot }: Readonly<{ shot: Shot }>): ReactNode => {
 };
 
 const POP_FRAMES = 8;
+const SETTLED = 60;
 const STRIKE_AT = 4;
 const STRIKE_WIDTH = 170;
 
-const TryNow = (): ReactNode => {
-  const frame = useCurrentFrame();
+const TryNow = ({ since = 0 }: Readonly<{ since?: number }>): ReactNode => {
+  const frame = useCurrentFrame() + since;
   const pop = interpolate(frame, [0, POP_FRAMES], [0.6, 1], {
     easing: Easing.out(Easing.back(1.8)),
     extrapolateRight: "clamp",
@@ -743,7 +826,10 @@ export const look: Partial<Look> = {
       <div
         className={`absolute right-[170px] left-[90px] flex justify-center ${pick(CAPTION_TOP, shot.id, "top-[900px] h-[200px] items-center")}`}
       >
-        <Caption className={pick(CAPTION, shot.id, BOLD)} shot={shot} />
+        <Caption
+          className={`${pick(CAPTION, shot.id, BOLD)} ${pick(VOICE_FILL, String(shot.voice), "")}`}
+          shot={shot}
+        />
       </div>
       <Source />
     </>
@@ -783,7 +869,8 @@ export const draw: Readonly<Record<string, Draw>> = {
     </>
   ),
   disk: (shot) => <Sharing shot={shot} />,
-  caveat: (shot) => <OldTool shot={shot} />,
+  caveat: () => <OldTool fixed={false} />,
+  fix: () => <OldTool fixed />,
   ending: (shot) => (
     <>
       <TryNow />
@@ -791,4 +878,5 @@ export const draw: Readonly<Record<string, Draw>> = {
       <Sfx at={0} kind="ending" shot={shot} />
     </>
   ),
+  join: () => <TryNow since={SETTLED} />,
 };
