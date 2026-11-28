@@ -3,6 +3,7 @@
   "title": "GOV.UK の部品: 確認の画面",
   "kind": "ui",
   "url": "https://design-system.service.gov.uk/patterns/check-answers/",
+  "image": "https://design-system.service.gov.uk/assets/images/govuk-opengraph-image.png",
   "note": "入力の後、送る前に答えを一覧で見直させる画面の作り。迷わせず、直す場所へ戻せる",
   "date": "2026-11-28"
 }
