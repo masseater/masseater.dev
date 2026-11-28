@@ -2,7 +2,7 @@ import { Console, Duration, Effect, Option, Schedule } from "effect";
 import { HttpClient, HttpClientRequest } from "effect/http";
 import { ChildProcess } from "effect/process";
 
-import { ENDPOINT, HOST, PORT } from "#/shared/config/endpoint.ts";
+import { ENDPOINT, HOST, PORT } from "#/shared/config/index.ts";
 
 const READY_EVERY_MILLIS = 200;
 const READY_EVERY = Duration.millis(READY_EVERY_MILLIS);

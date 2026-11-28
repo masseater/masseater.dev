@@ -1,7 +1,7 @@
 import { Clock, Effect } from "effect";
 import { ChildProcess } from "effect/process";
 
-import { ENDPOINT } from "#/shared/config/endpoint.ts";
+import { ENDPOINT } from "#/shared/config/index.ts";
 
 /** @internal */
 export const runCommand = Effect.fn("lap.run")(function* runCommand(

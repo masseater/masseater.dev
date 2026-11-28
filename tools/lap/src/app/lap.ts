@@ -1,12 +1,15 @@
 import { Console, Effect, Option, Path } from "effect";
 
-import { withCollector } from "#/features/record-lap/api/collector.ts";
-import { appendLine, keepSummary, lapDirectory } from "#/features/record-lap/api/files.ts";
-import { runCommand } from "#/features/record-lap/api/run.ts";
-import { invocationOf } from "#/features/record-lap/model/arguments.ts";
-import type { Invocation } from "#/features/record-lap/model/arguments.ts";
-import { lapLine } from "#/features/record-lap/model/span.ts";
-import type { Lap } from "#/features/record-lap/model/span.ts";
+import {
+  appendLine,
+  invocationOf,
+  keepSummary,
+  lapDirectory,
+  lapLine,
+  runCommand,
+  withCollector,
+} from "#/features/record-lap/index.ts";
+import type { Invocation, Lap } from "#/features/record-lap/index.ts";
 
 const ARGUMENTS_FROM = 2;
 const USAGE_EXIT = 2;
