@@ -90,6 +90,7 @@
     "@types/mdast": "catalog:",
     "@types/node": "catalog:",
     "effect": "catalog:stack",
+    "lapse": "workspace:*",
     "vite-plus": "catalog:stack"
   },
   "peerDependencies": {

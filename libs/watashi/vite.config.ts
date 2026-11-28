@@ -1,4 +1,5 @@
 import { LOCKED } from "@r_masseater/msch/locked-inputs";
+import { lapse } from "lapse";
 import { defineConfig } from "vite-plus";
 
 export default defineConfig({
@@ -11,6 +12,7 @@ export default defineConfig({
     deps: { alwaysBundle: [/./u], onlyBundle: false },
     publint: { strict: true },
   },
+  plugins: [lapse()],
   test: {
     testTimeout: 60_000,
   },

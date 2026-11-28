@@ -1,12 +1,14 @@
 import { tauriAppConfig, tauriAppTasks } from "@masseater.dev/tauri-app/vite";
 import { cargoInputs } from "@r_masseater/msch/cargo-inputs";
 import { Option } from "effect";
+import { lapse } from "lapse";
 import { defineConfig, mergeConfig } from "vite-plus";
 
 const app = tauriAppConfig({ devPort: 1420, viewport: Option.none() });
 
 export default defineConfig({
   ...mergeConfig(app, {
+    plugins: [lapse()],
     test: { server: { deps: { inline: ["@effect/vitest"] } } },
   }),
   run: {

@@ -1,4 +1,5 @@
 import { LOCKED } from "@r_masseater/msch/locked-inputs";
+import { lapse } from "lapse";
 import { defineConfig } from "vite-plus";
 
 export default defineConfig({
@@ -35,6 +36,7 @@ export default defineConfig({
       sourcemap: true,
     },
   ],
+  plugins: [lapse()],
   test: {
     include: ["src/**/*.test.ts"],
   },

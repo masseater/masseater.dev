@@ -29,6 +29,7 @@
     "@effect/vitest": "catalog:",
     "@types/node": "catalog:",
     "@types/three": "catalog:",
+    "lapse": "workspace:*",
     "typescript": "catalog:stack",
     "vite-plus": "catalog:stack"
   }

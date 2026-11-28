@@ -65,6 +65,7 @@
     "alchemy": "catalog:stack",
     "budoux": "catalog:",
     "drizzle-kit": "catalog:stack",
+    "lapse": "workspace:*",
     "mdast-util-directive": "catalog:",
     "mdast-util-mdx-jsx": "catalog:",
     "mdast-util-to-string": "catalog:",

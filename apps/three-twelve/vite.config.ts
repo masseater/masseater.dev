@@ -1,5 +1,6 @@
 import { alchemyTasks, deployTo } from "@masseater.dev/cloudflare-account/run-tasks";
 import { String as Str } from "effect";
+import { lapse } from "lapse";
 import { defineConfig } from "vite-plus";
 
 const NATIVE = "@snazzah/davey";
@@ -24,5 +25,6 @@ export default defineConfig({
     },
     copy: [{ from: "src/app/player/Containerfile", to: "dist/player" }],
   },
+  plugins: [lapse()],
   test: { include: ["**/*.test.ts"] },
 });

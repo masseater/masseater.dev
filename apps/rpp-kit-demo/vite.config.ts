@@ -2,6 +2,7 @@ import { alchemyTasks, deployTo } from "@masseater.dev/cloudflare-account/run-ta
 import tailwindcss from "@tailwindcss/vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
+import { lapse } from "lapse";
 import { rpp } from "rpp-kit/vite";
 import { defineConfig } from "vite-plus";
 
@@ -23,6 +24,7 @@ export default defineConfig({
   preview: { host: "127.0.0.1" },
   test: { include: ["src/**/*.test.ts"] },
   plugins: [
+    lapse(),
     rpp(),
     tailwindcss(),
     tanstackStart({

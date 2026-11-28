@@ -1,5 +1,6 @@
 import { alchemyTasks } from "@masseater.dev/cloudflare-account/run-tasks";
 import { LOCKED } from "@r_masseater/msch/locked-inputs";
+import { lapse } from "lapse";
 import { defineConfig } from "vite-plus";
 
 import { mosaicPlugins } from "./src/app/vite/vite-plugins.ts";
@@ -48,5 +49,5 @@ export default defineConfig({
   build: { copyPublicDir: false },
   preview: { host: "127.0.0.1" },
   test: { include: ["src/**/*.test.{ts,tsx}", "bin/lib/*.test.ts"] },
-  plugins: mosaicPlugins(),
+  plugins: [lapse(), ...mosaicPlugins()],
 });
