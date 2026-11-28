@@ -187,31 +187,31 @@ const Pop = ({ step, children }: Readonly<{ step: number; children: ReactNode }>
 
 const Intro = ({ shot }: Readonly<{ shot: Shot }>): ReactNode => (
   <>
-    <AbsoluteFill className="items-center justify-start gap-8 pt-[190px]">
+    <AbsoluteFill className="items-center justify-start gap-10 pt-[170px]">
       <Pop step={0}>
-        <div className="caption-outline font-jp text-[70px] font-black [--outline:#111] [--stroke:0.18em]">
+        <div className="caption-outline font-jp text-[74px] font-black whitespace-nowrap [--outline:#111] [--stroke:0.18em]">
           次世代のパッケージマネージャ
         </div>
       </Pop>
       <Pop step={1}>
         <div className="flex items-center gap-8">
           <Picture
-            className="size-[180px] rounded-[40px] bg-white p-7"
+            className="size-[230px] rounded-[50px] bg-white p-9"
             src={imageOf("pnpm")(shot)}
           />
-          <div className="caption-plain font-sans text-[200px] leading-none font-semibold italic">
+          <div className="caption-plain font-sans text-[260px] leading-none font-semibold italic">
             pnpm
           </div>
         </div>
       </Pop>
       <Pop step={2}>
         <div className="font-jp flex items-baseline text-[#ffd400]">
-          <span className="text-[330px] leading-none font-black tracking-[-0.08em]">30</span>
-          <span className="text-[130px] font-black">秒で</span>
+          <span className="text-[440px] leading-none font-black tracking-[-0.08em]">30</span>
+          <span className="text-[170px] font-black">秒で</span>
         </div>
       </Pop>
       <Pop step={3}>
-        <div className="caption-outline font-jp text-[130px] font-black [--outline:#111] [--stroke:0.16em]">
+        <div className="caption-outline font-jp text-[170px] font-black [--outline:#111] [--stroke:0.16em]">
           つむぎが解説
         </div>
       </Pop>
