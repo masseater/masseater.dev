@@ -1,7 +1,7 @@
 import { Array as Arr, Effect, Random, Schema, String as Str, pipe } from "effect";
 
 const ID_PARTS = 6;
-const PART_LIMIT = 0xff_ff_ff;
+const PART_LIMIT = 16_777_215;
 const HEX_WIDTH = 6;
 const TRACE_ID_LENGTH = 32;
 const SPAN_ID_LENGTH = 16;
