@@ -53,7 +53,7 @@ jobs:
       - uses: $/.github/actions/setup
         with:
           native: "false"
-      - uses: masseater/typescript-template/.github/actions/credentials@ff2b54ac1fb2277e68d1f582dd210920e91b364b
+      - uses: masseater/typescript-template/.github/actions/credentials@01e4330d6c9790af645c67973712c47971137da4
       - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
         with:
           shared-key: daily-${{ matrix.package.name }}
@@ -73,7 +73,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
       - if: matrix.package.deploy
-        uses: masseater/typescript-template/.github/actions/credentials@ff2b54ac1fb2277e68d1f582dd210920e91b364b
+        uses: masseater/typescript-template/.github/actions/credentials@01e4330d6c9790af645c67973712c47971137da4
       - if: matrix.package.deploy
         run: vp run --filter "./$DIRECTORY" daily:deploy
         env:
@@ -112,7 +112,7 @@ jobs:
       - uses: $/.github/actions/setup
         with:
           native: "false"
-      - uses: masseater/typescript-template/.github/actions/credentials@ff2b54ac1fb2277e68d1f582dd210920e91b364b
+      - uses: masseater/typescript-template/.github/actions/credentials@01e4330d6c9790af645c67973712c47971137da4
       - run: vp run -r daily:after
 
   ci-telemetry:
@@ -123,6 +123,6 @@ jobs:
       actions: read
       contents: read
     steps:
-      - uses: masseater/typescript-template/.github/actions/ci-telemetry@ff2b54ac1fb2277e68d1f582dd210920e91b364b
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@01e4330d6c9790af645c67973712c47971137da4
         with:
           github-token: ${{ github.token }}
