@@ -1,4 +1,4 @@
-import type { ToolSections } from "@r_masseater/vite-plus-adopt";
+import type { ToolSections } from "@r_masseater/msch/vite";
 import { lapse } from "lapse";
 import { defineConfig } from "vite-plus";
 
