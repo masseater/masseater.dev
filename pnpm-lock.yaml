@@ -397,8 +397,8 @@ catalogs:
       specifier: 1100.3.4
       version: 1100.3.4
     '@r_masseater/github-workflow':
-      specifier: 0.1.0
-      version: 0.1.0
+      specifier: 0.1.1
+      version: 0.1.1
     '@r_masseater/h56m':
       specifier: 0.3.0
       version: 0.3.0
@@ -1831,7 +1831,7 @@ importers:
         version: link:../../libs/ui
       '@r_masseater/github-workflow':
         specifier: 'catalog:'
-        version: 0.1.0(effect@4.1.7)
+        version: 0.1.1(effect@4.1.7)
       '@r_masseater/node-main':
         specifier: 'catalog:'
         version: 0.1.0(effect@4.1.7)(redis@6.2.1(@opentelemetry/api@1.10.0))
@@ -2700,7 +2700,7 @@ importers:
     dependencies:
       '@r_masseater/github-workflow':
         specifier: 'catalog:'
-        version: 0.1.0(effect@4.1.7)
+        version: 0.1.1(effect@4.1.7)
       '@r_masseater/node-main':
         specifier: 'catalog:'
         version: 0.1.0(effect@4.1.7)(redis@6.2.1(@opentelemetry/api@1.10.0))
@@ -3535,7 +3535,7 @@ importers:
         version: 3.1.0(asn1js@4.0.0)
       '@r_masseater/github-workflow':
         specifier: 'catalog:'
-        version: 0.1.0(effect@4.1.7)
+        version: 0.1.1(effect@4.1.7)
       '@r_masseater/node-main':
         specifier: 'catalog:'
         version: 0.1.0(effect@4.1.7)(redis@6.2.1(@opentelemetry/api@1.10.0))
@@ -5003,7 +5003,7 @@ importers:
     dependencies:
       '@r_masseater/github-workflow':
         specifier: 'catalog:'
-        version: 0.1.0(effect@4.1.7)
+        version: 0.1.1(effect@4.1.7)
       '@r_masseater/node-main':
         specifier: 'catalog:'
         version: 0.1.0(effect@4.1.7)(redis@6.2.1(@opentelemetry/api@1.10.0))
@@ -5047,7 +5047,7 @@ importers:
     dependencies:
       '@r_masseater/github-workflow':
         specifier: 'catalog:'
-        version: 0.1.0(effect@4.1.7)
+        version: 0.1.1(effect@4.1.7)
       '@r_masseater/node-main':
         specifier: 'catalog:'
         version: 0.1.0(effect@4.1.7)(redis@6.2.1(@opentelemetry/api@1.10.0))
@@ -5179,7 +5179,7 @@ importers:
         version: 1100.0.0
       '@r_masseater/github-workflow':
         specifier: 'catalog:'
-        version: 0.1.0(effect@4.1.7)
+        version: 0.1.1(effect@4.1.7)
       '@r_masseater/node-main':
         specifier: 'catalog:'
         version: 0.1.0(effect@4.1.7)(redis@6.2.1(@opentelemetry/api@1.10.0))
@@ -8947,8 +8947,8 @@ packages:
       vite: '*'
       vite-plus: '>=1.8.0'
 
-  '@r_masseater/github-workflow@0.1.0':
-    resolution: {integrity: sha512-P6+A+4AKg2CKeO8ZKu7D/gBtJyxJaVePQcZ3qeqTH+EhnawXjZsua4YhAdvAslMDikwKsfrQX32MqZChNal6aQ==}
+  '@r_masseater/github-workflow@0.1.1':
+    resolution: {integrity: sha512-Mdc/b02JJZ4bYOw2SmsgP8asIWGNfyDRqRFqg7cS4alklva52X2imndbS39N8Ti4Yx5w+v2Tc6W0ousWevuiYA==}
     engines: {node: '>=26.13.1'}
     peerDependencies:
       effect: ^4.1.0
@@ -21755,7 +21755,7 @@ snapshots:
       - redis
       - utf-8-validate
 
-  '@r_masseater/github-workflow@0.1.0(effect@4.1.7)':
+  '@r_masseater/github-workflow@0.1.1(effect@4.1.7)':
     dependencies:
       effect: 4.1.7
 
