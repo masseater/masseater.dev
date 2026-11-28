@@ -12,6 +12,22 @@ receivers:
             enabled: true
       load:
       memory:
+      filesystem:
+        metrics:
+          system.filesystem.utilization:
+            enabled: true
+          system.filesystem.inodes.usage:
+            enabled: false
+      network:
+        metrics:
+          system.network.packets:
+            enabled: false
+          system.network.errors:
+            enabled: false
+          system.network.dropped:
+            enabled: false
+          system.network.connections:
+            enabled: false
 
 exporters:
   file/traces:
