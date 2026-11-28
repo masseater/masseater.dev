@@ -66,7 +66,7 @@ catalog:
   "@modelcontextprotocol/client": 2.4.0
   "@modelcontextprotocol/server": 2.4.0
   auth: 1.7.28
-  "@r_masseater/github-workflow": 0.1.0
+  "@r_masseater/github-workflow": 0.1.1
   "@r_masseater/h56m": 0.3.0
   "@r_masseater/i68": 0.2.0
   "@r_masseater/intent-book": 0.3.2
@@ -271,6 +271,7 @@ catalogs:
     typescript: 7.1.0-beta
     vite-plus: 1.8.0
 overrides:
+  "@vitest/browser-playwright": 5.1.1 # exit: npm:vite-plus requires vitest@>=5.1.2
   "@remotion/tailwind-v4>tailwindcss": "catalog:stack" # exit: npm:@remotion/tailwind-v4 allows tailwindcss@>=4.3.5
   "@remotion/tailwind-v4>@tailwindcss/webpack": 4.3.5 # exit: npm:@remotion/tailwind-v4 allows @tailwindcss/webpack@>=4.3.5
   workerd: 1.20261125.1 # exit: npm:miniflare requires workerd@>=1.20261115.1

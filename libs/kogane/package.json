@@ -37,9 +37,6 @@
     "access": "public",
     "provenance": true
   },
-  "scripts": {
-    "prepublishOnly": "vp exec msch-publish prepublish ."
-  },
   "dependencies": {
     "@huggingface/transformers": "catalog:stack"
   },

@@ -42,9 +42,6 @@
     "access": "public",
     "provenance": true
   },
-  "scripts": {
-    "prepublishOnly": "vp exec msch-publish prepublish ."
-  },
   "dependencies": {
     "@effect/platform-node-shared": "catalog:",
     "chrome-launcher": "catalog:",
