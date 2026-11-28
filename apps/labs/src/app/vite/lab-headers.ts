@@ -5,14 +5,13 @@ import {
   SECURITY_HEADERS_CREDENTIALLESS,
   contentSecurityPolicy,
 } from "security-headers";
-import { headerLines, sourceHash } from "security-headers/static";
+import { headerLines, inlineStyleHashes } from "security-headers/static";
 import type { Plugin, Rolldown } from "vite-plus";
 
 import { ASSETS_DIR, CF_BEACON_TOKEN, PAGE_SCRIPT_SOURCES } from "#/shared/config/index.ts";
 
 const HEADERS_FILE = "_headers";
 const PAGE_HTML = /^(?<page>.+)\/index\.html$/u;
-const INLINE_STYLE = /<style[^>]*>(?<body>[\s\S]*?)<\/style>/gu;
 
 type PageStyles = Readonly<{ page: string; hashes: readonly string[] }>;
 
@@ -20,14 +19,6 @@ const group =
   (name: string) =>
   (groups: Readonly<Record<string, string>> | undefined): Option.Option<string> =>
     pipe(Option.fromNullishOr(groups), Option.flatMap(Rec.get(name)));
-
-const styleBodies = (html: string): readonly string[] =>
-  pipe(
-    html,
-    Str.matchAll(INLINE_STYLE),
-    Arr.fromIterable,
-    Arr.flatMap((match) => Option.toArray(group("body")(match.groups))),
-  );
 
 const scriptSourcesOf = (page: string): readonly string[] =>
   pipe(
@@ -72,9 +63,7 @@ const pageStyles = ({ fileName, html }: HtmlFile): Option.Option<Effect.Effect<P
     pageOf(fileName),
     Option.map((page) =>
       pipe(
-        styleBodies(html),
-        Arr.dedupe,
-        (items) => Effect.forEach(items, sourceHash, { concurrency: 1 }),
+        inlineStyleHashes(html),
         Effect.map((hashes) => ({ page, hashes })),
       ),
     ),

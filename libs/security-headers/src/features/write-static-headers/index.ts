@@ -2,6 +2,7 @@ export {
   headerLines,
   headersFileFor,
   inlineScriptHashes,
+  inlineStyleHashes,
   pageHashes,
   pageSlug,
   sourceHash,
