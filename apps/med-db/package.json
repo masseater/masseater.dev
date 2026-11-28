@@ -14,6 +14,7 @@
     "@elysiajs/eden": "catalog:stack",
     "@fontsource/dela-gothic-one": "catalog:",
     "@fontsource/m-plus-rounded-1c": "catalog:",
+    "@masseater.dev/like-pattern": "workspace:*",
     "@masseater.dev/mcp-tool-call": "workspace:*",
     "@masseater.dev/owner-auth": "workspace:*",
     "@masseater.dev/start-shell": "workspace:*",
