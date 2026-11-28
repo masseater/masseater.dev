@@ -960,56 +960,84 @@ const Highlights = ({
   );
 };
 
-const PLUGIN = "eslint-plugin-my-team";
 const FLIP_AT = 10;
 
-const Plugin = ({
-  fixed,
-  failAt = NOTHING,
-}: Readonly<{ fixed: boolean; failAt?: number }>): ReactNode => {
+const Plugin = ({ failAt }: Readonly<{ failAt: number }>): ReactNode => {
   const frame = useCurrentFrame();
-  const result = pipe(
-    Option.some({ text: "✓ Found 0 errors.", color: PASS }),
-    Option.filter(() => fixed),
-    Option.filter(() => frame >= FLIP_AT),
-    Option.getOrElse(() => ({
-      text: "✗ Rule 'my-team/no-raw-sql'\n  not found",
-      color: ALARM,
-    })),
-  );
+  const shown = frame >= failAt ? FULL : NOTHING;
   return (
-    <div className={`${AREA} font-jp flex flex-col gap-6`}>
+    <div className={`${AREA} font-jp flex flex-col justify-center`}>
       <div className="font-code flex flex-col gap-3 rounded-[16px] bg-[#0b0d10] px-8 py-6 text-[46px] leading-snug">
         <span className="text-white/90">$ npx @oxlint/migrate</span>
-        <span
-          className="text-white/90"
-          style={{ opacity: fixed || frame >= failAt ? FULL : NOTHING }}
-        >
+        <span className="text-white/90" style={{ opacity: shown }}>
           $ oxlint
         </span>
         <span
-          className="font-bold whitespace-pre-line"
-          style={{
-            color: result.color,
-            opacity: fixed ? FULL : grow(frame, failAt),
-          }}
+          className="font-bold"
+          style={{ color: ALARM, opacity: grow(frame, failAt) }}
         >
-          {result.text}
+          ✗ Rule &apos;my-team/no-raw-sql&apos;
+          <br />
+          {"  "}not found
         </span>
       </div>
+    </div>
+  );
+};
+
+interface ConfigLine {
+  readonly text: string;
+  readonly added?: boolean;
+}
+
+const CONFIG: readonly ConfigLine[] = [
+  { text: "{" },
+  { text: '  "jsPlugins": ["./lint/my-team.js"],', added: true },
+  { text: '  "rules": {' },
+  { text: '    "my-team/no-raw-sql": "error"' },
+  { text: "  }" },
+  { text: "}" },
+];
+
+const Config = (): ReactNode => {
+  const frame = useCurrentFrame();
+  return (
+    <div className={`${AREA} font-jp flex flex-col justify-center gap-5`}>
+      <div className="overflow-hidden rounded-[16px] bg-[#0b0d10]">
+        <div className="font-code bg-[#1d2128] px-6 py-2 text-[34px] text-white/70">
+          .oxlintrc.json
+        </div>
+        <div className="font-code flex flex-col py-4 text-[38px] leading-[1.6] whitespace-pre">
+          {pipe(
+            CONFIG,
+            Arr.map((line) =>
+              line.added === true ? (
+                <div
+                  className="flex bg-[#3ddc84]/25 px-4 font-bold text-white"
+                  key={line.text}
+                  style={{
+                    opacity: grow(frame, NOTHING),
+                    scale: String(slamOf(frame, NOTHING)),
+                  }}
+                >
+                  <span className="w-[28px] text-[#3ddc84]">+</span>
+                  {line.text}
+                </div>
+              ) : (
+                <div className="flex px-4 text-white/60" key={line.text}>
+                  <span className="w-[28px]" />
+                  {line.text}
+                </div>
+              ),
+            ),
+          )}
+        </div>
+      </div>
       <div
-        className="flex flex-col items-center gap-2 self-center"
-        style={{
-          opacity: fixed ? FULL : NOTHING,
-          scale: String(fixed ? slamOf(frame, NOTHING) : FULL),
-        }}
+        className="font-code self-start rounded-[12px] bg-[#0b0d10] px-6 py-3 text-[40px] font-bold"
+        style={{ color: PASS, opacity: shownOf(frame, FLIP_AT) }}
       >
-        <span className="text-[110px] leading-none font-black text-[#ffd400]">
-          +1行
-        </span>
-        <span className="font-code rounded-[14px] bg-[#ffd400] px-6 py-4 text-[38px] font-bold whitespace-nowrap text-[#1b1b1b]">
-          jsPlugins: ["{PLUGIN}"]
-        </span>
+        $ oxlint ✓ Found 0 errors.
       </div>
     </div>
   );
@@ -1125,10 +1153,11 @@ export const draw: Readonly<Record<string, Draw>> = {
       <Highlights at={NOTHING} since={SETTLED} />
     </>
   ),
-  caveat: (shot) => <Plugin failAt={lineStart(shot, 1)} fixed={false} />,
+  caveat: (shot) => <Plugin failAt={lineStart(shot, 1)} />,
   fix: (shot) => (
     <>
-      <Plugin fixed />
+      <Config />
+      <Sfx at={0} kind="pop" shot={shot} />
       <Sfx at={FLIP_AT} kind="pop" shot={shot} />
     </>
   ),

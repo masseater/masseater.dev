@@ -73,7 +73,7 @@ export const script: VideoScript = {
         "…あれ、いつもの\nプラグインが使えないのだ？",
       ],
     },
-    { id: "fix", say: ["そのプラグイン、\n1行でそのまま使えるよ"] },
+    { id: "fix", say: ["それ、設定に足せば\nそのまま使えるよ"] },
     { id: "ending", say: ["ね、もうlint待ちには\n戻れないっしょ？"] },
     {
       id: "join",
