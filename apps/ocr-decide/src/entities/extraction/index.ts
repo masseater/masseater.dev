@@ -1,5 +1,4 @@
 export { DIRECT, WAYS } from "./model/ways.ts";
-export type { Way } from "./model/ways.ts";
 export { LineSchema, linesOf } from "./model/result.ts";
 export { PictureSchema, SourceSchema } from "./model/picture.ts";
 export type { Picture, Source } from "./model/picture.ts";
