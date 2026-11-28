@@ -9092,21 +9092,21 @@ packages:
       effect: ^4.1.0
       vite-plus: ^1.8.0
 
-  '@r_masseater/wism-linux-x64-gnu@0.4.0':
-    resolution: {integrity: sha512-ahviM56RahMa6i2ps3Fx00K4wD5Jt8VkfXroTU/O9YIghOIjf13HGQRHwiXV6o23D6Twx89930eRiE49doKy9A==}
+  '@r_masseater/wism-linux-x64-gnu@0.4.1':
+    resolution: {integrity: sha512-WuEpXdDONTSbFwX86qxo6+K2lU3UvWbl4rqyW9EfbG3Ghx7ertlCEdBwKEhpadRD2piAmHc2Ws5GOeWNfNS44Q==}
     engines: {node: '>=26.13.1'}
     cpu: [x64]
     os: [linux]
     libc: [glibc]
 
-  '@r_masseater/wism-win32-x64-msvc@0.4.0':
-    resolution: {integrity: sha512-eTR3dk7rOQNemImhYOtY0m7MBYiLYfggrOupiVPPAgi9RDqyvoOQdQwLO4eHMKY8qQSUM8FeFB4BE/0M9HqQ0g==}
+  '@r_masseater/wism-win32-x64-msvc@0.4.1':
+    resolution: {integrity: sha512-XwjF2EUCzu1wLd9opYtmKd2WsX01eKg8R5SNAAgVvgIoc87CTHxl/K6LAvbXxG44i2yrKWR0LSVsY9XwXM7TNg==}
     engines: {node: '>=26.13.1'}
     cpu: [x64]
     os: [win32]
 
-  '@r_masseater/wism@0.4.0':
-    resolution: {integrity: sha512-wblV7m6fal8qnGQTzIcr22eNOV3SnnScrtBevfCMOCbiP+hUGrDoWHuwZmpXAtPdRe7rouxOOhNR2B0h5zWgoA==}
+  '@r_masseater/wism@0.4.1':
+    resolution: {integrity: sha512-XGxi5lPibLCfy9O5kUORO39UM5hbLddRcV7DLVVGkjb5o996+nTXh3GG9LZWFVlXSqobFOkUUZ0fmq0e1vibDg==}
     engines: {node: '>=26.13.1'}
     hasBin: true
     peerDependencies:
@@ -21865,7 +21865,7 @@ snapshots:
       '@r_masseater/oxlint-typed-rules': 0.5.0(effect@4.1.7)(typescript@7.1.0-beta)
       '@r_masseater/textlint-rule-preset-ja': 0.2.1(@r_masseater/y8@0.5.0(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(effect@4.1.7)(markdownlint@0.42.2(supports-color@10.2.2))(minimatch@11.0.9)(redis@6.2.1(@opentelemetry/api@1.10.0))(vite-plus@1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.10)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.10)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(vitest@5.1.1)(yaml@2.9.1)))(effect@4.1.7)(minimatch@11.0.9)
       '@r_masseater/vite-plus-adopt': 0.14.0(10f1bb14d3cd96c19292d5d8354f2e8f)
-      '@r_masseater/wism': 0.4.0(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(effect@4.1.7)(redis@6.2.1(@opentelemetry/api@1.10.0))(vite-plus@1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.10)(@vitest/browser-playwright@5.1.2)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.10)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(vitest@5.1.2)(yaml@2.9.1))
+      '@r_masseater/wism': 0.4.1(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(effect@4.1.7)(redis@6.2.1(@opentelemetry/api@1.10.0))(vite-plus@1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.10)(@vitest/browser-playwright@5.1.2)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.10)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(vitest@5.1.2)(yaml@2.9.1))
       '@r_masseater/y8': 0.5.0(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(effect@4.1.7)(markdownlint@0.42.2(supports-color@10.2.2))(minimatch@11.0.9)(redis@6.2.1(@opentelemetry/api@1.10.0))(vite-plus@1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.10)(@vitest/browser-playwright@5.1.2)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.10)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(vitest@5.1.2)(yaml@2.9.1))
       '@shadcn/lint': 0.2.5(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))
       '@tanstack/intent': 0.5.6(patch_hash=6a437296d250871cc7a7bf8a24c623bc98963f6b76ce91ae6ef37bd765613196)
@@ -21923,7 +21923,7 @@ snapshots:
       '@r_masseater/oxlint-typed-rules': 0.5.0(effect@4.1.7)(typescript@7.1.0-beta)
       '@r_masseater/textlint-rule-preset-ja': 0.2.1(@r_masseater/y8@0.5.0(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(effect@4.1.7)(markdownlint@0.42.2(supports-color@10.2.2))(minimatch@11.0.9)(redis@6.2.1(@opentelemetry/api@1.10.0))(vite-plus@1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.10)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.10)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(vitest@5.1.1)(yaml@2.9.1)))(effect@4.1.7)(minimatch@11.0.9)
       '@r_masseater/vite-plus-adopt': 0.14.0(f727593095c556ebb9bc187be7669543)
-      '@r_masseater/wism': 0.4.0(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(effect@4.1.7)(redis@6.2.1(@opentelemetry/api@1.10.0))(vite-plus@1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.10)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.10)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(vitest@5.1.1)(yaml@2.9.1))
+      '@r_masseater/wism': 0.4.1(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(effect@4.1.7)(redis@6.2.1(@opentelemetry/api@1.10.0))(vite-plus@1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.10)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.10)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(vitest@5.1.1)(yaml@2.9.1))
       '@r_masseater/y8': 0.5.0(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(effect@4.1.7)(markdownlint@0.42.2(supports-color@10.2.2))(minimatch@11.0.9)(redis@6.2.1(@opentelemetry/api@1.10.0))(vite-plus@1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.10)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.10)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(vitest@5.1.1)(yaml@2.9.1))
       '@shadcn/lint': 0.2.5(eslint@10.15.0(jiti@2.7.0)(supports-color@10.2.2))
       '@tanstack/intent': 0.5.6(patch_hash=6a437296d250871cc7a7bf8a24c623bc98963f6b76ce91ae6ef37bd765613196)
@@ -22120,35 +22120,35 @@ snapshots:
       - redis
       - utf-8-validate
 
-  '@r_masseater/wism-linux-x64-gnu@0.4.0':
+  '@r_masseater/wism-linux-x64-gnu@0.4.1':
     optional: true
 
-  '@r_masseater/wism-win32-x64-msvc@0.4.0':
+  '@r_masseater/wism-win32-x64-msvc@0.4.1':
     optional: true
 
-  '@r_masseater/wism@0.4.0(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(effect@4.1.7)(redis@6.2.1(@opentelemetry/api@1.10.0))(vite-plus@1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.10)(@vitest/browser-playwright@5.1.2)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.10)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(vitest@5.1.2)(yaml@2.9.1))':
+  '@r_masseater/wism@0.4.1(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(effect@4.1.7)(redis@6.2.1(@opentelemetry/api@1.10.0))(vite-plus@1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.10)(@vitest/browser-playwright@5.1.2)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.10)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(vitest@5.1.2)(yaml@2.9.1))':
     dependencies:
       '@effect/platform-node': 4.1.7(effect@4.1.7)(redis@6.2.1(@opentelemetry/api@1.10.0))
       effect: 4.1.7
       vite: '@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)'
       vite-plus: 1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.10)(@vitest/browser-playwright@5.1.2)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.10)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(vitest@5.1.2)(yaml@2.9.1)
     optionalDependencies:
-      '@r_masseater/wism-linux-x64-gnu': 0.4.0
-      '@r_masseater/wism-win32-x64-msvc': 0.4.0
+      '@r_masseater/wism-linux-x64-gnu': 0.4.1
+      '@r_masseater/wism-win32-x64-msvc': 0.4.1
     transitivePeerDependencies:
       - bufferutil
       - redis
       - utf-8-validate
 
-  '@r_masseater/wism@0.4.0(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(effect@4.1.7)(redis@6.2.1(@opentelemetry/api@1.10.0))(vite-plus@1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.10)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.10)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(vitest@5.1.1)(yaml@2.9.1))':
+  '@r_masseater/wism@0.4.1(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(effect@4.1.7)(redis@6.2.1(@opentelemetry/api@1.10.0))(vite-plus@1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.10)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.10)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(vitest@5.1.1)(yaml@2.9.1))':
     dependencies:
       '@effect/platform-node': 4.1.7(effect@4.1.7)(redis@6.2.1(@opentelemetry/api@1.10.0))
       effect: 4.1.7
       vite: '@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)'
       vite-plus: 1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.10)(@vitest/ui@5.1.1)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.10)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(vitest@5.1.1)(yaml@2.9.1)
     optionalDependencies:
-      '@r_masseater/wism-linux-x64-gnu': 0.4.0
-      '@r_masseater/wism-win32-x64-msvc': 0.4.0
+      '@r_masseater/wism-linux-x64-gnu': 0.4.1
+      '@r_masseater/wism-win32-x64-msvc': 0.4.1
     transitivePeerDependencies:
       - bufferutil
       - redis
