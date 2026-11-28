@@ -118,7 +118,12 @@ export interface Utterance {
 const NATURAL_SPEED = { min: 0.8, max: 2 } as const;
 const SPEED_AS_GIVEN = 1;
 
-type Effects<Value> = Effect.Effect<Value, VideoError | Config.ConfigError, HttpClient.HttpClient>;
+/** @internal */
+export type Effects<Value> = Effect.Effect<
+  Value,
+  VideoError | Config.ConfigError,
+  HttpClient.HttpClient
+>;
 
 const queryOf = (text: string, speaker: string): Effects<QueryType> =>
   Effect.gen(function* query() {
