@@ -2,8 +2,11 @@ name: setup
 description: Install the toolchain and the dependencies that verify needs in this repository
 inputs:
   cache:
-    description: Whether setup-vp restores its cache
+    description: Whether to restore the pnpm store and the mise tools from the Actions cache. The newest store entry restores whichever lockfile it was saved for, and install adds only the difference
     default: "true"
+  save-store:
+    description: Whether to save the pnpm store, pruned to what the lockfile needs, as the entry for this lockfile when the restore did not hit it exactly. Only the hourly cache job sets it, so a lockfile change on main adds no 2 GiB entry per push
+    default: "false"
   session-path:
     description: Whether to move the checkout to /home/user/<repository>, where cloud sessions check out, and mount it back at the workspace before the install, so that the one install runs under the paths that cache keys hold and still hard links from the package store
     default: "false"
@@ -69,8 +72,19 @@ runs:
         key: lockfile-verified-${{ hashFiles('pnpm-lock.yaml', 'pnpm-workspace.yaml') }}
     - uses: voidzero-dev/setup-vp@cab1ab9eaff52d4857875f4f2c016e36af8f2c76 # v1.22.0
       with:
-        cache: ${{ inputs.cache }}
+        cache: "false"
         run-install: false
+    - id: store-path
+      if: ${{ inputs.cache == 'true' || inputs.save-store == 'true' }}
+      shell: bash
+      run: echo "path=$(vp exec pnpm store path)" >> "$GITHUB_OUTPUT"
+    - id: store
+      if: ${{ inputs.cache == 'true' }}
+      uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: ${{ steps.store-path.outputs.path }}
+        key: pnpm-store-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('pnpm-lock.yaml') }}
+        restore-keys: pnpm-store-${{ runner.os }}-${{ runner.arch }}-
     - shell: bash
       env:
         SESSION_PATH: ${{ inputs.session-path }}
@@ -85,6 +99,11 @@ runs:
         fi
         vp install --frozen-lockfile
         vp exec pnpm store prune
+    - if: ${{ inputs.save-store == 'true' && steps.store.outputs.cache-hit != 'true' }}
+      uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: ${{ steps.store-path.outputs.path }}
+        key: pnpm-store-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('pnpm-lock.yaml') }}
     - if: ${{ steps.lockfile-verified.outputs.cache-hit != 'true' }}
       uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
       with:
