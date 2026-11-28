@@ -5,17 +5,9 @@ import { FPS } from "@masseater.dev/video-kit/script";
 import type { SfxKind } from "@masseater.dev/video-kit/script";
 import { Array as Arr, Option, Record as Rec, pipe } from "effect";
 import type { ReactNode } from "react";
-import {
-  AbsoluteFill,
-  Easing,
-  Freeze,
-  Img,
-  interpolate,
-  staticFile,
-  useCurrentFrame,
-} from "remotion";
+import { AbsoluteFill, Easing, Freeze, interpolate, staticFile, useCurrentFrame } from "remotion";
 
-import { tachiePath, tachiePsdPath } from "#/shared/config/index.ts";
+import { tachiePsdPath } from "#/shared/config/index.ts";
 import { pick } from "#/shared/lib/pick.ts";
 
 import { INTRO_STEPS } from "./script.ts";
@@ -24,31 +16,14 @@ const BOLD =
   "caption-outline text-[68px] font-bold whitespace-pre-line [--outline:#1b1b1b] [--stroke:0.14em]";
 const RED_LOOK =
   "caption-outline leading-none tracking-[-0.06em] scale-x-[0.86] [--fill:#ff1e1e] [--outline:#2a0000] [--stroke:0.16em] [--emphasis:#ff1e1e] drop-shadow-[0_10px_0_rgb(0_0_0/0.8)]";
-const RED = `text-[180px] ${RED_LOOK}`;
+const RED = `text-[140px] ${RED_LOOK}`;
 
 const CAPTION: Readonly<Record<string, string>> = { punch: RED, intro: "hidden" };
 const VOICE_FILL: Readonly<Record<string, string>> = { "3": "[--fill:#c6f28a]" };
 const CAPTION_TOP: Readonly<Record<string, string>> = {
-  punch: "top-[620px]",
   disk: "top-[960px] h-[200px] items-center",
 };
 
-const RUN = ["$ pnpm install", "++++++++++++++++", "Done in 4.0s"];
-
-const LOG = [
-  ...RUN,
-  "Packages are hard linked from the content-addressable store to the virtual store.",
-  "  Content-addressable store is at: ~/.local/share/pnpm/store/v11",
-  "Progress: resolved 18, reused 13, downloaded 11, added 18, done",
-  "dependencies:",
-  "+ react 19.3.1",
-  "+ typescript 7.0.2",
-  "+ vite 8.3.8",
-  "$ rm -rf node_modules && pnpm install",
-  "Done in 407ms using pnpm v12.23.0",
-];
-
-const SCROLL_PER_FRAME = 2.4;
 const FLASH_FRAMES = 9;
 
 interface Mouth {
@@ -207,6 +182,30 @@ const ZUNDAMON: Cast = {
       after: ["v1.!目/*にっこり", "v1.!顔色/*ほっぺ赤め", ZUNDA_ARM("右", "手を挙げる")],
       later: NONE,
     },
+    patch: {
+      before: [OUTFIT, "v1.!眉/*上がり眉", "v1.!目/*目セット/!黒目/*カメラ目線"],
+      closed: "v1.!口/*ほー",
+      after: NONE,
+      later: NONE,
+    },
+    punch: {
+      before: [OUTFIT, "v1.!眉/*上がり眉"],
+      closed: "v1.!口/*ほあ",
+      after: ["v1.!目/*〇〇"],
+      later: NONE,
+    },
+    more: {
+      before: [OUTFIT, "v1.!眉/*上がり眉"],
+      closed: "v1.!口/*ほあ",
+      after: ["v1.!目/*〇〇"],
+      later: NONE,
+    },
+    updates: {
+      before: [OUTFIT, "v1.!眉/*上がり眉"],
+      closed: "v1.!口/*ほあ",
+      after: ["v1.!目/*〇〇", "v1.!顔色/*ほっぺ赤め"],
+      later: NONE,
+    },
     why: {
       before: [OUTFIT, "v1.!眉/*上がり眉", "v1.!目/*目セット/!黒目/*カメラ目線"],
       closed: "v1.!口/*ほー",
@@ -300,33 +299,21 @@ const partsOf = (cast: Cast, timeline: Timeline, frame: number): readonly Part[]
 const SLIDE_FRAMES = 6;
 const OFFSTAGE = -900;
 
-const STAY_FRAMES = 150;
-
 interface Span {
   readonly from: number;
   readonly to: number;
 }
 
 const staysOf = (cast: Cast, timeline: Timeline): readonly Span[] => {
-  const spans: Span[] = [];
   const lines = pipe(
     timeline.cuts,
     Arr.filter((cut) => cut.voice === cast.voice),
   );
-  for (const cut of lines) {
-    const span = { from: cut.from, to: cut.from + cut.duration };
-    const joined = pipe(
-      Arr.last(spans),
-      Option.filter((last) => span.from - last.to <= STAY_FRAMES),
-      Option.map((last) => ({ from: last.from, to: span.to })),
-    );
-    if (Option.isSome(joined)) {
-      spans.splice(-1, 1, joined.value);
-    } else {
-      spans.push(span);
-    }
-  }
-  return spans;
+  return pipe(
+    Option.all([Arr.head(lines), Arr.last(lines)]),
+    Option.map(([first, last]) => [{ from: first.from, to: last.from + last.duration }]),
+    Option.getOrElse((): readonly Span[] => []),
+  );
 };
 
 const slideOf = (cast: Cast, timeline: Timeline, frame: number): number => {
@@ -398,40 +385,24 @@ const LightLeak = (): ReactNode => {
   );
 };
 
-const Log = (): ReactNode => {
-  const frame = useCurrentFrame();
-  return (
-    <AbsoluteFill className="overflow-hidden bg-[#0b0d10]">
-      <div
-        className="font-code px-6 text-[34px] leading-[1.45] whitespace-pre text-[#8b949e] opacity-20 blur-[2px]"
-        style={{ translate: `0 ${String(200 - frame * SCROLL_PER_FRAME)}px` }}
-      >
-        {pipe(
-          [...LOG, ...LOG, ...LOG],
-          Arr.map((row, index) => <div key={`${String(index)}:${row}`}>{row}</div>),
-        )}
-      </div>
-    </AbsoluteFill>
-  );
-};
-
 const CROUCH_FRAMES = 10;
 const DASH_FRAMES = 10;
 const TRAILS = [0, 1, 2, 3] as const;
 const TRAIL_LAG = 1.6;
 const STREAKS = [
-  { top: 380, width: 520, speed: 150, offset: 0 },
-  { top: 520, width: 760, speed: 190, offset: 300 },
-  { top: 760, width: 440, speed: 170, offset: 620 },
-  { top: 1180, width: 680, speed: 210, offset: 140 },
-  { top: 1380, width: 560, speed: 160, offset: 820 },
-  { top: 1560, width: 820, speed: 200, offset: 460 },
+  { top: 240, width: 520, speed: 150, offset: 0 },
+  { top: 330, width: 760, speed: 190, offset: 300 },
+  { top: 470, width: 440, speed: 170, offset: 620 },
+  { top: 600, width: 680, speed: 210, offset: 140 },
+  { top: 720, width: 560, speed: 160, offset: 820 },
+  { top: 840, width: 820, speed: 200, offset: 460 },
 ] as const;
 const SCREEN = 1080;
 
 const dashX = (frame: number): number =>
   interpolate(frame, [0, CROUCH_FRAMES, CROUCH_FRAMES + DASH_FRAMES], [-40, 0, 1500], {
     easing: Easing.in((time) => Easing.cubic(time)),
+    extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
 
@@ -457,7 +428,7 @@ const Streak = ({
   );
 };
 
-const Dash = (): ReactNode => {
+const Dash = ({ children }: Readonly<{ children: ReactNode }>): ReactNode => {
   const frame = useCurrentFrame();
   const squash = interpolate(frame, [0, CROUCH_FRAMES], [1, 0.92], { extrapolateRight: "clamp" });
   return (
@@ -469,16 +440,17 @@ const Dash = (): ReactNode => {
       {pipe(
         TRAILS,
         Arr.map((trail) => (
-          <Img
-            className="absolute top-[760px] left-[100px] w-[1000px] max-w-none origin-bottom rotate-[12deg]"
+          <AbsoluteFill
+            className="origin-bottom"
             key={trail}
-            src={staticFile(tachiePath(TSUMUGI.psd))}
             style={{
               translate: `${String(dashX(frame - trail * TRAIL_LAG))}px 0`,
               scale: `1 ${String(squash)}`,
               opacity: (TRAILS.length - trail) / TRAILS.length / (trail + 1),
             }}
-          />
+          >
+            {children}
+          </AbsoluteFill>
         )),
       )}
     </AbsoluteFill>
@@ -1110,8 +1082,11 @@ export const draw: Readonly<Record<string, Draw>> = {
   ),
   punch: (shot) => (
     <>
-      <Log />
-      <Dash />
+      <Dash>
+        <Freeze frame={SETTLED}>
+          <Done />
+        </Freeze>
+      </Dash>
       <Sfx at={0} kind="stamp" shot={shot} />
       <Sfx at={CROUCH_FRAMES - 2} kind="dash" shot={shot} />
     </>

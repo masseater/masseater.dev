@@ -59,7 +59,7 @@ export const script: VideoScript = {
       ],
     },
     { id: "other", voice: ZUNDAMON, say: ["{他|ほか}にもなんかあるのだ？"] },
-    { id: "more", say: ["便利機能も\n**盛りだくさん**だよ！"], hold: 0.8 },
+    { id: "more", say: ["便利機能も\n**盛りだくさん**だよ！"], hold: 0.2 },
     { id: "updates", say: ["しかも開発が\nめっちゃ活発なんだよね"] },
     { id: "strong", voice: ZUNDAMON, say: ["最強すぎるのだ！"] },
     {
