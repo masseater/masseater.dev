@@ -379,9 +379,9 @@ url_api = "https://api.github.com/repos/zizmorcore/zizmor/releases/assets/780655
 provenance = "github-attestations"
 
 [[tools."go:github.com/betterleaks/betterleaks/v2"]]
-version = "2.0.0-rc.12"
+version = "2.0.0-rc.14"
 backend = "go:github.com/betterleaks/betterleaks/v2"
-specifiers = ["v2.0.0-rc.12"]
+specifiers = ["v2.0.0-rc.14"]
 
 [[tools."go:github.com/boostsecurityio/poutine"]]
 version = "1.1.6"

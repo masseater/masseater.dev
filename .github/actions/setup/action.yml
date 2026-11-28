@@ -113,7 +113,7 @@ runs:
     - if: ${{ inputs.sccache == 'true' }}
       uses: mozilla-actions/sccache-action@fc920bf0ec8de6ee65d409111f7ec508035751ba # v0.0.11
       with:
-        version: v0.20.0
+        version: v0.20.1
     - if: ${{ inputs.sccache == 'true' }}
       shell: bash
       env:
