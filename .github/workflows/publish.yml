@@ -242,6 +242,6 @@ jobs:
       actions: read
       contents: read
     steps:
-      - uses: masseater/typescript-template/.github/actions/ci-telemetry@0aec18eb421e6fb6160d7342470e2a24fe61069a
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@ff2b54ac1fb2277e68d1f582dd210920e91b364b
         with:
           github-token: ${{ github.token }}

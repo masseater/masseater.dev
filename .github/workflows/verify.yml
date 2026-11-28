@@ -51,7 +51,7 @@ jobs:
           path: node_modules/.cache/msch
           key: msch-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.job }}-${{ matrix.shard }}
           restore-keys: msch-
-      - uses: masseater/typescript-template/.github/actions/verify@0aec18eb421e6fb6160d7342470e2a24fe61069a
+      - uses: masseater/typescript-template/.github/actions/verify@ff2b54ac1fb2277e68d1f582dd210920e91b364b
         timeout-minutes: 30
         with:
           github-token: ${{ github.token }}
@@ -83,7 +83,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions: {}
     steps:
-      - uses: masseater/typescript-template/.github/actions/verify-shards@0aec18eb421e6fb6160d7342470e2a24fe61069a
+      - uses: masseater/typescript-template/.github/actions/verify-shards@ff2b54ac1fb2277e68d1f582dd210920e91b364b
         with:
           result: ${{ needs.shard.result }}
 
@@ -198,6 +198,6 @@ jobs:
       actions: read
       contents: read
     steps:
-      - uses: masseater/typescript-template/.github/actions/ci-telemetry@0aec18eb421e6fb6160d7342470e2a24fe61069a
+      - uses: masseater/typescript-template/.github/actions/ci-telemetry@ff2b54ac1fb2277e68d1f582dd210920e91b364b
         with:
           github-token: ${{ github.token }}
