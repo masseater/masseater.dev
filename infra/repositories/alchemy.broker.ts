@@ -1,13 +1,5 @@
-import {
-  CloudflareEnvironment,
-  SecretsStore,
-  Workers,
-  Zone,
-  providers,
-  state,
-} from "@alchemy.run/cloudflare";
+import { CloudflareEnvironment, SecretsStore, Workers, Zone, state } from "@alchemy.run/cloudflare";
 import type { ClaudeRequestsRpc } from "@masseater.dev/exposure-protocol/claude-requests";
-import { withWorkersTracing } from "@r_masseater/workers-tracing/alchemy";
 import { Stack } from "alchemy";
 import type { CompiledStack } from "alchemy";
 import { adopt } from "alchemy/AdoptPolicy";
@@ -15,25 +7,23 @@ import { Config, Effect } from "effect";
 import type { ConfigError } from "effect/Config";
 
 import { ciKeys, encodedGrants, githubAppStore } from "./src/app/broker-env.ts";
+import { brokerProviders } from "./src/app/broker-providers.ts";
 import { tailnetFederation } from "./src/features/join-tailnet/model/tailnet-federation.ts";
 import {
   CREDENTIAL_BROKER_AUDIENCE,
   HOURLY_CRON,
   IDLE_CHECK_CRON,
   PREFIX,
-  TRACE_DESTINATION,
 } from "./src/shared/config/broker-names.ts";
 
 const DOMAIN = "masseater.dev";
 const CREDENTIAL_BROKER_HOST = `credentials.${DOMAIN}`;
 const SUNDRIES = { stack: "masseater-dev-sundries", stage: "prod" } as const;
 
-const tracedProviders = withWorkersTracing({ destinations: [TRACE_DESTINATION] })(providers());
-
 const broker: Effect.Effect<CompiledStack, ConfigError> & Readonly<{ stackName: string }> = Stack(
   CREDENTIAL_BROKER_AUDIENCE,
   {
-    providers: tracedProviders,
+    providers: brokerProviders,
     state: state(),
   },
   Effect.gen(function* stack() {

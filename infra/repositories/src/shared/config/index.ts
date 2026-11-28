@@ -6,5 +6,6 @@ export {
   IDLE_CHECK_CRON,
   IDLE_CHECK_MINUTES,
   PREFIX,
+  TRACE_DESTINATION,
 } from "./broker-names.ts";
 export { AGENT_SUBJECT, AGENT_TAG, SSH_PORT, SSH_USER, TAILNET_ISSUER } from "./tailnet-names.ts";
