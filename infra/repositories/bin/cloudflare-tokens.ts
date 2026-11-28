@@ -5,7 +5,6 @@ import {
   verifyToken as verifyAccountToken,
 } from "@distilled.cloud/cloudflare/accounts";
 import type { CloudflareOpContext } from "@distilled.cloud/cloudflare/accounts";
-import { fromApiToken } from "@distilled.cloud/cloudflare/Credentials";
 import type { DeleteTokenError as DeleteUserTokenError } from "@distilled.cloud/cloudflare/user";
 import {
   deleteToken as deleteUserToken,
@@ -19,7 +18,6 @@ import {
   Config,
   Console,
   Effect,
-  Layer,
   ManagedRuntime,
   Record as Rec,
   Stream,
@@ -27,10 +25,11 @@ import {
   pipe,
 } from "effect";
 import type { ConfigError } from "effect/Config";
-import { layer as fetchHttpClient } from "effect/http/FetchHttpClient";
 
 import { grantPermissions } from "#/features/grant-token-permissions/index.ts";
 import { ISSUED_TOKEN_PREFIX } from "#/features/issue-cloudflare-token/index.ts";
+
+import { cloudflare } from "./lib/cloudflare.ts";
 
 type Token = Readonly<{
   id?: string | null | undefined;
@@ -159,12 +158,6 @@ const program = Effect.gen(function* tokens() {
   yield* inventory("account", () => listAccountTokens.items({ accountId }));
   yield* inventory("user", () => listUserTokens.items({}));
 });
-
-const cloudflare = Layer.unwrap(
-  Config.Redacted("CLOUDFLARE_API_TOKEN").pipe(
-    Effect.map((apiToken) => Layer.mergeAll(fromApiToken({ apiToken }), fetchHttpClient)),
-  ),
-);
 
 const fail = (cause: Cause.Cause<unknown>): Effect.Effect<void> =>
   cause.pipe(
