@@ -1,4 +1,4 @@
-import { READ_ONLY, failedAt, toolInputOf } from "@masseater.dev/mcp-tool-call";
+import { READ_ONLY, failedAt, toolInputOf, registeredTool } from "@masseater.dev/mcp-tool-call";
 import type { UpstreamFailed } from "@masseater.dev/mcp-tool-call";
 import type { McpServer } from "@modelcontextprotocol/server";
 import { runWorkersAi } from "@r_masseater/workers-tracing/workers-ai";
@@ -57,18 +57,8 @@ export const decide = ({ AI }: DecideBindings): Decide =>
     return yield* decode(output).pipe(Effect.mapError(fail));
   });
 
-export const registerDecideTools =
-  (bindings: DecideBindings) =>
-  (server: McpServer): McpServer => {
-    server.registerTool(
-      "decide",
-      {
-        description: DESCRIPTION,
-        inputSchema: INPUT_SCHEMA,
-        annotations: READ_ONLY,
-      },
-      (input) =>
-        decide(bindings)(input).pipe(runTool({ count: ({ answers }) => Rec.size(answers) })),
-    );
-    return server;
-  };
+export const registerDecideTools = (bindings: DecideBindings): ((server: McpServer) => McpServer) =>
+  registeredTool(
+    { name: "decide", description: DESCRIPTION, inputSchema: INPUT_SCHEMA, annotations: READ_ONLY },
+    (input) => decide(bindings)(input).pipe(runTool({ count: ({ answers }) => Rec.size(answers) })),
+  );

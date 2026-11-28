@@ -103,14 +103,19 @@ const renderTrace = ([traceId, members]: readonly [
     "\n",
   );
 
-export const render = (spans: readonly ReceivedSpan[]): string =>
+const tracesOf = (
+  spans: readonly ReceivedSpan[],
+): Record<string, Arr.NonEmptyReadonlyArray<ReceivedSpan>> =>
   pipe(
     spans,
-    Arr.groupBy((span) => span.traceId),
-    Rec.toEntries,
-    Arr.map(renderTrace),
-    Arr.join("\n\n"),
+    Arr.groupBy(({ traceId }) => traceId),
   );
+
+export const traceIdsOf = (spans: readonly ReceivedSpan[]): readonly string[] =>
+  Rec.keys(tracesOf(spans));
+
+export const render = (spans: readonly ReceivedSpan[]): string =>
+  pipe(tracesOf(spans), Rec.toEntries, Arr.map(renderTrace), Arr.join("\n\n"));
 
 const isSeenIn =
   (spans: readonly ReceivedSpan[]) =>

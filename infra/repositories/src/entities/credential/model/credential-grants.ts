@@ -47,6 +47,7 @@ const PROFILES = {
     zone: ["Zone Transform Rules Write"],
   }),
   access: extend({ account: ["Access: Apps and Policies Write", "MCP Portals Write"] }),
+  gateway: extend({ account: ["AI Gateway Write"] }),
   exposure: EXPOSURE,
 } as const satisfies Readonly<Record<string, Grant>>;
 
@@ -76,6 +77,7 @@ const grantKeyOf = (repository: GrantedRepository, environment?: string): string
 export const EXPOSURE_GRANT_KEY = grantKeyOf("masseater.dev", "exposure");
 
 export const RED_MAIN_GRANT_KEYS: readonly string[] = [
+  grantKeyOf("ai-produced"),
   grantKeyOf("masseater.dev"),
   grantKeyOf("ecosystems"),
 ];
@@ -90,6 +92,7 @@ const CREDENTIAL_GRANTS: Readonly<Record<string, keyof typeof PROFILES>> = {
   [grantKeyOf("masseater.dev", "zone")]: "transforms",
   [grantKeyOf("masseater.dev", "mcp-portal")]: "access",
   [grantKeyOf("masseater.dev", "production")]: "access",
+  [grantKeyOf("masseater.dev", "task")]: "gateway",
   [grantKeyOf("ecosystems")]: "deploy",
   [grantKeyOf("mirucord")]: "deploy",
   [grantKeyOf("msa")]: "deploy",

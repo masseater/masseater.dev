@@ -1,4 +1,4 @@
-import { compactInput } from "@masseater.dev/mcp-tool-call";
+import { compactInput, registeredTool } from "@masseater.dev/mcp-tool-call";
 import type { OVERWRITE, READ_ONLY, WRITE } from "@masseater.dev/mcp-tool-call";
 import type { McpServer, StandardSchemaWithJSON } from "@modelcontextprotocol/server";
 import { Array as Arr, Effect, Layer, pipe } from "effect";
@@ -72,18 +72,16 @@ const validated =
 export const tool = <Input, Output, Value>(spec: Tool<Input, Output, Value>): DefinedTool => ({
   name: spec.name,
   annotations: spec.annotations,
-  register: (runTool) => (server) => {
-    server.registerTool(
-      spec.name,
+  register: (runTool) =>
+    registeredTool(
       {
+        name: spec.name,
         description: spec.description,
         inputSchema: compactInput(spec.input),
         annotations: spec.annotations,
       },
       (input) => pipe(spec.run(input), runTool({ count: spec.count })),
-    );
-    return server;
-  },
+    ),
   call: (input) => validated(spec.input)(input).pipe(Effect.flatMap(spec.run)),
 });
 

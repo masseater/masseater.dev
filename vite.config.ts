@@ -9,6 +9,7 @@ import {
 } from "@r_masseater/msch/lint";
 import { workspaceSettings } from "@r_masseater/msch/workspace-settings";
 import { restrictedSyntax as unguardedWorkersAi } from "@r_masseater/workers-tracing/oxlint";
+import { lapse, withOtelEnv } from "lapse";
 import { defineConfig } from "vite-plus";
 
 const workspace = await workspaceSettings({
@@ -17,68 +18,66 @@ const workspace = await workspaceSettings({
   dependencySets: { instrumentation: requiredStack[INSTRUMENTATION] ?? [] },
 });
 
-export default defineConfig({
-  ...repositoryConfig({
-    workspace,
-    overrides: [
-      { files: [...workspace.lint.deployEntries], rules: tracedRules },
-      {
-        files: ["apps/*/src/**/*.{ts,tsx}"],
-        excludeFiles: ["**/*.test.ts", "**/*.test.tsx", "**/*.test.support.ts"],
-        rules: {
-          "eslint-js/no-restricted-syntax": [
-            "error",
-            ...cloudflareResourceSyntax,
-            removalPolicySyntax,
-            ...unguardedWorkersAi,
-          ],
-        },
+const repository = repositoryConfig({
+  workspace,
+  overrides: [
+    { files: [...workspace.lint.deployEntries], rules: tracedRules },
+    {
+      files: ["apps/*/src/**/*.{ts,tsx}"],
+      excludeFiles: ["**/*.test.ts", "**/*.test.tsx", "**/*.test.support.ts"],
+      rules: {
+        "eslint-js/no-restricted-syntax": [
+          "error",
+          ...cloudflareResourceSyntax,
+          removalPolicySyntax,
+          ...unguardedWorkersAi,
+        ],
       },
+    },
+  ],
+  secrets: {
+    lines: [
+      String.raw`\bOWNER_DISCORD_ID = "[0-9]{17,20}"`,
+      String.raw`untrusted comment: minisign public key: [0-9A-F]{16}`,
     ],
-    secrets: {
-      lines: [
-        String.raw`\bOWNER_DISCORD_ID = "[0-9]{17,20}"`,
-        String.raw`untrusted comment: minisign public key: [0-9A-F]{16}`,
-      ],
-      paths: [
-        String.raw`(^|/)fixtures/[^/]+\.tgz!`,
-        String.raw`/fixtures/actionlint/`,
-        String.raw`/audit-workflows/fixtures/`,
-        String.raw`/h56m(-presets)?/src/app/fixtures/`,
-      ],
-    },
-    textlint: {
-      ignores: [
-        "apps/zenn-articles/**",
-        "**/src/pages/*/video.md",
-        "**/.cache/**",
-        "**/fixtures/**",
-      ],
-      kanji: [
-        "個人情報保護法",
-        "中小企業基盤整備機構",
-        "小規模企業共済",
-        "中小企業倒産防止共済",
-        "情報処理推進機構",
-        "情報通信研究機構",
-        "国立情報学研究所",
-        "日本情報経済社会推進協会",
-        "国立研究開発法人",
-        "大学共同利用機関",
-      ],
-      technicalWriting: {
-        "no-exclamation-question-mark": {
-          allow: ["ぶいあーる!", "超かぐや姫!", "超かぐや姫！", "Beat This!"],
-        },
+    paths: [
+      String.raw`(^|/)fixtures/[^/]+\.tgz!`,
+      String.raw`/fixtures/actionlint/`,
+      String.raw`/audit-workflows/fixtures/`,
+      String.raw`/h56m(-presets)?/src/app/fixtures/`,
+    ],
+  },
+  textlint: {
+    ignores: ["apps/zenn-articles/**", "**/src/pages/*/video.md", "**/.cache/**", "**/fixtures/**"],
+    kanji: [
+      "個人情報保護法",
+      "中小企業基盤整備機構",
+      "小規模企業共済",
+      "中小企業倒産防止共済",
+      "情報処理推進機構",
+      "情報通信研究機構",
+      "国立情報学研究所",
+      "日本情報経済社会推進協会",
+      "国立研究開発法人",
+      "大学共同利用機関",
+    ],
+    technicalWriting: {
+      "no-exclamation-question-mark": {
+        allow: ["ぶいあーる!", "超かぐや姫!", "超かぐや姫！", "Beat This!"],
       },
-      rules: { "@r_masseater/preset-ja": { "no-taigendome": false } },
     },
-    markdown: { ignores: ["apps/zenn-articles/**", "**/src/pages/*/video.md"] },
-    run: {
-      remoteCache: "https://task-cache.masseater.dev/projects/masseater.dev",
-      tasks: { "db-check-all": "vp run -r db:check" },
-    },
-  }),
+    rules: { "@r_masseater/preset-ja": { "no-taigendome": false } },
+  },
+  markdown: { ignores: ["apps/zenn-articles/**", "**/src/pages/*/video.md"] },
+  run: {
+    remoteCache: "https://task-cache.masseater.dev/projects/masseater.dev",
+    tasks: { "db-check-all": "vp run -r db:check" },
+  },
+});
+
+export default defineConfig({
+  ...withOtelEnv(repository),
+  plugins: [lapse()],
   skills: {
     "artouc/stop-describe-ui": {
       commit: "251a859f6e40645030e1ae69fa4b501c851eac9c",
@@ -112,7 +111,7 @@ export default defineConfig({
       skills: ["feature-sliced-design"],
     },
     "masseater/skills": {
-      commit: "2746694ffaadef09e0ec0058cc160665f1f82a98",
+      commit: "b638eeeaad0143a0f4dd522a18aa2c5c01b9984f",
       root: "plugins/masseater-skills/skills",
       skills: "all",
     },

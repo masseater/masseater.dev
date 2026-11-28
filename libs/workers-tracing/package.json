@@ -108,7 +108,7 @@
     "provenance": true
   },
   "scripts": {
-    "prepublishOnly": "node -e \"if (!process.env.npm_config_user_agent?.startsWith('pnpm/')) { console.error('npm publish leaves catalog: in dependencies. Publish the tarball from vp pm pack instead.'); process.exit(1) }\" && vp run build"
+    "prepublishOnly": "vp exec msch-publish prepublish ."
   },
   "devDependencies": {
     "@alchemy.run/cloudflare": "catalog:stack",
@@ -118,7 +118,7 @@
     "@r_masseater/vite-plus-adopt": "catalog:",
     "@r_masseater/vitest-otlp": "catalog:",
     "@tanstack/react-start": "catalog:stack",
-    "@tanstack/router-core": "1.171.39",
+    "@tanstack/router-core": "catalog:",
     "@types/node": "catalog:",
     "alchemy": "catalog:stack",
     "effect": "catalog:stack",

@@ -1,5 +1,5 @@
 export { watashiQueries } from "./api/queries.ts";
-export { headline } from "./model/life-item.ts";
+export { datedOf } from "./model/life-item.ts";
 export type { LifeItemValue } from "./model/life-item.ts";
 export type { MemoValue, ProjectValue } from "./model/memo.ts";
 export type { MemoChangeValue, RevisionValue } from "./model/memo-input.ts";

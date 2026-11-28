@@ -1,0 +1,8 @@
+{
+  "slug": "stripe-docs",
+  "title": "Stripe のドキュメント",
+  "kind": "site",
+  "url": "https://docs.stripe.com/",
+  "note": "説明、コード、実行結果を 3 カラムで同じ画面に並べる、API ドキュメントの型",
+  "date": "2026-11-28"
+}
