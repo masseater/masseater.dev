@@ -38,6 +38,7 @@ export const script: VideoScript = {
       ],
       speed: [INTRO_SPEED],
     },
+    { id: "wait", say: ["まだ…？"], hold: 0.9 },
     { id: "hook", say: ["npmのインストール\n遅すぎない？"] },
     { id: "try", say: ["pnpmに変えてみたら"] },
     { id: "wow", say: ["4秒で終わった"] },

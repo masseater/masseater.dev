@@ -1,3 +1,4 @@
+import type { Part } from "@masseater.dev/tachie";
 import type { Draw, Look, Shot, Timeline } from "@masseater.dev/video-kit";
 import { Caption, Picture, PsdNarrator, Sfx, Terminal, imageOf } from "@masseater.dev/video-kit";
 import { FPS } from "@masseater.dev/video-kit/script";
@@ -21,6 +22,7 @@ const CAPTION: Readonly<Record<string, string>> = { punch: RED, intro: "hidden" 
 const CAPTION_TOP: Readonly<Record<string, string>> = { punch: "top-[620px]" };
 
 const RUN = ["$ pnpm install", "++++++++++++++++", "Done in 4.0s"];
+const AGAIN_RUN = ["$ rm -rf node_modules", "$ pnpm install", "Done in 0.4s"];
 
 const LOG = [
   ...RUN,
@@ -48,32 +50,131 @@ const Console = ({
   </div>
 );
 
-const PARTS = [
-  { kind: "blink", closed: "v1.!目/*閉じ", open: "v1.!目/*基本目セット" },
-  {
-    kind: "volume-mouth",
-    closed: "v1.!口/*ほほえみ",
-    half: "v1.!口/*お",
-    open: "v1.!口/*わあ",
-    alwaysApply: true,
-  },
-] as const;
+const BLINK = { kind: "blink", closed: "v1.!目/*閉じ", open: "v1.!目/*基本目セット" } as const;
 
-const Board = ({ timeline }: Readonly<{ timeline: Timeline }>): ReactNode => (
-  <AbsoluteFill className="bg-[#285a41]">
-    <div className="absolute inset-x-0 top-[64px] h-[18px] bg-[#9a5a33]" />
-    <div className="absolute inset-x-0 top-0 bottom-[28px] overflow-hidden">
-      <PsdNarrator
-        className="top-[1340px] left-[290px] h-[1682px] w-[1000px]"
-        parts={PARTS}
-        psd={staticFile(tachiePsdPath(TACHIE))}
-        timeline={timeline}
-      />
-    </div>
-    <div className="absolute inset-x-0 bottom-0 h-[28px] bg-[#9a5a33]" />
-    <div className="absolute bottom-[28px] left-[120px] h-[22px] w-[150px] bg-[#f1efe9]" />
-  </AbsoluteFill>
-);
+const mouthOf = (closed: string, open = "v1.!口/*わあ"): Part => ({
+  kind: "volume-mouth",
+  closed,
+  half: "v1.!口/*お",
+  open,
+  alwaysApply: true,
+});
+
+const PARTS: readonly Part[] = [BLINK, mouthOf("v1.!口/*ほほえみ")];
+
+const HALF = 0.5;
+const CENTER = "top-[1000px] left-[30px] h-[1682px] w-[1000px]";
+
+interface Scene {
+  readonly before: readonly Part[];
+  readonly closed: string;
+  readonly open?: string;
+  readonly after: readonly Part[];
+  readonly later: readonly Part[];
+}
+
+const SCENES: Readonly<Record<string, Scene>> = {
+  wait: {
+    before: ["v1.!目/*基本目セット/!黒目/*目逸らし"],
+    closed: "v1.!口/*む",
+    open: "v1.!口/*△",
+    after: [],
+    later: ["v1.!まゆ/*困り眉", "v1.表情記号/汗"],
+  },
+  hook: {
+    before: ["v1.!まゆ/*困り眉", "v1.!目/*基本目セット/!黒目/*目逸らし"],
+    closed: "v1.!口/*む",
+    open: "v1.!口/*えあー",
+    after: ["v1.表情記号/汗", "v1.表情記号/なみだめ", "v1.顔色/かげり"],
+    later: ["v1.!右腕/*口元"],
+  },
+  try: {
+    before: ["v1.!まゆ/*困り眉", "v1.!目/*基本目セット/!黒目/*カメラ目線"],
+    closed: "v1.!口/*むん",
+    after: ["v1.!右腕/*ゆびさし"],
+    later: [],
+  },
+  wow: {
+    before: [],
+    closed: "v1.!口/*おあー",
+    after: ["v1.!目/*〇〇", "v1.表情記号/汗"],
+    later: [],
+  },
+  again: {
+    before: ["v1.!まゆ/*ごきげん眉", "v1.!目/*基本目セット/!黒目/*きらーん"],
+    closed: "v1.!口/*にしー",
+    after: ["v1.!左腕/*ピース", "v1.顔色/ほっぺ赤め"],
+    later: [],
+  },
+  caveat: {
+    before: ["v1.!まゆ/*困り眉"],
+    closed: "v1.!口/*む",
+    open: "v1.!口/*えあー",
+    after: ["v1.表情記号/汗"],
+    later: ["v1.!まゆ/*ごきげん眉", "v1.!口/*にしー"],
+  },
+  ending: {
+    before: ["v1.!まゆ/*ごきげん眉"],
+    closed: "v1.!口/*わあーい",
+    after: [],
+    later: ["v1.!目/*にっこり", "v1.!右腕/*ピース"],
+  },
+};
+
+interface Stage {
+  readonly className: string;
+  readonly parts: readonly Part[];
+}
+
+const NARRATING: Stage = {
+  className: "top-[1340px] left-[290px] h-[1682px] w-[1000px]",
+  parts: PARTS,
+};
+
+const stageOf = (timeline: Timeline, frame: number): Stage =>
+  pipe(
+    timeline.cuts,
+    Arr.findFirst(({ from, duration }) => frame >= from && frame < from + duration),
+    Option.flatMap((cut) =>
+      pipe(
+        Option.fromNullishOr(SCENES[cut.id]),
+        Option.map((scene) => ({
+          className: CENTER,
+          parts: [
+            ...scene.before,
+            BLINK,
+            mouthOf(scene.closed, scene.open),
+            ...scene.after,
+            ...pipe(
+              scene.later,
+              Arr.filter(() => frame >= cut.from + cut.duration * HALF),
+            ),
+          ],
+        })),
+      ),
+    ),
+    Option.getOrElse(() => NARRATING),
+  );
+
+const Board = ({ timeline }: Readonly<{ timeline: Timeline }>): ReactNode => {
+  const frame = useCurrentFrame();
+  const stage = stageOf(timeline, frame);
+  return (
+    <AbsoluteFill className="bg-[#285a41]">
+      <div className="absolute inset-x-0 top-[64px] h-[18px] bg-[#9a5a33]" />
+      <div className="absolute inset-x-0 top-0 bottom-[28px] overflow-hidden">
+        <PsdNarrator
+          className={stage.className}
+          parts={stage.parts}
+          psd={staticFile(tachiePsdPath(TACHIE))}
+          timeline={timeline}
+        />
+      </div>
+      <div className="absolute inset-x-0 bottom-0 h-[28px] bg-[#9a5a33]" />
+      <div className="absolute bottom-[28px] left-[120px] h-[22px] w-[150px] bg-[#f1efe9]" />
+    </AbsoluteFill>
+  );
+};
 
 const LightLeak = (): ReactNode => {
   const frame = useCurrentFrame();
@@ -283,35 +384,87 @@ const lineStart = (shot: Shot, index: number): number =>
 
 const NPM_SECONDS = 43.1;
 const COUNT_SHARE = 0.85;
+const CRAWL_AT = [0, 0.25, 0.5, 0.62, 1] as const;
+const WAIT_CRAWL = [0, 9.8, 21.4, 27.6, 31.9];
+const HOOK_CRAWL = [31.9, 38.2, 41.7, 41.9, 43.1];
+const CLOCK_TURN = 40;
+
+const Clock = ({ frame }: Readonly<{ frame: number }>): ReactNode => (
+  <svg className="size-[150px] shrink-0 text-white" viewBox="0 0 100 100">
+    <circle cx="50" cy="50" fill="none" r="44" stroke="currentColor" strokeWidth="6" />
+    <line
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeWidth="6"
+      x1="50"
+      x2="50"
+      y1="50"
+      y2="28"
+    />
+    <line
+      stroke={ALARM}
+      strokeLinecap="round"
+      strokeWidth="5"
+      transform={`rotate(${String(frame * CLOCK_TURN)} 50 50)`}
+      x1="50"
+      x2="50"
+      y1="50"
+      y2="14"
+    />
+  </svg>
+);
 const ONE_DECIMAL = 1;
 
-const SlowInstall = ({ shot }: Readonly<{ shot: Shot }>): ReactNode => {
+interface Run {
+  readonly command: string;
+  readonly crawl: readonly number[];
+  readonly total: number;
+  readonly color: string;
+  readonly step: number;
+}
+
+const NPM_RUN = { command: "$ npm install", total: NPM_SECONDS, color: ALARM, step: 8 } as const;
+const PNPM_RUN: Run = {
+  command: "$ pnpm install",
+  crawl: [0, 0.9, 2.2, 3.4, 4],
+  total: 4,
+  color: YELLOW,
+  step: 1,
+};
+
+const Install = ({ shot, run }: Readonly<{ shot: Shot; run: Run }>): ReactNode => {
   const frame = useCurrentFrame();
+  const shown = Math.floor(frame / run.step) * run.step;
   const elapsed = interpolate(
-    frame,
-    [NOTHING, shot.duration * COUNT_SHARE],
-    [NOTHING, NPM_SECONDS],
-    {
-      extrapolateRight: "clamp",
-    },
+    shown,
+    pipe(
+      CRAWL_AT,
+      Arr.map((share) => shot.duration * COUNT_SHARE * share),
+    ),
+    run.crawl,
+    { extrapolateRight: "clamp" },
   );
-  const filled = elapsed / NPM_SECONDS;
+  const filled = elapsed / run.total;
   return (
     <div className={`${AREA} font-jp flex flex-col justify-center gap-10`}>
       <div className="font-code rounded-[16px] bg-[#0b0d10] px-8 py-5 text-[64px] text-white/90">
-        $ npm install
+        {run.command}
       </div>
       <div className="h-[100px] w-full shrink-0 rounded-[10px] border-[6px] border-white/85 p-[8px]">
         <div
-          className="h-full rounded-[4px] bg-[#ff6b5b]"
-          style={{ width: `${String(filled * 100)}%` }}
+          className="h-full rounded-[4px]"
+          style={{ width: `${String(filled * 100)}%`, background: run.color }}
         />
       </div>
-      <div className="flex items-baseline justify-end gap-4 text-white">
-        <span className="text-[180px] leading-none font-black tabular-nums">
+      <div className="flex items-center justify-between gap-4 text-white">
+        <Clock frame={shown} />
+        <span
+          className="ml-auto text-[180px] leading-none font-black tabular-nums"
+          style={{ color: run.color }}
+        >
           {elapsed.toFixed(ONE_DECIMAL)}
         </span>
-        <span className="text-[86px] font-black">秒…</span>
+        <span className="text-[86px] font-black">秒</span>
       </div>
       <div className="text-[36px] font-bold text-white/50">pnpm.io/benchmarks</div>
     </div>
@@ -323,11 +476,6 @@ interface Bar {
   readonly seconds: number;
   readonly color: string;
 }
-
-const AGAIN: readonly Bar[] = [
-  { label: "1回目", seconds: 4, color: YELLOW },
-  { label: "2回目", seconds: 0.4, color: YELLOW },
-];
 
 const RACE: readonly Bar[] = [
   { label: "npm", seconds: 43.1, color: ALARM },
@@ -375,7 +523,6 @@ const Bars = ({ bars }: Readonly<{ bars: readonly Bar[] }>): ReactNode => {
 
 const PROJECTS = ["A", "B", "C"] as const;
 const FLAT = ["react", "vite", "esbuild", "rollup", "typescript"] as const;
-const SHOWN_ROWS = 3;
 const TRANSITIVE = new Set<string>(["esbuild", "rollup"]);
 const PACKAGES = pipe(
   FLAT,
@@ -504,94 +651,31 @@ const Sharing = ({ shot }: Readonly<{ shot: Shot }>): ReactNode => {
   return <Store />;
 };
 
-const MISSING = "esbuild";
-
-const ROW_LOOK = {
-  away: {
-    border: "3px dashed rgb(255 255 255 / 0.35)",
-    background: "transparent",
-    color: "rgb(255 255 255 / 0.35)",
-  },
-  here: { border: "3px solid transparent", background: "rgb(255 255 255 / 0.9)", color: "#1b1b1b" },
-} as const;
-
-const MARK = {
-  found: { text: "✓", color: "#1f9d55" },
-  lost: { text: "✗", color: ALARM },
-} as const;
-
-const markOf = (hidden: boolean): (typeof MARK)[keyof typeof MARK] => {
-  if (hidden) {
-    return MARK.lost;
-  }
-  return MARK.found;
-};
-
-const rowLookOf = (away: boolean): (typeof ROW_LOOK)[keyof typeof ROW_LOOK] => {
-  if (away) {
-    return ROW_LOOK.away;
-  }
-  return ROW_LOOK.here;
-};
-
-const Mark = ({ hidden, frame }: Readonly<{ hidden: boolean; frame: number }>): ReactNode => {
-  const mark = markOf(hidden);
-  return (
-    <span
-      className="font-jp text-[60px] leading-none font-black whitespace-nowrap"
-      style={{ color: mark.color, opacity: grow(frame, GROW_FRAMES) }}
-    >
-      {mark.text}
-    </span>
-  );
-};
-
-const Modules = ({
-  title,
-  hidden,
-  frame,
-}: Readonly<{ title: string; hidden: boolean; frame: number }>): ReactNode => (
-  <div className="flex w-[400px] flex-col gap-2 rounded-[14px] border-[5px] border-white/85 p-4">
-    <div className="font-code text-[54px] font-bold text-white">{title}</div>
-    {pipe(
-      Arr.take(FLAT, SHOWN_ROWS),
-      Arr.map((name) => (
-        <div
-          className="font-code flex items-center justify-between rounded-[8px] px-3 py-1 text-[46px]"
-          key={name}
-          style={rowLookOf(hidden && TRANSITIVE.has(name))}
-        >
-          <span>{name}</span>
-          {pipe(
-            Option.liftPredicate(name, (each) => each === MISSING),
-            Option.map(() => <Mark frame={frame} hidden={hidden} key="mark" />),
-            Option.getOrNull,
-          )}
-        </div>
-      )),
-    )}
-  </div>
-);
+const ERROR = "#ff6b5b";
+const PASS = "#3ddc84";
 
 const OldTool = ({ shot }: Readonly<{ shot: Shot }>): ReactNode => {
   const frame = useCurrentFrame();
   const fixedAt = lineStart(shot, 1);
   const fixed = fixedAt > NOTHING && frame >= fixedAt;
+  const result = pipe(
+    Option.some({ text: "✓ build done", color: PASS }),
+    Option.filter(() => fixed),
+    Option.getOrElse(() => ({ text: "Error: Cannot find\nmodule 'esbuild'", color: ERROR })),
+  );
   return (
-    <div className={`${AREA} font-jp flex flex-col items-center gap-4`}>
-      <div className="rounded-full bg-white px-8 py-2 text-[51px] font-black text-[#1b1b1b]">
-        古いツールがesbuildを探すと…
-      </div>
-      <div className="flex w-full gap-4">
-        <Modules frame={frame} hidden={false} title="npm" />
-        <Modules frame={frame} hidden={!fixed} title="pnpm" />
+    <div className={`${AREA} font-jp flex flex-col gap-6`}>
+      <div className="font-code flex flex-col gap-3 rounded-[16px] bg-[#0b0d10] px-8 py-6 text-[44px] leading-snug">
+        <span className="text-white/90">$ old-tool build</span>
+        <span className="font-bold whitespace-pre-line" style={{ color: result.color }}>
+          {result.text}
+        </span>
       </div>
       <div
-        className="flex items-baseline gap-4 rounded-[12px] bg-[#ffd400] px-6 py-2 text-[#1b1b1b]"
-        style={{ opacity: grow(frame, lineStart(shot, 1)) }}
+        className="font-code self-start rounded-[12px] bg-[#ffd400] px-6 py-2 text-[52px] font-bold text-[#1b1b1b]"
+        style={{ opacity: grow(frame, fixedAt) }}
       >
-        <span className="text-[48px] font-black">設定1行で直る</span>
-        <span className="font-code text-[40px] font-bold">nodeLinker: hoisted</span>
+        nodeLinker: hoisted
       </div>
     </div>
   );
@@ -631,6 +715,25 @@ const TryNow = (): ReactNode => {
   );
 };
 
+const STAMP_FRAMES = 6;
+
+const Stamp = ({ at }: Readonly<{ at: number }>): ReactNode => {
+  const frame = useCurrentFrame();
+  const pop = interpolate(frame, [at, at + STAMP_FRAMES], [2.2, 1], {
+    easing: Easing.out((time) => Easing.cubic(time)),
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
+  return (
+    <div
+      className="font-jp absolute top-[600px] right-[120px] rotate-[-8deg] rounded-[20px] border-[10px] border-[#ffd400] px-8 text-[170px] leading-tight font-black text-[#ffd400]"
+      style={{ scale: String(pop), opacity: grow(frame, at) }}
+    >
+      0.4秒
+    </div>
+  );
+};
+
 export const look: Partial<Look> = {
   backdrop: (timeline) => <Board timeline={timeline} />,
   overlay: () => "",
@@ -649,13 +752,14 @@ export const look: Partial<Look> = {
 
 export const draw: Readonly<Record<string, Draw>> = {
   intro: (shot) => <Intro shot={shot} />,
-  hook: (shot) => (
+  wait: (shot) => (
     <>
-      <SlowInstall shot={shot} />
+      <Install run={{ ...NPM_RUN, crawl: WAIT_CRAWL }} shot={shot} />
       <Sfx at={0} kind="hook" shot={shot} />
     </>
   ),
-  try: () => <Console at={[0, 24, 40]} rows={RUN} />,
+  hook: (shot) => <Install run={{ ...NPM_RUN, crawl: HOOK_CRAWL }} shot={shot} />,
+  try: (shot) => <Install run={PNPM_RUN} shot={shot} />,
   wow: (shot) => (
     <>
       <Bars bars={RACE} />
@@ -671,10 +775,11 @@ export const draw: Readonly<Record<string, Draw>> = {
       <Sfx at={CROUCH_FRAMES - 2} kind="dash" shot={shot} />
     </>
   ),
-  again: () => (
+  again: (shot) => (
     <>
-      <Bars bars={AGAIN} />
-      <LightLeak />
+      <Console at={[0, 6, 14]} rows={AGAIN_RUN} />
+      <Stamp at={14} />
+      <Sfx at={14} kind="pop" shot={shot} />
     </>
   ),
   disk: (shot) => <Sharing shot={shot} />,
