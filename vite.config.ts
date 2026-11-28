@@ -111,11 +111,6 @@ export default defineConfig({
       commit: "5e95aaebb84541742686e56352b7569acf4306f1",
       skills: ["feature-sliced-design"],
     },
-    "GoogleChrome/modern-web-guidance": {
-      commit: "2b4aa13a72dd47cd135b06ce5abfccd92e19b24f",
-      root: "skills",
-      skills: ["modern-web-guidance"],
-    },
     "masseater/skills": {
       commit: "2746694ffaadef09e0ec0058cc160665f1f82a98",
       root: "plugins/masseater-skills/skills",
