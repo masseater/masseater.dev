@@ -178,9 +178,14 @@ const newestFirstOf = (entries: readonly unknown[]): readonly unknown[] =>
 
 const FROM_NEWEST = Option.getOrUndefined(Option.none<Cursor>());
 
-const nudgeOf = (needed: boolean): Option.Option<Readonly<{ continue: string }>> =>
+const NUDGE_DECISION: Readonly<{ kind: "continue"; continue: string }> = {
+  kind: "continue",
+  continue: NUDGE,
+};
+
+const nudgeOf = (needed: boolean): Option.Option<typeof NUDGE_DECISION> =>
   pipe(
-    Option.some({ continue: NUDGE }),
+    Option.some(NUDGE_DECISION),
     Option.filter(() => needed),
   );
 
