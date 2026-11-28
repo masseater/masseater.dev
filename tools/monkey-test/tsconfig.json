@@ -1,0 +1,32 @@
+{
+  "extends": "../../tsconfig.json",
+  "include": ["src", "bin", "*.ts"],
+  "compilerOptions": {
+    "plugins": [
+      {
+        "name": "@effect/language-service",
+        "diagnostics": false,
+        "allowedUnstableApis": [
+          "effect/PlatformError#PlatformError",
+          "effect/cli/Command#make",
+          "effect/cli/Flag#String",
+          "effect/cli/Flag#Int",
+          "effect/cli/Flag#atLeast",
+          "effect/cli/Flag#optional",
+          "effect/cli/Command#run",
+          "effect/FileSystem#FileSystem",
+          "effect/Path#Path",
+          "effect/http/HttpClient#HttpClient",
+          "effect/http/HttpClient#filterStatusOk",
+          "effect/http/HttpClientError#HttpClientError",
+          "effect/http/HttpClientRequest#bearerToken",
+          "effect/http/HttpClientRequest#get",
+          "effect/http/HttpClientRequest#setUrlParams",
+          "effect/http/HttpClientResponse#schemaBodyJson",
+          "effect/process/ChildProcess#make",
+          "effect/process/ChildProcessSpawner#ChildProcessSpawner"
+        ]
+      }
+    ]
+  }
+}
