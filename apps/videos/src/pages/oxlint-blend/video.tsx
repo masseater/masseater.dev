@@ -423,9 +423,9 @@ const STREAKS = [
   { top: 380, width: 520, speed: 150, offset: 0 },
   { top: 520, width: 760, speed: 190, offset: 300 },
   { top: 760, width: 440, speed: 170, offset: 620 },
-  { top: 1180, width: 680, speed: 210, offset: 140 },
-  { top: 1380, width: 560, speed: 160, offset: 820 },
-  { top: 1560, width: 820, speed: 200, offset: 460 },
+  { top: 230, width: 680, speed: 210, offset: 140 },
+  { top: 640, width: 560, speed: 160, offset: 820 },
+  { top: 860, width: 820, speed: 200, offset: 460 },
 ] as const;
 const SCREEN = 1080;
 
@@ -469,6 +469,11 @@ const Streak = ({
     />
   );
 };
+
+const BeforeDash = ({ shot }: Readonly<{ shot: Shot }>): ReactNode =>
+  useCurrentFrame() < dashStartOf(shot.duration) ? (
+    <Instant since={SETTLED} />
+  ) : null;
 
 const Streaks = ({ shot }: Readonly<{ shot: Shot }>): ReactNode => {
   const frame = useCurrentFrame() - dashStartOf(shot.duration);
@@ -734,8 +739,8 @@ const Install = ({
 
 const CHECK_FROM = 2.4;
 
-const Instant = (): ReactNode => {
-  const frame = useCurrentFrame();
+const Instant = ({ since = 0 }: Readonly<{ since?: number }>): ReactNode => {
+  const frame = useCurrentFrame() + since;
   const pop = interpolate(frame, [0, SLAM_FRAMES + 2], [CHECK_FROM, FULL], {
     easing: Easing.out((time) => Easing.cubic(time)),
     extrapolateRight: "clamp",
@@ -940,11 +945,11 @@ const Plugin = ({ failAt }: Readonly<{ failAt: number }>): ReactNode => {
     <div className={`${AREA} font-jp flex flex-col justify-center`}>
       <div className="font-code flex flex-col gap-3 rounded-[16px] bg-[#0b0d10] px-8 py-6 text-[46px] leading-snug">
         <span className="text-white/90">$ npx @oxlint/migrate</span>
-        <span className="text-white/90" style={{ opacity: shown }}>
+        <span className={shown === FULL ? "text-white/90" : "hidden"}>
           $ oxlint
         </span>
         <span
-          className="font-bold"
+          className={shown === FULL ? "font-bold" : "hidden"}
           style={{ color: ALARM, opacity: grow(frame, failAt) }}
         >
           ✗ Rule &apos;my-team/no-raw-sql&apos;
@@ -1075,7 +1080,12 @@ export const draw: Readonly<Record<string, Draw>> = {
   intro: (shot) => <Intro shot={shot} />,
   commit: (shot) => (
     <>
-      <Install hook run={{ ...ESLINT_RUN, crawl: COMMIT_CRAWL }} shot={shot} />
+      <Install
+        hook
+        run={{ ...ESLINT_RUN, crawl: COMMIT_CRAWL }}
+        share={FULL}
+        shot={shot}
+      />
       <Sfx at={0} kind="hook" shot={shot} />
     </>
   ),
@@ -1097,6 +1107,7 @@ export const draw: Readonly<Record<string, Draw>> = {
   ),
   punch: (shot) => (
     <>
+      <BeforeDash shot={shot} />
       <Streaks shot={shot} />
       <Sfx at={0} kind="stamp" shot={shot} />
       <Sfx
