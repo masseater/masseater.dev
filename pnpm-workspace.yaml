@@ -50,11 +50,11 @@ catalog:
   tonal: 6.9.0
   "@fontsource/m-plus-rounded-1c": 5.3.0
   "@codemirror/autocomplete": 6.20.4
-  "@codemirror/commands": 6.11.1
+  "@codemirror/commands": 6.11.2
   "@codemirror/lang-javascript": 6.2.5
   "@codemirror/lint": 6.9.8
   "@codemirror/state": 6.7.6
-  "@codemirror/view": 6.43.15
+  "@codemirror/view": 6.44.0
   "@typescript/typescript-wasip1-wasm": 7.1.0-dev.20261106.1
   codemirror: 6.0.2
   comlink: 4.4.2
