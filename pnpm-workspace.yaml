@@ -69,12 +69,12 @@ catalog:
   auth: 1.7.28
   "@r_masseater/github-workflow": 0.1.1
   "@r_masseater/h56m": 0.3.1
-  "@r_masseater/i68": 0.2.0
-  "@r_masseater/intent-book": 0.3.2
+  "@r_masseater/i68": 0.2.1
+  "@r_masseater/intent-book": 0.3.3
   "@r_masseater/mapped-import": 0.1.0
   "@r_masseater/msch": 0.70.1
   "@r_masseater/node-main": 0.1.0
-  "@r_masseater/song-format": 0.2.1
+  "@r_masseater/song-format": 0.2.2
   "@r_masseater/vite-plus-adopt": 0.16.0
   "@r_masseater/vitest-otlp": 0.2.2
   "@discordjs/voice": 0.19.2

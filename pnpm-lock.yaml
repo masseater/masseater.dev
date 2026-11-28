@@ -403,11 +403,11 @@ catalogs:
       specifier: 0.3.1
       version: 0.3.1
     '@r_masseater/i68':
-      specifier: 0.2.0
-      version: 0.2.0
+      specifier: 0.2.1
+      version: 0.2.1
     '@r_masseater/intent-book':
-      specifier: 0.3.2
-      version: 0.3.2
+      specifier: 0.3.3
+      version: 0.3.3
     '@r_masseater/mapped-import':
       specifier: 0.1.0
       version: 0.1.0
@@ -418,8 +418,8 @@ catalogs:
       specifier: 0.1.0
       version: 0.1.0
     '@r_masseater/song-format':
-      specifier: 0.2.1
-      version: 0.2.1
+      specifier: 0.2.2
+      version: 0.2.2
     '@r_masseater/vite-plus-adopt':
       specifier: 0.16.0
       version: 0.16.0
@@ -1314,10 +1314,10 @@ importers:
         version: link:../../libs/ui
       '@r_masseater/i68':
         specifier: 'catalog:'
-        version: 0.2.0(c0d6f0f3460b08710011be076f5d09b2)
+        version: 0.2.1(c0d6f0f3460b08710011be076f5d09b2)
       '@r_masseater/song-format':
         specifier: 'catalog:'
-        version: 0.2.1(b0acc5670ad7987d18ab5bdb560ce2b8)
+        version: 0.2.2(b0acc5670ad7987d18ab5bdb560ce2b8)
       '@tauri-apps/api':
         specifier: 'catalog:'
         version: 2.12.5
@@ -2345,10 +2345,10 @@ importers:
         version: 3.1.1(rollup@4.64.5)(supports-color@10.2.2)
       '@r_masseater/intent-book':
         specifier: 'catalog:'
-        version: 0.3.2(effect@4.1.7)(redis@6.2.1(@opentelemetry/api@1.10.0))(supports-color@10.2.2)
+        version: 0.3.3(effect@4.1.7)(redis@6.2.1(@opentelemetry/api@1.10.0))(supports-color@10.2.2)
       '@r_masseater/song-format':
         specifier: 'catalog:'
-        version: 0.2.1(b0acc5670ad7987d18ab5bdb560ce2b8)
+        version: 0.2.2(b0acc5670ad7987d18ab5bdb560ce2b8)
       '@resvg/resvg-js':
         specifier: 'catalog:'
         version: 2.6.2
@@ -3883,7 +3883,7 @@ importers:
         version: link:../daw-view
       '@r_masseater/song-format':
         specifier: 'catalog:'
-        version: 0.2.1(b0acc5670ad7987d18ab5bdb560ce2b8)
+        version: 0.2.2(b0acc5670ad7987d18ab5bdb560ce2b8)
       effect:
         specifier: catalog:stack
         version: 4.1.7
@@ -9015,8 +9015,8 @@ packages:
       vite:
         optional: true
 
-  '@r_masseater/i68@0.2.0':
-    resolution: {integrity: sha512-r0CjzsXCiIs/DhmBJIvof9EpncF4IYN8QxsHkyW9HjMyoDEedzoXL/O6J8aCXBwtDvHDIbbzQkvuoaFrKVu4Ow==}
+  '@r_masseater/i68@0.2.1':
+    resolution: {integrity: sha512-dcbKdQWoqb38d8KmcBPrrWKkIhRqdeegDh5N609yeOcLQkARjq88AQSGr/Pxzfq7AZ5/NQyk73eJ3ytocnMuBA==}
     engines: {node: '>=26.13.1'}
     hasBin: true
     peerDependencies:
@@ -9030,8 +9030,8 @@ packages:
       vite:
         optional: true
 
-  '@r_masseater/intent-book@0.3.2':
-    resolution: {integrity: sha512-xUjm4RJjwCN7e4jC4Pa8iq2mz4RQxW+AZVEPR/JXUujsuiqa+PFx/tJdukM2XK1RdalleRwfj9NPZRmnWhE1Cg==}
+  '@r_masseater/intent-book@0.3.3':
+    resolution: {integrity: sha512-PtDy3s8fq+gEvtOaDsphuOx1lSxAwjaaJ0JszM0lCf4yDmAdQCAuGhEgb1yBAYv2ReLggWrForffNnggdUm1Yg==}
     engines: {node: '>=26.13.1'}
     hasBin: true
     peerDependencies:
@@ -9076,8 +9076,8 @@ packages:
       effect: ^4.1.2
       typescript: '>=7.1.0-beta'
 
-  '@r_masseater/song-format@0.2.1':
-    resolution: {integrity: sha512-MaM1thlJWrCUOS4BsntrX3nuDk1DZrkXM5qtU6WTOkJD6euYkqrJnCE8gl30wew3dI6e2p+zgtTrrgS6quCnKg==}
+  '@r_masseater/song-format@0.2.2':
+    resolution: {integrity: sha512-UAWep6BbeAZ73n69lU3iaOuv1H7lC9NXNsk9wfFIvkE0PeUfhDIpvQkuDZeto3rqKXEhEtQzk/cDYn73/QyTaw==}
     engines: {node: '>=26.13.1'}
     hasBin: true
     peerDependencies:
@@ -21703,10 +21703,10 @@ snapshots:
       - redis
       - utf-8-validate
 
-  '@r_masseater/i68@0.2.0(c0d6f0f3460b08710011be076f5d09b2)':
+  '@r_masseater/i68@0.2.1(c0d6f0f3460b08710011be076f5d09b2)':
     dependencies:
       '@effect/platform-node': 4.1.7(effect@4.1.7)(redis@6.2.1(@opentelemetry/api@1.10.0))
-      '@r_masseater/song-format': 0.2.1(b0acc5670ad7987d18ab5bdb560ce2b8)
+      '@r_masseater/song-format': 0.2.2(b0acc5670ad7987d18ab5bdb560ce2b8)
       effect: 4.1.7
       vite-plus: 1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.10)(@vitest/browser-playwright@5.1.2)(@vitest/ui@5.1.2)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.10)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
     optionalDependencies:
@@ -21720,7 +21720,7 @@ snapshots:
       - ts-content-mapper
       - utf-8-validate
 
-  '@r_masseater/intent-book@0.3.2(effect@4.1.7)(redis@6.2.1(@opentelemetry/api@1.10.0))(supports-color@10.2.2)':
+  '@r_masseater/intent-book@0.3.3(effect@4.1.7)(redis@6.2.1(@opentelemetry/api@1.10.0))(supports-color@10.2.2)':
     dependencies:
       '@r_masseater/node-main': 0.1.0(effect@4.1.7)(redis@6.2.1(@opentelemetry/api@1.10.0))
       '@shikijs/rehype': 4.6.0
@@ -21831,7 +21831,7 @@ snapshots:
       effect: 4.1.7
       typescript: 7.1.0-beta
 
-  '@r_masseater/song-format@0.2.1(b0acc5670ad7987d18ab5bdb560ce2b8)':
+  '@r_masseater/song-format@0.2.2(b0acc5670ad7987d18ab5bdb560ce2b8)':
     dependencies:
       '@effect/platform-node': 4.1.7(effect@4.1.7)(redis@6.2.1(@opentelemetry/api@1.10.0))
       ableton-als: 0.5.1
