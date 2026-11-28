@@ -10,12 +10,14 @@
   "dependencies": {
     "@pnpm/deps.path": "catalog:",
     "@pnpm/lockfile.fs": "catalog:",
+    "@pnpm/lockfile.types": "catalog:",
     "@pnpm/logger": "catalog:",
     "@r_masseater/github-workflow": "catalog:",
     "@r_masseater/node-main": "catalog:",
     "effect": "catalog:stack"
   },
   "devDependencies": {
+    "@effect/platform-node": "catalog:",
     "vite-plus": "catalog:stack"
   }
 }

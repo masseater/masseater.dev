@@ -1,36 +1,8 @@
 import { refToRelative } from "@pnpm/deps.path";
-import { Array as Arr, Equal, HashSet, Option, Record as Rec, Schema, pipe } from "effect";
+import type { LockfileObject, ProjectSnapshot, ResolvedDependencies } from "@pnpm/lockfile.types";
+import { Array as Arr, Equal, HashSet, Option, Record as Rec, pipe } from "effect";
 
-const References = Schema.Record(Schema.String, Schema.String);
-
-const Importer = Schema.Struct({
-  dependencies: Schema.optional(References),
-  devDependencies: Schema.optional(References),
-  optionalDependencies: Schema.optional(References),
-});
-
-const Snapshot = Schema.Struct({
-  dependencies: Schema.optional(References),
-  optionalDependencies: Schema.optional(References),
-});
-
-/** @internal */
-export const LockfileShape = Schema.Struct({
-  importers: Schema.Record(Schema.String, Importer),
-  packages: Schema.optionalKey(Schema.Record(Schema.String, Snapshot)),
-  settings: Schema.optionalKey(Schema.Unknown),
-  overrides: Schema.optionalKey(Schema.Unknown),
-  patchedDependencies: Schema.optionalKey(Schema.Unknown),
-  packageExtensionsChecksum: Schema.optionalKey(Schema.Unknown),
-  pnpmfileChecksum: Schema.optionalKey(Schema.Unknown),
-});
-
-/** @internal */
-export type Resolution = typeof LockfileShape.Type;
-
-type ImporterOf = typeof Importer.Type;
-
-type Pinned = typeof References.Type | undefined;
+type Pinned = ResolvedDependencies | undefined;
 
 const referencesOf = (references: Pinned): readonly (readonly [string, string])[] =>
   pipe(
@@ -48,11 +20,13 @@ const keysOf = (...groups: readonly Pinned[]): readonly string[] =>
     ),
   );
 
-const directOf = (importer: ImporterOf): readonly string[] =>
+const directOf = (
+  importer: Pick<ProjectSnapshot, "dependencies" | "devDependencies" | "optionalDependencies">,
+): readonly string[] =>
   keysOf(importer.dependencies, importer.devDependencies, importer.optionalDependencies);
 
 const childrenOf =
-  (lockfile: Resolution) =>
+  (lockfile: LockfileObject) =>
   (key: string): readonly string[] =>
     pipe(
       Rec.toEntries(lockfile.packages ?? {}),
@@ -61,7 +35,7 @@ const childrenOf =
       Option.getOrElse((): readonly string[] => []),
     );
 
-const resolved = (lockfile: Resolution, directory: string): HashSet.HashSet<string> => {
+const resolved = (lockfile: LockfileObject, directory: string): HashSet.HashSet<string> => {
   const children = childrenOf(lockfile);
   const queue = [
     ...pipe(
@@ -81,7 +55,7 @@ const resolved = (lockfile: Resolution, directory: string): HashSet.HashSet<stri
   return HashSet.fromIterable(seen);
 };
 
-const environmentOf = (lockfile: Resolution): readonly unknown[] => [
+const environmentOf = (lockfile: LockfileObject): readonly unknown[] => [
   lockfile.settings,
   lockfile.overrides,
   lockfile.patchedDependencies,
@@ -95,8 +69,8 @@ export const sameResolution = ({
   after,
   directories,
 }: Readonly<{
-  before: Resolution;
-  after: Resolution;
+  before: LockfileObject;
+  after: LockfileObject;
   directories: readonly string[];
 }>): boolean =>
   Equal.equals(environmentOf(before), environmentOf(after)) &&
