@@ -1,0 +1,20 @@
+{
+  "name": "monkey-test",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Daily monkey test of the published CLIs, the public pages, the desktop screens and the MCP tools.",
+  "type": "module",
+  "imports": {
+    "#/*": "./src/*"
+  },
+  "dependencies": {
+    "@r_masseater/node-main": "catalog:",
+    "effect": "catalog:stack",
+    "gremlins.js": "catalog:",
+    "playwright": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "vite-plus": "catalog:stack"
+  }
+}
