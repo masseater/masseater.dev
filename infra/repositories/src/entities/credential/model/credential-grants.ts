@@ -141,6 +141,7 @@ const GITHUB_GRANTS: Readonly<Record<string, GitHubGrant>> = {
       secrets: "write",
       actions_variables: "write",
       environments: "write",
+      workflows: "write",
       metadata: "read",
     },
   },
