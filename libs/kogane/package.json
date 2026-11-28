@@ -50,6 +50,7 @@
     "@pnpm/workspace.workspace-manifest-reader": "catalog:",
     "@types/node": "catalog:",
     "effect": "catalog:stack",
+    "lapse": "workspace:*",
     "vite-plus": "catalog:stack"
   },
   "engines": {

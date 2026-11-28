@@ -1,5 +1,6 @@
 import { LOCKED } from "@r_masseater/msch/locked-inputs";
 import { otlp } from "@r_masseater/vitest-otlp";
+import { lapse } from "lapse";
 import { defineConfig } from "vite-plus";
 
 export default defineConfig({
@@ -10,7 +11,7 @@ export default defineConfig({
       build: { command: "vp pack", cache: LOCKED },
     },
   },
-  plugins: [otlp()],
+  plugins: [lapse(), otlp()],
   pack: {
     entry: { main: "bin/web-vitals-flow.ts" },
     platform: "node",

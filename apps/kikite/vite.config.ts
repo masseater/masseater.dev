@@ -2,6 +2,7 @@ import { ownerSiteRun } from "@masseater.dev/cloudflare-account/owner-site-run";
 import tailwindcss from "@tailwindcss/vite";
 import viteReact from "@vitejs/plugin-react";
 import { String as Str } from "effect";
+import { lapse } from "lapse";
 import { defineConfig } from "vite-plus";
 
 import { DEV_PROXY, interviewerDev } from "./src/app/server/dev.ts";
@@ -30,7 +31,7 @@ export default defineConfig({
     },
   },
   run: ownerSiteRun,
-  plugins: [tailwindcss(), viteReact(), interviewerDev()],
+  plugins: [lapse(), tailwindcss(), viteReact(), interviewerDev()],
   server: { proxy: DEV_PROXY },
   build: { outDir: "dist/client" },
   pack: {

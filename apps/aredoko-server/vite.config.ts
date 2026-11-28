@@ -1,7 +1,9 @@
 import { LOCKED } from "@r_masseater/msch/locked-inputs";
+import { lapse } from "lapse";
 import { defineConfig } from "vite-plus";
 
 export default defineConfig({
+  plugins: [lapse()],
   test: { server: { deps: { inline: ["@effect/vitest"] } } },
   pack: {
     entry: { main: "src/app/main.ts", "embedder-worker": "src/app/embedder-worker.ts" },

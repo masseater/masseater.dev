@@ -28,6 +28,7 @@
     "@types/react-dom": "catalog:",
     "effect": "catalog:stack",
     "happy-dom": "catalog:",
+    "lapse": "workspace:*",
     "react": "catalog:",
     "react-dom": "catalog:",
     "tailwindcss": "catalog:stack",

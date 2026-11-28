@@ -25,6 +25,7 @@
     "@types/node": "catalog:",
     "alchemy": "catalog:stack",
     "drizzle-kit": "catalog:stack",
+    "lapse": "workspace:*",
     "typescript": "catalog:stack",
     "vite-plus": "catalog:stack"
   }

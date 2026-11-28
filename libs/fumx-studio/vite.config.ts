@@ -1,5 +1,6 @@
 import { LOCKED } from "@r_masseater/msch/locked-inputs";
 import { otlp } from "@r_masseater/vitest-otlp";
+import { lapse } from "lapse";
 import { defineConfig } from "vite-plus";
 
 export default defineConfig({
@@ -9,7 +10,7 @@ export default defineConfig({
       verify: { command: [], dependsOn: ["test"] },
     },
   },
-  plugins: [otlp()],
+  plugins: [lapse(), otlp()],
   test: {
     include: ["src/**/*.test.ts"],
   },
