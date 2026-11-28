@@ -3,6 +3,7 @@ import { EffectIsland } from "@masseater.dev/effect-ui";
 import { useCallback } from "react";
 import type { ReactNode } from "react";
 
+import type { PasskeyKind } from "./passkey-panel-message.ts";
 import { PasskeyPanel } from "./passkey-panel.ts";
 
 export const PasskeyScreen = ({
@@ -12,7 +13,7 @@ export const PasskeyScreen = ({
   done,
   failed,
 }: Readonly<{
-  kind: "register" | "sign-in";
+  kind: typeof PasskeyKind.Type;
   title: string;
   label: string;
   done: string;
