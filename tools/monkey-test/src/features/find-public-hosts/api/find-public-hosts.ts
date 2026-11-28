@@ -59,5 +59,15 @@ const findPublic = Effect.fn("monkey.hosts")(function* findPublic(given: readonl
   });
 });
 
+const findDomains = Effect.fn("monkey.domains")(function* findDomains(given: readonly string[]) {
+  return yield* Arr.match(given, {
+    onEmpty: () => customDomains(),
+    onNonEmpty: (hosts) => Effect.succeed(hosts),
+  });
+});
+
 /** @internal */
 export const findPublicHosts = findPublic;
+
+/** @internal */
+export const findCustomDomains = findDomains;

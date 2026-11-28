@@ -12,6 +12,7 @@ const FindingKind = Schema.Literals([
   "desktop-load",
   "desktop-error",
   "desktop-server-error",
+  "mcp-contract",
   "mcp-server-error",
   "mcp-crash",
   "mcp-hang",

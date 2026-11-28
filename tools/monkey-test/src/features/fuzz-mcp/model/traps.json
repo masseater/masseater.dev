@@ -1,0 +1,56 @@
+{
+  "valid": {
+    "string": "monkey",
+    "integer": 1,
+    "number": 1,
+    "boolean": false,
+    "array": [],
+    "object": {}
+  },
+  "wrong": [
+    { "name": "null", "value": null },
+    { "name": "text", "value": "x" },
+    { "name": "number", "value": 0 },
+    { "name": "array", "value": [] },
+    { "name": "object", "value": {} }
+  ],
+  "traps": {
+    "string": [
+      { "name": "empty", "value": "" },
+      { "name": "nul", "value": "\u0000" },
+      { "name": "traversal", "value": "../../../etc/passwd" },
+      { "name": "sql", "value": "' OR 1=1 --" },
+      { "name": "bidi", "value": "😀‮" },
+      { "name": "number", "value": 0 },
+      { "name": "null", "value": null }
+    ],
+    "integer": [
+      { "name": "negative", "value": -1 },
+      { "name": "zero", "value": 0 },
+      { "name": "huge", "value": 9007199254740991 },
+      { "name": "fraction", "value": 1.5 },
+      { "name": "text", "value": "1" },
+      { "name": "null", "value": null }
+    ],
+    "number": [
+      { "name": "negative", "value": -1 },
+      { "name": "huge", "value": 1e308 },
+      { "name": "text", "value": "1" },
+      { "name": "null", "value": null }
+    ],
+    "boolean": [
+      { "name": "text", "value": "true" },
+      { "name": "number", "value": 0 },
+      { "name": "null", "value": null }
+    ],
+    "array": [
+      { "name": "holes", "value": [null] },
+      { "name": "text", "value": "x" },
+      { "name": "null", "value": null }
+    ],
+    "object": [
+      { "name": "text", "value": "x" },
+      { "name": "null", "value": null }
+    ]
+  }
+}

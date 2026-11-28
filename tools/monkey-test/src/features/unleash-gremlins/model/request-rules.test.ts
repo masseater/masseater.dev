@@ -1,21 +1,21 @@
 import { describe, expect, it } from "vite-plus/test";
 
-import { carriesBearer, shouldAbort } from "./request-rules.ts";
+import { answerOf, carriesBearer } from "./request-rules.ts";
 
 const ORIGIN = "https://site.test";
 
-describe("shouldAbort", () => {
-  it("lets a read through and stops a write", () => {
+describe("answerOf", () => {
+  it("lets a read through and answers a write without sending it", () => {
     const read = { method: "GET", url: `${ORIGIN}/a`, origin: ORIGIN, isNavigation: false };
-    expect(shouldAbort(read)).toBe(false);
-    expect(shouldAbort({ ...read, method: "POST" })).toBe(true);
-    expect(shouldAbort({ ...read, method: "delete" })).toBe(true);
+    expect(answerOf(read)).toBe("continue");
+    expect(answerOf({ ...read, method: "POST" })).toBe("fulfill");
+    expect(answerOf({ ...read, method: "delete" })).toBe("fulfill");
   });
 
   it("stops a navigation to another origin but not a sub-resource", () => {
     const away = { method: "GET", url: "https://other.test/", origin: ORIGIN, isNavigation: true };
-    expect(shouldAbort(away)).toBe(true);
-    expect(shouldAbort({ ...away, isNavigation: false })).toBe(false);
+    expect(answerOf(away)).toBe("abort");
+    expect(answerOf({ ...away, isNavigation: false })).toBe("continue");
   });
 });
 

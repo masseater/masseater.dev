@@ -4,10 +4,16 @@ import { Command, Flag } from "effect/cli";
 import { lineOf, sortedFindings } from "#/entities/finding/index.ts";
 import type { Finding } from "#/entities/finding/index.ts";
 import { seedOfDay } from "#/entities/horde-seed/index.ts";
-import { findPublicHosts } from "#/features/find-public-hosts/index.ts";
+import { findCustomDomains, findPublicHosts } from "#/features/find-public-hosts/index.ts";
+import { fuzzMcp } from "#/features/fuzz-mcp/index.ts";
 import { probePublishedCli } from "#/features/probe-published-cli/index.ts";
 import { readAccessTokens } from "#/features/read-access-tokens/index.ts";
-import { siteTargetsOf, unleashGremlins } from "#/features/unleash-gremlins/index.ts";
+import {
+  desktopTargetsOf,
+  findDesktopApps,
+  siteTargetsOf,
+  unleashGremlins,
+} from "#/features/unleash-gremlins/index.ts";
 
 const taggedError = Schema.TaggedError;
 
@@ -36,7 +42,14 @@ const hordeSeed = (given: Option.Option<number>): Effect.Effect<number> =>
 const probeSites = Effect.fn("monkey.sites")(function* probeSites(options: Options, seed: number) {
   const publicHosts = yield* findPublicHosts(options.hosts);
   const tokens = yield* readAccessTokens();
-  return yield* unleashGremlins(siteTargetsOf({ publicHosts, tokens, seed }));
+  const apps = yield* findDesktopApps();
+  const pages = yield* unleashGremlins([
+    ...siteTargetsOf({ publicHosts, tokens, seed }),
+    ...desktopTargetsOf({ apps, seed }),
+  ]);
+  const domains = yield* findCustomDomains(options.hosts);
+  const tools = yield* fuzzMcp({ domains, tokens, seed });
+  return [...pages, ...tools];
 });
 
 const report = Effect.fn("monkey.report")(function* report(
