@@ -5,7 +5,7 @@
   "description": "Makes the video and pose data for the Seikin Dance page from the source video.",
   "type": "module",
   "devDependencies": {
-    "@mediapipe/tasks-vision": "1.2.3",
+    "@mediapipe/tasks-vision": "catalog:",
     "@r_masseater/msch": "catalog:",
     "vite-plus": "catalog:stack"
   }
