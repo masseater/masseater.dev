@@ -15,6 +15,7 @@
     "@earendil-works/pi-ai": "catalog:",
     "@earendil-works/pi-durable": "catalog:",
     "@earendil-works/pi-schema": "catalog:",
+    "@masseater.dev/like-pattern": "workspace:*",
     "@masseater.dev/mcp-tool-call": "workspace:*",
     "@masseater.dev/owner-auth": "workspace:*",
     "@masseater.dev/portal-protocol": "workspace:*",
