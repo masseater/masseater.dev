@@ -17,7 +17,7 @@ export const INTRO_STEPS: readonly number[] = [
 export const script: VideoScript = {
   title: "pnpm",
   formats: ["vertical"],
-  length: { vertical: 30 },
+  length: { vertical: 40 },
   voice: 8,
   readings: {
     pnpm: "ピーエヌピーエム",
@@ -43,9 +43,11 @@ export const script: VideoScript = {
     { id: "hook", voice: ZUNDAMON, say: ["npmのインストール\n遅すぎるのだ"] },
     { id: "try", say: ["pnpmに変えてみ？"] },
     { id: "wow", voice: ZUNDAMON, say: ["4秒で終わったのだ！？"] },
-    { id: "punch", say: ["**爆速**っしょ"], hold: 0.6 },
+    { id: "punch", say: ["**爆速**\nっしょ"], hold: 0.6 },
     { id: "again", say: ["2回目なら**0.4秒**"] },
     { id: "disk", say: ["パッケージは\nPCに1つだけ置くから", "容量もほぼ増えないんだよね"] },
+    { id: "updates", say: ["しかも新機能が\n毎月のように増えてるんだよね"] },
+    { id: "plenty", voice: ZUNDAMON, say: ["至れり尽くせりなのだ"] },
     { id: "caveat", voice: ZUNDAMON, say: ["古いツールが\n動かないのだ…"] },
     { id: "fix", say: ["設定1行で直るよ"] },
     { id: "ending", say: ["これ味わっちゃうと\nもうnpmには戻れないっしょ"] },

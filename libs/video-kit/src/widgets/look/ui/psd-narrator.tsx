@@ -10,7 +10,7 @@ import type { CssVariables } from "#/shared/lib/css-variables.ts";
 import { Box } from "#/shared/ui/box.tsx";
 import { hopOf } from "#/widgets/look/model/hop.ts";
 
-const BREATH_FRAMES = 96;
+const BREATH_FRAMES = 192;
 const BREATH_DEPTH = 0.008;
 const FULL = 1;
 const TURN = Math.PI + Math.PI;
