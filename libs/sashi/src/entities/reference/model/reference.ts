@@ -46,7 +46,7 @@ const At = Schema.NonEmptyString.annotate({
 });
 
 const Note = Schema.NonEmptyString.check(Schema.isMaxLength(MAX_NOTE)).annotate({
-  description: "Why the owner points at it, in the owner's own words. Never copy the work",
+  description: "Why the owner points at it, in the owner's own words",
 });
 
 export const ReferenceFields = Schema.Struct({
