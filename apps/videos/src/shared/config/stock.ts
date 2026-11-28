@@ -30,6 +30,7 @@ export const IMAGES = {
   classroom:
     "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj9uN0mXOzdjOeEM6Sr5yETsxEVeTHaNZZoWQhlqOk2Za9GtuqCBc5YM3rxoC9e5F3o7yotRiEWVoxb-NqE518yC-cD1d_BRSoqCzbyBxRdbwDEltGi5zy2tbIjZaivQ7OMP81K8SMXLaGP/s1600/bg_school_room.jpg",
   pnpm: "https://raw.githubusercontent.com/pnpm/pnpm.io/main/static/img/pnpm-no-name-with-frame.svg",
+  oxlint: "https://oxc.rs/logo-without-border.svg",
 } as const;
 
 export const SHOTS = {
