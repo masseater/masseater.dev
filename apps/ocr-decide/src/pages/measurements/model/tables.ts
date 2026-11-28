@@ -1,19 +1,19 @@
 import type { Run, Summary } from "@ocr-decide/measurements/schema";
 import { Array as Arr, pipe } from "effect";
 
+import type { Column } from "#/shared/ui/value-table.ts";
+
 import { COPY } from "./copy.ts";
 import { dollars, percent, rateIn, seconds } from "./summary.ts";
 
-export interface Column {
-  readonly id: string;
-  readonly label: string;
-  readonly cell: (run: Run) => string;
-}
+/** @stability experimental */
+export type RunColumn = Column<Run>;
 
+/** @stability experimental */
 export interface Table {
   readonly id: string;
   readonly title: string;
-  readonly columns: readonly Column[];
+  readonly columns: readonly RunColumn[];
 }
 
 const OVERALL: Table = {
@@ -26,6 +26,7 @@ const OVERALL: Table = {
   ],
 };
 
+/** @stability experimental */
 export const tablesOf = (summary: Summary): readonly Table[] => [
   OVERALL,
   {
@@ -52,14 +53,4 @@ export const tablesOf = (summary: Summary): readonly Table[] => [
       })),
     ),
   },
-];
-
-export const headingsOf = (
-  columns: readonly Column[],
-): readonly Readonly<{ key?: string; label: string }>[] => [
-  { label: COPY.way },
-  ...pipe(
-    columns,
-    Arr.map(({ id, label }) => ({ key: id, label })),
-  ),
 ];

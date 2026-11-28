@@ -1,1 +1,16 @@
-@import "@masseater.dev/web-ui/styles.css";
+@import "@masseater.dev/ui/styles.css";
+@import "@masseater.dev/ui/theme.css";
+@import "@masseater.dev/effect-ui/sources.css";
+
+@source "../";
+
+@custom-variant dark (&:is(.dark *));
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
