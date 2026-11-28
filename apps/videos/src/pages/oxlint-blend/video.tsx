@@ -14,13 +14,12 @@ import type { ReactNode } from "react";
 import {
   AbsoluteFill,
   Easing,
-  Img,
   interpolate,
   staticFile,
   useCurrentFrame,
 } from "remotion";
 
-import { tachiePath, tachiePsdPath } from "#/shared/config/index.ts";
+import { tachiePsdPath } from "#/shared/config/index.ts";
 import { pick } from "#/shared/lib/pick.ts";
 
 import { INTRO_STEPS } from "./script.ts";
@@ -29,7 +28,7 @@ const BOLD =
   "caption-outline text-[68px] font-bold whitespace-pre-line [--outline:#1b1b1b] [--stroke:0.14em]";
 const RED_LOOK =
   "caption-outline leading-none tracking-[-0.06em] scale-x-[0.86] [--fill:#ff1e1e] [--outline:#2a0000] [--stroke:0.16em] [--emphasis:#ff1e1e] drop-shadow-[0_10px_0_rgb(0_0_0/0.8)]";
-const RED = `text-[180px] ${RED_LOOK}`;
+const RED = `text-[150px] ${RED_LOOK}`;
 
 const CAPTION: Readonly<Record<string, string>> = {
   punch: RED,
@@ -38,19 +37,8 @@ const CAPTION: Readonly<Record<string, string>> = {
 const VOICE_FILL: Readonly<Record<string, string>> = {
   "3": "[--fill:#c6f28a]",
 };
-const CAPTION_TOP: Readonly<Record<string, string>> = { punch: "top-[620px]" };
+const CAPTION_TOP: Readonly<Record<string, string>> = {};
 
-const LOG = [
-  "$ oxlint",
-  "Found 0 warnings and 0 errors.",
-  "Finished in 18ms on 4,812 files with 212 rules using 16 threads.",
-  "$ oxlint --type-aware",
-  "Found 0 warnings and 0 errors.",
-  "$ oxlint --fix",
-  "Finished in 21ms on 4,812 files.",
-];
-
-const SCROLL_PER_FRAME = 2.4;
 const FLASH_FRAMES = 9;
 
 interface Mouth {
@@ -359,6 +347,27 @@ const slideOf = (cast: Cast, timeline: Timeline, frame: number): number => {
   return shown ? 0 : OFFSTAGE;
 };
 
+const NOTHING_MOVED = 0;
+const DASH_CUT = "punch";
+const DASH_TAIL = 8;
+const dashStartOf = (duration: number): number =>
+  Math.max(0, duration - CROUCH_FRAMES - DASH_FRAMES - DASH_TAIL);
+const BLUR_PER_PX = 0.04;
+
+const dashOf = (cast: Cast, timeline: Timeline, frame: number): number =>
+  pipe(
+    timeline.cuts,
+    Arr.findFirst((cut) => cut.id === DASH_CUT),
+    Option.filter(() => cast.always),
+    Option.filter(
+      (cut) => frame >= cut.from && frame < cut.from + cut.duration,
+    ),
+    Option.map((cut) => frame - cut.from - dashStartOf(cut.duration)),
+    Option.filter((local) => local >= 0),
+    Option.map(dashX),
+    Option.getOrElse(() => NOTHING_MOVED),
+  );
+
 const Board = ({ timeline }: Readonly<{ timeline: Timeline }>): ReactNode => {
   const frame = useCurrentFrame();
   return (
@@ -372,7 +381,8 @@ const Board = ({ timeline }: Readonly<{ timeline: Timeline }>): ReactNode => {
               className="absolute inset-0"
               key={cast.psd}
               style={{
-                translate: `${String(slideOf(cast, timeline, frame))}px 0`,
+                translate: `${String(slideOf(cast, timeline, frame) + dashOf(cast, timeline, frame))}px 0`,
+                filter: `blur(${String(Math.max(NOTHING_MOVED, dashOf(cast, timeline, frame) - dashOf(cast, timeline, frame - 1)) * BLUR_PER_PX)}px)`,
               }}
             >
               <div className={`absolute ${cast.className} ${cast.facing}`}>
@@ -407,29 +417,8 @@ const LightLeak = (): ReactNode => {
   );
 };
 
-const Log = (): ReactNode => {
-  const frame = useCurrentFrame();
-  return (
-    <AbsoluteFill className="overflow-hidden bg-[#0b0d10]">
-      <div
-        className="font-code px-6 text-[34px] leading-[1.45] whitespace-pre text-[#8b949e] opacity-20 blur-[2px]"
-        style={{ translate: `0 ${String(200 - frame * SCROLL_PER_FRAME)}px` }}
-      >
-        {pipe(
-          [...LOG, ...LOG, ...LOG],
-          Arr.map((row, index) => (
-            <div key={`${String(index)}:${row}`}>{row}</div>
-          )),
-        )}
-      </div>
-    </AbsoluteFill>
-  );
-};
-
 const CROUCH_FRAMES = 10;
 const DASH_FRAMES = 10;
-const TRAILS = [0, 1, 2, 3] as const;
-const TRAIL_LAG = 1.6;
 const STREAKS = [
   { top: 380, width: 520, speed: 150, offset: 0 },
   { top: 520, width: 760, speed: 190, offset: 300 },
@@ -481,32 +470,14 @@ const Streak = ({
   );
 };
 
-const Dash = (): ReactNode => {
-  const frame = useCurrentFrame();
-  const squash = interpolate(frame, [0, CROUCH_FRAMES], [1, 0.92], {
-    extrapolateRight: "clamp",
-  });
+const Streaks = ({ shot }: Readonly<{ shot: Shot }>): ReactNode => {
+  const frame = useCurrentFrame() - dashStartOf(shot.duration);
   return (
     <AbsoluteFill className="overflow-hidden">
       {pipe(
         STREAKS,
         Arr.map((streak) => (
           <Streak frame={frame} key={streak.top} streak={streak} />
-        )),
-      )}
-      {pipe(
-        TRAILS,
-        Arr.map((trail) => (
-          <Img
-            className="absolute top-[760px] left-[100px] w-[1000px] max-w-none origin-bottom rotate-[12deg]"
-            key={trail}
-            src={staticFile(tachiePath(TSUMUGI.psd))}
-            style={{
-              translate: `${String(dashX(frame - trail * TRAIL_LAG))}px 0`,
-              scale: `1 ${String(squash)}`,
-              opacity: (TRAILS.length - trail) / TRAILS.length / (trail + 1),
-            }}
-          />
         )),
       )}
     </AbsoluteFill>
@@ -1126,10 +1097,13 @@ export const draw: Readonly<Record<string, Draw>> = {
   ),
   punch: (shot) => (
     <>
-      <Log />
-      <Dash />
+      <Streaks shot={shot} />
       <Sfx at={0} kind="stamp" shot={shot} />
-      <Sfx at={CROUCH_FRAMES - 2} kind="dash" shot={shot} />
+      <Sfx
+        at={dashStartOf(shot.duration) + CROUCH_FRAMES - 2}
+        kind="dash"
+        shot={shot}
+      />
     </>
   ),
   save: () => <Loops loop={SAVE_LOOP} />,
