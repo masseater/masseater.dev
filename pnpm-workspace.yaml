@@ -267,8 +267,6 @@ permissions:
     skills: true
   "@r_masseater/fu4":
     skills: true
-  "@r_masseater/fu4-presets":
-    skills: true
   "@r_masseater/song-format":
     skills: true
   "@r_masseater/github-workflow":
@@ -301,13 +299,9 @@ permissions:
     skills: true
   "@r_masseater/wism":
     skills: true
-  "@r_masseater/wism-presets":
-    skills: true
   "@r_masseater/workers-tracing":
     skills: true
   "@r_masseater/y8":
-    skills: true
-  "@r_masseater/y8-presets":
     skills: true
   "@tanstack/devtools-vite":
     skills: true
