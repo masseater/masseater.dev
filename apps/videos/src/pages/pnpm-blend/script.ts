@@ -4,13 +4,13 @@ import { BGM, IMAGES, SHOTS } from "#/shared/config/index.ts";
 import { VIDEO_START, onBeat } from "#/shared/lib/beat.ts";
 
 const INTRO_SPEED = 2;
-const INTRO_BEATS = { length: 3, voice: 5, call: 6 } as const;
+const INTRO_BEATS = { name: 1, length: 3, voice: 5, call: 6 } as const;
 
 export const INTRO_STEPS: readonly number[] = [
   VIDEO_START,
+  onBeat(INTRO_BEATS.name),
   onBeat(INTRO_BEATS.length),
   onBeat(INTRO_BEATS.voice),
-  onBeat(INTRO_BEATS.call),
 ];
 
 export const script: VideoScript = {
@@ -30,7 +30,12 @@ export const script: VideoScript = {
     {
       id: "intro",
       say: ["次世代のパッケージマネージャ\npnpmを", "30秒で|つむぎが|解説"],
-      at: INTRO_STEPS,
+      at: [
+        VIDEO_START,
+        onBeat(INTRO_BEATS.length),
+        onBeat(INTRO_BEATS.voice),
+        onBeat(INTRO_BEATS.call),
+      ],
       speed: [INTRO_SPEED],
     },
     { id: "hook", say: ["npmのインストール\n遅すぎない？"] },

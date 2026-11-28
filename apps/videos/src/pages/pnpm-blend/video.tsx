@@ -193,7 +193,7 @@ const Intro = ({ shot }: Readonly<{ shot: Shot }>): ReactNode => (
           次世代のパッケージマネージャ
         </div>
       </Pop>
-      <Pop step={0}>
+      <Pop step={1}>
         <div className="flex items-center gap-8">
           <Picture
             className="size-[180px] rounded-[40px] bg-white p-7"
@@ -204,24 +204,17 @@ const Intro = ({ shot }: Readonly<{ shot: Shot }>): ReactNode => (
           </div>
         </div>
       </Pop>
-      <Pop step={1}>
+      <Pop step={2}>
         <div className="font-jp flex items-baseline text-[#ffd400]">
           <span className="text-[330px] leading-none font-black tracking-[-0.08em]">30</span>
           <span className="text-[130px] font-black">秒で</span>
         </div>
       </Pop>
-      <div className="flex items-center gap-6">
-        <Pop step={2}>
-          <div className="caption-outline font-jp text-[130px] font-black [--outline:#111] [--stroke:0.16em]">
-            つむぎが
-          </div>
-        </Pop>
-        <Pop step={3}>
-          <div className="caption-outline font-jp text-[130px] font-black [--outline:#111] [--stroke:0.16em]">
-            解説
-          </div>
-        </Pop>
-      </div>
+      <Pop step={3}>
+        <div className="caption-outline font-jp text-[130px] font-black [--outline:#111] [--stroke:0.16em]">
+          つむぎが解説
+        </div>
+      </Pop>
     </AbsoluteFill>
     {pipe(
       stepFrames,
