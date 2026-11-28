@@ -12,7 +12,7 @@ import { pick } from "#/shared/lib/pick.ts";
 import { INTRO_STEPS } from "./script.ts";
 
 const BOLD =
-  "caption-outline text-[72px] font-bold whitespace-pre-line [--outline:#1b1b1b] [--stroke:0.14em]";
+  "caption-outline text-[68px] font-bold whitespace-pre-line [--outline:#1b1b1b] [--stroke:0.14em]";
 const RED_LOOK =
   "caption-outline leading-none tracking-[-0.06em] scale-x-[0.86] [--fill:#ff1e1e] [--outline:#2a0000] [--stroke:0.16em] [--emphasis:#ff1e1e] drop-shadow-[0_10px_0_rgb(0_0_0/0.8)]";
 const RED = `text-[260px] ${RED_LOOK}`;
@@ -38,13 +38,12 @@ const LOG = [
 const TACHIE = "tsumugi3";
 const SCROLL_PER_FRAME = 2.4;
 const FLASH_FRAMES = 9;
-const CUT_IN_FRAMES = 7;
 
 const Console = ({
   rows,
   at,
 }: Readonly<{ rows: readonly string[]; at: readonly number[] }>): ReactNode => (
-  <div className="absolute inset-x-0 top-[440px] flex justify-center px-6 [&>div]:scale-[1.45]">
+  <div className="absolute inset-x-0 top-[300px] flex justify-center px-6 [&>div]:scale-[1.45]">
     <Terminal at={at} rows={rows} />
   </div>
 );
@@ -56,6 +55,7 @@ const PARTS = [
     closed: "v1.!口/*ほほえみ",
     half: "v1.!口/*お",
     open: "v1.!口/*わあ",
+    alwaysApply: true,
   },
 ] as const;
 
@@ -64,7 +64,7 @@ const Board = ({ timeline }: Readonly<{ timeline: Timeline }>): ReactNode => (
     <div className="absolute inset-x-0 top-[64px] h-[18px] bg-[#9a5a33]" />
     <div className="absolute inset-x-0 top-0 bottom-[28px] overflow-hidden">
       <PsdNarrator
-        className="top-[1340px] left-[170px] h-[1682px] w-[1000px]"
+        className="top-[1340px] left-[290px] h-[1682px] w-[1000px]"
         parts={PARTS}
         psd={staticFile(tachiePsdPath(TACHIE))}
         timeline={timeline}
@@ -105,22 +105,73 @@ const Log = (): ReactNode => {
   );
 };
 
-const CutIn = (): ReactNode => {
-  const frame = useCurrentFrame();
-  const zoom = interpolate(frame, [0, CUT_IN_FRAMES], [1.6, 1], {
-    easing: Easing.out(Easing.back(1.4)),
+const CROUCH_FRAMES = 10;
+const DASH_FRAMES = 10;
+const TRAILS = [0, 1, 2, 3] as const;
+const TRAIL_LAG = 1.6;
+const STREAKS = [
+  { top: 380, width: 520, speed: 150, offset: 0 },
+  { top: 520, width: 760, speed: 190, offset: 300 },
+  { top: 760, width: 440, speed: 170, offset: 620 },
+  { top: 1180, width: 680, speed: 210, offset: 140 },
+  { top: 1380, width: 560, speed: 160, offset: 820 },
+  { top: 1560, width: 820, speed: 200, offset: 460 },
+] as const;
+const SCREEN = 1080;
+
+const dashX = (frame: number): number =>
+  interpolate(frame, [0, CROUCH_FRAMES, CROUCH_FRAMES + DASH_FRAMES], [-40, 0, 1500], {
+    easing: Easing.in((time) => Easing.cubic(time)),
     extrapolateRight: "clamp",
   });
+
+const Streak = ({
+  streak,
+  frame,
+}: Readonly<{ streak: (typeof STREAKS)[number]; frame: number }>): ReactNode => {
+  const travel = SCREEN + streak.width;
+  const left = SCREEN - ((streak.offset + frame * streak.speed) % travel);
   return (
     <div
-      className="absolute inset-x-0 bottom-0 h-[1040px] origin-[70%_50%] overflow-hidden [mask-image:linear-gradient(transparent,black_22%)]"
-      style={{ scale: String(zoom), opacity: interpolate(frame, [0, 2], [0, 1]) }}
-    >
-      <Img
-        className="absolute top-[-470px] left-[-1050px] w-[3246px] max-w-none rotate-[-6deg]"
-        src={staticFile(tachiePath(TACHIE))}
-      />
-    </div>
+      className="absolute h-[10px] rounded-full bg-white/70"
+      style={{
+        top: streak.top,
+        left,
+        width: streak.width,
+        opacity: interpolate(frame, [CROUCH_FRAMES - 2, CROUCH_FRAMES + 2], [0, 1], {
+          extrapolateLeft: "clamp",
+          extrapolateRight: "clamp",
+        }),
+      }}
+    />
+  );
+};
+
+const Dash = (): ReactNode => {
+  const frame = useCurrentFrame();
+  const squash = interpolate(frame, [0, CROUCH_FRAMES], [1, 0.92], { extrapolateRight: "clamp" });
+  return (
+    <AbsoluteFill className="overflow-hidden">
+      {pipe(
+        STREAKS,
+        Arr.map((streak) => <Streak frame={frame} key={streak.top} streak={streak} />),
+      )}
+      {pipe(
+        TRAILS,
+        Arr.map((trail) => (
+          <Img
+            className="absolute top-[760px] left-[100px] w-[1000px] max-w-none origin-bottom rotate-[12deg]"
+            key={trail}
+            src={staticFile(tachiePath(TACHIE))}
+            style={{
+              translate: `${String(dashX(frame - trail * TRAIL_LAG))}px 0`,
+              scale: `1 ${String(squash)}`,
+              opacity: (TRAILS.length - trail) / TRAILS.length / (trail + 1),
+            }}
+          />
+        )),
+      )}
+    </AbsoluteFill>
   );
 };
 
@@ -208,8 +259,7 @@ const Intro = ({ shot }: Readonly<{ shot: Shot }>): ReactNode => (
   </>
 );
 
-const AREA = "absolute inset-x-[80px] top-[430px] h-[620px]";
-const CHALK = "#f4f1e8";
+const AREA = "absolute inset-x-[80px] top-[250px] h-[600px]";
 const YELLOW = "#ffd400";
 const ALARM = "#ff6b5b";
 const GROW_FRAMES = 14;
@@ -248,7 +298,9 @@ const SlowInstall = ({ shot }: Readonly<{ shot: Shot }>): ReactNode => {
   const filled = elapsed / NPM_SECONDS;
   return (
     <div className={`${AREA} font-jp flex flex-col justify-center gap-10`}>
-      <div className="font-code text-[76px] text-white/90">$ npm install</div>
+      <div className="font-code rounded-[16px] bg-[#0b0d10] px-8 py-5 text-[64px] text-white/90">
+        $ npm install
+      </div>
       <div className="h-[100px] w-full shrink-0 rounded-[10px] border-[6px] border-white/85 p-[8px]">
         <div
           className="h-full rounded-[4px] bg-[#ff6b5b]"
@@ -261,9 +313,7 @@ const SlowInstall = ({ shot }: Readonly<{ shot: Shot }>): ReactNode => {
         </span>
         <span className="text-[86px] font-black">秒…</span>
       </div>
-      <div className="text-[48px] font-bold text-white/70">
-        同じプロジェクトの初回（pnpm.io/benchmarks）
-      </div>
+      <div className="text-[36px] font-bold text-white/50">pnpm.io/benchmarks</div>
     </div>
   );
 };
@@ -275,7 +325,7 @@ interface Bar {
 }
 
 const AGAIN: readonly Bar[] = [
-  { label: "1回目", seconds: 4, color: CHALK },
+  { label: "1回目", seconds: 4, color: YELLOW },
   { label: "2回目", seconds: 0.4, color: YELLOW },
 ];
 
@@ -325,6 +375,7 @@ const Bars = ({ bars }: Readonly<{ bars: readonly Bar[] }>): ReactNode => {
 
 const PROJECTS = ["A", "B", "C"] as const;
 const FLAT = ["react", "vite", "esbuild", "rollup", "typescript"] as const;
+const SHOWN_ROWS = 3;
 const TRANSITIVE = new Set<string>(["esbuild", "rollup"]);
 const PACKAGES = pipe(
   FLAT,
@@ -465,8 +516,8 @@ const ROW_LOOK = {
 } as const;
 
 const MARK = {
-  found: { text: "見える", color: "#1f9d55" },
-  lost: { text: "見えない", color: ALARM },
+  found: { text: "✓", color: "#1f9d55" },
+  lost: { text: "✗", color: ALARM },
 } as const;
 
 const markOf = (hidden: boolean): (typeof MARK)[keyof typeof MARK] => {
@@ -487,7 +538,7 @@ const Mark = ({ hidden, frame }: Readonly<{ hidden: boolean; frame: number }>): 
   const mark = markOf(hidden);
   return (
     <span
-      className="font-jp text-[34px] font-black"
+      className="font-jp text-[60px] leading-none font-black whitespace-nowrap"
       style={{ color: mark.color, opacity: grow(frame, GROW_FRAMES) }}
     >
       {mark.text}
@@ -500,14 +551,13 @@ const Modules = ({
   hidden,
   frame,
 }: Readonly<{ title: string; hidden: boolean; frame: number }>): ReactNode => (
-  <div className="flex w-[400px] flex-col gap-3 rounded-[14px] border-[5px] border-white/85 p-5">
+  <div className="flex w-[400px] flex-col gap-2 rounded-[14px] border-[5px] border-white/85 p-4">
     <div className="font-code text-[54px] font-bold text-white">{title}</div>
-    <div className="font-code text-[40px] text-white/60">node_modules/</div>
     {pipe(
-      FLAT,
+      Arr.take(FLAT, SHOWN_ROWS),
       Arr.map((name) => (
         <div
-          className="font-code flex items-center justify-between rounded-[8px] px-3 py-1 text-[42px]"
+          className="font-code flex items-center justify-between rounded-[8px] px-3 py-1 text-[46px]"
           key={name}
           style={rowLookOf(hidden && TRANSITIVE.has(name))}
         >
@@ -523,31 +573,33 @@ const Modules = ({
   </div>
 );
 
-const FIX_AT = 24;
-
-const OldTool = (): ReactNode => {
+const OldTool = ({ shot }: Readonly<{ shot: Shot }>): ReactNode => {
   const frame = useCurrentFrame();
+  const fixedAt = lineStart(shot, 1);
+  const fixed = fixedAt > NOTHING && frame >= fixedAt;
   return (
-    <div className={`${AREA} font-jp flex flex-col items-center gap-6`}>
+    <div className={`${AREA} font-jp flex flex-col items-center gap-4`}>
       <div className="rounded-full bg-white px-8 py-2 text-[51px] font-black text-[#1b1b1b]">
         古いツールがesbuildを探すと…
       </div>
       <div className="flex w-full gap-4">
         <Modules frame={frame} hidden={false} title="npm" />
-        <Modules frame={frame} hidden title="pnpm" />
+        <Modules frame={frame} hidden={!fixed} title="pnpm" />
       </div>
       <div
-        className="flex flex-col self-start rounded-[12px] border-[4px] border-dashed border-[#ffd400] px-6 py-3 text-[#ffd400]"
-        style={{ opacity: grow(frame, FIX_AT) }}
+        className="flex items-baseline gap-4 rounded-[12px] bg-[#ffd400] px-6 py-2 text-[#1b1b1b]"
+        style={{ opacity: grow(frame, lineStart(shot, 1)) }}
       >
-        <span className="text-[44px] font-black">設定1行で回避できる</span>
-        <span className="font-code text-[36px]">nodeLinker: hoisted</span>
+        <span className="text-[48px] font-black">設定1行で直る</span>
+        <span className="font-code text-[40px] font-bold">nodeLinker: hoisted</span>
       </div>
     </div>
   );
 };
 
 const POP_FRAMES = 8;
+const STRIKE_AT = 4;
+const STRIKE_WIDTH = 170;
 
 const TryNow = (): ReactNode => {
   const frame = useCurrentFrame();
@@ -557,7 +609,18 @@ const TryNow = (): ReactNode => {
   });
   return (
     <div className={`${AREA} font-jp flex flex-col items-center justify-center gap-10`}>
-      <div className="text-[64px] font-black text-white">今すぐ試すなら</div>
+      <div className="font-code flex items-center gap-8 text-[84px] font-bold">
+        <span className="relative text-white/60">
+          npm
+          <span
+            className="absolute top-1/2 left-[-10px] h-[10px] rounded-full bg-[#ff6b5b]"
+            style={{ width: `${String(STRIKE_WIDTH * grow(frame, STRIKE_AT))}px` }}
+          />
+        </span>
+        <span className="text-white">→</span>
+        <span className="text-[#ffd400]">pnpm</span>
+      </div>
+      <div className="text-[56px] font-black text-white">今すぐ試すなら</div>
       <div
         className="font-code rounded-[18px] bg-[#0b0d10] px-12 py-8 text-[92px] font-bold text-[#ffd400]"
         style={{ scale: String(pop) }}
@@ -575,7 +638,7 @@ export const look: Partial<Look> = {
     <>
       {content}
       <div
-        className={`absolute inset-x-[50px] flex justify-center ${pick(CAPTION_TOP, shot.id, "top-[150px] h-[270px] items-end")}`}
+        className={`absolute right-[170px] left-[90px] flex justify-center ${pick(CAPTION_TOP, shot.id, "top-[900px] h-[200px] items-center")}`}
       >
         <Caption className={pick(CAPTION, shot.id, BOLD)} shot={shot} />
       </div>
@@ -603,8 +666,9 @@ export const draw: Readonly<Record<string, Draw>> = {
   punch: (shot) => (
     <>
       <Log />
-      <CutIn />
+      <Dash />
       <Sfx at={0} kind="stamp" shot={shot} />
+      <Sfx at={CROUCH_FRAMES - 2} kind="dash" shot={shot} />
     </>
   ),
   again: () => (
@@ -614,7 +678,7 @@ export const draw: Readonly<Record<string, Draw>> = {
     </>
   ),
   disk: (shot) => <Sharing shot={shot} />,
-  caveat: () => <OldTool />,
+  caveat: (shot) => <OldTool shot={shot} />,
   ending: (shot) => (
     <>
       <TryNow />

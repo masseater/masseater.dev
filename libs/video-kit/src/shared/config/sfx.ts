@@ -14,6 +14,11 @@ export const SFX = {
     page: "https://soundeffect-lab.info/sound/anime/",
     volume: 0.5,
   },
+  dash: {
+    url: "https://soundeffect-lab.info/sound/anime/mp3/flee1.mp3",
+    page: "https://soundeffect-lab.info/sound/anime/",
+    volume: 0.6,
+  },
   ending: {
     url: "https://soundeffect-lab.info/sound/anime/mp3/jean1.mp3",
     page: "https://soundeffect-lab.info/sound/anime/",

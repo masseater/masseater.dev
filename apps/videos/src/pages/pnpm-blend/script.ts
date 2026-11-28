@@ -44,7 +44,7 @@ export const script: VideoScript = {
     { id: "punch", say: ["**爆速**"], hold: 0.6 },
     { id: "again", say: ["2回目は**0.4秒**"] },
     { id: "disk", say: ["パッケージは\nPCに1つだけ置くから", "容量もほぼ増えない"] },
-    { id: "caveat", say: ["古いツールだと\n動かないこともあるけど"] },
-    { id: "ending", say: ["もうnpmには戻れない"], hold: 0.8 },
+    { id: "caveat", say: ["古いツールだと\n動かないこともあるけど", "設定1行で直る"] },
+    { id: "ending", say: ["もうnpmには戻れない"], hold: 0.5 },
   ],
 };
