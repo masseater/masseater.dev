@@ -48,6 +48,7 @@ export type Tachie = ImageTachie | PsdTachie;
 export interface Music {
   readonly src: string;
   readonly start: number;
+  readonly loud: number;
 }
 
 export interface Timeline {

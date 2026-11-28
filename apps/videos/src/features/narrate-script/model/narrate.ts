@@ -1,5 +1,11 @@
 import type { VideoScript } from "@masseater.dev/video-kit/script";
-import { narrationKey, spokenOf, voiceOf, voicesOf } from "@masseater.dev/video-kit/script";
+import {
+  narrationKey,
+  speedOf,
+  spokenOf,
+  voiceOf,
+  voicesOf,
+} from "@masseater.dev/video-kit/script";
 import { Array as Arr, Effect, FileSystem, Option, Path, Record as Rec, pipe } from "effect";
 import type { Config, PlatformError } from "effect";
 import type { HttpClient } from "effect/http";
@@ -34,6 +40,7 @@ export interface Narrated {
 interface LineRequest {
   readonly voice: number;
   readonly spoken: string;
+  readonly speed: number;
   readonly manifest: Manifest;
 }
 
@@ -47,8 +54,9 @@ const fileOf = (key: string): Effect.Effect<string, never, Path.Path> =>
 const synthesizeTo = ({
   voice,
   spoken,
+  speed,
   file,
-}: Readonly<{ voice: number; spoken: string; file: string }>): Effect.Effect<
+}: Readonly<{ voice: number; spoken: string; speed: number; file: string }>): Effect.Effect<
   number,
   Failure,
   Services
@@ -56,7 +64,7 @@ const synthesizeTo = ({
   Effect.gen(function* synthesizeFile() {
     const fileSystem = yield* FileSystem.FileSystem;
     const path = yield* Path.Path;
-    const wav = yield* synthesize({ style: voice, text: spoken });
+    const wav = yield* synthesize({ style: voice, text: spoken, speed });
     const seconds = wavSeconds(wav);
     if (Option.isNone(seconds)) {
       return yield* videoError(`「${spoken}」の WAV にデータがない`);
@@ -69,24 +77,26 @@ const synthesizeTo = ({
 const recordLine = ({
   voice,
   spoken,
+  speed,
   manifest,
 }: LineRequest): Effect.Effect<Recorded, Failure, Services> =>
   Effect.gen(function* record() {
     const fileSystem = yield* FileSystem.FileSystem;
-    const key = yield* narrationKey({ speaker: voice, spoken });
+    const key = yield* narrationKey({ speaker: voice, spoken, speed });
     const file = yield* fileOf(key);
     const known = Rec.get(manifest.narration, key);
     const exists = yield* fileSystem.exists(file);
     if (Option.isSome(known) && exists) {
       return { key, seconds: known.value.seconds, made: false };
     }
-    const seconds = yield* synthesizeTo({ voice, spoken, file });
+    const seconds = yield* synthesizeTo({ voice, spoken, speed, file });
     return { key, seconds, made: true };
   });
 
 interface SpokenLine {
   readonly voice: number;
   readonly spoken: string;
+  readonly speed: number;
 }
 
 const spokenLines = (script: VideoScript): readonly SpokenLine[] =>
@@ -97,6 +107,7 @@ const spokenLines = (script: VideoScript): readonly SpokenLine[] =>
         cut.say,
         Arr.map((say) => ({
           voice: voiceOf(script)(cut),
+          speed: speedOf(cut),
           spoken: spokenOf({ say, readings: script.readings }),
         })),
       ),
@@ -153,7 +164,7 @@ const narrateAll = (script: VideoScript): Effect.Effect<Narrated, Failure, Servi
     const portraits = yield* portraitsOf(voices);
     const recorded = yield* Effect.forEach(
       spokenLines(script),
-      ({ voice, spoken }) => recordLine({ voice, spoken, manifest }),
+      ({ voice, spoken, speed }) => recordLine({ voice, spoken, speed, manifest }),
       { concurrency: 1 },
     );
     const fresh = pipe(

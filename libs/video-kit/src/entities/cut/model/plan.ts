@@ -29,12 +29,23 @@ const timeCut = (
     })),
   );
 
-const bgmOf = (script: VideoScript, sources: Sources): Option.Option<Music> =>
+const loudOf = (cuts: readonly TimedCut[], id: string | undefined): number =>
+  pipe(
+    Arr.findFirst(cuts, (cut) => cut.id === id),
+    Option.match({ onNone: () => NOTHING, onSome: ({ from, duration }) => from + duration }),
+  );
+
+const bgmOf = (
+  script: VideoScript,
+  sources: Sources,
+  cuts: readonly TimedCut[],
+): Option.Option<Music> =>
   pipe(
     Option.fromNullishOr(script.bgm),
-    Option.map(({ url, start }) => ({
+    Option.map(({ url, start, loudThrough }) => ({
       src: sources.assetSrc(url),
       start: frames(start ?? NOTHING),
+      loud: loudOf(cuts, loudThrough),
     })),
   );
 
@@ -92,7 +103,7 @@ export const planTimeline = ({ script, format, sources }: PlanRequest): Effect.E
         height: FRAMES[format].height,
         durationInFrames: Math.max(total, ONE),
         cuts,
-        bgm: bgmOf(script, sources),
+        bgm: bgmOf(script, sources, cuts),
         sfx: pipe(
           SFX,
           Rec.map(({ url }) => sources.assetSrc(url)),

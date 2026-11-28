@@ -1,17 +1,25 @@
 import { Array as Arr, Option, pipe } from "effect";
 
 import type { Format } from "#/shared/config/index.ts";
+import { Timing } from "#/shared/config/index.ts";
 
 export type Cut = Readonly<{
   id: string;
   say: readonly string[];
   at?: readonly number[];
   hold?: number;
+  speed?: number;
   formats?: readonly Format[];
   voice?: number;
 }>;
 
-export type Bgm = Readonly<{ url: string; credit: string; page?: string; start?: number }>;
+export type Bgm = Readonly<{
+  url: string;
+  credit: string;
+  page?: string;
+  start?: number;
+  loudThrough?: string;
+}>;
 
 export type VideoScript = Readonly<{
   title: string;
@@ -36,6 +44,8 @@ export const voiceOf =
   (script: VideoScript) =>
   (cut: Cut): number =>
     cut.voice ?? script.voice;
+
+export const speedOf = (cut: Cut): number => cut.speed ?? Timing.SPEED_SCALE;
 
 export const voicesOf = (script: VideoScript): readonly number[] =>
   pipe(script.cuts, Arr.map(voiceOf(script)), Arr.prepend(script.voice), Arr.dedupe);
