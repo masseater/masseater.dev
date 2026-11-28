@@ -1695,6 +1695,9 @@ importers:
       '@fontsource/m-plus-rounded-1c':
         specifier: 'catalog:'
         version: 5.3.0
+      '@masseater.dev/like-pattern':
+        specifier: workspace:*
+        version: link:../../libs/like-pattern
       '@masseater.dev/mcp-tool-call':
         specifier: workspace:*
         version: link:../../libs/mcp-tool-call
@@ -2997,6 +3000,9 @@ importers:
       '@earendil-works/pi-schema':
         specifier: 'catalog:'
         version: 1.6.1
+      '@masseater.dev/like-pattern':
+        specifier: workspace:*
+        version: link:../../libs/like-pattern
       '@masseater.dev/mcp-tool-call':
         specifier: workspace:*
         version: link:../../libs/mcp-tool-call
@@ -4050,6 +4056,19 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 26.6.10
+      vite-plus:
+        specifier: catalog:stack
+        version: 1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.10)(@vitest/browser-playwright@5.1.2)(@vitest/ui@5.1.2)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.10)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)
+
+  libs/like-pattern:
+    dependencies:
+      effect:
+        specifier: catalog:stack
+        version: 4.1.7
+    devDependencies:
+      typescript:
+        specifier: catalog:stack
+        version: 7.1.0-beta
       vite-plus:
         specifier: catalog:stack
         version: 1.8.0(@opentelemetry/api@1.10.0)(@types/node@26.6.10)(@vitest/browser-playwright@5.1.2)(@vitest/ui@5.1.2)(esbuild@0.28.1)(happy-dom@21.0.4)(jiti@2.7.0)(msw@3.0.7(@types/node@26.6.10)(@voidzero-dev/vite-plus-core@8.3.8001(patch_hash=46614ca508b21a245c476793d1566873ef790db12a683a22be27931a80574868)(@types/node@26.6.10)(esbuild@0.28.1)(jiti@2.7.0)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1))(supports-color@10.2.2)(typescript@7.1.0-beta))(oxlint-tsgolint@7.0.2008)(playwright@1.65.1)(publint@0.3.25)(terser@5.51.2)(typescript@7.1.0-beta)(yaml@2.9.1)

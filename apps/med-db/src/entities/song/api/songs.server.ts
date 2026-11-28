@@ -1,7 +1,8 @@
+import { containingPattern } from "@masseater.dev/like-pattern";
 import { countDistinct, isNotNull } from "drizzle-orm";
 import { Array, Effect, Option, Order, pipe } from "effect";
 
-import { NO_ROWS, containing, fromCatalog } from "#/shared/db/index.server.ts";
+import { NO_ROWS, fromCatalog } from "#/shared/db/index.server.ts";
 import { part } from "#/shared/db/index.ts";
 
 const byUsesDescending = Order.flip(
@@ -16,9 +17,9 @@ export const listSongs = Effect.fn("catalog.songs")(function* listSongs(
       onNone: () => ({}),
       onSome: (value) => ({
         OR: [
-          { title: { like: containing(value) } },
-          { artist: { like: containing(value) } },
-          { aliases: { alias: { like: containing(value) } } },
+          { title: { like: containingPattern(value) } },
+          { artist: { like: containingPattern(value) } },
+          { aliases: { alias: { like: containingPattern(value) } } },
         ],
       }),
     }),
