@@ -1,7 +1,0 @@
-{
-  "extends": "../../tsconfig.json",
-  "include": ["src", "bin", "vite.config.ts", "remotion.config.ts"],
-  "compilerOptions": {
-    "lib": ["ESNext", "DOM", "DOM.Iterable"]
-  }
-}

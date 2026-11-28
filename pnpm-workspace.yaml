@@ -235,16 +235,6 @@ catalog:
   "@types/sshpk": 1.17.5
   sshpk: 1.18.0
   dejavu-fonts-ttf: 2.37.3
-  remotion: 4.0.547
-  "@remotion/bundler": 4.0.547
-  "@remotion/cli": 4.0.547
-  "@remotion/layout-utils": 4.0.547
-  "@remotion/media": 4.0.547
-  "@remotion/player": 4.0.547
-  "@remotion/renderer": 4.0.547
-  "@remotion/tailwind-v4": 4.0.547
-  "@remotion/media-utils": 4.0.547
-  ag-psd: 34.2.3
 catalogs:
   stack:
     "@distilled.cloud/cloudflare": 1.0.0-rc.20
@@ -280,8 +270,6 @@ overrides:
   "@vitest/pretty-format": 5.1.2 # exit: npm:vite-plus requires vitest@>=5.1.2
   "@vitest/spy": 5.1.2 # exit: npm:vite-plus requires vitest@>=5.1.2
   "@vitest/utils": 5.1.2 # exit: npm:vite-plus requires vitest@>=5.1.2
-  "@remotion/tailwind-v4>tailwindcss": "catalog:stack" # exit: npm:@remotion/tailwind-v4 allows tailwindcss@>=4.3.5
-  "@remotion/tailwind-v4>@tailwindcss/webpack": 4.3.5 # exit: npm:@remotion/tailwind-v4 allows @tailwindcss/webpack@>=4.3.5
   workerd: 1.20261125.1 # exit: npm:miniflare requires workerd@>=1.20261115.1
   vite@*: "catalog:" # exit: unused
   fflate@>=0.7.0 <0.7.5: ^0.8.0 # exit: unused
