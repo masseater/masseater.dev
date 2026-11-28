@@ -17,7 +17,7 @@ export const INTRO_STEPS: readonly number[] = [
 export const script: VideoScript = {
   title: "Oxlint",
   formats: ["vertical"],
-  length: { vertical: 45 },
+  length: { vertical: 50 },
   voice: 8,
   readings: {
     Oxlint: "オーエックスリント",
@@ -27,6 +27,7 @@ export const script: VideoScript = {
     爆速: "ばくそく",
     Rust: "ラスト",
     CPU: "シーピーユー",
+    migrate: "マイグレート",
   },
   bgm: { ...BGM, loudThrough: "intro" },
   images: { ...IMAGES, ...SHOTS },
@@ -73,12 +74,24 @@ export const script: VideoScript = {
       say: ["{至れり尽くせり|いたれりつくせり}\nなのだ！"],
     },
     {
-      id: "caveat",
+      id: "zero",
       voice: ZUNDAMON,
       say: [
         "じゃあボクのプロジェクト\nでも試すのだ",
-        "…あれ、いつものESLintの\nプラグインはどうなるのだ？",
+        "…エラー0件？\nボクのコード完璧なのだ！",
       ],
+    },
+    {
+      id: "gotcha",
+      say: [
+        "それ、設定なしだと\n明らかなバグのルール\nしか動いてないよ",
+        "ESLintの設定は\nmigrateで持ってこ",
+      ],
+    },
+    {
+      id: "caveat",
+      voice: ZUNDAMON,
+      say: ["…あれ、いつものESLintの\nプラグインはどうなるのだ？"],
     },
     { id: "fix", say: ["ESLintのプラグインも\nそのまま使えるよ"] },
     { id: "ending", say: ["ね、もうlint待ちには\n戻れないっしょ？"] },

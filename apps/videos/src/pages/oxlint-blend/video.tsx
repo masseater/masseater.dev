@@ -120,6 +120,15 @@ const TSUMUGI: Cast = {
       after: ["v1.!右腕/*ゆびさし"],
       later: NONE,
     },
+    gotcha: {
+      before: [
+        "v1.!まゆ/*普通眉",
+        "v1.!目/*基本目セット/!黒目/*カメラ目線",
+      ],
+      closed: "v1.!口/*むふ",
+      after: ["v1.!右腕/*ゆびさし"],
+      later: NONE,
+    },
     agent: {
       before: ["v1.!まゆ/*ごきげん眉", "v1.!目/*基本目セット/!黒目/*きらーん"],
       closed: "v1.!口/*にしー",
@@ -220,6 +229,12 @@ const ZUNDAMON: Cast = {
       before: [OUTFIT, "v1.!眉/*困り眉1"],
       closed: "v1.!口/*ほあ",
       after: ["v1.!目/*〇〇"],
+      later: NONE,
+    },
+    zero: {
+      before: [OUTFIT, "v1.!眉/*上がり眉"],
+      closed: "v1.!口/*ほあ",
+      after: ["v1.!目/*にっこり", "v1.!顔色/*ほっぺ赤め"],
       later: NONE,
     },
     wow: {
@@ -1070,7 +1085,98 @@ const Reason = ({ shot }: Readonly<{ shot: Shot }>): ReactNode => {
   );
 };
 
+const CATEGORIES = [
+  { name: "correctness", note: "明らかなバグ", on: true },
+  { name: "suspicious", note: "バグっぽいコード", on: false },
+  { name: "pedantic", note: "厳しめ・誤検知あり", on: false },
+  { name: "perf", note: "実行速度", on: false },
+  { name: "style", note: "書き方の統一", on: false },
+  { name: "restriction", note: "特定の書き方を禁止", on: false },
+  { name: "nursery", note: "開発中のルール", on: false },
+] as const;
+const CONFIG_URL = "oxc.rs/docs/guide/usage/linter/config";
+const CATEGORY_GAP = 3;
+
+const ZeroErrors = ({ shot }: Readonly<{ shot: Shot }>): ReactNode => {
+  const frame = useCurrentFrame();
+  const doneAt = lineStart(shot, 1);
+  return (
+    <div className={`${AREA} font-jp flex flex-col justify-center`}>
+      <div className="font-code flex flex-col gap-3 rounded-[16px] bg-[#0b0d10] px-8 py-6 text-[46px] leading-snug">
+        <span className="text-white/90">$ npx oxlint</span>
+        <span
+          className={frame >= doneAt ? "font-bold" : "hidden"}
+          style={{ color: PASS }}
+        >
+          Found 0 warnings
+          <br />
+          and 0 errors.
+        </span>
+      </div>
+    </div>
+  );
+};
+
+const Categories = ({ shot }: Readonly<{ shot: Shot }>): ReactNode => {
+  const frame = useCurrentFrame();
+  const migrateAt = lineStart(shot, 1);
+  return (
+    <div className="font-jp absolute inset-x-[60px] top-[110px] flex h-[740px] flex-col justify-center gap-5">
+      <div className="flex flex-col gap-2 rounded-[20px] bg-[#0b0d10] px-6 py-5">
+        <span className="text-[30px] font-bold text-white/70">
+          設定なしで動くルールの分類
+        </span>
+        {pipe(
+          CATEGORIES,
+          Arr.map((category, index) => (
+            <div
+              className="flex items-center gap-4"
+              key={category.name}
+              style={{ opacity: shownOf(frame, index * CATEGORY_GAP) }}
+            >
+              <span
+                className="font-code w-[100px] rounded-[10px] py-1 text-center text-[30px] font-bold text-[#0b0d10]"
+                style={{ background: category.on ? PASS : "#ffffff40" }}
+              >
+                {category.on ? "ON" : "OFF"}
+              </span>
+              <span
+                className={`font-code w-[290px] text-[38px] font-bold ${category.on ? "text-white" : "text-white/50"}`}
+              >
+                {category.name}
+              </span>
+              <span
+                className={`text-[30px] font-bold ${category.on ? "text-white" : "text-white/50"}`}
+              >
+                {category.note}
+              </span>
+            </div>
+          )),
+        )}
+        <span className="font-code self-end text-[22px] font-bold text-white/50">
+          {CONFIG_URL}
+        </span>
+      </div>
+      <div
+        className="flex flex-col items-center gap-2 self-center rounded-[18px] border-[6px] border-[#ffd400] bg-[#0b0d10] px-8 py-4"
+        style={{
+          opacity: shownOf(frame, migrateAt),
+          scale: String(slamOf(frame, migrateAt)),
+        }}
+      >
+        <span className="font-code text-[54px] font-bold text-[#ffd400]">
+          npx @oxlint/migrate
+        </span>
+        <span className="text-[30px] font-bold text-white/80">
+          ESLintで有効だったルールをそのまま移す
+        </span>
+      </div>
+    </div>
+  );
+};
+
 const FLIP_AT = 10;
+const PLUGIN_FAIL_AT = 10;
 
 const Plugin = ({ failAt }: Readonly<{ failAt: number }>): ReactNode => {
   const frame = useCurrentFrame();
@@ -1295,7 +1401,19 @@ export const draw: Readonly<Record<string, Draw>> = {
       <Highlights at={NOTHING} since={SETTLED} />
     </>
   ),
-  caveat: (shot) => <Plugin failAt={lineStart(shot, 1)} />,
+  zero: (shot) => (
+    <>
+      <ZeroErrors shot={shot} />
+      <Sfx at={lineStart(shot, 1)} kind="pop" shot={shot} />
+    </>
+  ),
+  gotcha: (shot) => (
+    <>
+      <Categories shot={shot} />
+      <Sfx at={lineStart(shot, 1)} kind="stamp" shot={shot} />
+    </>
+  ),
+  caveat: () => <Plugin failAt={PLUGIN_FAIL_AT} />,
   fix: (shot) => (
     <>
       <Config />
