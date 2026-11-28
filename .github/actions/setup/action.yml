@@ -11,8 +11,11 @@ inputs:
     description: Whether to move the checkout to /home/user/<repository>, where cloud sessions check out, and mount it back at the workspace before the install, so that the one install runs under the paths that cache keys hold and still hard links from the package store
     default: "false"
   native:
-    description: Whether to install the mise tools and the apt packages that only verify needs, with the apt packages installing in the background while the other steps run
+    description: Whether to install the tools of vite.config.ts and the apt packages that only verify needs, with the apt packages installing in the background while the other steps run
     default: "true"
+  tools:
+    description: Whether the install fetches the tools of vite.config.ts. Empty follows native, so a job that skips the apt packages can still ask for the tools
+    default: ""
   rust-cache:
     description: Whether a job that installs the native tools also restores and saves the Rust build cache
     default: "true"
@@ -85,9 +88,15 @@ runs:
         path: ${{ steps.store-path.outputs.path }}
         key: pnpm-store-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('pnpm-lock.yaml') }}
         restore-keys: pnpm-store-${{ runner.os }}-${{ runner.arch }}-
+    - if: ${{ inputs.cache == 'true' && (inputs.tools || inputs.native) == 'true' }}
+      uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: ~/.cache/vpa/tools
+        key: vpa-tools-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('vpa-lock.json') }}
     - shell: bash
       env:
         SESSION_PATH: ${{ inputs.session-path }}
+        VPA_TOOLS: ${{ inputs.tools || inputs.native }}
       run: |
         if [ "$SESSION_PATH" = true ]; then
           root="/home/user/${GITHUB_REPOSITORY#*/}"
@@ -111,18 +120,13 @@ runs:
         key: lockfile-verified-${{ hashFiles('pnpm-lock.yaml', 'pnpm-workspace.yaml') }}
     - shell: bash
       run: echo "$GITHUB_WORKSPACE/.pnpm/rust/bin" >> "$GITHUB_PATH" # zizmor: ignore[github-env]
-    - if: ${{ inputs.native == 'true' }}
-      uses: jdx/mise-action@924e7c586e33d7d4bae9c14e26c5d22e2beb6e78 # v5.3.0
-      with:
-        fetch_from_github: false
-        cache: ${{ inputs.cache }}
     - if: ${{ inputs.native == 'true' && inputs.telemetry == 'true' }}
       shell: bash
       env:
         OTEL_FILES: ${{ runner.temp }}/otel
       run: |
         mkdir -p "$OTEL_FILES"
-        nohup otelcol --config "$GITHUB_ACTION_PATH/otelcol.yaml" > "$OTEL_FILES/collector.log" 2>&1 &
+        nohup "$GITHUB_WORKSPACE/node_modules/.bin/otelcol" --config "$GITHUB_ACTION_PATH/otelcol.yaml" > "$OTEL_FILES/collector.log" 2>&1 &
     - if: ${{ inputs.native == 'true' }}
       shell: bash
       run: |

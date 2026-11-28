@@ -99,9 +99,7 @@ jobs:
       - uses: $/.github/actions/setup
         with:
           native: "false"
-      - uses: jdx/mise-action@924e7c586e33d7d4bae9c14e26c5d22e2beb6e78 # v5.3.0
-        with:
-          fetch_from_github: false
+          tools: "true"
       - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
         with:
           key: ${{ fromJSON(needs.plan.outputs.plan).name }}-${{ matrix.platform.os }}

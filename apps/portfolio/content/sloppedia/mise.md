@@ -41,7 +41,7 @@ mise は、1,000を超える道具を、プロジェクトごとのバージョ�
 
 ## 評価
 
-Sloppedia の持ち主の masseater は、自分のリポジトリの道具のバージョンを `mise.toml` に書いている。クラウドのセッションと CI は `mise install` を呼ぶだけで、同じ道具がそろう。モノレポの構造の可視化を調べたとき、Cargo の辺と一段深い Tauri のクレートを両方拾えたのは mise だけだった。詳しくは「[モノレポの構造の可視化](/sloppedia/monorepo-structure-visualization)」を参照。
+Sloppedia の持ち主の masseater は、2026年11月28日からリポジトリのツールを mise ではなく vite-plus-adopt で入れている。ツールは `vite.config.ts` の `tools` に書き、`vpa --prepare` が取得して sha256 を `vpa-lock.json` と照合し、`node_modules/.bin` に結ぶ。クラウドのセッションと CI は、パッケージを入れるのと同じステップで同じツールがそろう。モノレポの構造の可視化を調べたとき、Cargo の辺と一段深い Tauri のクレートを両方拾えたのは mise だけだった。詳しくは「[モノレポの構造の可視化](/sloppedia/monorepo-structure-visualization)」を参照。
 
 ## 関連項目
 
