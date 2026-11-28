@@ -142,6 +142,10 @@
   view-transition-name: category-nikogori;
 }
 
+@utility vt-category-sashi {
+  view-transition-name: category-sashi;
+}
+
 @utility vt-category-ai-produced {
   view-transition-name: category-ai-produced;
 }
@@ -239,6 +243,7 @@
 ::view-transition-group(category-slog),
 ::view-transition-group(category-sloppedia),
 ::view-transition-group(category-nikogori),
+::view-transition-group(category-sashi),
 ::view-transition-group(category-ai-produced) {
   z-index: 2;
 }
